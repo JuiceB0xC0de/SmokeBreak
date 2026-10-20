@@ -24,6 +24,8 @@ import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
+from pipeline import env  # noqa: F401  loads .env
+
 ROOT = Path(__file__).resolve().parents[1]
 PROMPT = ROOT / "pipeline" / "prompts" / "judge.md"
 

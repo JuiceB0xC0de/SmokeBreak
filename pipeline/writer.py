@@ -18,6 +18,8 @@ from pathlib import Path
 
 import anthropic
 
+from pipeline import env  # noqa: F401  loads .env
+
 ROOT = Path(__file__).resolve().parents[1]
 PROMPT = ROOT / "pipeline" / "prompts" / "writer.md"
 CATEGORIES = ROOT / "pipeline" / "categories.json"

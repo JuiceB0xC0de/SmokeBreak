@@ -37,7 +37,7 @@ feeder  ->  scout  ->  picker  ->  reader  ->  judge  ->  writer  ->  drafts/
 ```
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-export ANTHROPIC_API_KEY=...
+cp .env.example .env     # then fill in the keys; .env is gitignored
 python3 -m pipeline.scout brew --limit 3   # a taste: 3 batches of 20
 python3 -m pipeline.scout brew             # all of it
 ```
@@ -45,7 +45,6 @@ python3 -m pipeline.scout brew             # all of it
 ## Picking and writing
 
 ```
-export OPENAI_API_KEY=...   OPENAI_MODEL=...   # the judge's vendor and model
 python3 -m pipeline.pick brew --n 2400       # choose across categories -> data/picks/brew.jsonl
 python3 -m pipeline.reader brew              # Haiku reads every homepage -> data/briefs/brew/
 python3 -m pipeline.judge brew               # keep or reject each brief -> data/judged/brew/

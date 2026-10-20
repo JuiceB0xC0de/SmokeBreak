@@ -23,6 +23,8 @@ from pathlib import Path
 
 import anthropic
 
+from pipeline import env  # noqa: F401  loads .env
+
 from pipeline.feeders import brew
 
 ROOT = Path(__file__).resolve().parents[1]
