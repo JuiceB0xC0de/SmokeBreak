@@ -1,13 +1,17 @@
 """Scout: Haiku reads every candidate and scores it against the standard.
 
-Run:  python3 -m pipeline.scout brew            # all of brew
-      python3 -m pipeline.scout brew --limit 3  # just 3 batches, to look at output
-      python3 -m pipeline.scout brew --dry-run  # print one request, call nothing
+Run:  python3 -m pipeline.scout brew             # all of brew
+      python3 -m pipeline.scout brew --limit 3   # just 3 batches, to look at output
+      python3 -m pipeline.scout brew --dry-run   # print one request, call nothing
+      python3 -m pipeline.scout brew --rebucket  # re-sort saved scores, no API calls
 
 Writes to data/scout/<source>/
   all.jsonl          every result, one per line (this is what makes re-runs resumable)
-  passes.jsonl       score >= 6
-  close_calls.jsonl  score 4 or 5, the "no, but barely" pile
+  passes.jsonl       score >= PASS
+  close_calls.jsonl  CLOSE <= score < PASS, the "no, but barely" pile
+
+passes and close_calls are rebuilt from all.jsonl at the end of every run, so
+moving PASS or CLOSE never needs a rescore. Just run --rebucket.
 """
 import argparse
 import json
@@ -28,8 +32,8 @@ CATEGORIES = ROOT / "pipeline" / "categories.json"
 MODEL = "claude-haiku-5-5"
 BATCH = 20          # formulae per request
 WORKERS = 4         # parallel requests
-PASS = 6            # score >= PASS goes to passes.jsonl
-CLOSE = 4           # CLOSE <= score < PASS goes to close_calls.jsonl
+PASS = 4            # score >= PASS goes to passes.jsonl
+CLOSE = 2           # CLOSE <= score < PASS goes to close_calls.jsonl
 
 FEEDERS = {"brew": brew.candidates}
 
@@ -98,6 +102,7 @@ def main() -> None:
     ap.add_argument("source", choices=FEEDERS)
     ap.add_argument("--limit", type=int, default=0, help="stop after N batches")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--rebucket", action="store_true", help="rebuild passes/close_calls from all.jsonl")
     args = ap.parse_args()
 
     outdir = ROOT / "data" / "scout" / args.source
@@ -105,6 +110,10 @@ def main() -> None:
     all_f = outdir / "all.jsonl"
     pass_f = outdir / "passes.jsonl"
     close_f = outdir / "close_calls.jsonl"
+
+    if args.rebucket:
+        rebucket(all_f, pass_f, close_f)
+        return
 
     # {resume: skip anything already scored}
     done = set()
@@ -132,14 +141,13 @@ def main() -> None:
     def write(rows, u):
         nonlocal n_pass, n_close
         with lock:
-            with all_f.open("a") as fa, pass_f.open("a") as fp, close_f.open("a") as fc:
+            with all_f.open("a") as fa:
                 for r in rows:
-                    line = json.dumps(r) + "\n"
-                    fa.write(line)
+                    fa.write(json.dumps(r) + "\n")
                     if r["score"] >= PASS:
-                        fp.write(line); n_pass += 1
+                        n_pass += 1
                     elif r["score"] >= CLOSE:
-                        fc.write(line); n_close += 1
+                        n_close += 1
             usage["in"] += u.input_tokens
             usage["out"] += u.output_tokens
             usage["cache_read"] += u.cache_read_input_tokens or 0
@@ -158,8 +166,20 @@ def main() -> None:
 
     # {rough cost, haiku 5.5 list price}
     cost = usage["in"] * 0.10 / 1e6 + usage["out"] * 0.50 / 1e6
-    print(f"done. passes={n_pass} close_calls={n_close} tokens in={usage['in']} out={usage['out']} "
+    print(f"done. this run: passes={n_pass} close_calls={n_close} tokens in={usage['in']} out={usage['out']} "
           f"cache_read={usage['cache_read']} ~${cost:.2f}", file=sys.stderr)
+    rebucket(all_f, pass_f, close_f)
+
+
+def rebucket(all_f: Path, pass_f: Path, close_f: Path) -> None:
+    """Rebuild passes.jsonl and close_calls.jsonl from all.jsonl using the current PASS/CLOSE line."""
+    rows = [json.loads(l) for l in all_f.read_text().splitlines() if l.strip()] if all_f.exists() else []
+    passes = [r for r in rows if r["score"] >= PASS]
+    close = [r for r in rows if CLOSE <= r["score"] < PASS]
+    pass_f.write_text("".join(json.dumps(r) + "\n" for r in passes))
+    close_f.write_text("".join(json.dumps(r) + "\n" for r in close))
+    print(f"total scored={len(rows)} passes={len(passes)} (score>={PASS}) close_calls={len(close)} "
+          f"({CLOSE}..{PASS-1})", file=sys.stderr)
 
 
 if __name__ == "__main__":

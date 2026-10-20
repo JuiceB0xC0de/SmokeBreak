@@ -40,4 +40,4 @@ python3 -m pipeline.scout brew --limit 3   # a taste: 3 batches of 20
 python3 -m pipeline.scout brew             # all of it
 ```
 
-Results land in `data/scout/brew/`: `all.jsonl` (everything), `passes.jsonl` (score 6+), `close_calls.jsonl` (score 4 to 5, the "no, but barely" pile). Re-running skips anything already scored.
+Results land in `data/scout/brew/`: `all.jsonl` (everything), `passes.jsonl` (score 4 and up), `close_calls.jsonl` (score 2 to 3, the "no, but barely" pile). Re-running skips anything already scored. Moved the line? `python3 -m pipeline.scout brew --rebucket` re-sorts the saved scores without calling the API.
