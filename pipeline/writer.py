@@ -1,11 +1,11 @@
 """Writer: Sonnet writes the entry from the reader's brief. One call, no tools.
 
-Run:  python3 -m pipeline.writer brew              # every brief in data/briefs/brew/
+Run:  python3 -m pipeline.writer brew              # every keep in data/judged/brew/keep.jsonl
       python3 -m pipeline.writer brew --limit 2    # just two, to look at the output
       python3 -m pipeline.writer brew --dry-run    # print the first request, call nothing
 
-Sonnet never sees the README. Haiku read it (pipeline/reader.py) and left a brief,
-so Sonnet's input is a couple of thousand tokens instead of twenty.
+Sonnet never sees the README. Haiku read it (pipeline/reader.py) and left a brief, the
+judge (pipeline/judge.py) said keep, and only then does Sonnet spend tokens on it.
 
 Output: drafts/<source>/<name>.md and <name>.json for the judge, rejected.jsonl for the rest.
 """
@@ -152,7 +152,8 @@ def main() -> None:
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
-    briefs = sorted((ROOT / "data" / "briefs" / args.source).glob("*.json"))
+    keep_f = ROOT / "data" / "judged" / args.source / "keep.jsonl"
+    keeps = [json.loads(l) for l in keep_f.read_text().splitlines() if l.strip()]
     outdir = ROOT / "drafts" / args.source
     outdir.mkdir(parents=True, exist_ok=True)
     rejected_f = outdir / "rejected.jsonl"
@@ -160,7 +161,7 @@ def main() -> None:
     done = {p.stem for p in outdir.glob("*.md")}
     if rejected_f.exists():
         done |= {json.loads(l)["name"] for l in rejected_f.read_text().splitlines() if l.strip()}
-    todo = [json.loads(p.read_text()) for p in briefs if p.stem not in done]
+    todo = [b for b in keeps if b["name"] not in done]
     if args.limit:
         todo = todo[:args.limit]
     print(f"{len(done)} already written, {len(todo)} to go", file=sys.stderr)
