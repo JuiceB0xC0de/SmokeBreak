@@ -15,6 +15,7 @@ moving PASS or CLOSE never needs a rescore. Just run --rebucket.
 """
 import argparse
 import json
+import random
 import sys
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -123,6 +124,7 @@ def main() -> None:
                 done.add(json.loads(line)["name"])
 
     todo = [c for c in FEEDERS[args.source]() if c["name"] not in done]
+    random.Random(7).shuffle(todo)   # a partial run should be a cross-section, not the letter A
     batches = [todo[i:i + BATCH] for i in range(0, len(todo), BATCH)]
     if args.limit:
         batches = batches[:args.limit]
