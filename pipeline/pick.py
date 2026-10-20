@@ -1,6 +1,7 @@
 """Picker: choose N candidates from the scout's passes, spread across categories.
 
 Run:  python3 -m pipeline.pick brew --n 150
+      python3 -m pipeline.pick brew --n 2400 --min-score 5     # the stronger half first
       python3 -m pipeline.pick brew --n 150 --include-close-calls
 
 Round-robin over categories, best score first inside each, lowest install count
@@ -31,6 +32,7 @@ def main() -> None:
     ap.add_argument("source")
     ap.add_argument("--n", type=int, default=150)
     ap.add_argument("--include-close-calls", action="store_true")
+    ap.add_argument("--min-score", type=int, default=0, help="only candidates scored at least this")
     args = ap.parse_args()
 
     scout = ROOT / "data" / "scout" / args.source
@@ -42,7 +44,7 @@ def main() -> None:
     skip = already_done(args.source)
     by_cat = defaultdict(list)
     for r in rows:
-        if r["category"] != "none" and r["name"] not in skip:
+        if r["category"] != "none" and r["name"] not in skip and r["score"] >= args.min_score:
             by_cat[r["category"]].append(r)
     for cat in by_cat:
         by_cat[cat].sort(key=lambda r: (-r["score"], r.get("installs_365d", 0)))
