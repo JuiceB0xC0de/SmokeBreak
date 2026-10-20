@@ -22,13 +22,14 @@ See `pipeline/categories.json`. Quick weird payoffs, sound and live coding, take
 ## How the catalogue gets built
 
 ```
-feeder  ->  scout  ->  writer  ->  judge  ->  catalogue/
+feeder  ->  scout  ->  picker  ->  reader  ->  writer  ->  judge  ->  catalogue/
 ```
 
 - **Feeder** pulls candidates from a package index. `pipeline/feeders/brew.py` is the first one. pip, npm, nix come later as more feeders.
 - **Scout** (Claude Haiku) reads every candidate and scores it against the standard. Cheap enough to run on all of Homebrew. Its brain is `pipeline/prompts/scout.md`, a plain text file. Edit that to change its taste.
 - **Picker** takes N from the passes, spread evenly across categories, best score first, obscure breaking ties.
-- **Writer** (Claude Sonnet) is the one real agent. It fetches the homepage or README with a tool, reads it, and writes the entry as structured JSON, which gets rendered to markdown in `drafts/`. It can also reject after reading. Its brain is `pipeline/prompts/writer.md`.
+- **Reader** (Claude Haiku) is the one real agent. It fetches the homepage or README with a tool, follows a link or two, and leaves a brief: what it is, why it exists, every command seen verbatim, status, caveats. Haiku does the reading because that is where the tokens go. Brain: `pipeline/prompts/reader.md`.
+- **Writer** (Claude Sonnet) writes the entry from the brief in one call, never sees the README, and can reject. Output is structured JSON rendered to markdown in `drafts/`. Brain: `pipeline/prompts/writer.md`.
 - **Judge** (a different vendor's model) decides keep or reject. Not built yet.
 
 ## Running the scout
@@ -45,10 +46,11 @@ python3 -m pipeline.scout brew             # all of it
 
 ```
 python3 -m pipeline.pick brew --n 150        # choose 150 across categories -> data/picks/brew.jsonl
-python3 -m pipeline.writer brew --limit 2    # write two entries, read them in drafts/brew/
-python3 -m pipeline.writer brew              # write the rest
+python3 -m pipeline.reader brew --limit 2    # Haiku reads two homepages -> data/briefs/brew/
+python3 -m pipeline.writer brew --limit 2    # Sonnet writes two entries -> drafts/brew/
+python3 -m pipeline.reader brew && python3 -m pipeline.writer brew   # the rest
 ```
 
-Drafts land in `drafts/brew/<name>.md`, with a `.json` beside each for the judge. Writer rejections go to `drafts/brew/rejected.jsonl`. Re-running skips anything already written.
+Briefs land in `data/briefs/brew/<name>.json`. Drafts land in `drafts/brew/<name>.md`, with a `.json` beside each for the judge. Writer rejections go to `drafts/brew/rejected.jsonl`. Re-running skips anything already written.
 
 Results from the scout land in `data/scout/brew/`: `all.jsonl` (everything), `passes.jsonl` (score 4 and up), `close_calls.jsonl` (score 2 to 3, the "no, but barely" pile). Re-running skips anything already scored. Moved the line? `python3 -m pipeline.scout brew --rebucket` re-sorts the saved scores without calling the API.
