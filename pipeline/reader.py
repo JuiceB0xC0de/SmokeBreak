@@ -33,7 +33,7 @@ PROMPT = ROOT / "pipeline" / "prompts" / "reader.md"
 MODEL = "claude-haiku-5-5"
 WORKERS = 4
 MAX_FETCHES = 5
-MAX_PAGE_CHARS = 40_000     # a page past this is cut, the model is told so
+MAX_PAGE_CHARS = 60_000     # a page past this is cut, the model is told so
 MAX_TURNS = 8               # hard stop on the loop
 
 
@@ -104,29 +104,28 @@ TOOLS = [{
 
 def brief_schema() -> dict:
     s = {"type": "string"}
+    strings = {"type": "array", "items": s}
+    pairs = lambda a, b: {"type": "array", "items": {
+        "type": "object", "properties": {a: s, b: s}, "required": [a, b], "additionalProperties": False}}
     return {
         "type": "object",
         "properties": {
             "what_it_is": s,
-            "why_it_exists": s,
+            "history": s,
             "how_it_works": s,
-            "commands_seen": {"type": "array", "items": {
-                "type": "object",
-                "properties": {"cmd": s, "context": s},
-                "required": ["cmd", "context"], "additionalProperties": False}},
+            "features": strings,
+            "commands_seen": pairs("cmd", "context"),
+            "example_session": s,
             "install_notes": s,
             "standout": s,
             "status": s,
             "caveats": s,
-            "quotes": {"type": "array", "items": s},
-            "links": {"type": "array", "items": {
-                "type": "object",
-                "properties": {"label": s, "url": s},
-                "required": ["label", "url"], "additionalProperties": False}},
-            "fetch_log": {"type": "array", "items": s},
+            "quotes": strings,
+            "links": pairs("label", "url"),
+            "fetch_log": strings,
         },
-        "required": ["what_it_is", "why_it_exists", "how_it_works", "commands_seen", "install_notes",
-                     "standout", "status", "caveats", "quotes", "links", "fetch_log"],
+        "required": ["what_it_is", "history", "how_it_works", "features", "commands_seen", "example_session",
+                     "install_notes", "standout", "status", "caveats", "quotes", "links", "fetch_log"],
         "additionalProperties": False,
     }
 
@@ -153,7 +152,7 @@ def read_one(client: anthropic.Anthropic, pick: dict, formula: dict, system: str
     for _ in range(MAX_TURNS):
         resp = client.messages.create(
             model=MODEL,
-            max_tokens=8000,
+            max_tokens=12000,
             system=[{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
             messages=messages,
             tools=TOOLS,
@@ -210,6 +209,9 @@ def main() -> None:
     system = PROMPT.read_text()
 
     if args.dry_run:
+        if not todo:
+            print("nothing to do", file=sys.stderr)
+            return
         print(job_message(todo[0], formulae.get(todo[0]["name"], {})))
         return
 

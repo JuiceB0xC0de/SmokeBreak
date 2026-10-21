@@ -29,8 +29,15 @@ feeder  ->  scout  ->  picker  ->  reader  ->  judge  ->  writer  ->  drafts/
 - **Scout** (Claude Haiku) reads every candidate and scores it against the standard. Cheap enough to run on all of Homebrew. Its brain is `pipeline/prompts/scout.md`, a plain text file. Edit that to change its taste.
 - **Picker** takes N from the passes, spread evenly across categories, best score first, obscure breaking ties.
 - **Reader** (Claude Haiku) is the one real agent. It fetches the homepage or README with a tool, follows a link or two, and leaves a brief: what it is, why it exists, every command seen verbatim, status, caveats. Haiku does the reading because that is where the tokens go. Brain: `pipeline/prompts/reader.md`.
-- **Judge** (a model from a different vendor, via plain HTTP) reads the brief and says keep or reject before any writing happens. The brief is cheap, the entry is not, so the judge goes first. Brain: `pipeline/prompts/judge.md`.
-- **Writer** (Claude Sonnet) writes the entry from the brief in one call, only for keeps, never sees the README, and can still reject. Output is structured JSON rendered to markdown in `drafts/`. Brain: `pipeline/prompts/writer.md`.
+- **Judge** (a model from a different vendor, by default) reads the brief and says keep or reject before any writing happens. The brief is cheap, the entry is not, so the judge goes first. Brain: `pipeline/prompts/judge.md`.
+- **Writer** (Claude Sonnet by default) writes the full entry from the brief in one call, only for keeps, never sees the README, and can still reject. Output is structured JSON rendered to markdown in `drafts/`. Brain: `pipeline/prompts/writer.md`.
+
+The judge and writer take `--model vendor:model`. `anthropic:`, `openai:`, or `local:` for anything OpenAI-compatible running on your own machine (Ollama, LM Studio). `pipeline/llm.py` is the one door they all go through. `--tag` keeps a second run's output in its own folder, so two models can be compared side by side:
+
+```
+python3 -m pipeline.judge brew --model local:gemma-4-e4b-it --tag gemma
+python3 -m pipeline.writer brew --model local:gemma-4-e4b-it --from-tag gemma --tag gemma
+```
 
 ## Running the scout
 

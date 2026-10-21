@@ -1,13 +1,15 @@
-"""Writer: Sonnet writes the entry from the reader's brief. One call, no tools.
+"""Writer: a model writes the full entry from the reader's brief. One call, no tools.
 
-Run:  python3 -m pipeline.writer brew              # every keep in data/judged/brew/keep.jsonl
-      python3 -m pipeline.writer brew --limit 2    # just two, to look at the output
-      python3 -m pipeline.writer brew --dry-run    # print the first request, call nothing
+Run:  python3 -m pipeline.writer brew                       # every keep in data/judged/brew/keep.jsonl
+      python3 -m pipeline.writer brew --limit 2
+      python3 -m pipeline.writer brew --dry-run
+      python3 -m pipeline.writer brew --model local:gemma-4-e4b-it --from-tag gemma --tag gemma
+                                                             # the comparison run: gemma's keeps, written by gemma
 
-Sonnet never sees the README. Haiku read it (pipeline/reader.py) and left a brief, the
-judge (pipeline/judge.py) said keep, and only then does Sonnet spend tokens on it.
+The writer never sees the README. The reader (pipeline/reader.py) left a brief, the judge
+(pipeline/judge.py) said keep, and only then does the writer spend tokens on it.
 
-Output: drafts/<source>/<name>.md and <name>.json for the judge, rejected.jsonl for the rest.
+Output: drafts/<source>[.<tag>]/<name>.md and <name>.json, rejected.jsonl for the rest.
 """
 import argparse
 import json
@@ -16,17 +18,15 @@ import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
-import anthropic
-
-from pipeline import env  # noqa: F401  loads .env
+from pipeline import llm
 
 ROOT = Path(__file__).resolve().parents[1]
 PROMPT = ROOT / "pipeline" / "prompts" / "writer.md"
 CATEGORIES = ROOT / "pipeline" / "categories.json"
 
 # {writer conf}
-MODEL = "claude-sonnet-5-5"
-EFFORT = "medium"
+DEFAULT_MODEL = "anthropic:claude-sonnet-5-5"
+EFFORT = "medium"      # anthropic only
 WORKERS = 3
 
 
@@ -35,6 +35,8 @@ WORKERS = 3
 def entry_schema() -> dict:
     slugs = [c["slug"] for c in json.loads(CATEGORIES.read_text())]
     s = {"type": "string"}
+    pairs = lambda *keys: {"type": "array", "items": {
+        "type": "object", "properties": {k: s for k in keys}, "required": list(keys), "additionalProperties": False}}
     return {
         "type": "object",
         "properties": {
@@ -42,24 +44,19 @@ def entry_schema() -> dict:
             "reject_reason": s,
             "title": s,
             "tldr": s,
-            "deeper_look": s,
+            "what_it_is": s,
+            "how_it_works": s,
             "install": s,
-            "try_this": {"type": "array", "items": {
-                "type": "object",
-                "properties": {"cmd": s, "what_happens": s},
-                "required": ["cmd", "what_happens"], "additionalProperties": False}},
-            "whats_unique": s,
+            "first_session": pairs("cmd", "what_you_see"),
+            "whats_interesting": s,
             "caveats": s,
             "commitment": {"type": "string", "enum": ["quick", "afternoon", "days-off"]},
             "category": {"type": "string", "enum": slugs},
             "tags": {"type": "array", "items": s},
-            "links": {"type": "array", "items": {
-                "type": "object",
-                "properties": {"label": s, "url": s},
-                "required": ["label", "url"], "additionalProperties": False}},
+            "go_deeper": pairs("label", "url", "why"),
         },
-        "required": ["verdict", "reject_reason", "title", "tldr", "deeper_look", "install", "try_this",
-                     "whats_unique", "caveats", "commitment", "category", "tags", "links"],
+        "required": ["verdict", "reject_reason", "title", "tldr", "what_it_is", "how_it_works", "install",
+                     "first_session", "whats_interesting", "caveats", "commitment", "category", "tags", "go_deeper"],
         "additionalProperties": False,
     }
 
@@ -82,26 +79,10 @@ def job_message(b: dict, formula: dict) -> str:
         "license": formula.get("license"),
         "deprecated": b.get("deprecated"),
         "scout": {"score": b["score"], "category": b["category"], "tags": b["tags"], "why": b["why"]},
+        "judge": b.get("judge"),
         "brief": b["brief"],
     }
     return "Write the Smoke Break entry for this candidate.\n\n" + json.dumps(facts, indent=1)
-
-
-# ---------- one call ----------
-
-def write_entry(client: anthropic.Anthropic, b: dict, formula: dict, system: str) -> tuple[dict, dict]:
-    resp = client.messages.create(
-        model=MODEL,
-        max_tokens=8000,
-        system=[{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
-        messages=[{"role": "user", "content": job_message(b, formula)}],
-        output_config={"effort": EFFORT, "format": {"type": "json_schema", "schema": entry_schema()}},
-    )
-    usage = {"in": resp.usage.input_tokens, "out": resp.usage.output_tokens}
-    if resp.stop_reason == "refusal":
-        return {"verdict": "reject", "reject_reason": f"writer refused: {resp.stop_details}"}, usage
-    text = next(x.text for x in resp.content if x.type == "text")
-    return json.loads(text), usage
 
 
 # ---------- rendering ----------
@@ -125,7 +106,13 @@ def render(b: dict, e: dict) -> str:
         "",
         f"**TLDR;** {e['tldr']}",
         "",
-        e["deeper_look"].strip(),
+        "## What it is",
+        "",
+        e["what_it_is"].strip(),
+        "",
+        "## How it works",
+        "",
+        e["how_it_works"].strip(),
         "",
         "## Install",
         "",
@@ -133,15 +120,15 @@ def render(b: dict, e: dict) -> str:
         e["install"].strip(),
         "```",
         "",
-        "## Try this",
+        "## First session",
         "",
     ]
-    for t in e["try_this"]:
-        out += ["```", t["cmd"], "```", t["what_happens"], ""]
-    out += ["## What's unique", "", e["whats_unique"], ""]
+    for i, t in enumerate(e["first_session"], 1):
+        out += [f"{i}. `{t['cmd']}`", "", f"   {t['what_you_see']}", ""]
+    out += ["## What's interesting", "", e["whats_interesting"].strip(), ""]
     if e["caveats"].strip():
-        out += ["## Caveats", "", e["caveats"], ""]
-    out += ["## Links", ""] + [f"- [{l['label']}]({l['url']})" for l in e["links"]] + [""]
+        out += ["## Caveats", "", e["caveats"].strip(), ""]
+    out += ["## Go deeper", ""] + [f"- [{l['label']}]({l['url']}): {l['why']}" for l in e["go_deeper"]] + [""]
     return "\n".join(out)
 
 
@@ -152,11 +139,14 @@ def main() -> None:
     ap.add_argument("source")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--model", default=DEFAULT_MODEL, help="vendor:model, see pipeline/llm.py")
+    ap.add_argument("--from-tag", default="", help="read keeps from data/judged/<source>.<from-tag>/")
+    ap.add_argument("--tag", default="", help="write to drafts/<source>.<tag>/")
     args = ap.parse_args()
 
-    keep_f = ROOT / "data" / "judged" / args.source / "keep.jsonl"
-    keeps = [json.loads(l) for l in keep_f.read_text().splitlines() if l.strip()]
-    outdir = ROOT / "drafts" / args.source
+    judged = ROOT / "data" / "judged" / (f"{args.source}.{args.from_tag}" if args.from_tag else args.source)
+    keeps = [json.loads(l) for l in (judged / "keep.jsonl").read_text().splitlines() if l.strip()]
+    outdir = ROOT / "drafts" / (f"{args.source}.{args.tag}" if args.tag else args.source)
     outdir.mkdir(parents=True, exist_ok=True)
     rejected_f = outdir / "rejected.jsonl"
 
@@ -166,23 +156,28 @@ def main() -> None:
     todo = [b for b in keeps if b["name"] not in done]
     if args.limit:
         todo = todo[:args.limit]
-    print(f"{len(done)} already written, {len(todo)} to go", file=sys.stderr)
+    print(f"{len(done)} already written, {len(todo)} to go, model {args.model}", file=sys.stderr)
 
     formulae = {f["name"]: f for f in json.loads((ROOT / "data" / "raw" / "brew" / "formula.json").read_text())}
     system = system_prompt()
 
     if args.dry_run:
+        if not todo:
+            print("nothing to do", file=sys.stderr)
+            return
         print(system[:1200], "...\n")
         print(job_message(todo[0], formulae.get(todo[0]["name"], {})))
         return
 
-    client = anthropic.Anthropic(max_retries=5)
     lock = threading.Lock()
     total = {"in": 0, "out": 0}
     n_ok = n_rej = 0
+    effort = EFFORT if args.model.startswith("anthropic:") else None
 
     def one(b):
-        return b, *write_entry(client, b, formulae.get(b["name"], {}), system)
+        entry, usage = llm.complete_json(args.model, system, job_message(b, formulae.get(b["name"], {})),
+                                         entry_schema(), effort)
+        return b, entry, usage
 
     with ThreadPoolExecutor(WORKERS) as pool:
         futs = [pool.submit(one, b) for b in todo]
@@ -196,7 +191,7 @@ def main() -> None:
                 total["in"] += usage["in"]; total["out"] += usage["out"]
                 if entry["verdict"] == "write":
                     (outdir / f"{b['name']}.md").write_text(render(b, entry))
-                    (outdir / f"{b['name']}.json").write_text(json.dumps({**b, "entry": entry}, indent=1))
+                    (outdir / f"{b['name']}.json").write_text(json.dumps({**b, "entry": entry, "writer_model": args.model}, indent=1))
                     n_ok += 1
                     print(f"[{k}/{len(todo)}] wrote {b['name']}: {entry['tldr']}", file=sys.stderr)
                 else:
@@ -205,9 +200,7 @@ def main() -> None:
                     n_rej += 1
                     print(f"[{k}/{len(todo)}] rejected {b['name']}: {entry['reject_reason']}", file=sys.stderr)
 
-    # {rough cost, sonnet 5.5 list price}
-    cost = total["in"] * 2.0 / 1e6 + total["out"] * 10.0 / 1e6
-    print(f"done. wrote={n_ok} rejected={n_rej} tokens in={total['in']} out={total['out']} ~${cost:.2f}", file=sys.stderr)
+    print(f"done. wrote={n_ok} rejected={n_rej} {llm.cost_line(args.model, total)}", file=sys.stderr)
 
 
 if __name__ == "__main__":
