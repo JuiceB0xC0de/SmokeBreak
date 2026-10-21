@@ -1,0 +1,143 @@
+{
+ "name": "httm",
+ "desc": "Interactive, file-level Time Machine-like tool for ZFS/btrfs",
+ "homepage": "https://github.com/kimono-koans/httm",
+ "installs_365d": 187,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "tui"
+ ],
+ "why": "Time-machine-style browsing of ZFS and btrfs snapshots, a clever look at filesystem internals.",
+ "brief": {
+  "what_it_is": "httm is a command-line tool, written in Rust, that lists the unique past versions of a file found on filesystem snapshots and backups, showing each version's size, date and location. You give it file paths (or pipe paths on stdin) and it prints every distinct version, deduplicated by modify time and size. It also has four interactive modes (browse, select, prune, restore) for picking a version and restoring or pruning it. It works with ZFS, btrfs and NILFS2 snapshots, Restic repositories and Time Machine backups, and can also be pointed at rsync-ed copies on ext4, XFS or NTFS. Output can be plain lines, null or tab delimited, JSON or CSV.",
+  "why_it_exists": "The author wants a command-line Time Machine. ZFS, BTRFS and NILFS2 snapshots are not designed to find unique versions of a single file, so httm does that search. The README says httm 'might change the way you use snapshots' and 'the Time Machine concept (because httm is very fast!)'.",
+  "how_it_works": "httm reads the snapshot directories for the dataset holding each path and compares the versions it finds, deduplicating by modify time and size, or by checksum if you ask for that verification level. It can also list deleted files and browse files behind deleted directories, and it can map snapshot mounts by file. Restores can be guarded by taking a pre-restore snapshot, and roll-forward avoids destroying interstitial snapshots. The README does not describe the internals in more detail.",
+  "commands_seen": [
+   {
+    "cmd": "httm --json ~/.histfile",
+    "context": "Print all unique versions of a history file as formatted JSON."
+   },
+   {
+    "cmd": "httm -b -R ~",
+    "context": "Browse all files in the home directory recursively and view unique versions on local snapshots."
+   },
+   {
+    "cmd": "httm -d=only -b -a -R ~",
+    "context": "Browse files deleted from the home directory, including versions on alternative replicated snapshot datasets."
+   },
+   {
+    "cmd": "httm -r=overwrite -R ~",
+    "context": "Browse the home directory and restore a selected version to its original location in overwrite mode."
+   },
+   {
+    "cmd": "httm --preview -s ~/.zshrc",
+    "context": "Show a bowie-formatted diff of each unique snapshot of ~/.zshrc against the live file (needs the bowie script installed)."
+   },
+   {
+    "cmd": "httm -l -r /var/log/samba/log.smbd",
+    "context": "Shortcut to recover the last-in-time unique version of a file without browsing."
+   },
+   {
+    "cmd": "sudo httm -S /etc/samba/smb.conf",
+    "context": "Take a snapshot of the dataset holding the given file."
+   },
+   {
+    "cmd": "ounce --give-priv",
+    "context": "Request ZFS snapshot privileges for the ounce wrapper, which snapshots a file before a modifying command like rm."
+   },
+   {
+    "cmd": "bowie ~/.zshrc",
+    "context": "Display the difference between unique snapshot versions and the live file, using the bowie wrapper script."
+   },
+   {
+    "cmd": "httm --install-zsh-hot-keys",
+    "context": "Copy the optional zsh hot-key script to the home directory so it can be sourced from .zshrc."
+   }
+  ],
+  "install_notes": "Homebrew: the README says a community member posted a formula at formulae.brew.sh/formula/httm. Beyond that, the README describes: Debian/Ubuntu and Red Hat/Fedora native packages on the tagged releases page, plus an unsupported PPA; building a .deb with cargo-deb (needs rustup and cargo install cargo-deb); an Arch PKGBUILD via makepkg; or cargo install --locked from the git tag. Optional extras: the zsh hot keys, a man page (httm.1, copied to a man1 directory), and the wrapper scripts ounce, bowie, equine and nicotine, which are copied to /usr/local/bin and made executable. The README says equine is required for Time Machine support on macOS and bowie is required for the default --preview behaviour. Using BTRFS, NILFS2 or Restic snapshots may need sudo or root, and Restic and Time Machine need extra flags such as --alt-store. Setting a default restore mode is done by exporting HTTM_RESTORE_MODE in ~/.zshenv.",
+  "standout": "It answers 'what did this file look like on each snapshot?' by deduplicating versions rather than listing every snapshot, and it reaches into deleted directories, remote replicated snapshots and Time Machine sparse bundles. The wrapper scripts (ounce takes a snapshot before rm or an editor runs, nicotine builds a git history of the versions) show a range of uses beyond browsing.",
+  "status": "unknown. The README has no release date, changelog or dated 'last updated' note, and the homepage fetch showed only the README. The only dates in it are example output from 2023, plus a 2023-era asciicast. The author describes the PPA as 'unsupported'. I did not check the tags page or commit history, so I cannot say whether it is maintained now.",
+  "caveats": "Linux, FreeBSD and macOS are the platforms the README says are known to work. Windows is not a priority; the README says a non-interactive Windows build once existed. FreeBSD interactive modes may not render properly on a fresh minimal install (see issue 20). Some older-libc Linux distros may need a musl build (issue 17). Red Hat-based installs may need rpm --replacefiles (issue 51). Some features need root (BTRFS, NILFS2, Restic). Restic and Time Machine need extra flags, and the Time Machine path depends on equine. The README also notes the ZFS-snapshot-based restore guard depends on snapshot privileges. The licence is MPL 2.0.",
+  "quotes": [
+   "The dream of a CLI Time Machine is still alive with `httm`.",
+   "httm might change the way you use snapshots (because ZFS/BTRFS/NILFS2 aren't designed to find unique file versions) or the Time Machine concept (because `httm` is very fast!).",
+   "Parseable ... or not ... oh my!",
+   "Use in combination with you favorite shell's hot keys for even more fun."
+  ],
+  "links": [
+   {
+    "label": "httm on GitHub (homepage and README)",
+    "url": "https://github.com/kimono-koans/httm"
+   },
+   {
+    "label": "Asciicast demo",
+    "url": "https://asciinema.org/a/637475"
+   },
+   {
+    "label": "A Somewhat Opinionated Guide to Effective ZFS Snapshots (the author's guide to creating snapshots)",
+    "url": "https://kimono-koans.github.io/opinionated-guide/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/kimono-koans/httm (homepage, README returned, worked)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It turns filesystem snapshots into a file-level, deduplicated Time Machine, including deleted paths and multiple snapshot backends."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "httm",
+  "tldr": "A fast command-line Time Machine that lists every unique past version of a file across ZFS, btrfs and other snapshots, and can restore any of them.",
+  "deeper_look": "httm takes file paths and prints each distinct version of those files found on snapshots, with size, date and location. It deduplicates by modify time and size, or by checksum if you ask for stricter verification. The output can be plain lines, null or tab delimited, JSON or CSV, so it fits into pipes. It also has interactive modes to browse, select, prune and restore.\n\nThe problem it addresses is that ZFS, btrfs and NILFS2 snapshots are taken per dataset, not per file. Asking 'what did this one file look like last month?' means digging through snapshot directories by hand. httm does that search for you, and it can reach files behind deleted directories and list deleted files. It also works with Restic repositories and Time Machine backups, and with rsync-ed copies on ext4, XFS or NTFS.\n\nThe idea underneath is that a snapshot is just a directory tree frozen in time, so a file's history is already on disk, waiting for a tool to line it up. Once it is lined up, you can diff it, restore it or build something on it. The install also brings small wrapper scripts. `ounce` snapshots a file before a command like rm runs, `bowie` diffs snapshot versions against the live file, and `nicotine` builds a git history from the versions. `equine` is needed for Time Machine support on macOS.\n\nThe README says httm 'might change the way you use snapshots'. That depends on whether you already keep snapshots, and the author has a guide to making them.",
+  "install": "brew install httm\n# Needs a filesystem with snapshots (ZFS, btrfs, NILFS2, Restic or Time Machine) to show anything.\n# btrfs, NILFS2 and Restic may need sudo. bowie is required for the default --preview behaviour.",
+  "try_this": [
+   {
+    "cmd": "httm --json ~/.histfile",
+    "what_happens": "Prints every unique snapshot version of your history file as formatted JSON."
+   },
+   {
+    "cmd": "httm -b -R ~",
+    "what_happens": "Opens an interactive browser over your home directory, recursively, with unique versions from local snapshots."
+   },
+   {
+    "cmd": "httm -d=only -b -a -R ~",
+    "what_happens": "Browses files deleted from your home directory, including versions on alternative replicated snapshot datasets."
+   }
+  ],
+  "whats_unique": "It lists unique versions of a file rather than every snapshot, and it reaches into deleted directories, replicated datasets and Time Machine backups. The wrapper scripts show uses beyond browsing, such as snapshotting before an rm.",
+  "caveats": "It needs snapshots to be useful, some modes need root, Restic and Time Machine need extra flags, and the brief could not confirm whether it is currently maintained.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "zfs",
+   "btrfs",
+   "snapshots",
+   "tui",
+   "rust",
+   "backup"
+  ],
+  "links": [
+   {
+    "label": "httm on GitHub (homepage and README)",
+    "url": "https://github.com/kimono-koans/httm"
+   },
+   {
+    "label": "Asciicast demo",
+    "url": "https://asciinema.org/a/637475"
+   },
+   {
+    "label": "A Somewhat Opinionated Guide to Effective ZFS Snapshots",
+    "url": "https://kimono-koans.github.io/opinionated-guide/"
+   }
+  ]
+ }
+}

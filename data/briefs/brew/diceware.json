@@ -1,0 +1,88 @@
+{
+ "name": "diceware",
+ "desc": "Passphrases to remember",
+ "homepage": "https://github.com/ulif/diceware",
+ "installs_365d": 379,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "library"
+ ],
+ "why": "Generates diceware passphrases from the word list method, a neat entropy idea, but mostly a small utility with limited surprise.",
+ "brief": {
+  "what_it_is": "diceware is a Python command-line passphrase generator that follows Arnold G. Reinhold's diceware proposal. It builds a passphrase by joining words chosen at random from a wordlist, six words by default, capitalized and with no separators. Options control word count, capitalization, delimiters, appended special characters, the wordlist (built-in or your own file or stdin), and the randomness source. Output is a single passphrase printed to the terminal.",
+  "why_it_exists": "The README says diceware passphrases are easier to remember than shorter, oddly constructed passwords while providing more entropy, citing xkcd 936. It frames the tool as following Reinhold's proposals and says the non-working parts are the author's fault.",
+  "how_it_works": "Each word is chosen by mapping random values onto wordlist entries. By default the source is Python's random.SystemRandom, which reads /dev/urandom on Unix-like systems. With -r realdice you type in your own dice results, and the README notes that wordlist sizes not a power of the dice sides cause some words to be cut. The default en_eff list has 7776 words (6^5), which the README puts at about 12.9 bits per word, or about 77.5 bits for six words.",
+  "commands_seen": [
+   {
+    "cmd": "pip install diceware",
+    "context": "Install command from the Install section, via pip."
+   },
+   {
+    "cmd": "diceware",
+    "context": "Generates a default six-word, capitalized, no-separator passphrase. Example output shown is MyraPend93rdSixthEagleAid."
+   },
+   {
+    "cmd": "diceware -n 1",
+    "context": "Sets the number of words to one (-n is the word count). Example output: Runny."
+   },
+   {
+    "cmd": "diceware -s 2",
+    "context": "Appends two special characters to the end of the passphrase (-s is the special-char count)."
+   },
+   {
+    "cmd": "diceware -d \"_\"",
+    "context": "Puts an underscore delimiter between words (-d sets the delimiter)."
+   },
+   {
+    "cmd": "diceware --no-caps",
+    "context": "Turns off capitalization so words stay in their wordlist case."
+   },
+   {
+    "cmd": "diceware -r realdice --dice-sides 6",
+    "context": "Uses real dice: the tool prompts you to type in dice results, and --dice-sides sets the number of die faces."
+   },
+   {
+    "cmd": "diceware --wordlist en_orig",
+    "context": "Selects the en_orig wordlist (-w / --wordlist picks a list by name)."
+   },
+   {
+    "cmd": "diceware -n 1 -w en_adjectives en_nouns",
+    "context": "Builds a one-word passphrase from the adjectives list followed by the nouns list. Example output: TediousPerimeter."
+   },
+   {
+    "cmd": "echo -e \"hi\\nhello\\n\" | diceware -",
+    "context": "Pipes a custom wordlist in on stdin, using - as the INFILE argument."
+   }
+  ],
+  "install_notes": "Install with pip install diceware. The README says the exact method depends on your OS. Optional configuration: a .diceware.ini file in your home directory, or ${XDG_CONFIG_HOME}/diceware/diceware.ini, or ${HOME}/.config/diceware/diceware.ini, with a [diceware] section whose keys match the long option names. Custom wordlists are plain text, one word per line, and PGP-signed lists are accepted. Developer install uses a virtualenv and pip install '.[tests,dev]', with pytest or tox for tests. Python support is listed as 2.7, 3.4 to 3.12, and pypy3. The README gives no Homebrew-specific steps.",
+  "standout": "The 'what is it good for' section makes a concrete entropy argument: it compares the value of adding a special character with adding a word, and calculates how long a phrase must be before a special character adds 10 bits. It also explains the prefix-code problem with turning off caps and delimiters, and says that en_eff was checked to be a prefix code.",
+  "status": "unknown. The README has a passing test-status badge and a copyright line running to 2024, and it lists Python 3.12 support. It gives no release date or changelog entry, and I did not fetch the PyPI or GitHub release pages, so I cannot confirm recent activity.",
+  "caveats": "Real-dice mode needs you to type results by hand. Wordlist sizes that are not a power of the dice sides lead to some words being cut, which reduces entropy. With caps off and no delimiter, prefix-code ambiguity can reduce entropy, so caps or a delimiter are advised. The README says appended special characters add little entropy. The man page is a manual template that the README says may be outdated. Licensing is GPL v3+ for the code, and the wordlists have their own copyrights. The README was the only page read, so I could not check the docs site.",
+  "quotes": [
+   "`diceware` is a passphrase generator following the proposals of Arnold G. Reinhold on http://diceware.com .",
+   "Normally, `diceware` passphrases are easier to remember than shorter passwords constructed in more or less bizarre ways.",
+   "Arnold G. Reinhold deserves all merits for the working parts of `Diceware`. The non-working parts are certainly my fault."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/ulif/diceware"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://diceware.readthedocs.io/"
+   },
+   {
+    "label": "PyPI package",
+    "url": "https://pypi.python.org/pypi/diceware/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/ulif/diceware (homepage, fetched OK, README returned in reStructuredText; sufficient, so no further fetches)"
+  ]
+ }
+}

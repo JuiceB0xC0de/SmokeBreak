@@ -1,0 +1,125 @@
+{
+ "name": "packetry",
+ "desc": "Fast, intuitive USB 2.0 protocol analysis application for use with Cynthion",
+ "homepage": "https://github.com/greatscottgadgets/packetry",
+ "installs_365d": 315,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "needs-hardware",
+  "gui",
+  "afternoon",
+  "protocol"
+ ],
+ "why": "A USB 2.0 protocol analyser paired with Cynthion hardware, a real window into how USB traffic looks on the wire.",
+ "brief": {
+  "what_it_is": "Packetry is a USB 2.0 protocol analysis application with a graphical interface, built to work with Cynthion hardware from Great Scott Gadgets. It takes in USB 2.0 traffic, either from a live capture through Cynthion or from a saved .pcap file, and shows the traffic in a GUI. The README says the only supported file format is .pcap with the LINKTYPE_USB_2_0 link layer header type. The documentation's section headings (Live Capture, Connect Cynthion, Start Capturing USB Traffic) suggest that live capture is its main use.",
+  "why_it_exists": "The README gives no explicit problem statement. It describes Packetry as a fast, intuitive USB 2.0 protocol analysis application for use with Cynthion.",
+  "how_it_works": "Packetry is written in Rust, and its GUI uses GTK 4 through the gtk-rs bindings. The README does not explain how capture or decoding works internally. If a capture filename is passed as an argument, the application tries to load that file on startup.",
+  "commands_seen": [
+   {
+    "cmd": "apt install rustc cargo build-essential libgtk-4-dev",
+    "context": "Debian-based Linux install of the Rust toolchain, build tools and GTK 4 headers, suggested as the usual route."
+   },
+   {
+    "cmd": "yum install rust cargo make gcc gcc-c++ gtk4-devel pango-devel",
+    "context": "Fedora install of the Rust toolchain, compilers and GTK 4 development packages."
+   },
+   {
+    "cmd": "brew install gtk4",
+    "context": "macOS: installs GTK 4 through Homebrew, after installing Rust with rustup."
+   },
+   {
+    "cmd": "cargo build",
+    "context": "Builds Packetry from source once the prerequisites are installed."
+   },
+   {
+    "cmd": "cargo run",
+    "context": "Builds and runs Packetry from source. A capture filename can be passed after it to load a file."
+   },
+   {
+    "cmd": "cargo build --all-features",
+    "context": "Shown only as a warning not to use this flag. The README says the optional features are for debug and test purposes and will degrade normal use."
+   }
+  ],
+  "install_notes": "Requires a Rust toolchain with a minimum version of 1.93. If the distribution's Rust packages are older, use rustup. GTK 4 headers must be installed and discoverable via pkg-config. Linux: use the apt or yum package lines above or similar packages for other distributions. macOS: install Rust with rustup and Homebrew, then run brew install gtk4. Windows: follow the external gtk-rs guide 'GUI development with Rust and GTK 4'; either the MSVC or GNU toolchain works. The README describes building from source only and does not mention a prebuilt binary or a Homebrew formula for Packetry itself. Using it with live capture needs Cynthion hardware. The docs have an 'Install Cynthion' step in the Quick Start, but the fetched docs page contained only the table of contents, so its details are unknown.",
+  "standout": "It pairs a Rust and GTK 4 desktop app with open Cynthion hardware for USB 2.0 analysis. It can also open saved .pcap captures, so it can be used for offline inspection without the hardware connected.",
+  "status": "Unknown for release date and last commit: I did not fetch the GitHub releases or commit pages. The README is current in that it sets a minimum Rust version of 1.93 and links to a readthedocs documentation site, which suggests active development, but this is inference. The docs page loaded but showed only navigation, with no version or date.",
+  "caveats": "Build from source only, as far as the README shows. Needs GTK 4 development headers and a recent Rust toolchain (1.93 or newer). Windows setup is handled by an external guide. Do not build with --all-features. The only file format listed as supported is .pcap with LINKTYPE_USB_2_0. The project covers USB 2.0 only. The documentation page's body text did not load, so the usage details are unverified.",
+  "quotes": [
+   "A fast, intuitive USB 2.0 protocol analysis application for use with Cynthion.",
+   "Packetry is written in Rust, with its GUI using GTK 4 via the gtk-rs bindings.",
+   "Do not build with `--all-features`. All the optional features currently in the package are for debug/test purposes only, and will prevent or degrade normal use of the application if enabled."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repository)",
+    "url": "https://github.com/greatscottgadgets/packetry"
+   },
+   {
+    "label": "Packetry Documentation (readthedocs)",
+    "url": "https://packetry.readthedocs.io/"
+   },
+   {
+    "label": "Cynthion hardware",
+    "url": "https://greatscottgadgets.com/cynthion/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/greatscottgadgets/packetry: worked, README returned.",
+   "https://packetry.readthedocs.io/: loaded, but only the table of contents and page titles came back (Introduction, User Interface, Keyboard Shortcuts, Quick Start); no body text."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Paired with Cynthion, Packetry makes live USB 2.0 traffic inspectable, offering a concrete window into a ubiquitous protocol rather than merely another polished GUI."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Packetry",
+  "tldr": "A Rust and GTK 4 USB 2.0 protocol analyser that shows traffic captured by Cynthion hardware, or read from a saved .pcap file.",
+  "deeper_look": "Packetry is a graphical application for looking at USB 2.0 traffic. It takes in packets from a live capture through Cynthion, the open USB hardware from Great Scott Gadgets, or from a saved .pcap file, and lays them out in a window. The README calls it \"A fast, intuitive USB 2.0 protocol analysis application for use with Cynthion.\"\n\nThe README gives no problem statement, and it does not explain how capture or decoding works internally. What it does say is that the app is written in Rust, with its GUI built on GTK 4 through the gtk-rs bindings. Given a capture filename as an argument, it tries to load that file on startup.\n\nThe idea underneath is that USB is a conversation you normally never see. Every keyboard, flash drive and webcam exchanges packets with the host, and an analyser sitting on the wire lets you read that exchange. That makes it a way into how devices enumerate, describe themselves and move data, and into reverse engineering a device whose behaviour you want to understand.\n\nThe only supported file format is .pcap with the LINKTYPE_USB_2_0 link layer header type. Live capture appears to be the main use, but saved captures can be opened without any hardware attached.",
+  "install": "brew install packetry\n# Live capture needs Cynthion hardware. Opening saved .pcap files does not.\n# The README describes building from source: Rust 1.93 or newer plus GTK 4 headers, then cargo build.",
+  "try_this": [
+   {
+    "cmd": "packetry --help",
+    "what_happens": "Lists the options the app accepts."
+   },
+   {
+    "cmd": "packetry-cli --help",
+    "what_happens": "Shows what the command-line companion offers."
+   }
+  ],
+  "whats_unique": "It pairs a desktop analyser written in Rust and GTK 4 with open Cynthion hardware. Captures can also be inspected offline from .pcap files.",
+  "caveats": "Live capture needs Cynthion hardware, only USB 2.0 is covered, and the brief could not confirm usage details because the documentation body text did not load.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "usb",
+   "protocol",
+   "needs-hardware",
+   "gui",
+   "rust",
+   "pcap"
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repository)",
+    "url": "https://github.com/greatscottgadgets/packetry"
+   },
+   {
+    "label": "Packetry Documentation",
+    "url": "https://packetry.readthedocs.io/"
+   },
+   {
+    "label": "Cynthion hardware",
+    "url": "https://greatscottgadgets.com/cynthion/"
+   }
+  ]
+ }
+}

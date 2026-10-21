@@ -1,0 +1,143 @@
+{
+ "name": "libsixel",
+ "desc": "SIXEL encoder/decoder implementation",
+ "homepage": "https://github.com/saitoha/libsixel",
+ "installs_365d": 2670,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "visual",
+  "terminal",
+  "ancient"
+ ],
+ "why": "Renders real images as SIXEL graphics in terminals, a forgotten 1980s display protocol revived; a strong quick payoff.",
+ "brief": {
+  "what_it_is": "libsixel is an encoder and decoder library for DEC SIXEL graphics, a terminal-friendly image format, plus command-line converters. img2sixel takes image files (the README mentions JPEG, PNG and animated GIF, via libjpeg, libpng and related build options) from file arguments or stdin and writes a SIXEL escape-sequence stream to stdout or a named file. sixel2png goes the other way, turning a SIXEL file into a PNG. Because the output is plain escape sequences, you can cat it to a SIXEL-capable terminal to display the picture. The package also ships C APIs and bindings for Python, Perl, PHP and Ruby.",
+  "why_it_exists": "The README says SIXEL was built for 1980s DEC printers and terminals, where drawing images was painfully slow, and that modern CPUs and networks make the format practical again. It also says the author's encoder was redesigned for terminal emulators rather than dot-matrix printers, to reduce the transport overhead while staying compatible with older SIXEL terminals.",
+  "how_it_works": "SIXEL data is an escape sequence (DCS) stream, so any program that can write bytes to a terminal can show an image. The encoder quantizes colours (median-cut, with selectable dithering such as Floyd-Steinberg, Atkinson and Stucki) and emits the bands of six pixel rows that SIXEL uses, with an encoding policy aimed at terminal display speed rather than printer head movement. The decoder reverses this into an indexed bitmap plus palette.",
+  "commands_seen": [
+   {
+    "cmd": "$ img2sixel < images/egret.jpg > egret.sixel",
+    "context": "Basic conversion: reads a JPEG from stdin and writes a SIXEL file."
+   },
+   {
+    "cmd": "$ img2sixel -p 16 < images/egret.jpg > egret.sixel",
+    "context": "Reduces the palette to 16 colours during conversion."
+   },
+   {
+    "cmd": "$ img2sixel -m images/map16.png < images/egret.jpg > egret.sixel",
+    "context": "Maps the image onto a fixed palette taken from another image file."
+   },
+   {
+    "cmd": "$ sixel2png < egret.sixel > egret.png",
+    "context": "Converts a SIXEL file back into a PNG via sixel2png."
+   },
+   {
+    "cmd": "$ ./configure",
+    "context": "First step of the build from source package, run inside the source tree."
+   },
+   {
+    "cmd": "$ make",
+    "context": "Compiles libsixel after configure."
+   },
+   {
+    "cmd": "# make install",
+    "context": "Installs libsixel system-wide (run as root)."
+   },
+   {
+    "cmd": "$ xterm -xrm \"XTerm*decTerminalID: vt340\" -xrm \"XTerm*numColorRegisters: 256\"",
+    "context": "Launches xterm with VT340 identity and 256 colour registers so SIXEL is not limited to 16 colours."
+   },
+   {
+    "cmd": "$ gem install libsixel-ruby",
+    "context": "Installs the Ruby interface from RubyGems."
+   },
+   {
+    "cmd": "$ easy_install libsixel-python",
+    "context": "Installs the Python interface (README notes the git develop branch is the source for the Python module)."
+   }
+  ],
+  "install_notes": "Homebrew is the package manager here, but the README lists many others (apt, pacman, nix, MacPorts and so on). Build from source uses ./configure, make and make install. Optional features are switched on or off with configure flags: --with-libcurl, --with-gd, --with-gdk-pixbuf2, --with-jpeg, --with-png, --enable-python, --enable-tests and others. Python bindings need either a configure --enable-python install or a manual build, and the README says the Python work is only on the develop branch. Perl, PHP and Ruby interfaces have their own build steps. A MinGW cross-build for Windows is documented. No accounts or runtime services are needed.",
+  "standout": "Rather than a printer-era encoder, it is a modern converter aimed at showing images in terminals: the README describes a terminal-oriented encoding that keeps compatibility with old DEC SIXEL terminals. The README also lists a wide set of real terminals and downstream projects (mlterm, WezTerm, iTerm2, xterm, RetroArch, Neofetch, and more), so the protocol is supported well beyond this one tool.",
+  "status": "unknown. The README shows a Travis CI badge and Coveralls badge, but gives no release date, version number or last-commit date, and the fetched page was truncated before any release or changelog information. The README points to a develop branch for the Python work. I did not check the GitHub releases or commit history, so I cannot give a firm status.",
+  "caveats": "By default img2sixel writes 7-bit output, and the README says terminals using an 8-bit mode need -8. Many terminals only support a 16-colour palette unless you configure them, and the README says xterm needs --enable-sixel-graphics at compile time and extra X resources set for more colours. Python bindings have a documented source-only path on develop. Some documented features (GIF animation, color quantization variants) are options, not defaults. The README support note says the software is provided as is and that the GitHub issue tracker is the main support channel. The README is cut off at 40000 characters, so the full licence text and any later sections were not seen. The licence is MIT per the README.",
+  "quotes": [
+   "So if you want to view a SIXEL image file, all you have to do is \"cat\" it to your terminal.",
+   "SIXEL data for terminals were found in 80's Usenet, but the technology of how to create them seems to be lost.",
+   "img2sixel(1) can decode GIF animation."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/saitoha/libsixel"
+   },
+   {
+    "label": "Demo video (SIXEL on a VT330, and img2sixel)",
+    "url": "https://youtu.be/0SasrQ7pnbA"
+   },
+   {
+    "label": "Low-level API header (include/sixel.h.in)",
+    "url": "https://github.com/saitoha/libsixel/blob/master/include/sixel.h.in"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/saitoha/libsixel (fetched OK, README returned, truncated at 40000 characters)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It revives an obscure terminal graphics protocol, letting you turn ordinary images into escape sequences that capable terminals render as pictures."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "libsixel",
+  "tldr": "Converts images into SIXEL, a 1980s DEC terminal graphics format, so you can cat a picture straight into a compatible terminal window.",
+  "deeper_look": "libsixel is an encoder and decoder for SIXEL, plus command-line tools. `img2sixel` reads an image (the README mentions JPEG, PNG and animated GIF) from a file or stdin and writes a stream of escape sequences. `sixel2png` goes the other way. Because the output is only escape sequences, the README puts it simply: \"all you have to do is \\\"cat\\\" it to your terminal.\"\n\nSIXEL dates from DEC printers and terminals of the 1980s, where drawing images was painfully slow. The README says modern CPUs and networks make the format practical again. This encoder was redesigned for terminal emulators rather than dot-matrix printers, to cut transport overhead while staying compatible with old SIXEL terminals.\n\nUnder the hood, the encoder quantizes colours (median-cut, with dithering choices such as Floyd-Steinberg, Atkinson and Stucki) and emits SIXEL's bands of six pixel rows. The idea underneath is that a terminal is not only a text grid: a few escape codes can turn it into a bitmap display, and any program that can write bytes can draw in it. The README lists many terminals and downstream projects that speak SIXEL, including mlterm, WezTerm, iTerm2, xterm, RetroArch and Neofetch. It also ships C APIs and bindings for Python, Perl, PHP and Ruby.",
+  "install": "brew install libsixel\n# You also need a SIXEL-capable terminal (e.g. mlterm, WezTerm, iTerm2, or xterm built with SIXEL support).",
+  "try_this": [
+   {
+    "cmd": "img2sixel --help",
+    "what_happens": "Lists the encoder's options, including palette size, dithering and 8-bit output."
+   },
+   {
+    "cmd": "img2sixel -p 16 < images/egret.jpg > egret.sixel",
+    "what_happens": "Converts a JPEG from stdin to SIXEL with a 16-colour palette; cat the file in a SIXEL terminal to see it."
+   },
+   {
+    "cmd": "sixel2png < egret.sixel > egret.png",
+    "what_happens": "Decodes a SIXEL file back into a PNG."
+   }
+  ],
+  "whats_unique": "It is an encoder tuned for showing images in modern terminals while staying compatible with old DEC SIXEL hardware. Many terminals and tools support the protocol beyond this one.",
+  "caveats": "By default output is 7-bit (terminals in 8-bit mode need -8), many terminals limit you to 16 colours unless configured, and the brief could not confirm how recently the project was updated.",
+  "commitment": "quick",
+  "category": "quick-weird-payoffs",
+  "tags": [
+   "quick",
+   "sixel",
+   "terminal",
+   "graphics",
+   "images",
+   "retro"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/saitoha/libsixel"
+   },
+   {
+    "label": "Demo video (SIXEL on a VT330, and img2sixel)",
+    "url": "https://youtu.be/0SasrQ7pnbA"
+   },
+   {
+    "label": "Low-level API header (include/sixel.h.in)",
+    "url": "https://github.com/saitoha/libsixel/blob/master/include/sixel.h.in"
+   }
+  ]
+ }
+}

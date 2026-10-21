@@ -1,0 +1,100 @@
+{
+ "name": "bend",
+ "desc": "Language that blocks AI mistakes via proof",
+ "homepage": "https://bend-lang.com",
+ "installs_365d": 146,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language",
+  "library"
+ ],
+ "why": "A massively parallel functional language on HVM with a proof-oriented angle; an unusual language worth an afternoon.",
+ "brief": {
+  "what_it_is": "Bend is a functional programming language that compiles to native code and runs on CPUs (up to sixteen cores) and on GPUs. Its type checker doubles as a proof checker, in the style of Lean and Rocq. You write laws in a LAWS.bend file and proofs in a PROOF.bend file, and the proof checker verifies that the implementation satisfies them. The homepage pitches it as a way to stop AI coding agents from shipping code that breaks the rules you have declared. The inputs are Bend source files, and the outputs are compiled binaries plus a pass or fail from the proof check.",
+  "why_it_exists": "The homepage argues that humans will stop reading code in a post-AGI economy, but people still need an unambiguous way to tell AI systems what they want. Laws are meant to be more precise than natural language, proofs are meant to verify that the AI implemented them, and a fast compiler makes it practical to check after every change.",
+  "how_it_works": "Bend compiles to native code and parallelizes work automatically: you split the work in two and the runtime spreads the calls across available cores or the GPU, then joins them back, with no threads, locks, or kernels to write. Its type checker is described as a proof checker, which is how a law in LAWS.bend becomes something a PROOF.bend file must prove before code can ship. The homepage says the core type theory is BendTT, an affine dependent type theory, and the VM is BendRT, a parallel runtime for CPUs and GPUs.",
+  "commands_seen": [
+   {
+    "cmd": "curl -fsSL https://bend-lang.com/install.sh | sh",
+    "context": "The install command on the homepage and in the Get started section."
+   },
+   {
+    "cmd": "bend guide",
+    "context": "Named in the AGENTS.md snippet as the way for an agent to learn the language; the homepage says it prints GUIDE.md, the whole language."
+   },
+   {
+    "cmd": "bend PROOF.bend",
+    "context": "Named in the AGENTS.md snippet as the check to run before committing."
+   }
+  ],
+  "install_notes": "Install with the curl one-liner piped to sh, which runs a remote script directly. The homepage gives no other install options, no runtime or account requirements, and no GPU setup steps for the GPU path. Its AGENTS.md snippet tells a coding agent to run bend guide, keep rules in LAWS.bend, run bend PROOF.bend before committing, and parallelize code where possible.",
+  "standout": "Laws are written as checkable declarations (for example, no move sequence leads to victory) and a proof must hold for them, so an AI agent's changes can be rejected by the type checker. The same binary is pitched as running on one core, sixteen cores, or a GPU without code changes. The checker is pitched as fast enough to run after every edit.",
+  "status": "unknown. The homepage has no release date, changelog, or commit information, and I did not fetch a repository. The homepage says Bend is still evolving and young, which suggests active early development but does not prove it is maintained.",
+  "caveats": "The speed and compile-time numbers are vendor claims from charts on an Apple M4 Max, and I could not check them. The homepage says Bend works best on the back-end, on Linux and macOS, and says Expect bugs. It is described as young. Installation is a curl-to-shell pipe. The laws-block-mistakes claim depends on the proofs actually being written to cover the law, and the homepage says the PROOF.bend body is written by the AI. Brew's own caveats field is empty. The license is not stated on the homepage.",
+  "quotes": [
+   "a fast language that blocks AI mistakes via proof",
+   "Merging a bug is mathematically impossible: it is a theorem.",
+   "LAWS.bend is AGENTS.md backed by proof.",
+   "Bend is still evolving. Expect bugs, and please report them."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://bend-lang.com"
+   }
+  ],
+  "fetch_log": [
+   "https://bend-lang.com (homepage): fetched successfully; contains install instructions, the pitch, the LAWS.bend and PROOF.bend examples, and references to GUIDE.md and two papers (BendTT, BendRT) without URLs. No further fetches were made."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Bend combines automatically parallel functional programming across CPUs and GPUs with a proof-oriented type system\u2014an unusual language that offers more to explore than a novelty pitch."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Bend",
+  "tldr": "A parallel functional language whose type checker doubles as a proof checker, pitched as a way to stop AI coding agents from breaking your declared rules.",
+  "deeper_look": "Bend is a functional language that compiles to native code and runs on CPUs (up to sixteen cores) or GPUs. You write the work as ordinary recursive calls, and the runtime spreads them across available cores and joins the results. There are no threads, locks, or kernels to write.\n\nThe other half is the type checker, which works as a proof checker in the style of Lean and Rocq. Rules go in a LAWS.bend file as checkable declarations. The homepage's example is that no sequence of moves leads to victory. A PROOF.bend file must then prove the implementation satisfies those laws, and `bend PROOF.bend` runs the check. The homepage's phrase for it: \"LAWS.bend is AGENTS.md backed by proof.\"\n\nThe stated reason is that people will want an unambiguous way to tell AI systems what they want, and laws are more precise than natural language. A fast checker makes it practical to run after every edit. The core type theory is called BendTT, an affine dependent type theory, and the parallel runtime is BendRT.\n\nThe homepage says the PROOF.bend body is written by the AI, so the guarantee is only as good as the laws you wrote and the proofs actually covering them. Treat it as a way to see dependent types and automatic parallelism side by side in one young language.",
+  "install": "brew install bend\n# the homepage's own install is: curl -fsSL https://bend-lang.com/install.sh | sh\n# the brew formula depends on bun. The homepage lists no account requirements and no GPU setup steps.",
+  "try_this": [
+   {
+    "cmd": "bend guide",
+    "what_happens": "Prints GUIDE.md, which the homepage describes as the whole language, so you can read it in one go."
+   },
+   {
+    "cmd": "bend PROOF.bend",
+    "what_happens": "Runs the proof check against the laws, the step the homepage says to run before committing."
+   },
+   {
+    "cmd": "bend --help",
+    "what_happens": "Lists the commands the executable offers."
+   }
+  ],
+  "whats_unique": "It combines automatic CPU and GPU parallelism with a Lean-style proof checker in one language. Its pitch is that the checker, not a human reviewer, rejects an AI agent's bad changes.",
+  "caveats": "The homepage says Bend is young and says \"Expect bugs\"; its speed numbers are vendor charts from an Apple M4 Max, and it works best on the back-end on Linux and macOS.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "language",
+   "functional",
+   "parallel",
+   "proofs",
+   "dependent-types",
+   "gpu"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://bend-lang.com"
+   }
+  ]
+ }
+}

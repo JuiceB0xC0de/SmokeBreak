@@ -1,0 +1,45 @@
+{
+ "name": "libdsk",
+ "desc": "Library for accessing discs and disc image files",
+ "homepage": "https://www.seasip.info/Unix/LibDsk/",
+ "installs_365d": 223,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "library",
+  "afternoon",
+  "reverse-engineering"
+ ],
+ "why": "Reads and writes raw disc images across obscure floppy formats, a good door into old disk layouts.",
+ "brief": {
+  "what_it_is": "LIBDSK is a C library for reading and writing floppy discs and disc image files through one common interface. Its drivers cover raw image files, many emulator formats (.DSK, IMD, CopyQM, TeleDisk, Compaq QRST, APRIDISK, JV3, D88, SAP, CP2, D64, dc42 and others), and real floppy drives on Linux, DOS and Windows. The page also lists utilities built on it (dskdump, dskform, dskid, dsktrans, dskconv, dsklabel and others) and a Gotek USB-stick backend. Input is a disc image or a physical drive, and output is the same data in another image format or on another medium.",
+  "why_it_exists": "The page says it is meant for converting between real floppy discs and disc images, as CPCTRANS and PCWTRANS did under DOS. It also lets CPMTOOLS and emulator floppy controllers read .DSK files and real discs without format-specific code.",
+  "how_it_works": "Drivers sit behind one API, and the page says newer versions (1.5.x) store intermediate data in a common format called LDBS, which the DSK, EDSK, ApriDisk, CFI, IMD, JV3, CopyQM and TeleDisk drivers now use. The rcpmfs driver presents a Unix or Windows directory as a CP/M disc image. Lib765, a separate package, runs the other way: it turns uPD765A floppy controller commands into LIBDSK API calls.",
+  "commands_seen": [
+   {
+    "cmd": "./configure --with-libdsk",
+    "context": "Build CPMTOOLS against an installed LIBDSK so it can read emulator .DSK images (the page's example for CPMTOOLS integration)."
+   }
+  ],
+  "install_notes": "The page offers source tarballs (libdsk-1.4.2.tar.gz stable, libdsk-1.5.22.tar.gz development), Windows and DOS executable builds, and Debian, Fedora/Redhat and Gentoo packages from third parties. Using real floppy drives under Linux needs a kernel with FDRAWCMD support, which the page says is deprecated since 5.18 and slated for removal. So you need a custom kernel or an older one that still has it. Nothing in the page mentions Homebrew specifically.",
+  "standout": "It is a long-running, format-heavy library that treats old and obscure disc formats (CP/M, Amstrad, Commodore 64, TRS-80, Compaq, Gotek sticks) as first-class citizens, and it doubles as a bridge between emulators and real hardware. Its disc-format coverage is much wider than most floppy tools.",
+  "status": "Maintained, with evidence from the page itself: the page was last updated 2024-11-11 by John Elliott, and the development version is 1.5.22, with changelog entries running through 1.5.x. I did not check a repository commit history or release dates.",
+  "caveats": "Real-drive access on modern Linux needs FDRAWCMD, which the kernel is dropping. The README warns that rcpmfs users with files over 16k that are not a multiple of 128 bytes must use LibDsk 1.5.18 or later, since earlier versions could corrupt them. The GUI front-end (Diskette Tools) needs wxWidgets to build from source. Licensing was not stated on the page. The page is the author's own site, not a repository, so I could not check issue trackers or a README.",
+  "quotes": [
+   "LIBDSK is a library for accessing floppy discs and disc image files.",
+   "Lib765 is the floppy controller emulation from JOYCE, separately packaged. It is (in some sense) the reverse of LibDsk; it converts uPD765a commands into LibDsk API calls.",
+   "The Diskette Tools program is a GUI front-end to LibDsk. It doesn't do any more than the provided sample utilities, but it looks nicer."
+  ],
+  "links": [
+   {
+    "label": "LIBDSK homepage (John Elliott)",
+    "url": "https://www.seasip.info/Unix/LibDsk/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.seasip.info/Unix/LibDsk/ - fetched OK; not a GitHub repo, so this is the project page with changelog, download and format list. No separate README or docs were followed."
+  ]
+ }
+}

@@ -1,0 +1,66 @@
+{
+ "name": "john",
+ "desc": "Featureful UNIX password cracker",
+ "homepage": "https://www.openwall.com/john/",
+ "installs_365d": 5511,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "library"
+ ],
+ "why": "John the Ripper is a famous password cracker, but its format-cracking depth makes it a real window into hash internals.",
+ "brief": {
+  "what_it_is": "John the Ripper is a free, open-source password security auditing and password recovery tool for many operating systems. You give it password hash files (such as a Unix passwd or shadow copy, or exported hashes from other formats) and it tries guesses against them using wordlists, rules, and other cracking modes, printing any passwords it recovers. The 'jumbo' build adds support for hundreds of hash and cipher types, including web-app and database hashes, SSH and GnuPG private keys, archives (ZIP, RAR, 7z), PDFs, Office documents, and disk images. Output is cracked plaintext shown in the terminal and saved to a pot file.",
+  "why_it_exists": "The homepage describes it as a password security auditing tool, and the README says its primary purpose is to detect weak Unix passwords. The README also says it was built to combine several cracking modes in one fast, configurable program that runs the same way across platforms.",
+  "how_it_works": "John runs a set of cracking modes (wordlist, rules-based mangling, incremental and others) against the hashes in the files you pass it, auto-detecting the hash type. Cracked results go to a pot file ($JOHN/john.pot), which is also used to skip hashes already cracked on later runs. Sessions save state to john.rec on abort or every 10 minutes, so they can be resumed with --restore. Jumbo users run a bundled *2john helper first to convert larger files (archives, documents, keys) into hashes that John can load.",
+  "commands_seen": [
+   {
+    "cmd": "john passwd",
+    "context": "Basic run with default cracking-mode order against a copy of a password file named passwd."
+   },
+   {
+    "cmd": "john --wordlist=password.lst --rules passwd",
+    "context": "Restricts cracking to wordlist mode, with word-mangling rules enabled, against the file passwd."
+   },
+   {
+    "cmd": "john --show passwd",
+    "context": "Prints the passwords already cracked for the hashes in passwd."
+   },
+   {
+    "cmd": "john --restore",
+    "context": "Resumes a cracking session that was interrupted and saved its state."
+   }
+  ],
+  "install_notes": "The homepage recommends building from the GitHub source in preference to the release tarballs; the 1.9.0-jumbo-1 source tarballs are marked out of date with known issues. Core sources are at 1.9.0. Build instructions are in the archive for jumbo, and the core build is documented on the homepage. Windows binaries are offered as 7z and zip downloads. Binary distributions may ship alternate executables such as john-omp for multi-core use. OpenMP parallelism for some hashes must be enabled at compile time by uncommenting an OMPFLAGS line in the Makefile, and the OMP_NUM_THREADS environment variable sets thread count at runtime. Packages exist in several Linux distributions, FreeBSD, NetBSD, OpenBSD, and as an Ubuntu snap. Downloads come with GPG signatures.",
+  "standout": "Breadth is the draw: the jumbo build reads hashes and encrypted files from far outside the Unix passwd world, and it has a built-in mini-compiler for defining custom cracking modes in a subset of C. The same tool runs on many platforms, and sessions can move between them.",
+  "status": "maintained. The homepage lists a 1.9.0 core release and a 1.9.0-jumbo-1 release, and the GitHub README has CI and commit-activity badges, and a commits-since-tag badge pointing to 1.9.0-Jumbo-1. I could not see actual release or commit dates in the pages I read, so the exact recency is unverified.",
+  "caveats": "The README warns that jumbo contributions have low quality requirements, so the extra functionality is not necessarily mature and bugs are expected. The homepage flags the 1.9.0-jumbo-1 source tarballs as out of date with known issues. OpenVMS support needs a contributed patch. Licensing is GPL v2 or later. Many features need the separate *2john helper programs. Some optimized performance is reserved for the commercial John the Ripper Pro, which the homepage promotes.",
+  "quotes": [
+   "John the Ripper is an Open Source password security auditing and password recovery tool available for many operating systems.",
+   "Its primary purpose is to detect weak Unix passwords.",
+   "It has a lot of code, documentation, and data contributed by jumbo developers and the user community."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.openwall.com/john/"
+   },
+   {
+    "label": "GitHub repository (jumbo, bleeding-jumbo branch)",
+    "url": "https://github.com/openwall/john"
+   },
+   {
+    "label": "john-users mailing list archive",
+    "url": "https://www.openwall.com/lists/john-users/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.openwall.com/john/ - worked, homepage text retrieved",
+   "https://github.com/openwall/john - worked, README retrieved (URL was my guess at the repository, and it returned the README)"
+  ]
+ }
+}

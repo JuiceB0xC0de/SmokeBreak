@@ -1,0 +1,67 @@
+{
+ "name": "ent",
+ "desc": "Pseudorandom number sequence test program",
+ "homepage": "https://www.fourmilab.ch/random/",
+ "installs_365d": 373,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "math",
+  "science",
+  "quick",
+  "library"
+ ],
+ "why": "Runs entropy, chi-square and Monte Carlo pi tests on byte streams, a classic way to judge whether data looks random.",
+ "brief": {
+  "what_it_is": "ent is a command-line program that runs statistical randomness tests on a stream of bytes, read from a file or from standard input. It reports the entropy in bits per character, an estimate of how much the data could be compressed, a chi-square value with the percentage of truly random sequences that would exceed it, the arithmetic mean byte value, a Monte Carlo estimate of pi with its percent error, and the serial correlation coefficient. Output goes to standard output, either as a human-readable report or as CSV with the -t option.",
+  "why_it_exists": "The page says the program is useful for evaluating pseudorandom number generators for encryption and statistical sampling, for compression algorithms, and for other cases where the information density of a file matters.",
+  "how_it_works": "Each test reads the byte stream and computes one statistic. The Monte Carlo pi value takes each successive six bytes as 24-bit X and Y coordinates and counts how many fall inside a circle inscribed in a square. The chi-square test compares the byte-value distribution with a uniform one. Serial correlation measures how much each byte depends on the previous one. The page notes a limit of the entropy-based compression estimate: it uses only the chosen reading frame (8-bit bytes, or bits with -b), so larger-frame algorithms such as Lempel-Ziv can compress more when the data has repeated multi-byte sequences.",
+  "commands_seen": [
+   {
+    "cmd": "ent [ -b -c -f -t -u ] [ infile ]",
+    "context": "Synopsis from the man-style page. Runs the tests on infile, or on standard input if no infile is given, and writes results to standard output."
+   },
+   {
+    "cmd": "-b",
+    "context": "Treat input as a stream of bits instead of 8-bit bytes, so the statistics describe the bitstream."
+   },
+   {
+    "cmd": "-c",
+    "context": "Print a table of how many times each byte value (or bit value, with -b) occurs and its fraction of the file."
+   },
+   {
+    "cmd": "-f",
+    "context": "Fold upper-case letters to lower case before computing statistics, using ISO 8859-1 Latin-1 rules."
+   },
+   {
+    "cmd": "-t",
+    "context": "Terse mode: write CSV records, with a record-type field in each row, suitable for spreadsheets or other programs."
+   },
+   {
+    "cmd": "-u",
+    "context": "Print how-to-call (usage) information."
+   }
+  ],
+  "install_notes": "Nothing beyond the Homebrew formula is documented on the homepage. The project is distributed as random.zip, which holds a prebuilt Win32 executable (ent.exe, built with Microsoft Visual C++ .NET) and C source with a Makefile for building under Unix. No accounts, runtimes or configuration are mentioned. The page does not give a version number.",
+  "standout": "It is a small, long-lived classic from John Walker's Fourmilab site that bundles several well-known randomness tests into one tool and explains each result in plain language. The homepage itself is the program's documentation, with worked examples: JPEG data scores near 7.98 bits per character, and Unix rand() fails the chi-square test badly.",
+  "status": "Unknown as to current maintenance. The homepage is dated January 28th, 2008, and the README gives no release version or recent activity. It refers to a GitHub source repository, but I did not follow that link, so I have no commit or release dates.",
+  "caveats": "The page's prebuilt binary is for Windows only, and the Unix path requires building from source with the Makefile. The page says the output is a statistical screen and is not proof of randomness. The compression estimate covers only the chosen byte or bit frame. Public domain licence, with no warranty.",
+  "quotes": [
+   "This page describes a program, ent, which applies various tests to sequences of bytes stored in files and reports the results of those tests.",
+   "The program is useful for evaluating pseudorandom number generators for encryption and statistical sampling applications, compression algorithms, and other applications where the information density of a file is of interest.",
+   "Thus, the standard Unix generator (or at least the low-order bytes it returns) is unacceptably non-random",
+   "This software is in the public domain."
+  ],
+  "links": [
+   {
+    "label": "Homepage: Pseudorandom Number Sequence Test Program (John Walker, Fourmilab)",
+    "url": "https://www.fourmilab.ch/random/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.fourmilab.ch/random/ \u2014 fetched successfully; contained the full program description, man-style documentation and option list. No further fetches were made, because the homepage was complete and the GitHub repository URL was not given in the text."
+  ]
+ }
+}

@@ -1,0 +1,94 @@
+{
+ "name": "tsshd",
+ "desc": "UDP-based SSH server with roaming support",
+ "homepage": "https://trzsz.github.io/tsshd",
+ "installs_365d": 437,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "quick"
+ ],
+ "why": "A UDP-based SSH server with roaming, a neat look at how SSH can ride a different transport and survive IP changes.",
+ "brief": {
+  "what_it_is": "tsshd is a server-side program that behaves like sshd but listens on UDP, so an SSH session can keep working when the client's IP or network changes or the link drops. The client, tssh (trzsz-ssh), first logs in over ordinary SSH, which starts a fresh tsshd process on the server. That process picks a random UDP port in 61001-61999, hands the port number and session keys back through the SSH channel, and then the client talks to it over QUIC or KCP. The README says it aims to stay compatible with OpenSSH and supports UDP port forwarding, both local and remote.",
+  "why_it_exists": "The author says it was inspired by mosh and aims for the same roaming and sleep/wake survival, while keeping ordinary SSH behaviour. The README states that tssh and tsshd 'work exactly like ssh', with no plans for mosh-style local echo and line editing.",
+  "how_it_works": "tssh logs in normally over TCP SSH, and the server then spawns a per-session tsshd that listens on a random UDP port and sends the port and session secret keys back over the SSH channel; the SSH connection is then closed and traffic moves to UDP. On the client, a proxy implementing net.PacketConn sits between the KCP or QUIC client and the network, so when heartbeats stop it can re-authenticate to the server proxy from a new address while the transport above it never sees an interruption. Authentication packets are AES-256-GCM encrypted with a session key, with a strictly increasing sequence number to block replays; the transports are kcp-go or quic-go (QUIC uses TLS 1.3).",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt install tsshd",
+    "context": "Install on Ubuntu or Debian once the trzsz PPA or repo is added (Debian needs the keyring and sources list first)."
+   },
+   {
+    "cmd": "brew install tsshd",
+    "context": "Install on macOS via Homebrew."
+   },
+   {
+    "cmd": "go install github.com/trzsz/tsshd/cmd/tsshd@latest",
+    "context": "Build and install the latest release with Go; binary lands in ~/go/bin/. Requires Go 1.26 per GitHub README (homepage says 1.25)."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Final step after cloning the repo and running make, for building from source."
+   },
+   {
+    "cmd": "tssh --udp xxx",
+    "context": "Log in to host xxx over tsshd roaming mode; usage is otherwise the same as standard SSH. Add --kcp for the KCP transport."
+   },
+   {
+    "cmd": "scoop install tsshd",
+    "context": "Install on Windows via scoop; the README then says the tsshd.exe path must be allowed through the firewall."
+   },
+   {
+    "cmd": "conda install -c conda-forge tsshd",
+    "context": "Install from conda-forge (pixi and mamba variants are also listed)."
+   },
+   {
+    "cmd": "yay -S tsshd",
+    "context": "Install on Arch Linux from the AUR."
+   },
+   {
+    "cmd": "sudo dnf copr enable @trzsz/trzsz",
+    "context": "Enable the trzsz COPR repo on Fedora/CentOS/RHEL before installing tsshd with dnf."
+   },
+   {
+    "cmd": "git clone --depth 1 https://github.com/trzsz/tsshd.git",
+    "context": "First step of building from source, followed by make and sudo make install."
+   }
+  ],
+  "install_notes": "Works from many package managers (apt PPA, dnf COPR, yum via gemfury or wlnmp, AUR, Homebrew, scoop, conda-forge, or Go). The server needs tsshd installed and reachable, and it uses OpenSSH's sshd_config by default unless ~/.config/tsshd/sshd_config exists. Client side needs tssh (trzsz-ssh) installed, and a host entry in ~/.ssh/config with '#!! UdpMode yes' (or QUIC or KCP) is optional. If tsshd is not on the server PATH, set TsshdPath or --tsshd-path. On Windows, allow tsshd.exe through the firewall. The UDP port range can be changed with TsshdPort.",
+  "standout": "Instead of replacing SSH, it bootstraps through a normal SSH login and then hands the session to a per-session UDP process, and the client's proxy keeps the QUIC or KCP layer unaware of IP changes. The README also describes a Go middleware framework (tsshd.RunMain / WithMiddleware, plus a Wish hybrid example) for building custom roaming SSH services.",
+  "status": "Probably maintained, but I could not confirm dates. The homepage and GitHub README are current and describe a detailed feature set, with the GitHub README asking for Go 1.26 and a dev pre-release tag, which suggests ongoing work. No release date or last-commit date was visible in what I fetched. The GitHub badge shows MIT licence.",
+  "caveats": "Local echo and line editing are not planned, so it does not match mosh there. The client must be tssh (or a supported terminal such as rootshell), so plain OpenSSH clients cannot use roaming. Windows needs a firewall exception. If UDP is blocked, UdpProxyMode TCP works but adds latency. The Go version requirement differs between pages (1.25 on the homepage, 1.26 on GitHub). Server startup relies on spawning a process through sshd, so Wish-based deployments are a separate path. Sessions can also be kept alive for up to 10 days by default (UdpAliveTimeout 1w3d).",
+  "quotes": [
+   "tsshd is a UDP-based SSH server built for unreliable networks.",
+   "tssh and tsshd works exactly like ssh, there are no plans to support local echo and line editing",
+   "The proxy implements the net.PacketConn interface, so packets are exchanged directly in memory rather than through the local network stack."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://trzsz.github.io/tsshd"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/trzsz/tsshd"
+   },
+   {
+    "label": "Chinese docs",
+    "url": "https://trzsz.github.io/cn/tsshd"
+   },
+   {
+    "label": "tssh client (trzsz-ssh)",
+    "url": "https://github.com/trzsz/trzsz-ssh"
+   }
+  ],
+  "fetch_log": [
+   "https://trzsz.github.io/tsshd - worked, full homepage text returned",
+   "https://github.com/trzsz/tsshd - worked, README returned (used for status, licence and Go version)"
+  ]
+ }
+}

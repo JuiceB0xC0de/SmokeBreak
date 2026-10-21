@@ -1,0 +1,137 @@
+{
+ "name": "tsduck",
+ "desc": "MPEG Transport Stream Toolkit",
+ "homepage": "https://tsduck.io/",
+ "installs_365d": 1080,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "protocol",
+  "visual",
+  "library"
+ ],
+ "why": "An MPEG transport stream toolkit opens the hidden machinery of broadcast TV, letting you dissect live multiplexes.",
+ "brief": {
+  "what_it_is": "TSDuck is a free, open-source C++ toolkit for MPEG transport streams, the container format behind digital TV. It is a collection of command-line utilities and plugins with no GUI, and each one does one elementary job. Inputs include live DVB-S/C/T, ATSC, ISDB, ASI, UDP/IP multicast, HTTP, HLS, SRT and RIST feeds, plus recorded .ts files and pcap captures. Outputs include analysis reports, rewritten or re-routed streams, and tables and descriptors in XML, JSON or binary. A library and Python and Java bindings are also provided for building pipelines in code.",
+  "why_it_exists": "The author describes TSDuck as a General-Purpose Toolbox for Digital TV Engineers, aimed at test, monitoring, integration, debug, lab and demo work rather than production operators. The stated architectural goal was that any new feature could be implemented within a couple of hours.",
+  "how_it_works": "Through tsp, the Transport Stream Processor, plugins are chained so that a live or recorded stream passes through input, processing and output stages in any order. Each standalone tool such as tsanalyze or tsdump performs one elementary feature, so you combine them in a shell pipeline. The core is a shared C++20 library of classes that handle MPEG, DVB, ATSC, ISDB and SCTE signalling.",
+  "commands_seen": [
+   {
+    "cmd": "brew install tsduck",
+    "context": "Installs TSDuck on macOS through Homebrew, as listed in the README download section."
+   },
+   {
+    "cmd": "winget install tsduck",
+    "context": "Installs TSDuck on Windows through the winget package manager."
+   },
+   {
+    "cmd": "pkg install tsduck",
+    "context": "Installs TSDuck on FreeBSD from the FreeBSD package system."
+   },
+   {
+    "cmd": "tsversion --check",
+    "context": "Checks online whether a newer TSDuck version is available."
+   },
+   {
+    "cmd": "tsversion --upgrade",
+    "context": "Downloads the latest binaries for the current OS and upgrades TSDuck."
+   },
+   {
+    "cmd": "--help",
+    "context": "The README says every utility and plugin accepts this option to display its syntax. Shown as a bare option, not a full command line."
+   }
+  ],
+  "install_notes": "Beyond brew install: Windows uses winget, FreeBSD uses pkg install, and prebuilt binary packages exist for Windows and recent Fedora, RedHat and clones, Ubuntu and Debian on x64 and Arm64. Building from source is documented in the Builder Guide. Nightly builds are available for testing. Hardware drivers are separate: Dektec drivers and HiDes drivers are downloaded from the site's Download menu. The README does not describe any account, runtime or first-run configuration step.",
+  "standout": "Rather than a single application, it is a Unix-style toolbox of small single-purpose executables (about 40 are listed) plus a plugin-based pipeline engine, and it reaches real broadcast hardware such as DVB tuners, Dektec cards and USB modulators. It also covers SCTE 35 splice info, MPE, SimulCrypt CAS head-end emulation and ETSI TR 101 290 metrics to InfluxDB and Grafana.",
+  "status": "Maintained, as far as the sources show. The homepage copyright runs to 2005-2026, the site lists nightly builds and a change log, and it reports about 1092 GitHub stars. The README says the project is maintained by one developer in spare time. I did not find a last-release date or last-commit date in what I fetched, so the status is inferred rather than confirmed.",
+  "caveats": "Support for DVB tuners, Dektec devices and HiDes modulators is listed as Windows and Linux only; AstroMeta-based modulators also work on macOS. Maintenance rests on one developer working in spare time. The README describes the tools as a toolbox, not a production-grade application. The Homebrew, winget and FreeBSD packages are the simple paths; other platforms need a source build. The brew caveats field was empty.",
+  "quotes": [
+   "The free and open-source reference framework for MPEG transport streams.",
+   "There is no sophisticated GUI. Each utility or plugin performs only one elementary feature but they can be combined in any order.",
+   "TSDuck shall be understood as a General-Purpose Toolbox for Digital TV Engineers and not as a specialized application for production operators."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://tsduck.io/"
+   },
+   {
+    "label": "User Guide",
+    "url": "https://tsduck.io/docs/tsduck.html"
+   },
+   {
+    "label": "Builder Guide",
+    "url": "https://tsduck.io/docs/tsduck-build.html"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/tsduck/tsduck"
+   }
+  ],
+  "fetch_log": [
+   "https://tsduck.io/ - worked; homepage text read, including overview, availability and license.",
+   "https://github.com/tsduck/tsduck - worked; README read, including usage, download and license sections."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "TSDuck makes the hidden structure of broadcast TV streams inspectable and manipulable, with a distinctive toolkit for decoding, analyzing, and rerouting live multiplexes."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "TSDuck",
+  "tldr": "A toolbox of small command-line tools for taking apart MPEG transport streams, the container that carries digital TV, from live broadcasts or recorded files.",
+  "deeper_look": "TSDuck is a free C++ toolkit for MPEG transport streams, the format that carries digital television over satellite, cable, terrestrial and IP networks. It installs about forty small executables, each doing one elementary job: analysing a stream, dumping packets, fixing continuity counters, compiling and decoding signalling tables, and so on. There is no GUI. In its own words: \"Each utility or plugin performs only one elementary feature but they can be combined in any order.\"\n\nThe centre of it is tsp, the Transport Stream Processor. It chains plugins so a stream flows through input, processing and output stages. Inputs can be live DVB, ATSC or ISDB tuners, UDP multicast, HTTP, HLS, SRT, RIST, recorded .ts files or pcap captures. Outputs can be reports, rewritten streams, or tables and descriptors in XML, JSON or binary. Underneath is a shared C++20 library covering MPEG, DVB, ATSC, ISDB and SCTE signalling, with Python and Java bindings if you would rather script it.\n\nThe author describes it as a general-purpose toolbox for digital TV engineers doing test, monitoring, integration, debug and lab work, and not a production application. The idea underneath is that broadcast television is a stream of tiny fixed-size packets with tables interleaved to say what is in them, and that those tables can be read, rewritten and inspected like any other protocol. A .ts file and a few of these tools are enough to start looking at that layer.",
+  "install": "brew install tsduck\n# Also on Windows via winget and FreeBSD via pkg. Tuner, Dektec and HiDes hardware support needs separate drivers and is Windows and Linux only. You do not need hardware to analyse recorded .ts files.",
+  "try_this": [
+   {
+    "cmd": "tsp --help",
+    "what_happens": "Shows the syntax of the stream processor, the plugin pipeline engine at the heart of the toolkit."
+   },
+   {
+    "cmd": "tsanalyze --help",
+    "what_happens": "Lists the options of the analysis tool, which reports on the services, PIDs and bitrates inside a transport stream."
+   },
+   {
+    "cmd": "tsversion --check",
+    "what_happens": "Checks online whether a newer TSDuck release is available."
+   }
+  ],
+  "whats_unique": "It is a Unix-style box of single-purpose tools plus a plugin pipeline, and it reaches real broadcast hardware and standards such as SCTE 35, SimulCrypt head-end emulation and ETSI TR 101 290 metrics. Few open projects cover digital TV signalling this broadly.",
+  "caveats": "Maintained by one developer in spare time, described by the README as a toolbox rather than a production application, and tuner and modulator support is mostly Windows and Linux only.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "mpeg-ts",
+   "broadcast",
+   "dvb",
+   "protocol",
+   "streaming",
+   "cli"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://tsduck.io/"
+   },
+   {
+    "label": "User Guide",
+    "url": "https://tsduck.io/docs/tsduck.html"
+   },
+   {
+    "label": "Builder Guide",
+    "url": "https://tsduck.io/docs/tsduck-build.html"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/tsduck/tsduck"
+   }
+  ]
+ }
+}

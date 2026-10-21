@@ -1,0 +1,82 @@
+{
+ "name": "zydis",
+ "desc": "Fast and lightweight x86/x86_64 disassembler library",
+ "homepage": "https://zydis.re",
+ "installs_365d": 698,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "library",
+  "reverse-engineering",
+  "afternoon"
+ ],
+ "why": "A fast x86 disassembler library, a real door into how machine code is decoded.",
+ "brief": {
+  "what_it_is": "Zydis is an open-source C library for decoding and disassembling x86 and x86-64 (AMD64) machine code. You hand it a memory buffer of raw bytes and it returns decoded instructions with their mnemonics, operands, and per-instruction detail such as accessed registers, flags, and byte offsets of instruction fragments. The README also describes it as a code generation library, so it includes an encoder, shown in the examples as turning a mov into bytes. The package ships two command-line tools, ZydisDisasm and ZydisInfo. The README documents ZydisInfo as a tool for inspecting essentially all the information Zydis provides about an instruction, and shows a screenshot of it. It does not show a ZydisDisasm command line.",
+  "why_it_exists": "The README presents Zydis as a fast, lightweight, complete x86 and x86-64 disassembler and code generation library, with no third-party dependencies. The homepage pitches it as 'the ultimate X86 & X86-64 disassembler library' and emphasizes correctness, full ISA coverage from Intel and AMD, and small binaries.",
+  "how_it_works": "The README gives no internal mechanism beyond the claims that it does no dynamic memory allocation, is thread-safe by design, and has no dependencies, not even libc. It says it should compile on any platform with a C11 compiler. The homepage says the library's tables were checked against Intel's XED and LLVM instruction data, with the author acknowledging that correctness is hard to benchmark.",
+  "commands_seen": [
+   {
+    "cmd": "git clone --recursive 'https://github.com/zyantific/zydis.git'",
+    "context": "Clones the repository with submodules, as the first step of the CMake build."
+   },
+   {
+    "cmd": "cmake -B build",
+    "context": "Configures the CMake build in a build directory."
+   },
+   {
+    "cmd": "cmake --build build -j4",
+    "context": "Compiles Zydis using four parallel jobs after configuration."
+   },
+   {
+    "cmd": "brew install zydis",
+    "context": "Homebrew install command listed in the package manager table."
+   },
+   {
+    "cmd": "apt-get install libzydis-dev zydis-tools",
+    "context": "Debian and Ubuntu install command listed in the package manager table; zydis-tools is the package that carries the command-line tools."
+   },
+   {
+    "cmd": "pacman -S zydis",
+    "context": "Arch Linux install command from the package manager table."
+   },
+   {
+    "cmd": "nix-shell -p zydis",
+    "context": "NixOS install command from the package manager table."
+   },
+   {
+    "cmd": "vcpkg install zydis",
+    "context": "vcpkg install command from the package manager table."
+   }
+  ],
+  "install_notes": "Beyond brew install, the README lists several routes. Build from source with CMake, which needs a recent git clone with submodules and CMake installed; on Windows there is also a manually maintained Visual Studio 2022 project and a way to generate a VS project with CMake. Alternatively, use the amalgamated single-header and single-source distribution from the GitHub release page (zydis-amalgamated.tar.gz), which needs only a C11 compiler. Other packages come from Arch, Debian, Ubuntu, NixOS, vcpkg, and Homebrew. Troubleshooting covers forcing -fPIC when linking a static build into a shared library, via -DCMAKE_POSITION_INDEPENDENT_CODE=ON. No accounts or runtime are required. Official bindings exist for Rust and Python 3.",
+  "standout": "Zero dependencies, not even libc, and no heap allocation, so it runs in user mode, kernel drivers, and UEFI. It is also very small: the homepage says the full library with all ISA extensions is about 300KB. It is used inside x64dbg, Mozilla Firefox, and WebKit, per the README.",
+  "status": "Maintained, according to the README and repo structure. Evidence: CI and OSS-Fuzz badges, a master branch for unreleased work, and a maintenance/v4 branch that the README says receives feature updates. v3 receives only security updates until 2025, and v2 is end-of-life. I did not see a last release or commit date, so I cannot give an exact date.",
+  "caveats": "The homepage is mostly marketing. Its figures (2713 GitHub stars, 1582 instructions, 20792 lines of code) and claims like 'Fast AF' and 'one of the most correct in the industry' are the author's own and unbenchmarked. The homepage's ISA section contains a broken sentence. The README says the library is tested on Windows, macOS, FreeBSD, Linux, and UEFI, but the Windows-specific build paths are secondary. The README gives no license detail beyond MIT. Commercial support is available by contacting the company. The v3 maintenance window ends in 2025, so check the version you pick.",
+  "quotes": [
+   "Fast and lightweight x86/x86-64 disassembler and code generation library.",
+   "Absolutely no third party dependencies \u2014 not even libc",
+   "Should compile on any platform with a working C11 compiler"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://zydis.re"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/zyantific/zydis"
+   },
+   {
+    "label": "Complete doxygen documentation",
+    "url": "https://doc.zydis.re/"
+   }
+  ],
+  "fetch_log": [
+   "https://zydis.re: fetched, worked; mostly marketing copy, and the live disassembly demo was truncated.",
+   "https://github.com/zyantific/zydis: fetched, worked; full README returned. Did not follow doc.zydis.re, since the README covered what the brief needs."
+  ]
+ }
+}

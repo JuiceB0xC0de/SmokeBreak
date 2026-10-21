@@ -1,0 +1,101 @@
+{
+ "name": "flecs",
+ "desc": "Fast entity component system for C & C++",
+ "homepage": "https://www.flecs.dev",
+ "installs_365d": 122,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "library",
+  "simulation",
+  "generative"
+ ],
+ "why": "An entity component system library is a plumbing-adjacent tool, but it opens a door into simulation architecture worth a look.",
+ "brief": {
+  "what_it_is": "Flecs is a fast, lightweight Entity Component System library for C and C++, aimed at games and simulations with very large numbers of entities. You define components as plain data types, attach them to entities, and write systems (functions) that run over every entity matching a query. It is a library you compile into your program, not a standalone tool: the input is your C or C++ code, and the output is the running simulation loop, which the README drives with ecs_progress. It also has a web-based Flecs Explorer for monitoring and controlling a running app.",
+  "why_it_exists": "The README frames ECS as a way to organize code and data so that games are 'larger, more complex and are easier to extend', and presents Flecs as a fast, portable implementation of that pattern.",
+  "how_it_works": "Entities are identifiers, components are datatypes added to entities, and systems are functions that run for all entities matching a component query. Storage is described as cache-friendly archetype/SoA, which the README says can process millions of entities every frame. Systems run inside a pipeline via ecs_progress, and the README mentions a lockless scheduler for running work across CPU cores.",
+  "commands_seen": [],
+  "install_notes": "The README I read contains no installation instructions, build commands, or package-manager lines, so I could not confirm anything beyond the Homebrew formula's existence. The README does say the C99 API is zero dependency and that the code base builds in less than 5 seconds. Language bindings for C#, Rust, Zig, Lua and Clojure are community-maintained and may lag master. Documentation is at the Flecs docs site, which I did not fetch.",
+  "standout": "The README claims it is the first open source ECS with full support for entity relationships, and it bundles a reflection framework with a JSON serializer, a statistics addon, and a browser-based explorer for live inspection. The same library runs in the browser through emscripten at flecs.dev/city, and the README lists a sizable set of shipped commercial games built on it.",
+  "status": "Appears maintained. The README has a live version badge pointing to GitHub releases and a CI badge for the master branch, and it says CI runs more than 13000 tests. I did not see a release date or last-commit date in what I fetched, so the exact recency is unknown.",
+  "caveats": "The homepage at https://www.flecs.dev returned almost no content (only the page title 'Flecs'), so the README was my main source. The brew description calls it a C and C++ library, and the README's main examples are C99 and C++17, so it is a programming-library entry rather than a command-line tool; there is nothing to run from a shell. The README's license badge says MIT but I did not read the LICENSE file. Community language bindings may not track master. The README's 'first open source ECS with full support for Entity Relationships' is the author's own claim, not something I verified.",
+  "quotes": [
+   "Flecs is a fast and lightweight Entity Component System that lets you build games and simulations with millions of entities",
+   "Code base that builds in less than 5 seconds",
+   "Runs in the browser without modifications with emscripten",
+   "ECS is a way of organizing code and data that lets you build games that are larger, more complex and are easier to extend."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.flecs.dev"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://www.flecs.dev/flecs/Docs.html"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/SanderMertens/flecs"
+   },
+   {
+    "label": "Flecs Explorer (web UI)",
+    "url": "https://flecs.dev/explorer"
+   }
+  ],
+  "fetch_log": [
+   "https://www.flecs.dev - worked, but returned only the page title 'Flecs' with no body content",
+   "https://github.com/SanderMertens/flecs - worked, returned the README in full"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Flecs makes an intriguing simulation architecture tangible, especially through first-class entity relationships, query-driven systems, reflection, and live inspection."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Flecs",
+  "tldr": "A small C and C++ library that organizes simulations as plain data plus functions, handling millions of entities per frame, with a browser explorer for inspecting the running program.",
+  "deeper_look": "Flecs is an Entity Component System (ECS) library. Instead of building objects with methods and inheritance, you split a world into three things: entities, which are just identifiers; components, which are plain data types attached to entities; and systems, which are functions that run over every entity matching a query, such as everything that has both a position and a velocity.\n\nThe README presents this as a way of organizing code and data \"that lets you build games that are larger, more complex and are easier to extend.\" Underneath is a storage idea. Entities with the same set of components are grouped together in cache-friendly archetype tables, laid out as structure-of-arrays. The README says this lets it process millions of entities every frame. It also mentions a lockless scheduler for spreading work across CPU cores. Systems run in a pipeline, and the simulation advances each time your program calls `ecs_progress`.\n\nThe pattern is the door here. Once you think of a program as a queryable database of data with functions running over it, game loops, particle systems, agent simulations and generative toys start to look alike. Flecs also bundles a reflection framework with a JSON serializer, a statistics addon, and a web-based Flecs Explorer for watching and controlling a live app. The same library runs in the browser through emscripten, with a demo at flecs.dev/city.\n\nThis is a library you compile into your own program, not a tool with a command line. The brief covers the C99 and C++17 APIs; bindings for C#, Rust, Zig, Lua and Clojure are community-maintained.",
+  "install": "brew install flecs\n# This installs the library and headers only. There is no executable. You need a C or C++ compiler and your own program to link it against.",
+  "try_this": [],
+  "whats_unique": "The README claims it is the first open source ECS with full support for entity relationships. It also ships a live browser-based explorer and a reflection system in the same small library, which is unusual for an ECS.",
+  "caveats": "It is a programming library with nothing to run from a shell, and the brief found no install or build commands, so you will be reading the docs to get started.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "library",
+   "c",
+   "cpp",
+   "ecs",
+   "simulation",
+   "games",
+   "generative"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.flecs.dev"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://www.flecs.dev/flecs/Docs.html"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/SanderMertens/flecs"
+   },
+   {
+    "label": "Flecs Explorer (web UI)",
+    "url": "https://flecs.dev/explorer"
+   }
+  ]
+ }
+}

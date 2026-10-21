@@ -1,0 +1,107 @@
+{
+ "name": "peg",
+ "desc": "Program to perform pattern matching on text",
+ "homepage": "https://www.piumarta.com/software/peg/",
+ "installs_365d": 49,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "quick",
+  "ancient"
+ ],
+ "why": "Piumarta's PEG pattern matcher, a compact tool tied to parsing expression grammars with an old-school feel.",
+ "brief": {
+  "what_it_is": "peg and leg are command-line tools that read a Parsing Expression Grammar (PEG) from files or standard input and write C source for a recursive-descent parser. The generated C file defines a function yyparse() that returns non-zero when the input matches the grammar and zero when it does not. peg reads the original Ford-style PEG syntax, and leg reads a variant with lex/yacc-style conventions. Grammar rules can carry C actions that run after a successful match, with the matched text available as yytext.",
+  "why_it_exists": "The author presents leg as an attractive replacement for parsers built with lex and yacc. The stated advantages are unlimited backtracking, ordered choice for disambiguation, and combining scanning and parsing in one activity.",
+  "how_it_works": "The grammar is a set of named rules whose patterns are matched left to right, descending into named sub-rules and backtracking on failure, so the parser performs a depth-first search for the first successful path. Predicates (& and !) are evaluated during the search, while actions run only after a complete match, in left-to-right order along the successful path. The output is plain C with a yy/YY prefix on external symbols, which the manual says is meant to avoid namespace pollution in client programs.",
+  "commands_seen": [
+   {
+    "cmd": "peg -o username.c username.peg",
+    "context": "From the manual's simple example: writes the generated parser for the grammar in username.peg into username.c."
+   },
+   {
+    "cmd": "peg [-hvV -ooutput] [filename ...]",
+    "context": "The manual's SYNOPSIS line; leg takes the same form. -h prints options, -o writes output to a file instead of stdout, -P suppresses #line directives, -v is verbose to stderr, -V prints version to stderr."
+   },
+   {
+    "cmd": "man peg",
+    "context": "Quoted from the BUGS section, which notes that leg's manual page is read via 'man peg'."
+   }
+  ],
+  "install_notes": "The page documents no installer beyond the source tarball (peg-0.1.19.tar.gz) and the Brew formula. Building from source needs a C compiler, and the version history mentions Win32 and MacOS build files added in 0.1.11. The generated parser needs no runtime and carries no license burden. A leg-mode.el Emacs mode is also distributed. A C program using the output calls yyparse() in a loop, and the manual's example adds a main() for that.",
+  "standout": "It is a small, old-school PEG-to-C generator that predates and sits outside the usual modern PEG toolchains, with a leg dialect designed as a drop-in conceptual replacement for lex and yacc. Its design choices (ordered choice, unlimited backtracking, a single pass that does both scanning and parsing, and the author's own quirky operator names) are documented openly in the manual's BUGS section.",
+  "status": "quiet. The latest stable release is 0.1.19, dated 2023-03-06. A development version 0.1.20 is dated 2023-11-19 and described as 'updated periodically'. The page gives no later date and I saw no repository activity to check against.",
+  "caveats": "Left recursion is detected in the grammar but not handled correctly in the generated parser; the manual suggests rewriting it as a repeatable suffix. A grammar that accepts empty input will loop forever, so the manual recommends using + or adding !. at the end. The manual lists missing lex features such as yywrap() and yyin, says diagnostics are obscure, and says the generated code lacks #line directives to point C errors back to the grammar. The manual also states that the operators ! and ~ 'should really be named the other way around'. The output targets C only. Named Windows and MacOS build files exist, but the page does not describe platform testing.",
+  "quotes": [
+   "Unlike lex and yacc, peg and leg support unlimited backtracking, provide ordered choice as a means for disambiguation, and can combine scanning (lexical analysis) and parsing (syntactic analysis) into a single activity.",
+   "peg is distributed under the MIT license. It will not infect your project with a contagious disease license if you decide to modify it for your own use.",
+   "The parsers that peg and leg create are unencumbered and you are free to use and/or distribute them any way you like."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (peg/leg)",
+    "url": "https://www.piumarta.com/software/peg/"
+   },
+   {
+    "label": "Manual page (peg.1.html)",
+    "url": "https://www.piumarta.com/software/peg/peg.1.html"
+   }
+  ],
+  "fetch_log": [
+   "https://www.piumarta.com/software/peg/ - worked; the README-style page with overview, download links, and version history",
+   "https://www.piumarta.com/software/peg/peg.1.html - worked; the full man page with synopsis, grammar, options, and examples (output truncated at 40000 characters near the end, after the AUTHOR section started)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Its PEG-to-C approach makes ordered choice and backtracking visible, combining lexing and parsing in a compact, exploratory tool."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "peg and leg",
+  "tldr": "Two small tools that turn a parsing expression grammar into a C recursive-descent parser, with backtracking and ordered choice instead of lex and yacc.",
+  "deeper_look": "peg and leg read a Parsing Expression Grammar from files or standard input and write C source for a parser. The generated file defines `yyparse()`, which returns non-zero when the input matches the grammar and zero when it does not. peg reads Ford-style PEG syntax. leg reads a variant with lex/yacc-style conventions. Rules can carry C actions that run after a successful match, with the matched text available as `yytext`.\n\nThe author presents leg as an attractive replacement for lex and yacc. In the manual's words: \"Unlike lex and yacc, peg and leg support unlimited backtracking, provide ordered choice as a means for disambiguation, and can combine scanning (lexical analysis) and parsing (syntactic analysis) into a single activity.\"\n\nThe idea underneath is the PEG itself. A grammar is a set of named rules matched left to right, descending into sub-rules and backtracking on failure, so the parser does a depth-first search for the first path that succeeds. Choice is ordered, so there is no ambiguity to resolve. Predicates (`&` and `!`) are tested during the search, while actions run only after a complete match, in left-to-right order along the successful path.\n\nThe output is plain C with a `yy`/`YY` prefix on external symbols, which the manual says avoids namespace pollution. The generated parser needs no runtime and carries no license obligation. peg itself is MIT licensed.",
+  "install": "brew install peg\n# installs two executables: peg and leg. Building a parser from the output needs a C compiler.",
+  "try_this": [
+   {
+    "cmd": "peg -o username.c username.peg",
+    "what_happens": "Reads the grammar in username.peg and writes a C parser to username.c, as in the manual's simple example."
+   },
+   {
+    "cmd": "peg --help",
+    "what_happens": "Prints the options. The manual's synopsis lists -h, -o, -P, -v and -V."
+   },
+   {
+    "cmd": "man peg",
+    "what_happens": "Opens the manual, which covers the grammar syntax, actions, and a candid BUGS section. It also covers leg."
+   }
+  ],
+  "whats_unique": "It is a compact, old-school PEG-to-C generator that sits outside the modern PEG toolchains. Its leg dialect is meant as a conceptual drop-in for lex and yacc, and its quirks are documented openly.",
+  "caveats": "Release activity is quiet (stable 0.1.19 from 2023-03-06), left recursion is not handled correctly, a grammar that accepts empty input loops forever, and output targets C only.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "parsing",
+   "peg",
+   "c",
+   "grammar",
+   "code-generator"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (peg/leg)",
+    "url": "https://www.piumarta.com/software/peg/"
+   },
+   {
+    "label": "Manual page (peg.1.html)",
+    "url": "https://www.piumarta.com/software/peg/peg.1.html"
+   }
+  ]
+ }
+}

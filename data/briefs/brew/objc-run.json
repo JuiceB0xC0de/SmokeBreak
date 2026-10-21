@@ -1,0 +1,65 @@
+{
+ "name": "objc-run",
+ "desc": "Use Objective-C files for shell script-like tasks",
+ "homepage": "https://github.com/iljaiwas/objc-run",
+ "installs_365d": 14,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "quick",
+  "reverse-engineering"
+ ],
+ "why": "Running Objective-C as shell scripts is a strange, delightful idea, though it is tiny and niche.",
+ "brief": {
+  "what_it_is": "objc-run is a shell script that compiles and runs a single Objective-C source file. You give it a .m file plus any parameters. It compiles the file into an application named after the file, launches it, passes the remaining parameters to it, and deletes the built app when it exits. It can also pull CocoaPods dependencies from a podfile written inside a C comment in the source file. The README's example use case is small tasks such as manipulating plist files.",
+  "why_it_exists": "The README says it is for small programming tasks you want to handle in Objective-C that don't justify setting up a complete Xcode project. It describes itself as \"Think of it as CodeRunner without an user interface.\"",
+  "how_it_works": "objc-run compiles the .m file into an application named after the file, runs it if compilation succeeds, and passes along the remaining command-line arguments. Once the program finishes, the built application is removed. With a #!/usr/bin/env objc-run first line, the .m file can be launched directly as a script. CocoaPods modules are enabled by placing podfile contents between podfile-start and podfile-end inside a /* */ comment.",
+  "commands_seen": [
+   {
+    "cmd": "brew install objc-run",
+    "context": "Homebrew install, the README's recommended route."
+   },
+   {
+    "cmd": "chmod u+x objc-run",
+    "context": "Sets the executable bit when installing the script by hand instead of through Homebrew."
+   },
+   {
+    "cmd": "objc-run myfile.m myparam1 myparam2",
+    "context": "Basic usage: compiles myfile.m into an app called myfile, launches it, and passes the two parameters through."
+   },
+   {
+    "cmd": "#!/usr/bin/env objc-run",
+    "context": "Shebang line to place as the first line of a .m file so it can be run directly. The README warns that this line makes direct compilation of the file fail."
+   },
+   {
+    "cmd": "./test.bash",
+    "context": "Runs the bundled self-check script. The README shows it with a $ prompt and reports Done and exit status 0 on success."
+   },
+   {
+    "cmd": "echo $?",
+    "context": "Shown after ./test.bash to check its exit status, which should be 0."
+   }
+  ],
+  "install_notes": "Install with brew install objc-run if you use Homebrew. Otherwise download the objc-run shell script, make it executable with chmod u+x objc-run, and place it in a directory on your $PATH. For a direct-launch .m file, make objc-run or a link to it available on $PATH. For CocoaPods, put the podfile contents in a C comment between podfile-start and podfile-end; the README's example uses platform :osx, '10.9' and pod 'Barista'. No accounts or hardware are mentioned. The README does not list the Xcode or compiler requirements, though the Objective-C code and CocoaPods use imply a macOS toolchain.",
+  "standout": "It turns a single Objective-C file into a runnable script with a shebang line and no project setup, which is an unusual idea. The CocoaPods support is embedded in a comment in the source, so the file stays self-contained.",
+  "status": "Quiet, as far as I can tell. The repository shows 62 commits, 422 stars and 13 forks, and the README has no release notes or status note. The page I fetched did not show a last-commit date or a release date, so I could not confirm recent activity.",
+  "caveats": "The README does not say which platforms it supports, but its Objective-C and CocoaPods examples point to macOS. Running a .m file directly with the shebang line makes compiling that file directly fail, so you must choose one way to run it. It is a single shell script with no documented test beyond test.bash, and the README does not discuss its limits or how it handles failed compiles beyond stopping. The sidebar lists an MIT license.",
+  "quotes": [
+   "objc-run is a shell script which compiles and executes Objective-C source code files. It integrates with CocoaPods.",
+   "It's perfect for small programming tasks you want to handle in Objective-C, that don't justify setting up a complete Xcode project, e.g. manipulating plist files.",
+   "Think of it as CodeRunner without an user interface."
+  ],
+  "links": [
+   {
+    "label": "Homepage / repository",
+    "url": "https://github.com/iljaiwas/objc-run"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/iljaiwas/objc-run: fetched OK. The GitHub page returned the README text plus repo sidebar (422 stars, 13 forks, MIT license). No further fetches were needed."
+  ]
+ }
+}

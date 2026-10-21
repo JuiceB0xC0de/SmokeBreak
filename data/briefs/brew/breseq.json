@@ -1,0 +1,96 @@
+{
+ "name": "breseq",
+ "desc": "Computational pipeline for finding mutations in short-read DNA resequencing data",
+ "homepage": "https://barricklab.org/breseq",
+ "installs_365d": 237,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science"
+ ],
+ "why": "Real bioinformatics pipeline that finds mutations in resequenced DNA, genuine science you can run on real data.",
+ "brief": {
+  "what_it_is": "breseq is a command-line pipeline, written in C++ and R, that finds mutations in short-read DNA resequencing data by comparing reads against a reference genome. You give it a reference (GenBank .gbk, GFF3, or FASTA) plus FASTQ read files, optionally with a -p flag for polymorphism mode or -c for contig mode. It reports single-nucleotide mutations, small insertions and deletions, large deletions, and new junctions supported by mosaic reads (such as new mobile element insertions). The output is an annotated HTML report. The homepage says it targets haploid microbial-sized genomes.",
+  "why_it_exists": "The homepage frames it as a way to identify mutations relative to a reference in resequencing data for haploid microbial genomes. The docs describe its common use as identifying mutations in laboratory-evolved microbes.",
+  "how_it_works": "The fetched pages describe breseq as a pipeline that maps reads to the reference, using Bowtie2 as its read mapper, and then calls mutations and junctions from the alignments. Its output is an annotated HTML report. The fetched pages do not spell out the internal calling algorithm in detail.",
+  "commands_seen": [
+   {
+    "cmd": "breseq -l 80 -r REL606.gbk SRR2584524.fastq.gz",
+    "context": "Example 1a from the homepage: analyze a clonal evolved E. coli sample against a reference GenBank file, with -l 80 setting the read length."
+   },
+   {
+    "cmd": "breseq -p -l 80 -r REL606.gbk SRR2584524.fastq.gz",
+    "context": "Example 1b: the same clonal sample run in polymorphism mode (-p)."
+   },
+   {
+    "cmd": "breseq -r REL606.gbk SRR2584534_1.fastq.gz SRR2584534_2.fastq.gz",
+    "context": "Example 2: paired-end reads for a second evolved clone, with no read length flag."
+   },
+   {
+    "cmd": "breseq -j 8 -p -r REL606.gbk SRR6173952_1.fastq.gz SRR6173952_2.fastq.gz",
+    "context": "Example 3: a mixed population sample run in polymorphism mode with 8 threads (-j 8)."
+   },
+   {
+    "cmd": "breseq --junction-only-reference pBTK622_tdk-kanR_cassette_for_Golden_Transformation.gbk -r Acinetobacter-baylyi-ADP1-WT.gff3 G2_CCGTCC_L007_R1_001.fastq.gz G2_CCGTCC_L007_R2_001.fastq.gz",
+    "context": "Example 6a, labeled best option: locate an integration cassette's insertion site in the A. baylyi genome using a junction-only reference."
+   },
+   {
+    "cmd": "breseq -t -r pBTK622_tdk-kanR_cassette_for_Golden_Transformation.gbk -r Acinetobacter-baylyi-ADP1-WT.gff3 G2_CCGTCC_L007_R1_001.fastq.gz G2_CCGTCC_L007_R2_001.fastq.gz",
+    "context": "Example 6c: the same cassette sample run in targeted mode (-t)."
+   },
+   {
+    "cmd": "breseq -c assembly.fasta SRR2584534_1.fastq.gz SRR2584534_2.fastq.gz",
+    "context": "Example 7b, labeled best option: map reads to a de novo assembly using contig mode (-c)."
+   },
+   {
+    "cmd": "bin/breseq",
+    "context": "From the installation page: running the binary from the unpacked download directory to get help output."
+   },
+   {
+    "cmd": "./run_tests.sh",
+    "context": "From the installation page: test command for a binary download install."
+   },
+   {
+    "cmd": "./configure --prefix=${PWD}",
+    "context": "From the installation page: source build with a prefix set to the current source directory; this is the no-admin option."
+   },
+   {
+    "cmd": "make test",
+    "context": "From the installation page: optional, recommended test run after building from source; it should take under 5 minutes."
+   }
+  ],
+  "install_notes": "The docs recommend installing with Conda through Bioconda, which installs breseq and its dependencies. The DIY routes need Bowtie2 (2.1.0 or higher) and R (2.1.4 or higher) on your PATH. Binary downloads exist for Linux and macOS, and may not run on every OS version; if so, build from source. Source builds need a C++ compiler such as GCC, and macOS needs the Apple command-line tools. The docs give three source-build layouts: system-wide with sudo make install, inside the source directory with --prefix=${PWD}, or a custom prefix. Windows users are pointed to WSL. Galaxy and a Modal cloud setup are also documented. No accounts are needed.",
+  "standout": "Unlike general variant callers, breseq is built for evolved-microbe comparisons against a reference. It can call new junctions from mosaic reads, which covers mobile element insertions, and has a junction-only reference mode for locating integration cassettes. It ships annotated HTML reports, and its docs include worked examples from the long-term E. coli evolution experiment.",
+  "status": "Looks actively maintained, but I have no dated evidence. The GitHub README shows a build-and-test CI badge, release and download badges, and Bioconda badges. The homepage copyright reads 2026, and the docs site is live with a 'latest' version. I did not see a release date or last-commit date, so this is a judgment, not a verified date.",
+  "caveats": "The homepage describes breseq as implemented in C++ and R and as working on Unix platforms including macOS and Cygwin. The docs instead say Linux, macOS, and WSL, and do not mention Cygwin. Windows native is not supported; WSL is the route. Source builds can be a hassle for people without admin rights or a compiler. Results can vary slightly with Bowtie2 version, and the docs warn that older Bowtie2 versions can crash breseq. The docs say to report both breseq and Bowtie2 versions in publications. The brew description calls it a pipeline for short-read resequencing; it is aimed at haploid microbial genomes, not large diploid genomes. gdtools is listed as an executable by Homebrew, but I did not find it described in the pages I fetched. The homepage's tutorial data is large (Population_Sample.tgz is 1.4G).",
+  "quotes": [
+   "breseq is a computational pipeline for finding mutations relative to a reference sequence in short-read DNA re-sequencing data for haploid microbial-sized genomes.",
+   "Please report bugs on GitHub.",
+   "The output of breseq may vary (usually only slightly) depending on your version of bowtie2. When reporting results in a publication you should always state the version of breseq AND the version of bowtie2 that you used to ensure reproducibility!"
+  ],
+  "links": [
+   {
+    "label": "Barrick Lab breseq homepage",
+    "url": "https://barricklab.org/breseq"
+   },
+   {
+    "label": "Online breseq documentation (user manual)",
+    "url": "https://breseq.barricklab.org/"
+   },
+   {
+    "label": "breseq GitHub repository",
+    "url": "https://github.com/barricklab/breseq"
+   }
+  ],
+  "fetch_log": [
+   "https://barricklab.org/breseq: worked. Homepage text with description, examples, and tutorial links.",
+   "https://github.com/barricklab/breseq: worked. README is thin: badges, a download link, and a pointer to the online docs and CONTRIBUTING.md.",
+   "https://breseq.barricklab.org/: worked as a redirect to latest/.",
+   "https://breseq.barricklab.org/latest/: worked. Docs landing page with a short intro and a link to Installation.",
+   "https://breseq.barricklab.org/latest/installation/: worked. Installation page with Conda, DIY, WSL, Galaxy, and Modal sections."
+  ]
+ }
+}

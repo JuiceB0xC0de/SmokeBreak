@@ -1,0 +1,143 @@
+{
+ "name": "toxiproxy",
+ "desc": "TCP proxy to simulate network & system conditions for chaos & resiliency testing",
+ "homepage": "https://github.com/shopify/toxiproxy",
+ "installs_365d": 706,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "simulation",
+  "afternoon"
+ ],
+ "why": "A TCP proxy that injects latency and failures; a useful lens on how networks break, though it leans toward testing tooling.",
+ "brief": {
+  "what_it_is": "Toxiproxy is a TCP proxy written in Go, paired with an HTTP API and a CLI. You point your application's test connections at a Toxiproxy listen address, and Toxiproxy forwards them to the real upstream (Redis, MySQL, a web app). You then add toxics over HTTP or the CLI to add latency, cut bandwidth, drop packets, reset connections, or take the whole service down. The inputs are proxy definitions (name, listen address, upstream address) and toxic definitions; the output is the same traffic with the injected faults applied. Client libraries exist in many languages, with Ruby as the original.",
+  "why_it_exists": "Shopify built it to prove with tests that an application has no single points of failure, and has used it in all development and test environments since October 2014. The README says existing tools lacked the dynamic API needed for integration and unit testing, and that Linux tools like nc are not cross-platform and require root.",
+  "how_it_works": "Each proxy is a listener that forwards bytes between a client and an upstream. Toxics sit on a stream (upstream or downstream) and alter the data: latency adds a delay of latency +/- jitter, bandwidth limits KB/s, packet_loss drops chunks, and down disables the proxy by setting enabled to false. Toxics can be applied with a toxicity probability, so only a fraction of connections are affected. The server listens for HTTP on port 8474, and clients change proxies and toxics through that API.",
+  "commands_seen": [
+   {
+    "cmd": "brew tap shopify/shopify",
+    "context": "MacOS install path from the README: adds the Shopify tap before installing via Homebrew."
+   },
+   {
+    "cmd": "brew install toxiproxy",
+    "context": "Installs the toxiproxy binaries on macOS after the tap is added."
+   },
+   {
+    "cmd": "docker run --rm -it ghcr.io/shopify/toxiproxy",
+    "context": "Runs the server image from the GitHub container registry in the foreground."
+   },
+   {
+    "cmd": "make build",
+    "context": "Source build from the Makefile; the README says this needs Go installed."
+   },
+   {
+    "cmd": "./dist/toxiproxy-server",
+    "context": "Starts the server binary produced by make build."
+   },
+   {
+    "cmd": "toxiproxy-cli create -l localhost:26379 -u localhost:6379 shopify_test_redis_master",
+    "context": "Creates a proxy named shopify_test_redis_master listening on 26379 and forwarding to Redis on 6379."
+   },
+   {
+    "cmd": "toxiproxy-cli list",
+    "context": "Lists proxies with their listen address, upstream, enabled state, and toxics."
+   },
+   {
+    "cmd": "toxiproxy-cli toxic add -t latency -a latency=1000 shopify_test_redis_master",
+    "context": "Adds a downstream latency toxic of 1000 ms to the named proxy."
+   },
+   {
+    "cmd": "toxiproxy-cli toxic remove -n latency_downstream redis",
+    "context": "Removes the latency_downstream toxic from the proxy named redis."
+   },
+   {
+    "cmd": "toxiproxy-cli delete redis",
+    "context": "Deletes the proxy named redis."
+   }
+  ],
+  "install_notes": "Linux: download the .deb or binaries from the GitHub Releases page; the README's example uses v2.13.0 and sudo dpkg -i then sudo service toxiproxy start. macOS also offers MacPorts (port install toxiproxy). Windows: standalone toxiproxy-server and toxiproxy-cli .exe files from Releases. Docker: image at ghcr.io/shopify/toxiproxy (older images <= 2.1.4 on Docker Hub). Use --net=host to reach it from the host. Source: needs Go; run make build, or make all for every platform, which also needs goreleaser for Linux packages. The README's Development section asks for Go 1.27 and golangci-lint v2.14.0. Configuration: the server takes a JSON file via -config, and the README suggests config/toxiproxy.json. Set LOG_LEVEL to change logging. Set TOXIPROXY_AUTH_TOKEN to require a bearer token.",
+  "standout": "Toxiproxy is designed for test code to drive. Faults are switched on and off from inside a test through a client API, and the Ruby client can wrap a block so the fault lasts only for that block. The README also covers the traps that come with proxying, such as MySQL preferring its Unix socket and ephemeral port collisions on Linux.",
+  "status": "Maintained, by the evidence available. The README references v2.13.0 as the current release, and it has a GitHub release badge and a CI test workflow badge. It has a CHANGELOG, a RELEASE.md, and an active list of client libraries. I did not see a date for the last release or commit, so the exact recency is unknown.",
+  "caveats": "The HTTP API has no authentication by default and can create proxies to arbitrary upstreams, so the README says never to expose it to an untrusted network. Setting TOXIPROXY_AUTH_TOKEN turns on bearer-token auth for every endpoint. Docker with host networking binds to 0.0.0.0. Toxics are documented per type; down is not a toxic but a proxy flag. Client libraries are separate projects, so the Ruby examples are not the Go binary's own usage. Linux users can hit random connection failures unless they pick ports outside 32768-61000. Building from source needs Go and, for the full build, goreleaser. The README's Development section pins specific Go and golangci-lint versions. The toxics page covers only the built-in list, and the README points to CREATING_TOXICS.md for custom ones.",
+  "quotes": [
+   "Toxiproxy is the tool you need to prove with tests that your application doesn't have single points of failure.",
+   "Linux tools like `nc` and so on are not cross-platform and require root, which makes them problematic in test, development and CI environments.",
+   "The API is unauthenticated by default and can create proxies to arbitrary upstreams, so never expose it to an untrusted network."
+  ],
+  "links": [
+   {
+    "label": "Toxiproxy GitHub repository (homepage)",
+    "url": "https://github.com/shopify/toxiproxy"
+   },
+   {
+    "label": "Shopify blog post on resilient Rails applications",
+    "url": "https://shopify.engineering/building-and-testing-resilient-ruby-on-rails-applications"
+   },
+   {
+    "label": "Releases (binaries and packages)",
+    "url": "https://github.com/Shopify/toxiproxy/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/shopify/toxiproxy: fetched OK, README returned"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Toxiproxy makes network failures controllable inside ordinary integration tests, revealing how applications behave when connections misbehave."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Toxiproxy",
+  "tldr": "A TCP proxy that lets you slow, drop, cut and reset connections to Redis, MySQL or anything else, on demand, from a CLI or an HTTP API.",
+  "deeper_look": "Toxiproxy sits between your application and a service it depends on. You create a proxy with a name, a listen address and an upstream address, then point the app at the listen address. Traffic flows through untouched until you add a toxic: latency with jitter, a bandwidth cap, packet loss, a connection reset, or taking the whole proxy down.\n\nShopify built it to prove with tests that an application has no single points of failure, and has used it in all development and test environments since October 2014. The README says existing tools lacked the dynamic API needed for integration and unit testing, and that Linux tools like `nc` \"are not cross-platform and require root, which makes them problematic in test, development and CI environments.\"\n\nThe idea underneath is that a network failure is just a transformation on a byte stream, and you can make it a switch you flip. Each toxic sits on the upstream or downstream side of a connection and alters the data. A toxicity setting applies it to only a fraction of connections, so you can see how your code behaves when some requests are slow and others are fine. That is closer to how real networks fail than a clean outage.\n\nThe server exposes an HTTP API on port 8474, and the CLI is a thin client for it. Client libraries in many languages, with Ruby the original, let test code turn faults on and off.",
+  "install": "brew tap shopify/shopify\nbrew install toxiproxy\n# Docker alternative: docker run --rm -it ghcr.io/shopify/toxiproxy\n# Start the server with toxiproxy-server; the CLI talks to it over HTTP on port 8474.",
+  "try_this": [
+   {
+    "cmd": "toxiproxy-cli create -l localhost:26379 -u localhost:6379 shopify_test_redis_master",
+    "what_happens": "Creates a proxy listening on port 26379 that forwards to a Redis on port 6379."
+   },
+   {
+    "cmd": "toxiproxy-cli toxic add -t latency -a latency=1000 shopify_test_redis_master",
+    "what_happens": "Adds a 1000 ms downstream delay, so anything connecting through the proxy gets slow responses."
+   },
+   {
+    "cmd": "toxiproxy-cli list",
+    "what_happens": "Shows each proxy with its listen address, upstream, enabled state and active toxics."
+   }
+  ],
+  "whats_unique": "It is built to be driven from test code. Faults can be switched on and off through an API, and the Ruby client can scope a fault to a single block.",
+  "caveats": "The HTTP API is unauthenticated by default and can create proxies to arbitrary upstreams, so never expose it to an untrusted network; set TOXIPROXY_AUTH_TOKEN to require a bearer token.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "network",
+   "proxy",
+   "tcp",
+   "chaos-testing",
+   "latency",
+   "go"
+  ],
+  "links": [
+   {
+    "label": "Toxiproxy GitHub repository",
+    "url": "https://github.com/shopify/toxiproxy"
+   },
+   {
+    "label": "Shopify blog post on resilient Rails applications",
+    "url": "https://shopify.engineering/building-and-testing-resilient-ruby-on-rails-applications"
+   },
+   {
+    "label": "Releases (binaries and packages)",
+    "url": "https://github.com/Shopify/toxiproxy/releases"
+   }
+  ]
+ }
+}

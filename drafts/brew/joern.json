@@ -1,0 +1,154 @@
+{
+ "name": "joern",
+ "desc": "Open-source code analysis platform based on code property graphs",
+ "homepage": "https://joern.io/",
+ "installs_365d": 972,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "language",
+  "library"
+ ],
+ "why": "Code property graph platform lets you query source and binaries as a graph, a genuinely different way to take code apart.",
+ "brief": {
+  "what_it_is": "Joern is an open-source platform for analyzing source code, bytecode, and binary executables. It turns code into code property graphs (CPGs), a graph representation of the program, and stores them in a custom graph database. You then mine that graph with search queries written in a Scala-based domain-specific query language, through an interactive shell (the `joern` REPL) or a server mode with a REST API. Input is source or binaries; output is query results, and it can also run scanners built on those queries.",
+  "why_it_exists": "The README says it is developed 'with the goal of providing a useful tool for vulnerability discovery and research in static program analysis.' The homepage frames it as 'The Bug Hunter's Workbench' and says it uncovers attack surface, sloppy coding practices, and variants of known vulnerabilities.",
+  "how_it_works": "Language frontends (the *2cpg tools) parse code, tolerating missing build environments, and build a CPG that layers syntax, control flow, data flow and call information into one graph. The docs say it is 'a language-agnostic intermediate representation,' and that the graph is extended by 'CPG passes.' Analysts then query the graph, including a taint-analysis engine that tracks attacker-controlled data statically. Queries can be wrapped into scanners (joern-scan) and run in CI.",
+  "commands_seen": [
+   {
+    "cmd": "wget https://github.com/joernio/joern/releases/latest/download/joern-install.sh",
+    "context": "Downloads the official install script from the latest release (the Quick Installation path)."
+   },
+   {
+    "cmd": "sudo ./joern-install.sh",
+    "context": "Runs the install script, which detects the platform and downloads the matching distribution zip."
+   },
+   {
+    "cmd": "joern",
+    "context": "Starts the interactive shell; it prints a banner and 'Type `help` to begin' at the joern> prompt."
+   },
+   {
+    "cmd": "./joern-install --interactive",
+    "context": "Fallback to try if the installation script fails for any reason."
+   },
+   {
+    "cmd": "docker run --rm -it -v /tmp:/tmp -v $(pwd):/app:rw -w /app -t ghcr.io/joernio/joern:master joern",
+    "context": "Runs the interactive shell from the master Docker image, mounting the current directory at /app."
+   },
+   {
+    "cmd": "docker run --rm -it -v /tmp:/tmp -v $(pwd):/app:rw -w /app -t ghcr.io/joernio/joern:master joern --server",
+    "context": "Runs Joern in server mode from the same image."
+   },
+   {
+    "cmd": "sbt test",
+    "context": "Runs the unit tests for developers working on the source."
+   },
+   {
+    "cmd": "sbt stage",
+    "context": "Stages the build before setting up the QueryDB plugin, from the QueryDB section."
+   },
+   {
+    "cmd": "./querydb-install.sh",
+    "context": "Deploys the QueryDB queries to the local install during QueryDB development."
+   },
+   {
+    "cmd": "./joern-scan --list-query-names",
+    "context": "Prints all available queries; used to check that a newly added query was deployed."
+   }
+  ],
+  "install_notes": "Requires JDK 21 (other versions 'might work' but are untested). gcc and g++ are optional, used to auto-discover C/C++ system headers. Linux, macOS and Windows zips are published for x86_64 and arm64. The install script auto-detects the platform; Windows users unzip manually. Docker images exist (ghcr.io/joernio/joern:master; joern-alma8 for older VMs). The Almalinux 9 image needs SSE4.2 CPU support. Development needs sbt and a JDK; the README covers IntelliJ (BSP import) and VSCode dev-container setup. The homepage itself gives no install steps.",
+  "standout": "A code property graph lets you query source, bytecode and binaries with one graph model and one query language, instead of writing one-off grep or AST scripts per language. It also tolerates incomplete code, so it can analyze a snapshot that won't build. Its taint engine and CPG passes are what set it apart from linters.",
+  "status": "Maintained, with evidence from the README: a release workflow publishes a new release automatically once per day, the changelog reaches v4.0.0 (migration from overflowdb to flatgraph), and the project has CI badges and contributor guidelines. I did not check commit dates, so the most recent activity is unverified. The README's sample banner still says 'Version: 2.0.1', which looks stale.",
+  "caveats": "The homepage is out of date: it says Python, Java source, Kotlin and PHP are 'coming soon', but the docs list them as supported (Medium to Very High maturity). Maturity varies widely: C/C++ and Java are 'Very High', while Ruby and C# are 'Medium-Low'. The query language is Scala, so you need Scala-literate users. The README does not state a license. The docs show a Gremlin-Scala lineage. Heavy JVM requirement (JDK 21). Almalinux 9 needs SSE4.2. The 'Built with' logos on the homepage are unlabeled images, so I could not confirm them.",
+  "quotes": [
+   "Joern is a platform for analyzing source code, bytecode, and binary executables.",
+   "Joern is developed with the goal of providing a useful tool for vulnerability discovery and research in static program analysis.",
+   "Joern is maintained by industry partners and researchers alike, for the most part with their own goals and priorities, and additional help is largely volunteer work."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://joern.io/"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://docs.joern.io/"
+   },
+   {
+    "label": "CPG specification",
+    "url": "https://cpg.joern.io"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/joernio/joern"
+   }
+  ],
+  "fetch_log": [
+   "https://joern.io/ - worked, but thin: navigation and marketing copy only, no command lines or install steps",
+   "https://github.com/joernio/joern - worked, README returned in full",
+   "https://docs.joern.io/ - worked, overview page with supported-languages table and core features"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Joern\u2019s code property graphs make static analysis feel like querying a program\u2019s structure and data flows, an unusual, hands-on way to investigate vulnerabilities."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Joern",
+  "tldr": "Joern turns source code, bytecode and binaries into a queryable code property graph, so you can hunt bugs by asking questions of a program.",
+  "deeper_look": "Joern is an open-source platform for analyzing source code, bytecode, and binary executables. Language frontends (the `*2cpg` tools) parse the input and build a code property graph, or CPG. The graph layers syntax, control flow, data flow and call information into one structure, held in a custom graph database. The frontends tolerate missing build environments, so a snapshot that won't compile can still be analyzed.\n\nYou explore the graph through the `joern` interactive shell, or through a server mode with a REST API. Queries are written in a Scala-based query language. Joern also includes a taint-analysis engine that tracks attacker-controlled data statically, and queries can be packaged into scanners (`joern-scan`) and run in CI.\n\nThe README says it is developed \"with the goal of providing a useful tool for vulnerability discovery and research in static program analysis.\" The homepage calls it \"The Bug Hunter's Workbench\" and says it helps uncover attack surface, sloppy coding practices, and variants of known vulnerabilities.\n\nThe idea underneath is that a program is a graph you can ask questions of, rather than text to grep. One graph model and one query language cover many languages, instead of a one-off AST script for each. It is a door into static analysis research, where linters stop and program-analysis ideas begin.",
+  "install": "brew install joern\n# Needs a JDK (the formula pulls in openjdk@25; upstream documents JDK 21). Docker images also exist: ghcr.io/joernio/joern:master",
+  "try_this": [
+   {
+    "cmd": "joern",
+    "what_happens": "Starts the interactive shell; it prints a banner and 'Type `help` to begin' at the joern> prompt."
+   },
+   {
+    "cmd": "joern-scan --list-query-names",
+    "what_happens": "Prints all the built-in queries that the scanner can run."
+   },
+   {
+    "cmd": "joern --help",
+    "what_happens": "Lists the shell's command-line options, including server mode."
+   }
+  ],
+  "whats_unique": "One graph model and one query language cover source, bytecode and binaries across many languages, and the frontends cope with code that won't build. The taint engine and CPG passes go well beyond what a linter does.",
+  "caveats": "The homepage is out of date and maturity varies by language (C/C++ and Java are rated Very High, Ruby and C# Medium-Low), and queries are written in Scala on a heavy JVM stack.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "static-analysis",
+   "reverse-engineering",
+   "security",
+   "graph",
+   "scala",
+   "jvm"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://joern.io/"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://docs.joern.io/"
+   },
+   {
+    "label": "CPG specification",
+    "url": "https://cpg.joern.io"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/joernio/joern"
+   }
+  ]
+ }
+}

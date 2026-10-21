@@ -1,0 +1,149 @@
+{
+ "name": "ndpi",
+ "desc": "Deep Packet Inspection (DPI) library",
+ "homepage": "https://www.ntop.org/products/deep-packet-inspection/ndpi/",
+ "installs_365d": 654,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "network",
+  "library",
+  "afternoon",
+  "protocol"
+ ],
+ "why": "Deep packet inspection library that identifies protocols from raw traffic, a useful door into how networks get classified.",
+ "brief": {
+  "what_it_is": "nDPI is an open source C library for deep packet inspection that identifies the application-layer protocol behind network traffic. It takes raw packets or flows and reports the protocol (the README cites 450+ protocols), a traffic category, flow risks, and metadata such as URLs, TLS certificates, and operating system. It is built as a library to embed in other tools, and it ships a C API. The README also says it is used in ntop's own tools (ntopng, nProbe, nProbe Cento) and in third-party applications.",
+  "why_it_exists": "The homepage says nDPI extends the original OpenDPI library by adding protocols that were otherwise available only in OpenDPI's paid version, under the LGPL. It also says the port-to-application mapping no longer holds, so detection has to look at the traffic itself.",
+  "how_it_works": "nDPI inspects packet payloads and flow behaviour to decide which application protocol a flow belongs to, regardless of the port used. Dissectors are added per protocol under src/lib/protocols/, and the README says configuration files can extend detection by host, BPF, protocol, or port. The homepage also describes ETA (Encrypted Traffic Analysis) for classifying TLS and QUIC traffic, and FPC (First Packet Classification).",
+  "commands_seen": [
+   {
+    "cmd": "./autogen.sh && ./configure",
+    "context": "Generates the build system and configures nDPI from the source tree, the main build step."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles nDPI after configure."
+   },
+   {
+    "cmd": "./autogen.sh && ./configure --enable-old-croaring",
+    "context": "Fallback if compilation fails with errors in croaring.c."
+   },
+   {
+    "cmd": "./autogen.sh && ./configure --with-only-libndpi",
+    "context": "Builds only the library, without tools or tests."
+   },
+   {
+    "cmd": "./tests/do.sh",
+    "context": "Generates and checks for diffs in PCAP test files."
+   },
+   {
+    "cmd": "./tests/do-unit.sh",
+    "context": "Runs the unit tests."
+   },
+   {
+    "cmd": "./tests/do-dga.sh",
+    "context": "Runs the DGA detection test."
+   },
+   {
+    "cmd": "make check",
+    "context": "Runs all the tests together."
+   },
+   {
+    "cmd": "make doc",
+    "context": "Builds the documentation after installing doc/requirements.txt with pip."
+   },
+   {
+    "cmd": "make doc-view",
+    "context": "Serves the built documentation using the builtin Python 3 webserver."
+   }
+  ],
+  "install_notes": "Build from source: the README gives ./autogen.sh && ./configure then make. Required GNU tools are autoconf, automake, libtool, pkg-config, gettext, flex, and bison, plus gcc or clang. Package lists are given for Debian/Ubuntu (libpcap-dev, libjson-c-dev, libnuma-dev, libpcre2-dev, libmaxminddb-dev, librrd-dev), Arch, FreeBSD (use gmake, not make), and macOS (brew install coreutils gcc git gettext flex bison libtool autoconf automake pkg-config libpcap json-c pcre2 libmaxminddb rrdtool). On Windows there are three routes: MSYS2, Mingw-w64, or Visual Studio (windows/nDPI.sln), and all need npcap with WinPcap compatibility mode enabled. Unit tests need nBPF from PF_RING plus PCRE2 for full coverage. The README does not describe what ndpiReader or ndpiSimpleIntegration do; I did not find them documented in the pages I read.",
+  "standout": "Unlike most DPI tools, nDPI is meant to be embedded: it is a library, not a sniffer, and the README says ntop removed features that slow the engine down for monitoring use. It also goes beyond naming the protocol: it extracts metadata, detects flow risks, and classifies encrypted TLS and QUIC traffic through ETA.",
+  "status": "Maintained, judging by the evidence I saw. The GitHub README has active build and fuzzing badges, and the project's 2025 talks and videos are linked from it. I did not see a last-release or last-commit date, so this is an inference, not a measured figure.",
+  "caveats": "Licensing is LGPLv3, but the README notes that some dissectors are dual-licensed and points to README.license.md. Windows builds need npcap in WinPcap compatibility mode. The README says detection is not guaranteed to be error free or 100% accurate. It also asks users to respect privacy and to have proper authorization before capturing or inspecting traffic. Build errors in croaring.c may need the --enable-old-croaring workaround. The README offers no packaged binary install, so Homebrew's executables are not covered in the material I read.",
+  "quotes": [
+   "nDPI is used in ntop tools and various third party applications for adding application-layer detection of protocols, regardless of the port being used.",
+   "This is because nowadays the concept of port=application no longer holds.",
+   "nDPI is just a library.",
+   "While we do our best to detect network protocols, we cannot guarantee that our software is error free and 100% accurate in protocol detection."
+  ],
+  "links": [
+   {
+    "label": "nDPI product page (homepage)",
+    "url": "https://www.ntop.org/products/deep-packet-inspection/ndpi/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/ntop/ndpi"
+   },
+   {
+    "label": "Paper: nDPI: Open-source high-speed deep packet inspection (IWCMC 2014)",
+    "url": "http://luca.ntop.org/nDPI.pdf"
+   },
+   {
+    "label": "The Ultimate Guide to nDPI (YouTube, 2025)",
+    "url": "https://www.youtube.com/watch?v=NndEp7__Y1A"
+   }
+  ],
+  "fetch_log": [
+   "https://www.ntop.org/products/deep-packet-inspection/ndpi/ - loaded, but it is a marketing page with feature lists and no commands",
+   "https://github.com/ntop/ndpi - loaded, returned the README, which has the build, test, and documentation commands"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "nDPI turns raw flows into protocol and metadata classifications, including encrypted TLS and QUIC traffic\u2014a rare, hands-on way to explore how networks fingerprint applications."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "nDPI",
+  "tldr": "An open source C library that works out which application protocol a network flow belongs to by looking at the traffic itself, not the port number.",
+  "deeper_look": "nDPI is a deep packet inspection library. Give it packets or flows and it reports the application protocol (the README cites 450+), a traffic category, flow risks, and metadata such as URLs, TLS certificates and operating system. It is built to be embedded in other software through a C API. ntop's own tools (ntopng, nProbe, nProbe Cento) use it, and so do third-party applications.\n\nThe homepage says it extends the original OpenDPI library, adding protocols that were otherwise only in OpenDPI's paid version, under the LGPL. The underlying problem is stated in the README: \"nowadays the concept of port=application no longer holds.\" Port 443 can carry almost anything, so the only way to classify traffic is to inspect payloads and flow behaviour.\n\nThat is the door it opens. Each protocol has its own dissector under src/lib/protocols/, so you can read how a protocol is recognised from its first few packets. The homepage also describes ETA (Encrypted Traffic Analysis) for classifying TLS and QUIC without decrypting, and FPC (First Packet Classification).\n\nThe brief does not document what the two Homebrew executables, ndpiReader and ndpiSimpleIntegration, do. Their names suggest a packet reader and a minimal integration example, but treat that as a guess and check --help.",
+  "install": "brew install ndpi",
+  "try_this": [
+   {
+    "cmd": "ndpiReader --help",
+    "what_happens": "Prints the options of the installed reader tool, which is the quickest way to see what it can do."
+   },
+   {
+    "cmd": "ndpiSimpleIntegration --help",
+    "what_happens": "Shows how the second installed executable is invoked, if it offers help output."
+   }
+  ],
+  "whats_unique": "It is a library rather than a sniffer, and the README says ntop removed features that slow the engine for monitoring use. It also goes past naming the protocol to extract metadata, flag risks, and classify encrypted TLS and QUIC traffic.",
+  "caveats": "The README admits detection is not guaranteed to be error free or 100% accurate, and asks you to have authorization before inspecting traffic you do not own.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "network",
+   "protocol",
+   "dpi",
+   "library",
+   "c",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "nDPI product page (homepage)",
+    "url": "https://www.ntop.org/products/deep-packet-inspection/ndpi/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/ntop/ndpi"
+   },
+   {
+    "label": "Paper: nDPI: Open-source high-speed deep packet inspection (IWCMC 2014)",
+    "url": "http://luca.ntop.org/nDPI.pdf"
+   },
+   {
+    "label": "The Ultimate Guide to nDPI (YouTube, 2025)",
+    "url": "https://www.youtube.com/watch?v=NndEp7__Y1A"
+   }
+  ]
+ }
+}

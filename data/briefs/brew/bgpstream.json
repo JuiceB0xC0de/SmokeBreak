@@ -1,0 +1,84 @@
+{
+ "name": "bgpstream",
+ "desc": "For live and historical BGP data analysis",
+ "homepage": "https://bgpstream.caida.org/",
+ "installs_365d": 201,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "science",
+  "afternoon"
+ ],
+ "why": "Live and historical BGP routing data analysis; a real door into how the internet's routing table behaves.",
+ "brief": {
+  "what_it_is": "BGPStream is an open-source software framework for analysing live and historical BGP (Border Gateway Protocol) routing data. You give it a time window, and it finds and fetches the matching archive files from Route Views and RIPE RIS, or reads live updates. The bgpreader command-line tool prints the results to standard output as one line per BGP element (an announcement, withdrawal, RIB entry or state message), or in bgpdump -m format. The homepage also advertises C/C++ and Python APIs (PyBGPStream). The homepage says version V2.2.0 is available now.",
+  "why_it_exists": "The README describes BGPStream as a framework for the analysis of both historical and real-time Border Gateway Protocol (BGP) measurement data. The homepage lists scientific research, operational monitoring, and post-event analysis as its uses.",
+  "how_it_works": "BGPReader is the command-line front end. By default it uses a 'broker' data interface that finds archive files for the requested time window, so users do not have to download data by hand. Other interfaces read a single MRT file, a CSV list, an SQLite database, or a Kafka topic. Filters on collector, peer ASN, origin ASN, prefix, community and AS-path regex are applied to the stream. Per the docs, the -w option accepts a start and end time, and omitting the end enables live mode.",
+  "commands_seen": [
+   {
+    "cmd": "./configure",
+    "context": "Build step from the README: configure the source tree before building."
+   },
+   {
+    "cmd": "make",
+    "context": "Build step from the README, run after ./configure."
+   },
+   {
+    "cmd": "# make install",
+    "context": "Install step from the README, run after make (the leading # is the shell prompt as written in the README)."
+   },
+   {
+    "cmd": "./autogen.sh",
+    "context": "README says to run this before ./configure only if you cloned from GitHub rather than downloading a release tarball."
+   },
+   {
+    "cmd": "bgpreader",
+    "context": "Typed alone, prints the bgpreader usage prompt."
+   },
+   {
+    "cmd": "bgpreader -w 1445306400,1445306402 -c route-views.sfmix",
+    "context": "Docs example: read records from the route-views.sfmix collector over a two-second window (Unix epoch times)."
+   },
+   {
+    "cmd": "bgpreader -w 1445306400,1445306402 -p ris -m",
+    "context": "Docs example: same window, RIPE RIS project only, output in bgpdump -m format."
+   },
+   {
+    "cmd": "bgpreader -w 1445306400,1445306402 -c route-views.sfmix -r",
+    "context": "Docs example: prints record-level output (-r) instead of elements, mainly useful for debugging BGPStream."
+   }
+  ],
+  "install_notes": "The README says the usual build is ./configure, make, then make install. libcurl must be installed before building the wandio library, and BGPStream also needs wandio (a separate library from WAND at research.wand.net.nz). If you clone from GitHub, run ./autogen.sh before ./configure. Default data access goes to the BGPStream Broker service, so a working internet connection is needed to reach Route Views and RIS archives. I saw no account or API key requirement. The homepage lists Docker and tutorial pages, but I did not fetch them.",
+  "standout": "Route Views and RIPE RIS archives are presented as one stream you query by time window, and switching from a fixed window to live mode is a single option change. The default output mirrors BGPdump's one-line format, so it can be a drop-in replacement for older scripts.",
+  "status": "Unknown. The homepage advertises V2.2.0 as available now, but I saw no release date or last-commit date on the homepage or README. The GitHub README I read was the classic short build instructions, with no note on whether the project is still developed.",
+  "caveats": "Building from source needs autotools plus libcurl and wandio, so the build chain is the main obstacle. The README does not state a license; the homepage shows a University of California copyright notice only. Live mode and the Kafka interface are described in the usage text, but I did not test or verify them. The executables list also names parsebgp, which I did not see documented in any page I fetched. Homepage was reachable.",
+  "quotes": [
+   "BGPStream is an open-source software framework for the analysis of both historical and real-time Border Gateway Protocol (BGP) measurement data.",
+   "Users familiar with the BGPdump tool should find using BGPReader easy; BGPReader even supports the BGPdump -m output format, so in some cases BGPReader can be used as a drop-in replacement for BGPdump.",
+   "Give BGPStream a time range and it will automatically acquire and stream the right data to you. Enable realtime monitoring by changing a single parameter."
+  ],
+  "links": [
+   {
+    "label": "BGPStream homepage",
+    "url": "https://bgpstream.caida.org/"
+   },
+   {
+    "label": "BGPReader documentation",
+    "url": "https://bgpstream.caida.org/docs/tools/bgpreader"
+   },
+   {
+    "label": "GitHub repository (CAIDA/bgpstream)",
+    "url": "https://github.com/CAIDA/bgpstream"
+   }
+  ],
+  "fetch_log": [
+   "https://bgpstream.caida.org/ - worked; marketing page with the V2.2.0 banner and links to docs, but no install or usage detail",
+   "https://github.com/CAIDA/bgpstream - worked; README returned with build instructions and a link to the website",
+   "https://bgpstream.caida.org/docs/tools/bgpreader - worked; BGPReader usage, options, output formats and examples. The URL was guessed from the site's docs structure and it resolved."
+  ]
+ }
+}

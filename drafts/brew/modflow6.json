@@ -1,0 +1,94 @@
+{
+ "name": "modflow6",
+ "desc": "USGS modular hydrologic model",
+ "homepage": "https://www.usgs.gov/software/modflow-6-usgs-modular-hydrologic-model",
+ "installs_365d": 14,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "science",
+  "simulation",
+  "afternoon"
+ ],
+ "why": "USGS groundwater flow simulator, real hydrology you can run at home, though niche and obscure.",
+ "brief": {
+  "what_it_is": "MODFLOW 6 is the USGS's sixth core release of its modular groundwater simulation program, and it models three-dimensional, transient groundwater flow. The user supplies a model description as input files covering the grid, aquifer properties, and stresses such as wells, rivers, recharge, and boundary conditions. It outputs simulated heads, flows, and budgets. The homepage also lists groundwater transport, energy transport, and particle tracking models, while the GitHub README mentions only flow and transport. The brew-installed executable is mf6.",
+  "why_it_exists": "The USGS says MODFLOW has spawned many incompatible variants for surface-water interaction, nested and unstructured grids, karst, solute transport, and saltwater intrusion, because the old program was built to run one model on a regular layer-row-column grid. MODFLOW 6 is a new object-oriented framework meant to run multiple models and multiple model types in one simulation, so those capabilities can live in one program.",
+  "how_it_works": "Each model is divided into packages, and each package handles one aspect of the simulation, such as flow, wells, rivers, lakes, or streamflow routing. Any number of models can run in one simulation, either independently, exchanging information through exchange objects, or tightly coupled in a single matrix solution. The Water Mover package moves water from provider packages to receiver packages, for example routing pumped groundwater into a lake.",
+  "commands_seen": [],
+  "install_notes": "Nothing I read covers installation beyond the brew formula, which provides mf6. The GitHub README says pre-built Linux, macOS, and Windows binaries from the develop branch are posted nightly in a separate MODFLOW-ORG/modflow6-nightly-build repository, and that building from source requires following DEVELOPER.md, which I did not open. The official distribution and past releases are on the USGS release page and on code.usgs.gov. Running it means preparing input files, or using a Python package such as FloPy or a GUI such as ModelMuse, which the USGS lists as related tools.",
+  "standout": "One program absorbs the features of MODFLOW-2005, MODFLOW-NWT, MODFLOW-USG, MODFLOW-LGR, SEAWAT's buoyancy, MT3D-USGS, and MODPATH 7 functionality. It also ships the ZONEBUDGET and Mf5to6 converter tools with the release, so older models can be converted rather than rebuilt.",
+  "status": "Maintained. The homepage is dated September 23, 2026, and its software citation gives version 6.8.1 with a release date of 23 September 2026. The GitHub README says the develop branch is under active, frequent updates and that nightly builds are produced, with the version string at 6.9.0.dev0. I did not check commit dates directly.",
+  "caveats": "The README includes a disclaimer that the software is preliminary or provisional, has not received final USGS approval, and comes with no warranty. The GitHub README and the homepage disagree: the README says 30 years and lists only the GWF and GWT models, while the homepage says 40 years and also lists GWE and PRT, so the README may lag. The particle tracking model does not support DISU grids or tracking through lake and stream features. The scout notes call it niche, and the documentation assumes hydrogeology background. I did not find any licensing statement beyond the USGS public-domain framing, and I did not check the brew formula version.",
+  "quotes": [
+   "MODFLOW 6 is an object-oriented program and framework developed to provide a platform for supporting multiple models and multiple types of models within the same simulation",
+   "MODFLOW is a popular open-source groundwater flow model distributed by the U.S. Geological Survey.",
+   "This software is preliminary or provisional and is subject to revision."
+  ],
+  "links": [
+   {
+    "label": "USGS homepage for MODFLOW 6",
+    "url": "https://www.usgs.gov/software/modflow-6-usgs-modular-hydrologic-model"
+   },
+   {
+    "label": "GitHub development repository",
+    "url": "https://github.com/MODFLOW-USGS/modflow6"
+   },
+   {
+    "label": "Example problems rendered as online descriptions",
+    "url": "https://modflow6-examples.readthedocs.io/en/master/examples.html"
+   }
+  ],
+  "fetch_log": [
+   "https://www.usgs.gov/software/modflow-6-usgs-modular-hydrologic-model: worked, returned the USGS page text, which is mostly navigation and descriptive prose with no command lines or install steps",
+   "https://github.com/MODFLOW-USGS/modflow6: worked, returned the README. The repository links point to MODFLOW-ORG, so the org name in the URL I fetched may be a redirect. The README itself has no command lines. DEVELOPER.md, CONTRIBUTING.md, and the examples site were linked but not fetched."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A USGS groundwater simulator that couples multiple aquifer, river, lake, and transport models opens a genuinely unusual scientific rabbit hole."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "MODFLOW 6",
+  "tldr": "The USGS's groundwater simulator: describe an aquifer, its wells and rivers in text files, and mf6 computes how the water moves through it.",
+  "deeper_look": "MODFLOW 6 is the sixth core release of the U.S. Geological Survey's modular groundwater model. You describe a model in input files: the grid, the properties of the aquifer, and the stresses on it, such as wells, rivers, recharge and boundary conditions. The `mf6` program solves three-dimensional, transient groundwater flow and writes out simulated heads, flows and budgets. The homepage also lists transport, energy transport and particle tracking models.\n\nThe older MODFLOW was built to run one model on a regular layer-row-column grid. Over the years people bolted on features for surface-water interaction, nested and unstructured grids, karst, solute transport and saltwater intrusion, and the variants stopped being compatible. MODFLOW 6 is a rewrite as an object-oriented framework, meant to hold multiple models and multiple types of models in one simulation.\n\nThe idea underneath is the package. Each model is split into packages, and each package handles one aspect, such as wells, rivers, lakes or streamflow routing. Models in one simulation can run independently, exchange information, or be solved together in a single matrix. A Water Mover package can send water between packages, for example routing pumped groundwater into a lake.\n\nIt is a door into real hydrogeology: the same kind of code used to reason about aquifers, well fields and contamination. The USGS example problems are published online, and Python tools such as FloPy and the ModelMuse GUI are listed as related ways to build inputs.",
+  "install": "brew install modflow6\n# installs the mf6 executable; gcc is a dependency. Running it needs model input files, which you write by hand or generate with a tool like FloPy.",
+  "try_this": [
+   {
+    "cmd": "mf6 --help",
+    "what_happens": "Prints the command-line options for the solver, a first check that the install works."
+   }
+  ],
+  "whats_unique": "One program absorbs the features of MODFLOW-2005, MODFLOW-NWT, MODFLOW-USG, MODFLOW-LGR, SEAWAT buoyancy, MT3D-USGS and MODPATH 7, and it ships converters for older models. It is also public-domain government science software.",
+  "caveats": "The README calls the software preliminary and provisional with no warranty, and the documentation assumes you already know some hydrogeology.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "science",
+   "simulation",
+   "hydrology",
+   "groundwater",
+   "fortran",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "USGS homepage for MODFLOW 6",
+    "url": "https://www.usgs.gov/software/modflow-6-usgs-modular-hydrologic-model"
+   },
+   {
+    "label": "GitHub development repository",
+    "url": "https://github.com/MODFLOW-USGS/modflow6"
+   },
+   {
+    "label": "Example problems rendered as online descriptions",
+    "url": "https://modflow6-examples.readthedocs.io/en/master/examples.html"
+   }
+  ]
+ }
+}

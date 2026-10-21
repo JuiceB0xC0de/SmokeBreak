@@ -1,0 +1,91 @@
+{
+ "name": "libusrsctp",
+ "desc": "Portable SCTP userland stack",
+ "homepage": "https://github.com/sctplab/usrsctp",
+ "installs_365d": 14561,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "protocol",
+  "network",
+  "library",
+  "afternoon"
+ ],
+ "why": "A userland SCTP stack, a door into a transport protocol almost nobody has seen running, used in WebRTC data channels.",
+ "brief": {
+  "what_it_is": "libusrsctp is a C library that implements SCTP (Stream Control Transmission Protocol) in userland, so an application can run SCTP without kernel support. It is built from the sctplab/usrsctp repository and the README says it supports FreeBSD, OpenBSD, Linux, Mac OS X and Windows. Applications start it with usrsctp_init(), create sockets with usrsctp_socket(), and exchange messages with usrsctp_sendv() and usrsctp_recvv(). Its API is modelled on RFC 6458, the Sockets API Extensions for SCTP, with differences listed in the Manual. Data can go straight over SCTP or be encapsulated in UDP, and the Manual describes a set of sysctl-style tunables exposed as usrsctp_sysctl_set_* and usrsctp_sysctl_get_* functions.",
+  "why_it_exists": "The README says SCTP is a message-oriented, reliable transport with multihoming and multi-streaming that runs on top of IP or UDP, and it is an alternative to TCP for those features. The userland port lets programs use it on operating systems where it is not built into the kernel. The Manual also notes that some NAT boxes cannot pass SCTP packets, which is why UDP encapsulation exists.",
+  "how_it_works": "Each application calls usrsctp_init() with a UDP encapsulation port (default 9899, or 0 to disable encapsulation) and then creates sockets with the RFC 6458 style calls. Sends and receives go through usrsctp_sendv() and usrsctp_recvv(), which pass data as a plain buffer and carry per-message info such as sndinfo and prinfo. Direct SCTP mode uses raw sockets, which is why it needs root, while UDP mode wraps SCTP packets in UDP datagrams for NAT traversal.",
+  "commands_seen": [
+   {
+    "cmd": "./bootstrap",
+    "context": "Unix-like build step, run first inside the usrsctp source folder (autotools path)."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Unix-like build step that generates the Makefiles before compiling."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds libusrsctp.la in usrsctplib and the example programs in programs."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the library to /usr/local/lib and copies the header to /usr/include; the Manual says this needs root or sudoer rights."
+   },
+   {
+    "cmd": "nmake -f Makefile.nmake",
+    "context": "Windows build using the Microsoft Visual Studio command-line compiler, run in the usrsctp directory."
+   },
+   {
+    "cmd": "cmake <path-to-usrsctp-sources>",
+    "context": "CMake configure step, run from a directory outside the usrsctp source tree."
+   },
+   {
+    "cmd": "cmake --build .",
+    "context": "CMake build step; the Manual says the default is a DEBUG build with verbose output."
+   },
+   {
+    "cmd": "./discard_server 11111 22222",
+    "context": "Example of starting the discard server with local and remote UDP encapsulation ports, on Unix-like systems."
+   },
+   {
+    "cmd": "./client 127.0.0.1 9 0 22222 11111",
+    "context": "Example client run on the same machine as the server, sending stdin to the discard server over UDP encapsulation; port 9 is the discard port."
+   },
+   {
+    "cmd": "discard_server [local_encaps_port remote_encaps_port]",
+    "context": "Usage line for the discard server test program; the encapsulation ports are optional."
+   }
+  ],
+  "install_notes": "Unix-like systems: run ./bootstrap, ./configure and make in the usrsctp folder, then optionally sudo make install. Windows needs a compiler such as Microsoft Visual Studio and is built with nmake or CMake. CMake builds default to DEBUG. Sending data directly over SCTP uses raw sockets, so it needs sudo on Unix or an administrator console on Windows; UDP encapsulation avoids this. The README and Manual do not mention any Homebrew-specific steps beyond the formula itself.",
+  "standout": "Instead of a fixed set of kernel parameters, it exposes the kernel's SCTP tunables (send and receive buffer sizes, RTO timers, SACK frequency, congestion control module choice, CMT, and others) as usrsctp_sysctl_set_* functions the application calls at runtime. It also ships a discard server and client as runnable test programs, which makes it easy to watch SCTP move data end to end.",
+  "status": "unknown. The README is one line plus badges and links to a Buildbot and a Coverity scan, and it gives no release or last-commit date. The fetched Manual lists test platforms as FreeBSD 10.0, OpenBSD 7.0, Ubuntu 11.10, Windows 7, and Mac OS X 10.6 and 10.7, and marks many tunables as TBD, which suggests the docs have not been updated recently. I did not see the repository's commit or release pages, so I cannot confirm whether it is still maintained.",
+  "caveats": "The Manual says at most one destination address is supported in usrsctp_sendv(), and that authinfo is not implemented (it returns EINVAL). Many sysctl entries are marked TBD in the Manual. Direct SCTP mode needs root or admin rights and raw sockets, and the README warns that NAT boxes often cannot pass SCTP, so UDP encapsulation is the recommended option outside loopback. The brew description is terse and gives no executables. The scout note says it is used in WebRTC data channels; that claim does not appear in the README or Manual I read, so it should not be stated as fact from these sources.",
+  "quotes": [
+   "This is a userland SCTP stack supporting FreeBSD, OpenBSD, Linux, Mac OS X and Windows.",
+   "SCTP is a message oriented, reliable transport protocol with direct support for multihoming that runs on top of IP or UDP, and supports both v4 and v6 versions.",
+   "All system calls start with the prefix usrsctp_ to distinguish them from the kernel variants."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/sctplab/usrsctp"
+   },
+   {
+    "label": "Manual.md",
+    "url": "https://github.com/sctplab/usrsctp/blob/master/Manual.md"
+   },
+   {
+    "label": "Example programs",
+    "url": "https://github.com/sctplab/usrsctp/tree/master/programs"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/sctplab/usrsctp: worked, README returned (short; links to Manual.md and a Buildbot CI page)",
+   "https://github.com/sctplab/usrsctp/blob/master/Manual.md: worked, full Manual text returned inside the GitHub page wrapper; used for the commands, API and caveats"
+  ]
+ }
+}

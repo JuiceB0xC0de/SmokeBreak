@@ -1,0 +1,40 @@
+{
+ "name": "libcpucycles",
+ "desc": "Microlibrary for counting CPU cycles",
+ "homepage": "https://cpucycles.cr.yp.to/",
+ "installs_365d": 59,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "library",
+  "science"
+ ],
+ "why": "Microlibrary from djb's circle for measuring CPU cycles precisely, a rare glimpse into how timing is actually counted in hardware.",
+ "brief": {
+  "what_it_is": "libcpucycles is a small C library for counting CPU cycles. A program includes <cpucycles.h>, calls cpucycles() whenever it wants a reading, and gets back a long long. It is linked with -lcpucycles. The library picks a timer from machine-level cycle counters for many architectures (amd64, arm32, arm64, loong64, mips64, ppc32, ppc64, riscv32, riscv64, s390x, sparc64, x86) or, failing those, from OS-level mechanisms (mach_absolute_time, perf_event, CLOCK_MONOTONIC, and a microsecond gettimeofday fallback). A companion cpucycles-info program prints a summary of cycle-counter accuracy.",
+  "why_it_exists": "The author argues that cycle counts are the most precise timers typical software can reach, and that they are central to understanding and improving performance. Compiler intrinsics such as __rdtsc() work only on Intel/AMD and are noisier than PMC counters, and __builtin_readcyclecounter() works only with clang, so each package otherwise has to build its own portable layer. The stated goal is to provide state-of-the-art cycle counting centrally for all packages to use.",
+  "how_it_works": "On the first call to cpucycles(), the library benchmarks the available mechanisms and selects the one that does the best job. Subsequent calls are thread-safe and very fast. Hardware counters are preferred (PMC or TSC on amd64, PMC or VCT on arm64, and so on), with the OS-level mechanisms as fallbacks in order of accuracy.",
+  "commands_seen": [],
+  "install_notes": "The homepage does not describe installation, packaging, or build steps beyond the API line: include <cpucycles.h> and link with -lcpucycles. Homebrew provides the package with two executables, cpucycles-info and cpucycles-open. Nothing about hardware, accounts, or runtime configuration was visible on the page.",
+  "standout": "Instead of asking each package to write its own cycle-counting shim, it centralizes per-architecture counter selection and self-benchmarks at runtime to choose the best available source. That makes it a shared utility rather than a one-off timing hack.",
+  "status": "The homepage shows 'Latest release: 20260901' and 'version 2026.09.01 of the Intro web page'. That is the only dated evidence. I could not see a commit history, a changelog, or a repository from the homepage alone, so beyond that release line the status is unknown.",
+  "caveats": "The homepage does not mention a license, supported OS list beyond the names above, or known limitations. Accuracy depends on the mechanism chosen, and the author notes that the fallback gettimeofday has only microsecond resolution. The page is an intro only and points to no docs, install guide, or source repository. The homepage itself was reachable, so this brief is based only on that page.",
+  "quotes": [
+   "libcpucycles is a microlibrary for counting CPU cycles.",
+   "but are the most precise timers available to typical software; they are central tools used in understanding and improving software performance.",
+   "The goal of libcpucycles is to provide state-of-the-art cycle counting centrally for all packages to use."
+  ],
+  "links": [
+   {
+    "label": "libcpucycles homepage (Intro)",
+    "url": "https://cpucycles.cr.yp.to/"
+   }
+  ],
+  "fetch_log": [
+   "https://cpucycles.cr.yp.to/ \u2014 fetched OK, intro page text returned; no README or install docs linked from it, so no further fetches made"
+  ]
+ }
+}

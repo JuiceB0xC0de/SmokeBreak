@@ -1,0 +1,122 @@
+{
+ "name": "ad",
+ "desc": "Adaptable text editor inspired by vi, kakoune, and acme",
+ "homepage": "https://github.com/sminez/ad",
+ "installs_365d": 262,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "tui"
+ ],
+ "why": "A small editor inspired by acme and kakoune with an unusual design, though editors are a crowded niche.",
+ "brief": {
+  "what_it_is": "ad (pronounced A.D.) is a text editor written in Rust that combines vi/kakoune-style modal editing with the extensibility of Plan 9's Acme. Its README says that inside ad, text is something you can execute as well as edit. Editing is done in the terminal, and the editor exposes its state through a virtual filesystem interface (fsys, built on a 9p implementation) so external client programs can interact with it. The README does not say exactly what input and output formats it handles beyond text buffers and its command language.",
+  "why_it_exists": "The author used vim and kakoune for years but wanted acme's approach of running arbitrary external programs from inside the editor and driving it through a simple protocol, without acme's mouse-first design. The README says the goal is a small, usable editor that can be hacked on, and that it is not trying to replace vim, kakoune, or emacs as a massively hackable editor.",
+  "how_it_works": "Editing is built from a set of internal modules: a gap buffer for buffer state, a 'dot' module for selections and vim-like motions, and an 'exec' module implementing the core of the sam editing language, now split into its own crate called structex. Other modules include a 9p-backed virtual filesystem (fsys and ninep), a minimal LSP client, a custom character-stream regex engine, tree-sitter syntax highlighting with regex fallback, and a trie for sequence-based keybindings. The README describes these as a non-exhaustive list of the more interesting internals.",
+  "commands_seen": [
+   {
+    "cmd": "git clone git@github.com:sminez/ad.git",
+    "context": "Getting started: the recommended way to try ad is to clone the repo (the README shows this with a $ prompt) and compile from source, since packaging with default config files is not in place yet."
+   },
+   {
+    "cmd": "cd ad",
+    "context": "Getting started: enter the cloned repository before compiling."
+   },
+   {
+    "cmd": "cargo install --path .",
+    "context": "Getting started: builds and installs the ad binary from the local checkout."
+   },
+   {
+    "cmd": "cargo xtask setup-dotfiles",
+    "context": "Getting started: runs the xtask that sets up default config files. The README says to review the actions it performs first (linked to xtask/src/setup.rs) and only proceed if happy with them."
+   },
+   {
+    "cmd": ":help",
+    "context": "Inside the editor, not the shell: the built-in help section, which the README points to as the main user-facing documentation."
+   }
+  ],
+  "install_notes": "Not on Homebrew-style packaging yet: the README says packaging that includes default config files and helper scripts is not in place, so the recommended route is cloning the repo and building with cargo install --path . Then run cargo xtask setup-dotfiles, which writes config, after reviewing the actions it takes. The README does not state a Rust toolchain version. Afterwards open ad and run :help. A YouTube tour is linked, with a warning that it may not match the current state. The crates.io package is named ad-editor, though the install instructions use the local path.",
+  "standout": "Instead of a plugin language, ad makes text executable in the acme style and uses sam-derived structural regular expressions as its command language, which it implements itself, including its own regex engine. It also aims for editing that is integrated with external tools rather than hacked on inside the editor, and it is built largely from scratch on purpose.",
+  "status": "Actively developed, but the README makes no release claims beyond 'stable enough that you can try it out'. It says the project is under active development and that the git log tracks changes. The README does not give a last release date or last commit date, and I did not follow the GitHub commits or releases pages, so the exact recency is unknown. The build badge and a crates.io version badge are present.",
+  "caveats": "The README warns that ad is primarily a playground and is not recommended as a primary editor. It says there is very little user documentation beyond :help, that bugs and crashes are likely, and that keybindings and default behaviours are not yet committed to, so updates may change behaviour. Contributors are asked to raise an issue before opening PRs; outside minor fixes, unsolicited PRs will be closed. The video tour may be out of date. Licence was not visible in the README. The Structex and ninep engines have been split into separate crates. Install is source-only for now.",
+  "quotes": [
+   "ad (pronounced A.D.) is an attempt at combining a modal editing interface of likes of vi and kakoune with the approach to extensibility of Plan9's Acme.",
+   "In the spirit of Plan9 itself, ad is primarily intended as playground for experimenting with implementing various text editor features and currently is not recommended for use as your primary text editor.",
+   "The aim is to provide a comfortable editing environment to work in that supports direct interaction with external tools and programs from the outside rather than pulling everything in."
+  ],
+  "links": [
+   {
+    "label": "ad homepage (GitHub repo and README)",
+    "url": "https://github.com/sminez/ad"
+   },
+   {
+    "label": "Video tour of ad (YouTube)",
+    "url": "https://www.youtube.com/watch?v=jb2pAi5hLUg"
+   },
+   {
+    "label": "structex: the extracted sam-style structural regex engine",
+    "url": "https://github.com/sminez/structex"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/sminez/ad: fetched OK, README returned. It was thorough enough that I did not follow further links."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Its Acme-inspired executable text, sam-derived editing language, and 9P filesystem interface make this a genuinely unusual editor rather than another modal-editor variant."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "ad",
+  "tldr": "A Rust text editor that pairs vi and kakoune style modal editing with Plan 9 Acme's idea that text on screen can be executed.",
+  "deeper_look": "ad (pronounced A.D.) is a terminal text editor written in Rust. Its editing model comes from vi and kakoune: modes, selections, motions. Its approach to extending itself comes from Plan 9's Acme, where you run external programs from inside the editor instead of writing plugins in an embedded language. The README puts it as text being something you can execute as well as edit.\n\nThe command language is the interesting part. ad implements the core of the sam editor's language, structural regular expressions, and has since split that out into its own crate called structex. Structural regexes describe edits as a pipeline over regions of text, which is a different way of thinking about search and replace. The editor also carries its own character-stream regex engine, a gap buffer, tree-sitter highlighting with a regex fallback, and a minimal LSP client.\n\nThe other half of the Acme idea is the outside door. ad exposes its state through a virtual filesystem (fsys, built on its own 9p implementation), so external programs can drive the editor through a simple protocol. The stated aim is \"a comfortable editing environment to work in that supports direct interaction with external tools and programs from the outside rather than pulling everything in.\"\n\nThe author is explicit that this is a playground. It is not trying to replace vim, kakoune or emacs, just to be a small editor that can be hacked on.",
+  "install": "The Homebrew formula is listed, but the README says packaging with default config files is not in place and recommends building from source with a Rust toolchain: `git clone git@github.com:sminez/ad.git && cd ad && cargo install --path .` Then optionally run `cargo xtask setup-dotfiles`, after reading what it does in xtask/src/setup.rs, since it writes config files.",
+  "try_this": [
+   {
+    "cmd": "ad --help",
+    "what_happens": "Lists the command line options of the editor."
+   },
+   {
+    "cmd": "cargo xtask setup-dotfiles",
+    "what_happens": "Run from the cloned repo, it sets up default config files. The README asks you to review its actions first."
+   },
+   {
+    "cmd": ":help",
+    "what_happens": "Typed inside ad, not the shell, it opens the built-in help, which is the main user documentation."
+   }
+  ],
+  "whats_unique": "Instead of a plugin language, ad makes text executable in the Acme style and uses a self-implemented sam-style structural regex language for commands, all built largely from scratch on purpose.",
+  "caveats": "The README says ad is a playground, not recommended as a primary editor, with little documentation beyond :help, likely bugs and crashes, and keybindings that may change.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "editor",
+   "tui",
+   "rust",
+   "plan9",
+   "acme",
+   "modal-editing"
+  ],
+  "links": [
+   {
+    "label": "ad homepage (GitHub repo and README)",
+    "url": "https://github.com/sminez/ad"
+   },
+   {
+    "label": "Video tour of ad (YouTube, may be out of date)",
+    "url": "https://www.youtube.com/watch?v=jb2pAi5hLUg"
+   },
+   {
+    "label": "structex: the extracted sam-style structural regex engine",
+    "url": "https://github.com/sminez/structex"
+   }
+  ]
+ }
+}

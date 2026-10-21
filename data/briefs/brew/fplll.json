@@ -1,0 +1,89 @@
+{
+ "name": "fplll",
+ "desc": "Lattice algorithms using floating-point arithmetic",
+ "homepage": "https://github.com/fplll/fplll",
+ "installs_365d": 418,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "math",
+  "library"
+ ],
+ "why": "Lattice reduction algorithms are a real mathematical door, though the tool is mostly a library for specialists.",
+ "brief": {
+  "what_it_is": "fplll is a C++ library, with two command-line programs, for lattice reduction. You give it a lattice basis as a matrix of integer row vectors, typically on stdin or as a file, and it outputs a reduced basis. It can also run LLL, BKZ, HKZ, slide, self-dual BKZ and HLLL reduction, and solve shortest-vector (SVP) and closest-vector (CVP) problems. The companion program latticegen prints random test matrices of several kinds (knapsack, NTRU-like, q-ary, and others) for fplll to consume.",
+  "why_it_exists": "The README says the library is named for LLL, the Lenstra-Lenstra-Lov\u00e1sz algorithm, which is central to the code, and that it implements floating-point LLL variants 'offering different speed/guarantees ratios'. The aim is a practical, fast set of lattice reduction algorithms with the guarantees stated.",
+  "how_it_works": "Reduction works on floating-point orthogonalization (Gram-Schmidt data), with several floating-point types available: double, long double, dd, qd, dpe and MPFR. A 'wrapper' picks an estimated best sequence of LLL variants to give a guaranteed output as fast as possible, and the user does not have to choose. BKZ includes the BKZ-2.0 improvements (extreme enumeration pruning, block preprocessing, early termination). SVP uses Kannan-Fincke-Pohst enumeration.",
+  "commands_seen": [
+   {
+    "cmd": "brew install fplll",
+    "context": "Homebrew install on macOS, from the README's MacOS section."
+   },
+   {
+    "cmd": "./latticegen r 10 1000 | ./fplll",
+    "context": "Example 1: generates a 10-dimensional knapsack-style matrix with 1000-bit entries and LLL-reduces it."
+   },
+   {
+    "cmd": "./fplll matrix",
+    "context": "Example 2: reduces a basis read from a file named matrix."
+   },
+   {
+    "cmd": "./latticegen -randseed 1234 r 10 1000 | ./fplll",
+    "context": "Example 3: same as the first, with a fixed random seed for reproducibility."
+   },
+   {
+    "cmd": "./latticegen r 30 3000 | ./fplll -a svp",
+    "context": "Example 4: solves the shortest vector problem on a random 30-dimensional lattice."
+   },
+   {
+    "cmd": "echo \"[[17 42 4][50 75 108][11 47 33]][100 101 102]\" | ./fplll -a cvp",
+    "context": "Example 5: solves the closest vector problem for a small inline basis and target vector."
+   },
+   {
+    "cmd": "./autogen.sh",
+    "context": "Source build: generates the configure script from the source tree."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Source build: configures the package; accepts --with-gmp, --with-mpfr, --prefix and similar options."
+   },
+   {
+    "cmd": "make check",
+    "context": "Runs the test suite; also builds the llldiff comparison tool in fplll/.libs/."
+   },
+   {
+    "cmd": "sudo aptitude install fplll-tools",
+    "context": "Debian/Ubuntu install; the package is named fplll-tools."
+   }
+  ],
+  "install_notes": "Homebrew, conda (conda install fplll), and Debian/Ubuntu packages are available. Building from source needs GNU MP 4.2.0+ (or MPIR), MPFR 2.3.0+ with complete installation, autotools 2.61+ and g++ 4.9.3+. QD 2.3.15+ is optional, built with --enable-shared=yes. The source build is ./autogen.sh, ./configure, make, then make install as root, installing to /usr/local/bin by default. If the libraries are not on the library path, pass --with-gmp=path or --with-mpfr=path. Windows 10 requires WSL, a Linux distribution from the Windows Store, and apt-get packages (make, autoconf, libtool, gcc, g++, libgmp-dev, libmpfr-dev, pkg-config). If the libfplll.so.5 error appears, set LD_LIBRARY_PATH to the .libs directory. Docker and AWS images are on Docker Hub under the fplll account, not in this repository.",
+  "standout": "Most lattice tools expose one algorithm. fplll's wrapper picks the LLL variant itself to balance speed against a guaranteed output, and latticegen supplies the standard cryptographic-style test lattices (knapsack, q-ary, NTRU-like) from the literature, so you can benchmark immediately.",
+  "status": "Likely maintained, but the README gives no date. The citation block says Version 5.5.0 (2023), the CI and codecov badges are present, and the maintainers are named. I could not see a last-commit date or release date, so I cannot confirm recent activity.",
+  "caveats": "Mostly a library for specialists, not a casual tool. The README warns that the 'n' NTRU-like generator 'does not produce a genuine ntru lattice with h a genuine public key'. The library does not use multiple cores, except for a parallel enumeration option that needs a compile-time setting. Windows support goes through WSL. The wrapper and proved modes guarantee weaker reduction parameters than the defaults suggest (delta' = 2*delta-1, eta' = 2*eta-1/2). The package is LGPL-2.1-or-later. Building from source needs several numeric libraries and autotools. Homebrew caveats were empty.",
+  "quotes": [
+   "fplll contains implementations of several lattice algorithms.",
+   "It contains a 'wrapper' choosing the estimated best sequence of variants in order to provide a guaranteed output as fast as possible.",
+   "Running multiple threads working on *different* objects, however, is supported."
+  ],
+  "links": [
+   {
+    "label": "fplll GitHub repository and README",
+    "url": "https://github.com/fplll/fplll"
+   },
+   {
+    "label": "API documentation",
+    "url": "https://fplll.github.io/fplll/annotated.html"
+   },
+   {
+    "label": "fpylll, Python interface",
+    "url": "https://github.com/malb/fpylll"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/fplll/fplll: fetched OK, returned the full README (installation, usage, bibliography). No other pages were fetched, because the README was complete and the docs link was not needed."
+  ]
+ }
+}

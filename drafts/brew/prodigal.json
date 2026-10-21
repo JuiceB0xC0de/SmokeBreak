@@ -1,0 +1,127 @@
+{
+ "name": "prodigal",
+ "desc": "Microbial gene prediction",
+ "homepage": "https://github.com/hyattpd/Prodigal",
+ "installs_365d": 181,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "science",
+  "quick",
+  "library",
+  "math"
+ ],
+ "why": "Real bioinformatics gene prediction in bacterial genomes, a genuine scientific tool you can run on your own sequences.",
+ "brief": {
+  "what_it_is": "Prodigal is a command-line gene finder for prokaryotic genomes, written by Doug Hyatt. It takes a DNA sequence file in FASTA format (genomes, draft genomes, or metagenomes) and predicts the protein-coding genes in it. Output can be written as GFF3, GenBank, or Sequin table, and protein translations can be saved to a separate FASTA file. It ships as a single binary for Linux, Mac OS X, and Windows.",
+  "why_it_exists": "The README presents it as fast, reliable protein-coding gene prediction for prokaryotic genomes. Its selling points are that it runs without training data and handles draft assemblies and metagenomes, not just finished genomes.",
+  "how_it_works": "The README says Prodigal is an unsupervised machine learning algorithm. It needs no training data and instead learns the genome's properties from the sequence itself, including RBS motif usage, start codon usage, and coding statistics. It also predicts the translation initiation site for most genes and can report confidence scores and RBS details for every candidate start site.",
+  "commands_seen": [
+   {
+    "cmd": "prodigal -i my.genome.fna -o my.genes -a my.proteins.faa",
+    "context": "Basic run on a single genome: reads the input FASTA, writes gene coordinates to my.genes, and writes predicted proteins to my.proteins.faa."
+   },
+   {
+    "cmd": "prodigal -i my.metagenome.fna -o my.genes -a my.proteins.faa -p meta",
+    "context": "Same run with -p meta, the README's mode for metagenomic input."
+   },
+   {
+    "cmd": "prodigal -h",
+    "context": "Prints the full list of options."
+   },
+   {
+    "cmd": "$ make install",
+    "context": "Builds and installs Prodigal from source. The README lists this as the source-install route."
+   }
+  ],
+  "install_notes": "Official releases include a prebuilt binary for Linux, Mac OS X, and Windows. To build from source, run make install; on Windows this needs Cygwin or MinGW. The README points to a wiki page titled Installing Prodigal for more detail. No accounts, runtimes, or configuration are mentioned.",
+  "standout": "It is unsupervised: no reference database or training set is needed, because the model is learned from each input genome. The README's claim that it handles draft genomes and metagenomes, not only finished genomes, is also less common among gene callers.",
+  "status": "quiet. The README's latest entry is 'New in 2.6.3 (February 2016)', a single bug fix to translation of partial genes. I did not see a commit date or a newer release note, so I cannot confirm recent activity.",
+  "caveats": "The license is GPL. Windows source builds need Cygwin or MinGW. The README has no dependency or memory notes and no mention of newer versions. Its only recent change is a 2016 fix, so the project may not be actively developed.",
+  "quotes": [
+   "Fast, reliable protein-coding gene prediction for prokaryotic genomes.",
+   "Prodigal is an unsupervised machine learning algorithm.  It does not need to be provided with any training data, and instead automatically learns the properties of the genome from the sequence itself, including RBS motif usage, start codon usage, and coding statistics.",
+   "Prodigal analyzes the *E. coli K-12* genome in 10 seconds on a modern MacBook Pro."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/hyattpd/Prodigal"
+   },
+   {
+    "label": "Wiki documentation",
+    "url": "https://github.com/hyattpd/prodigal/wiki"
+   },
+   {
+    "label": "Options cheat sheet",
+    "url": "https://github.com/hyattpd/prodigal/wiki#cheat-sheet"
+   },
+   {
+    "label": "Project website",
+    "url": "http://prodigal.ornl.gov/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/hyattpd/Prodigal: fetched OK, README returned. I did not follow the wiki or website links, so the installation and cheat-sheet pages are unverified."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A respected but under-the-radar scientific tool whose unsupervised model learns a genome\u2019s coding signals to find genes makes a worthwhile rabbit hole."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Prodigal",
+  "tldr": "Prodigal reads bacterial DNA in FASTA format and predicts where the protein-coding genes are, with no training data, in about ten seconds for E. coli.",
+  "deeper_look": "Prodigal is a command-line gene finder for prokaryotic genomes, written by Doug Hyatt. You give it a FASTA file of DNA (a finished genome, a draft assembly, or a metagenome) and it predicts the protein-coding genes. Coordinates can be written as GFF3, GenBank, or Sequin table, and the predicted protein translations can go to a separate FASTA file.\n\nThe idea underneath it is that a genome can be used to interpret itself. The README calls Prodigal \"an unsupervised machine learning algorithm\" that \"does not need to be provided with any training data, and instead automatically learns the properties of the genome from the sequence itself, including RBS motif usage, start codon usage, and coding statistics.\" Bacterial genes are dense and statistically distinctive, so the program can bootstrap a model from the raw sequence, then use it to call genes and pick likely translation start sites.\n\nThat makes it a way into real bioinformatics without needing a reference database or an account. Feed it a genome, look at the proteins it finds, and you are looking at the first step of how newly sequenced microbes get annotated. The README also says it can report confidence scores and RBS details for every candidate start site, which is where you can start to see how uncertain the problem is.",
+  "install": "brew install prodigal\n# You also need a DNA sequence file in FASTA format. No accounts or runtimes are required.",
+  "try_this": [
+   {
+    "cmd": "prodigal -h",
+    "what_happens": "Prints the full list of options, including output formats and modes."
+   },
+   {
+    "cmd": "prodigal -i my.genome.fna -o my.genes -a my.proteins.faa",
+    "what_happens": "Reads a genome FASTA, writes gene coordinates to my.genes and predicted protein sequences to my.proteins.faa."
+   },
+   {
+    "cmd": "prodigal -i my.metagenome.fna -o my.genes -a my.proteins.faa -p meta",
+    "what_happens": "Runs the same prediction in metagenome mode, for mixed or fragmentary input."
+   }
+  ],
+  "whats_unique": "It is unsupervised, so it needs no reference database or training set because it learns from each input genome. It also handles draft genomes and metagenomes, not just finished ones.",
+  "caveats": "The README's latest entry is version 2.6.3 from February 2016, so the project looks quiet, and it only handles prokaryotes, not eukaryotic genomes.",
+  "commitment": "quick",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "quick",
+   "science",
+   "bioinformatics",
+   "genomics",
+   "dna",
+   "bacteria"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/hyattpd/Prodigal"
+   },
+   {
+    "label": "Wiki documentation",
+    "url": "https://github.com/hyattpd/prodigal/wiki"
+   },
+   {
+    "label": "Options cheat sheet",
+    "url": "https://github.com/hyattpd/prodigal/wiki#cheat-sheet"
+   },
+   {
+    "label": "Project website",
+    "url": "http://prodigal.ornl.gov/"
+   }
+  ]
+ }
+}

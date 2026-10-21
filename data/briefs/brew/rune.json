@@ -1,0 +1,62 @@
+{
+ "name": "rune",
+ "desc": "Embeddable dynamic programming language for Rust",
+ "homepage": "https://rune-rs.github.io",
+ "installs_365d": 50,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language",
+  "library"
+ ],
+ "why": "An embeddable dynamic language for Rust is a small, unusual language worth a look.",
+ "brief": {
+  "what_it_is": "Rune is an embeddable dynamic programming language for Rust. You write scripts in Rune syntax (functions, structs, enums, async code, pattern matching, template literals) and run them either with the bundled `rune` command-line tool or from inside a Rust program through the `rune` crate. Source text goes in, and the compiler turns it into bytecode for a stack-based virtual machine that the host program can call into. The homepage and README do not describe the output format beyond running programs and returning values to Rust.",
+  "why_it_exists": "The README calls it \"an embeddable dynamic programming language for Rust\" and the homepage says it is \"easily embeddable and has support for an exciting set of language features\". The stated aim is to give Rust programs a scripting layer that is dynamic, with first-class async, without leaving Rust.",
+  "how_it_works": "Source is compiled into a compact representation that runs on a stack-based virtual machine. The Rust host builds a Context, loads Sources, calls rune::prepare(...).build_vm(), then invokes functions by name with vm.call([\"add\"], (10i64, 20i64)) and converts the result back with rune::from_value. Memory safety comes from reference counting, and each function call gets its own stack frame.",
+  "commands_seen": [
+   {
+    "cmd": "cargo run --bin rune -- run scripts/hello_world.rn",
+    "context": "README's way to run a Rune program with the bundled CLI, from a checkout of the repo."
+   },
+   {
+    "cmd": "cargo run --bin rune -- run scripts/hello_world.rn --dump --trace",
+    "context": "README's way to see detailed diagnostics while a program runs, using the --dump and --trace flags."
+   }
+  ],
+  "install_notes": "The README only shows building from source with cargo (cargo run --bin rune). Nothing in the fetched README mentions a Homebrew install step, runtime prerequisites, or first-run configuration beyond that. Running from Rust needs the rune crate (crates.io/docs.rs) and the termcolor crate if you want the coloured diagnostics shown in the example. The Rust example uses the `?` operator, so it needs to sit inside a function that returns a Result.",
+  "standout": "The homepage leads with async as a core feature rather than an add-on. It supports async functions, closures, blocks and generators, plus a native `select` expression for racing futures, and the example shows an HTTP request raced against a timeout. The const-evaluation example also runs a loop at compile time.",
+  "status": "unknown. The fetched README has CI, crates.io and docs.rs badges, and the Discord and book links are live, but it shows no release version, release date or last-commit date. I could not confirm recent activity from what I fetched.",
+  "caveats": "The README gives no platform list, no licence text and no stability statement, and the fetched pages do not say whether the language is production-ready. The homepage example relies on modules (http::get, time::sleep) that the README does not explain how to install or enable. The brew caveats field was empty.",
+  "quotes": [
+   "Rune is a dynamic programming language that is easily embeddable and has support for an exciting set of language features.",
+   "Rune prioritized excellent support for async with support for async functions, closures, blocks, and generators.",
+   "The Rune Language, an embeddable dynamic programming language for Rust."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://rune-rs.github.io"
+   },
+   {
+    "label": "Book",
+    "url": "https://rune-rs.github.io/book/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/rune-rs/rune"
+   },
+   {
+    "label": "Rust docs (docs.rs)",
+    "url": "https://docs.rs/rune"
+   }
+  ],
+  "fetch_log": [
+   "https://rune-rs.github.io: worked. Homepage text with the async and const-evaluation examples. No install or command details.",
+   "https://github.com/rune-rs/rune: worked. README returned with highlights, CLI commands and the Rust embedding example. I did not follow the book link, so the install and status details are thin."
+  ]
+ }
+}

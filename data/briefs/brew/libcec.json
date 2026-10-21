@@ -1,0 +1,92 @@
+{
+ "name": "libcec",
+ "desc": "Control devices with TV remote control and HDMI cabling",
+ "homepage": "https://libcec.pulse-eight.com/",
+ "installs_365d": 602,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "protocol",
+  "library",
+  "afternoon"
+ ],
+ "why": "Drives TVs over HDMI-CEC, a hidden control channel in every living room you can talk to from a terminal.",
+ "brief": {
+  "what_it_is": "libCEC is a C/C++ library, with Python, Node.js, .NET and Rust bindings, for talking to HDMI-CEC, the control channel built into HDMI cabling. It lets a computer send and receive CEC messages, so a TV remote can drive a media centre and the software can command other HDMI devices. It needs suitable hardware: Pulse-Eight's USB-CEC adapter, certain NUC adapters, a Raspberry Pi, or a few other SoCs. The executables it installs are cec-client (plus cecc-client, and versioned copies named 8.1.6), which are the command-line front ends to the library.",
+  "why_it_exists": "The homepage says it is an enabling platform for the CEC bus in HDMI, so developers can talk to other HDMI devices without dealing with the communication overhead, handshaking, and vendor-specific ways of sending each message.",
+  "how_it_works": "The README describes libCEC as a layer over the CEC bus that handles the messaging details and per-vendor quirks, so callers work with higher-level operations. It supports several adapter backends, selected at build time with cmake flags such as HAVE_LINUX_API for the Linux CEC framework (v4.10+), HAVE_EXYNOS_API, HAVE_AOCEC_API and HAVE_TDA995X_API. The homepage also notes that not every TV implements CEC the same way, so libCEC works around limits where it can.",
+  "commands_seen": [
+   {
+    "cmd": "git clone git://github.com/Pulse-Eight/libcec.git",
+    "context": "Homepage instruction to clone the source repository."
+   },
+   {
+    "cmd": "apt-get install git cmake build-essential libudev-dev libxrandr-dev python3-dev swig",
+    "context": "Debian/Ubuntu prerequisites for building libCEC from source, from docs/README.linux.md."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Configure the build from the libcec/build directory."
+   },
+   {
+    "cmd": "make -j4",
+    "context": "Compile libCEC in parallel."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Install the built library and tools system-wide."
+   },
+   {
+    "cmd": "sudo ldconfig",
+    "context": "Refresh the shared library cache after installing."
+   },
+   {
+    "cmd": "cmake -DHAVE_LINUX_API=1 ..",
+    "context": "Configure the build to use the Linux CEC framework (kernel v4.10+)."
+   },
+   {
+    "cmd": "npm install libcec",
+    "context": "Install the Node.js binding; the README says it binds the native library, which must still be installed."
+   },
+   {
+    "cmd": "cargo add libcec",
+    "context": "Add the Rust crate; the native library must still be installed."
+   },
+   {
+    "cmd": "dotnet add package LibCecSharp",
+    "context": "Add the .NET binding from NuGet; the native library must still be installed."
+   }
+  ],
+  "install_notes": "Beyond brew, the README says C, C++ and Python come from platform packages (libcec8-dev and python-libcec on Debian/Ubuntu, or the Windows installer), and the bindings need libCEC installed underneath them. On Linux, libCEC needs udev v151 or later and cdc-acm support in the kernel or as a module. Building needs cmake 3.12.0 or later and a C++11 compiler; pkg-config, udev headers and X randr headers are recommended so the adapter can be auto-detected. The optional .NET binding needs the .NET 8 SDK and -DENABLE_DOTNET_LIB=1. Example systemd units are in the repo's systemd folder. The Raspberry Pi has its own doc (docs/README.raspberrypi.md), which I did not fetch. Some Panasonic TVs need a button sequence to enable media keys, and Raspberry Pi users may need hdmi_force_hotplug=1 in /boot/config.txt.",
+  "standout": "It turns a hidden TV-to-HDMI control bus into a normal library with bindings across several languages, with a documented adapter-hardware story and per-vendor workarounds. The one-line pitch is that a TV remote can control the whole home theatre from one computer.",
+  "status": "Unknown from what I read. The homepage and the GitHub README show no release date or last-commit date. The executables list includes 8.1.6 versions, and the README says the bindings are published from 8.1.6 onward and that the .NET apps moved to a separate repo. The API docs site and the GitHub repo both look current, but I could not confirm recent activity.",
+  "caveats": "Hardware matters: the README says libCEC works with the right adapter, and not every TV supports CEC the same way, so the vendor support chart matters before buying. Linux, macOS and Windows are each covered, but build steps differ by platform. The library is dual licensed GPLv2 or commercial, per the homepage. Contributors must sign a contributors agreement. The homepage still points to IRC on freenode, which may be out of date. Raspberry Pi and Panasonic notes are niche fixes. The brew entry has no caveats of its own.",
+  "quotes": [
+   "libCEC allows you in combination with the right hardware to control your device with your TV remote control. Utilising your existing HDMI cabling",
+   "libCEC is an enabling platform for the CEC bus in HDMI, it allows developers to interact with other HDMI devices without having to worry about the communication overhead, handshaking, and the various ways of sending a message for each vendor",
+   "This library provides support for Pulse-Eight's USB-CEC adapter and other CEC capable hardware, like the Raspberry Pi."
+  ],
+  "links": [
+   {
+    "label": "libCEC homepage",
+    "url": "https://libcec.pulse-eight.com/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/Pulse-Eight/libcec"
+   },
+   {
+    "label": "API docs (all bindings)",
+    "url": "https://pulse-eight.github.io/libcec/"
+   }
+  ],
+  "fetch_log": [
+   "https://libcec.pulse-eight.com/ - worked, but it is mostly marketing copy with no command examples",
+   "https://github.com/Pulse-Eight/libcec - worked, README returned",
+   "https://github.com/Pulse-Eight/libcec/blob/master/docs/README.linux.md - worked, Linux build instructions returned"
+  ]
+ }
+}

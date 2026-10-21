@@ -1,0 +1,124 @@
+{
+ "name": "fennel",
+ "desc": "Lua Lisp Language",
+ "homepage": "https://fennel-lang.org",
+ "installs_365d": 942,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "quick",
+  "library"
+ ],
+ "why": "A Lisp that compiles to Lua with macros and a REPL, a genuinely unusual door into language design.",
+ "brief": {
+  "what_it_is": "Fennel is a Lisp-syntax programming language that compiles to Lua and is built around a macro system. It takes Fennel source files (.fnl) or code typed into its REPL and produces plain Lua code, which runs anywhere Lua runs. It can be run as a command-line script, embedded as a single fennel.lua file inside a Lua program, or precompiled ahead of time with the compiler. The site claims full two-way Lua compatibility, so Fennel can call any Lua function or library and vice versa.",
+  "why_it_exists": "The homepage pitches Fennel as bringing together the simplicity, speed, and reach of Lua with the flexibility of Lisp syntax and macros. The Rationale page on the site is said to explain why it was created, but I did not fetch it.",
+  "how_it_works": "The compiler turns Fennel forms into Lua source, and macros run at compile time, so the shipped Lua has no runtime dependency on Fennel. The site says compiled code should be as efficient as hand-written Lua. The site also offers a side-by-side view that shows how Fennel code maps to Lua and back.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt install fennel",
+    "context": "Setup page example for installing Fennel from the Debian package manager; packaged versions may lag official releases."
+   },
+   {
+    "cmd": "chmod +x fennel-1.6.1",
+    "context": "Makes the downloaded fennel script executable before moving it onto $PATH, such as into /usr/local/bin."
+   },
+   {
+    "cmd": "chmod +x fennel-1.6.1*",
+    "context": "Makes the downloaded prebuilt Fennel binary executable (GNU/Linux x86_64 or Windows) before moving it onto $PATH."
+   },
+   {
+    "cmd": "require(\"fennel\").install().dofile(\"main.fnl\")",
+    "context": "Lua line for embedding the Fennel compiler in a Lua application: it loads fennel.lua, installs the searcher, and runs main.fnl as the entry point."
+   },
+   {
+    "cmd": "./fennel --compile $< > $@",
+    "context": "Makefile recipe for ahead-of-time compilation, turning each .fnl file into a .lua file during the build."
+   }
+  ],
+  "install_notes": "Several routes: a package manager (the wiki lists packagers; Debian has a fennel package), the fennel script which needs Lua 5.1, 5.2, 5.3, 5.4, 5.5 or LuaJIT already installed, or a prebuilt binary that bundles its own Lua, currently listed for GNU/Linux x86_64 and Windows. Signature verification is optional. The script route needs manual updates. For embedding, add fennel.lua to your repo, and don't use the full executable file. For games, TIC-80 has Fennel built in (run 'new fennel' in its console), while L\u00d6VE needs a project skeleton and manual setup. GNU Readline is optional for a better REPL with tab completion and history. The setup page assumes a UNIX-like environment and says it says nothing about other platforms in depth.",
+  "standout": "It is a Lisp whose output is ordinary Lua, and the compiler is a single file that can be embedded in other Lua programs for runtime extension and live development. The homepage's in-browser REPL and side-by-side Fennel-to-Lua viewer make the compilation step easy to inspect.",
+  "status": "Likely maintained, but the evidence is thin. The docs list releases from v0.1.0 up to v1.6.1, the setup page references fennel-1.6.1, and the project tracks issues on dev.fennel-lang.org and hosts its repo on Sourcehut. I saw no release dates or commit dates, so I cannot confirm recent activity.",
+  "caveats": "The homepage's embedded REPL needs scripting enabled in the browser, and the page says you can install Fennel locally instead. Prebuilt binaries cover only GNU/Linux x86_64 and Windows as listed. Packaged versions may lag behind official releases. L\u00d6VE has no built-in Fennel support. The setup page is aimed at UNIX-like systems. The site says it has no telemetry. I did not check the license.",
+  "quotes": [
+   "Fennel is a programming language that brings together the simplicity, speed, and reach of Lua with the flexibility of a lisp syntax and macro system.",
+   "Anywhere you can run Lua code, you can run Fennel code.",
+   "Fennel does not contain any telemetry or spyware and never will."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://fennel-lang.org"
+   },
+   {
+    "label": "Setting up Fennel",
+    "url": "https://fennel-lang.org/setup"
+   },
+   {
+    "label": "Issue tracker",
+    "url": "https://dev.fennel-lang.org"
+   }
+  ],
+  "fetch_log": [
+   "https://fennel-lang.org (homepage): fetched OK, content included the feature list, sample Fennel code, docs index, version list, and community links.",
+   "https://fennel-lang.org/setup (Setup Guide, URL guessed from the homepage's Setup Guide link): fetched OK, contained install routes, embedding, AOT compile, editor, and game-platform sections."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Fennel makes Lisp macros and syntax compile to ordinary Lua, an unusual, inspectable language-design experiment that remains compatible with Lua\u2019s ecosystem."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Fennel",
+  "tldr": "A Lisp with macros that compiles to plain Lua, so it runs anywhere Lua does, with a REPL and a single-file compiler you can embed.",
+  "deeper_look": "Fennel is a programming language written in Lisp syntax that compiles to Lua. You give it .fnl files or type into its REPL, and it produces ordinary Lua source. Per the homepage, it calls any Lua function or library, and Lua can call back into it.\n\nThe homepage pitches it as bringing together \"the simplicity, speed, and reach of Lua with the flexibility of a lisp syntax and macro system.\" Macros run at compile time, so the Lua you ship has no runtime dependency on Fennel. The site says the compiled output should be as efficient as hand-written Lua.\n\nThe idea underneath is that a language can be a thin, inspectable layer over another one. The homepage has an in-browser REPL and a side-by-side viewer that shows how Fennel forms map to Lua, which makes the compile step easy to see. The compiler is a single file, fennel.lua, which you can drop into a Lua program for runtime extension and live development. TIC-80 has Fennel built in, and L\u00d6VE can use it with some manual setup.",
+  "install": "brew install fennel\n# Homebrew pulls in lua as a dependency. Other routes: a single fennel script (needs an existing Lua or LuaJIT) or a prebuilt binary for GNU/Linux x86_64 and Windows.",
+  "try_this": [
+   {
+    "cmd": "fennel --help",
+    "what_happens": "Lists the command-line options, including running a file, starting the REPL, and compiling."
+   },
+   {
+    "cmd": "./fennel --compile $< > $@",
+    "what_happens": "From a Makefile recipe, compiles each .fnl file ahead of time into a .lua file."
+   },
+   {
+    "cmd": "require(\"fennel\").install().dofile(\"main.fnl\")",
+    "what_happens": "In a Lua program, loads fennel.lua, installs its module searcher, and runs main.fnl as the entry point."
+   }
+  ],
+  "whats_unique": "It is a Lisp whose output is ordinary Lua, and the whole compiler fits in one embeddable file. Because of that, you can add macros and a live REPL to any Lua host.",
+  "caveats": "Likely maintained (releases up to v1.6.1), but the brief found no release or commit dates; prebuilt binaries cover only GNU/Linux x86_64 and Windows.",
+  "commitment": "quick",
+  "category": "languages-and-oddities",
+  "tags": [
+   "quick",
+   "language",
+   "lisp",
+   "lua",
+   "macros",
+   "compiler",
+   "repl"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://fennel-lang.org"
+   },
+   {
+    "label": "Setting up Fennel",
+    "url": "https://fennel-lang.org/setup"
+   },
+   {
+    "label": "Issue tracker",
+    "url": "https://dev.fennel-lang.org"
+   }
+  ]
+ }
+}

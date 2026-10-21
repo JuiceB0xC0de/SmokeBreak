@@ -1,0 +1,90 @@
+{
+ "name": "fwup",
+ "desc": "Configurable embedded Linux firmware update creator and runner",
+ "homepage": "https://github.com/fwup-home/fwup",
+ "installs_365d": 814,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "reverse-engineering"
+ ],
+ "why": "Builds and applies embedded Linux firmware images, a glimpse into how devices get their updates.",
+ "brief": {
+  "what_it_is": "fwup is a command-line utility for embedded Linux devices that applies whole-image software updates. You feed it a configuration file (fwup.conf) that describes partitions, filesystems, and update tasks, and it packs the resources into a .fw file, which is a ZIP archive that can optionally be cryptographically signed. On the device or host side, fwup takes a .fw file and writes it to a memory card or device, or to an image file, and can verify archives and signatures. The README also describes a helper script, img2fwup, that converts a raw image file into a .fw file.",
+  "why_it_exists": "The README frames fwup as an update tool for systems that replace entire root filesystem images, such as A/B partition swaps, recovery partitions, and trial-update/failback schemes. It says distribution of update archives is deliberately not a feature: users call fwup from external media, the network, or a tool like Ansible. The author also says the goal is to make updates fast enough for development and reliable enough for production, and that it aims to beat dd(1) on write speed and reliability.",
+  "how_it_works": "A configuration file defines file-resources, mbr or gpt partition tables, and task blocks with event handlers (on-init, on-resource, on-finish, on-error) and actions such as fat_write, raw_write, and uboot_setenv. fwup embeds a processed copy of that config and each resource's BLAKE2b-256 hash into the archive, then streams through the archive in one pass when applying, checking writes as it goes. The README says scripts are kept intentionally limited so that failure cases are easier to reason about, and it recommends the A/B 'write to unused slot, then flip at the end' pattern.",
+  "commands_seen": [
+   {
+    "cmd": "brew install fwup",
+    "context": "Installs fwup on macOS via Homebrew, the README's stated simplest route for system-wide install."
+   },
+   {
+    "cmd": "sudo fwup example.fw",
+    "context": "Linux example that writes a .fw file to an SDCard; fwup finds the card and asks for confirmation. On OSX or Windows the sudo is dropped."
+   },
+   {
+    "cmd": "fwup -c -f fwup.conf -o myfirmware.fw",
+    "context": "Creates a firmware update archive from a configuration file, writing it to myfirmware.fw."
+   },
+   {
+    "cmd": "fwup -a -i myfirmware.fw -t complete",
+    "context": "Applies the 'complete' task from the archive to an auto-detected attached SDCard, the usual initialize-a-card case."
+   },
+   {
+    "cmd": "fwup -a -d /dev/sdc -i myfirmware.fw -t upgrade",
+    "context": "Applies the 'upgrade' task to a named device file instead of auto-detection."
+   },
+   {
+    "cmd": "fwup -a -d myimage.img -i myfirmware.fw -t complete",
+    "context": "Writes the complete task into a regular image file that can then be used with dd(1)."
+   },
+   {
+    "cmd": "fwup -g",
+    "context": "Generates a public/private signing key pair (fwup-key.pub and fwup-key.priv by default)."
+   },
+   {
+    "cmd": "fwup -S -s fwup-key.priv -i myfirmware.fw -o signedfirmware.fw",
+    "context": "Signs an existing firmware archive with the private key, writing the result to a new file."
+   },
+   {
+    "cmd": "./configure --enable-minimal-build",
+    "context": "Source build option to trim rarely used functionality for space-constrained targets."
+   },
+   {
+    "cmd": "make check",
+    "context": "Runs the regression tests; the README asks source builders to run this before using fwup in production."
+   }
+  ],
+  "install_notes": "Homebrew on macOS. On Linux, prebuilt .deb (AMD64, ARM64, Raspbian armhf) and RPM packages are on the GitHub releases page, and Alpine, Arch (AUR fwup-git), Buildroot, and Yocto (meta-fwup) are also listed. On Windows, use chocolatey (choco install fwup) or download fwup.exe and put it on your PATH. Building from source is documented per platform (Linux, OSX, Windows, Raspbian, BSD) and needs the regression tests run. Using the tool on real devices or SD cards requires sudo on Linux (no sudo on OSX/Windows). The README also points to asdf-fwup for version pinning with asdf or mise. No account or hardware is needed to build or run archives; the target device only needs a matching layout.",
+  "standout": "Unlike a general-purpose flasher, fwup is built around the archive: one ZIP can hold several tasks, the first matching task is applied based on conditions read from the target (file exists, partition offset, U-Boot variable, path on device), and tasks can be signed and verified. It also has delta updates via VCDIFF and xdelta3 (still labelled BETA), and it ships a config language with scoped blocks and include() fragments.",
+  "status": "Maintained. The GitHub releases page shows v1.17.1 marked Latest, dated 15 Sep (the year is not shown in the fetched page), and v1.17.0 dated 14 Sep, with a cadence of multiple releases per year back to v1.12.0 (23 Dec). The v1.17.1 notes describe a macOS sandbox fix and restored RPM artifacts. The README's install links point to v1.17.0 rather than the latest v1.17.1, which is a small staleness signal.",
+  "caveats": "The README describes delta updates as BETA and says they may change in backwards-incompatible ways. The README says U-Boot environment support is limited to the author's own use and does not cover big-endian targets or raw NAND writes. Some features require the --unsafe flag (require-execute, execute, path_write, pipe_write, ubi_volume_write), and ubi_volume_write is Linux-only. Features are versioned, so a newer fwup.conf can be ignored or break on older devices, and the README warns about that. Applying updates to a device in place is described as weaker against power loss than writing to an unused slot. The fetched README was cut off at 40000 characters partway through the delta section, so I did not read the end of it. The config format and tasks are detailed enough that a writer should avoid implying a full command reference.",
+  "quotes": [
+   "Scripts are intentionally limited to make failure scenarios easier to reason about.",
+   "Distribution of software update archives is not a feature.",
+   "The goal is to make updates fast enough for code development and reliable enough for production use."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/fwup-home/fwup"
+   },
+   {
+    "label": "Releases (v1.17.1 latest)",
+    "url": "https://github.com/fwup-home/fwup/releases"
+   },
+   {
+    "label": "Nerves Project buildroot system (more examples, per README)",
+    "url": "https://github.com/nerves-project/nerves_system_br"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/fwup-home/fwup: worked (README returned, cut off at 40000 characters during the delta update section)",
+   "https://github.com/fwup-home/fwup/releases: worked (release list and notes for v1.12.0 to v1.17.1 readable)"
+  ]
+ }
+}

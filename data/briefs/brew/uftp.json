@@ -1,0 +1,40 @@
+{
+ "name": "uftp",
+ "desc": "Secure, reliable, efficient multicast file transfer program",
+ "homepage": "https://uftp-multicast.sourceforge.net/",
+ "installs_365d": 155,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "Multicast file transfer is an uncommon protocol corner that most developers never touch, worth a look at how one-to-many delivery works.",
+ "brief": {
+  "what_it_is": "UFTP is an encrypted file transfer program that sends one file stream over UDP multicast to many receivers at once. The server takes files and a user-set send rate, and each receiver gets the same data and reassembles the file from numbered blocks. Receivers send back negative acknowledgments (NAKs) for missing blocks, and the server retransmits only those. Optional UFTP proxy servers support NAT traversal and multicast tunneling across networks without end-to-end multicast, and they aggregate receiver responses. The homepage describes the project as the program family with server, client, proxy, and key management utilities (uftp, uftp_keymgt, uftpd, uftpproxyd).",
+  "why_it_exists": "The homepage says it is for distributing large files to many receivers, especially over satellite links with two-way communication, where propagation delay makes TCP-based transfer highly inefficient.",
+  "how_it_works": "A session has an Announce/Register phase, a File Transfer phase (File Info then Data Transfer for each file), and a Completion/Confirmation phase. The server announces on a public multicast address, clients register, and encryption keys are negotiated with a TLS-based scheme extended so multiple receivers share one key. Files are split into numbered blocks (one per packet) grouped into sections, and clients NAK missing blocks at section or end-of-file boundaries.",
+  "commands_seen": [],
+  "install_notes": "The homepage gives no build or install commands. It lists source tarballs and zips (.tar.gz and .zip) plus Windows 64-bit executable zips for the latest version. It says the software runs on Solaris, Linux, MacOSX/BSD, and Windows 7/8/10/11, and that other UNIX-like systems should work with minor tweaks. It also says the project includes OpenSSL-derived cryptographic code, so an OpenSSL build dependency is likely, but the page does not spell out the requirement. Usage docs for server, client, proxy, and key management are linked under Version 5.x and 4.x, but those pages were not fetched.",
+  "standout": "Multicast encrypted file delivery with NAK-based selective repeat and a shared TLS-derived group key is uncommon. The proxy design, which lets receivers behind NAT or without multicast routing feed responses back up, is a further distinctive piece. The homepage also says a UFTP dissector is built into Wireshark 2.2 and later.",
+  "status": "The homepage lists version 5.0.4 with a release date of 10/19/2026, but the page's own 'Last update' line says December 17, 2023, and the most recent prior release listed is 5.0.3 on 12/17/2023. The 5.0.4 date is likely a typo or a future-dated entry, so the timing is unclear. Taken at face value the project has had releases through 2023 and possibly 2026, and it is still listed on SourceForge. No README or GitHub activity was checked, so I'd call it maintained-looking but not verified.",
+  "caveats": "The homepage describes it as GPL-licensed, with commercial licenses available. Windows binaries are listed only as 64-bit zips for version 5.x. Version 5.x clients and proxies are said to be backward compatible with 4.x servers, but 5.x servers are not mentioned as compatible with older clients. Multicast deployment usually needs network support, which the homepage addresses through proxies rather than solving directly. The brew caveats field was empty.",
+  "quotes": [
+   "UFTP is an encrypted multicast file transfer program, designed to securely, reliably, and efficiently transfer files to multiple receivers simultaneously.",
+   "especially useful for data distribution over a satellite link (with two way communication), where the inherent delay makes any TCP based communication highly inefficient.",
+   "Because UDP does not guarantee that packets will arrive in order, each block is numbered so the client can properly reassemble the file."
+  ],
+  "links": [
+   {
+    "label": "UFTP homepage",
+    "url": "https://uftp-multicast.sourceforge.net/"
+   }
+  ],
+  "fetch_log": [
+   "https://uftp-multicast.sourceforge.net/ : fetched OK, full text returned (project overview, protocol summary, version and download table, licensing). Docs links (Server usage, Client usage, Proxy usage, Key management) appeared as labels without URLs, so I did not follow them. Only one fetch was made."
+  ]
+ }
+}

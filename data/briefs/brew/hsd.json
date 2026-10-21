@@ -1,0 +1,99 @@
+{
+ "name": "hsd",
+ "desc": "Handshake Daemon & Full Node",
+ "homepage": "https://handshake.org",
+ "installs_365d": 287,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "protocol",
+  "network"
+ ],
+ "why": "Handshake full node is a door into a decentralised naming system where domains are rooted in a blockchain rather than DNS.",
+ "brief": {
+  "what_it_is": "HSD (Handshake Daemon) is the reference full-node implementation of the Handshake protocol, a peer-to-peer root naming system. It takes in blockchain and peer-network data and serves a validated root zone: it runs a built-in recursive resolver and an authoritative nameserver (ports 5349 and 5350 by default) so local tools like dig can resolve Handshake names. It also provides a wallet server, command-line tools (hsd-cli, hsw-cli), and RPC and REST APIs for querying the node, bidding on names, and claiming DNS names with DNSSEC proofs. The homepage describes the broader project as a decentralised naming and certificate-authority experiment.",
+  "why_it_exists": "The homepage says Handshake aims to replace centralised root naming and certificate authorities with a system where every peer validates and manages the root zone, and it argues that charging an economic cost for names (through HNS coin auctions) deters the spam and sybil attacks that pushed earlier decentralised systems toward central operators.",
+  "how_it_works": "Names are registered through on-chain auctions: an open transaction starts bidding, bids are placed with a hidden lockup value, bids are later revealed, and the winner registers the name with sendupdate. Existing DNS owners can instead publish a DNSSEC ownership proof (a TXT record commitment, then sendclaim) that is mined on-chain and matures after about 30 days (4,320 blocks), allowing them to skip the auction. The README says the built-in resolver is JavaScript, with optional native libunbound bindings for better performance and DNS conformance.",
+  "commands_seen": [
+   {
+    "cmd": "$ hsd-cli info",
+    "context": "Returns basic node info; the README says it works once hsd is installed globally."
+   },
+   {
+    "cmd": "$ hsd --ns-port 5300",
+    "context": "Boots hsd with the authoritative nameserver moved to port 5300."
+   },
+   {
+    "cmd": "$ hsd --rs-host 0.0.0.0 --rs-port 53 # Warning: public!",
+    "context": "Exposes the recursive resolver on port 53 on all interfaces; the README flags this as public."
+   },
+   {
+    "cmd": "$ dig @127.0.0.1 www.ietf.org +dnssec",
+    "context": "Test query against the local recursive resolver with DNSSEC enabled."
+   },
+   {
+    "cmd": "$ hsd --listen --public-host [my-public-ip-address] --max-inbound 50",
+    "context": "Accepts inbound peer connections and advertises a public address so peers know to connect."
+   },
+   {
+    "cmd": "$ hsd --http-host '::' --api-key 'hunter2' --coinbase-address 'ts1qsu62stru80svj5xk6mescy65v0lhg8xxtweqsr'",
+    "context": "Starts the node with a public HTTP API behind an API key and a coinbase address for CPU mining; the README's example uses a placeholder key."
+   },
+   {
+    "cmd": "$ hsw-rpc sendopen handshake",
+    "context": "Sends the open transaction that starts the auction for the name handshake."
+   },
+   {
+    "cmd": "$ hsw-rpc sendbid handshake 5 10",
+    "context": "Places a bid of 5 HNS with a lockup value of 10 HNS (the README notes units are HNS)."
+   },
+   {
+    "cmd": "$ hsw-rpc sendupdate handshake '{\"records\":[{\"type\":\"GLUE4\",\"ns\":\"ns1.example.com.\",\"address\":\"127.0.0.1\"}]}'",
+    "context": "After winning, sets the name's DNS records, here a GLUE4 record."
+   },
+   {
+    "cmd": "$ hsw-rpc sendclaim example",
+    "context": "Crawls the DNSSEC-signed zones for the name and broadcasts the ownership claim proof."
+   },
+   {
+    "cmd": "$ npm install -g hs-client",
+    "context": "Installs hs-client, which provides the hsd-rpc and hsw-rpc shortcuts and the miner used for CPU mining."
+   }
+  ],
+  "install_notes": "The README points to docs/install.md for the install guide. It is installed as an npm package with Node.js, and the README says to install unbound first if you want native libunbound bindings, since those must be present before installing hsd. Mining needs hs-client. Claiming an existing DNS name requires DNSSEC already enabled on that name, and running your own zone requires BIND-style key tools (dnssec-keygen, dnssec-signzone) or the bns package. The README's examples use testnet addresses and settings, so mainnet configuration is not covered in what I read.",
+  "standout": "Rather than a blockchain that only moves money, it treats the chain as a root zone that any peer can validate, and it lets existing DNS owners prove ownership with DNSSEC instead of buying names at auction. The project's own page also says it has no official foundation or controlling entity.",
+  "status": "unknown. The README has a CI build badge and a coverage badge, and it says the testnet airdrop is live, but it gives no release version, date, or last-commit date, and the homepage does not say when it was last updated. I could not confirm whether it is actively maintained.",
+  "caveats": "The homepage calls Handshake an experimental protocol. The README warns that HSD does not protect against theft or lost funds from bugs or user error. Some ports and examples are public-facing or testnet-only, and the README flags binding the resolver to 0.0.0.0 as public. Claims need DNSSEC set up correctly (no CNAMEs or wildcards, and every label must be a zone cut), and a claim takes about 30 days to mature. The JavaScript resolver is slower and less DNS-conformant than the libunbound build. Code is MIT-licensed, with Bcoin copyright notices as well. The Homepage says 'Multiple implementations may exist', so HSD is one of several.",
+  "quotes": [
+   "HSD is an implementation of the Handshake Protocol.",
+   "By running Handshake, one can participate in a decentralized open naming platform secured by a decentralized peer-to-peer network.",
+   "every peer is validating and in charge of managing the root DNS naming zone",
+   "HSD does not guarantee you against theft or lost funds due to bugs, mishaps, or your own incompetence."
+  ],
+  "links": [
+   {
+    "label": "Handshake project homepage",
+    "url": "https://handshake.org"
+   },
+   {
+    "label": "HSD documentation site",
+    "url": "https://hsd-dev.org"
+   },
+   {
+    "label": "HSD API docs",
+    "url": "https://hsd-dev.org/api-docs"
+   },
+   {
+    "label": "HSD source on GitHub",
+    "url": "https://github.com/handshake-org/hsd"
+   }
+  ],
+  "fetch_log": [
+   "https://handshake.org: worked; returned the project homepage text (no README), which links to the GitHub code and docs without giving URLs in the extracted text.",
+   "https://github.com/handshake-org/hsd: worked; returned the README. I chose this URL myself because the homepage text does not give the repository link. I did not follow the docs/install.md link or the hsd-dev.org docs, so those are referenced but unread."
+  ]
+ }
+}

@@ -1,0 +1,77 @@
+{
+ "name": "veryfasttree",
+ "desc": "Efficient phylogenetic tree inference for massive taxonomic datasets",
+ "homepage": "https://github.com/citiususc/veryfasttree",
+ "installs_365d": 195,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "science",
+  "afternoon",
+  "math"
+ ],
+ "why": "Phylogenetic tree inference on huge datasets is real science you can run, though it is a niche specialist tool.",
+ "brief": {
+  "what_it_is": "VeryFastTree is a command-line program that infers phylogenetic trees from multiple sequence alignments, aimed at very large datasets. It is a tuned fork of FastTree-2 that adds multithreading and SIMD vectorization. It reads NEXUS, Fasta, Fastq or Phylip interleaved alignments, optionally zlib- or libbz2-compressed, and writes a tree. Its author reports building a tree from a one-million-taxa alignment in 36 hours on a two-socket 32-core Xeon server. It is a niche specialist tool for researchers working with huge alignments.",
+  "why_it_exists": "The README says it exists for efficient phylogenetic tree inference on massive taxonomic datasets, where FastTree-2 is too slow. The authors claim it is more than 3x faster than FastTree-2 and their previous v3.0 on the same server, while keeping FastTree-2's topological accuracy.",
+  "how_it_works": "It keeps FastTree-2's inference phases, methods and heuristics unchanged and parallelizes them with OpenMP-style threads, using a tree-partitioning method so subtrees can be processed in parallel. It vectorizes the likelihood arithmetic with SSE3, AVX, AVX2 or AVX512 intrinsics, with an experimental CUDA path. Its command-line arguments match FastTree-2's, so an existing FastTree-2 call can be swapped for a VeryFastTree call. Its extra options (-threads, -threads-level, -threads-mode, -ext, -fastexp, -disk-computing) control the parallel and memory strategies.",
+  "commands_seen": [
+   {
+    "cmd": "cmake -LH",
+    "context": "Lists the build options (USE_NATIVE, USE_SSE2, USE_AVX2, USE_AVX512, USE_CUDA, CUDA_ARCH and others) with their descriptions."
+   },
+   {
+    "cmd": "cmake -DUSE_NATIVE=OFF -DUSE_SEE4=ON .",
+    "context": "Example configure step that turns off native-architecture tuning and enables SSE4.1 instead. The README's example spells the option USE_SEE4."
+   },
+   {
+    "cmd": "cmake [options] .",
+    "context": "Generic configure step, run from the source directory on Linux, macOS or Windows."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds VeryFastTree on Linux and macOS after cmake configuration."
+   },
+   {
+    "cmd": "make install",
+    "context": "Optional step on Linux and macOS to install the built binary."
+   },
+   {
+    "cmd": "cmake --build",
+    "context": "Build step on Windows after cmake configuration."
+   }
+  ],
+  "install_notes": "Packages exist for Bioconda, Homebrew, MacPorts and Debian-based Linux distributions, and there are Python bindings on PyPI. Building from source needs CMake 3.5 or newer and a C++11 compiler: GCC 5+, Visual Studio 2015 or newer, or Clang. make is required on Linux. The CUDA Toolkit is needed only for the CUDA build. The libraries are bundled in the lib folder. By default CMake tunes the binary to the build machine's CPU (USE_NATIVE=ON), so a binary built for one machine should be rebuilt with native tuning off if it will run elsewhere. If -threads is not given, the thread count comes from the OMP_NUM_THREADS environment variable. No accounts or licences are mentioned, and no first-run configuration is described.",
+  "standout": "It is a drop-in replacement for FastTree-2 with the same flags, so users can speed up an existing pipeline by changing the binary name. It is also deterministic in its default mode, which the README contrasts with the parallel version of FastTree-2.",
+  "status": "Appears maintained but quiet. The README's most recent release is v4.0 from July 2023, and it cites a 2024 GigaScience paper. It is listed in several package managers. I did not see commit dates or a changelog entry after v4.0, so I cannot confirm recent activity.",
+  "caveats": "The speed figures are the authors' own benchmark on one server with one million taxa, not independent measurements. Since 2023 the default mode is deterministic and the README says it is faster than the non-deterministic mode, but this needs checking on the user's data. The -threads-level 4 SPR acceleration only works on datasets larger than 2^(sprlength + 2). Disk computing options slow execution noticeably, and the -disk-dynamic-computing option hurts performance even when RAM is sufficient. CUDA support is marked experimental. The -fastexp 1 and 3 options (single-precision exp) are not recommended together with -double-precision. The README gives no licence in the text I read, so check the repository before reuse. The README does not state the licence, and I did not check the repository's LICENSE file.",
+  "quotes": [
+   "VeryFastTree keeps exactly the same command line arguments than FastTree-2.",
+   "In addition, unlike the parallel version of FastTree-2, VeryFastTree is deterministic.",
+   "It is a highly-tuned implementation based on the FastTree-2 tool that takes advantage of parallelization and vectorization strategies to speed up the inference of phylogenies for huge alignments."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/citiususc/veryfasttree"
+   },
+   {
+    "label": "Bioconda package",
+    "url": "https://anaconda.org/bioconda/veryfasttree"
+   },
+   {
+    "label": "GigaScience 2024 paper (DOI)",
+    "url": "https://doi.org/10.1093/gigascience/giae055"
+   },
+   {
+    "label": "Python bindings on PyPI",
+    "url": "https://pypi.org/project/veryfasttree/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/citiususc/veryfasttree (homepage, GitHub README): fetched OK"
+  ]
+ }
+}

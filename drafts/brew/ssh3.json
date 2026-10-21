@@ -1,0 +1,138 @@
+{
+ "name": "ssh3",
+ "desc": "Faster and richer secure shell using HTTP/3",
+ "homepage": "https://arxiv.org/abs/2312.08396",
+ "installs_365d": 182,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol",
+  "library"
+ ],
+ "why": "Rebuilds SSH on HTTP/3 and QUIC, a genuine door into how a familiar protocol can be reimagined over modern transport.",
+ "brief": {
+  "what_it_is": "SSH3 is an experimental remote-terminal client and server, written in Go, that carries the SSH Connection Protocol over HTTP/3 (QUIC and TLS 1.3). You run ssh3-server on a host, with an X.509 certificate and key, and connect with the ssh3 client, which takes a user and host (plus optional secret URL path) and gives you a shell. It supports password, public key, agent, and OpenID Connect logins, plus TCP and UDP port forwarding. The homepage is an arXiv paper abstract; the README below is from the project's GitHub repository.",
+  "why_it_exists": "The authors say SSH dates from the late nineties and that they wanted to revisit it with QUIC, TLS 1.3 and HTTP/3, offering 'an enhanced feature set without compromise compared to SSHv2'. The README's main claims are faster session establishment (3 round trips instead of 5 to 7) and new authentication methods via HTTP authorization.",
+  "how_it_works": "SSH3 uses QUIC and TLS 1.3 to establish the secure channel and HTTP Authorization mechanisms for user authentication, mapping SSH Connection Protocol semantics onto HTTP. The server can sit behind a secret URL path and answer 404 to everything else, so scanners cannot see it. UDP forwarding uses QUIC datagrams, and proxy jump uses UDP forwarding so the middle host cannot decrypt the end-to-end traffic.",
+  "commands_seen": [
+   {
+    "cmd": "go install github.com/francoismichel/ssh3/cmd/...@latest",
+    "context": "Installs both ssh3 and ssh3-server with the Go toolchain (the README's listed install method besides release binaries and source builds)."
+   },
+   {
+    "cmd": "go build -o ssh3 cmd/ssh3/main.go",
+    "context": "Builds the client from source in a cloned repo."
+   },
+   {
+    "cmd": "CGO_ENABLED=1 go build -o ssh3-server cmd/ssh3-server/main.go",
+    "context": "Builds the server from source; the README says this requires gcc."
+   },
+   {
+    "cmd": "ssh3-server -bind 192.0.2.0:443 -url-path <my-long-secret>",
+    "context": "Runs the server on a bind address with a secret URL path so it only answers requests to that path and returns 404 otherwise."
+   },
+   {
+    "cmd": "ssh3-server -generate-public-cert my-domain.example.org -url-path /ssh3",
+    "context": "Starts a public server on port 443 with a Let's Encrypt certificate for the given domain, answering on /ssh3."
+   },
+   {
+    "cmd": "ssh3 -privkey ~/.ssh/id_rsa username@my-server.example.org/my-secret-path",
+    "context": "Client connects with a private key file and a secret path appended to the host."
+   },
+   {
+    "cmd": "ssh3 -use-password username@my-server.example.org/my-secret-path",
+    "context": "Client uses password authentication, which only works if the server was started with -enable-password-login."
+   },
+   {
+    "cmd": "ssh3 my-server/my-secret-path",
+    "context": "Config-based connection: the host alias my-server is resolved from ~/.ssh/config, and the URLPath option supplies the path."
+   }
+  ],
+  "install_notes": "Install with go install, use release binaries from the GitHub releases page, or build from source with a recent Go toolchain. The server build needs CGO_ENABLED=1 and gcc. There is no SSH3 daemon yet, so you must run ssh3-server yourself, for example in screen. The server needs an X.509 certificate and key (defaults ./cert.pem and ./priv.key). You can get one from Let's Encrypt (-generate-public-cert), use an existing cert with -cert and -key, or make a self-signed one with -generate-selfsigned-cert. Like OpenSSH, the server must run as root to log in other users. Server authorized keys come from ~/.ssh/authorized_keys and ~/.ssh3/authorized_identities. OIDC needs a ~/.ssh3/oidc_config.json file and a Google Cloud experimental app, per the README.",
+  "standout": "It keeps the SSH Connection Protocol but moves it onto HTTP/3, so the server can hide behind a secret URL path that returns 404 to scanners. Login can go through an external identity provider such as Google, GitHub or Microsoft Entra via OpenID Connect, with no public key copying. It also adds UDP port forwarding over QUIC datagrams, which OpenSSH lacks.",
+  "status": "Unknown in terms of activity. The arXiv paper was submitted 12 Dec 2023 (v1 only). The README describes an Internet-Draft, draft-michel-remote-terminal-http3-00, and notes the project 'is probably going to change its name' and that connection migration is coming 'soon'. I saw no release date or last-commit date in the pages I fetched, so the maintenance level is not confirmed.",
+  "caveats": "The README says it is experimental and a proof of concept: 'Do not deploy the SSH3 server on your production servers for now' and 'we cannot yet endorse its appropriateness for production systems'. Expert cryptographic review is still needed. The project may be renamed. Password login is off unless -enable-password-login is set. OIDC is marked 'still experimental' and needs manual setup. Reverse port forwarding is not implemented yet, and the client ignores most ~/.ssh/config options. There is no daemon, so you have to keep ssh3-server running yourself. The README's own advice is to hide the secret URL path but never rely on it for access control. I did not check the license.",
+  "quotes": [
+   "SSH3 is a complete revisit of the SSH protocol, mapping its semantics on top of the HTTP mechanisms.",
+   "Faster for session establishment, not throughput !",
+   "Do not deploy the SSH3 server on your production servers for now",
+   "Your SSH3 public server can be hidden"
+  ],
+  "links": [
+   {
+    "label": "arXiv paper: Towards SSH3: how HTTP/3 improves secure shells (homepage)",
+    "url": "https://arxiv.org/abs/2312.08396"
+   },
+   {
+    "label": "GitHub repository (README source)",
+    "url": "https://github.com/francoismichel/ssh3"
+   },
+   {
+    "label": "Internet-Draft draft-michel-remote-terminal-http3-00",
+    "url": "https://datatracker.ietf.org/doc/draft-michel-remote-terminal-http3/"
+   }
+  ],
+  "fetch_log": [
+   "https://arxiv.org/abs/2312.08396 (homepage): worked, returned the arXiv abstract page for Towards SSH3 with no README content, and no link to the code repository.",
+   "https://github.com/francoismichel/ssh3: worked, returned the README. I chose this URL myself, from knowledge of the project, since the arXiv page does not link to it, so treat it as an inference. Two fetches used, within the limit of five."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A hands-on reimagining of SSH over HTTP/3 reveals how QUIC changes authentication, forwarding, and connection setup; its experimental status suits exploration, not production."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "ssh3",
+  "tldr": "An experimental remote shell that runs the SSH Connection Protocol over HTTP/3 and QUIC, so a server can hide behind a secret URL and answer 404 to scanners.",
+  "deeper_look": "SSH3 is a client (`ssh3`) and server (`ssh3-server`) written in Go. It gives you a remote terminal, like OpenSSH, but the secure channel is QUIC with TLS 1.3, and the connection is an HTTP/3 request. User authentication goes through HTTP Authorization. That covers passwords, public keys, an agent, and OpenID Connect logins through providers such as Google, GitHub or Microsoft Entra.\n\nThe authors say SSH dates from the late nineties and wanted to revisit it with modern transport. Their main claim is faster session establishment: 3 round trips instead of 5 to 7. The README is clear that this is about setup time, not throughput: \"Faster for session establishment, not throughput !\"\n\nThe idea underneath is that a shell session is just a set of semantics (channels, forwarding, exec) that can ride on any transport. Put them on HTTP/3 and you inherit things the web already has. The server can sit behind a secret URL path and return 404 to everything else. UDP port forwarding can use QUIC datagrams. Proxy jump uses that forwarding, so the middle host cannot decrypt end-to-end traffic. The README's own warning is to hide the path but never rely on it for access control.\n\nThe homepage is the arXiv paper, \"Towards SSH3: how HTTP/3 improves secure shells\". An Internet-Draft, draft-michel-remote-terminal-http3-00, describes the protocol. It is a good way to see how a protocol you use daily looks when rebuilt on a different layer.",
+  "install": "brew install ssh3\n# Needs a host to run ssh3-server on, plus an X.509 certificate and key (defaults ./cert.pem and ./priv.key).\n# Self-signed (-generate-selfsigned-cert) or Let's Encrypt (-generate-public-cert) both work.\n# Like OpenSSH, the server must run as root to log in other users.",
+  "try_this": [
+   {
+    "cmd": "ssh3 --help",
+    "what_happens": "Lists the client's options, including key, password and config-based login."
+   },
+   {
+    "cmd": "ssh3-server -generate-public-cert my-domain.example.org -url-path /ssh3",
+    "what_happens": "Starts a public server on port 443 with a Let's Encrypt certificate, answering only on /ssh3."
+   },
+   {
+    "cmd": "ssh3 -privkey ~/.ssh/id_rsa username@my-server.example.org/my-secret-path",
+    "what_happens": "Connects with a private key, with the secret URL path appended to the host."
+   }
+  ],
+  "whats_unique": "It keeps the SSH Connection Protocol but maps it onto HTTP/3, so the server can hide behind a secret URL and logins can go through an OpenID Connect provider. It also adds UDP port forwarding over QUIC datagrams, which OpenSSH lacks.",
+  "caveats": "The README calls it an experimental proof of concept and says \"Do not deploy the SSH3 server on your production servers for now\"; it may be renamed, has no daemon, and lacks reverse port forwarding.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "network",
+   "protocol",
+   "ssh",
+   "quic",
+   "http3",
+   "go"
+  ],
+  "links": [
+   {
+    "label": "arXiv paper: Towards SSH3: how HTTP/3 improves secure shells (homepage)",
+    "url": "https://arxiv.org/abs/2312.08396"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/francoismichel/ssh3"
+   },
+   {
+    "label": "Internet-Draft draft-michel-remote-terminal-http3-00",
+    "url": "https://datatracker.ietf.org/doc/draft-michel-remote-terminal-http3/"
+   }
+  ]
+ }
+}

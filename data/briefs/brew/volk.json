@@ -1,0 +1,87 @@
+{
+ "name": "volk",
+ "desc": "Vector Optimized Library of Kernels",
+ "homepage": "https://www.libvolk.org/",
+ "installs_365d": 2990,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "library",
+  "science"
+ ],
+ "why": "A SIMD kernel library for GNU Radio, interesting for its code generation but mostly infrastructure.",
+ "brief": {
+  "what_it_is": "VOLK (Vector-Optimized Library of Kernels) is a C library of hand-written SIMD kernels for mathematical operations on vectors. Calling code uses one architecture-agnostic kernel name, and VOLK picks the matching hand-tuned implementation for the CPU at runtime. The README does not describe the function signatures or data formats, so the exact inputs and outputs are not confirmed from these pages. It is a sub-project of GNU Radio.",
+  "why_it_exists": "The README says SIMD architectures differ widely and that no compiler has yet vectorized this code properly or efficiently, so VOLK takes a different approach: it hand-writes kernels per architecture and gives users one portable call.",
+  "how_it_works": "For each architecture or platform, a developer adds a new proto-kernel to VOLK. At runtime VOLK selects the correct proto-kernel, so users call the same kernel everywhere. The build uses cpu_features to detect CPU capabilities such as AVX for this dynamic dispatch, and volk_profile benchmarks the local system so the fastest kernel is chosen.",
+  "commands_seen": [
+   {
+    "cmd": "mkdir build",
+    "context": "Create a build directory for the standard CMake out-of-tree build on x86."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Configure the build from the build directory."
+   },
+   {
+    "cmd": "make",
+    "context": "Compile VOLK; the README suggests make -j with a core count for speed."
+   },
+   {
+    "cmd": "make test",
+    "context": "Run VOLK's test suite."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Install the library system-wide."
+   },
+   {
+    "cmd": "sudo ldconfig",
+    "context": "Linux only: link and cache the shared library after install."
+   },
+   {
+    "cmd": "volk_profile",
+    "context": "Profile the local machine so VOLK selects the best kernel; the README says to run it after installing."
+   },
+   {
+    "cmd": "cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchains/arm_cortex_a76_hardfp_native.cmake ..",
+    "context": "ARM 32-bit build (example for Raspberry Pi 5) using the matching toolchain file; swap in a72 for Pi 4 or a53 for Pi 3."
+   }
+  ],
+  "install_notes": "Standard CMake build: mkdir build, cmake, make, make test, sudo make install. On Linux run sudo ldconfig afterward; on macOS and Windows, add the library install location to PATH. Run volk_profile once after install. cpu_features is used for CPU detection: CMake uses a system copy if found, otherwise it fetches it automatically via FetchContent (except static builds with static dispatch). 32-bit ARM builds need a board-specific CMake toolchain file from cmake/Toolchains (Pi 3, 4, 5 listed); 64-bit ARM needs no extra compiler options. The brew formula's executables are volk-config-info, volk_modtool, and volk_profile. No accounts or runtimes are required beyond a C/C++ toolchain and CMake, as far as the README shows.",
+  "standout": "Instead of relying on auto-vectorizing compilers, VOLK ships a separate hand-written kernel per SIMD target behind one function name, and a profiling tool measures which kernel is fastest on the actual machine. The scout note called it interesting for its code generation, but the README I read does not mention code generation, so treat that claim as unverified.",
+  "status": "Maintained. The homepage lists releases v3.3.0 (08 Feb 2026), v3.2.0 (03 Feb 2025), and v3.1.2 (25 Feb 2024). The GitHub README has active CI badges and names maintainers (@michaelld and @jdemel), and it refers to a CHANGELOG and contributing guide. The date of the latest commit was not visible.",
+  "caveats": "License wording conflicts: the homepage says GPLv3, while the README says VOLK 3.0 and later are LGPL-3.0-or-later and earlier versions were GPL-3.0-or-later. The README is more specific, so it is probably correct, but check it. Optimized kernels target x86 with SSE/AVX and ARM with NEON; MIPS and RISC-V support is experimental and some kernels are known not to work there. The README says it does not guarantee support for obsolete distros such as Ubuntu 12.04. MSVC lacks aligned_alloc, so aligned memory there is allocated with MSVC-specific calls that cannot be released with plain free. The README also notes that relicensing involved three contributors who could not be reached.",
+  "quotes": [
+   "VOLK is the Vector-Optimized Library of Kernels.",
+   "For each architecture or platform that a developer wishes to vectorize for, a new proto-kernel is added to VOLK.",
+   "Since each SIMD architecture can be very different and no compiler has yet come along to handle vectorization properly or highly efficiently, VOLK approaches the problem differently."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.libvolk.org/"
+   },
+   {
+    "label": "Using VOLK (Doxygen docs)",
+    "url": "https://www.libvolk.org/doxygen/using_volk.html"
+   },
+   {
+    "label": "Source repository (GitHub mirror)",
+    "url": "https://github.com/gnuradio/volk"
+   },
+   {
+    "label": "Zenodo DOI",
+    "url": "https://doi.org/10.5281/zenodo.3360942"
+   }
+  ],
+  "fetch_log": [
+   "https://www.libvolk.org/ - worked; returned sparse page with the project description, license line, release list, and links to Web, Git, Documentation, and Issues, but no build details.",
+   "https://github.com/gnuradio/volk - worked; returned the README, which covers the build steps, supported platforms, license, and contribution policy.",
+   "https://www.libvolk.org/doxygen/using_volk.html - not fetched; the README points to it for detailed usage, but I stopped at two fetches because the README covered the build and concept."
+  ]
+ }
+}

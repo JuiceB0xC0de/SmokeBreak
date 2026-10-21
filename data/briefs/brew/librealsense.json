@@ -1,0 +1,87 @@
+{
+ "name": "librealsense",
+ "desc": "Intel RealSense D400 series and SR300 capture",
+ "homepage": "https://github.com/realsenseai/librealsense",
+ "installs_365d": 2254,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "library",
+  "afternoon",
+  "visual"
+ ],
+ "why": "The SDK for Intel RealSense depth cameras, a real door into depth sensing if you own the hardware.",
+ "brief": {
+  "what_it_is": "librealsense is the RealSense SDK 2.0, a cross-platform C/C++ library for Intel RealSense depth cameras. It streams depth and color frames from the camera and provides intrinsic and extrinsic calibration information. The README lists D400-series models (D555 PoE, D457 GMSL/FAKRA, D455, D435if, D405) and says wrappers exist for Python, ROS 2, C#, Unity and a REST API. The README does not mention the SR300, and the executables list from the package metadata is not described in the README beyond realsense-viewer and the Depth Quality Tool.",
+  "why_it_exists": "The README presents it as the open-source SDK for RealSense stereo depth cameras, offering high-resolution color and depth at close and long range. It calls RealSense the 'defacto-standard 3D stereo camera for robotics.'",
+  "how_it_works": "The high-level API centers on rs2::pipeline (C++) or rs.pipeline (Python): you start the pipeline, call wait_for_frames() in a loop, pull the depth frame, and call get_distance(x, y) on a pixel to get meters. The README says there are lower-level APIs as well, and the examples and tools directories are the next stop.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/realsenseai/librealsense.git",
+    "context": "Build from source, step 1: clones the repository (the README says to use the new realsenseai org URL)."
+   },
+   {
+    "cmd": "mkdir build && cd build",
+    "context": "Build from source, step 1: creates and enters a build directory inside the clone."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Build from source, step 2: configures the build with CMake from the build directory."
+   },
+   {
+    "cmd": "cmake --build .",
+    "context": "Build from source, step 3: compiles the project."
+   },
+   {
+    "cmd": "cmake .. -DBUILD_WITH_HIP=ON",
+    "context": "Optional AMD GPU acceleration on Linux via ROCm/HIP; the README notes BUILD_WITH_CUDA and BUILD_WITH_HIP are mutually exclusive."
+   },
+   {
+    "cmd": "cmake .. -DBUILD_WITH_HIP=ON -DCMAKE_HIP_ARCHITECTURES=gfx1100",
+    "context": "Targets one specific AMD GPU architecture instead of the default set (gfx90a, gfx942, gfx1100, gfx1101)."
+   },
+   {
+    "cmd": "cmake .. -G Ninja -DBUILD_WITH_HIP=ON",
+    "context": "Windows HIP build using the Ninja generator; requires the HIP SDK for Windows (7.1+)."
+   },
+   {
+    "cmd": "pip install pyrealsense2",
+    "context": "Installs the stable Python package, aligned with SDK tags and recommended for most users."
+   },
+   {
+    "cmd": "pip install pyrealsense2-beta",
+    "context": "Installs the beta Python package with fresher builds. Both import as pyrealsense2, so install only one."
+   }
+  ],
+  "install_notes": "Easiest path is the precompiled SDK bundle from the GitHub Releases page; for minor releases, Debian packages are attached as release artifacts. Ubuntu and Jetson have their own install guides (doc/distribution_linux.md, doc/installation.md, doc/installation_jetson.md). APT users must update the APT key, per the README's guide link. Windows and macOS have separate guides (doc/installation_windows.md, doc/installation_osx.md). Building from source uses CMake; GPU acceleration is optional, via CUDA or HIP/ROCm. Needs a RealSense camera plugged in. Beta binaries are being pushed to the master branch.",
+  "standout": "The README bundles the SDK, its own viewer, a depth-quality measurement tool, and a long list of language wrappers into one repository. Its high-level pipeline API keeps the first working program to about a dozen lines.",
+  "status": "maintained. The README describes an active branch policy with beta releases on master, a CI badge pointing at the development branch, a recent note about the migration to the realsenseai organization, and product pages from 2025. I did not see a release date or last-commit date in the fetched page, so the exact recency is unverified.",
+  "caveats": "Requires a RealSense camera to be useful. The README says full feature support varies by platform and points to release notes. Legacy devices (F200, R200, LR200, ZR300) are only in the v1.12.1 legacy release. The SR300 is listed in the package description but not in the README. The README says new closed-source libraries are sold through Perception Studio, which is separate from this open-source repo. The org was renamed from IntelRealSense; the README warns the old redirect may not last. The license badge indicates Apache 2.0. The package metadata has no brew caveats.",
+  "quotes": [
+   "RealSense SDK 2.0 is a cross-platform library for RealSense depth cameras.",
+   "The SDK allows depth and color streaming, and provides intrinsic and extrinsic calibration information.",
+   "Open source SDK with rich examples and wrappers (Python, ROS, C#, Unity and more...)",
+   "Both packages import as `pyrealsense2`. Install **only one** at a time."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/realsenseai/librealsense"
+   },
+   {
+    "label": "Releases (precompiled SDK bundles)",
+    "url": "https://github.com/realsenseai/librealsense/releases"
+   },
+   {
+    "label": "Wiki and docs",
+    "url": "https://github.com/realsenseai/librealsense/wiki"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/realsenseai/librealsense (fetched OK, README returned; no further fetches needed)"
+  ]
+ }
+}

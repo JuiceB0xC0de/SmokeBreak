@@ -1,0 +1,90 @@
+{
+ "name": "sdns",
+ "desc": "Privacy important, fast, recursive dns resolver server with dnssec support",
+ "homepage": "https://sdns.dev/",
+ "installs_365d": 224,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "A recursive DNSSEC resolver written from scratch is a useful door into how DNS resolution actually works.",
+ "brief": {
+  "what_it_is": "SDNS is a recursive DNS resolver written in Go. It resolves names starting from the root, validates answers against DNSSEC trust anchors, and caches them. Clients send it DNS queries over plain UDP and TCP, or over DNS over TLS, DNS over HTTPS and DNS over QUIC, and it returns answers with DNSSEC status flags such as 'ad' when validation succeeds. It also serves cache hits from stored response bytes.",
+  "why_it_exists": "The README frames it as a privacy-minded, fast, recursive resolver with DNSSEC validation, and the homepage tagline is 'Privacy important, fast, recursive dns resolver server with dnssec support'. The Homebrew scout note calls it a useful way into how DNS resolution actually works. Neither source spells out a problem statement beyond that.",
+  "how_it_works": "Rather than forwarding to upstream resolvers, it walks the DNS tree from the root and checks signatures against the trust anchor, which it fetches and keeps up to date under RFC 5011. Privacy features include QNAME minimisation (RFC 9156) and an optional local root zone (RFC 8806). Warm cache hits are answered from the bytes it already holds, with zero allocations per wire-served hit, which the project says a test pins in CI.",
+  "commands_seen": [
+   {
+    "cmd": "dig @127.0.0.1 example.com A +dnssec +multiline",
+    "context": "Homepage example query against a local SDNS instance, showing the answer section with RRSIG records."
+   },
+   {
+    "cmd": "go install github.com/semihalev/sdns@latest",
+    "context": "Install from source with Go; the README says it needs Go 1.27 or newer."
+   },
+   {
+    "cmd": "brew install sdns && sudo brew services start sdns",
+    "context": "Homebrew install on macOS, or Linux with Homebrew, then start it as a background service."
+   },
+   {
+    "cmd": "sudo snap install sdns",
+    "context": "Linux install via Snap."
+   },
+   {
+    "cmd": "yay -S sdns-git",
+    "context": "Arch Linux install from the AUR, built from the latest commit rather than a release."
+   },
+   {
+    "cmd": "sdns -t -c sdns.conf",
+    "context": "Quick start: with a path that does not exist yet, this writes the full documented config; run again after editing to validate it."
+   },
+   {
+    "cmd": "sdns -c sdns.conf &",
+    "context": "Quick start: launch the resolver in the background with the config file."
+   },
+   {
+    "cmd": "dig @127.0.0.1 -p 5354 example.com A +dnssec",
+    "context": "Quick start: query the loopback high port set in the edited config; an 'ad' flag in the answer means it was validated."
+   },
+   {
+    "cmd": "make test",
+    "context": "Development: run the test suite only. The README also lists make all (generate, tidy, test, build) and go build (binary only)."
+   }
+  ],
+  "install_notes": "Options are go install, pre-built binaries and .deb/.rpm packages on the GitHub releases page, Docker, Homebrew, Snap, and the AUR. Docker users should use the ghcr.io/semihalev/sdns:1.9 image (also on Docker Hub as c1982/sdns). Pin a release tag, because 'latest' is built from every push to main. The README's Docker example binds to 127.0.0.1 and mounts a config file. It also sets directory to /var/lib/sdns, since the image has no WORKDIR, and uses --stop-timeout 20. On first run the server writes a full commented sdns.conf. The generated config listens on port 53 on all interfaces and its default accesslist allows every client, so the README advises trying it on a loopback high port first. The first query is slow while the resolver primes the root and fetches the trust anchor. Four keys matter most: bind, directory, dnssec and accesslist.",
+  "standout": "The README and homepage stress the validation gate, sdns -t, which checks the whole config and reports every problem at once, and the rule that new features ship off by default so an upgrade never changes behaviour. The homepage also lists a Response Policy Zone shadow mode, whose counters show what enforcement would do before it is switched on. Its benchmark page reports cold-cache throughput and compares against PowerDNS Recursor, Unbound and Knot Resolver on one host.",
+  "status": "Likely maintained, but not confirmed. The homepage and README both show v1.9.0 as the current release, the docs site is current, and CI and coverage badges are present. I did not see a release or commit date, so I cannot say how recent v1.9.0 is.",
+  "caveats": "The benchmark numbers come from the project's own runs on one 32-core Xeon host. The headline cold figure of 658/s was measured on sdns 1.8.1-pre, not on the 1.9.0 release. The README says the cold figure is 905/s if QNAME minimisation is turned off, and that the project keeps that setting on. The default config is open to all clients on port 53, so it must be restricted before it faces a network. The go install route needs Go 1.27 or newer, which is a very new toolchain requirement. The Docker 'latest' tag tracks main, not releases. The project makes no statement about license beyond MIT. I did not see a note about Windows support beyond the README listing pre-built binaries for Windows.",
+  "quotes": [
+   "A recursive DNS resolver with DNSSEC validation, written in Go.",
+   "New features ship off or in shadow. Enabling a configuration section or key is a decision you make, never one made for you by an upgrade.",
+   "Every throughput figure below was produced by a documented run on one host, with the corpus, the methodology and the fairness notes for each written down; the allocation figure is pinned by a test."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://sdns.dev/"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://sdns.dev/docs/"
+   },
+   {
+    "label": "Benchmarks",
+    "url": "https://sdns.dev/docs/reference/benchmarks/"
+   },
+   {
+    "label": "Source (GitHub)",
+    "url": "https://github.com/semihalev/sdns"
+   }
+  ],
+  "fetch_log": [
+   "https://sdns.dev/ - worked; homepage text returned with install link, benchmark tables, protocol list, config sample and capabilities summary.",
+   "https://github.com/semihalev/sdns - worked; README returned. I inferred this URL from the homepage's 'Source' link label. The homepage did not give the address directly."
+  ]
+ }
+}

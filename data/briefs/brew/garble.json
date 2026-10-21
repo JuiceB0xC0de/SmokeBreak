@@ -1,0 +1,61 @@
+{
+ "name": "garble",
+ "desc": "Obfuscate Go builds",
+ "homepage": "https://github.com/burrowers/garble",
+ "installs_365d": 470,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "reverse-engineering",
+  "quick",
+  "library"
+ ],
+ "why": "Obfuscates Go binaries, a useful window into how compiled programs can be hidden and what makes them hard to read.",
+ "brief": {
+  "what_it_is": "Garble is a command-line tool that obfuscates Go builds by wrapping the Go toolchain. You run it in place of go build, and it takes your Go source packages (including the standard runtime) and produces a binary that behaves like a normal build but reveals much less about the original source. It also provides garble test to run tests on obfuscated code, garble run to obfuscate and execute a simple program, garble reverse to de-obfuscate text such as panic stack traces, and garble bug to file a pre-filled bug report. The README says it requires Go 1.27 or later.",
+  "why_it_exists": "The README's stated goal is to produce a binary that works as well as a regular build but has as little information about the original source code as possible. It targets cases where Go binaries are shared with end users and the source is private or paid for, and it also covers sharing obfuscated source for private Go libraries, since Go plugins have shortcomings, and reducing binary size (the -tiny flag claims about 15% smaller).",
+  "how_it_works": "Garble wraps calls to the Go compiler and linker. It replaces identifiers and package paths with short base64 hashes, replaces position information with short base64 hashed filenames, and strips build, module, and debug information. With the -literals flag it also rewrites literal expressions such as strings into more complex expressions that resolve to the same value at run time, and obfuscates //go:embed files, which are decoded at run time. Builds are deterministic per package, keyed on garble version, Go version, source, and build parameters, which is what makes garble reverse work on stack traces.",
+  "commands_seen": [
+   {
+    "cmd": "go install mvdan.cc/garble@latest # or @master",
+    "context": "Installation line shown at the top of the README; @master is the alternative to @latest."
+   },
+   {
+    "cmd": "garble build [build flags] [packages]",
+    "context": "Basic usage: the main command, wrapping go build with obfuscation."
+   },
+   {
+    "cmd": "garble -h",
+    "context": "Lists all available commands and flags."
+   },
+   {
+    "cmd": "go clean -cache",
+    "context": "Mentioned in the Speed section as the analogy for why the first garble build is slow; not a garble command."
+   }
+  ],
+  "install_notes": "Installed with go install mvdan.cc/garble@latest (or @master). Requires Go 1.27 or later. garble build uses whichever go is first on $PATH; to use a different Go version the README points to GOTOOLCHAIN. Garble uses its own cache, defaulting to a directory under the user cache dir such as ~/.cache/garble, which can be moved with the GARBLE_CACHE environment variable. Garble also requires git on the machine to patch the linker. No accounts or hardware are mentioned.",
+  "standout": "Garble is built to stay coupled to cmd/go and the build cache, obfuscating one package at a time so incremental builds only redo changed code, and it stays reversible: given the same seed and inputs, garble reverse can map obfuscated panic stack traces back to original names. The -tiny flag removes panic and fatal error printing from the runtime entirely, trading debuggability for size.",
+  "status": "unknown for release and commit dates, since the fetched README carries no dates. Signals of active upkeep in the text: it targets Go 1.27, it cites issues up to #984, it has a CI badge, and it invites new contributors. I would call it actively maintained by inference, not by a dated record.",
+  "caveats": "Exported methods are never obfuscated, because interfaces may need them. There is no supported way to exclude specific files or packages from obfuscation. Go plugins are unsupported. Obfuscation is not encryption: with -literals the executable contains the decoding key, and embedded filenames stay visible. Constant-expression literals cannot be obfuscated. Literal obfuscation can slow programs down. With -literals, -ldflags values must be unpatterned. -tiny means panics print no stack trace and the program simply exits, which makes crashes harder to debug and makes reverse mostly useless. APIs such as runtime.GOROOT and runtime/debug.ReadBuildInfo do not work in obfuscated binaries, which can affect timezone loading. Initialization order can change because import paths are obfuscated. The README says garble build takes about twice as long as go build. The first build is slow because every package is obfuscated once. The runtime/cgo and crypto/internal/fips140 packages are excluded. Custom -seed values must be kept, because losing one makes garble reverse stop working.",
+  "quotes": [
+   "Produce a binary that works as well as a regular build, but that has as little information about the original source code as possible.",
+   "This is obfuscation, not encryption: the executable contains the decoding key, so its contents can still be recovered.",
+   "With this flag, no panics or fatal runtime errors will ever be printed, but they can still be handled internally with `recover` as normal."
+  ],
+  "links": [
+   {
+    "label": "Homepage / README (GitHub)",
+    "url": "https://github.com/burrowers/garble"
+   },
+   {
+    "label": "Control flow obfuscation doc (linked from README, not fetched)",
+    "url": "https://github.com/burrowers/garble/blob/master/docs/CONTROLFLOW.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/burrowers/garble: fetched OK, returned the README. The README is complete, so I did not follow further links."
+  ]
+ }
+}

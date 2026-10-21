@@ -1,0 +1,89 @@
+{
+ "name": "ssdb",
+ "desc": "NoSQL database supporting many data structures: Redis alternative",
+ "homepage": "https://ssdb.io/",
+ "installs_365d": 9,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "database",
+  "afternoon"
+ ],
+ "why": "A Redis-like NoSQL store with a less familiar design, though a database clone is not inherently strange.",
+ "brief": {
+  "what_it_is": "SSDB is an open-source key-value NoSQL database written in C/C++ on top of LevelDB, so data lives on disk. Its values can be plain strings, sorted sets (key-zset), hashmaps (key-hashmap) and lists. Clients talk to a running ssdb-server over a network connection, and the README says Redis clients are supported. The package includes ssdb-server, a command-line client (ssdb-cli), and other tools (ssdb-bench, ssdb-dump, ssdb-repair). Its client libraries cover C++, PHP, Python, Java, Node.js, Ruby and Go.",
+  "why_it_exists": "The README presents SSDB as an alternative to Redis for persistent collection data: \"an alternative to Redis\" that is \"Designed to store collection data\".",
+  "how_it_works": "The server stores data in LevelDB, a disk-based key-value engine, which is how it stays persistent beyond memory. It exposes key-string, key-zset, key-hashmap and key-list structures over the network and supports master-slave replication and a persistent queue. The README gives no deeper internals beyond an architecture diagram image.",
+  "commands_seen": [
+   {
+    "cmd": "wget --no-check-certificate https://github.com/ideawu/ssdb/archive/master.zip",
+    "context": "Downloads the source zip from GitHub (the README's first build step; it disables certificate checking)."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds ssdb from the unzipped source tree (run inside ssdb-master)."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Optional step that installs ssdb under /usr/local/ssdb."
+   },
+   {
+    "cmd": "./ssdb-server ssdb.conf",
+    "context": "Starts the server in the foreground using a config file named ssdb.conf."
+   },
+   {
+    "cmd": "./ssdb-server -d ssdb.conf",
+    "context": "Starts the server as a daemon with the same config file."
+   },
+   {
+    "cmd": "./tools/ssdb-cli -p 8888",
+    "context": "Opens the built-in command-line client connected to port 8888."
+   },
+   {
+    "cmd": "./ssdb-server ssdb.conf -s stop",
+    "context": "Stops a running server (the README says older versions used kill on the pid file instead)."
+   },
+   {
+    "cmd": "kill `cat ./var/ssdb.pid`",
+    "context": "Older-version way to stop the server, reading the pid from ./var/ssdb.pid."
+   },
+   {
+    "cmd": "make ios",
+    "context": "Builds static libraries (libssdb-ios.a and LevelDB/snappy/util libs) for linking into an iOS project."
+   }
+  ],
+  "install_notes": "Source build with make on Linux, BSD, OS X or Windows-style environments per the platform badge. Installation needs a C/C++ toolchain and make; the README does not list other dependencies. A config file (ssdb.conf) is needed to start the server, and the default port in the examples is 8888. For Windows, a prebuilt ssdb-server.exe is hosted in a separate repo, ideawu/ssdb-bin. There is a PHP client example, and the README links to docs for each language's client.",
+  "standout": "SSDB is Redis-protocol compatible but stores data on disk through LevelDB, so its data is not limited to RAM. It also has built-in Nagios self-check commands and ships a benchmark comparing it with Redis. The README claims production use at QIHU 360.",
+  "status": "unknown. The README has no release dates, version numbers or changelog, and I could not see the last commit date from the README alone. It does claim to be \"stable, production-ready\". Its links point to old infrastructure (Google Code for LevelDB, and a 2013 MacBook benchmark), which suggests the README has not been refreshed recently. The homepage at ssdb.io no longer appears to be the project's site (see caveats).",
+  "caveats": "The homepage https://ssdb.io/ returned an unrelated SEO blog about NoSQL, written by a 'John Rice', with sponsor blurbs for web agencies and a call-center vendor. It does not describe SSDB, so the project's docs links on that domain (ssdb.io/docs/) are unverified. The benchmarks are old: 1000 requests on a 2013 MacBook Pro, and the chart is hosted on ssdb.io. The README's build instructions use wget with --no-check-certificate. The Windows binary comes from another repo. The license is New BSD. The README does not describe Redis command coverage, so 'Redis compatible' should be checked against the actual commands before relying on it.",
+  "quotes": [
+   "SSDB is a high performace key-value(key-string, key-zset, key-hashmap) NoSQL database, an alternative to Redis.",
+   "SSDB is stable, production-ready and is widely used by many Internet companies including QIHU 360.",
+   "Redis clients are supported"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (returned unrelated content)",
+    "url": "https://ssdb.io/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/ideawu/ssdb"
+   },
+   {
+    "label": "Online docs",
+    "url": "http://ssdb.io/docs/"
+   },
+   {
+    "label": "Compile and install wiki",
+    "url": "http://ssdb.io/docs/install.html"
+   }
+  ],
+  "fetch_log": [
+   "https://ssdb.io/ - fetched, loaded, but the content is an unrelated SEO/NoSQL blog that does not describe SSDB; the project README was used instead",
+   "https://github.com/ideawu/ssdb - fetched; README returned, used as the primary source"
+  ]
+ }
+}

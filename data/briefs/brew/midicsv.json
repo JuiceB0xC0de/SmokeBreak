@@ -1,0 +1,61 @@
+{
+ "name": "midicsv",
+ "desc": "Convert MIDI audio files to human-readable CSV format",
+ "homepage": "https://www.fourmilab.ch/webtools/midicsv/",
+ "installs_365d": 178,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "quick",
+  "audio",
+  "take-things-apart"
+ ],
+ "why": "Turning MIDI binaries into readable CSV is a clear way to see how a music file is structured.",
+ "brief": {
+  "what_it_is": "midicsv is a pair of command-line programs by John Walker (Fourmilab). midicsv reads a standard MIDI file and writes a CSV text file that records every event in it, one event per line, with track number, absolute time, and event type as the first fields. csvmidi reads a CSV file in that same format and writes an equivalent MIDI file. Both read standard input and write standard output, so they can sit in a Unix pipeline between text tools.",
+  "why_it_exists": "The author's framing is that MIDI files are compact binary files that are hard to read and write without a special-purpose library, while Perl and Python are well suited to the transformations musicians want. The programs are meant to let text-processing tools transform MIDI files, or generate them from scratch, in bulk.",
+  "how_it_works": "midicsv decodes the binary MIDI file into records such as 'Track, Time, Note_on_c, Channel, Note, Velocity', with each event type given a readable name and a '_c' suffix for channel events or '_t' suffix for text meta-events. Records are sorted by track, then time, and the file opens with a Header record and closes with End_of_file. csvmidi parses those records back into binary MIDI and reports errors as warnings on standard error, skipping bad records. The README includes Perl examples (transpose, chorus, channel extraction, a drum machine, and a random guitar composer) that edit or generate the CSV.",
+  "commands_seen": [
+   {
+    "cmd": "midicsv song.mid | perl transpose.pl | csvmidi >tsong.mid",
+    "context": "Pipeline from the Transpose Key example: converts song.mid to CSV, shifts note numbers down an octave with a Perl filter (skipping channel 9 percussion), then rebuilds a MIDI file as tsong.mid."
+   },
+   {
+    "cmd": "midicsv song.mid | perl chorus.pl | csvmidi >tsong.mid",
+    "context": "Pipeline from the Chorus example: duplicates each non-percussion note one octave lower to thicken the bass, then writes the result as MIDI."
+   },
+   {
+    "cmd": "midicsv song.mid | perl exchannel.pl | csvmidi >tsong.mid",
+    "context": "Pipeline from the Extract Channel example: keeps only events on the chosen channel (set to 9 for the General MIDI percussion track) and writes the result as MIDI."
+   },
+   {
+    "cmd": "perl drummer.pl | csvmidi >drumtrack.mid",
+    "context": "Dumbest Drummer example: the Perl script prints CSV for a simple repeating drum pattern with no source MIDI file, and csvmidi turns it into drumtrack.mid."
+   },
+   {
+    "cmd": "perl acomp.pl | csvmidi >performance.mid",
+    "context": "Stoned Guitarist example: the Perl script writes CSV for a randomly generated guitar line with cymbal accompaniment and a closing applause effect, and csvmidi writes performance.mid."
+   }
+  ],
+  "install_notes": "The archive midicsv-1.1.tar.gz contains source, a Makefile for Unix systems, and ready-to-run 32-bit Windows executables; a zipped archive with only the Windows executables is also offered. Building from source uses the supplied Makefile. The Perl examples need Perl, and the README suggests TiMidity++ as a software synthesiser for listening to the results. I did not see Homebrew-specific steps; the executables listed are csvmidi and midicsv.",
+  "standout": "The CSV format is designed on purpose to be easy for text tools, spreadsheets, and databases to handle, and the author states that no information is lost on a round trip. Its examples show that a short script can edit or generate a whole MIDI file through a pipe, which is a different approach from a sequencer or a MIDI library.",
+  "status": "quiet. The README is dated 'by John Walker, February, 2004, Revised January, 2008', and the latest download it names is midicsv-1.1.tar.gz. The page gives no newer release or commit history, so the project looks finished rather than actively developed. I did not check a repository or the Homebrew formula for more recent versions.",
+  "caveats": "midicsv assumes its input is a well-formed MIDI file. Gross errors may crash it, and it does not check for things like a note-on without a matching note-off. csvmidi does not do semantic checking either, so a CSV that is well-formed but musically nonsensical will produce a MIDI file that instruments may not play sensibly. The round trip is equivalent but not guaranteed to be byte-for-byte identical, because the -x option controls MIDI running-status compression. The Windows executables are 32-bit. The software is public domain with no warranty. The homepage was reachable and the README is the homepage itself.",
+  "quotes": [
+   "No information is lost in transforming a MIDI file to CSV and back.",
+   "MIDI files are somewhat difficult to read and write without a special-purpose library, particularly in commonly used text processing languages such as Perl and Python",
+   "This program isn't presented for its musical merit, but simply to illustrate how easy it is to generate arbitrary MIDI music files by writing CSV which is fed through csvmidi."
+  ],
+  "links": [
+   {
+    "label": "midicsv homepage (Fourmilab)",
+    "url": "https://www.fourmilab.ch/webtools/midicsv/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.fourmilab.ch/webtools/midicsv/ : fetched successfully. This is the full manual, including the midicsv and csvmidi man pages, the CSV file format specification, and Perl examples. No further fetches were needed."
+  ]
+ }
+}

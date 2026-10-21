@@ -1,0 +1,46 @@
+{
+ "name": "libupnpp",
+ "desc": "C++ wrapper for libnpupnp",
+ "homepage": "https://www.lesbonscomptes.com/upmpdcli/libupnpp-refdoc/libupnpp-ctl.html",
+ "installs_365d": 57,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "library",
+  "network",
+  "protocol"
+ ],
+ "why": "A C++ wrapper over UPnP discovery; the door to UPnP is interesting, but this is a wrapper rather than the key itself.",
+ "brief": {
+  "what_it_is": "Libupnpp is a C++ library that wraps the UPnP stack (libupnp, or its successor libnpupnp) with a higher-level API. A C++ program uses it to discover UPnP devices on the network, read their parsed descriptions, and send commands to and receive status from their services. It ships predefined classes for UPnP AV RenderingControl and AVTransport and for many OpenHome audio services, and it has a generic string-based interface for any other service. Inputs are network discovery and SOAP/HTTP traffic; outputs are C++ objects and return values.",
+  "why_it_exists": "The author's framing is that libupnpp gives C++ programs a usable interface to UPnP audio devices, so they do not have to deal with the raw libupnp layer directly. It is the control-point side of the upmpdcli project's tooling.",
+  "how_it_works": "A global device directory (UPnPDeviceDirectory) runs discovery and keeps a list of active devices; you look a device up by friendly name with getDevByFName(). Each device's description XML is parsed into a UPnPDeviceDesc, which you pass to a Device or Service constructor. Service classes marshal arguments into SOAP, make synchronous calls, and parse the reply. Event reporting works by having the control point run an internal HTTP server that services report to after you subscribe via installReporter(); callbacks run on a separate thread.",
+  "commands_seen": [],
+  "install_notes": "No install steps, package names, or build instructions were visible on the reference page or the GitLab project page. The library needs a multithreaded build because the underlying library uses threads. Optional libupnp debug logging depends on whether UPNP_HAVE_DEBUG is enabled in upnpconfig.h. Consult the framagit repository for build details, which were not read.",
+  "standout": "The 'Pythonic quacks like a duck' approach is unusual: device classes do not verify device type, and callers build an a-la-carte object from whatever services exist. It also offers a string-based TypedService interface that works from the device's own service description, so you can call actions that have no hand-written wrapper.",
+  "status": "Unknown, leaning quiet. The reference page says 'Last updated 2021-01-12', and the GitLab page shows a creation date of March 09, 2020 but no recent release or commit date. The project's own README-like text points at a libnpupnp successor, which implies later activity elsewhere that was not checked.",
+  "caveats": "The old libupnp base supports only one IP interface; libnpupnp supports multiple IPv4 interfaces but only a single IPv6 interface. Most methods are blocking, so parallelism needs your own threads. Event callbacks come from a separate thread and need synchronization. Embedded devices are described by the author as poorly supported by common control points. The license is GNU LGPLv2.1. The reference doc is the only documentation read; it has no install or usage walkthrough.",
+  "quotes": [
+   "Libupnpp is a C++ wrapper for libupnp a.k.a Portable UPnP (up to branch 0.17), or its C++ descendant, libnpupnp (versions 0.18 and later).",
+   "In general, the service is the interesting entity, and the wise approach is the Pythonic 'quacks like a duck' one: if a device has the service you need, you can use it.",
+   "Most libupnpp methods are blocking. Multithreading will be needed to achieve parallelism in your program"
+  ],
+  "links": [
+   {
+    "label": "Homepage: libupnpp control point reference",
+    "url": "https://www.lesbonscomptes.com/upmpdcli/libupnpp-refdoc/libupnpp-ctl.html"
+   },
+   {
+    "label": "GitLab project (framagit)",
+    "url": "https://framagit.org/medoc92/libupnpp"
+   }
+  ],
+  "fetch_log": [
+   "https://www.lesbonscomptes.com/upmpdcli/libupnpp-refdoc/libupnpp-ctl.html - loaded (reference doc, not a README; last updated 2021-01-12)",
+   "https://framagit.org/medoc92/libupnpp - loaded (GitLab project page; short description, LGPLv2.1, created March 09, 2020; no README body)"
+  ]
+ }
+}

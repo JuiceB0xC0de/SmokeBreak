@@ -1,0 +1,103 @@
+{
+ "name": "iccdev",
+ "desc": "Developer tools for interacting with and manipulating ICC profiles",
+ "homepage": "https://github.com/InternationalColorConsortium/iccDEV",
+ "installs_365d": 432,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "visual",
+  "library"
+ ],
+ "why": "ICC colour profile tools open a door into how colour is described and transformed across devices, a niche but real window into file formats.",
+ "brief": {
+  "what_it_is": "iccDEV is a set of command-line tools, C/C++ libraries, and bindings for reading, validating, converting, and applying ICC colour profiles. The Homebrew formula exposes 20 executables, including iccDumpProfile (dump and validate a profile), iccToJson/iccFromJson and iccToXml/iccFromXml (convert between binary ICC and editable text), iccApplyNamedCmm and iccApplyProfiles (run colour values or TIFF images through profile chains), iccRoundTrip and iccPawgReport (assessment), and iccDumpProfileGui (a graphical viewer). Inputs are ICC profiles (including ICC iccMAX profiles), text colour data, TIFF/PNG/JPEG images, and .cube LUTs; outputs are text, JSON or XML, transformed colour values, converted images, or DeviceLink profiles. It is also packaged as a Python module (iccdev on PyPI), a MATLAB package, a WebAssembly npm package, a Docker image, and an MCP server for AI assistants.",
+  "why_it_exists": "The ICC, the body that promotes open, vendor-neutral, cross-platform colour management, publishes this as its reference-style open source toolkit for the ICC profile format and the iccMAX profile specification. The README says the project was formerly known as DemoIccMAX.",
+  "how_it_works": "The tools are built on shared libraries (IccProfLib and related code) that parse and write profile tags, then apply profile chains through a CMM (colour management module) using a chosen rendering intent. The npm package is the same command-line tools compiled to WebAssembly: each tool is a module that is called with callMain() on files written into an in-memory file system. The Python and MATLAB packages wrap the same libraries in-process, or call the command-line tools for JSON, XML and dump helpers.",
+  "commands_seen": [
+   {
+    "cmd": "brew install iccdev",
+    "context": "Homebrew install of the tagged release; puts the tools on PATH but does not include the sample profiles."
+   },
+   {
+    "cmd": "npm install iccdev",
+    "context": "Installs the WebAssembly build of the command-line tools for Node.js 16 or newer."
+   },
+   {
+    "cmd": "docker pull ghcr.io/internationalcolorconsortium/iccdev:latest",
+    "context": "Pulls the unified container image that carries the tools, the MCP server and the sample profiles under Testing/."
+   },
+   {
+    "cmd": "iccDumpProfile sRGB_v4_ICC_preference.icc",
+    "context": "Prints the contents of the sample sRGB profile; the README's first example."
+   },
+   {
+    "cmd": "iccDumpProfile -v sRGB_v4_ICC_preference.icc",
+    "context": "Same dump with a Validation Report appended at the end."
+   },
+   {
+    "cmd": "iccToJson   sRGB_v4_ICC_preference.icc srgb.json",
+    "context": "Converts the binary profile to editable JSON; iccFromJson converts it back to a binary ICC file."
+   },
+   {
+    "cmd": "iccApplyNamedCmm ApplyDataFiles/rgbFloat.txt 0 1 sRGB_v4_ICC_preference.icc 1",
+    "context": "Applies the sRGB profile to a text file of RGB values, outputting Lab, with tetrahedral interpolation and relative colorimetric intent."
+   },
+   {
+    "cmd": "iccRoundTrip sRGB_v4_ICC_preference.icc",
+    "context": "Reports round-trip Delta E statistics for the profile."
+   },
+   {
+    "cmd": "iccPawgReport sRGB_v4_ICC_preference.icc",
+    "context": "Prints the ICC Profile Assessment Working Group checklist covering security, conformance and quality; add --json for machine-readable output."
+   },
+   {
+    "cmd": "iccDumpProfileGui sRGB_v4_ICC_preference.icc",
+    "context": "Opens the read-only graphical profile viewer, optionally with a named profile."
+   },
+   {
+    "cmd": "python -m pip install \"iccdev[numpy]\"",
+    "context": "Installs the Python bindings with the optional NumPy extra from PyPI."
+   },
+   {
+    "cmd": "iccPawgReport --json Testing/sRGB_v4_ICC_preference.icc",
+    "context": "Emits the PAWG assessment as machine-readable JSON, with unrounded round-trip metrics for Q1."
+   }
+  ],
+  "install_notes": "Release bundles for Windows x64, Linux x86_64 and macOS are on the latest release page; unzip and run (Windows: path.bat; Linux/macOS: source ./path.sh so the script puts the tools on PATH). The Linux bundle links against the system libraries of the Ubuntu release it was built on, so on other distributions the README suggests Docker or Homebrew instead. Debian/RPM runtime packages exist for Linux x86_64, but they contain no sample profiles and no GUI. The Python wheel covers CPython 3.9-3.13 and has no source distribution; if no wheel fits, building from the repository needs a C++17 compiler. Python helpers like icc_to_json need the command-line tools on PATH or ICCDEV_TOOLS_DIR set. MATLAB needs a release bundle (or a build) and works with prebuilt MEX only on Windows x64, Linux x86_64 and Apple Silicon macOS, tested with MATLAB R2023b. The MCP server runs under Docker (no install beyond Docker) or via pip install of iccdev-mcp[rest] pointed at an unzipped tools bundle. Building from source is documented in docs/build.md.",
+  "standout": "Unlike most ICC utilities, which handle the classic v2/v4 profile model, this suite targets the iccMAX profile model too, and it ships the same tool set as a CLI, a Python and MATLAB library, a WebAssembly package, and an MCP server for AI assistants. A round-trip plus PAWG assessment report is built in, so checking a profile's quality doesn't need a separate tool.",
+  "status": "Appears maintained, though I did not see a last-release date or commit date in the pages I read. Evidence: the README describes a rolling 'latest build' release published from master, the docs reference specific issue numbers and CI workflows, and the distribution spans PyPI, npm, Homebrew and GHCR. Treat 'maintained' as an inference from that, not a verified date.",
+  "caveats": "The README says binaries are attached to a rolling latest build rather than to version tags, so pinning needs the release-notes commit. The Docker image is large and slower because its tools are sanitizer-instrumented builds, and it has no display, so the GUI is absent there. Prebuilt MATLAB MEX is limited to three platforms; Intel macOS, Linux ARM64 and GNU Octave need a source build. The npm package is Node.js only with no browser build. Licence is BSD 3-Clause; the README says ICC membership is encouraged for commercial use. The brew caveats field was empty. The scout_notes line describes the project only in general terms and is not a source for any specific claim.",
+  "quotes": [
+   "You do not need to build iccDEV to use it.",
+   "The purpose of the International Color Consortium (ICC) is to promote the use and adoption of open, vendor-neutral, cross-platform color management systems.",
+   "The viewer is read-only. To change a profile, convert it with iccToJson or iccToXml, edit the text, and convert it back."
+  ],
+  "links": [
+   {
+    "label": "iccDEV repository (homepage)",
+    "url": "https://github.com/InternationalColorConsortium/iccDEV"
+   },
+   {
+    "label": "Using iccDEV guide",
+    "url": "https://github.com/InternationalColorConsortium/iccDEV/blob/master/docs/using-iccdev.md"
+   },
+   {
+    "label": "CLI tool reference",
+    "url": "https://github.com/InternationalColorConsortium/iccDEV/blob/master/docs/tools-cli-reference.md"
+   },
+   {
+    "label": "Latest release page",
+    "url": "https://github.com/InternationalColorConsortium/iccDEV/releases/latest"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/InternationalColorConsortium/iccDEV (homepage, worked; returned README)",
+   "https://github.com/InternationalColorConsortium/iccDEV/blob/master/docs/using-iccdev.md (worked; full guide text returned inside GitHub page chrome)",
+   "https://github.com/InternationalColorConsortium/iccDEV/blob/master/docs/tools-cli-reference.md (worked; full reference returned inside GitHub page chrome)"
+  ]
+ }
+}

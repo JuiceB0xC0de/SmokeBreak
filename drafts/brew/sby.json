@@ -1,0 +1,134 @@
+{
+ "name": "sby",
+ "desc": "Front-end for Yosys-based formal verification flows",
+ "homepage": "https://symbiyosys.readthedocs.io/en/latest/",
+ "installs_365d": 340,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "library"
+ ],
+ "why": "Formal hardware verification front-end for Yosys, a real and rarely seen corner of proof-based circuit checking.",
+ "brief": {
+  "what_it_is": "SymbiYosys (sby) is a front-end driver program for Yosys-based formal hardware verification flows. You give it a .sby file that defines one or more verification tasks, and it runs Yosys to prepare the hardware design and then hands it to solver engines. It covers bounded and unbounded checking of safety properties (assertions), generating test benches from cover statements, and liveness properties. Its output is a PASS or FAIL per task, plus counterexample traces (VCD, a Verilog testbench, and a constraints file) when a property fails.",
+  "why_it_exists": "The docs describe sby as the driver that runs Yosys-based formal verification flows for hardware designs, so the user does not have to assemble the Yosys steps and solvers by hand. The README points to YosysHQ's documentation for how to use it and says it is licensed under ISC.",
+  "how_it_works": "A .sby file is organised into sections (tasks, options, engines, script, files), and each task names its own engine and script steps. sby runs the Yosys commands in the script section (for example read -formal, hierarchy -check, prep) and passes the result to an engine such as smtbmc with boolector, which checks the properties. When a check fails, the engine writes the counterexample trace to engine_0/trace.vcd, a trace_tb.v testbench, and a trace.smtc file.",
+  "commands_seen": [
+   {
+    "cmd": "sby fifo.sby",
+    "context": "Runs the default tasks in the fifo.sby file (basic and cover, marked with the :default tag) on the FIFO tutorial design."
+   },
+   {
+    "cmd": "sby -f fifo.sby nofullskip",
+    "context": "Runs only the nofullskip task, which is meant to fail, and uses -f to overwrite the previous output directory."
+   },
+   {
+    "cmd": "sby fifo.sby cover",
+    "context": "Runs only the cover task to check that the w_underfill cover statement can be reached."
+   },
+   {
+    "cmd": "gtkwave fifo_nofullskip/engine_0/trace.vcd noskip.gtkw",
+    "context": "Opens the failing counterexample VCD in GTKWave using the provided noskip.gtkw save file."
+   },
+   {
+    "cmd": "grep \"w_underfill\" fifo_cover/logfile.txt -A 1",
+    "context": "Searches the cover task's log to find which trace file reached the w_underfill cover statement."
+   }
+  ],
+  "install_notes": "The GitHub README recommends installing the binary suite rather than sby alone, because it bundles all required dependencies and supported solvers. Options are the free OSS CAD Suite (github.com/YosysHQ/oss-cad-suite-build releases, with install instructions in that repo) or the commercial Tabby CAD Suite, which requires contacting YosysHQ for an evaluation license and download link. The docs also have an 'Installing from source' page with prerequisites (Yices 2 is listed as recommended); I did not read it. The tutorial assumes sby and boolector are installed and suggests GTKWave as a VCD viewer. No hardware or account is needed for the OSS route.",
+  "standout": "The whole flow is driven by one declarative .sby file, which can hold several named verification tasks, such as a bounded check, a deliberately failing check, and a cover run. Failing checks produce a waveform and a standalone testbench from the counterexample without extra work. The docs also teach through a worked FIFO example that uses an intentionally broken variant, so the failure is part of the lesson.",
+  "status": "unknown. The docs site appears current, and the README is short and points to YosysHQ-hosted documentation, but I saw no release date, last-commit date, or version number in the pages I fetched.",
+  "caveats": "Full SystemVerilog Assertion (SVA) support and the industry-grade SystemVerilog and VHDL parsers are available only with the commercial Tabby CAD Suite evaluation license, per the README. The Verific frontend requires Tabby, which the docs say is not the same as having a Verific license. The solvers and other components have their own license terms. The docs' Getting started page has a 404 at its old URL (getting_started.html) on the symbiyosys.readthedocs.io host; the current guide lives at yosyshq.readthedocs.io/projects/sby. The homepage given is the older documentation domain. On Windows, elapsed process time is unavailable in the summary output, per the docs.",
+  "quotes": [
+   "SymbiYosys (sby) is a front-end driver program for Yosys-based formal hardware verification flows.",
+   "The easiest way to use sby is to install the binary software suite, which contains all required dependencies, including all supported solvers.",
+   "The default set of tests should all pass. If this is not the case there may be a problem with the installation of sby or one of its solvers.",
+   "Make sure to get a Tabby CAD Suite Evaluation License for extensive SystemVerilog Assertion (SVA) support, as well as industry-grade SystemVerilog and VHDL parsers!"
+  ],
+  "links": [
+   {
+    "label": "Documentation homepage (as submitted)",
+    "url": "https://symbiyosys.readthedocs.io/en/latest/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/YosysHQ/sby"
+   },
+   {
+    "label": "Getting started tutorial (FIFO example)",
+    "url": "https://yosyshq.readthedocs.io/projects/sby/en/latest/quickstart.html"
+   },
+   {
+    "label": "OSS CAD Suite build",
+    "url": "https://github.com/YosysHQ/oss-cad-suite-build"
+   }
+  ],
+  "fetch_log": [
+   "https://symbiyosys.readthedocs.io/en/latest/ : worked, returned the docs index page (contents and sections, no commands)",
+   "https://github.com/YosysHQ/sby : worked, returned the README (short, points to the YosysHQ docs and the CAD suites)",
+   "https://symbiyosys.readthedocs.io/en/latest/getting_started.html : failed, HTTP 404 (guessed URL, not linked from homepage)",
+   "https://yosyshq.readthedocs.io/projects/sby/en/latest/quickstart.html : worked, returned the Getting started tutorial with the commands listed in commands_seen"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "SymbiYosys opens a compelling rabbit hole: proving hardware properties and exploring counterexamples as waveforms, with a declarative workflow for multiple verification tasks."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "SymbiYosys (sby)",
+  "tldr": "A driver for formal hardware verification: describe a circuit's properties in one file and sby either proves them or hands back a waveform showing how they break.",
+  "deeper_look": "SymbiYosys, run as `sby`, is a front-end for Yosys-based formal verification flows. You write a `.sby` file with sections for tasks, options, engines, script and files. sby runs the Yosys steps in the script section (for example `read -formal`, `hierarchy -check`, `prep`) and passes the result to a solver engine such as smtbmc with boolector. Each task ends in PASS or FAIL.\n\nThe idea underneath is that testing and proving are different things. A simulation shows that a circuit behaved on the inputs you tried. Formal verification asks a solver whether any input sequence can violate an assertion. sby supports bounded and unbounded checks of safety properties, liveness properties, and cover statements, which ask the solver to find a way to reach a state you care about and generate a test bench from it.\n\nWhen a check fails, the output is concrete. The engine writes a counterexample trace as a VCD waveform, a standalone Verilog testbench, and a constraints file. The docs teach this with a worked FIFO example that includes a deliberately broken variant, so you see a failure and read the trace as part of the lesson.\n\nA single `.sby` file can hold several named tasks, such as a bounded check, a check meant to fail, and a cover run, each with its own engine and script steps.",
+  "install": "brew install sby\n# The README recommends the OSS CAD Suite binary bundle instead, since it includes all supported solvers: https://github.com/YosysHQ/oss-cad-suite-build\n# The tutorial also assumes boolector is installed, and suggests GTKWave to view waveforms. No hardware or account is needed.",
+  "try_this": [
+   {
+    "cmd": "sby fifo.sby",
+    "what_happens": "Runs the default tasks (basic and cover) on the tutorial FIFO design. Both should pass; if not, the docs suspect the installation or a solver."
+   },
+   {
+    "cmd": "sby -f fifo.sby nofullskip",
+    "what_happens": "Runs the task that is meant to fail, overwriting the previous output directory, and writes a counterexample trace."
+   },
+   {
+    "cmd": "gtkwave fifo_nofullskip/engine_0/trace.vcd noskip.gtkw",
+    "what_happens": "Opens the failing trace in GTKWave with the tutorial's save file so you can see how the property broke."
+   }
+  ],
+  "whats_unique": "One declarative file drives bounded checks, deliberately failing checks, and cover runs, and every failure comes back as a waveform and a testbench. The documentation teaches through a broken design on purpose.",
+  "caveats": "Full SystemVerilog Assertion support and the industry-grade SystemVerilog and VHDL parsers need the commercial Tabby CAD Suite evaluation license, and the homepage given is the older docs domain, with the current guide at yosyshq.readthedocs.io.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "formal-verification",
+   "hardware",
+   "yosys",
+   "verilog",
+   "proofs"
+  ],
+  "links": [
+   {
+    "label": "Documentation homepage",
+    "url": "https://symbiyosys.readthedocs.io/en/latest/"
+   },
+   {
+    "label": "Getting started tutorial (FIFO example)",
+    "url": "https://yosyshq.readthedocs.io/projects/sby/en/latest/quickstart.html"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/YosysHQ/sby"
+   },
+   {
+    "label": "OSS CAD Suite build",
+    "url": "https://github.com/YosysHQ/oss-cad-suite-build"
+   }
+  ]
+ }
+}

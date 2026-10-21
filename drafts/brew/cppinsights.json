@@ -1,0 +1,132 @@
+{
+ "name": "cppinsights",
+ "desc": "See your source code with the eyes of a compiler",
+ "homepage": "https://cppinsights.io/",
+ "installs_365d": 64,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "language",
+  "visual"
+ ],
+ "why": "Shows what the compiler actually does to your C++ code, templates and lambdas expanded, a genuinely revealing way to see your source.",
+ "brief": {
+  "what_it_is": "C++ Insights is a Clang-based command-line tool, also served as a web page at cppinsights.io, that takes a C++ source file and rewrites it as the compiler's internal view of the same code. The README calls this a source-to-source transformation: the output is C++ rather than assembly. Its examples show compiler-generated special member functions, lambdas, range-based for-loops, structured bindings, the implicit upcast from Derived to Base, and the deduced types behind auto and decltype. The homepage only exposes Source, Insight and Console panes, and the README says the goal is compilable output, though that is not always possible. The homepage footer credits Andreas Fertig and says the site is powered by Flask and CodeMirror.",
+  "why_it_exists": "The author found that C++ AST dumps and Compiler Explorer assembly are not in the language he writes, and that showing a student an AST and saying 'this is all there was' was unsatisfying. He wanted a view of the compiler's work expressed in C++ itself.",
+  "how_it_works": "It is a Clang-based tool, so it parses with Clang and uses Clang's AST to decide what to rewrite. The transformation is then printed back out as C++ source. The README warns that results are only as good as Clang's understanding of the AST, and that output is not guaranteed to compile.",
+  "commands_seen": [
+   {
+    "cmd": "insights <YOUR_CPP_FILE> -- -std=c++17",
+    "context": "Basic usage: run the insights binary on a source file, with Clang options passed after the -- separator."
+   },
+   {
+    "cmd": "brew install cppinsights",
+    "context": "Homebrew install, which the README says is for macOS."
+   },
+   {
+    "cmd": "cmake -G\"Ninja\" ../cppinsights",
+    "context": "Out-of-tree build configuration using Ninja, run from a build folder beside the cloned source."
+   },
+   {
+    "cmd": "ninja",
+    "context": "Builds the project after cmake configuration; the resulting insights binary lands in the build folder."
+   },
+   {
+    "cmd": "cmake -DCMAKE_OSX_ARCHITECTURES=arm64 ../cppinsights",
+    "context": "Configuration step the README recommends for building for ARM on macOS."
+   },
+   {
+    "cmd": "./scripts/getinclude.py",
+    "context": "Collects the system include paths from a compiler (g++ by default) so they can be passed to insights, since the binary hard-codes its own."
+   },
+   {
+    "cmd": "insights <YOUR_CPP_FILE> -- -std=c++17 `./scripts/getinclude.py`",
+    "context": "Usage with the include paths from getinclude.py substituted in via backticks."
+   },
+   {
+    "cmd": "./cppinsights Insights.cpp -- --gcc-toolchain=${GCC_11_2_0_INSTALL_PATH} -std=c++20",
+    "context": "Pointing Clang at a custom-built GCC's libstdc++ location when the GCC is not in the default system path."
+   },
+   {
+    "cmd": "cmake --install build",
+    "context": "Installs the binary plus shell completion scripts for bash, zsh and fish when building from source."
+   }
+  ],
+  "install_notes": "Homebrew covers macOS. Building outside the Clang tree needs a Clang installation on the search path, plus CMake and Ninja in the example. Inside the Clang tree, LLVM_EXTERNAL_PROJECTS is the suggested route. Useful CMake options include INSIGHTS_STRIP (default ON), INSIGHTS_STATIC, INSIGHTS_COVERAGE, INSIGHTS_USE_LIBCPP and DEBUG. Arch Linux users need extra flags: -DINSIGHTS_USE_SYSTEM_INCLUDES=off -DCLANG_LINK_CLANG_DYLIB=on -DLLVM_LINK_LLVM_DYLIB=on. Windows has its own Readme_Windows.md. For system include paths, run scripts/getinclude.py. There is also a Docker container maintained as a separate GitHub project, plus Vim, Neovim and VS Code plugins. Eclipse CDT/Cevelop project generation is documented too.",
+  "standout": "It shows the compiler's transformations as ordinary C++ that a student can read, such as special member functions shown as commented-out defaults and the implicit upcast written as static_cast, instead of as assembly or an AST dump. The homepage makes it usable with no install at all.",
+  "status": "unknown. The GitHub page shows 1,165 commits, about 4.7k stars, 272 forks and an MIT license, and the README mentions ongoing C++20 work and tracking Clang releases. I could not see a last-commit or release date in what I fetched, so I cannot confirm recent activity.",
+  "caveats": "Results depend on Clang's AST, and the author says he does not get everything right. The output is not always compilable. C++20 support was described as still in progress. The website often lags the latest Clang by a few months. System include paths are hard-coded into the binary, which makes custom toolchains fiddly. Building needs a Clang installation, and Windows and Arch need special handling. The Homebrew formula is described as macOS-focused. The homepage text I got was only the form labels, with no example content visible.",
+  "quotes": [
+   "C++ Insights is a Clang-based tool that does a source-to-source transformation.",
+   "It's about the magic the compiler does for us to make things work.",
+   "I do not claim to get all the things right.",
+   "Please remember that C++ Insights is based on Clang and its understanding of the AST."
+  ],
+  "links": [
+   {
+    "label": "Homepage (online tool)",
+    "url": "https://cppinsights.io/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/andreasfertig/cppinsights"
+   }
+  ],
+  "fetch_log": [
+   "https://cppinsights.io/ - loaded, but returned only the form labels (Source, Insight, Console) and the footer, with no example output or description",
+   "https://github.com/andreasfertig/cppinsights - loaded; README returned in full, plus repo metadata (MIT, 4.7k stars, 1,165 commits)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It makes hidden C++ compiler transformations visible as readable C++ source, a distinctive and genuinely revealing way to explore the language."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "C++ Insights",
+  "tldr": "Rewrites your C++ the way Clang sees it, with lambdas, implicit conversions and deduced types spelled out as ordinary C++ you can read.",
+  "deeper_look": "C++ Insights is a Clang-based tool that does a source-to-source transformation. You give it a C++ file and it prints another C++ file, one where the work the compiler normally does silently is written out. The README's examples include compiler-generated special member functions, lambdas, range-based for-loops, structured bindings, the implicit upcast from Derived to Base, and the types hidden behind auto and decltype.\n\nThe author, Andreas Fertig, built it because AST dumps and assembly listings are not in the language he writes. Showing a student an AST and saying \"this is all there was\" was unsatisfying. So the output stays in C++: a defaulted special member function appears as a commented-out default, and an implicit upcast appears as a static_cast.\n\nThe idea underneath is that much of C++ is things the compiler does on your behalf. In the project's words: \"It's about the magic the compiler does for us to make things work.\" A lambda turns out to be a small class with an operator(). A range-based for turns out to be iterator calls. Seeing that written out makes the rules easier to remember than reading the standard.\n\nThe tool parses with Clang and uses Clang's AST to decide what to rewrite, so it is only as accurate as Clang's understanding. The author says plainly: \"I do not claim to get all the things right.\" The output is meant to compile but is not guaranteed to. There is also a web version at cppinsights.io with Source, Insight and Console panes, so you can try it without installing anything.",
+  "install": "brew install cppinsights\n# pulls in llvm@21 as a dependency. The README describes the Homebrew route as macOS-focused; elsewhere you build from source with CMake, Ninja and a Clang installation, or use the web version.",
+  "try_this": [
+   {
+    "cmd": "insights <YOUR_CPP_FILE> -- -std=c++17",
+    "what_happens": "Prints your file rewritten with the compiler's hidden work made explicit. Clang options go after the -- separator."
+   },
+   {
+    "cmd": "insights <YOUR_CPP_FILE> -- -std=c++17 `./scripts/getinclude.py`",
+    "what_happens": "Does the same but passes in system include paths collected from your compiler, for when the hard-coded ones don't match your setup. The script is in the source repository."
+   },
+   {
+    "cmd": "insights --help",
+    "what_happens": "Lists the available options."
+   }
+  ],
+  "whats_unique": "The output is C++ rather than an AST dump or assembly, so you read the compiler's work in the language you wrote. It is also available as a web page with no install.",
+  "caveats": "Output depends on Clang's AST and is not always compilable, C++20 support was described as still in progress, and I could not confirm recent project activity.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "c++",
+   "clang",
+   "compilers",
+   "source-to-source",
+   "learning"
+  ],
+  "links": [
+   {
+    "label": "Homepage (online tool)",
+    "url": "https://cppinsights.io/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/andreasfertig/cppinsights"
+   }
+  ]
+ }
+}

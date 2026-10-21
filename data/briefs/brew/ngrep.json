@@ -1,0 +1,90 @@
+{
+ "name": "ngrep",
+ "desc": "Network grep",
+ "homepage": "https://github.com/jpr5/ngrep",
+ "installs_365d": 2653,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "Greps live network traffic by pattern, a direct window into the packets your machine sends and receives all day.",
+ "brief": {
+  "what_it_is": "ngrep is a command-line packet sniffer that works like GNU grep applied to network traffic. You give it a regular expression (or a hexadecimal pattern with -X) and an optional BPF filter, and it captures live packets through libpcap or reads a saved pcap file. It prints the packets whose payloads match, with source and destination addresses, and it can also write matched traffic to a dump file with -O. It understands IPv4/6, TCP, UDP, ICMPv4/6, IGMP and raw packets.",
+  "why_it_exists": "The author says ngrep was originally built to debug plaintext protocols such as HTTP, IMAP, DNS and SIP, to analyze suspicious traffic such as malware communications, and to search and reprocess pcap dump files for specific data patterns. The README also notes it could be used to collect plaintext credentials, and adds that 'Like all useful tools, it can be used for good and for bad.'",
+  "how_it_works": "It uses libpcap to capture packets from one or more interfaces, and BPF filter syntax (the same kind tcpdump uses) to limit what is captured. Each packet payload is then matched against the given extended regex or hex expression, and matches are printed with addresses and flags. The README says PCRE2 is the default on macOS/Homebrew and Windows builds, while GNU regex is the other option.",
+  "commands_seen": [
+   {
+    "cmd": "docker pull ghcr.io/jpr5/ngrep:latest",
+    "context": "README's first suggested install route: pulls the official container image from GitHub Container Registry."
+   },
+   {
+    "cmd": "docker run --rm --net=host --cap-add=NET_RAW ghcr.io/jpr5/ngrep:latest -q 'GET|POST' tcp port 80",
+    "context": "README example: runs ngrep in Docker with host networking and the NET_RAW capability, quietly matching GET or POST on TCP port 80."
+   },
+   {
+    "cmd": "ngrep -d any port 25",
+    "context": "EXAMPLES.md: monitors all traffic on source or destination port 25 (SMTP) across every interface, using 'any' as the device."
+   },
+   {
+    "cmd": "ngrep -wi -d any 'user|pass' port 21",
+    "context": "EXAMPLES.md: watches FTP traffic on port 21 for the words 'user' or 'pass', case-insensitively and matched as whole words."
+   },
+   {
+    "cmd": "ngrep -W byline port 80",
+    "context": "EXAMPLES.md: HTTP sniffing with -W byline so embedded line feeds are respected and headers are easier to read."
+   },
+   {
+    "cmd": "ngrep -O /tmp/dns.dump -d any -T port domain",
+    "context": "EXAMPLES.md: captures DNS traffic to a dump file with -O while printing time differences with -T."
+   },
+   {
+    "cmd": "ngrep -xX '0xc5d5e5f55666768696a6b6c6d6e6' port 80",
+    "context": "EXAMPLES.md: -X treats the match as a hex pattern and -x prints matched packets in hex, for finding binary content in web traffic."
+   },
+   {
+    "cmd": "ngrep -r -d docker0 -W byline port 5432",
+    "context": "EXAMPLES.md: with -r, container names replace raw IPs in the output, shown here on the docker0 bridge watching Postgres traffic."
+   },
+   {
+    "cmd": "ngrep -r -d br-a1b2c3 -W byline -q 'GET|POST' port 80",
+    "context": "EXAMPLES.md: shows HTTP requests on a Docker Compose bridge network with container names in place of IPs."
+   },
+   {
+    "cmd": "ngrep -r -d docker0 -q '' port 53",
+    "context": "EXAMPLES.md: watches DNS lookups between containers, using an empty match expression to match every packet."
+   }
+  ],
+  "install_notes": "Easiest route per the README is Docker: docker pull ghcr.io/jpr5/ngrep:latest, then run with --net=host and --cap-add=NET_RAW. Pre-built binaries are on the GitHub Releases page. Building from source is described in an INSTALL file, which I did not open. Container name resolution (-r) is compiled in by default and can be turned off at build time with --disable-container-resolution. For -r, if the Docker or Podman socket is reachable, ngrep uses the Events API; otherwise it falls back to CLI polling with a 30-second cache. The README does not spell out a sudo or privilege requirement for plain host use.",
+  "standout": "The -r flag resolves Docker and Podman container IPs to container names in live output, so a capture reads as api_gateway talking to postgres_db rather than a bare 172.18.x address. It also keeps the classic grep-style pattern plus BPF filter model, so the same expression works on a live interface or a saved pcap.",
+  "status": "Maintained, by the evidence available. The README header reads 'ngrep 1.49.0 (2.7.2026)' with a 'What's New' list that includes recent Windows ARM64 and PCRE2 work, and there is a build badge pointing at GitHub Actions. I did not see a commit date. The date format in the header is ambiguous, so I cannot give an exact release date.",
+  "caveats": "The 'Working Platforms' list is a historical one, from Linux 2.0 and Solaris 2.5.1 to Windows 10, and the README points to the autobuild matrix for current support. Regex library choice changes the license: GNU regex means GPL, PCRE2 means BSD-style, per the README. The Docker example needs host networking and NET_RAW. Container filtering still uses raw IPs, so you look up a container's IP with docker inspect before filtering. Without a Docker or Podman socket (rootless Podman, permission issues), -r falls back to polling. The author also asks distribution maintainers to CC him on bug reports and patches, because he often finds out late.",
+  "quotes": [
+   "ngrep is like GNU grep applied to the network layer.",
+   "Like all useful tools, it can be used for good and for bad.",
+   "at the end of the day it's my code, so it's my responsibility, but I can't be everywhere to see everything."
+  ],
+  "links": [
+   {
+    "label": "EXAMPLES.md (usage walkthroughs)",
+    "url": "https://github.com/jpr5/ngrep/blob/master/EXAMPLES.md"
+   },
+   {
+    "label": "DOCKER.md (Docker usage, linked from README)",
+    "url": "https://github.com/jpr5/ngrep/blob/master/DOCKER.md"
+   },
+   {
+    "label": "Releases (binaries)",
+    "url": "https://github.com/jpr5/ngrep/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/jpr5/ngrep (homepage, README returned, worked)",
+   "https://github.com/jpr5/ngrep/blob/master/EXAMPLES.md (worked; GitHub page wrapper is noisy but the examples text is readable)"
+  ]
+ }
+}

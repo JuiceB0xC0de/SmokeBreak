@@ -1,0 +1,97 @@
+{
+ "name": "cyme",
+ "desc": "List system USB buses and devices",
+ "homepage": "https://github.com/tuna-f1sh/cyme",
+ "installs_365d": 1714,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "quick",
+  "needs-hardware",
+  "tui"
+ ],
+ "why": "Lists USB buses and devices with the descriptor trees, a readable door into the USB hardware layer.",
+ "brief": {
+  "what_it_is": "Cyme is a command-line tool that lists the USB buses and devices on the host machine, including full device descriptors. It is described as a cross-platform replacement for lsusb, targeting Linux, macOS and Windows. It takes no input beyond the host's USB hardware and its own config file, and prints a list, a tree, lsusb-style output, or JSON, with filtering, configurable display blocks and coloured or ASCII output. It also has a `cyme watch` subcommand for hotplug events. It can be used as a Rust library as well.",
+  "why_it_exists": "The author, an embedded developer who uses a USB listing tool often, found lsusb's verbose dump too verbose, its tree lacking useful data, and its behaviour poor outside Linux. The project began as a replacement for a barely working lsusb script and as a Rust learning project, and grew into a cross-platform lsusb.",
+  "how_it_works": "The default build uses a pure Rust profiler built on nusb, which reads the system USB tree and device descriptors. On Linux it can also use udev for driver and USB ID lookup. Older or alternative backends are available: libusb, which is what lsusb uses, and macOS system_profiler parsing. The README says the libusb backend uses control messages to gather the same information lsusb does.",
+  "commands_seen": [
+   {
+    "cmd": "brew install cyme",
+    "context": "Installs the Homebrew formula, which also installs a man page, shell completions and the libusb dependency."
+   },
+   {
+    "cmd": "cargo install --locked cyme",
+    "context": "Builds and installs from crates.io with a Rust toolchain present."
+   },
+   {
+    "cmd": "alias lsusb='cyme --lsusb'",
+    "context": "Suggested alias so cyme's lsusb-compatible mode replaces lsusb in the shell."
+   },
+   {
+    "cmd": "cyme --tree",
+    "context": "Lists all devices and buses in a tree with the default display blocks."
+   },
+   {
+    "cmd": "cyme --tree --verbose",
+    "context": "Tree view that also shows configurations; more -v levels go further down the descriptor tree."
+   },
+   {
+    "cmd": "cyme --tree -vvv",
+    "context": "Tree view down to interfaces and endpoints, using the short verbose flag."
+   },
+   {
+    "cmd": "cyme --tree --verbose --json > tree.json",
+    "context": "Exports the tree as JSON to a file."
+   },
+   {
+    "cmd": "cyme --from-json tree.json",
+    "context": "Re-displays a saved JSON export as if it were freshly profiled data."
+   },
+   {
+    "cmd": "cyme -d 0x05ac",
+    "context": "Filters to devices from one vendor ID, given in base 16."
+   },
+   {
+    "cmd": "cyme --filter-class hid --filter-exclude name=Keyboard",
+    "context": "Shows HID-class devices while excluding any whose name matches Keyboard."
+   },
+   {
+    "cmd": "cyme --lsusb --verbose",
+    "context": "lsusb-style verbose device dump with full descriptor information."
+   },
+   {
+    "cmd": "cyme --json watch | jq '.buses[] | .devices[]? | select( (.last_event | has(\"connected\")))'",
+    "context": "Streams hotplug events as JSON and filters for newly connected devices."
+   }
+  ],
+  "install_notes": "Pre-compiled binaries from the GitHub releases page use the native backends and need no extra dependencies. Homebrew pulls in libusb. Building from source uses cargo install --locked. On Linux the udev feature is on by default, and the udevlib variant needs libudev-dev. The libusb profiler needs libusb 1.0 (brew install libusb, or sudo apt install libusb-1.0-0-dev). Config is read from cyme.json in $XDG_CONFIG_HOME/cyme or $HOME/.config/cyme on Linux, $HOME/Library/Application Support/cyme on macOS, and {FOLDERID_RoamingAppData}/cyme on Windows, or from a file passed with --config. Icons need a Nerd Font to render; use --encoding utf8 or --icon never otherwise. Arch users can install it with pacman -S cyme.",
+  "standout": "It is an lsusb replacement that also runs on macOS and Windows, with a tree view that goes down to interfaces and endpoints, and a watch mode that lets you edit display settings live and save them to the config. It can also export the tree to JSON and re-import it later as static data. The --mask-serials option is aimed at sharing dumps without exposing serial numbers.",
+  "status": "unknown. The README names 2.0.0 as the current default profiler and the Homebrew and Arch packages are listed, but it gives no release date or last-commit date, and I did not check the releases or commits pages.",
+  "caveats": "On Linux, sudo is needed to read root hub string descriptors and some devices, though the program works without it. Apple VHCI devices such as the T2 chip's cannot be opened, so they are listed without verbose data. The libusb backend does not profile buses on non-Linux systems, which get generic bus information instead. Verbose output and the udev driver info are Linux-specific or depend on feature flags. The README says the project is 'not perfect' and began as a Rust learning project. The README does not state a licence in the parts I read. Contributions must follow the Rust project's LLM usage policy. Docs are a man page at ./doc/cyme.1 and an example config in ./doc.",
+  "quotes": [
+   "A modern cross-platform `lsusb` that attempts to maintain compatibility with, but also add new features.",
+   "As a developer of embedded devices, I use a USB list tool on a frequent basis and developed this to cater to what I believe are the short comings of `lsusb`",
+   "It's not perfect as it started out as a Rust refresher but I had a lot of fun developing it and hope others will find it useful and can contribute."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/tuna-f1sh/cyme"
+   },
+   {
+    "label": "API docs on docs.rs",
+    "url": "https://docs.rs/cyme/latest/cyme/"
+   },
+   {
+    "label": "YouTube demo of the watch subcommand",
+    "url": "https://youtu.be/ohRBrVBRolA"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/tuna-f1sh/cyme: fetched OK, README returned in full. No further fetches; the README was complete enough that I did not follow links."
+  ]
+ }
+}

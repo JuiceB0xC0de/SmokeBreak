@@ -1,0 +1,57 @@
+{
+ "name": "gzrt",
+ "desc": "Gzip recovery toolkit",
+ "homepage": "https://www.urbanophile.com/arenn/coding/gzrt/gzrt.html",
+ "installs_365d": 107,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering"
+ ],
+ "why": "Recovers data from corrupted gzip archives by scanning deflate streams, a good window into how compressed formats actually break.",
+ "brief": {
+  "what_it_is": "gzrecover is a command-line program from the gzip Recovery Toolkit (gzrt) that tries to salvage data from a corrupted .gz file. It reads a damaged gzip archive, either from a named file or from standard input, and skips over bad bytes. It writes whatever it can read to a new file named with a .recovered suffix (any .gz is stripped), or to standard output with -p. The output is not guaranteed to be good, so the author says it must be checked by hand.",
+  "why_it_exists": "The author wrote it after a backup restore failed: bad sectors had corrupted the archive, and gzip stopped about 10% of the way through, so almost everything was lost. The README's framing is that gzip 'craps out' on the first error, and gzrecover is meant to get past bad data and keep what it can.",
+  "how_it_works": "The README does not explain the internal algorithm. It says gzrecover 'attempts to skip over bad data in a gzip archive', that it reports where it finds bad bytes when run with -v, and that it runs slower than gunzip, more so the more corrupt the file. It does not say it scans deflate streams, so that detail comes from the scout note and is unverified here. For tarballs, the workflow is to run gzrecover first and then pass the .recovered output to GNU cpio, since GNU tar cannot handle format errors.",
+  "commands_seen": [
+   {
+    "cmd": "make",
+    "context": "Builds the gzrecover program from the unpacked gzrt source directory. The README says to install by copying the binary manually to a directory of your choice."
+   },
+   {
+    "cmd": "cpio --version",
+    "context": "Suggested way to check whether GNU cpio is installed and at version 2.6 or higher, which is needed only for recovering compressed tar files."
+   },
+   {
+    "cmd": "gzrecover my-corrupted-backup.tar.gz",
+    "context": "Runs recovery on a corrupted gzipped tarball. Per the README's example, it writes my-corrupted-backup.tar.recovered alongside the input."
+   },
+   {
+    "cmd": "cpio -F my-corrupted-backup.tar.recovered -i -v",
+    "context": "Extracts files from the recovered tar stream with GNU cpio, which tolerates format errors that GNU tar rejects. The README's example uses this after gzrecover."
+   }
+  ],
+  "install_notes": "You need zlib, which you may already have; build and install it first if not. Unpack the gzrt sources, cd into the gzrt directory, and run make. There is no make install step: the README says to copy the binary manually to a directory of your choice. For compressed tar archives you also need GNU cpio 2.6 or higher, which the README says is only needed if you don't already have it. The README mentions a 0.8 release (2013-10-03) and a GitHub repository, but the GitHub link's URL was not given on the homepage, so I did not follow it. The brew formula's executable is gzrecover.",
+  "standout": "Rather than trying to decompress the whole stream, it treats a corrupt gzip file as something to scan past its damage and keep what can be read. It pairs with cpio for tarballs because cpio tolerates errors that tar does not, which is a practical recovery chain for backups.",
+  "status": "quiet. The latest release listed is 0.8, dated 2013-10-03, and the copyright line runs 2002-2013. The page shows no commits or releases after that, and I did not check the GitHub repository's activity.",
+  "caveats": "Output is not guaranteed to be valid and the author warns it 'is likely to recover some bad data', so everything must be checked by hand; the bigger the file, the more likely it extracts something. Runtime grows with corruption and can be long, and cpio can produce very verbose errors and run for a long time. The README gives no platform list; the build is a plain make with zlib, and the docs assume a Unix-style shell. The program is GPL-licensed, but the copyright notice also says 'All Rights Reserved' under a separate line. Also, before recovering, check that the file was not transferred by FTP in ASCII mode, which the author says causes 99% of corruption reports.",
+  "quotes": [
+   "gzip craps out 10% of the way through your archive.",
+   "99% of \"corrupted\" gzip archives are caused by transferring the file via FTP in ASCII mode instead of binary mode.",
+   "This program is provided AS IS with absolutely NO WARRANTY.",
+   "Everything should be manually verified."
+  ],
+  "links": [
+   {
+    "label": "gzrt homepage (author's page)",
+    "url": "https://www.urbanophile.com/arenn/coding/gzrt/gzrt.html"
+   }
+  ],
+  "fetch_log": [
+   "https://www.urbanophile.com/arenn/coding/gzrt/gzrt.html: loaded OK; README-style page with usage, install steps, and an example. Did not follow the GitHub repository link, since its URL was not given, and did not fetch the ChangeLog, which was not linked."
+  ]
+ }
+}

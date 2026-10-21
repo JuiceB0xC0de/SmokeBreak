@@ -1,0 +1,113 @@
+{
+ "name": "rumbledb",
+ "desc": "JSONiq and XQuery query engine on Apache Spark",
+ "homepage": "https://rumbledb.org/",
+ "installs_365d": 26,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "library",
+  "afternoon"
+ ],
+ "why": "JSONiq and XQuery running on Spark is an unusual query language world, though heavy and niche.",
+ "brief": {
+  "what_it_is": "RumbleDB is an open-source query engine that runs JSONiq and XQuery on Apache Spark. You write a query in the JSONiq language and point it at nested or messy data such as JSON, JSON Lines, XML, CSV, Parquet, Avro, libSVM, or text, from a local disk, HDFS, S3, or Azure blob storage. Results come out as JSON, XML, CSV, Parquet, YAML, and other formats. It can run on a laptop or scale out across a Spark cluster, including Amazon EMR. The homepage calls version 3.0 'Coast Redwood'.",
+  "why_it_exists": "The README argues that RumbleDB exposes a query language rather than a DataFrame API, for more flexibility and productivity, and because a lot of data simply will not fit in DataFrames. The homepage pitches it as built for 'Big data. Nested data. Beautifully messy data.'",
+  "how_it_works": "Queries are written in JSONiq, a FLWOR-based language for nested data, and run on top of Apache Spark. The homepage says JSON navigation, FLWOR clauses, and downward XML navigation are automatically parallelized across cores or a cluster, and that count and sum-style pushdowns are applied automatically. The README does not describe the internals in more detail.",
+  "commands_seen": [
+   {
+    "cmd": "pip install jsoniq",
+    "context": "Listed on the homepage as the Python installation route ('Installation via pip install jsoniq'). Not shown as a separate code block."
+   }
+  ],
+  "install_notes": "The homepage lists installation via pip (the jsoniq package), Homebrew, Docker, a standalone jar, and a thin jar for use with an existing Spark installation, plus a Java API and an interactive query shell. There is a Jupyter notebook integration, and the README points to a Colab sandbox notebook (RumbleSandbox.ipynb) that can also be run locally. Running on a cluster needs Spark; the homepage says it runs on Amazon EMR (8.x) with data on S3 or HDFS. The homepage says Spark 4.0, 4.1, and 4.2 are supported. PostgreSQL and MongoDB reading is listed as Python-edition only. I saw no account or registration step; the homepage says none is needed.",
+  "standout": "It is a declarative nested-data query language sitting on Spark rather than a DataFrame API, and it accepts both JSONiq and W3C XQuery. The homepage claims 95% W3C compliance. It also bundles RumbleML, which exposes Spark ML estimators and transformers as JSONiq function items, so model training runs inside the query language.",
+  "status": "Appears maintained, but I could not confirm dates. The homepage advertises a current 3.0 release with Spark 4.2 compatibility, and the README points to docs for 'the latest official release'. I saw no release date or last-commit date in either page, so this is an inference from the version and compatibility claims.",
+  "caveats": "The engine is heavy: it runs on Spark, so you need a JVM and Spark for anything beyond a small local query. Some features are Python-edition only (PostgreSQL and MongoDB reading). The homepage's 95% W3C compliance figure is self-reported. The README says the Jupyter introduction to the RumbleDB-specific input formats has not yet been converted to notebooks. The homepage describes the project as niche. The README does not give a licence beyond the homepage's 'Apache 2.0' statement, and the brew formula notes were empty.",
+  "quotes": [
+   "Big data. Nested data. Beautifully messy data.",
+   "RumbleDB exposes a query language rather than a DataFrame API, for more flexibility, more productivity but also because a lot of data simply will not fit in DataFrames.",
+   "You can query it in place from any local file systems or data lakes (Azure blob storage, Amazon S3, HDFS, etc)."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://rumbledb.org/"
+   },
+   {
+    "label": "Documentation (latest official release)",
+    "url": "https://docs.rumbledb.org/"
+   },
+   {
+    "label": "Jupyter sandbox notebook (Colab)",
+    "url": "https://colab.research.google.com/github/RumbleDB/rumble/blob/master/RumbleSandbox.ipynb"
+   },
+   {
+    "label": "Source on GitHub",
+    "url": "https://github.com/RumbleDB/rumble"
+   }
+  ],
+  "fetch_log": [
+   "https://rumbledb.org/ - worked; marketing homepage with feature list and the forests.jq JSONiq example",
+   "https://github.com/RumbleDB/rumble - worked; README (guessed from the homepage's 'Explore the source' link, since the page text did not include hrefs)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "RumbleDB brings the unfamiliar FLWOR-style JSONiq and XQuery languages to nested data across Spark clusters, making big-data querying feel like exploring a different computational model."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "RumbleDB",
+  "tldr": "A query engine that runs JSONiq and XQuery over messy nested data, on a laptop or scaled out across a Spark cluster.",
+  "deeper_look": "RumbleDB takes a query written in JSONiq, a language built around FLWOR clauses (for, let, where, order by, return) for nested data, and runs it on Apache Spark. You point it at JSON, JSON Lines, XML, CSV, Parquet, Avro, libSVM or plain text, on local disk, HDFS, S3 or Azure blob storage. Results can come back as JSON, XML, CSV, Parquet, YAML and other formats. It also accepts W3C XQuery.\n\nThe stated reason it exists is a disagreement with the DataFrame approach. In the README's words: \"RumbleDB exposes a query language rather than a DataFrame API, for more flexibility, more productivity but also because a lot of data simply will not fit in DataFrames.\" Data with missing fields, varying shapes and deep nesting does not fit a rigid table, and a declarative language can describe it directly.\n\nThe homepage says JSON navigation, FLWOR clauses and downward XML navigation are parallelized automatically across cores or a cluster, with count and sum-style pushdowns applied for you. You write the query, and Spark does the distribution. It also bundles RumbleML, which exposes Spark ML estimators and transformers as JSONiq function items, so model training can happen inside the query language.\n\nThe door here is the idea of a query language for trees instead of tables. XQuery and JSONiq come from the document-and-semi-structured-data world, and RumbleDB connects that tradition to big-data infrastructure.",
+  "install": "brew install rumbledb\n# Needs a JVM and Spark; the formula pulls in apache-spark and openjdk@21.\n# Other routes listed on the homepage: pip install jsoniq, Docker, a standalone jar, or a thin jar for an existing Spark install.",
+  "try_this": [
+   {
+    "cmd": "rumbledb --help",
+    "what_happens": "Lists the command-line options of the engine."
+   },
+   {
+    "cmd": "pip install jsoniq",
+    "what_happens": "Installs the Python edition, which the homepage lists as an installation route and which can be used from Jupyter."
+   }
+  ],
+  "whats_unique": "It is a declarative nested-data query language on top of Spark rather than a DataFrame API, and it speaks both JSONiq and W3C XQuery. It also runs Spark ML inside the query language.",
+  "caveats": "It is heavy, since it needs a JVM and Spark, and the homepage's 95% W3C compliance figure is self-reported; it appears maintained, but I could not confirm release dates.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "jsoniq",
+   "xquery",
+   "spark",
+   "query-language",
+   "json",
+   "xml",
+   "java"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://rumbledb.org/"
+   },
+   {
+    "label": "Documentation (latest official release)",
+    "url": "https://docs.rumbledb.org/"
+   },
+   {
+    "label": "Jupyter sandbox notebook (Colab)",
+    "url": "https://colab.research.google.com/github/RumbleDB/rumble/blob/master/RumbleSandbox.ipynb"
+   },
+   {
+    "label": "Source on GitHub",
+    "url": "https://github.com/RumbleDB/rumble"
+   }
+  ]
+ }
+}

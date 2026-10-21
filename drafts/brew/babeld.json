@@ -1,0 +1,136 @@
+{
+ "name": "babeld",
+ "desc": "Loop-avoiding distance-vector routing protocol",
+ "homepage": "https://www.irif.fr/~jch/software/babel/",
+ "installs_365d": 26,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "afternoon",
+  "library"
+ ],
+ "why": "A loop-avoiding distance-vector routing daemon, a door into how mesh and home routers quietly find paths to each other.",
+ "brief": {
+  "what_it_is": "Babel is a loop-avoiding distance-vector routing protocol for IPv6 and IPv4, implemented in the reference daemon babeld. You start babeld on each node and list the network interfaces it should take part on, for example babeld eth1. The nodes then exchange routing updates with each other and build routes to one another's addresses. It is designed for both wired networks and wireless mesh networks, and it is an IETF standard (RFC 8966).",
+  "why_it_exists": "The homepage says Babel is based on ideas from DSDV, AODV and Cisco's EIGRP, but is designed to work well not only in wired networks but also in wireless mesh networks, and has been extended for overlay networks. The GitHub README describes it as roughly based on HSDV and AODV, with provisions for link cost estimation and redistribution of routes from other routing protocols.",
+  "how_it_works": "When babeld detects a wired link, it enables optimisations that make it as efficient as traditional routing protocols. When it detects a wireless link, it disables those optimisations and uses a packet-loss metric designed for 802.11 WiFi (the ETX metric), which slows convergence but keeps radio link quirks from breaking routing. Babel uses triggered updates and explicit requests for routing information, and a single update packet can carry both IPv6 and IPv4 routes.",
+  "commands_seen": [
+   {
+    "cmd": "git clone git://github.com/jech/babeld.git",
+    "context": "Homepage's way to fetch the latest, possibly unstable, sources with git."
+   },
+   {
+    "cmd": "git clone https://github.com/jech/babeld.git",
+    "context": "README's clone command for the source repository."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds babeld from the source tree, run inside the cloned babeld directory."
+   },
+   {
+    "cmd": "su -c 'make install'",
+    "context": "Installs the built babeld as root after compiling."
+   },
+   {
+    "cmd": "make CC=mipsel-linux-gcc PLATFORM_DEFINES='-march=mips32'",
+    "context": "Cross-compile variant the README suggests for OpenWRT targets."
+   },
+   {
+    "cmd": "make LDLIBS=''",
+    "context": "Build variant the README says is needed on Mac OS X."
+   },
+   {
+    "cmd": "# iwconfig eth1 mode ad-hoc channel 11 essid \"my-mesh-network\"",
+    "context": "Example setup of a wireless interface in ad-hoc mode on each mesh node, as shown in the README's network setup section."
+   },
+   {
+    "cmd": "# ip -6 addr add $(generate-ipv6-address -r)/128 dev eth1",
+    "context": "Gives a node a random RFC 4193 IPv6 address using the generate-ipv6-address helper, so every node has a unique address."
+   },
+   {
+    "cmd": "# babeld eth1",
+    "context": "Starts the Babel routing daemon on the interface eth1; list several interfaces to include them all."
+   },
+   {
+    "cmd": "# babeld -C 'redistribute metric 128' eth1",
+    "context": "Starts babeld on eth1 and redistributes all routes into Babel, used on an Internet gateway node."
+   }
+  ],
+  "install_notes": "Build from source with make, then make install as root. The README says to run git submodule init and git submodule update after cloning, and it gives no reason. Cross-compiling for OpenWRT needs a different CC and PLATFORM_DEFINES, and Mac OS X needs LDLIBS set empty. Each node needs a wireless or other interface set up, and needs unique IPv6 and/or IPv4 addresses. Some VPN or tunnel interfaces (the README names OpenVPN and Linux GRE) do not get an IPv6 link-local address automatically, so one must be added by hand or babeld fails with 'couldn't allocate requested address'. For an Internet gateway, the default route must carry an explicit protocol, such as proto static, or Babel will not redistribute it.",
+  "standout": "One update packet can carry both IPv6 and IPv4 routes, and the daemon switches between a wired mode with optimisations and a wireless mode with a WiFi-specific loss metric depending on link type. The protocol is an IETF standard with a family of RFCs covering authentication, DTLS, source-specific routing and Homenet, which is unusual for a small daemon.",
+  "status": "unknown. The fetched pages show no release date and no last-commit date. The homepage cites RFCs through RFC 9229 (May 2022) and a changelog, and it names the git repository, but I could not confirm recent activity.",
+  "caveats": "The homepage says Babel's convergence is slow on wireless links by design, and that after heavy packet loss converging on optimal routes can take up to about 40 seconds with the default 16-second update interval. The loop-free guarantee in pure mesh networks is strong, but in prefix-based networks loops are said to vanish once an update has gone around them, not avoided outright. Some wired optimisations must be turned off manually on exotic links such as point-to-multipoint VPNs. The FRR version of Babel is described as obsolete, and Pybabel and Sbabeld are described as incomplete or not recommended. The README example commands use iwconfig and ip addr, which are older Linux tools. No licence was seen in the fetched pages.",
+  "quotes": [
+   "Babel is a loop-avoiding distance-vector routing protocol for IPv6 and IPv4 with fast convergence properties.",
+   "in a pure mesh network, Babel never creates a routing loop, and in a prefix-based network, all routing loops are guaranteed to disappear as soon as one update went around a loop (there is no \"counting to infinity\").",
+   "If you do not have brains you follow the same route twice. \u2014 Greek proverb"
+  ],
+  "links": [
+   {
+    "label": "Babel homepage (Julius Chroboczek)",
+    "url": "https://www.irif.fr/~jch/software/babel/"
+   },
+   {
+    "label": "babeld GitHub repository and README",
+    "url": "https://github.com/jech/babeld"
+   }
+  ],
+  "fetch_log": [
+   "https://www.irif.fr/~jch/software/babel/ : worked, full text returned",
+   "https://github.com/jech/babeld : worked, README returned"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Babel is an obscure routing protocol whose loop-avoidance guarantees and wireless link-cost adaptation make network routing surprisingly inspectable."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "babeld",
+  "tldr": "A small routing daemon for Babel, an IETF-standard protocol that lets wired and wireless mesh nodes find loop-free paths to each other.",
+  "deeper_look": "Babel is a distance-vector routing protocol for IPv6 and IPv4, and babeld is its reference implementation. You start the daemon on each node, name the interfaces it should use (`babeld eth1`), and the nodes exchange updates and build routes to one another's addresses. One update packet can carry both IPv6 and IPv4 routes.\n\nThe homepage says Babel draws on DSDV, AODV and Cisco's EIGRP, but is designed to work well in wireless mesh networks as well as wired ones. The daemon checks what kind of link it is on. On a wired link it turns on optimisations that make it about as efficient as traditional routing protocols. On a wireless link it turns them off and uses the ETX packet-loss metric, designed for 802.11 WiFi. Convergence is slower there, but the quirks of radio links do not break routing.\n\nThe idea underneath is how routers avoid looping packets forever. In the project's words: \"in a pure mesh network, Babel never creates a routing loop, and in a prefix-based network, all routing loops are guaranteed to disappear as soon as one update went around a loop (there is no \"counting to infinity\").\" It is a good way into how mesh networks and home routers work out paths on their own.\n\nBabel is a standard, RFC 8966, with a family of related RFCs covering authentication, DTLS, source-specific routing and Homenet. That is a lot of specification behind a small daemon.",
+  "install": "brew install babeld\n# Running it for real needs root, a network interface, and unique IPv6 and/or IPv4 addresses on each node. A second machine or VM helps to see it route.",
+  "try_this": [
+   {
+    "cmd": "babeld --help",
+    "what_happens": "Prints the daemon's options so you can see what it can be configured to do."
+   },
+   {
+    "cmd": "# babeld eth1",
+    "what_happens": "Starts the daemon on eth1 and begins exchanging routing updates with any Babel neighbours on that link."
+   },
+   {
+    "cmd": "# babeld -C 'redistribute metric 128' eth1",
+    "what_happens": "Starts babeld on eth1 and redistributes all routes into Babel, as you would on an Internet gateway node."
+   }
+  ],
+  "whats_unique": "It switches between wired and wireless behaviour depending on the link it detects, and carries IPv4 and IPv6 routes in the same updates. It is also a small daemon backed by a full IETF standard.",
+  "caveats": "The brief could not confirm recent activity; wireless convergence is slow by design, up to about 40 seconds after heavy packet loss; and the README's examples use older Linux tools like iwconfig.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "network",
+   "routing",
+   "protocol",
+   "mesh",
+   "ipv6",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "Babel homepage (Julius Chroboczek)",
+    "url": "https://www.irif.fr/~jch/software/babel/"
+   },
+   {
+    "label": "babeld GitHub repository and README",
+    "url": "https://github.com/jech/babeld"
+   }
+  ]
+ }
+}

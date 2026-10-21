@@ -1,0 +1,83 @@
+{
+ "name": "octomap",
+ "desc": "Efficient probabilistic 3D mapping framework based on octrees",
+ "homepage": "https://octomap.github.io/",
+ "installs_365d": 10489,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "visual",
+  "library",
+  "math"
+ ],
+ "why": "Probabilistic 3D occupancy mapping with octrees is a genuinely neat data structure you can run and visualise.",
+ "brief": {
+  "what_it_is": "OctoMap is a C++ library for building 3D occupancy maps of an environment, stored in an octree. It takes in sensor readings from robots, such as laser scans, and folds them into a probabilistic model in which each region is marked occupied, free, or unknown. The map grows as needed and can be saved in a compact form for later use or exchange between robots. The repository also includes octovis, a visualisation library and set of tools. The metadata lists eight executables (binvox2bt, bt2vrml, compare_octrees, convert_octree, edit_octree, eval_octree_accuracy, graph2tree, log2graph), but the README I read does not describe any of them.",
+  "why_it_exists": "The homepage says the library is for robotics and aims at a full 3D model with no prior assumptions about the environment. It needs to represent unknown space as well as free and occupied space, because unknown areas matter for autonomous exploration. It is developed at University of Freiburg and cited as Hornung et al., Autonomous Robots, 2013.",
+  "how_it_works": "The map is an octree, and each node holds a probability of occupancy that is updated from new sensor readings, which handles noise and dynamic objects. Nodes can be at different resolutions, so a coarse map can serve a high-level planner while a fine map serves a local planner. Unexplored regions are simply absent from the tree, which is how unknown space is encoded.",
+  "commands_seen": [
+   {
+    "cmd": "cd octomap",
+    "context": "Enter the octomap library subfolder to build only the library."
+   },
+   {
+    "cmd": "mkdir build",
+    "context": "Create a build directory inside the subfolder (also used in the full-package build)."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Configure the build with CMake from the build directory; the README shows this for both the library-only and full builds."
+   },
+   {
+    "cmd": "make",
+    "context": "Compile after CMake configuration; binaries and libs end up in bin and lib of the top-level directory where the build was started."
+   },
+   {
+    "cmd": "cd build",
+    "context": "For the full package, run from the top-level directory: enter build, then run cmake .. and make to compile octomap and octovis together."
+   },
+   {
+    "cmd": "git clone https://github.com/Microsoft/vcpkg.git",
+    "context": "First step of the alternative install route through the vcpkg dependency manager."
+   },
+   {
+    "cmd": "./bootstrap-vcpkg.sh",
+    "context": "Bootstraps vcpkg inside the cloned vcpkg directory before installing octomap."
+   },
+   {
+    "cmd": "./vcpkg install octomap",
+    "context": "Installs the octomap port through vcpkg, which Microsoft team members and community contributors keep up to date."
+   }
+  ],
+  "install_notes": "The homepage recommends Linux, with Mac OS and Windows also supported as a self-contained source distribution. The standard route is CMake: running it from the top level builds both octomap and octovis, and running it inside octomap/ builds only the library. Build output goes to bin and lib in the top-level directory. An alternative is vcpkg (vcpkg integrate install, then vcpkg install octomap). ROS users can use pre-compiled packages (ros.org wiki pages for octomap and octovis). Windows specifics are in octomap/README.md and octovis/README.md, which I did not fetch. The README I read lists no runtime dependencies, and I saw no first-run configuration step.",
+  "standout": "Unknown space is a first-class part of the model rather than an afterthought: the map records what is free, occupied, and not yet observed, and the tree grows as needed. It is also multi-resolution, so one map can serve both coarse planning and close-up visualisation.",
+  "status": "unknown. The homepage says OctoMap is currently maintained by Armin Hornung, and the README points to releases, a changelog, and an issue tracker. I saw no release date or last-commit date in what I fetched. The README's Travis badge points at travis-ci.org, which suggests the CI setup predates the current service.",
+  "caveats": "Licensing is split: octomap is New BSD, but octovis and related libraries are GPL. The README I read does not explain the eight listed executables, so their usage is unverified. Windows build details are in sub-READMEs I did not read. Its Travis CI badge may be stale. I did not check the mailing list or issue tracker for recent activity.",
+  "quotes": [
+   "The OctoMap library implements a 3D occupancy grid mapping approach, providing data structures and mapping algorithms in C++ particularly suited for robotics.",
+   "Compact. The map is stored efficiently, both in memory and on disk.",
+   "OctoMap consists of two separate libraries each in its own subfolder: octomap, the actual library, and octovis, our visualization libraries and tools."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://octomap.github.io/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/OctoMap/octomap"
+   },
+   {
+    "label": "Online API documentation (doxygen)",
+    "url": "https://octomap.github.io/octomap/doc/"
+   }
+  ],
+  "fetch_log": [
+   "https://octomap.github.io/ - worked, returned homepage text with overview, requirements, license, citation, and links to docs and example maps",
+   "https://github.com/OctoMap/octomap - worked, returned top-level README (overview, CMake build steps, vcpkg install). Sub-READMEs for octomap and octovis were not fetched."
+  ]
+ }
+}

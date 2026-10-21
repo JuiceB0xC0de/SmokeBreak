@@ -1,0 +1,91 @@
+{
+ "name": "src",
+ "desc": "Simple revision control: RCS reloaded with a modern UI",
+ "homepage": "http://www.catb.org/~esr/src/",
+ "installs_365d": 152,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "ancient"
+ ],
+ "why": "Eric Raymond's modern revision control built on RCS ideas is a small, opinionated oddity with history.",
+ "brief": {
+  "what_it_is": "Simple Revision Control (src) is a command-line version-control tool for single-file projects kept by solo developers, such as scripts in ~/bin, single-file HOWTOs, FAQs and config files. It takes ordinary files in a directory and keeps each file's history in a single human-readable history file under a hidden .src subdirectory. Output is the usual VCS results: status listings, logs, diffs, and checked-out working copies. Its command set is meant to look familiar to Subversion, Mercurial and Git users, and it uses consecutive integer revision numbers rather than hashes. The author describes it as having no binary blobs anywhere.",
+  "why_it_exists": "The author describes src as RCS/SCCS reloaded with a modern UI, aimed at the case where many small single-file projects sit in one directory and heavier systems are overkill. The manual says it 'modernizes the venerable RCS, hence the anagrammatic acronym.'",
+  "how_it_works": "Each file's history is a single RCS-style master file stored in a hidden .src directory beside the file, and src maintains no other permanent state. Commands like status, diff and log shell out to the RCS tools, so the RCS back end does the real storage work. The manual also supports an RCS back end selected automatically when an RCS directory is present, and an experimental SCCS back end with limits on tags and branches.",
+  "commands_seen": [
+   {
+    "cmd": "src [command] [revision-spec] ['file'...]",
+    "context": "General synopsis from the man page."
+   },
+   {
+    "cmd": "src commit [-|-m 'string'|-f 'file'|-e|-b branch] ['file'...]",
+    "context": "Records a commit for the named files; creates a history if none exists. 'ci' is a synonym."
+   },
+   {
+    "cmd": "src status [-a] ['file'...]",
+    "context": "Shows added, unmodified, modified, missing, untracked, ignored and locked state. 'st' is a synonym."
+   },
+   {
+    "cmd": "src checkout ['revision'] ['file'...]",
+    "context": "Refreshes working copies from their history files. 'co' is a synonym."
+   },
+   {
+    "cmd": "src log [-v] [(-<n>|-l <n>)] [-P] [((--patch|-u|-c) [-b|-w])] ['revision-range'] ['file'...]",
+    "context": "Shows commit log, optionally with unified or context diffs per revision."
+   },
+   {
+    "cmd": "src diff [(-u|-c) [-b|-w]] ['revision-range'] ['file'...]",
+    "context": "Diffs the working copy against the last check-in, a stored revision, or a range; uses diff(1) underneath."
+   },
+   {
+    "cmd": "src tag [list|-l|create|-c|delete|del|-d] ['name'] ['revision'] ['file'...]",
+    "context": "Lists, creates or deletes tags."
+   },
+   {
+    "cmd": "src branch [list|-l|create|-c|delete|del|-d] ['name'] ['file'...]",
+    "context": "Lists, creates or deletes branches; the default branch is 'trunk'."
+   },
+   {
+    "cmd": "src fast-export ['revision-range'] ['file'...]",
+    "context": "Exports histories as a Git fast-import stream, which is the route to Git."
+   },
+   {
+    "cmd": "src srcify",
+    "context": "Moves a directory's RCS (or SCCS) management over to src, renaming RCS to .src and checking out masters for editing."
+   }
+  ],
+  "install_notes": "Requires Python 2.7 or later, and the README says it runs under Python 3.x. The RCS tools version 5.7 or later must be on PATH for the recommended RCS back end. The fast-import command needs rcs-fast-import 1.3 or later. The manual says SRC 'uses two small self-contained executables, with no libraries and no complications.' The homepage lists the source tarball (src-1.45.tar.gz) and the GitLab repo; I did not see brew-specific steps. The EDITOR variable controls the editor used on commit, with a fallback list of Emacs and vi variants.",
+  "standout": "It is a deliberately small, opinionated tool that keeps single-file histories as plain RCS masters, with a Git/Subversion-style command set on top. The man page is candid about its quirks, including that 'src remove' is omitted as 'a deliberate speed bump', and that SCCS support 'exists mainly because it's hilarious'.",
+  "status": "Maintained. The homepage lists version 1.45 with a date of 20 May 2026 and a recent change for a Python 3.14 port fix and dropping Python 2 support. The man page was last updated 2026-04-13. The GitLab project was created January 26, 2016.",
+  "caveats": "Designed only for single-file solo projects; the manual says running more than one edit session in the same directory at once 'may produce mysterious failures'. Branch deletions renumber downstream revisions. SRC bails out if a directory named RCS-save exists. Commit messages containing an RCS log delimiter line are rejected. SCCS support lacks tags and branches and has a Y2.1K caveat: 'do not use the SCCS backend after the year 2067.' The fast-export output may not exactly match git fast-export for repos with tags. The GitLab page lists a BSD 2-Clause license; the homepage links a COPYING file, which I did not fetch.",
+  "quotes": [
+   "Simple Revision Control is RCS/SCCS reloaded with a modern UI, designed to manage single-file solo projects kept more than one to a directory.",
+   "Features integer sequential revision numbers, a command set that will seem familiar to Subversion/Git/Mercurial users, and no binary blobs anywhere.",
+   "The omission of \"src remove\" is a deliberate speed bump.",
+   "the SCCS support exists mainly because it's hilarious (for obscure hacker values of 'hilarious')."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "http://www.catb.org/~esr/src/"
+   },
+   {
+    "label": "Manual page (src.html)",
+    "url": "http://www.catb.org/~esr/src/src.html"
+   },
+   {
+    "label": "Project repository (GitLab)",
+    "url": "https://gitlab.com/esr/src"
+   }
+  ],
+  "fetch_log": [
+   "http://www.catb.org/~esr/src/ - worked; resource page with summary, release 1.45 and file links",
+   "http://www.catb.org/~esr/src/src.html - worked; full man-page style documentation",
+   "https://gitlab.com/esr/src - worked but thin; project description and license only, no README body text"
+  ]
+ }
+}

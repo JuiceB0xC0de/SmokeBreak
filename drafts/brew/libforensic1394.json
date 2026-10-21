@@ -1,0 +1,74 @@
+{
+ "name": "libforensic1394",
+ "desc": "Live memory forensics over IEEE 1394 (\"FireWire\") interface",
+ "homepage": "https://freddie.witherden.org/tools/libforensic1394/",
+ "installs_365d": 23,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "reverse-engineering",
+  "protocol"
+ ],
+ "why": "Reads live machine memory over FireWire DMA, a striking door into hardware-level memory access with a real huh.",
+ "brief": {
+  "what_it_is": "An open source C library, with Python bindings, for live memory forensics over the IEEE 1394 (FireWire) interface. It uses the direct memory access that FireWire offers to read a running machine's physical memory. The homepage says it runs on GNU/Linux and Mac OS X, and it exposes a simple C API for this. Its input is a 1394 connection to the target machine, and its output is the memory contents read over that link.",
+  "why_it_exists": "The author describes it as a modern alternative to pythonraw1394 (a Python wrapper around libraw1394), with native support for the newer \"Juju\" stack used by many GNU/Linux distributions. The homepage says it improves on existing libraries by offering a simple and clean interface to FireWire direct memory access.",
+  "how_it_works": "The homepage gives only a high-level account. The library presents an SBP-2 unit directory to a remote device so it can acquire physical memory access. It uses a vectorised API that exploits the asynchronous capabilities of 1394 controllers, and on Linux it works through the Juju stack, on Mac OS X through IOKit.",
+  "commands_seen": [],
+  "install_notes": "The homepage lists a git repository for the latest version and source tarballs for release 0.2 (libforensic1394-0.2.tar.gz and .zip). The build uses CMake and CPack. Hardware is implied to be a 1394 (FireWire) controller on the target and analysis side, but the homepage does not state requirements. Windows and FreeBSD are not supported. The homepage does not describe first-run steps or configuration.",
+  "standout": "It reads live physical memory through FireWire's DMA path, so the target machine needs no installed agent or software running on it. The page notes the author's own paper on the technique, which is the main source for the method.",
+  "status": "Quiet. The latest release, 0.2, was tagged 2010-10-05. A developer preview came out 2010-08-03. The page was last updated 2015-02-07, and the copyright line says 2015. The homepage describes the project as feature complete, with the Windows port postponed. I found no newer release or commit information on the page.",
+  "caveats": "Supported only on GNU/Linux and Mac OS X. FreeBSD and Windows support are listed as future work, and the Windows driver is described as requiring a prohibitively expensive cross-signing certificate. The known bugs and limitations are in a BUGS file in the source distribution, which I did not fetch. The release is from 2010 and the page was last updated in 2015, so current kernel and OS versions are untested as far as the page shows. The library is LGPLv3+. The Doxygen docs and the paper are referenced, but the page gives no direct URLs for them.",
+  "quotes": [
+   "An open source (GNU LGPLv3+) library for performing live memory forensics over the IEEE 1394 (\"FireWire\") interface.",
+   "libforensic1394 improves upon existing libraries by providing a simple and clean interface to the the direct memory access functionality available over FireWire.",
+   "Available through git libforensic1394 is currently feature complete and undergoing extensive field testing."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://freddie.witherden.org/tools/libforensic1394/"
+   }
+  ],
+  "fetch_log": [
+   "https://freddie.witherden.org/tools/libforensic1394/ : fetched OK, HTML page with description, news, features, todo, download and history. No command lines on the page. Doxygen docs and paper are referenced by name only, with no URLs given, and I did not follow any further links."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It exposes a striking hardware-forensics trick\u2014reading live physical memory over FireWire DMA without an agent\u2014and its age and hardware requirements make it niche, not uninteresting."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "libforensic1394",
+  "tldr": "A C library with Python bindings that reads a running machine's physical memory over FireWire, using DMA, with nothing installed on the target.",
+  "deeper_look": "libforensic1394 is a small library for live memory forensics over IEEE 1394, better known as FireWire. FireWire controllers can read and write another machine's physical memory directly (DMA), without the target's CPU or operating system taking part. The library wraps that capability in a simple C API, with Python bindings, so you can connect two machines with a cable and read memory from the running one.\n\nThe author describes it as a modern alternative to pythonraw1394, a Python wrapper around libraw1394. The main difference is native support for the newer \"Juju\" FireWire stack used by many GNU/Linux distributions. On Mac OS X it works through IOKit. The homepage says it improves on existing libraries by offering \"a simple and clean interface to the the direct memory access functionality available over FireWire.\"\n\nAs the homepage gives it, the trick is that the library presents an SBP-2 unit directory to the remote device. SBP-2 is the protocol FireWire storage devices speak, so the target treats your machine as a disk and grants it memory access. A vectorised API takes advantage of the controllers' asynchronous capabilities. The author's own paper on the technique is the main source for the method.\n\nThe idea underneath is that a peripheral bus can be a path into memory, bypassing every protection the operating system provides. That is why it is useful for forensics, and why DMA attacks became a security topic. It is a way into hardware-level trust assumptions.",
+  "install": "brew install libforensic1394\n# Needs a FireWire (IEEE 1394) controller and a cable between two machines. The homepage does not state exact requirements. It lists a git repository and release 0.2 tarballs, built with CMake.",
+  "try_this": [],
+  "whats_unique": "It reads live physical memory through FireWire's DMA path, so the target needs no agent or software running on it. The API is small and clean for something so low-level.",
+  "caveats": "The last release, 0.2, dates from 2010 and the page was last updated in 2015, so behaviour on current kernels is untested; it supports only GNU/Linux and Mac OS X, and you need FireWire hardware.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "firewire",
+   "memory-forensics",
+   "dma",
+   "reverse-engineering",
+   "protocol"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://freddie.witherden.org/tools/libforensic1394/"
+   }
+  ]
+ }
+}

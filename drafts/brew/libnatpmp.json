@@ -1,0 +1,103 @@
+{
+ "name": "libnatpmp",
+ "desc": "NAT port mapping protocol library",
+ "homepage": "https://miniupnp.tuxfamily.org/libnatpmp.html",
+ "installs_365d": 539,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "quick"
+ ],
+ "why": "A door into NAT-PMP, the router port mapping protocol quietly running in most homes, with a small client to explore.",
+ "brief": {
+  "what_it_is": "libnatpmp is a C client-side library for NAT-PMP, the NAT Port Mapping Protocol, which lets a program ask a router for its public address and for a port mapping from a private port to a public one. The author describes it as an attempt at a portable, fully compliant client implementation. The API is declared in natpmp.h and is driven by request calls (sendpublicaddressrequest, sendnewportmappingrequest) followed by polling readnatpmpresponseorretry until it stops returning NATPMP_TRYAGAIN. The Homebrew formula also installs an executable called natpmpc, but the pages I read say nothing about its options or output.",
+  "why_it_exists": "NAT-PMP is described on the homepage as the direct competitor to the UPnP IGD specification, offering a way to do NAT traversal. The homepage says it was mainly supported by Apple software and hardware at the time.",
+  "how_it_works": "The library uses non-blocking sockets and every API call is asynchronous, so it can be folded into an event-driven loop. A caller sends a request, then waits on the socket with select() or poll() using getnatpmprequesttimeout() as the timeout, and calls readnatpmpresponseorretry() repeatedly until the response arrives. The sample code in the homepage shows this pattern for a TCP port redirect with a 3600-second lifetime.",
+  "commands_seen": [
+   {
+    "cmd": "make",
+    "context": "Build the library and samples. The homepage says to use gmake or make."
+   },
+   {
+    "cmd": "make jnitest",
+    "context": "From the GitHub mirror README: runs a simple Java bindings test, and downloads JNAerator first."
+   }
+  ],
+  "install_notes": "Building from source uses make or gmake. The GitHub mirror's README says Java bindings were added by a later contributor and use JNI plus JNAerator's extractor, so JNAerator is needed for them. Running make jnitest downloads JNAerator and runs a small test. I did not check the Homebrew formula or any prerequisites beyond these notes.",
+  "standout": "Its design is built for event-driven code: all calls are non-blocking and asynchronous, and the homepage gives a state-machine example for P2P startup that obtains the public address and then creates a mapping. It targets the NAT-PMP protocol at a time when most home-router tooling was built around UPnP.",
+  "status": "quiet. The homepage says 'Last modified on February 5th 2008.' The GitHub mirror's README says the repository was initialised from a libnatpmp-20120821 snapshot and adds Java bindings, and it cites a copyright of 2007-2009. I did not find a recent release date or commit date, so the project looks dormant rather than actively developed.",
+  "caveats": "The homepage notes a name clash with an older C++ library by Allen Porter, and asks whether the name should change. The sample code says 'Error checking has been deliberately omitted,' so the snippets are not production code. The function names on the homepage appear without underscores (for example initnatpmp, readnatpmpresponseorretry), which is probably a formatting loss in the page; check natpmp.h for the real names. I did not find a license statement in the pages I read. The mirror README's Java bindings require JNAerator, which is an extra dependency.",
+  "quotes": [
+   "libnatpmp is an attempt to make a portable and fully compliant implementation of the protocol for the client side.",
+   "It is based on non blocking sockets and all calls of the API are asynchronous.",
+   "NAT-PMP is the direct concurrent to the UPnP IGD specification."
+  ],
+  "links": [
+   {
+    "label": "libnatpmp homepage",
+    "url": "https://miniupnp.tuxfamily.org/libnatpmp.html"
+   },
+   {
+    "label": "GitHub repository (mirror README)",
+    "url": "https://github.com/miniupnp/libnatpmp"
+   },
+   {
+    "label": "Mirror of the homepage cited in the README",
+    "url": "http://miniupnp.free.fr/libnatpmp.html"
+   }
+  ],
+  "fetch_log": [
+   "https://miniupnp.tuxfamily.org/libnatpmp.html: worked. Homepage with overview, API notes and sample code.",
+   "https://github.com/miniupnp/libnatpmp: worked. Returned a README that describes the Java bindings and points to the MiniUPnP homepage. No build or usage commands beyond make jnitest."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It exposes NAT-PMP, a little-seen router protocol for discovering your public address and requesting port mappings\u2014an intriguing way to explore how home NAT traversal works."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "libnatpmp",
+  "tldr": "A small C client library, plus the natpmpc tool, for NAT-PMP: the protocol that lets a program ask your router for its public address and an open port.",
+  "deeper_look": "NAT-PMP, the NAT Port Mapping Protocol, lets a program on a private network ask its router two things: what is my public address, and can you forward a public port to this private one. libnatpmp is a C client for that exchange. Its author describes it as \"an attempt to make a portable and fully compliant implementation of the protocol for the client side.\"\n\nThe homepage calls NAT-PMP \"the direct concurrent to the UPnP IGD specification\" and says it was mainly supported by Apple software and hardware at the time. So it is a second answer to a problem most people only know through UPnP: how does a peer-to-peer app, game or server behind a home router become reachable without manual configuration?\n\nThe library is built for event loops. All calls are asynchronous and use non-blocking sockets. You send a request with calls like sendpublicaddressrequest or sendnewportmappingrequest, wait on the socket with select() or poll() using getnatpmprequesttimeout() as the timeout, then call readnatpmpresponseorretry() until it stops returning NATPMP_TRYAGAIN. The homepage walks through this as a small state machine: get the public address, then create a mapping, for example a TCP redirect with a 3600-second lifetime.\n\nThe Homebrew formula also installs natpmpc, a command-line client. The pages I read say nothing about its options or output, so start with its help text. The library is old, with the homepage last modified in 2008, but the protocol is small and the code is a short read.",
+  "install": "brew install libnatpmp\n# natpmpc talks to your router, so it only does something useful on a network whose gateway supports NAT-PMP",
+  "try_this": [
+   {
+    "cmd": "natpmpc --help",
+    "what_happens": "Prints the usage text for the client, which is the quickest way to see what it can ask a router."
+   }
+  ],
+  "whats_unique": "It is a compact client for NAT-PMP, the lesser-known sibling of UPnP IGD, with an API designed around asynchronous, event-driven code.",
+  "caveats": "The homepage was last modified in 2008 and the project looks dormant; the homepage samples omit error checking, and whether natpmpc gets an answer depends on your router supporting NAT-PMP.",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "network",
+   "protocol",
+   "nat",
+   "c",
+   "router"
+  ],
+  "links": [
+   {
+    "label": "libnatpmp homepage",
+    "url": "https://miniupnp.tuxfamily.org/libnatpmp.html"
+   },
+   {
+    "label": "GitHub repository (mirror README)",
+    "url": "https://github.com/miniupnp/libnatpmp"
+   },
+   {
+    "label": "Mirror of the homepage cited in the README",
+    "url": "http://miniupnp.free.fr/libnatpmp.html"
+   }
+  ]
+ }
+}

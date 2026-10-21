@@ -1,0 +1,75 @@
+{
+ "name": "cmix",
+ "desc": "Data compression program with high compression ratio",
+ "homepage": "https://www.byronknoll.com/cmix.html",
+ "installs_365d": 94,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "science",
+  "afternoon",
+  "math"
+ ],
+ "why": "Extreme context-mixing compressor that shows how far prediction can push compression; a genuine thing to poke at.",
+ "brief": {
+  "what_it_is": "cmix is a lossless data compression program that runs on Linux, Windows and Mac OS X. It takes one file in and writes a compressed file out, and decompression runs the same process in reverse, so it is symmetric in time. Before compressing, it detects the data type (binary executables, natural language text, or images) and transforms it into a more predictable form. It then codes the data one bit at a time, with about 2,077 independent models (in v21) producing a probability for each bit, which are combined by a context mixer and refined before arithmetic coding. The README says it can only handle single files, so multiple files should be bundled with tar first.",
+  "why_it_exists": "The README says it is 'aimed at optimizing compression ratio at the cost of high CPU/memory usage', and that it 'gets state of the art results on several compression benchmarks'. The author started it in December 2013 and says most of the ideas came from Matt Mahoney's book Data Compression Explained.",
+  "how_it_works": "The pipeline has three stages: preprocessing (type detection and transforms, including a dictionary-based word replacement for English text), model prediction (an ensemble of models that each output the probability the next bit is 1), and context mixing. The mixer is a gated-linear-style network with three layers of weights, and its output is refined with secondary symbol estimation (SSE). A byte-level LSTM mixer, trained with backpropagation through time and Adam, is listed as a component unique to cmix.",
+  "commands_seen": [
+   {
+    "cmd": "make",
+    "context": "Compiles cmix from the source tree (the README says to use make). On Windows, MinGW or Cygwin are the suggested toolchains."
+   },
+   {
+    "cmd": "tar",
+    "context": "Not a cmix command, but the README says to bundle multiple files or directories into one archive with tar (or a similar tool) before compressing, since cmix handles only single files."
+   },
+   {
+    "cmd": "-Ofast -march=native",
+    "context": "Compiler flags the README suggests for the fastest build. It warns these may cause incompatibility between machines because of floating-point differences."
+   },
+   {
+    "cmd": "-O3",
+    "context": "Compiler flag the README suggests when you need builds that are compatible across computers, at the cost of speed."
+   },
+   {
+    "cmd": "./enwik9-preproc c path_to_enwik9",
+    "context": "Step 2 of the enwik9 preprocessing instructions: compresses the enwik9 test file into .ready4cmix with the helper tool, after copying enwik9-preproc and dictionary/new_article_order into a new folder."
+   },
+   {
+    "cmd": "./enwik9-preproc d .ready4cmix",
+    "context": "Step 3 of the enwik9 instructions: reverses the preprocessing to reproduce the original enwik9 file from .ready4cmix."
+   }
+  ],
+  "install_notes": "Build from source with make. Windows can use MinGW (nuwen.net) or Cygwin. Pre-built Windows executables are published as zip files on the homepage for versions 9 through 21; Linux and Mac builds are not offered as downloads there, so they appear to be built from source. At least 32GB of RAM is recommended. The README does not show the basic compress or decompress command line, so check the source or the tool's built-in help for syntax. Optional: precomp (github.com/schnaader/precomp-cpp) can be used beforehand on some files to improve compression.",
+  "standout": "Most compressors of this kind mix a few dozen models. cmix combines about 2,077 models, adds a byte-level LSTM mixer (which the author says is unique to cmix), and feeds a PPM model's predictions into the LSTM. It trades large time and memory costs for ratio, and the README's own numbers show it.",
+  "status": "Last release is v21, dated September 10, 2024, and both the homepage and the GitHub README list it as the latest. I could not see commit dates, so activity beyond the release is unknown. Reads as maintained but quiet.",
+  "caveats": "Very slow and memory-hungry: the homepage benchmarks report about 65,155 seconds (about 18 hours) to compress enwik8 (100 MB) and about 622,950 seconds (about 173 hours) for enwik9 (1 GB), both at around 19 to 31 GB of memory. Compression and decompression take the same time. The README says the compressed size can vary slightly with compiler settings, and -Ofast -march=native builds may not decompress identically on different machines (use -O3 for portability). Single file only. The GitHub README doesn't name a license beyond GPL free software; the homepage says GNU General Public License. The benchmark times are as reported by the author, and I did not verify them.",
+  "quotes": [
+   "cmix is a lossless data compression program aimed at optimizing compression ratio at the cost of high CPU/memory usage.",
+   "At least 32GB of RAM is recommended to run cmix.",
+   "cmix can only compress/decompress single files. To compress multiple files or directories, create an archive file using \"tar\" (or some similar tool).",
+   "Compile with \"-O3\" to fix compatibility issues (at the cost of slower performance)."
+  ],
+  "links": [
+   {
+    "label": "Homepage (Byron Knoll)",
+    "url": "https://www.byronknoll.com/cmix.html"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/byronknoll/cmix"
+   },
+   {
+    "label": "precomp (optional preprocessing)",
+    "url": "https://github.com/schnaader/precomp-cpp"
+   }
+  ],
+  "fetch_log": [
+   "https://www.byronknoll.com/cmix.html - fetched OK; project description, benchmarks, download list (v1 to v21), acknowledgements.",
+   "https://github.com/cmix - fetched OK via GitHub README; build notes, enwik9 steps, changelog for v1 to v21."
+  ]
+ }
+}

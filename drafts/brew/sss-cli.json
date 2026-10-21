@@ -1,0 +1,121 @@
+{
+ "name": "sss-cli",
+ "desc": "Shamir secret share command-line interface",
+ "homepage": "https://github.com/dsprenkels/sss-cli",
+ "installs_365d": 53,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "math",
+  "quick",
+  "science"
+ ],
+ "why": "Shamir secret sharing splits a secret into polynomial-based shares, a neat piece of applied math you can run in a minute.",
+ "brief": {
+  "what_it_is": "sss-cli is a pair of command-line tools, secret-share-split and secret-share-combine, for splitting a secret into Shamir secret shares and recombining them. The README's example pipes a text secret into secret-share-split with -n 4 -t 3, which writes shares to stdout, and then feeds any 3 of those shares into secret-share-combine, which prints the secret back. The tool is described as a wrapper around the author's SSS library. Each share is wrapped in an AEAD layer so that tampering can be detected, which makes the shares much longer than the secret.",
+  "why_it_exists": "The README says the tool allows 'securely splitting and recombining secrets using a secure implementation of the Shamir secret sharing scheme.' Its FAQ explains the extra design choice: plain Shamir sharing gives confidentiality but not integrity, so an attacker could tamper with shares and the restored secret would look valid.",
+  "how_it_works": "The tool splits a secret into shares using Shamir's scheme, so that any threshold number of shares (the -t value) can reconstruct the secret. Each share is additionally protected with an AEAD wrapper, which the README says stops shares from being tampered with undetected. The README says the AEAD layer is the reason shares are longer than the secret. Crypto is provided by the RustCrypto crypto-secretbox crate, per the 0.1.2 changelog entry.",
+  "commands_seen": [
+   {
+    "cmd": "cargo install --git https://github.com/dsprenkels/sss-cli --branch v0.1",
+    "context": "Builds and installs both tools from source using Cargo, pinned to the v0.1 branch. Requires Rust."
+   },
+   {
+    "cmd": "echo \"Tyler Durden isn't real.\" | secret-share-split -n 4 -t 3 >shares.txt",
+    "context": "The README's example: makes 4 shares with recombination threshold 3 and writes them to shares.txt."
+   },
+   {
+    "cmd": "head -n 3 shares.txt | secret-share-combine",
+    "context": "Takes the first 3 shares from shares.txt and combines them to recover the secret."
+   },
+   {
+    "cmd": "cargo uninstall shamirsecretsharing-cli",
+    "context": "Uninstall command given in the README. It names a different crate from the one the install command uses, so it may need correcting."
+   },
+   {
+    "cmd": "brew install vitkabele/tap/sss-cli",
+    "context": "Homebrew install on macOS from a third-party tap, since the formula is not in upstream homebrew-core."
+   }
+  ],
+  "install_notes": "Installing from source needs Rust, and the README links to rustup. After cargo install, Cargo's bin directory must be on $PATH if it is not already. On macOS, Homebrew works only through the third-party tap vitkabele/tap, not the core formula. The README does not describe any accounts, configuration, or first-run steps.",
+  "standout": "It wraps Shamir secret sharing in an AEAD layer so that tampered shares are detectable, and the README openly explains the size cost of that choice. Most Shamir demos stop at the math and never address integrity.",
+  "status": "unknown. The fetched README shows no release date or last-commit date. The changelog's newest entry is 0.1.2, and the install command pins a branch named v0.1. The Travis CI badge points at travis-ci.org, which has been retired, so CI status is unverified. The author's contact is a GitHub-associated email, and an issues link is provided.",
+  "caveats": "Requires a Rust toolchain to build from source. The Homebrew path depends on a third-party tap, not homebrew-core. The uninstall command refers to shamirsecretsharing-cli, which does not match the install command's crate name. Shares are much longer than secrets. The README gives no platform list beyond macOS and no license information. The Travis badge points to a retired service. The README is short and does not document the flags beyond -n and -t.",
+  "quotes": [
+   "This tool allows for securely splitting and recombining secrets using a secure implementation of the Shamir secret sharing scheme.",
+   "`sss-cli` uses an AEAD wrapper so that the shares cannot be tampered with, which takes up some extra space.",
+   "The package is not yet in the upstream *homebrew-core*, but there exists a tap"
+  ],
+  "links": [
+   {
+    "label": "Homepage / repository",
+    "url": "https://github.com/dsprenkels/sss-cli"
+   },
+   {
+    "label": "SSS library (underlying Shamir implementation)",
+    "url": "https://github.com/dsprenkels/sss"
+   },
+   {
+    "label": "Homebrew tap with sss-cli formula",
+    "url": "https://github.com/vitkabele/homebrew-tap"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/dsprenkels/sss-cli: fetched OK, returned the README (sss-cli repository). No other pages fetched, since the README was complete and did not point to further docs."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A practical Shamir secret-sharing CLI makes threshold cryptography tangible, and its AEAD layer exposes an often-overlooked problem: shares need integrity as well as confidentiality."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "sss-cli",
+  "tldr": "Split a secret into shares with Shamir's scheme, then recover it from any threshold subset, with tamper detection built in.",
+  "deeper_look": "sss-cli is two small commands: secret-share-split and secret-share-combine. You pipe a secret into the first with a share count (-n) and a threshold (-t), and it prints shares to stdout. Feed any t of those shares into the second and the original secret comes back. With fewer than t shares, you get nothing useful.\n\nThe idea underneath is Shamir's secret sharing. The secret is hidden in a polynomial, and each share is a point on it. Enough points pin the polynomial down and reveal the secret. Too few leave every possible secret equally likely. It is a short route into finite-field arithmetic and threshold cryptography.\n\nThe tool also deals with a weakness of the plain scheme. Basic Shamir gives confidentiality but not integrity, so someone could alter a share and the recovered secret would look valid but be wrong. The README says sss-cli wraps each share in an AEAD layer so tampering is detected. That is why the shares are much longer than the secret. The tool wraps the author's SSS library, and per the changelog the crypto comes from the RustCrypto crypto-secretbox crate.",
+  "install": "brew install vitkabele/tap/sss-cli\n# Not in homebrew-core; this uses a third-party tap.\n# Alternative, needs Rust: cargo install --git https://github.com/dsprenkels/sss-cli --branch v0.1",
+  "try_this": [
+   {
+    "cmd": "echo \"Tyler Durden isn't real.\" | secret-share-split -n 4 -t 3 >shares.txt",
+    "what_happens": "Creates 4 shares of the secret, any 3 of which can recover it, and writes them to shares.txt."
+   },
+   {
+    "cmd": "head -n 3 shares.txt | secret-share-combine",
+    "what_happens": "Combines the first 3 shares and prints the original secret."
+   },
+   {
+    "cmd": "secret-share-split --help",
+    "what_happens": "Lists the options, since the README documents only -n and -t."
+   }
+  ],
+  "whats_unique": "It adds an AEAD layer so tampered shares are detected, which most Shamir demos skip. The README is open about the size cost.",
+  "caveats": "Maintenance status is unclear, the README is short and documents only -n and -t, and the Homebrew route depends on a third-party tap.",
+  "commitment": "quick",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "quick",
+   "math",
+   "cryptography",
+   "secret-sharing",
+   "rust"
+  ],
+  "links": [
+   {
+    "label": "Homepage / repository",
+    "url": "https://github.com/dsprenkels/sss-cli"
+   },
+   {
+    "label": "SSS library (underlying Shamir implementation)",
+    "url": "https://github.com/dsprenkels/sss"
+   },
+   {
+    "label": "Homebrew tap with sss-cli formula",
+    "url": "https://github.com/vitkabele/homebrew-tap"
+   }
+  ]
+ }
+}

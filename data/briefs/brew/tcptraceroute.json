@@ -1,0 +1,71 @@
+{
+ "name": "tcptraceroute",
+ "desc": "Traceroute implementation using TCP packets",
+ "homepage": "https://github.com/mct/tcptraceroute",
+ "installs_365d": 3277,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "quick"
+ ],
+ "why": "Traceroute using TCP SYN packets, a clean door into how routers and firewalls treat different traffic.",
+ "brief": {
+  "what_it_is": "tcptraceroute is a traceroute implementation that sends TCP packets instead of the ICMP or UDP probes that classic traceroute uses. You give it a destination host, and it reports the routers along the path to it. The README describes it only as 'A traceroute implementation using TCP packets', and the README I read does not show the output format. It is a single C program, and Homebrew installs it as the executable tcptraceroute.",
+  "why_it_exists": "The README gives no motivation beyond the one-line description. The practical point is that TCP probes can get through firewalls that drop ICMP or UDP probes, so the path they reveal can differ from a classic traceroute.",
+  "how_it_works": "The README does not explain the mechanism. Its dependencies, libnet (packet crafting) and libpcap (packet capture), suggest it builds raw TCP packets and captures the replies to see which hop answered. The SYN-packet detail comes from the scout notes, not from the README.",
+  "commands_seen": [
+   {
+    "cmd": "./configure",
+    "context": "Build step from INSTALL: configures the package for your system. The INSTALL file says it takes a while and prints the features it checks for."
+   },
+   {
+    "cmd": "make",
+    "context": "Build step from INSTALL: compiles the package after configure."
+   },
+   {
+    "cmd": "make install",
+    "context": "Install step from INSTALL: installs the programs and any data files and documentation."
+   },
+   {
+    "cmd": "make clean",
+    "context": "From INSTALL: removes program binaries and object files from the source directory."
+   },
+   {
+    "cmd": "make distclean",
+    "context": "From INSTALL: also removes the files configure created, so the tree can be rebuilt for a different kind of computer."
+   }
+  ],
+  "install_notes": "Homebrew is the easy route. Its caveats say tcptraceroute needs root, so you run it as sudo tcptraceroute, and the caveat warns you to trust the software before granting it root. Building from source uses autoconf: ./configure, make, make install, with the default prefix /usr/local. configure options listed in INSTALL include --prefix=PREFIX, --with-libpcap=DIR, --with-libnet=DIR, --enable-noselect-default, --enable-track-default=PORT|ID, --enable-default-port=N and --enable-static. You need libnet and libpcap installed first. The INSTALL text dates from the 1.5beta1 era and mentions csh on old System V, so some of it is historical.",
+  "standout": "It is a small, focused tool that answers a specific question: which hops are reachable and answer when probes look like ordinary TCP connection attempts. That makes it useful for seeing how routers and firewalls treat different traffic types.",
+  "status": "quiet. The README copyright runs 2001-2015, the INSTALL file is dated 2003, and the author's update page at michael.toren.net did not load. I saw no release date or recent commit in the pages I could read, so this is an inference, not a confirmed fact.",
+  "caveats": "Needs root privileges, as the Homebrew caveats say. Depends on libnet and libpcap, so building from source takes some setup. Licensed under GPL v2. The README is very thin and points to an INSTALL file and an author site, and the author site did not load. The INSTALL instructions are old. The README gives no output example and no documented options beyond what INSTALL lists. The homepage was reachable.",
+  "quotes": [
+   "A traceroute implementation using TCP packets",
+   "Requires libnet <http://www.packetfactory.net/libnet> and libpcap <http://www.tcpdump.org/>.",
+   "This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2, as published by the Free Software Foundation."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/mct/tcptraceroute"
+   },
+   {
+    "label": "Author's updates page (did not load)",
+    "url": "http://michael.toren.net/code/tcptraceroute/"
+   },
+   {
+    "label": "INSTALL file",
+    "url": "https://github.com/mct/tcptraceroute/blob/master/INSTALL"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/mct/tcptraceroute: worked, returned the README",
+   "http://michael.toren.net/code/tcptraceroute/: failed (URLError)",
+   "https://github.com/mct/tcptraceroute/blob/master/INSTALL: worked, returned the INSTALL file"
+  ]
+ }
+}

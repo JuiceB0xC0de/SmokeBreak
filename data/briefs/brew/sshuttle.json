@@ -1,0 +1,88 @@
+{
+ "name": "sshuttle",
+ "desc": "Proxy server that works as a poor man's VPN",
+ "homepage": "https://github.com/sshuttle/sshuttle",
+ "installs_365d": 29878,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "quick",
+  "ssh"
+ ],
+ "why": "Tunnels whole subnets over SSH using packet capture tricks, a neat door into how transparent proxying and routing actually work.",
+ "brief": {
+  "what_it_is": "sshuttle is a command-line proxy that tunnels network traffic over an SSH connection, acting as a lightweight stand-in for a VPN. You point it at a remote SSH host and at the subnets you want to reach, and it forwards every port on those networks, not just ports you name in advance. Clients see the real IP addresses of remote hosts rather than localhost port mappings. The README says it runs on Linux, FreeBSD, macOS, and Windows (experimental).",
+  "why_it_exists": "The README targets people who can reach a remote network over SSH but have no usable VPN there, may lack admin rights on that network, and find OpenSSH port forwarding too slow or cumbersome for many hosts. It also argues that OpenSSH's PermitTunnel is disabled by default and does TCP-over-TCP, which performs badly.",
+  "how_it_works": "The how-it-works page says sshuttle is 'not exactly a VPN, and not exactly port forwarding.' It tracks every connection instead of forwarding packets statelessly: it reassembles the TCP stream locally, multiplexes it statefully over one SSH session, and splits it back into packets at the far end. The stated result is data-over-TCP rather than TCP-over-TCP, which avoids the performance collapse the docs attribute to tunnelling raw packets over a reliable transport.",
+  "commands_seen": [
+   {
+    "cmd": "sudo pip install sshuttle",
+    "context": "Installs sshuttle from PyPI system-wide (listed under the PyPI install method)."
+   },
+   {
+    "cmd": "pip install sshuttle",
+    "context": "Installs from PyPI inside a virtualenv as a non-root user, after activating it."
+   },
+   {
+    "cmd": "python3 -m venv /tmp/sshuttle",
+    "context": "Creates the virtualenv used for the non-root install method."
+   },
+   {
+    "cmd": "apt-get install sshuttle",
+    "context": "Debian/Ubuntu package install, listed in the installation docs."
+   },
+   {
+    "cmd": "brew install sshuttle",
+    "context": "Homebrew install, the method this brief was requested for."
+   },
+   {
+    "cmd": "pacman -S sshuttle",
+    "context": "Arch Linux package install from the installation docs."
+   },
+   {
+    "cmd": "dnf install sshuttle",
+    "context": "Fedora package install from the installation docs."
+   },
+   {
+    "cmd": "sudo port install sshuttle",
+    "context": "macOS install via MacPorts, after sudo port selfupdate."
+   }
+  ],
+  "install_notes": "Beyond brew install: packages exist for Ubuntu, Debian, Arch, Fedora, openSUSE, Gentoo, NixOS, FreeBSD (ports or pkg), OpenBSD, MacPorts, and Nix (nix-shell -p sshuttle). Python installs go through PyPI or a git clone with pip. Windows is listed as 'pip install sshuttle' with a separate experimental Windows page. I did not fetch the Requirements or Usage pages, so client privileges, remote-side requirements, and first-run steps are unverified.",
+  "standout": "Instead of tunnelling packets through SSH, which the author says causes TCP-over-TCP meltdown, it keeps per-connection state, so the tunnel carries plain data and the inner TCP sessions behave normally. The README also says the author knows of no other program that covers this exact combination of client OS, ssh-only access, no admin on the remote side, and no VPN. That claim is hedged with 'as far as I know'.",
+  "status": "Appears maintained, but I could not confirm dates. The stable docs are for version 2.0.0, and the README links both stable and latest documentation and a write-up on running it as a service. I saw no release date or commit date.",
+  "caveats": "Windows support is marked experimental in the README. The README says nothing about licensing, which I did not check. The README points to a Medium post for running it as a service, which is third-party guidance rather than project documentation. Its approach of tracking connections is presented as the reason it avoids TCP-over-TCP, not as a limit, but I did not read the Requirements, Usage, or TPROXY pages, so platform limits beyond those listed are unknown.",
+  "quotes": [
+   "sshuttle: where transparent proxy meets VPN meets ssh",
+   "sshuttle is not exactly a VPN, and not exactly port forwarding.  It's kind of both, and kind of neither.",
+   "It's just data-over-TCP, which is safe."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub README)",
+    "url": "https://github.com/sshuttle/sshuttle"
+   },
+   {
+    "label": "Documentation (stable)",
+    "url": "https://sshuttle.readthedocs.io/en/stable/"
+   },
+   {
+    "label": "How it works",
+    "url": "https://sshuttle.readthedocs.io/en/stable/how-it-works.html"
+   },
+   {
+    "label": "Installation",
+    "url": "https://sshuttle.readthedocs.io/en/stable/installation.html"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/sshuttle/sshuttle: worked, README returned",
+   "https://sshuttle.readthedocs.io/en/stable/how-it-works.html: worked",
+   "https://sshuttle.readthedocs.io/en/stable/installation.html: worked"
+  ]
+ }
+}

@@ -1,0 +1,91 @@
+{
+ "name": "reliable",
+ "desc": "Simple packet acknowledgement system for UDP-based protocols",
+ "homepage": "https://github.com/mas-bandwidth/reliable",
+ "installs_365d": 114,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol",
+  "library"
+ ],
+ "why": "A packet acknowledgement scheme for UDP is a neat look at how reliability is built on unreliable transport.",
+ "brief": {
+  "what_it_is": "reliable is a C library, from the README a simple packet acknowledgement system for UDP-based protocols. You give it packets you want to send and the raw bytes of packets you receive, and it tells you which of your sent packets the other side acknowledged. It works through callbacks: you supply a transmit function that puts bytes on your own UDP socket and a process function that handles received packets. It also reports RTT, jitter and packet loss estimates, and it handles fragmentation, reassembly and duplicate detection. It does not include a socket layer of its own.",
+  "why_it_exists": "The README says it is 'useful in situations where you need to know which UDP packets you sent were received by the other side.' It is meant to sit under your own protocol so you can resend messages until a packet carrying them is acked.",
+  "how_it_works": "Each endpoint assigns a sequence number to every packet it sends and tracks what the peer has received. Acks are collected in an array that you read with reliable_endpoint_get_acks and clear each frame. reliable_endpoint_update is called once per frame to refresh RTT, jitter, packet loss and bandwidth estimates. The README does not describe the ack bitfield encoding or the fragmentation wire format in detail.",
+  "commands_seen": [
+   {
+    "cmd": "reliable_default_config( &config );",
+    "context": "Fills the config struct with defaults before you override fields such as max_packet_size, fragment_above and the callbacks."
+   },
+   {
+    "cmd": "reliable_endpoint_create( &config, time );",
+    "context": "Creates an endpoint from the config; returns NULL on invalid config or failed allocation, so the README says to check the result."
+   },
+   {
+    "cmd": "reliable_endpoint_receive_packet( endpoint, packet_data, packet_bytes );",
+    "context": "Call for each packet received from your UDP socket, on the endpoint that should own it."
+   },
+   {
+    "cmd": "reliable_endpoint_send_packet( endpoint, packet_data, packet_bytes );",
+    "context": "Sends a packet through the endpoint, which goes out via your transmit callback."
+   },
+   {
+    "cmd": "reliable_endpoint_get_acks( endpoint, &num_acks );",
+    "context": "Returns a read-only array of acked sequence numbers and sets the count; valid only until the next receive, clear, reset or destroy."
+   },
+   {
+    "cmd": "reliable_endpoint_clear_acks( endpoint );",
+    "context": "Clears the accumulated acks once you have processed them; the README says to do this every frame."
+   },
+   {
+    "cmd": "reliable_endpoint_next_packet_sequence( endpoint );",
+    "context": "Returns the sequence number the next sent packet will have, so you can map acks back to message contents before sending."
+   },
+   {
+    "cmd": "reliable_endpoint_update( endpoint, time );",
+    "context": "Called once per frame to keep latency, jitter, packet loss and bandwidth stats current."
+   },
+   {
+    "cmd": "reliable_endpoint_rtt_min( endpoint );",
+    "context": "Reads the minimum round-trip time estimate, used in the README's stats printf example."
+   },
+   {
+    "cmd": "reliable_endpoint_destroy( endpoint );",
+    "context": "Frees an endpoint when you are finished with it."
+   }
+  ],
+  "install_notes": "The README gives no package-manager or build instructions beyond the C API. It says reliable is designed to work with your own socket library, and suggests the author's netcode library if you do not have one. No runtime, accounts or hardware are mentioned. The brew formula has no executables, so this is a library to link against, not a command-line tool.",
+  "standout": "It is a small, reliability-on-top-of-UDP layer with no socket code of its own, designed to pair with the author's netcode library. The caveats section is unusually careful about callback lifetimes and reentrancy, such as the rule that the transmit callback must not send on the same endpoint it was called from.",
+  "status": "The README says 'reliable is stable and production ready' and has a CI badge pointing to a GitHub Actions workflow. I did not see a release date or last commit date on the page I fetched, so recency is unknown.",
+  "caveats": "Endpoints are not thread safe; use one per thread or add your own lock, and the log, printf and assert handlers are process-global. Acks accumulate until cleared, and extra acks are dropped with a logged error when the buffer fills. Callback pointers and the ack array are valid only for the duration of the call or until the next mutating call, so data must be copied to be kept. The transmit callback must not send on its own endpoint. It is not a full messaging layer. Licence is BSD 3-Clause, with a credit request for products that use it.",
+  "quotes": [
+   "reliable is a simple packet acknowledgement system for UDP-based protocols.",
+   "It's useful in situations where you need to know which UDP packets you sent were received by the other side.",
+   "reliable is stable and production ready.",
+   "reliable is a packet acknowledgement system, not a full messaging layer."
+  ],
+  "links": [
+   {
+    "label": "Homepage / repository",
+    "url": "https://github.com/mas-bandwidth/reliable"
+   },
+   {
+    "label": "netcode (suggested socket library)",
+    "url": "https://github.com/mas-bandwidth/netcode"
+   },
+   {
+    "label": "CI workflow",
+    "url": "https://github.com/mas-bandwidth/reliable/actions/workflows/ci.yml"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/mas-bandwidth/reliable : fetched OK, README returned. Thin on release or commit info, and the README's linked docs were not needed for the brief."
+  ]
+ }
+}

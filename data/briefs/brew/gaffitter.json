@@ -1,0 +1,85 @@
+{
+ "name": "gaffitter",
+ "desc": "Efficiently fit files/folders to fixed size volumes (like DVDs)",
+ "homepage": "https://gaffitter.sourceforge.net/",
+ "installs_365d": 23,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "library",
+  "ancient"
+ ],
+ "why": "Solves a knapsack-style packing puzzle for fitting files onto DVD-sized volumes, an obscure and charming old utility.",
+ "brief": {
+  "what_it_is": "GAFFitter (Genetic Algorithm File Fitter) is a command-line tool written in C++ that arranges a list of files or directories into volumes of a fixed capacity, such as CD or DVD sizes. It takes a list of items, either as arguments, on stdin, or as size-identifier pairs, and outputs the selected items grouped into numbered volumes with a summary line for each (sum, difference from target, item count). Its aim is to minimize wasted space so that fewer volumes are needed.",
+  "why_it_exists": "The author describes it as a way to reduce the number of volumes needed to pack items by smartly arranging the input list, since the order you feed files in determines how well they fill each disc.",
+  "how_it_works": "The search is a genetic algorithm, a global meta-heuristic, rather than a simple greedy fill. It has many tunable parameters (seed, generations, population size, crossover and mutation probabilities, selection pressure) and presets from -1 (fast) to -9 (best). Other modes include a Best Fit approximation (--approximate) and a plain order-preserving split (--split).",
+  "commands_seen": [
+   {
+    "cmd": "fit -t 700m *.ogg",
+    "context": "Basic usage: pack the .ogg files into 700 MiB volumes, printing each volume's contents and a summary line."
+   },
+   {
+    "cmd": "fit -t 4.37g --bins 1 *",
+    "context": "Limit the output to a maximum of one volume with a 4.37 GiB target."
+   },
+   {
+    "cmd": "find . -type f | fit - -t 1.4m",
+    "context": "Read the file list from stdin via a pipe (the - argument) and pack it into 1.4 MiB volumes."
+   },
+   {
+    "cmd": "fit -t 10m --split *",
+    "context": "Split the files in their original order into 10 MiB volumes, preserving order at the cost of more wasted space."
+   },
+   {
+    "cmd": "fit -t 3.14 --di --ss '1 id one' '2.4 ID2' '0.3 b' '0.5 foo' '1.23456789 bar'",
+    "context": "Direct input mode: pass size-identifier pairs instead of file names, and show each item's size."
+   },
+   {
+    "cmd": "du -Lbs <files/dirs> | fit - --di --di-b <user options>",
+    "context": "Documented workaround to follow symbolic links, since GAFFitter itself does not follow them: get sizes from du and feed them in as direct input in bytes."
+   },
+   {
+    "cmd": "fit -t 700m -B 2048 *",
+    "context": "Example with a 2048-byte block size, stated to be equivalent to the du pipeline above apart from symlink handling."
+   },
+   {
+    "cmd": "gaff-iso --dvd *",
+    "context": "Bundled Python helper that packs files into DVD-sized volumes and creates ISO9660 images with genisoimage or mkisofs; outputs DVD-0001.iso, etc."
+   },
+   {
+    "cmd": "gaff-k3b --dvd *",
+    "context": "Bundled helper that packs files into DVD volumes for burning with K3B."
+   },
+   {
+    "cmd": "gaff-brasero --dvd *",
+    "context": "Bundled Python helper that integrates GAFFitter with the Brasero burner; calls Brasero once per volume."
+   }
+  ],
+  "install_notes": "The homepage gives no installation steps beyond pointers to a Git repository, the latest version 1.0.0 download, and official Debian packages. It targets GNU/Linux and other POSIX systems. The optional gaff-iso script needs genisoimage or mkisofs, the gaff-k3b and gaff-brasero scripts need K3B or Brasero, and the Nautilus scripts need awk, sed and echo and must be placed in ~/.gnome2/nautilus-scripts/ and set executable. Nothing on the page describes a build process.",
+  "standout": "It is a genetic-algorithm take on the bin-packing problem, shipped as a Unix filter with a deliberately rich command-line interface. The author also bundled a set of front-end scripts for ISO creation and burning tools from the GNOME and KDE era, which gives it a distinctly period flavour.",
+  "status": "Appears quiet. The homepage footer says 'Last updated on Mon Aug 3 2015', and the latest version listed is 1.0.0. The page gives no release date and no commit date, so I cannot confirm more recent activity.",
+  "caveats": "Runs on GNU/Linux and other POSIX systems only; the author says it could be ported to non-POSIX systems but does not claim it works there. The genetic algorithm is a heuristic and the page calls the approximation mode non-optimal. --split preserves order but usually wastes more space. GAFFitter does not follow symbolic links without the du workaround. Brasero handles only one volume at a time. The license is GPL v3 or later. The bundled scripts depend on tools that may no longer be common. The page does not mention Homebrew.",
+  "quotes": [
+   "Genetic Algorithm File Fitter, or just GAFFitter, is a command-line software written in C++ that arranges (via a genetic algorithm) an input list of items or files/directories into volumes of a certain capacity (target), such as CD or DVD, in a way that the total wastage is minimized.",
+   "By smartly arranging the input list, GAFFitter fits better the given items and so optimizes (reduces) the number of required volumes to pack them.",
+   "It is Free Software! (GPL)"
+  ],
+  "links": [
+   {
+    "label": "GAFFitter homepage",
+    "url": "https://gaffitter.sourceforge.net/"
+   },
+   {
+    "label": "GNU GPL version 3 text (license)",
+    "url": "http://www.gnu.org/licenses/gpl.txt"
+   }
+  ],
+  "fetch_log": [
+   "https://gaffitter.sourceforge.net/ : fetched OK; the page is a single HTML document with the About, Usage, Examples, scripts, and license sections, so no further fetches were needed."
+  ]
+ }
+}

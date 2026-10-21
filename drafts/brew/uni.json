@@ -1,0 +1,150 @@
+{
+ "name": "uni",
+ "desc": "Unicode database query tool for the command-line",
+ "homepage": "https://github.com/arp242/uni",
+ "installs_365d": 402,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "tui",
+  "library"
+ ],
+ "why": "Unicode database query tool that turns the character set into a browsable, searchable oddity cabinet from the terminal.",
+ "brief": {
+  "what_it_is": "uni is a command-line tool that queries the Unicode database. You give it text, codepoints, character names, categories, blocks, ranges, or emoji keywords, and it prints a table of matching characters with their codepoint, UTF-8 bytes, HTML entity, and name. It has four main commands: identify (codepoints in a string, like a Unicode-aware hexdump), search (codepoints by name words), print (codepoints by category, block, or range), and emoji (emoji by name, CLDR keyword, or group). Output can also be JSON, or a custom format string via -format. The README says it supports Unicode 15.1 and has good emoji support.",
+  "why_it_exists": "The README does not give a formal problem statement. The author says the emoji command is 'the real reason I wrote this', and notes that the CLDR keyword data makes emoji search much more useful than name matching alone (for example, 'smile' finds only one emoji by name, while the keyword search finds many more).",
+  "how_it_works": "uni reads a local copy of the Unicode data (generated into the repo's unidata package and cached in unidata/.cache) and matches against it. Input can be arguments or stdin. Output is a text table by default, with -as json or -as table for other layouts, and -format takes a template with %(name flags) fields. The README says the Go standard library unicode package is not used, because the database is Unicode 13 and would fail on newer codepoints.",
+  "commands_seen": [
+   {
+    "cmd": "uni identify \u20ac",
+    "context": "Identify a character: prints codepoint, decimal, UTF-8 bytes, HTML entity and name. The leading '% ' in the README is a shell prompt and is omitted here."
+   },
+   {
+    "cmd": "uni s globe earth",
+    "context": "Search names for codepoints containing both words (AND is the default for multiple search terms)."
+   },
+   {
+    "cmd": "uni s -o globe milky",
+    "context": "Search with -o so the terms are combined with OR instead of AND."
+   },
+   {
+    "cmd": "uni print U+2042",
+    "context": "Print a single codepoint. The README says U+2042, U2042 and 2042 are equivalent."
+   },
+   {
+    "cmd": "uni p Po",
+    "context": "Print all codepoints in the general category Po (Other_Punctuation)."
+   },
+   {
+    "cmd": "uni e cry",
+    "context": "Emoji search; matches on name and on CLDR keywords, showing the emoji, name and keyword list."
+   },
+   {
+    "cmd": "uni e g:cat-face grin",
+    "context": "Emoji search combining a group filter (g:cat-face) with a keyword term."
+   },
+   {
+    "cmd": "uni i -as json h\u20ac\u00fd",
+    "context": "Identify characters and output JSON. The README notes every value is a string, even numbers."
+   },
+   {
+    "cmd": "go install zgo.at/uni/v2@latest",
+    "context": "Compile and install from source with the Go toolchain; the binary lands in ~/go/bin."
+   },
+   {
+    "cmd": "go generate unidata",
+    "context": "Regenerate the Unicode data in the development section. Cached files in unidata/.cache must be cleared to fetch fresh copies; requires zsh and GNU awk (gawk)."
+   }
+  ],
+  "install_notes": "Prebuilt binaries are on the GitHub releases page, and packages for various platforms are listed on Repology. Building from source needs a Go toolchain and the command 'go install zgo.at/uni/v2@latest', which puts the binary in ~/go/bin, so that directory should be on PATH. No accounts, hardware, or first-run configuration are mentioned. Regenerating Unicode data is a development task that needs zsh and gawk. The README also lists Vim, dmenu, rofi and fzf integrations (a dmenu-uni script and a uni.vim snippet) as copy-paste add-ons.",
+  "standout": "The emoji command searches CLDR keywords as well as names, with group filters (g:hands), skin tone (-tone dark), gender variants (-gender women,man), and a -format template, so 'shrug' can produce man and woman variants in several skin tones. The project also ships a WebAssembly build that runs in the browser, so you can try it without installing.",
+  "status": "Maintained. The GitHub releases page lists v2.10.0 as Latest, dated 17 Sep (the year is not in the fetched text). Its notes say 'Update to Unicode 18.0', and the previous release, v2.9.0, is dated 16 Dec and says 'Update to Unicode 17.0'. Releases are frequent and changelog entries are detailed.",
+  "caveats": "The README says Unicode 15.1, but the latest release notes say Unicode 18.0, so the README is out of date on that point. The README says the table alignment is off for some wide characters on GitHub, though it should be correct in a terminal. The handshake emoji's per-hand skin tones are not supported, and the author says this is deliberate for now. The index links an Alternatives section, but it was not in the fetched text, so no comparison with other tools was verified. The project's license was not seen in the fetched pages. Regenerating the data needs zsh and gawk.",
+  "quotes": [
+   "`uni` queries the Unicode database from the commandline.",
+   "All values are always a string, even numerical values. This makes things a bit easier/consistent as JSON doesn't support hex literals and such.",
+   "Maybe for uni v3 someday."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/arp242/uni"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/arp242/uni/releases"
+   },
+   {
+    "label": "Run in the browser (WebAssembly build)",
+    "url": "https://arp242.github.io/uni-wasm/"
+   },
+   {
+    "label": "Packages (Repology)",
+    "url": "https://repology.org/project/uni/versions"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/arp242/uni: worked; returned the README (usage, commands, development notes; no Alternatives text included)",
+   "https://github.com/arp242/uni/releases: worked; page text was heavily cluttered but included release notes for v2.2.1 through v2.10.0, which I used for status and the Unicode version"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A focused terminal window into Unicode\u2019s oddities, with searchable codepoint data and CLDR emoji keywords that make exploration more than a character lookup."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "uni",
+  "tldr": "A command-line Unicode database: look up any character by name, codepoint, category or emoji keyword and see its bytes, entity and name.",
+  "deeper_look": "uni queries the Unicode database from the terminal. Give it text, codepoints, name words, categories, blocks, ranges or emoji keywords, and it prints a table of matching characters with codepoint, UTF-8 bytes, HTML entity and name. It has four main commands: identify (what is in this string, like a Unicode-aware hexdump), search (find codepoints by name), print (list codepoints by category, block or range) and emoji. Output can be a table, JSON, or a custom `-format` template.\n\nThe author calls the emoji command \"the real reason I wrote this\". It matches CLDR keywords as well as names, which matters: searching `smile` by name finds one emoji, while the keyword data finds many more. You can narrow by group, skin tone and gender variants.\n\nThe idea underneath is that text is not what it looks like. A string is a list of codepoints, which become bytes, and each codepoint belongs to a category and a block. Looking at a few strings through `identify` is a quick way to see how invisible characters, lookalikes and combining marks work. uni reads its own copy of the Unicode data rather than the Go standard library's, because that one is Unicode 13 and fails on newer codepoints.",
+  "install": "brew install uni",
+  "try_this": [
+   {
+    "cmd": "uni identify \u20ac",
+    "what_happens": "Prints the codepoint, decimal value, UTF-8 bytes, HTML entity and name of the euro sign."
+   },
+   {
+    "cmd": "uni s globe earth",
+    "what_happens": "Searches character names for codepoints containing both words."
+   },
+   {
+    "cmd": "uni e g:cat-face grin",
+    "what_happens": "Searches emoji by keyword within the cat-face group."
+   }
+  ],
+  "whats_unique": "The emoji search uses CLDR keywords, groups, skin tones and gender variants, not just names. A WebAssembly build also lets you try it in a browser first.",
+  "caveats": "The README still says Unicode 15.1, but the latest release notes say Unicode 18.0, so the README is out of date.",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "unicode",
+   "emoji",
+   "text",
+   "cli"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/arp242/uni"
+   },
+   {
+    "label": "Run in the browser (WebAssembly build)",
+    "url": "https://arp242.github.io/uni-wasm/"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/arp242/uni/releases"
+   },
+   {
+    "label": "Packages (Repology)",
+    "url": "https://repology.org/project/uni/versions"
+   }
+  ]
+ }
+}

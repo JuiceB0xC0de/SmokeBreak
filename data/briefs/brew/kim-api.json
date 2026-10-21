@@ -1,0 +1,90 @@
+{
+ "name": "kim-api",
+ "desc": "Knowledgebase of Interatomic Models (KIM) API",
+ "homepage": "https://openkim.org",
+ "installs_365d": 1012,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "library"
+ ],
+ "why": "Knowledgebase and API for interatomic potentials in molecular simulation, real science but mostly infrastructure for researchers.",
+ "brief": {
+  "what_it_is": "OpenKIM is a curated repository of interatomic potentials (also called force fields or models) for atomistic simulation, with a Knowledgebase of Interatomic Models (KIM) API that lets many simulation codes load these models without modification. The site lists about 1,532 models, 40 model drivers, 26 test drivers, and 220,789 tests, and offers search by element and by material. The kim-api package is the software layer: it takes a model name from the knowledgebase and provides a common interface so that codes such as LAMMPS, ASE, DL_POLY, and GULP can call it. Each potential is checked for coding integrity and benchmarked against material properties.",
+  "why_it_exists": "The homepage frames the goal as helping users \"discover and use the best potentials for their research\" through a \"simple plug-and-play API\". The KIM API docs describe a standard Portable Model Interface so one implementation of a model can run in several simulators unmodified.",
+  "how_it_works": "The KIM API defines the Portable Model Interface (PMI) for models and the Simulator Model Interface (SMI) for packaging a model's native simulator input, parameters, and metadata (supported species, units). A portable model can carry its code and parameters together, or carry only parameters and use a separate model driver library. Bindings exist for C++, C, Fortran, Python, and Julia.",
+  "commands_seen": [
+   {
+    "cmd": "kim init         SW_StillingerWeber_1985_Si__MO_405512056662_006 metal",
+    "context": "LAMMPS-style input on the homepage: defines the KIM model (Stillinger-Weber Si) and its unit style."
+   },
+   {
+    "cmd": "kim query        a0 get_lattice_constant_cubic crystal=[\"diamond\"] species=[\"Si\"] units=[\"angstrom\"]",
+    "context": "LAMMPS-style input on the homepage: queries the knowledgebase for a cubic lattice constant for diamond Si under that model."
+   },
+   {
+    "cmd": "kim interactions Si",
+    "context": "LAMMPS-style input on the homepage: maps atom types to species for the KIM model."
+   },
+   {
+    "cmd": "kim_init    SNAP_ChenDengTran_2017_Mo__MO_698578166685_000",
+    "context": "Homepage example for a second simulator input (DL_POLY/GULP-style format): loads a SNAP Mo potential."
+   },
+   {
+    "cmd": "kim_interactions    Mo",
+    "context": "Same second example: assigns the Mo species to the loaded model."
+   },
+   {
+    "cmd": "kim_model",
+    "context": "Homepage example input block for an Ar molecular dynamics run that names the Lennard-Jones model LJ_Shifted_Bernardes_1958HighCutoff_Ar__MO_242741380554_004 on the next line."
+   },
+   {
+    "cmd": "from ase.calculators.kim import KIM",
+    "context": "Python example on the homepage: imports the ASE calculator wrapper for KIM models."
+   },
+   {
+    "cmd": "calc = KIM(model)",
+    "context": "Python example: creates an ASE calculator for the Al EAM model named by the model variable."
+   },
+   {
+    "cmd": "a0 = get_lattice_constant_cubic([model], [\"fcc\"], [\"Al\"], [\"angstrom\"])[0]",
+    "context": "Python example: queries the lattice constant for fcc Al under that model using the kim_query helper."
+   }
+  ],
+  "install_notes": "The KIM API docs say the easiest route is the pre-compiled kim-api package from conda-forge; installing from source is also supported. Models are obtained separately, and the docs point to an 'Obtaining KIM Models' page with the detailed steps. The Homebrew metadata lists three executables (kim-api-activate, kim-api-collections-management, kim-api-deactivate), but I did not see them documented in the pages I read. Support is through the OpenKIM forum at matsci.org.",
+  "standout": "Rather than being a single potential or a simulator, it is a shared, curated catalogue plus a standard interface, so one model ID works across several codes. The site also reports benchmark results (Crystal Genome test drivers) for each potential, which helps choose one.",
+  "status": "Maintained. The homepage news shows items dated 29-Aug-2026, a July 2026 quarterly update, and new Crystal Genome test drivers in late July 2026. The KIM API docs list version 2.4.2 as the latest release, but I did not see its release date.",
+  "caveats": "The homepage is a JavaScript app (it says to enable JavaScript), so I read text from the page shell and the example blocks, not the live search results. The homepage examples are a mix of input formats (LAMMPS-style, DL_POLY/GULP-style, and Python), and the exact syntax is not uniform. I did not verify the three Homebrew executables against documentation. Users must cite the KIM Project when publishing with the site's content.",
+  "quotes": [
+   "OpenKIM is a curated repository of conventional and machine learning interatomic potentials for atomistic simulations that are compatible with many major codes through a simple plug-and-play API.",
+   "Each potential is verified for coding integrity and benchmarked against a variety of material properties based on OpenKIM Crystal Genome (XtalG) technology, empowering users to discover and use the best potentials for their research.",
+   "Please cite the KIM Project and content obtained from this site if you use it in published work."
+  ],
+  "links": [
+   {
+    "label": "OpenKIM homepage",
+    "url": "https://openkim.org"
+   },
+   {
+    "label": "KIM API documentation (latest release)",
+    "url": "https://kim-api.readthedocs.io/en/latest/"
+   },
+   {
+    "label": "KIM API overview page",
+    "url": "https://openkim.org/kim-api/"
+   },
+   {
+    "label": "OpenKIM support forum",
+    "url": "https://matsci.org/openkim/"
+   }
+  ],
+  "fetch_log": [
+   "https://openkim.org: worked, but the page is a JavaScript app; text was extracted from the shell and examples.",
+   "https://openkim.org/kim-api/: worked; overview and install pointers, no install commands."
+  ]
+ }
+}

@@ -1,0 +1,95 @@
+{
+ "name": "mdxmini",
+ "desc": "Plays music in X68000 MDX chiptune format",
+ "homepage": "https://github.com/mistydemeo/mdxmini/",
+ "installs_365d": 66,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "audio",
+  "quick",
+  "ancient"
+ ],
+ "why": "Plays X68000 MDX chiptune files, a door into a obscure Japanese retro sound format and its hardware era.",
+ "brief": {
+  "what_it_is": "mdxmini is a C library with a small API for playing back MDX chiptune files made for the X68000 home computer. A caller opens an MDX file (plus an optional directory of .pdx sample files), reads metadata such as title, length in seconds, and track count, then calls mdx_calc_sample repeatedly to render raw PCM audio into a buffer at a chosen sample rate. Each call can also report the note or sample index active on each channel, which is useful for visualizations. The README's Shift-JIS note means titles come back in that encoding.",
+  "why_it_exists": "The README presents it as a way to play the large MDX archive of FM-sound-era music from the X68000, whose 8-channel YM2151 and PCM chip gave it strong music support. The Credits section traces it from the original X68000 MXDRV player through Daisuke Nagano's Unix mdxplay to BouKiCHi's library.",
+  "how_it_works": "The caller initialises a t_mdxmini struct with mdx_open, sets the output rate with mdx_set_rate, and then loops on mdx_calc_sample to fill a 16-bit buffer. mdx_calc_sample returns 0 at the final frame of the song. mdx_get_current_notes fills an array with per-channel values: channels 0 to 7 are FM notes (0 is the lowest C), and channels 8 to 15 are PCM sample indices. The README does not say how the chip output is generated internally.",
+  "commands_seen": [],
+  "install_notes": "The README gives no build, install, or dependency steps. The API is documented in the mdxmini.h header, and the README's C sample shows the call sequence. The Homebrew formula provides an executable named mdxplay, but the README does not describe how that binary works or how to run it. Some songs need a directory of .pdx sample files passed as path_to_samples, which can be NULL.",
+  "standout": "It is a reusable playback library rather than only a player, and it exposes live per-channel note data for visualizations. Its downstream uses include an Android player and the Modizer music-module player, so the same core runs on mobile and desktop.",
+  "status": "unknown. The README has no dates or version notes. The GitHub releases page has no releases. The README names Misty De Meo as current maintainer, but I could not check recent commits.",
+  "caveats": "The README covers only the library API and gives no build instructions, supported platforms, or licence. The mdxplay executable in the Homebrew formula is not described in the README, so I could not confirm its options or behaviour. Songs that use PCM samples need the matching .pdx files on disk. Titles are Shift-JIS encoded and need decoding for display. The README's example playback-position arithmetic looks convoluted, so treat the sample loop as illustrative rather than exact.",
+  "quotes": [
+   "mdxmini is a C library with a simple API which can play back MDX chiptunes from the X68000 home computer.",
+   "The X68000 was, for its time, an advanced 16-bit computer with excellent multimedia support; its 8-channel YM2151 sound chip and 1-channel PCM chip gave it excellent music support.",
+   "Detailed API documentation is available in the mdxmini.h header file, but the following sample program shows how to use mdxmini to open a file, extract some metadata, and play back music"
+  ],
+  "links": [
+   {
+    "label": "mdxmini homepage (GitHub)",
+    "url": "https://github.com/mistydemeo/mdxmini/"
+   },
+   {
+    "label": "Fossil of FM-sound era MDX archive",
+    "url": "http://www42.tok2.com/home/mdxoarchive"
+   },
+   {
+    "label": "ruby-mdxplay demo program",
+    "url": "https://github.com/mistydemeo/ruby-mdxplay"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/mistydemeo/mdxmini/ (homepage, README returned, worked)",
+   "https://github.com/mistydemeo/mdxmini/releases (worked, page loaded and reports no releases)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A playable gateway to the X68000\u2019s distinctive FM-and-PCM music format, with live per-channel note data that invites visualizers and deeper exploration."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "mdxmini",
+  "tldr": "A small C library and the mdxplay player that render MDX chiptunes, the FM-synth music format of Sharp's X68000 home computer, into audio.",
+  "deeper_look": "mdxmini plays MDX files, a music format from the Sharp X68000, a Japanese 16-bit home computer. In the README's words, its \"8-channel YM2151 sound chip and 1-channel PCM chip gave it excellent music support.\" A large archive of MDX songs from that era still exists, and this library is a way to hear them without the original machine.\n\nIt is built as a library first. A caller opens an MDX file, optionally with a directory of .pdx sample files, reads the title, length and track count, then repeatedly asks for chunks of raw 16-bit audio at a chosen sample rate. Each chunk can also report which note is sounding on each of the eight FM channels and which sample is playing on the PCM channels, which is handy if you want to draw a visualizer.\n\nThe lineage is traced in the README's credits: the original X68000 MXDRV player, then Daisuke Nagano's Unix mdxplay, then BouKiCHi's library. The Homebrew formula installs an executable called mdxplay. The README does not describe it, so treat its options as something to discover with --help.\n\nThe larger door here is the sound itself. FM synthesis on a chip like the YM2151 shaped a lot of 1980s and 90s game and computer music, and a small, readable C API makes this a convenient place to see how a tracker-style song file turns into samples.",
+  "install": "brew install mdxmini\n# installs the mdxplay executable; depends on sdl2-compat\n# some songs need matching .pdx sample files on disk, and you must supply your own MDX files",
+  "try_this": [
+   {
+    "cmd": "mdxplay --help",
+    "what_happens": "Prints the player's usage, since the README does not document the executable."
+   }
+  ],
+  "whats_unique": "It is a reusable playback library with live per-channel note data, not only a player. The same core is used in an Android player and in the Modizer music-module player.",
+  "caveats": "The README documents only the library API, with no build steps or description of mdxplay, and I could not confirm the project's recent activity or that titles display correctly, since they are Shift-JIS encoded.",
+  "commitment": "quick",
+  "category": "sound-and-live-coding",
+  "tags": [
+   "quick",
+   "audio",
+   "chiptune",
+   "retro",
+   "x68000",
+   "fm-synthesis",
+   "c-library"
+  ],
+  "links": [
+   {
+    "label": "mdxmini homepage (GitHub)",
+    "url": "https://github.com/mistydemeo/mdxmini/"
+   },
+   {
+    "label": "Fossil of FM-sound era MDX archive",
+    "url": "http://www42.tok2.com/home/mdxoarchive"
+   },
+   {
+    "label": "ruby-mdxplay demo program",
+    "url": "https://github.com/mistydemeo/ruby-mdxplay"
+   }
+  ]
+ }
+}

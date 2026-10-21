@@ -1,0 +1,89 @@
+{
+ "name": "blink",
+ "desc": "Tiniest x86-64-linux emulator",
+ "homepage": "https://github.com/jart/blink",
+ "installs_365d": 153,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "take-things-apart",
+ "tags": [
+  "reverse-engineering",
+  "afternoon",
+  "library"
+ ],
+ "why": "A tiny x86-64 Linux emulator that lets you watch machine code execute, a strong door into how programs run.",
+ "brief": {
+  "what_it_is": "Blink is a user-mode x86-64 Linux emulator written in ANSI C11. It takes a Linux x86-64 ELF binary (or a Cosmopolitan Actually Portable Executable) and runs it on another POSIX host such as macOS, FreeBSD, OpenBSD, or Cygwin, translating Linux system calls to the host. Its companion program, blinkenlights, is a terminal UI debugger that shows memory panels rendered as IBM Code Page 437 glyphs, which change as you step through the assembly. The README describes a headless blink mode and a blinkenlights TUI mode, and the TUI also supports reverse debugging by scrolling the mouse wheel over the assembly.",
+  "why_it_exists": "The README positions blink as a smaller, more portable alternative to qemu-x86_64: about 221kb versus a 4mb binary, running on any POSIX system rather than only Linux, and reportedly up to 2x faster on some benchmarks. Blinkenlights is framed as a visualization-first alternative to GDB: 'Unlike GDB, Blinkenlights focuses on visualizing program execution.'",
+  "how_it_works": "Instruction decoding uses a trimmed-down version of Intel's Xed disassembler. Hot code is JIT-compiled to native functions on x86_64 and aarch64, with the -j flag controlling JIT (the meaning is inverted between blink and blinkenlights). Guest memory is virtualized either through a four-level PML4T page table with a 16-entry TLB, or through a faster linear identity-mapped translation (disabled with -m), and Linux syscalls are emulated on top of the host OS.",
+  "commands_seen": [
+   {
+    "cmd": "./configure",
+    "context": "First build step: runs the configure script before compiling."
+   },
+   {
+    "cmd": "make -j4",
+    "context": "Builds blink and blinkenlights in parallel using four jobs."
+   },
+   {
+    "cmd": "doas make install  # note: doas is modern sudo",
+    "context": "Installs the built programs system-wide; the README notes doas as a modern sudo replacement."
+   },
+   {
+    "cmd": "blink -v",
+    "context": "Prints version and build configuration to confirm the install."
+   },
+   {
+    "cmd": "blink third_party/cosmo/tinyhello.elf",
+    "context": "Runs the bundled hello-world Cosmopolitan binary under Blink."
+   },
+   {
+    "cmd": "blinkenlights third_party/cosmo/tinyhello.elf",
+    "context": "Runs the same hello-world binary under the blinkenlights debugger TUI."
+   },
+   {
+    "cmd": "make MODE=tiny",
+    "context": "Builds the smallest-footprint variant, which removes assertions and logging and is about 50% smaller."
+   },
+   {
+    "cmd": "./configure --enable-vfs",
+    "context": "Enables the emulated VFS so a full chroot'd Linux distro can run with correct absolute symlinks and /proc values, at some size and speed cost."
+   },
+   {
+    "cmd": "make check",
+    "context": "Runs Blink's local test suite of 700+ test programs."
+   },
+   {
+    "cmd": "blinkenlights -jm o//third_party/python/python.com",
+    "context": "Runs Actually Portable Python in the TUI with JIT and the linear memory optimization enabled, which the README says are needed for usable speed."
+   }
+  ],
+  "install_notes": "Build from source: needs a C11 compiler with atomics (GCC 4.9.4 or newer) and a modern GNU Make, not the one shipped with Xcode. No libraries beyond POSIX libc are required. The README's install path is ./configure, make, then doas make install, and blink -v plus man blink to verify. Blink downloads precompiled test binaries automatically, and make check2 / make emulates fetch static GCC and Qemu toolchains. The TUI needs a UTF-8 VT100/xterm-style terminal; recommended terminals include kitty, PuTTY, GNOME Terminal, and Terminal.app. Optional first-run files: blink writes blink.log in the current directory when something is logged, and BLINK_OVERLAYS can point at a root filesystem directory. Nothing in the README mentions Homebrew-specific steps beyond the brew formula, so I have no further detail on the brew install itself.",
+  "standout": "Blinkenlights turns execution into a visual experience: memory panels of CP437 glyphs animate as you single-step, and you can rewind execution history by scrolling backward over the disassembly. Blink's own claim is that it is a few hundred kilobytes and runs on far more hosts than qemu-user, which is unusual for an emulator.",
+  "status": "unknown. The README I read has no release dates, changelog, or commit history, and I did not follow the repository's releases or commits pages, so I cannot say whether it is actively maintained from what I saw. The README describes a long test regime (Cosmopolitan, LTP, and musl test suites) and a version string of blink-1.0, which is the only version hint.",
+  "caveats": "Not every Linux program works: the README says Blink returns EINVAL for many address families and Linux-only syscalls such as membarrier and System V message queues. x87 long double is not 80-bit; Blink uses 64-bit doubles. Some fringe instructions (BOUND, ENTER) are unimplemented, and most ring-0 instructions are unsupported. JIT exists only on x86_64 and aarch64 and only for 64-bit long-mode code. Running without JIT (-j in blink) is about 10x slower. Page-size mismatches on Apple M1 (16kb) and Cygwin (64kb) can produce an ELF p_vaddr error; the fix involves -m or relinking with -Wl,-z,max-page-size=65536. The debugger's -j and -m flags mean the opposite of the same flags in blink. MODE=tiny removes all assertions and logging, which the README says to use only if you are confident the build is bug-free for your use case. Debugging frames require -fno-omit-frame-pointer. License not stated in the README I read, so I cannot say what it is. The brew caveats field was empty.",
+  "quotes": [
+   "blink is an x86-64 interpreter for POSIX platforms that's written in ANSI C11 that's compatible with C++ compilers.",
+   "Blink is 221kb in size (115kb with optional features disabled), whereas qemu-x86_64 is a 4mb binary.",
+   "Unlike GDB, Blinkenlights focuses on visualizing program execution."
+  ],
+  "links": [
+   {
+    "label": "Blinkenlights project page",
+    "url": "https://justine.lol/blinkenlights"
+   },
+   {
+    "label": "Getting Started with Cosmopolitan Libc (blog)",
+    "url": "https://jeskin.net/blog/getting-started-with-cosmopolitan-libc/"
+   },
+   {
+    "label": "blink-isystem (musl headers for Blink builds)",
+    "url": "https://github.com/jart/blink-isystem"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/jart/blink : fetched OK, returned the README (blinkenlights/blink combined README, about 40k characters before truncation). Did not follow further links; README was complete enough to write the brief."
+  ]
+ }
+}

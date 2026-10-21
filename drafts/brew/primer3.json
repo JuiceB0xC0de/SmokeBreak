@@ -1,0 +1,144 @@
+{
+ "name": "primer3",
+ "desc": "Program for designing PCR primers",
+ "homepage": "https://primer3.org/",
+ "installs_365d": 145,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "science",
+  "library",
+  "afternoon"
+ ],
+ "why": "Real molecular biology software for designing PCR primers, a genuine scientific tool you can run at home.",
+ "brief": {
+  "what_it_is": "Primer3 is a command-line C program, with Perl test scripts, that designs PCR primers from a DNA sequence. The core binary, primer3_core, reads Boulder-IO text records from stdin or a file. Each record gives a template sequence, optional target and exclusion regions, and PRIMER_ settings such as size, melting temperature, GC content and product size range. It prints ranked candidate primer pairs in the same Boulder-IO format, or a readable report when run with --format_output. The homepage says it can also design hybridization probes (internal oligos) and sequencing primers. The brew executables list also includes ntdpal, ntthal, oligotm, long_seq_tm_test, amplicon3_core and primer3_masker; the README names only primer3_core, ntdpal, oligotm and long_seq_tm_test.",
+  "why_it_exists": "The homepage describes PCR as an essential and ubiquitous tool in genetics and molecular biology, and says PCR is used for many different goals, so primer3 exposes many input parameters that let the user define what makes a good primer for their goal. The README frames it as doing everything from mispriming libraries and sequence quality data to generating internal oligos.",
+  "how_it_works": "The manual says primer3 scores candidate primers against criteria including oligo melting temperature, size, GC content and primer-dimer possibilities, PCR product size, positional constraints within the template, and ectopic priming (amplifying the wrong sequence). Some criteria are hard constraints and others are terms in an objective function that defines the optimal pair. Thermodynamic alignment is used for oligo-oligo and hairpin checks by default from version 2.3 onward, and it needs parameter files from a primer3_config directory. The masker component (primer3_masker) masks template sequence before design.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt-get install -y build-essential g++ cmake git-all",
+    "context": "README install step on Debian/Ubuntu: installs the compiler toolchain, cmake and git."
+   },
+   {
+    "cmd": "git clone https://github.com/primer3-org/primer3.git primer3",
+    "context": "README: clones the source repository into a folder named primer3."
+   },
+   {
+    "cmd": "cd primer3/src",
+    "context": "README: enter the source directory where the Makefile lives."
+   },
+   {
+    "cmd": "make",
+    "context": "README: builds the executables from source."
+   },
+   {
+    "cmd": "make test",
+    "context": "README: runs the test suite after building."
+   },
+   {
+    "cmd": "./primer3_core ../example",
+    "context": "README: runs primer3_core on the bundled example input file to confirm it works."
+   },
+   {
+    "cmd": "$ make all",
+    "context": "Manual (Unix section): builds the executables; the manual says to expect primer3_core, ntdpal, oligotm and long_seq_tm_test."
+   },
+   {
+    "cmd": "primer3_core < example",
+    "context": "Manual: the manual's own example run, feeding a Boulder-IO record on stdin."
+   },
+   {
+    "cmd": "primer3_core --format_output",
+    "context": "Manual: command-line flag that prints a user-oriented report instead of Boulder-IO. Shown as a flag in the manual, not as a full command line."
+   },
+   {
+    "cmd": "perl -w p3test.pl",
+    "context": "Manual (Mac section): optional test run from the test folder."
+   }
+  ],
+  "install_notes": "Source build needs git, a C and C++ compiler (gcc/g++ in the README), make and cmake, plus perl for the tests. The manual says that if your perl is not called perl you must edit the test Makefile. Manual's Mac section describes a prebuilt bin folder copied into ~/bin or /usr/local/bin with optional PATH edits; the manual does not say how current that is. Windows needs Git for Windows, TDM-GCC MinGW (mingw32-make TESTOPTS=--windows) and ActivePerl, per the manual. Thermodynamic parameter files must sit in ./primer3_config/ or /opt/primer3_config/, or be pointed to with PRIMER_THERMODYNAMIC_PARAMETERS_PATH. No accounts, hardware or services are needed. The web interfaces Primer3Web and Primer3Plus are separate, per the manual.",
+  "standout": "It is a plain text-in, text-out tool with no account, GUI or service dependency, and it has been cited in the literature since 2012 with peer-reviewed papers in NAR and Bioinformatics. It also has a settings design that separates the same engine's defaults for a command-line user from those for a wet-lab web user, and its default settings changed in version 2.3 to use thermodynamic calculations.",
+  "status": "Unknown. The homepage says 'last updated: 08.Jan.2022', the manual's copyright runs to 2022, and the Windows section points to tag v2.3.7. I did not see a release date or latest-commit date on the GitHub README, so I cannot confirm current activity. Brew lists it, so it is at least packaged.",
+  "caveats": "Windows build does not support the masker (primer3_masker); the manual says masker-related tests will fail there. Thermodynamic alignment depends on the primer3_config parameter files, and the manual warns that the path must be set correctly. The manual says it uses Boulder-IO tags, a pre-XML format, so scripting against it means learning that format. The manual warns that hard-coded Windows line endings break compilation and tests. Licensed GPL-2.0 or later, so programs that link to or include its code take on GPL terms. The manual and homepage look older in style and use plain http for the manual link. The homepage's 'last updated' date is from January 2022.",
+  "quotes": [
+   "Primer3 is a widely used program for designing PCR primers (PCR = \"Polymerase Chain Reaction\").",
+   "Design PCR primers from DNA sequence. Widely used (190k Google hits for \"primer3\").",
+   "The development of Primer3 is promoted by a small group of enthusiastic scientists mainly in their free time.",
+   "primer3 does it. C&perl."
+  ],
+  "links": [
+   {
+    "label": "Primer3 homepage",
+    "url": "https://primer3.org/"
+   },
+   {
+    "label": "Source on GitHub (README)",
+    "url": "https://github.com/primer3-org/primer3"
+   },
+   {
+    "label": "Primer3 manual",
+    "url": "http://primer3.org/manual.html"
+   }
+  ],
+  "fetch_log": [
+   "https://primer3.org/ - worked; homepage text read, links to GitHub, web interfaces and manual.",
+   "https://github.com/primer3-org/primer3 - worked; README read, containing install and run commands. Thin, so I followed the manual link.",
+   "http://primer3.org/manual.html - worked; manual text read, truncated at about 40,000 characters, so later sections (output tags, exit codes) were not read."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A widely used but developer-unfamiliar scientific tool that turns DNA sequences and constraints into ranked primers using real thermodynamic and mispriming models."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "primer3",
+  "tldr": "Primer3 reads a DNA sequence and prints ranked PCR primer pairs, using a plain text-in, text-out format and thermodynamic scoring.",
+  "deeper_look": "PCR copies a stretch of DNA by starting from two short strands, called primers, that stick to either end of the target. Choosing those two strands is a real design problem. They need the right melting temperature and GC content, they must not stick to each other or fold back on themselves, and they should not amplify the wrong place. Primer3 is the program many labs use to make that choice.\n\nThe core binary, `primer3_core`, reads Boulder-IO text records. Each record holds a template sequence, optional target and exclusion regions, and `PRIMER_` settings such as size, melting temperature and product size range. It prints ranked candidate pairs in the same format, or a readable report with `--format_output`. The homepage says it can also design hybridization probes (internal oligos) and sequencing primers.\n\nThe interesting part is the scoring. The manual describes some criteria as hard constraints and others as terms in an objective function that defines the optimal pair. From version 2.3, oligo-oligo and hairpin checks use thermodynamic alignment by default. The other installed tools, such as `oligotm` and `ntthal`, look like the same thermodynamic pieces exposed on their own. That makes it a small window into how biology gets turned into numbers you can optimise.\n\nThe homepage says development is promoted by \"a small group of enthusiastic scientists mainly in their free time.\"",
+  "install": "brew install primer3\n# No accounts or hardware needed. Thermodynamic checks need the primer3_config parameter files, either in ./primer3_config/ or /opt/primer3_config/, or pointed to with PRIMER_THERMODYNAMIC_PARAMETERS_PATH.",
+  "try_this": [
+   {
+    "cmd": "primer3_core --help",
+    "what_happens": "Prints the program's usage and options, a first look at what it accepts."
+   },
+   {
+    "cmd": "primer3_core < example",
+    "what_happens": "Feeds a Boulder-IO record on stdin, as in the manual, and prints ranked primer pairs in the same format. You need the example file from the source repository."
+   },
+   {
+    "cmd": "primer3_core --format_output < example",
+    "what_happens": "Runs the same record but prints a readable report instead of raw Boulder-IO tags."
+   }
+  ],
+  "whats_unique": "It is a plain text-in, text-out engine with no GUI or service behind it, and it has been cited in the literature since 2012. The web interfaces Primer3Web and Primer3Plus are separate front ends to the same kind of design logic.",
+  "caveats": "The homepage was last updated in January 2022 and current activity could not be confirmed. Input uses the pre-XML Boulder-IO format, so scripting against it means learning that format.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "science",
+   "biology",
+   "pcr",
+   "dna",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "Primer3 homepage",
+    "url": "https://primer3.org/"
+   },
+   {
+    "label": "Source on GitHub (README)",
+    "url": "https://github.com/primer3-org/primer3"
+   },
+   {
+    "label": "Primer3 manual",
+    "url": "http://primer3.org/manual.html"
+   }
+  ]
+ }
+}

@@ -1,0 +1,90 @@
+{
+ "name": "ocproxy",
+ "desc": "User-level SOCKS and port forwarding proxy",
+ "homepage": "https://github.com/cernekee/ocproxy",
+ "installs_365d": 160,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "Userspace TCP/IP stack that tunnels through OpenConnect VPNs without root, a clever way to take a network stack apart.",
+ "brief": {
+  "what_it_is": "ocproxy is a user-level SOCKS5 and port-forwarding proxy for OpenConnect VPNs, built on the lwIP TCP/IP stack. OpenConnect runs it as a script, passing it the tunnel file descriptor, and ocproxy turns that tunnel into a local SOCKS5 server (-D) and local ports that forward over the VPN (-L). Only the connections a user explicitly sends through it go over the VPN, so the VPN no longer captures all host traffic. The optional vpnns companion tool, which is Linux-only and marked experimental, instead runs an application in a separate network namespace attached to the VPN.",
+  "why_it_exists": "The README says that when using ocproxy, OpenConnect only handles network activity the user specifically asks to proxy, so the VPN interface no longer \"hijacks\" all network traffic on the host. It also aims at situations where root is unavailable or undesirable, such as multiuser systems, and at connecting to several VPNs at once even when their IP ranges overlap.",
+  "how_it_works": "OpenConnect is started with --script-tun and --script pointing at ocproxy, which reads its network settings from environment variables set by OpenConnect (INTERNAL_IP4_ADDRESS, INTERNAL_IP4_MTU, INTERNAL_IP4_DNS, CISCO_DEF_DOMAIN) and receives the tunneled traffic on the file descriptor named by VPNFD. Inside the process, lwIP handles the TCP/IP, and the SOCKS5 server and -L forwards open connections over the VPN. The separate vpnns approach creates a fresh user/net/uts/mount namespace with only loopback, then uses --attach to give it a tunnel device, default route and resolv.conf, so no proxy configuration is needed.",
+  "commands_seen": [
+   {
+    "cmd": "openconnect --script-tun --script \"./ocproxy -L 2222:unix-host:22 -L 3389:win-host:3389 -D 11080\" vpn.example.com",
+    "context": "Main usage: OpenConnect launches ocproxy as its tunnel script, with a SOCKS5 server on 11080 and two forwarded local ports. (The README wraps this across two lines; joined here.)"
+   },
+   {
+    "cmd": "ssh -p2222 localhost",
+    "context": "Connects to a forwarded port, reaching unix-host:22 over the VPN through the -L 2222 mapping."
+   },
+   {
+    "cmd": "socksify ssh unix-host",
+    "context": "Uses the SOCKS wrapper socksify to run ssh through the built-in SOCKS5 server."
+   },
+   {
+    "cmd": "tsocks ssh 172.16.1.2",
+    "context": "Same idea using the tsocks wrapper, for a host given by IP address."
+   },
+   {
+    "cmd": "firefox -no-remote -ProfileManager",
+    "context": "One-time setup to create a separate Firefox profile for routing browsing through the VPN."
+   },
+   {
+    "cmd": "firefox -no-remote -P vpn",
+    "context": "Runs a second Firefox instance using the previously configured \"vpn\" profile."
+   },
+   {
+    "cmd": "./autogen.sh",
+    "context": "First build step when building ocproxy from git."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Configure step of the build from git; needs libevent >= 2.0, autoconf, automake and gcc."
+   },
+   {
+    "cmd": "make",
+    "context": "Final build step after configure."
+   },
+   {
+    "cmd": "openconnect --script \"vpnns --attach\" --script-tun vpn.example.com",
+    "context": "Experimental vpnns path: connects to an ocserv gateway and hands the tunnel to vpnns inside the namespace."
+   }
+  ],
+  "install_notes": "Building from git needs libevent 2.0 or newer (shared library and headers), autoconf, automake, and gcc, binutils and make. The README points to Ubuntu PPA packages for 14.04 LTS and 16.04 LTS (ppa:cernekee, package names ocproxy and openvpn) and says those are needed for the OpenVPN example. OpenConnect should run as a non-root user with ocproxy. vpnns needs Linux kernel 3.8 or newer and an X server that accepts UNIX sockets in /tmp, or a change to /etc/X11/xinit/xserverrc to add -listen unix. Setup for FoxyProxy and tsocks/Dante is per-application configuration.",
+  "standout": "It runs as a user-space TCP/IP stack under OpenConnect instead of a kernel tun device, so a VPN can serve one application or port without root or touching the host routing table. The companion vpnns tool uses Linux user and network namespaces to do the same job at the whole-application level, with no proxy configuration, and the README says it does not require root or changing host network configuration.",
+  "status": "unknown. The README has no release dates, changelog, or version numbers. It names Kevin Cernekee as current maintainer and David Edmondson as original author. The Ubuntu 14.04 and 16.04 PPA references look dated. I did not check the commit history or releases page.",
+  "caveats": "vpnns is marked experimental and is Linux-only; it may interfere with dbus connections. The README notes that OpenVPN support needs out-of-tree patches posted to a mailing list. It requires libevent 2.0+ and a build-from-source path with autotools. Proxy-based use only covers TCP-style apps that can go through SOCKS or a -L forward, and the README says vpnns is better suited to VOIP and BitTorrent. The README does not state a license.",
+  "quotes": [
+   "ocproxy is a user-level SOCKS and port forwarding proxy for OpenConnect based on lwIP.",
+   "ocproxy should not be run directly.",
+   "When the VPN disconnects, the browser will lose all connectivity, preventing leaks.",
+   "Unlike previous approaches to the problem (e.g. anything that involves running `ip netns`), vpnns does not require root privileges or changing the host network configuration."
+  ],
+  "links": [
+   {
+    "label": "ocproxy GitHub repository (homepage)",
+    "url": "https://github.com/cernekee/ocproxy"
+   },
+   {
+    "label": "OpenConnect project",
+    "url": "http://www.infradead.org/openconnect/"
+   },
+   {
+    "label": "FoxyProxy (browser proxy extension referenced in README)",
+    "url": "http://getfoxyproxy.org/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/cernekee/ocproxy: fetched OK, README returned in full. No further fetches needed."
+  ]
+ }
+}

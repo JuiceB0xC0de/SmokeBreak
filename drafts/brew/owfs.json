@@ -1,0 +1,87 @@
+{
+ "name": "owfs",
+ "desc": "Monitor and control physical environment using Dallas/Maxim 1-wire system",
+ "homepage": "https://owfs.org/",
+ "installs_365d": 33,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "protocol",
+  "afternoon",
+  "library"
+ ],
+ "why": "A 1-Wire filesystem that exposes sensors and switches as files, a delightful door into a bus most people never meet.",
+ "brief": {
+  "what_it_is": "OWFS is a filesystem and toolset for the Dallas/Maxim 1-Wire bus, used to monitor and control a physical environment. Sensors and switches on the bus are exposed as files, so a path such as 10.001122334/temperature reads a value. Scripts can read temperature, switch lights, write to an LCD, and log or graph results. The package ships a set of command-line programs (owfs, owhttpd, owserver, owftpd, owtap, owmon and others) and language bindings for perl, python, php, tcl, Java and C.",
+  "why_it_exists": "The homepage presents OWFS as an easy way to use the powerful 1-wire system of Dallas/Maxim for monitoring and controlling the physical environment. The site lists uses such as home automation, environmental monitoring, security, process control, server rooms, HVAC and weather stations.",
+  "how_it_works": "The homepage describes a filesystem interface, with each 1-Wire device addressed by its unique ID and its readings or settings available as files. It also offers web access through owhttpd, remote network access through owserver, and language modules that talk to the bus directly (libow) or through a light network protocol (OWNet). The homepage does not explain the internals in detail.",
+  "commands_seen": [],
+  "install_notes": "The homepage lists supported bus adapters, including USB (DS9490R and others), serial, and i2c adapters, plus network adapters such as EtherWeather and HA7Net. Its navigation includes setup pages for permissions, udev and USB, Windows, Macintosh, NetBSD, Ubuntu, Debian, Slackware and Gentoo, and a 'Testing without hardware' page. The homepage does not say which of these is required for a Homebrew install. The quickstart page I tried returned empty, so I could not read the setup steps.",
+  "standout": "It turns a 1-Wire bus into a plain filesystem, so ordinary shell tools and scripts can read sensors and set switches. Hardware is cheap and the bus supports parasitic power and individually addressed devices.",
+  "status": "unknown. The homepage is labelled a 'Development Site' and its copyright line reads '2003-' with no end year. No release date, last commit or version number appears on the homepage, and I did not reach the changelog or git pages.",
+  "caveats": "I read only the homepage, and the quickstart page returned empty, so this brief has no verified install or usage commands. Using it requires 1-Wire hardware such as a bus master adapter and sensors. The homepage lists Cygwin for Windows, not native Windows. The license is GPLv2. The Homebrew formula has no caveats.",
+  "quotes": [
+   "OWFS is an easy way to use the powerful 1-wire system of Dallas/Maxim.",
+   "OWFS is a simple and flexible program to monitor and control the physical environment.",
+   "You can write scripts to read temperature, flash lights, write to an LCD, log and graph, ..."
+  ],
+  "links": [
+   {
+    "label": "OWFS homepage",
+    "url": "https://owfs.org/"
+   }
+  ],
+  "fetch_log": [
+   "https://owfs.org/ - fetched, worked; the site's navigation and overview page, no README-style commands present",
+   "https://owfs.org/index.php?page=quickstart-guide - fetched, returned an empty page; no content"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It makes an obscure physical bus tangible by exposing sensors and switches as files, opening a genuinely unusual way to explore hardware."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "OWFS",
+  "tldr": "A filesystem for the Dallas/Maxim 1-Wire bus, where cheap sensors and switches show up as files you can read and write from the shell.",
+  "deeper_look": "OWFS puts a 1-Wire bus into a directory tree. Each device on the bus has a unique ID, and its readings and settings appear as files under that ID. A path such as `10.001122334/temperature` reads a value. Because it is just files, ordinary shell tools and scripts can read temperature, flip a switch, write to an LCD, or log and graph the results.\n\n1-Wire is a low-speed bus from Dallas Semiconductor, now Maxim, where devices are individually addressed and can run on parasitic power. The hardware is cheap, and most people never meet it. OWFS is a way in without writing a driver.\n\nThe package is a set of programs rather than one tool. `owserver` shares the bus over the network. `owhttpd` serves it as a web page, and `owftpd` serves it over FTP. `owtap` and `owmon` are for watching and inspecting. There are also bindings for perl, python, php, tcl, Java and C. The homepage lists uses like home automation, server rooms, HVAC and weather stations.\n\nThe homepage describes the interface but not the internals, so the details are worth reading in the project docs.",
+  "install": "brew install owfs\n# Real use needs 1-Wire hardware: a bus master such as a USB DS9490R, serial or i2c adapter, plus sensors. The homepage also has a 'Testing without hardware' page.",
+  "try_this": [
+   {
+    "cmd": "owserver --help",
+    "what_happens": "Shows the options for the server that shares a 1-Wire bus over the network."
+   },
+   {
+    "cmd": "owdir --help",
+    "what_happens": "Shows how to list the devices on a bus through an owserver."
+   },
+   {
+    "cmd": "owhttpd --help",
+    "what_happens": "Shows the options for serving the bus as a web page."
+   }
+  ],
+  "whats_unique": "It turns a hardware bus into a plain filesystem, so a shell script can read a sensor the way it reads a text file. It also shares the bus over the network, web and FTP.",
+  "caveats": "Needs 1-Wire hardware to do anything real, and the homepage is labelled a 'Development Site' with no visible release date, so its current maintenance is unclear.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "1-wire",
+   "filesystem",
+   "sensors",
+   "protocol"
+  ],
+  "links": [
+   {
+    "label": "OWFS homepage",
+    "url": "https://owfs.org/"
+   }
+  ]
+ }
+}

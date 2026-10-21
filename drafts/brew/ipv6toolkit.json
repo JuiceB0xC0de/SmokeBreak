@@ -1,0 +1,103 @@
+{
+ "name": "ipv6toolkit",
+ "desc": "Security assessment and troubleshooting tool for IPv6",
+ "homepage": "https://www.si6networks.com/research/tools/ipv6toolkit/",
+ "installs_365d": 151,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "A toolkit for poking IPv6 neighbour discovery, extension headers and router behaviour, a real door into a protocol nobody looks at.",
+ "brief": {
+  "what_it_is": "The SI6 Networks IPv6 Toolkit is a set of 19 command-line tools for IPv6 security assessment and troubleshooting, written in C and built from source. Most tools craft and send specific IPv6 packets, such as Neighbor Discovery, Router Advertisement, ICMPv6 error, TCP, UDP, or fragmented and extension-header packets, to test how networks and devices respond. The toolkit also includes addr6 for address analysis, scan6 for IPv6 address scanning, and path6, a traceroute that supports extension headers and fragmentation. The pages I read do not say what output format the tools produce.",
+  "why_it_exists": "The homepage says the toolkit is for performing security assessments of IPv6 networks, assessing device resiliency by performing real-world attacks against them, and troubleshooting IPv6 networking problems. It is developed by Fernando Gont for SI6 Networks, and the homepage says development is partly supported by the company's IPv6 security training courses.",
+  "how_it_works": "Each tool is a separate executable that builds and sends one kind of crafted IPv6 packet or runs one kind of test, such as blackhole6 finding where in the path packets with particular extension headers are dropped, or frag6 running fragmentation-based tests. The README says the tools are built with make and that libpcap must be installed first. The sources are in a tools directory, man pages in manuals, and unit tests in tests.",
+  "commands_seen": [
+   {
+    "cmd": "make all",
+    "context": "Builds all the tools from the source tree, according to the repository README."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the tools, the configuration file, the database, and the existing manual pages, according to the README."
+   }
+  ],
+  "install_notes": "Clone the git repository from https://github.com/fgont/ipv6toolkit.git, then run make all followed by make install. libpcap must already be installed: the package is usually named libpcap-dev on Linux and libpcap via Homebrew on macOS. The README says the tools were tested to build with both gcc and clang on Debian 7.0, Debian GNU/kFreeBSD 7.0, FreeBSD 9.0, NetBSD 6.1.1, OpenBSD 5.3, Ubuntu 24.04 LTS, macOS 14, and OpenSolaris. The homepage lists a broader set of supported platforms, including Gentoo and Solaris. The pages I read did not mention a Homebrew formula, root or capabilities requirements, or first-run steps. Because the packet tools send raw packets, they will likely need elevated privileges, but I did not confirm this from the pages.",
+  "standout": "Unlike a general-purpose scanner or traceroute, the toolkit is built around protocol-level checks that are rarely tested: Neighbor Discovery spoofing, Router Advertisement and Redirect injection, IPv6 Flow Label and Jumbogram handling, and extension-header filtering. It is also the source of scan6, which the homepage describes as the most comprehensive IPv6 network scanning tool out there.",
+  "status": "Probably maintained, but I could not confirm a date. The GitHub page shows 861 commits, GitHub Actions workflows, and 279 stars, and the README lists tests on Ubuntu 24.04 LTS and macOS 14. The README header says v2.2, but I did not see a release date or last-commit date on the pages I read.",
+  "caveats": "The license is GPL-3.0. The toolkit is a set of raw-packet tools for security testing, so it should only be used on networks you are authorised to test. It is built from source and needs libpcap; there is no package-manager install shown on the pages I read beyond the brew install mentioned in the brief. The README's platform list is narrower than the homepage's list. The homepage's Mac OS wording differs from the README's Mac 0S 14, which is probably a typo in the README.",
+  "quotes": [
+   "The tools comprising the toolkit range from packet-crafting tools to send arbitrary Neighbor Discovery packets to the most comprehensive IPv6 network scanning tool out there (our scan6 tool).",
+   "It can be leveraged to perform security assessments of IPv6 networks, assess the resiliency of IPv6 devices by performing real-world attacks against them, and to trouble-shoot IPv6 networking problems.",
+   "Please send any bug reports to Fernando Gont <fgont@si6networks.com>"
+  ],
+  "links": [
+   {
+    "label": "SI6 Networks IPv6 Toolkit homepage",
+    "url": "https://www.si6networks.com/research/tools/ipv6toolkit/"
+   },
+   {
+    "label": "GitHub repository (fgont/ipv6toolkit)",
+    "url": "https://github.com/fgont/ipv6toolkit"
+   }
+  ],
+  "fetch_log": [
+   "https://www.si6networks.com/research/tools/ipv6toolkit/ - worked; homepage with description, tool list, and platform list; no shell commands on the page",
+   "https://github.com/fgont/ipv6toolkit - worked; repository page with the README text (make all, make install, libpcap note, tested platforms) and repo stats"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A focused suite for crafting unusual IPv6 packets and testing how real networks handle them makes an overlooked protocol tangible and explorable."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "ipv6toolkit",
+  "tldr": "Nineteen command-line tools that craft IPv6 packets by hand, so you can see how networks and devices react to Neighbor Discovery, fragments and extension headers.",
+  "deeper_look": "The SI6 Networks IPv6 Toolkit is a set of small C programs, each built around one kind of IPv6 packet or test. There are tools for Neighbor Discovery (`ns6`, `na6`), Router Advertisements (`ra6`), ICMPv6 errors (`icmp6`), TCP and UDP (`tcp6`, `udp6`), fragmentation (`frag6`) and more. `addr6` analyses addresses, `scan6` scans for IPv6 hosts, and `path6` is a traceroute that understands extension headers and fragmentation.\n\nIt was written by Fernando Gont for SI6 Networks. The homepage says it is meant for security assessments of IPv6 networks, for testing device resilience \"by performing real-world attacks against them\", and for troubleshooting. The homepage also says development is partly funded by the company's IPv6 security training courses.\n\nThe idea underneath is that IPv6 moved a lot of work into protocols most people never look at: neighbour discovery replaces ARP, routers announce themselves unprompted, and extension headers chain together in ways middleboxes often mishandle. Each tool lets you send exactly one of those things and watch what comes back. `blackhole6`, for example, looks for where along a path packets with particular extension headers get dropped.\n\nThe tools send raw packets, so use them only on networks you are authorised to test.",
+  "install": "brew install ipv6toolkit\n# Upstream builds from source and needs libpcap. The brief did not confirm root requirements, but raw-packet tools will likely need elevated privileges.",
+  "try_this": [
+   {
+    "cmd": "addr6 --help",
+    "what_happens": "Shows the options for the address analysis tool."
+   },
+   {
+    "cmd": "scan6 --help",
+    "what_happens": "Lists how to use the IPv6 address scanner."
+   },
+   {
+    "cmd": "path6 --help",
+    "what_happens": "Shows the options for the extension-header-aware traceroute."
+   }
+  ],
+  "whats_unique": "It is built around protocol-level checks that general scanners and traceroutes rarely cover, such as Neighbor Discovery spoofing, Router Advertisement injection, and extension-header filtering. It is also the home of scan6, which the homepage calls \"the most comprehensive IPv6 network scanning tool out there\".",
+  "caveats": "These are raw-packet security tools for networks you are authorised to test, and the brief could not confirm a last-release date, though the README lists tests on Ubuntu 24.04 and macOS 14.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "ipv6",
+   "network",
+   "protocol",
+   "security",
+   "packet-crafting"
+  ],
+  "links": [
+   {
+    "label": "SI6 Networks IPv6 Toolkit homepage",
+    "url": "https://www.si6networks.com/research/tools/ipv6toolkit/"
+   },
+   {
+    "label": "GitHub repository (fgont/ipv6toolkit)",
+    "url": "https://github.com/fgont/ipv6toolkit"
+   }
+  ]
+ }
+}

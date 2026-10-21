@@ -1,0 +1,132 @@
+{
+ "name": "websocketd",
+ "desc": "WebSockets the Unix way",
+ "homepage": "http://websocketd.com",
+ "installs_365d": 208,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "Exposes ordinary stdin and stdout programs as WebSockets, a charming door into a protocol nobody looks at.",
+ "brief": {
+  "what_it_is": "websocketd is a single command-line binary that wraps an ordinary program and serves it over a WebSocket. The program reads lines from stdin and writes lines to stdout, and websocketd turns each incoming WebSocket message into a stdin line and each stdout line into an outgoing WebSocket message. Each browser connection gets its own process, which websocketd starts on connect and stops on disconnect. It also includes a static file server, a classic CGI server, and a built-in developer console for inspecting frames.",
+  "why_it_exists": "The author's framing is that any program that can read stdin and write stdout can become a WebSocket server, with no networking library, framework, or change to the program. The README says 'WebSocket-capable applications can now be built very easily.'",
+  "how_it_works": "On startup websocketd listens on a port. When a client connects, it forks the configured program and pipes each client message to the program's stdin followed by a newline. Each newline-terminated line the program prints to stdout is sent to the client as a WebSocket message. When the socket closes, the process is shut down, and teardown signals the whole process group. The homepage describes the model as 'CGI's idea, applied to WebSockets.'",
+  "commands_seen": [
+   {
+    "cmd": "websocketd --port=8080 ./count.sh",
+    "context": "Serves the count.sh script as a WebSocket server on port 8080. This is the core invocation, and the homepage shows the same line."
+   },
+   {
+    "cmd": "brew install websocketd",
+    "context": "Installs websocketd via Homebrew on a Mac, per the GitHub README."
+   },
+   {
+    "cmd": "chmod +x count.sh",
+    "context": "Makes the Bash example script executable before testing it on the command line."
+   },
+   {
+    "cmd": "./count.sh",
+    "context": "Runs the Bash counter directly in the shell, to show it works without websocketd before wrapping it."
+   },
+   {
+    "cmd": "websocketd --help",
+    "context": "Prints the command-line help listing all flags."
+   },
+   {
+    "cmd": "websocketd --devconsole",
+    "context": "Per the README and homepage, starts the server with the built-in developer console so you can open the root URL in a browser and inspect frames. The README and homepage state this as a flag in prose, so the exact invocation is taken from the text."
+   }
+  ],
+  "install_notes": "No runtime, account, or configuration is needed. Download the single executable for Linux, macOS, or Windows from the install page at websocketd.com/docs/start/install/, or use 'brew install websocketd' on a Mac. The README says there are no installers, package managers, or external libraries. The example HTML page connects to ws://localhost:8080/ and can be opened from disk with a file:// URL. I did not open the install page, so per-platform details are not verified.",
+  "standout": "The program stays an ordinary stdin/stdout program, with no WebSocket library and no code changes, and the same script runs unchanged in a shell. The built-in dev console lets you test the script from a browser with no client code, which is unusual for a tool at this scale.",
+  "status": "unknown. The homepage and GitHub README show no release date, last-commit date, or deprecation note. The README does describe recent-sounding features, including the dev console, Unix socket support, --socketmode, and --passstderr, which suggests active work, but I did not confirm this from dates.",
+  "caveats": "No release date or last-commit date was visible, so currency is unconfirmed. The README warns that SERVER_NAME and SERVER_PORT mirror the client's Host header and should not be used for access decisions. Teardown signals the whole process group, so scripts that deliberately spawn survivors need setsid. The README's own description is focused on Linux, macOS, and Windows, and I did not check build instructions or license terms.",
+  "quotes": [
+   "Turn any program into a WebSocket server",
+   "As long as you can write an executable program that reads STDIN and writes to STDOUT, you can build a WebSocket server.",
+   "It is CGI\u2019s idea, applied to WebSockets."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/joewalnes/websocketd"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://websocketd.com/docs/"
+   },
+   {
+    "label": "Install page",
+    "url": "https://websocketd.com/docs/start/install/"
+   }
+  ],
+  "fetch_log": [
+   "http://websocketd.com \u2014 worked; returned the homepage text (tagline, count.sh example, how-it-works, dev console, feature list).",
+   "https://github.com/joewalnes/websocketd \u2014 worked; returned the README with Details, Quickstart, More Features, and Documentation sections. Used as the second fetch because the homepage had no extra command detail or status information.",
+   "Not fetched: https://websocketd.com/docs/ and https://websocketd.com/docs/start/install/. Both appear as links only."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A clever CGI-for-WebSockets bridge turns unchanged stdin/stdout programs into per-connection interactive services, making a familiar Unix interface unexpectedly useful for browser protocols."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "websocketd",
+  "tldr": "Turns any program that reads stdin and writes stdout into a WebSocket server, so a ten-line shell script can talk to a browser.",
+  "deeper_look": "websocketd is a single binary that wraps an ordinary program and serves it over a WebSocket. When a browser connects, websocketd starts the program. Each incoming message becomes a line on its stdin, and each line the program prints to stdout goes back as a message. When the socket closes, the process is stopped.\n\nThe author's pitch is that no networking library, framework, or code change is needed. The homepage puts it this way: \"It is CGI's idea, applied to WebSockets.\" Each connection gets its own process, just as classic CGI gave each request its own process. A counter script that runs in your shell runs unchanged behind a socket.\n\nThe door it opens is the protocol itself. WebSockets are usually hidden behind client and server libraries. Here you can watch the mapping directly: lines in, messages out, one process per connection. It also includes a static file server, a CGI server, and a built-in developer console that lets you inspect frames from a browser without writing any client code.",
+  "install": "brew install websocketd\n# No runtime or account needed. Single executable also available for Linux, macOS and Windows from websocketd.com/docs/start/install/",
+  "try_this": [
+   {
+    "cmd": "websocketd --port=8080 ./count.sh",
+    "what_happens": "Serves your count.sh script as a WebSocket server on port 8080, starting a fresh copy of the script for each connection."
+   },
+   {
+    "cmd": "websocketd --devconsole",
+    "what_happens": "Starts the server with the built-in developer console, so you can open the root URL in a browser and inspect frames."
+   },
+   {
+    "cmd": "websocketd --help",
+    "what_happens": "Prints the command-line help listing all flags."
+   }
+  ],
+  "whats_unique": "The program stays a plain stdin/stdout program with no WebSocket code, and the same script still runs in a shell. The built-in dev console lets you test it from a browser with no client code.",
+  "caveats": "No release or last-commit date was visible, so how actively it is maintained is unconfirmed; also, teardown signals the whole process group, so scripts that deliberately spawn survivors need setsid.",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "network",
+   "protocol",
+   "websocket",
+   "unix",
+   "cgi"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "http://websocketd.com"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/joewalnes/websocketd"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://websocketd.com/docs/"
+   },
+   {
+    "label": "Install page",
+    "url": "https://websocketd.com/docs/start/install/"
+   }
+  ]
+ }
+}

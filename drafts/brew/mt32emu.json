@@ -1,0 +1,129 @@
+{
+ "name": "mt32emu",
+ "desc": "Multi-platform software synthesiser",
+ "homepage": "https://github.com/munt/munt",
+ "installs_365d": 904,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "quick",
+  "audio",
+  "library",
+  "ancient"
+ ],
+ "why": "An emulator of the Roland MT-32 synth, a 1987 machine with a distinctive sound and a window into vintage hardware synthesis.",
+ "brief": {
+  "what_it_is": "Munt is a monorepo of related subprojects built around mt32emu, a C/C++ library that approximates the Roland MT-32, CM-32L and LAPC-I synthesiser modules in software. The main end-user application is mt32emu_qt, a Qt GUI that takes MIDI input from virtual or real MIDI ports (or from Standard MIDI files) and outputs audio, and can also render SMF files to WAV or RAW. Other parts include a Linux ALSA driver, an SMF-to-WAV converter, a Windows MME driver, and a DOSBox patch. The README does not give a release year for the hardware, although the scout note calls it a 1987 machine.",
+  "why_it_exists": "The README frames the project as an approximate emulation of Roland's MT-32, CM-32L and LAPC-I modules, for developers who want to embed one in a driver or application, and for users who want to play MIDI through it on a computer. The mt32emu_qt README also notes that the app 'Emulates the funny MT-32 LCD' and shows the synth's internal state in real time.",
+  "how_it_works": "mt32emu is the emulation engine, exposed as a C++ library with an optional C-compatible API. Front ends feed it MIDI messages through platform MIDI systems (Windows Multimedia, CoreMIDI, ALSA sequencer, raw ALSA/OSS4 ports, or JACK MIDI) and receive rendered audio, which is sent to the host audio system (PulseAudio, JACK, ALSA, OSS, or Windows multimedia). The README says the library's emulation 'requires enough processing power from CPU to perform in real-time', and an optional external resampler (libsoxr or libsamplerate) can replace the built-in one.",
+  "commands_seen": [
+   {
+    "cmd": "cmake -DCMAKE_BUILD_TYPE:STRING=Release .",
+    "context": "Configure an in-tree POSIX build with optimisations on; the README says compiler optimisations are off by default otherwise. Appears in both the mt32emu and mt32emu_qt READMEs."
+   },
+   {
+    "cmd": "make",
+    "context": "Compile after the CMake configure step. Same in both READMEs."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Install the built library or app system-wide. Same in both READMEs."
+   },
+   {
+    "cmd": "mkfifo /var/tmp/sequencer",
+    "context": "From the ALSA & OSS4 raw MIDI section of mt32emu_qt: creates a FIFO to act as a virtual MIDI port when no native virtual port is available. Described as the simplest approach."
+   },
+   {
+    "cmd": "sudo ln -s /var/tmp/sequencer /dev/sequencer",
+    "context": "Links the FIFO into /dev so applications expecting an OSS sequencer device can find it. Paired with the mkfifo line above."
+   },
+   {
+    "cmd": "sudo modprobe snd_virmidi",
+    "context": "Loads the Linux kernel module that creates virtual raw MIDI ports; the README says it creates 4 by default, bound to ALSA sequencer ports."
+   }
+  ],
+  "install_notes": "Building needs CMake and the Qt framework (the README says Qt major versions 4 to 6 are supported, selectable with mt32emu-qt_WITH_QT_VERSION), plus the mt32emu library, which mt32emu_qt can be built within the monorepo. Other dependencies depend on platform: PortAudio, the DirectX SDK (Windows, for DirectSound and WDMKS), PulseAudio, and JACK. Build options such as mt32emu-qt_USE_JACK_DYNAMIC_LOADING, mt32emu-qt_WITH_ALSA_MIDI_SEQUENCER and CMAKE_BUILD_TYPE are set on the cmake command line, in CMakeCache.txt, or via the CMake GUI. On Windows, the README suggests the CMake GUI. The READMEs I read do not say where the Roland control and PCM ROM images come from, though mt32emu_qt has a GUI to 'manage ROMs'. Expect to supply them yourself. Virtual MIDI setup varies by OS: CoreMIDI and ALSA create ports automatically on startup, while Windows needs the bundled MME driver installed.",
+  "standout": "The MT-32 LCD is emulated, and mt32emu_qt shows the synth's internal state live. Its MIDI support is broad: several MIDI systems, including a JACK mode where one client acts as a full synth with no added latency. The core is a library that others can embed, not only a standalone app.",
+  "status": "Maintained, as far as I can tell. The README copyright lines run to 2011-2026, and the project has a Windows driver, a FreeBSD port directory and a Qt 6 target. I could not see a release date or last-commit date on the pages I fetched, so the exact recency is unknown.",
+  "caveats": "The README says the emulation is approximate. It needs a real-time-capable CPU; its suggested minimum is an 800 MHz Pentium III with 8 MB RAM for one synth. Compiler optimisations are off unless you set Release. The ALSA/OSS raw MIDI support is described as very basic, and the Linux ALSA GUI (mt32emu_alsadrv) is called mostly obsolete in favour of mt32emu_qt. The JACK exclusive-mode synth cannot be pinned, so no extra MIDI sessions can be routed into it. The DOSBox patch targets DOSBox 0.74 and is aimed at developers. Roland is a trademark, and the README includes a trademark disclaimer. The project is GPL-3.0 for the application and LGPL-2.1 for the library.",
+  "quotes": [
+   "mt32emu is a C/C++ library which allows to emulate (approximately) the Roland MT-32, CM-32L and LAPC-I synthesiser modules.",
+   "Emulates the funny MT-32 LCD. Also displays the internal synth state in realtime.",
+   "Because CoreMIDI and ALSA MIDI sequencer support virtual MIDI ports natively, these systems seem simplest to use."
+  ],
+  "links": [
+   {
+    "label": "Munt monorepo (homepage)",
+    "url": "https://github.com/munt/munt"
+   },
+   {
+    "label": "mt32emu_qt README",
+    "url": "https://github.com/munt/munt/tree/master/mt32emu_qt"
+   },
+   {
+    "label": "Roland MT-32 on Wikipedia",
+    "url": "https://en.wikipedia.org/wiki/Roland_MT-32"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/munt/munt: OK, returned the monorepo overview README listing subprojects",
+   "https://github.com/munt/munt/tree/master/mt32emu_qt: OK, returned the mt32emu_qt README with build and MIDI details",
+   "https://github.com/munt/munt/tree/master/mt32emu: OK, returned the mt32emu library README with build and hardware notes"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A real-time emulator of a distinctive vintage synthesizer turns MIDI into its sound and exposes the hardware\u2019s live internal state, making it a hands-on window into synthesis."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "mt32emu (Munt)",
+  "tldr": "A software emulation of the Roland MT-32 synthesiser modules, the sound module behind a generation of DOS game music, usable as a library or through a Qt app.",
+  "deeper_look": "Munt is a monorepo built around mt32emu, a C/C++ library that approximates the Roland MT-32, CM-32L and LAPC-I synthesiser modules in software. Front ends feed it MIDI messages and it returns rendered audio. The main end-user program is mt32emu_qt, a Qt GUI that accepts MIDI from virtual or real ports or from Standard MIDI files, and can render those files to WAV or RAW. Other pieces include an SMF-to-WAV converter, a Windows MME driver, a Linux ALSA driver and a DOSBox patch.\n\nThe project exists so that developers can embed an MT-32 in a driver or application, and so that people can play MIDI through one on an ordinary computer. The README is upfront that the emulation is approximate. The Qt app also \"Emulates the funny MT-32 LCD\" and shows the synth's internal state in real time, so you can watch the little display and the parts react as notes arrive.\n\nThe idea underneath is that a synth of this kind is a set of sampled sounds plus a particular synthesis engine and a MIDI interface. Reproducing it in software means reproducing that behaviour closely enough to sound right, in real time. That makes the project a way into MIDI routing (CoreMIDI, ALSA sequencer, JACK MIDI, raw ports) and into how old hardware gets preserved in code.\n\nBefore you start: the READMEs I read do not say where the Roland control and PCM ROM images come from. mt32emu_qt has a GUI to manage ROMs, but expect to supply them yourself.",
+  "install": "brew install mt32emu\n# Homebrew installs the library (no executables). For the Qt app, build mt32emu_qt from the munt repo with CMake and Qt (4 to 6).\n# You will also need to supply your own Roland ROM images.",
+  "try_this": [
+   {
+    "cmd": "cmake -DCMAKE_BUILD_TYPE:STRING=Release .",
+    "what_happens": "Configures an in-tree build of mt32emu_qt with optimisations on; the README says they are off by default."
+   },
+   {
+    "cmd": "make",
+    "what_happens": "Compiles the app after the CMake configure step."
+   },
+   {
+    "cmd": "sudo modprobe snd_virmidi",
+    "what_happens": "On Linux, loads the kernel module that creates virtual raw MIDI ports (4 by default), bound to ALSA sequencer ports."
+   }
+  ],
+  "whats_unique": "It emulates the MT-32's LCD and shows the synth's internal state live. It is also a library others can embed, with MIDI support across several systems including a JACK mode.",
+  "caveats": "The brew formula installs only the library, with no executables; the GUI needs a separate source build, you must supply your own ROM images, and the README calls the emulation approximate.",
+  "commitment": "afternoon",
+  "category": "sound-and-live-coding",
+  "tags": [
+   "afternoon",
+   "audio",
+   "midi",
+   "emulation",
+   "library",
+   "vintage-hardware"
+  ],
+  "links": [
+   {
+    "label": "Munt monorepo (homepage)",
+    "url": "https://github.com/munt/munt"
+   },
+   {
+    "label": "mt32emu_qt README",
+    "url": "https://github.com/munt/munt/tree/master/mt32emu_qt"
+   },
+   {
+    "label": "Roland MT-32 on Wikipedia",
+    "url": "https://en.wikipedia.org/wiki/Roland_MT-32"
+   }
+  ]
+ }
+}

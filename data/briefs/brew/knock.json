@@ -1,0 +1,65 @@
+{
+ "name": "knock",
+ "desc": "Port-knock server",
+ "homepage": "https://github.com/jvinet/knock",
+ "installs_365d": 498,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "A port-knocking server, a door into the idea of hiding services behind a sequence of packets that most people have never seen used.",
+ "brief": {
+  "what_it_is": "knock is a port-knocking server and client. The server, knockd, uses libpcap to sniff a network interface for a configured sequence of port hits (knocks). When it sees the sequence, it runs a command bound to that sequence, such as an iptables rule that opens a port. The knock client is a small command for sending those hits. Input is raw network traffic on the server's interface; output is whatever command the server is configured to run. The README does not document the config file format or client usage.",
+  "why_it_exists": "The README frames port-knocking as a way for a server to watch its interfaces for a special \"knock\" sequence and then act on it. It notes that the knock hits do not need to land on open ports, because libpcap reads the raw traffic.",
+  "how_it_works": "knockd watches raw interface traffic with libpcap rather than listening on a socket, so knock packets can target closed ports. The README's example is a DENY-policy firewall: the client sends four TCP SYN packets to a fixed port sequence, the server runs an iptables command to open port 22 for that client, and a second four-port sequence closes it again. The README does not explain how the sequence is configured.",
+  "commands_seen": [
+   {
+    "cmd": "autoreconf -fi",
+    "context": "Build step: regenerates the autoconf build files before configuring. The README says libpcap and autoconf tools are required."
+   },
+   {
+    "cmd": "./configure --prefix=/usr/local",
+    "context": "Build step: configures the source for installation under /usr/local."
+   },
+   {
+    "cmd": "make",
+    "context": "Build step: compiles knockd and the other programs."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Build step: installs the built files into the prefix, using sudo."
+   }
+  ],
+  "install_notes": "Building from source requires libpcap and the autoconf tools. The README's steps are autoreconf -fi, ./configure --prefix=/usr/local, make, then sudo make install. No accounts, hardware, or runtime configuration are mentioned, and the README says nothing about first-run setup or where the config file lives.",
+  "standout": "Because the server sniffs raw traffic with libpcap, the knock hits do not have to reach an open port, so the knocking service itself stays invisible to a port scan. The idea is older than this project, and the README points to other implementations (pasmal, doorman) and to sendip for more advanced knocks.",
+  "status": "unknown. The fetched README shows only copyright 2004 by Judd Vinet, with no release date, version number, or last-commit date. The README does not say whether the project is still maintained. The Homebrew formula's executables are knock, knock_helper_ipt.sh, and knockd; the README does not mention knock_helper_ipt.sh.",
+  "caveats": "The README is short and does not document the config format, the knock client's options, or the helper script. The client is described as \"very basic\", and more complex knocks (such as specific TCP flags) need another tool like sendip. The example relies on iptables, so it assumes a Linux-style firewall. The build needs libpcap and autoconf. The fetched text names no license. Age is a concern: the copyright is 2004 and the README links to freshmeat, which is a dead site.",
+  "quotes": [
+   "Port-knocking is a method where a server can sniff one of its interfaces for a special \"knock\" sequence of port-hits.",
+   "These port-hits need not be on open ports, since we use libpcap to sniff the raw interface traffic.",
+   "The accompanying knock client is very basic."
+  ],
+  "links": [
+   {
+    "label": "Homepage / README (GitHub)",
+    "url": "https://github.com/jvinet/knock"
+   },
+   {
+    "label": "sendip (advanced knock client, linked from README)",
+    "url": "http://freshmeat.net/projects/sendip/"
+   },
+   {
+    "label": "doorman (other implementation, linked from README)",
+    "url": "http://doorman.sourceforge.net/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/jvinet/knock: fetched OK; returned README text. No docs links beyond the external implementations listed in the README. Did not fetch further links because the README points to no docs site and the external links are to other projects."
+  ]
+ }
+}

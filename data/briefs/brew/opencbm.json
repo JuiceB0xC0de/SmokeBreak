@@ -1,0 +1,75 @@
+{
+ "name": "opencbm",
+ "desc": "Provides access to various floppy drive formats",
+ "homepage": "https://spiro.trikaliotis.net/opencbm",
+ "installs_365d": 96,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "afternoon",
+  "reverse-engineering",
+  "ancient"
+ ],
+ "why": "Lets a PC talk to Commodore 1541 floppy drives via a parallel cable, a door into old serial bus protocols and vintage hardware.",
+ "brief": {
+  "what_it_is": "OpenCBM is a kernel driver and development library, plus command-line tools, for talking to Commodore 8-bit floppy drives such as the VIC-1541 over the IEC serial bus. The PC connects to the drives through a parallel-port cable (XM1541 or XA1541, optionally with an XP1541 or XP1571 add-on) or through a USB adapter (XU1541 or XUM1541, also called ZoomFloppy). Commands such as cbmctrl, cbmcopy, d64copy and cbmformat take drive commands and disk images or files as input and read or write files, D64 images and drive status on the PC. The package also includes imgcopy, a fast disk copier, and supports other CBM IEC devices, some IEEE drives through a converter, and the VIC-1530/1531 tape units through ZoomTape.",
+  "why_it_exists": "The author says the Commodore serial bus protocol is proprietary and not natively supported by modern hardware or software, and OpenCBM provides an interface to it at the level of simple TALK and LISTEN commands, similar to the C64 kernel routines, with lower-level bus control available as well. It is the Windows port (cbm4win) and successor to cbm4linux.",
+  "how_it_works": "Each supported cable is driven by a plugin selected in opencbm.conf or with the -@ adapter option. The homepage FAQ explains that the parallel-port cables need the drive's DATA line to raise a parallel-port interrupt, so the driver can answer CLK without busy-waiting the whole CPU. That is why the XM1541 cable swaps the RESET and DATA lines relative to the XE1541 design. USB cables go through libusb-1.0, or libusb-0.1 for compatibility.",
+  "commands_seen": [
+   {
+    "cmd": "cbmctrl --help",
+    "context": "Lists the parameters and subcommands for cbmctrl (the homepage FAQ says to run it from a DOS console on Windows). Also referenced for the other tools, which each accept --help."
+   },
+   {
+    "cmd": "cmd",
+    "context": "Windows Run-dialog entry the FAQ recommends to open a console window before running the tools, because the Start-Run route closes the window immediately."
+   },
+   {
+    "cmd": "-@ xu1541",
+    "context": "Option text from the 0.4.0.60 notes: selects the xu1541 plugin on cbmctrl, cbmcopy, d64copy, cbmformat, cbmforng and cbmrpm41. The adapter name must appear in opencbm.conf."
+   },
+   {
+    "cmd": "-@ xa1541:1",
+    "context": "Option text from the 0.4.0.60 notes: selects the xa1541 plugin on LPT1. Use xa1541:2 for LPT2."
+   },
+   {
+    "cmd": "--transfer=parallel",
+    "context": "Option mentioned in a FAQ entry for d64copy and cbmcopy. The FAQ says it needs an XP1541 companion cable and otherwise hangs."
+   }
+  ],
+  "install_notes": "On Windows, the project ships a zip (opencbm-0.4.99.104.zip, i386 and AMD64), and an install.cmd script installs OpenCBM, the plugin and the drivers together. The manual covers installation and uninstallation, and the Windows installer is not a simple package. Parallel-port cables need a working LPT port; the FAQ notes one Windows 2000 laptop needed 'Legacy Plug+Play Detection' enabled on the LPT port. Linux and BSD builds compile from source; the README points to the manual at opencbm.trikaliotis.net for the steps. Configuration lives in /etc/opencbm.conf (or under the OPENCBM_HOME path). Plugins are built only when libusb or the matching sources are present. Hardware: a real drive and a supported cable.",
+  "standout": "Unlike a typical emulator bridge, this talks to real 1541-era hardware through a parallel port and gives a low-level IEC bus interface, so the PC can act as a controller for vintage drives. The project has moved from parallel cables to USB adapters, and the homepage argues about interrupt timing in some detail.",
+  "status": "Quiet but not abandoned, as far as I can tell. The homepage's changelog has a dated entry for version 0.4.99.104 (Jan 23rd, 2022), which is labelled an RC on the download line. The GitHub README shows no date, and I could not see a later release or commit date from the pages I read, so the current state is unknown beyond January 2022. The README names two maintainers (spiro-trikaliotis and go4retro).",
+  "caveats": "The homepage is an older personal site, and parts of its history section describe cbm4win from 2004-2006. Its FAQ says the XE1541 cable will very likely never be supported. The version history is full of 'ALPHA STAGE' and 'BETA STAGE' labels from 2009-2016. The README says XUM1541 PROMICRO and TEENSY2 firmware is UNSUPPORTED, and Itanium Windows is no longer supported. Native USB support also covers FreeBSD and macOS. The README says libusb-0.1 support will be dropped in some future version. Compiling on Linux can be fiddly, and the 2014 source packages needed fixes to build. The homepage has been updated only sporadically. The scout note's 'parallel cable' framing is incomplete, because USB adapters are also supported. License: GPLv2.",
+  "quotes": [
+   "Win NT/2K/XP/7/8/10/11, Linux/i386/AMD64/ARM, FreeBSD and MacOS X kernel driver and development library to control serial CBM devices, such as the Commodore 1541 disk drive, connected to the PC's parallel port via a XM1541 or XA1541 cable.",
+   "OpenCBM provides an interface to this so-called IEC bus at the level of simple TALK and LISTEN commands, similar to the one provided by the Commodore kernel routines.",
+   "It is very unlikely that an XE cable will ever be supported."
+  ],
+  "links": [
+   {
+    "label": "Homepage (Spiro Trikaliotis, OpenCBM section)",
+    "url": "https://spiro.trikaliotis.net/opencbm"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/OpenCBM/OpenCBM"
+   },
+   {
+    "label": "Online manual and installation instructions",
+    "url": "http://opencbm.trikaliotis.net/"
+   },
+   {
+    "label": "Bug tracker",
+    "url": "https://github.com/OpenCBM/OpenCBM/issues"
+   }
+  ],
+  "fetch_log": [
+   "https://spiro.trikaliotis.net/opencbm: fetched, worked; personal site with OpenCBM section, changelog, FAQ and download link",
+   "https://github.com/OpenCBM/OpenCBM: fetched, worked; README returned; the manual link at opencbm.trikaliotis.net was not fetched"
+  ]
+ }
+}

@@ -1,0 +1,91 @@
+{
+ "name": "dump1090-fa",
+ "desc": "FlightAware ADS-B Ground Station System for SDRs",
+ "homepage": "https://github.com/flightaware/dump1090",
+ "installs_365d": 997,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "radio",
+  "network",
+  "afternoon"
+ ],
+ "why": "Turns a cheap SDR dongle into a live map of overhead aircraft by decoding ADS-B squitters broadcast in plain sight.",
+ "brief": {
+  "what_it_is": "dump1090-fa is an ADS-B, Mode S, and Mode 3A/3C demodulator and decoder from FlightAware. It takes radio samples from a directly connected software defined radio (SDR) or aircraft data delivered over a network connection, and decodes the aircraft transponder messages. Its output is a live display of nearby aircraft, either in a terminal or as a browser map. It can also feed crowd-sourced flight data to FlightAware when paired with PiAware.",
+  "why_it_exists": "The README presents it as the successor to dump1090-mutability and as a FlightAware ground station component. It packages local aircraft reception for Debian and Raspbian and supports contributing crowd-sourced tracking data to FlightAware through PiAware.",
+  "how_it_works": "It demodulates and decodes ADS-B, Mode S, and Mode 3A/3C transponder messages. The README says it uses starch to build several versions of the DSP code and picks the fastest one the hardware supports at runtime, controlled by 'wisdom files' that list implementations in priority order. Default wisdom is compiled in for x86, ARM 32-bit, and ARM 64-bit, and users can generate their own with a benchmark run.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt-get install build-essential fakeroot debhelper librtlsdr-dev pkg-config libncurses5-dev libbladerf-dev libhackrf-dev liblimesuite-dev libsoapysdr-dev devscripts",
+    "context": "Installs the build dependencies for the Debian package build on bullseye, buster, or stretch, including the RTL-SDR, bladeRF, HackRF, LimeSDR, and SoapySDR libraries."
+   },
+   {
+    "cmd": "./prepare-build.sh bullseye",
+    "context": "Prepares the Debian packaging tree for a release; the README says to substitute buster or stretch."
+   },
+   {
+    "cmd": "dpkg-buildpackage -b --no-sign",
+    "context": "Builds the Debian binary package from the prepared package directory, unsigned."
+   },
+   {
+    "cmd": "dpkg-buildpackage -b --no-sign --build-profiles=custom,rtlsdr",
+    "context": "Builds a limited package with RTL-SDR support only; supported for bullseye and buster builds."
+   },
+   {
+    "cmd": "dpkg-buildpackage -b --no-sign --build-profiles=custom",
+    "context": "Builds a package with no SDR support, network input only."
+   },
+   {
+    "cmd": "make BLADERF=no",
+    "context": "Manual build option that disables bladeRF support and removes the libbladeRF dependency."
+   },
+   {
+    "cmd": "make RTLSDR=no",
+    "context": "Manual build option that disables rtl-sdr support and removes the librtlsdr dependency."
+   },
+   {
+    "cmd": "brew install librtlsdr",
+    "context": "The README's macOS build step (tested on Mojave 10.14.6) for the RTL-SDR library, followed by a plain make."
+   },
+   {
+    "cmd": "/usr/share/dump1090-fa/generate-wisdom",
+    "context": "On package installs, runs the benchmark that generates a wisdom file for the local hardware, which takes tens of minutes."
+   },
+   {
+    "cmd": "dump1090-fa --version",
+    "context": "Shows which DSP implementations were chosen for the hardware."
+   }
+  ],
+  "install_notes": "You need SDR hardware (RTL-SDR, bladeRF, HackRF, LimeSDR, or a SoapySDR-supported device) or a network feed of aircraft data. The Debian build needs the listed apt packages. Building with limited SDR support is documented for bullseye and buster only, and you can build with no SDR support at all for network-only use. Manual installs require `make`, after which you must place the binaries and set up your own way of starting them. Optionally, generate a wisdom file on an idle system with CPU frequency scaling disabled, copy it to /etc/dump1090-fa/wisdom.local for package installs, and restart dump1090. For manual installs, pass --wisdom /path/to/wisdom.local. The README does not describe a first-run command for viewing aircraft.",
+  "standout": "It benchmarks its own DSP code at build or install time and selects the fastest implementation the hardware supports, using a wisdom file mechanism. It also serves both sides of the hobbyist-to-network pipeline, a local display and optional crowd-sourced upload through PiAware.",
+  "status": "Maintained, per the README, which says FlightAware maintains it and names it the successor to dump1090-mutability. The fetched README shows no release or commit date, so I could not confirm recent activity.",
+  "caveats": "Packaging is aimed at Debian and Raspbian; the README says it should build on other Linux and Unix-like systems. The macOS (Mojave 10.14.6) and FreeBSD (12.1-RELEASE) build notes are marked 'Minimal testing... YMMV'. The example release names (bullseye, buster, stretch) are old, and limited-profile builds are supported only for bullseye and buster. Wisdom generation takes tens of minutes and gives stable results only on an idle system with CPU frequency scaling disabled. The README does not mention a license, and I did not see one in the fetched text. The README gives no usage examples for running the viewer or map.",
+  "quotes": [
+   "dump1090-fa is a ADS-B, Mode S, and Mode 3A/3C demodulator and decoder that will receive and decode aircraft transponder messages",
+   "It can provide a display of locally received aircraft data in a terminal or via a browser map.",
+   "dump1090-fa uses starch to build multiple versions of the DSP code and choose the fastest supported by the hardware at runtime.",
+   "Minimal testing on Mojave 10.14.6, YMMV."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/flightaware/dump1090"
+   },
+   {
+    "label": "PiAware (crowd-sourced feeding)",
+    "url": "http://flightaware.com/adsb/piaware"
+   },
+   {
+    "label": "starch (DSP implementation selector)",
+    "url": "https://github.com/flightaware/starch"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/flightaware/dump1090 (homepage): fetched OK, README returned. The README is brief on runtime usage, so I did not follow further links, and I stopped at one fetch."
+  ]
+ }
+}

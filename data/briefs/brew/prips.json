@@ -1,0 +1,68 @@
+{
+ "name": "prips",
+ "desc": "Print the IP addresses in a given range",
+ "homepage": "https://devel.ringlet.net/sysutils/prips/",
+ "installs_365d": 272,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network"
+ ],
+ "why": "Expands IP ranges into individual addresses, a tiny tool but a gentle entry point into CIDR arithmetic and address space.",
+ "brief": {
+  "what_it_is": "prips is a command-line tool that prints every IP address in a given range, one per line. You give it a start and end address, or a CIDR block like 192.168.0.0/24, and it outputs each address in turn. It can also go the other way with -c, turning a start and end address into a single CIDR block. The -i option sets the step between printed addresses, and -e excludes addresses from the output.",
+  "why_it_exists": "The README says prips \"can enhance the usability of tools that are made to work on only one host at a time (e.g. whois).\" It feeds address lists into single-host tools.",
+  "how_it_works": "The README does not explain the internals beyond the examples. It shows that prips takes either a first and last address or a CIDR block and prints the addresses between them. Its output can be piped into a shell loop, as in the parallel ping example.",
+  "commands_seen": [
+   {
+    "cmd": "prips 192.168.0.0 192.168.0.255",
+    "context": "Example 1: prints every address from the start address to the end address, one per line."
+   },
+   {
+    "cmd": "prips 192.168.0.0/24",
+    "context": "Example 2: the same range given in CIDR notation."
+   },
+   {
+    "cmd": "prips -c 192.168.0.0 192.168.0.15",
+    "context": "Example 3: converts an IP range to CIDR notation; prints 192.168.0.0/28."
+   },
+   {
+    "cmd": "prips -i 256 10.8.0.0/16",
+    "context": "Example 4: -i sets the increment, so this prints only the network addresses of each /24 inside 10.8/16."
+   },
+   {
+    "cmd": "prips -e ...0,255 207.94.169.0/24",
+    "context": "Example 5: -e excludes the last-octet 0 and 255 (network and broadcast) addresses, used inside a shell script that pings each host in parallel."
+   },
+   {
+    "cmd": "tar xvfz prips-1.3.1.tar.gz",
+    "context": "Install step: extracts the source tarball."
+   },
+   {
+    "cmd": "cargo build --release",
+    "context": "Install step: run inside the rust/ subdirectory; builds target/release/prips."
+   }
+  ],
+  "install_notes": "Homebrew is not the only route. The README's own instructions are: extract the source tarball, enter the rust/ subdirectory, run cargo build --release, then copy target/release/prips to a directory such as /usr/local/bin. That means a Rust toolchain is needed for a source build. The README gives no configuration or first-run steps.",
+  "standout": "The tool is tiny but does real address-space arithmetic, including converting a range back into CIDR. The README's parallel-ping script is a short shell pattern for sweeping a subnet using only prips and ping.",
+  "status": "unknown. The homepage shows a source tarball named prips-1.3.1 and a named maintainer, Peter Pentchev, but gives no release date, last commit, or changelog. I did not follow the GitLab or ReadTheDocs links, because the page text did not include their URLs.",
+  "caveats": "The README says it has only been tested on Linux and *BSD systems, and that it should work on any POSIX-compatible system. The Rust build is the documented route. The ping example is explicitly described as working only on small networks: it starts a process per host, and the README warns of a race that can hit the process limit. The README offers no license information on the page I read.",
+  "quotes": [
+   "prips is a tool that can be used to print all of the IP address on a given range.",
+   "It can enhance the usability of tools that are made to work on only one host at a time (e.g. whois).",
+   "Note that this script only works on small networks because it uses a lot of processes."
+  ],
+  "links": [
+   {
+    "label": "prips homepage (Ringlet)",
+    "url": "https://devel.ringlet.net/sysutils/prips/"
+   }
+  ],
+  "fetch_log": [
+   "https://devel.ringlet.net/sysutils/prips/ - loaded; README-style page with overview, install, examples, and contact sections. Not followed further: the GitLab and ReadTheDocs links had no URLs in the page text."
+  ]
+ }
+}

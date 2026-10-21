@@ -1,0 +1,106 @@
+{
+ "name": "bao",
+ "desc": "Implementation of BLAKE3 verified streaming",
+ "homepage": "https://github.com/oconnor663/bao",
+ "installs_365d": 354,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "library",
+  "afternoon",
+  "protocol"
+ ],
+ "why": "Verified streaming for BLAKE3, a neat idea where each chunk of a file can be checked as it arrives.",
+ "brief": {
+  "what_it_is": "Bao is a Rust implementation of BLAKE3 verified streaming, which lets a reader check every byte of a file against a root hash as the bytes arrive, or check just a slice of it without hashing the whole file. It takes a file and produces a Bao-encoded file that stores the content interleaved with the BLAKE3 hash-tree nodes (combined mode), or a separate outboard file holding only the tree nodes. The `bao` command line tool can encode, hash, decode, slice, and decode-slice, and it reports 'hash mismatch' when the hash or the data is wrong. The project ships two Rust crates: the `bao` library and the `bao_bin` binary.",
+  "why_it_exists": "The README's motivating case is a secure messaging app that sends attachments with a hash in the message metadata. With a serial hash the recipient must download the whole attachment before verifying it, which is impractical for large video files. Tree hashes like BLAKE3 let a recipient stream and verify as they go, and the author says this scenario was the original motivation for the project.",
+  "how_it_works": "Bao follows Section 6.4 of the BLAKE3 spec. The encoding stores the file's bytes together with all the nodes of its hash tree, so a decoder can check each piece against the root hash as it reads. A slice is an encoded range of content that can be decoded with the same root hash and no seeking on the receiving end, since the sender prepares it by seeking over the full encoding. The README notes that one content seek usually needs several seeks in the encoding, because the decoder walks the tree level by level.",
+  "commands_seen": [
+   {
+    "cmd": "head -c 1000000 /dev/urandom > f",
+    "context": "Creates a one-megabyte random input file named f."
+   },
+   {
+    "cmd": "bao encode f f.bao",
+    "context": "Converts f into a combined Bao-encoded file f.bao; the README shows it is about 6% larger (1062472 vs 1000000 bytes)."
+   },
+   {
+    "cmd": "hash=`bao hash f`",
+    "context": "Computes the BLAKE3 root hash of f and stores it in a shell variable."
+   },
+   {
+    "cmd": "bao decode $hash < f.bao > f2",
+    "context": "Streams verified decoded bytes out of f.bao using the root hash; cmp f f2 then confirms the round trip."
+   },
+   {
+    "cmd": "bao decode $bad_hash < f.bao",
+    "context": "Uses an all-zero hash to show the failure case; the output is 'Error: Custom { kind: InvalidData, error: StringError(\"hash mismatch\") }'."
+   },
+   {
+    "cmd": "bao slice 500000 100000 f.bao f.slice",
+    "context": "Extracts a 100 KB slice starting at byte 500000 from the encoded file into f.slice (107272 bytes)."
+   },
+   {
+    "cmd": "bao decode-slice $hash 500000 100000 < f.slice > f.slice.out",
+    "context": "Decodes the slice using the same root hash and the same start and count parameters, with no seeking."
+   },
+   {
+    "cmd": "bao encode f --outboard f.obao",
+    "context": "Re-encodes f in outboard mode, writing only the tree hash bytes to f.obao (62472 bytes)."
+   },
+   {
+    "cmd": "bao decode $hash f --outboard f.obao f4",
+    "context": "Decodes the whole file in outboard mode, passing both the original input file and the outboard encoding."
+   },
+   {
+    "cmd": "cargo install bao_bin",
+    "context": "Installs the bao command line utility from crates.io after adding ~/.cargo/bin to PATH."
+   },
+   {
+    "cmd": "git clone https://github.com/oconnor663/bao",
+    "context": "Clones the repository to build the binary from source."
+   },
+   {
+    "cmd": "cd bao/bao_bin",
+    "context": "Enters the binary crate directory before building from source."
+   },
+   {
+    "cmd": "cargo build --release",
+    "context": "Builds the release binary in bao_bin; the README's next line runs ./target/release/bao --help."
+   }
+  ],
+  "install_notes": "Easiest route is `cargo install bao_bin` from crates.io, after adding ~/.cargo/bin to PATH, which means a Rust toolchain with cargo is required. To build from source, clone the repo, cd into bao/bao_bin, and run cargo build --release; the binary lands at ./target/release/bao. No accounts, hardware, or extra configuration are mentioned. The README's examples use GNU coreutils (stat -c, column, tail --bytes), so they may need adjusting on other systems.",
+  "standout": "Verified streaming gives you integrity checking of any byte range, with a root hash that is only the BLAKE3 hash, so a recipient can check an arbitrary slice without a separate challenge set or a full download. The README also includes tests/bao.py, a second implementation in Python written to be short and readable, which is a useful entry point for understanding the algorithm before reading the Rust.",
+  "status": "Not clear from the README alone. It names no release date or changelog, and the crates are listed on crates.io and docs.rs (badges present), but I could not check the last commit or release date from the pages fetched. The CI badge points to a tests workflow.",
+  "caveats": "The README warns: 'Bao is beta cryptography software. It has not been formally audited yet.' Building needs a Rust toolchain. Outboard mode and slices add extra flags and files to manage. The README's examples are shell-specific and use GNU tools. The license was not visible in the README text fetched.",
+  "quotes": [
+   "Bao is an implementation of BLAKE3 verified streaming, as described in Section 6.4 of the BLAKE3 spec.",
+   "Clients can stream this encoding, or do random seeks into it, while verifying that every byte they read matches the root hash.",
+   "Caution! Bao is beta cryptography software. It has not been formally audited yet.",
+   "tests/bao.py is a fully functional second implementation in Python, designed to be as short and readable as possible."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repo)",
+    "url": "https://github.com/oconnor663/bao"
+   },
+   {
+    "label": "Bao spec",
+    "url": "https://github.com/oconnor663/bao/blob/master/docs/spec.md"
+   },
+   {
+    "label": "Rust crate bao_bin on crates.io",
+    "url": "https://crates.io/crates/bao_bin"
+   },
+   {
+    "label": "Rust docs for bao",
+    "url": "https://docs.rs/bao"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/oconnor663/bao \u2014 fetched OK; README returned (thin on release info; linked spec docs/spec.md not fetched)"
+  ]
+ }
+}

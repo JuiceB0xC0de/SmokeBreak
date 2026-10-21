@@ -1,0 +1,118 @@
+{
+ "name": "launch_socket_server",
+ "desc": "Bind to privileged ports without running a server as root",
+ "homepage": "https://github.com/mistydemeo/launch_socket_server",
+ "installs_365d": 67,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "Uses launchd socket activation to bind privileged ports, a small door into how macOS hands out sockets.",
+ "brief": {
+  "what_it_is": "launch_socket_server is a small Go program for macOS (OS X) that sits between launchd and your server. launchd opens a privileged port (under 1024), and the proxy forwards incoming connections from that port to your unprivileged program over a Unix domain socket or a local TCP port. Your server takes its connections from the proxy and never needs to run as root. By default the proxy creates the socket path and passes it to your program in the LAUNCH_PROGRAM_SOCKET_PATH environment variable. The README describes it as an MIT-licensed fork maintained by Misty De M\u00e9o, with the original by Sam Stephenson in 2014.",
+  "why_it_exists": "The README states the problem: you want to accept connections on a port number under 1024 on OS X, but you don't want your server to run as root. The solution it offers is to run your server with launch_socket_server.",
+  "how_it_works": "launchd holds the privileged socket and uses the launch_activate_socket API (available on OS X 10.9 and higher) to hand it to launch_socket_server, which then proxies each connection to your program. Your server reads LAUNCH_PROGRAM_SOCKET_PATH, unlinks any existing socket file, binds to that path, and runs in the foreground. Setup is a launchd plist in /Library/LaunchDaemons whose Sockets key names the port (for example 80) and whose ProgramArguments begin with the launch_socket_server path.",
+  "commands_seen": [
+   {
+    "cmd": "sudo launchctl load -Fw /Library/LaunchDaemons/com.example.myserver.plist",
+    "context": "Registers and loads the launch daemon plist as root. This is how you start the daemon."
+   },
+   {
+    "cmd": "sudo launchctl unload -Fw /Library/LaunchDaemons/com.example.myserver.plist",
+    "context": "Unloads the launch daemon as root."
+   },
+   {
+    "cmd": "brew install go",
+    "context": "Installs Go, which is required to build launch_socket_server from source (the README suggests Homebrew)."
+   },
+   {
+    "cmd": "make",
+    "context": "Run inside a copy of the source tree to build launch_socket_server."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs launch_socket_server into /usr/local by default. Set the PREFIX environment variable to install elsewhere."
+   }
+  ],
+  "install_notes": "There is no binary install described in the README. You build from source: install Go (the README suggests brew install go), run make, then make install, which targets /usr/local unless PREFIX is set. Setup also needs a launch daemon plist at /Library/LaunchDaemons/<identifier>.plist, loaded as root with launchctl. The plist sets Label, RunAtLoad, KeepAlive, UserName, GroupName, optional log paths, ProgramArguments, and a Sockets entry (SockNodeName 0.0.0.0, SockServiceName 80 or a service name from /etc/services). Optional EnvironmentVariables set LAUNCH_PROGRAM_SOCKET_PATH or LAUNCH_PROGRAM_TCP_ADDRESS (for example 127.0.0.1:8000). Passing login_wrapper gives your program the user's login-shell environment.",
+  "standout": "It uses launchd's own socket activation, so the privileged bind is done by the system and your program never runs as root. It can also run as a pure proxy with no child program (use '-' in place of the server path), or proxy to a TCP address instead of a Unix socket.",
+  "status": "unknown. The README mentions that this is a current fork maintained by Misty De M\u00e9o, but it shows no release date, version number, or recent commit, and I did not check the repository's commit or release history.",
+  "caveats": "macOS only. The README describes OS X and requires OS X 10.9 or later for launch_activate_socket. Building needs Go. Your server must read LAUNCH_PROGRAM_SOCKET_PATH, unlink the socket before binding, and should unlink it on exit. Your server must stay in the foreground and must not fork into the background. Launch daemons are loaded with sudo. The program runs with a minimal environment unless you use login_wrapper. The README's example image points to a sstephenson/launch_socket_server URL rather than this fork.",
+  "quotes": [
+   "You want to accept connections on a port number under 1024 on OS X, but you don't want your server to run as root.",
+   "launch_socket_server sits in between launchd(8) and your server, using the system's APIs to proxy incoming connections from a privileged port to your unprivileged program.",
+   "Note: Your server program must run in the foreground, not forked as a background process."
+  ],
+  "links": [
+   {
+    "label": "Homepage / README (GitHub)",
+    "url": "https://github.com/mistydemeo/launch_socket_server"
+   },
+   {
+    "label": "launchd(8) man page (Apple)",
+    "url": "https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man8/launchd.8.html"
+   },
+   {
+    "label": "login_wrapper helper in the repo",
+    "url": "https://github.com/mistydemeo/launch_socket_server/blob/master/libexec/launch_socket_server/login_wrapper"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/mistydemeo/launch_socket_server (homepage, fetched OK, README returned; no further fetches needed because the README covers setup and usage)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A small macOS-specific tool that makes launchd socket activation tangible, showing how privileged ports can be handed to an unprivileged server."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "launch_socket_server",
+  "tldr": "A small macOS proxy that lets launchd bind a privileged port like 80 and hand connections to a server running as an ordinary user.",
+  "deeper_look": "launch_socket_server solves one old Unix problem: ports under 1024 are privileged, but you do not want your web server or other daemon running as root just to listen on one. On macOS, launchd can open the socket itself. This program sits between launchd and your server, takes the socket launchd hands over, and forwards each incoming connection to your unprivileged program.\n\nThe forwarding goes over a Unix domain socket by default. The proxy creates the socket path and passes it to your program in the `LAUNCH_PROGRAM_SOCKET_PATH` environment variable. Your server unlinks any existing file at that path, binds to it, and stays in the foreground. A TCP address such as `127.0.0.1:8000` works too, via `LAUNCH_PROGRAM_TCP_ADDRESS`.\n\nThe idea underneath is socket activation. The system, not your program, owns the listening socket and passes it along through the `launch_activate_socket` API (OS X 10.9 and later). Separating who opens a port from who serves it is a pattern worth knowing, and this is a small, readable example of it. The README calls the project an MIT-licensed fork maintained by Misty De M\u00e9o, from an original by Sam Stephenson in 2014.\n\nSetup is a launchd plist in `/Library/LaunchDaemons`. Its `Sockets` key names the port, and its `ProgramArguments` begin with the path to launch_socket_server. You can also use `-` in place of a server path to run it as a pure proxy with no child program.",
+  "install": "brew install launch_socket_server\n# macOS only. The upstream README describes building from source instead: brew install go, then make, then make install (to /usr/local, or set PREFIX).\n# You also need a launch daemon plist in /Library/LaunchDaemons, loaded with sudo.",
+  "try_this": [
+   {
+    "cmd": "sudo launchctl load -Fw /Library/LaunchDaemons/com.example.myserver.plist",
+    "what_happens": "Registers and starts your launch daemon, so launchd opens the privileged port and launch_socket_server proxies to your program."
+   },
+   {
+    "cmd": "sudo launchctl unload -Fw /Library/LaunchDaemons/com.example.myserver.plist",
+    "what_happens": "Unloads the daemon and releases the port."
+   }
+  ],
+  "whats_unique": "It relies on launchd's own socket activation, so the privileged bind happens in the system and your program never runs as root. It can also act as a plain proxy to a TCP address with no child program.",
+  "caveats": "macOS only, needs OS X 10.9 or later, and the brief could not confirm recent maintenance; your server must stay in the foreground and unlink its socket before binding.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "macos",
+   "launchd",
+   "sockets",
+   "network",
+   "go"
+  ],
+  "links": [
+   {
+    "label": "Homepage / README (GitHub)",
+    "url": "https://github.com/mistydemeo/launch_socket_server"
+   },
+   {
+    "label": "launchd(8) man page (Apple)",
+    "url": "https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man8/launchd.8.html"
+   },
+   {
+    "label": "login_wrapper helper in the repo",
+    "url": "https://github.com/mistydemeo/launch_socket_server/blob/master/libexec/launch_socket_server/login_wrapper"
+   }
+  ]
+ }
+}

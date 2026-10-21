@@ -1,0 +1,83 @@
+{
+ "name": "reaver",
+ "desc": "Implements brute force attack to recover WPA/WPA2 passkeys",
+ "homepage": "https://github.com/t6x/reaver-wps-fork-t6x",
+ "installs_365d": 479,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "network",
+  "reverse-engineering",
+  "needs-hardware",
+  "protocol"
+ ],
+ "why": "Brute-forces WPS PINs on WPA networks, a famous wireless weakness that makes the WPS protocol itself fascinating to understand.",
+ "brief": {
+  "what_it_is": "Reaver is a command-line tool that runs a brute-force attack against the WPS (Wi-Fi Protected Setup) registrar PIN of a Wi-Fi access point, with the goal of recovering the WPA/WPA2 passphrase. It takes a monitor-mode wireless interface and a target BSSID (plus optional ESSID, channel and timing flags) and sends PIN guesses to the access point. When it finds the PIN, it reports the recovered PIN and passphrase. The companion tool wash scans for nearby access points and reports which ones have WPS enabled, and it can also output WPS details as JSON. This is the community fork (reaver-wps-fork-t6x) of Craig Heffner's original reaver, which adds the offline Pixie Dust attack.",
+  "why_it_exists": "The README says the tool implements the brute-force attack on WPS PINs described by Stefan Viehbock, 'Brute forcing Wi-Fi Protected Setup: When poor design meets poor implementation', and presents it as a robust, practical attack tested against many access points. The fork exists to fix bugs, add features, and add the offline Pixie Dust attack, which the original did not have.",
+  "how_it_works": "The README says the online attack guesses WPS registrar PINs against the access point, which typically takes hours (it claims 4-10 hours on average, and about half that to hit the right PIN). The offline Pixie Dust mode (-K or -Z) collects values such as PKE, PKR, E-Hash1, E-Hash2, E-Nonce and Authkey, and passes them to the separate pixiewps program, which tries to work out the PIN without online guessing. The README says the offline attack can take seconds to minutes against vulnerable access points. The README does not describe the internal protocol mechanics in more detail.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt -y install build-essential libpcap-dev aircrack-ng pixiewps",
+    "context": "Example dependency install on Kali Linux, which the README says includes pixiewps."
+   },
+   {
+    "cmd": "git clone https://github.com/t6x/reaver-wps-fork-t6x",
+    "context": "Download the source from GitHub. A zip download via wget is also listed."
+   },
+   {
+    "cmd": "cd src",
+    "context": "Move into the source directory after unpacking the repository, before compiling."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Generate the build configuration in src. The README says ./configure --enable-libnl3 or --enable-libnl-tiny are options for wireless channel switching."
+   },
+   {
+    "cmd": "make",
+    "context": "Compile reaver and wash after configuring."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Install the built binaries system-wide."
+   },
+   {
+    "cmd": "reaver -i wlan0mon -b 00:90:4C:C1:AC:21 -vv",
+    "context": "The README's example attack: monitor-mode interface wlan0mon, target AP BSSID 00:90:4C:C1:AC:21, verbose output."
+   },
+   {
+    "cmd": "wash -i wlan0mon",
+    "context": "The README's example scan: list nearby access points and their WPS status on interface wlan0mon."
+   }
+  ],
+  "install_notes": "Build dependencies per the README are libpcap-dev and build-essential. Optional libnl-3-dev and libnl-genl-3-dev, or libnl-tiny, are needed if the kernel does not support wext (the README says this is the case on most modern distros), used via ./configure --enable-libnl3 or --enable-libnl-tiny. Runtime extras are pixiewps (required for the Pixie Dust attack) and aircrack-ng (optional but recommended). Pixiewps must be installed separately from its own repository. You need a wireless interface in monitor mode (for example wlan0mon) before running either tool. Install with ./configure, make, then sudo make install from the src directory. The Homebrew formula only lists the executables reaver and wash. The README does not describe a Homebrew-specific setup.",
+  "standout": "Pixie Dust is the notable idea: it turns a days-long online PIN guess into an offline calculation that can succeed in seconds on vulnerable chipsets, using values captured during the WPS handshake. The fork also adds an option to pass an arbitrary string as a PIN (-p).",
+  "status": "The README calls this the latest revision (master branch) of the community edition and points to a Releases page with stable releases since 1.6 beta. It describes the older 1.5.3 fork as discontinued. No release date or last-commit date appears in the README, so I could not confirm recent activity. Status is best described as actively referenced but undated.",
+  "caveats": "The tool is for Linux and needs a wireless card that supports monitor mode and packet injection, plus root. Channel switching may fail on modern kernels without libnl. Pixie Dust needs pixiewps installed separately. The README says that with Pixie Dust you must rerun reaver with the recovered PIN (-p) to get the passphrase, and calls this a temporary solution. The README warns not to use small DH keys (-S) when attacking a Realtek AP. Vulnerability depends on the access point, and the README does not give a list. The README does not address authorization or legal use, and I did not see a license named in the README. Using this against networks you do not own or have permission to test is illegal in many places.",
+  "quotes": [
+   "Reaver implements a brute force attack against Wifi Protected Setup (WPS) registrar PINs in order to recover WPA/WPA2 passphrases",
+   "When using the offline attack, if the AP is vulnerable, it may take only a matter of seconds to minutes.",
+   "The discontinued reaver-wps-fork-t6x community edition, reaver version 1.5.3, which includes the Pixie Dust attack, is now the old-master branch"
+  ],
+  "links": [
+   {
+    "label": "Homepage / repository (reaver-wps-fork-t6x)",
+    "url": "https://github.com/t6x/reaver-wps-fork-t6x"
+   },
+   {
+    "label": "pixiewps (offline Pixie Dust tool, lists vulnerable APs)",
+    "url": "https://github.com/wiire/pixiewps"
+   },
+   {
+    "label": "Viehbock WPS paper (basis for the attack)",
+    "url": "http://sviehb.files.wordpress.com/2011/12/viehboeck_wps.pdf"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/t6x/reaver-wps-fork-t6x: fetched OK, README returned in full. It covers requirements, setup, usage for reaver and wash, and acknowledgements, so I did not follow further links."
+  ]
+ }
+}

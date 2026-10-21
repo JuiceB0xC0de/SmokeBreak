@@ -1,0 +1,119 @@
+{
+ "name": "apktool",
+ "desc": "Tool for reverse engineering 3rd party, closed, binary Android apps",
+ "homepage": "https://apktool.org",
+ "installs_365d": 39417,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "reverse-engineering",
+  "afternoon",
+  "tui"
+ ],
+ "why": "Decodes closed Android APKs into smali and resources, a solid door into how apps are taken apart, though fairly well known.",
+ "brief": {
+  "what_it_is": "Apktool is a command-line tool for reverse engineering closed, binary Android apps. You give it an APK file and it decodes the resources and manifest to nearly their original form and disassembles the code into smali, which lays the app out as a project folder. After you edit that folder, the same tool rebuilds it into an APK. The homepage transcript shows version 3.0.3 in use.",
+  "why_it_exists": "The README frames it as a way to take third-party, closed Android apps apart so people can inspect and modify them, for example to localize an app or add features. It also says it is not for piracy.",
+  "how_it_works": "Running decode (d) on an APK writes out a project-like folder with decoded resources, manifest and smali code, and it copies unknown and original files across. Running build (b) on that folder reassembles the smali into classes.dex, rebuilds the resources and packages a new APK. The homepage also describes an analyze mode: attaching -m to a decode command skips rebuilding and just unpacks resources and manifest for inspection.",
+  "commands_seen": [
+   {
+    "cmd": "apktool d test.apk",
+    "context": "Decodes the APK test.apk into a folder of resources and smali (the disassemble step, shown on the homepage transcript)."
+   },
+   {
+    "cmd": "apktool b test",
+    "context": "Rebuilds the decoded folder test into a new APK (the assemble step, shown on the homepage transcript)."
+   }
+  ],
+  "install_notes": "The fetched text does not include install steps beyond the download links. The README points to Bitbucket and a mirror for downloads and to a 'How to Build' page at apktool.org/docs/build, which I did not fetch, so any Java runtime or build requirements are unverified. The brew entry gives the executable name as apktool.",
+  "standout": "Unlike a plain decompiler, it aims to round-trip: you can decode, change resources or smali, and rebuild a working APK, with a project-style layout and automation for repetitive steps. The smali output also lets you step through app code.",
+  "status": "Appears maintained, though I could not confirm a date. The homepage shows version 3.0.3, the GitHub README has a CI badge and describes a 'main' branch for 3.x plus a 2.x maintenance branch. I saw no release date or last commit date.",
+  "caveats": "The README says Apktool is NOT intended for piracy and other non-legal uses. Decoding is 'nearly original', not exact, so rebuilt output may not match the source. Licensed under Apache 2.0, per the README badge. Downloads are linked from Bitbucket and a personal mirror rather than GitHub releases. Platform support and build difficulty were not stated in the text I read.",
+  "quotes": [
+   "Apktool is a tool for reverse engineering third-party, closed, binary, Android apps.",
+   "It can decode resources to nearly original form and rebuild them after making some modifications; it makes it possible to debug smali code step-by-step.",
+   "Just try to be fair with the authors of an app, that you use and probably like."
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://apktool.org"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://apktool.org/wiki/the-basics/intro"
+   },
+   {
+    "label": "Source (GitHub)",
+    "url": "https://github.com/iBotPeaches/Apktool"
+   },
+   {
+    "label": "Downloads mirror",
+    "url": "https://connortumbleson.com/apktool"
+   }
+  ],
+  "fetch_log": [
+   "https://apktool.org: worked, returned homepage text with two example command transcripts and feature blurbs",
+   "https://github.com/iBotPeaches/Apktool: worked, returned the README (repository has no separate homepage text beyond it)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A solid, still-relevant way to take closed Android apps apart, inspect their resources and smali, then modify and rebuild them\u2014an unusually hands-on window into APKs."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "apktool",
+  "tldr": "Takes a compiled Android app apart into readable resources and smali code, then rebuilds your edited folder back into a working APK.",
+  "deeper_look": "Apktool is a command-line tool for reverse engineering closed, binary Android apps. Give it an APK and it writes out a project-style folder: the manifest and resources decoded to nearly their original form, and the app's code disassembled into smali, a human-readable assembly for Android's Dalvik bytecode. Files it does not recognise are copied across as they are.\n\nThe interesting part is the round trip. After decoding, you can edit a string, swap an image, or change a smali instruction, then run the build command. It reassembles the smali into classes.dex, rebuilds the resources, and packages a new APK. The README gives localizing an app or adding features as examples of why someone would want this. The project says it can also help you step through smali code while debugging.\n\nThat makes it a door into how Android apps are put together. An APK is a zip of compiled code, binary-encoded XML and assets, and seeing it laid out as plain files shows what the build tools normally hide. There is also an analyze option: adding -m to a decode skips the rebuild step and just unpacks resources and manifest for inspection.\n\nThe README says Apktool is not intended for piracy or other non-legal uses, and closes with a plea: \"Just try to be fair with the authors of an app, that you use and probably like.\"",
+  "install": "brew install apktool\n# pulls in openjdk as a dependency; you need an APK file of your own to try it on",
+  "try_this": [
+   {
+    "cmd": "apktool d test.apk",
+    "what_happens": "Decodes test.apk into a folder named test holding the manifest, decoded resources and smali code."
+   },
+   {
+    "cmd": "apktool b test",
+    "what_happens": "Rebuilds the decoded folder test into a new APK."
+   },
+   {
+    "cmd": "apktool --help",
+    "what_happens": "Lists the available commands and options."
+   }
+  ],
+  "whats_unique": "Unlike a plain decompiler that only lets you read, it aims to round-trip: decode, change resources or smali, and rebuild a working APK from the same project-style folder.",
+  "caveats": "Decoding is \"nearly original\" rather than exact, so rebuilt output may differ from the source, and the project asks that it not be used for piracy.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "reverse-engineering",
+   "android",
+   "smali",
+   "apk",
+   "java",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://apktool.org"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://apktool.org/wiki/the-basics/intro"
+   },
+   {
+    "label": "Source (GitHub)",
+    "url": "https://github.com/iBotPeaches/Apktool"
+   },
+   {
+    "label": "Downloads mirror",
+    "url": "https://connortumbleson.com/apktool"
+   }
+  ]
+ }
+}

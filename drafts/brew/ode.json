@@ -1,0 +1,145 @@
+{
+ "name": "ode",
+ "desc": "Simulating articulated rigid body dynamics",
+ "homepage": "https://www.ode.org/",
+ "installs_365d": 8665,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "simulation",
+  "science",
+  "library",
+  "afternoon"
+ ],
+ "why": "The Open Dynamics Engine simulates articulated rigid body physics, a real simulation you can drive and disturb.",
+ "brief": {
+  "what_it_is": "ODE (Open Dynamics Engine) is an open-source C/C++ library for simulating articulated rigid body dynamics. You give it bodies, joints, and forces through its API, and each simulation step it advances the physics state. It has built-in collision detection with friction, and it can use OPCODE or GIMPACT for triangle-mesh collisions. The README describes it as a library rather than a standalone program, so the Homebrew executable ode-config is presumably a build-flag helper for projects that link against it; the README does not mention ode-config. The homepage and README describe uses in ground vehicles, legged creatures, and VR objects.",
+  "why_it_exists": "The homepage frames ODE as a physics SDK: a library that a game or simulation program embeds to get rigid-body motion and contact handling without writing its own solver. The homepage says it is \"currently used in many computer games, 3D authoring tools and simulation tools.\"",
+  "how_it_works": "The README does not explain the solver internals. It says ODE has advanced joint types, integrated collision detection with friction, and a C/C++ API. Its build options include ODE_DOUBLE_PRECISION for double-precision math and ODE_WITH_OPCODE for trimesh collisions, which are the main knobs a user would touch.",
+  "commands_seen": [
+   {
+    "cmd": "cmake -B build -DCMAKE_BUILD_TYPE=Release",
+    "context": "Configures a Release build in the build directory (Quick Start; works on Linux and macOS)."
+   },
+   {
+    "cmd": "cmake --build build --parallel",
+    "context": "Compiles the configured project in parallel (Quick Start; macOS variant uses $(sysctl -n hw.ncpu))."
+   },
+   {
+    "cmd": "cmake --install build",
+    "context": "Installs the built library (Quick Start; Linux variant uses sudo cmake --install build)."
+   },
+   {
+    "cmd": "ctest --test-dir build --output-on-failure",
+    "context": "Runs the test suite and prints output for failing tests."
+   },
+   {
+    "cmd": "cmake -B build -DODE_DOUBLE_PRECISION=ON -DODE_WITH_DEMOS=OFF",
+    "context": "Example of setting CMake options: double-precision math, with demos turned off."
+   },
+   {
+    "cmd": "cmake -G \"MSYS Makefiles\" -B build -DCMAKE_BUILD_TYPE=Release",
+    "context": "Windows MSYS2 shell configure step (run from mingw64, ucrt64, or clang64)."
+   },
+   {
+    "cmd": "sudo apt-get install libglu1-mesa-dev freeglut3-dev",
+    "context": "Installs OpenGL/GLU development packages on Debian/Ubuntu; needed only if building demos."
+   },
+   {
+    "cmd": "cmake -B build -G \"Ninja\" -DCMAKE_BUILD_TYPE=Release",
+    "context": "Example of choosing a generator (Ninja) with -G."
+   }
+  ],
+  "install_notes": "Requires CMake 3.10 or later and a C/C++ compiler (GCC, Clang, MSVC, or MinGW). OpenGL and GLU are needed only for the demos, which are on by default (ODE_WITH_DEMOS=ON); turn them off with -DODE_WITH_DEMOS=OFF if you only want the library. The README gives per-platform steps for Windows (Visual Studio, MSYS2), Linux, and macOS, and lists Xcode and Visual Studio generators. No accounts, runtimes, or first-run configuration are mentioned. The README's install steps are for building from source; it does not mention a Homebrew formula or a separate ode-config step.",
+  "standout": "It is a physics engine you drive from code and then perturb, so the fun is in changing forces, joints, or collisions and watching the simulated bodies respond. Its demos are built with an OpenGL-based DrawStuff library, which makes it a visual playground rather than only a library.",
+  "status": "maintained. The GitHub repository at github.com/odedevs/ode has CI badges for Windows, MSYS2, Ubuntu, Arch Linux, and macOS, and its copyright line runs through 2026 (\"Copyright (C) 2008-2026 Open Dynamics Engine contributors\"). I did not see a release date or last-commit date. The ode.org homepage is old-looking, with a 2001-2004 copyright and mailing-list archives from 2007, and it still points to BitBucket, which I could not read.",
+  "caveats": "The homepage is dated and still points to BitBucket for source; the live repository is on GitHub. Triangle-mesh collisions via GIMPACT are marked experimental. The LGPL and BSD licenses both apply, and the README notes third-party code (GIMPACT, libccd, OU/ODER, OPCODE) under its own licenses. The README does not mention ode-config, so I could not confirm what the Homebrew executable does. The BitBucket README fetch returned only page chrome.",
+  "quotes": [
+   "ODE is a free, industrial quality library for simulating articulated rigid body dynamics - for example ground vehicles, legged creatures, and moving objects in VR environments.",
+   "It is fast, flexible, robust and platform independent, with advanced joints, contact with friction, and built-in collision detection.",
+   "It is fully featured, stable, mature and platform independent with an easy to use C/C++ API."
+  ],
+  "links": [
+   {
+    "label": "ODE homepage",
+    "url": "https://www.ode.org/"
+   },
+   {
+    "label": "ODE manual (wiki)",
+    "url": "https://ode.org/wiki/index.php?title=Manual"
+   },
+   {
+    "label": "GitHub repository (odedevs/ode)",
+    "url": "https://github.com/odedevs/ode"
+   },
+   {
+    "label": "API documentation",
+    "url": "http://opende.sf.net/docs/index.html"
+   }
+  ],
+  "fetch_log": [
+   "https://www.ode.org/ \u2014 worked; returned the old homepage text with links to the BitBucket source, wiki, and mailing list.",
+   "https://bitbucket.org/odedevs/ode/src/master/README.md \u2014 failed; returned only page chrome with no README text.",
+   "https://github.com/odedevs/ode \u2014 worked; returned the full README (license, build, CMake options, and platform notes)."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "ODE is a mature, lesser-known physics engine that lets you experiment with articulated bodies, joints, friction, and collisions in a working simulation."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "ODE (Open Dynamics Engine)",
+  "tldr": "A C/C++ physics library that simulates rigid bodies, joints and contacts, the kind of engine that moves vehicles and walking creatures in games.",
+  "deeper_look": "ODE is a library for simulating articulated rigid body dynamics. You describe bodies, joints and forces through a C/C++ API, then call a step function and it advances the physics. It has joint types, collision detection with friction built in, and optional triangle-mesh collision through OPCODE or GIMPACT.\n\nThe homepage frames it as a physics SDK: something a game or simulation embeds so it does not have to write its own solver. It says ODE is \"currently used in many computer games, 3D authoring tools and simulation tools.\" The examples it gives are ground vehicles, legged creatures and moving objects in VR.\n\nThe idea underneath is that a lot of simulated motion is a set of rigid bodies connected by constraints, with contacts resolved each step. Once you see that, you can build a car, a ragdoll or a walking robot out of the same few pieces, then change a force, a joint or a collision and watch what happens. The source ships demos drawn with an OpenGL-based DrawStuff library, so there is something to look at without writing a renderer.\n\nThe Homebrew formula installs one executable, `ode-config`. The README does not mention it, so it is presumably a helper that reports build flags for programs linking against the library. This is a library you build things with, not a program you run.",
+  "install": "brew install ode\n# Library only. To build the demos you need CMake 3.10+, a C/C++ compiler, and OpenGL/GLU (demos are on by default); see the README.",
+  "try_this": [
+   {
+    "cmd": "ode-config --help",
+    "what_happens": "Shows the options of the helper the Homebrew formula installs; presumably it reports compile and link flags for projects using ODE."
+   },
+   {
+    "cmd": "cmake -B build -DCMAKE_BUILD_TYPE=Release",
+    "what_happens": "From a clone of the GitHub repo, configures a Release build that includes the demos by default."
+   },
+   {
+    "cmd": "cmake --build build --parallel",
+    "what_happens": "Compiles the library and demos so you can run the DrawStuff demos and start changing forces and joints."
+   }
+  ],
+  "whats_unique": "It is a mature physics engine you can build from source and perturb, with demos that make the rigid-body behaviour visible. Most physics libraries are just a dependency.",
+  "caveats": "It is a library with a C/C++ API, not a standalone tool, so the fun starts with building the source demos or writing code; the homepage is dated and GIMPACT mesh collision is marked experimental.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "physics",
+   "simulation",
+   "library",
+   "c",
+   "rigid-body"
+  ],
+  "links": [
+   {
+    "label": "ODE homepage",
+    "url": "https://www.ode.org/"
+   },
+   {
+    "label": "GitHub repository (odedevs/ode)",
+    "url": "https://github.com/odedevs/ode"
+   },
+   {
+    "label": "ODE manual (wiki)",
+    "url": "https://ode.org/wiki/index.php?title=Manual"
+   },
+   {
+    "label": "API documentation",
+    "url": "http://opende.sf.net/docs/index.html"
+   }
+  ]
+ }
+}

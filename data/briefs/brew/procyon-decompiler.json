@@ -1,0 +1,65 @@
+{
+ "name": "procyon-decompiler",
+ "desc": "Modern decompiler for Java 5 and beyond",
+ "homepage": "https://github.com/mstrobel/procyon",
+ "installs_365d": 198,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering"
+ ],
+ "why": "A Java decompiler that turns compiled class files back into readable source, a satisfying way to watch bytecode become code.",
+ "brief": {
+  "what_it_is": "procyon-decompiler is a standalone command-line front-end for the Java decompiler in Procyon's Compiler Toolset. You pass it class names (dotted or binary form), .class file paths, or whole jar files, and it prints reconstructed Java source to the console. It can also print raw bytecode or a bytecode AST instead of Java. The decompiler itself is a framework that other applications can call through the com.strobel.decompiler.Decompiler helper class.",
+  "why_it_exists": "The author, Mike Strobel, found the Java decompiler options lacking. Jad is no longer maintained and does not support Java 5+ features, and JD-GUI tends to fail on code emitted by his LINQ/DLR tree compiler. He wrote Procyon's decompiler, inspired by and borrowing heavily from ILSpy and Mono.Cecil.",
+  "how_it_works": "The decompiler is based on ILSpy and Mono.Cecil, per the wiki. Input can be a type name, which is loaded from the user or bootstrap classpath, a file path, or a jar. Output is written to System.out. The README says the front-end embeds all dependencies in the JAR, so it can be redistributed as a single file.",
+  "commands_seen": [
+   {
+    "cmd": "java -jar decompiler.jar",
+    "context": "Shows help and exits (wiki says this is the help/usage form, alongside -?)."
+   },
+   {
+    "cmd": "java -jar decompiler.jar -?",
+    "context": "Shows help/usage information and exits."
+   },
+   {
+    "cmd": "java -jar decompiler.jar java.lang.String",
+    "context": "Decompiles a single class to the console."
+   },
+   {
+    "cmd": "java -DAnsi=true -jar decompiler.jar java.util.Collections",
+    "context": "Decompiles a class to the console with ANSI color forced on, for consoles where auto-detection fails such as MobaXterm."
+   },
+   {
+    "cmd": "java -jar decompiler.jar -jar myJar.jar -o out",
+    "context": "Decompiles a whole jar into the out directory."
+   }
+  ],
+  "install_notes": "Requires Java 7 to run, per the wiki. The download is procyon-decompiler-x.x.xx.jar, which the wiki says to rename to decompiler.jar before running the examples. The wiki says to run the main class directly (com.strobel.decompiler.DecompilerDriver) instead of using -jar if classes from jars or CLASSPATH directories are not found. Color output needs an ANSI/xterm-256 console. On Windows, the author recommends MobaXterm, since the plain command prompt does not support it. The -r flag gives raw bytecode and -b gives the bytecode AST, with -u for unoptimized AST. Brew's install may differ from the manual jar steps, and the wiki does not mention brew.",
+  "standout": "It handles Java 5+ constructs that the author says other decompilers miss: enum declarations, String and enum switches, local and anonymous classes, annotations, and Java 8 lambdas and method references. It also offers three output modes, including a bytecode AST.",
+  "status": "quiet. The Java Decompiler wiki page was last edited Oct 27, 2019. I did not see a release date or recent commit on the README page, so I cannot confirm active maintenance. The README still labels the decompiler as Experimental.",
+  "caveats": "Labelled Experimental in the README. The wiki says it is 'still incomplete' and has known issues. Classes compiled with Eclipse or anything other than javac may decompile less well, especially String switches. Output only goes to the console for now, with no file output, although the -o option for jars writes to a directory. No GUI is built in. Color output does not work in the plain Windows command prompt. The wiki says Java 7 is required to run, although the input can contain Java 5+ features. The brew description says 'Java 5 and beyond', which refers to the input language, not the runtime. The wiki was written for an older release and may not match the current brew build.",
+  "quotes": [
+   "The Procyon decompiler handles language enhancements from Java 5 and beyond that most other decompilers don't.",
+   "All dependencies are embedded in the JAR for easy redistribution.",
+   "The command-line decompiler is simply a front-end; the decompiler itself is a framework that can be integrated into other applications and called programmatically."
+  ],
+  "links": [
+   {
+    "label": "Procyon homepage (GitHub README)",
+    "url": "https://github.com/mstrobel/procyon"
+   },
+   {
+    "label": "Java Decompiler wiki page",
+    "url": "https://github.com/mstrobel/procyon/wiki/Java-Decompiler"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/mstrobel/procyon: worked, README returned (covers the whole Procyon suite; the decompiler is one section)",
+   "https://github.com/mstrobel/procyon/wiki/Java-Decompiler: worked, returned the page text with GitHub page chrome around it; the commands are from this page"
+  ]
+ }
+}

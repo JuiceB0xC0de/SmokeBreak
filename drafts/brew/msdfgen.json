@@ -1,0 +1,147 @@
+{
+ "name": "msdfgen",
+ "desc": "Multi-channel signed distance field generator",
+ "homepage": "https://github.com/Chlumsky/msdfgen",
+ "installs_365d": 79,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "visual",
+  "library"
+ ],
+ "why": "Turns vector glyphs into multi-channel distance fields, a neat transform with a real trick, though mostly used as a library.",
+ "brief": {
+  "what_it_is": "A C++ command-line tool and library that turns vector shapes and font glyphs into distance field textures. The console program takes a font glyph (-font file.ttf 'M'), an SVG file (-svg), or a text shape description (-shapedesc, -defineshape, -stdin) and writes an image such as PNG, BMP, TIFF, or raw float formats. Its default mode, msdf, produces a multi-channel signed distance field, and it can also write monochrome sdf, perpendicular psdf, or mtsdf, which puts a true distance field in the alpha channel. The output is meant to be sampled in a fragment shader for resolution-independent text and shape rendering.",
+  "why_it_exists": "Monochrome distance fields lose sharp corners when magnified, and the author's stated purpose is to generate multi-channel distance fields, using a method he developed, that reproduce corners almost perfectly by using all three colour channels. The README also notes that conventional and perpendicular distance fields are supported.",
+  "how_it_works": "Each edge of the shape is assigned a colour (c, m, y or w) so that neighbouring edges meeting at a sharp corner are encoded in different channels. The shader takes the median of the three channels to recover a signed distance, which is then used like an ordinary SDF to get anti-aliased edges. The README gives the GLSL for this, and the method is described in the author's master's thesis, linked below.",
+  "commands_seen": [
+   {
+    "cmd": "vcpkg install msdfgen",
+    "context": "Installs the library through the vcpkg package manager, which is the README's suggested route for using it as a library."
+   },
+   {
+    "cmd": "msdfgen <mode> <input> <options>",
+    "context": "General form of the standalone console program. Only the input specification is required, and mode defaults to msdf."
+   },
+   {
+    "cmd": "msdfgen msdf -font C:\\Windows\\Fonts\\arialbd.ttf 'M' -o msdf.png -dimensions 32 32 -pxrange 4 -autoframe -testrender render.png 1024 1024",
+    "context": "README example. Generates a 32x32 multi-channel distance field of the capital M from Arial Bold with a 4 px range, saves it to msdf.png, and writes a 1024x1024 test render to render.png."
+   },
+   {
+    "cmd": "-o <filename>",
+    "context": "Sets the output file. The format is deduced from the extension (png, bmp, tiff, rgba, fl32, txt, bin), or set with -format."
+   },
+   {
+    "cmd": "-pxrange <range>",
+    "context": "Sets the width of the distance range around the shape in distance field pixels. -range does the same in shape units."
+   },
+   {
+    "cmd": "-autoframe",
+    "context": "Automatically frames the shape to fit the field. The README says not to use it for character maps, since it is intended only as a quick preview."
+   },
+   {
+    "cmd": "-angle <angle>",
+    "context": "Sets the maximum angle still treated as a corner, in radians (3.0) or degrees with a D suffix (171.9D)."
+   },
+   {
+    "cmd": "-testrender <filename.png> <width> <height>",
+    "context": "Tests the generated field by rendering the original shape from it into a PNG of the given size."
+   },
+   {
+    "cmd": "-testrendermulti",
+    "context": "Like -testrender, but leaves the colour channels uncombined, which the README suggests for seeing how the multi-channel field works."
+   },
+   {
+    "cmd": "-exportshape <filename.txt>",
+    "context": "Saves the shape as a text description with edge colouring, which can be edited and fed back in with -shapedesc."
+   },
+   {
+    "cmd": "-printmetrics",
+    "context": "Prints information about the shape's layout."
+   }
+  ],
+  "install_notes": "The core module needs only bare C++. The extensions for loading fonts and SVG and saving PNG use FreeType, TinyXML2 and libpng, with Skia optional. The README says a Windows binary is in the GitHub Releases section. To build from source, use the included CMake script. By default this needs vcpkg, so set the VCPKG_ROOT environment variable to the vcpkg directory and CMake will fetch the dependencies from it. Using it as a library means the Shape, edgeColoringSimple and generateMSDF API from msdfgen.h and msdfgen-ext.h.",
+  "standout": "The colour-channel trick is the main idea. Three channels encode sharp corners that a single-channel distance field smooths over, and the same texture still works with a simple median in the shader. The tool also includes testrender and exportshape options to check the result.",
+  "status": "unknown. The README I read has no release dates, version numbers or changelog contents, and I did not open the Releases page, the CHANGELOG.md link or the commit history, so I cannot give a last-release or last-commit date from what I saw. The README is detailed and reads as current, and the author links to a companion project, msdf-atlas-gen.",
+  "caveats": "The README documents a prebuilt binary only for Windows, so other platforms must build from source, and the default build path depends on vcpkg. The SVG loader uses only the last vector path in the file. -autoframe is for previews, not character maps. The output channels must be read as linear, not sRGB, even when the PNG format suggests otherwise. The README gives no licence in the text I read, so check the repository for it before reuse. The scout note's 'mostly used as a library' is the scout's framing; the README presents the console program as a primary way to use it.",
+  "quotes": [
+   "Unlike monochrome distance fields, they have the ability to reproduce sharp corners almost perfectly by utilizing all three color channels.",
+   "its primary purpose is to generate multi-channel distance fields, using a method I have developed.",
+   "For 2D rendering, this can generally be replaced by a precomputed uniform value.",
+   "Make sure to interpret the MSDF color channels in linear space just like the alpha channel and not as sRGB, even if the image format (PNG, BMP) may suggest otherwise."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/Chlumsky/msdfgen"
+   },
+   {
+    "label": "Master's thesis describing the method (PDF)",
+    "url": "https://github.com/Chlumsky/msdfgen/files/3050967/thesis.pdf"
+   },
+   {
+    "label": "MSDF-Atlas-Gen, for generating whole font atlases",
+    "url": "https://github.com/Chlumsky/msdf-atlas-gen"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/Chlumsky/msdfgen - fetched OK; README returned in full, so I did not follow further links."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Its three-channel encoding preserves sharp corners that ordinary distance fields blur\u2014a clever, useful graphics transform with an easy-to-try command-line tool."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "msdfgen",
+  "tldr": "Turns a font glyph or SVG shape into a three-channel distance field texture that keeps sharp corners crisp when a shader scales it up.",
+  "deeper_look": "msdfgen is a C++ command-line tool and library. Give it a glyph from a font, an SVG file, or a text description of a shape, and it writes an image (PNG, BMP, TIFF or raw float formats). The default mode is `msdf`, a multi-channel signed distance field. It can also write a plain `sdf`, a perpendicular `psdf`, or `mtsdf`, which puts a true distance field in the alpha channel.\n\nThe problem it addresses is that a single-channel distance field rounds off sharp corners when magnified. The author's approach assigns each edge of the shape a colour (c, m, y or w), so that two edges meeting at a corner land in different channels. In the fragment shader, the median of the three channels gives back a signed distance, which is then used like an ordinary SDF to get anti-aliased edges. In the README's words, these fields \"have the ability to reproduce sharp corners almost perfectly by utilizing all three color channels.\"\n\nThe idea underneath is that a texture can hold geometry instead of pixels. A 32x32 image of a letter can be scaled up to fill a screen and still look sharp. Once you have seen the three channels pulled apart, the trick is easy to follow. The method is described in the author's master's thesis, linked below.",
+  "install": "brew install msdfgen\n# Depends on freetype, libpng and tinyxml2, which brew pulls in. The README documents a prebuilt binary only for Windows.",
+  "try_this": [
+   {
+    "cmd": "msdfgen msdf -font C:\\Windows\\Fonts\\arialbd.ttf 'M' -o msdf.png -dimensions 32 32 -pxrange 4 -autoframe -testrender render.png 1024 1024",
+    "what_happens": "The README example: writes a 32x32 multi-channel field of the letter M to msdf.png, plus a 1024x1024 render rebuilt from it in render.png. Swap in any font path on your machine."
+   },
+   {
+    "cmd": "msdfgen msdf -font C:\\Windows\\Fonts\\arialbd.ttf 'M' -o msdf.png -dimensions 32 32 -pxrange 4 -autoframe -testrendermulti render.png 1024 1024",
+    "what_happens": "Using -testrendermulti instead of -testrender leaves the colour channels uncombined, so you can see how the multi-channel field works."
+   },
+   {
+    "cmd": "msdfgen --help",
+    "what_happens": "Lists the modes, input types and options, including -exportshape, which saves a shape with its edge colouring as editable text."
+   }
+  ],
+  "whats_unique": "The per-edge colouring trick lets one ordinary RGB texture carry sharp corners, and the shader needs only a median to read it. The tool's own test renders let you check the result without writing any shader code.",
+  "caveats": "The README documents a prebuilt binary only for Windows, and building from source defaults to vcpkg. The SVG loader reads only the last vector path in a file. Treat the output channels as linear, not sRGB.",
+  "commitment": "quick",
+  "category": "quick-weird-payoffs",
+  "tags": [
+   "quick",
+   "graphics",
+   "fonts",
+   "shaders",
+   "distance-fields",
+   "cpp"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/Chlumsky/msdfgen"
+   },
+   {
+    "label": "Master's thesis describing the method (PDF)",
+    "url": "https://github.com/Chlumsky/msdfgen/files/3050967/thesis.pdf"
+   },
+   {
+    "label": "MSDF-Atlas-Gen, for generating whole font atlases",
+    "url": "https://github.com/Chlumsky/msdf-atlas-gen"
+   }
+  ]
+ }
+}

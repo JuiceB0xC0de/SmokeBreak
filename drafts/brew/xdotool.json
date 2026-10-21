@@ -1,0 +1,125 @@
+{
+ "name": "xdotool",
+ "desc": "Fake keyboard/mouse input and window management for X",
+ "homepage": "https://www.semicomplete.com/projects/xdotool/",
+ "installs_365d": 2361,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "quick",
+  "tui"
+ ],
+ "why": "Synthesizing keyboard and mouse input through X is a fun hack into the input stack, though X tooling is niche now.",
+ "brief": {
+  "what_it_is": "xdotool is a command-line tool for Linux and other X11 desktops that simulates keyboard and mouse input and manages windows. You give it commands and arguments, such as a search for windows by name or class, and it sends synthetic key presses, mouse actions, or window changes to the X server. It can also find windows and move, resize, hide, or change properties such as the title. On window managers that support it, it can switch desktops, move windows between them, and change the number of desktops.",
+  "why_it_exists": "The page gives no formal rationale, but it frames the tool as a way to script a desktop: simulate input and control windows from the shell, without writing an Xlib program.",
+  "how_it_works": "The page says it uses X11's XTEST extension and other Xlib functions to generate input events. Window searches and changes go through the same X interface. The page also describes chaining commands, for example searching for windows and then passing the results to windowactivate, key, or windowsize.",
+  "commands_seen": [
+   {
+    "cmd": "xdotool <cmd> [args]",
+    "context": "The page's stated basic usage pattern. The README-style text says to see man xdotool for details."
+   },
+   {
+    "cmd": "WID=`xdotool search \"Mozilla Firefox\" | head -1`",
+    "context": "Example to focus the Firefox URL bar: finds the first window whose name matches Mozilla Firefox and stores its ID in WID."
+   },
+   {
+    "cmd": "xdotool windowactivate --sync $WID",
+    "context": "Activates (focuses) the window with that ID and waits until the change takes effect."
+   },
+   {
+    "cmd": "xdotool key --clearmodifiers ctrl+l",
+    "context": "Sends Ctrl+L, which focuses the browser's URL bar; --clearmodifiers clears any modifier keys already held."
+   },
+   {
+    "cmd": "xdotool search \"Mozilla Firefox\" windowactivate --sync key --clearmodifiers ctrl+l",
+    "context": "The one-line form, available from version 2.20100623, which chains search, activate, and key in a single command."
+   },
+   {
+    "cmd": "WIDS=`xdotool search --onlyvisible --name \"gnome-terminal\"`",
+    "context": "Example to resize all visible gnome-terminal windows: collects the IDs of visible windows whose name matches."
+   },
+   {
+    "cmd": "xdotool windowsize $id 500 500",
+    "context": "Loop body that resizes one window to 500 by 500 pixels."
+   },
+   {
+    "cmd": "xdotool search --onlyvisible --classname \"gnome-terminal\" windowsize %@ 500 500",
+    "context": "The one-line form for resizing all visible gnome-terminal windows, using %@ to stand for each matched window. The page's text wraps the final 500 onto a new line; the arguments are 500 500."
+   },
+   {
+    "cmd": "apt-get install xdotool",
+    "context": "Install command for Debian and Ubuntu, as listed on the page."
+   },
+   {
+    "cmd": "make all install",
+    "context": "Source build command: compiles and installs xdotool from the source tree."
+   }
+  ],
+  "install_notes": "Prerequisites are Xlib (found through pkg-config as xlib) and the XTEST library (pkg-config name xtst, which the page also writes as xtest). Package-manager installs exist for Debian/Ubuntu (apt-get), FreeBSD (pkg), Fedora (dnf), macOS (brew), and openSUSE (zypper). Building from source uses make all install; make test is optional and needs ruby and Xvfb. If the build fails, the page says you may be missing libraries or headers. If pkg-config is unavailable for x11 and xtst, you must set DEFAULT_LIBS and DEFAULT_INC in the Makefile by hand. The brew caveats (not on the homepage) say macOS needs XTEST enabled in the X11 server with: defaults write org.x.X11 enable_test_extensions -boolean true",
+  "standout": "It drives a running X session from the shell: a window can be found by name or class, then focused, resized, or sent keystrokes, all chained on one line. The page's own examples show this kind of desktop automation without writing any code.",
+  "status": "Unclear. The homepage is dated 24 April 2015, and its footer reads Copyright 2006-2022. It mentions no current release, and I did not check the source repository, so I can't confirm recent activity.",
+  "caveats": "Targets the X11 display server. The page does not mention Wayland support. Sending input relies on XTEST, which the macOS caveat says must be enabled manually. Building needs the X11 and XTST development headers. The page's content is licensed CC BY-NC-SA, which covers the website text only; I did not see the software's own license. The brew note's own hint is a Stack Overflow link, not documentation.",
+  "quotes": [
+   "This tool lets you simulate keyboard input and mouse activity, move and resize windows, etc. It does this using X11\u2019s XTEST extension and other Xlib functions.",
+   "Basic usage is: xdotool <cmd> [args].",
+   "If the build fails, it might be because you don\u2019t have the required libraries and header files installed."
+  ],
+  "links": [
+   {
+    "label": "xdotool homepage (Jordan Sissel's project page)",
+    "url": "https://www.semicomplete.com/projects/xdotool/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.semicomplete.com/projects/xdotool/ : fetched OK; project description, install table, build notes, and examples read. No further fetches made."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A shell command can discover X windows and drive their input and geometry through X11, making the desktop itself a scriptable surface rather than a GUI-only workspace."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "xdotool",
+  "tldr": "Type, click, and rearrange windows on an X11 desktop from the shell, by sending synthetic input through the X server.",
+  "deeper_look": "xdotool is a command-line tool for X11 desktops that simulates keyboard and mouse input and manages windows. You can search for windows by name or class, then focus, move, resize, or hide them, or send them keystrokes. On window managers that support it, it can also switch desktops and move windows between them.\n\nThe homepage gives no formal rationale, but the idea is plain: a desktop is something you can script from the shell without writing an Xlib program. It generates input through X11's XTEST extension and other Xlib functions, and window searches and changes go through the same X interface.\n\nThe interesting part is chaining. A search returns window IDs, and the next command in the line can act on them. The page's example is `xdotool search \"Mozilla Firefox\" windowactivate --sync key --clearmodifiers ctrl+l`, which finds Firefox, focuses it, and presses Ctrl+L to reach the URL bar. Behind it sits a larger idea: the X server treats a synthetic keypress much like a real one, which is why one small tool can drive almost any graphical program.",
+  "install": "brew install xdotool\n# macOS: XTEST must be enabled in the X11 server (XQuartz):\ndefaults write org.x.X11 enable_test_extensions -boolean true\n# Needs a running X11 session. On Debian/Ubuntu: apt-get install xdotool",
+  "try_this": [
+   {
+    "cmd": "xdotool --help",
+    "what_happens": "Prints the list of commands the tool understands."
+   },
+   {
+    "cmd": "xdotool search \"Mozilla Firefox\" windowactivate --sync key --clearmodifiers ctrl+l",
+    "what_happens": "Finds a Firefox window, focuses it, and sends Ctrl+L to jump to the URL bar."
+   },
+   {
+    "cmd": "xdotool search --onlyvisible --classname \"gnome-terminal\" windowsize %@ 500 500",
+    "what_happens": "Resizes every visible gnome-terminal window to 500 by 500 pixels."
+   }
+  ],
+  "whats_unique": "It chains find, focus, resize, and keystroke steps on one shell line, so desktop automation needs no code beyond that line.",
+  "caveats": "It targets X11 and the page does not mention Wayland; the homepage is dated 2015, I couldn't confirm recent activity, and on macOS XTEST must be enabled by hand.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "x11",
+   "automation",
+   "input",
+   "windows",
+   "cli"
+  ],
+  "links": [
+   {
+    "label": "xdotool homepage (Jordan Sissel's project page)",
+    "url": "https://www.semicomplete.com/projects/xdotool/"
+   }
+  ]
+ }
+}

@@ -1,0 +1,77 @@
+{
+ "name": "flix",
+ "desc": "Statically typed functional, imperative, and logic programming language",
+ "homepage": "https://flix.dev/",
+ "installs_365d": 650,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "afternoon"
+ ],
+ "why": "A language blending functional, imperative and logic programming with Datalog-style constraint solving, uncommon enough to explore.",
+ "brief": {
+  "what_it_is": "Flix is a statically typed programming language that combines functional, imperative, and logic programming, with a focus on algebraic effects and handlers. It takes Flix source files (.flix) and compiles them to JVM bytecode, with a built-in build tool, package manager, test runner, REPL, and language server. The homepage also describes it as a whole-program optimizing compiler, and it offers an embedded first-class Datalog for fixpoint and graph-reachability problems. It can call Java and Maven libraries directly.",
+  "why_it_exists": "The homepage frames Flix as an effect-oriented language: by explicitly modelling side effects in the type system, it aims to enforce modularity, aid program reasoning, and let programmers write their own control structures through user-defined effects and handlers. It is developed at Aarhus University with contributors from Waterloo, T\u00fcbingen, and Copenhagen.",
+  "how_it_works": "Every expression is annotated with an effect set (for example \\ {} for pure, \\ IO for impure), and the compiler infers and tracks these, including through higher-order functions via effect polymorphism. Library effects such as Clock, Http, and Logger have default handlers, so programs can run without handler boilerplate, and users can wrap them with middleware like retries or circuit breakers in with clauses. The compiler is whole-program: it uses monomorphization, inlining, closure elimination, tail call elimination, and tree shaking, and the homepage shows JVM bytecode to back this up.",
+  "commands_seen": [
+   {
+    "cmd": "flix init",
+    "context": "Writes the first flix.toml manifest for a new project, per the Build and Package Management section."
+   },
+   {
+    "cmd": "flix test",
+    "context": "Runs every function marked @Test in the project using the built-in test framework."
+   },
+   {
+    "cmd": "flix build",
+    "context": "Builds the project; the homepage says it is the step before inspecting bytecode with javap."
+   },
+   {
+    "cmd": "flix lsp",
+    "context": "Starts the Flix compiler as a Language Server Protocol server on stdin/stdout for any LSP-capable editor such as Neovim, Emacs, or Helix."
+   },
+   {
+    "cmd": "java -jar flix.jar Xperf --n 21",
+    "context": "Reproduces the whole-compiler throughput benchmark quoted on the homepage."
+   },
+   {
+    "cmd": "java -jar flix.jar Xperf --frontend --n 21",
+    "context": "Reproduces the frontend-only throughput benchmark quoted on the homepage."
+   },
+   {
+    "cmd": "javap -c -p",
+    "context": "Disassembles the compiled classes after flix build to show the JVM bytecode listing in the optimizer section."
+   }
+  ],
+  "install_notes": "The homepage gives no installation steps beyond the commands above. Because the compiler runs on the JVM and the performance section refers to flix.jar, a Java runtime is needed, but the homepage does not name a minimum version. Dependencies are declared in flix.toml, with GitHub-hosted Flix packages under [dependencies] and Maven artifacts under [mvn-dependencies], and they are downloaded on the next build. The docs site at doc.flix.dev has a getting-started chapter for editor configuration, which I did not read.",
+  "standout": "Effects are part of the type system, and the compiler guarantees that a pure expression has no side effects. Region-based local mutation lets a function such as sort use mutable arrays internally and still be typed pure. Datalog constraints are first-class values that can be passed around, stored, composed, and solved inside an ordinary functional program. Build, test, REPL, and LSP are built into the compiler, not separate tools.",
+  "status": "Maintained, per the homepage. It says Flix is actively developed, with 7,400+ merged PRs, 4,100+ resolved issues, 97+ contributors, and about 272,000 lines in the compiler, plus funding from Danish research bodies and an Amazon Research Award. I did not check a GitHub release or commit date, so I have no dated evidence of recent activity.",
+  "caveats": "The 'ironclad guarantee' about purity is the project's own claim; I did not verify it. Performance figures come from the project, use an Apple M2 Pro, and are not independently checked. The homepage examples use module names such as Net.Http, Time.Clock, and Fs.FileRead, while the docs and homepage examples differ in places (the docs show a use Net.Http-style import and a different Clock example), so copy-pasted code may need checking against the current stdlib at api.flix.dev. The language is Scala-like in syntax and is a niche language with a small ecosystem compared with mainstream options. The homepage does not state a license, so I cannot confirm licensing from it. The Brew formula's caveats field was empty.",
+  "quotes": [
+   "Flix is a principled effect-oriented functional, imperative, and logic programming language developed at Aarhus University and by a community of open source contributors.",
+   "The Flix compiler provides an ironclad guarantee that if an expression is pure then it cannot have side-effects and it is referentially transparent.",
+   "The VSCode extension uses the real Flix compiler hence there is a 1:1 correspondence between the extension and the compiler."
+  ],
+  "links": [
+   {
+    "label": "Flix homepage",
+    "url": "https://flix.dev/"
+   },
+   {
+    "label": "Programming Flix (docs book)",
+    "url": "https://doc.flix.dev/"
+   },
+   {
+    "label": "Standard library API reference",
+    "url": "https://api.flix.dev/"
+   }
+  ],
+  "fetch_log": [
+   "https://flix.dev/ - fetched OK, full homepage text including feature sections, benchmarks, and commands.",
+   "https://doc.flix.dev/ - fetched OK, introduction chapter (mdBook page), with additional examples; no install or getting-started content was visible in the returned text."
+  ]
+ }
+}

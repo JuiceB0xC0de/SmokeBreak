@@ -1,0 +1,94 @@
+{
+ "name": "dolt",
+ "desc": "Git for Data",
+ "homepage": "https://www.dolthub.com",
+ "installs_365d": 35441,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "afternoon"
+ ],
+ "why": "A SQL database with Git-style versioning and branching for data is a genuinely unusual database with a twist.",
+ "brief": {
+  "what_it_is": "Dolt is a SQL database that can be forked, cloned, branched, merged, pushed and pulled the way a Git repository can. You connect to it with any MySQL-compatible client to read or change schema and data. Version control is exposed in SQL through system tables, functions and stored procedures, and through a Git-like command line (`dolt`) that can import CSV files, commit, push to a remote, and merge a teammate's changes. The output is a database whose tables carry commit history, branches and cell-level diffs.",
+  "why_it_exists": "The README frames it as Git for data: \"Git versions files. Dolt versions tables. It's like Git and MySQL had a baby.\" The project also says it is useful for agent memory, especially in multi-agent and multi-machine workflows, and that it powers Beads and Gas Town.",
+  "how_it_works": "Dolt exposes Git-style operations inside SQL. Read operations are system tables named dolt_<thing> such as dolt_log, dolt_status and dolt_diff_<table>, and write operations are stored procedures named after the CLI command, such as dolt_add and dolt_commit, with options passed as arguments in the same way as on the command line. The `dolt sql-server` command runs a MySQL-compatible server on port 3306 by default, and the CLI's `dolt sql` gives a built-in MySQL-style client.",
+  "commands_seen": [
+   {
+    "cmd": "sudo bash -c 'curl -L https://github.com/dolthub/dolt/releases/latest/download/install.sh | bash'",
+    "context": "Linux/Mac install script from the README; puts dolt in /usr/local/bin and needs sudo."
+   },
+   {
+    "cmd": "brew install dolt",
+    "context": "Homebrew install on Mac, which the README says is updated every release."
+   },
+   {
+    "cmd": "dolt config --global --add user.email YOU@DOMAIN.COM",
+    "context": "Sets the commit author email; the README says it works exactly like git config."
+   },
+   {
+    "cmd": "dolt sql-server",
+    "context": "Starts the built-in MySQL-compatible server on localhost:3306; the terminal hangs while it runs."
+   },
+   {
+    "cmd": "dolt -u root -p \"\" sql",
+    "context": "Opens Dolt's built-in MySQL-style SQL shell as root with an empty password."
+   },
+   {
+    "cmd": "mysql --host 127.0.0.1 --port 3306 -uroot",
+    "context": "Connects the standard MySQL client to the running Dolt server over TCP."
+   },
+   {
+    "cmd": "call dolt_add('teams', 'employees', 'employees_teams');",
+    "context": "SQL stored procedure equivalent of `dolt add` for the named tables."
+   },
+   {
+    "cmd": "call dolt_commit('-m', 'Created initial schema');",
+    "context": "SQL stored procedure equivalent of `dolt commit -m`, creating a Dolt commit (distinct from a SQL transaction COMMIT)."
+   },
+   {
+    "cmd": "select * from dolt_diff('main', 'modifications', 'employees');",
+    "context": "Table function that diffs one table between two branches."
+   },
+   {
+    "cmd": "call dolt_reset('--hard');",
+    "context": "Restores a dropped table after an accidental DROP TABLE, per the README's undo walkthrough."
+   }
+  ],
+  "install_notes": "Single binary of about 103 MB. Options in the README: the install script (needs sudo), Arch Linux `pacman -S dolt`, Homebrew, MacPorts `sudo port install dolt`, Windows .msi from GitHub releases, Chocolatey `choco install dolt`, or Docker images dolthub/dolt and dolthub/dolt-sql-server. Building from source needs Go and a working C compiler, because Dolt depends on cgo; the build is `go install ./cmd/dolt`, with output in ~/go/bin. After install, set user.name and user.email with dolt config --global. Databases live in whatever directory you create them in, and each one is a directory. To use a GUI, the README uses TablePlus with MySQL as the connection type and root as the user.",
+  "standout": "Dolt is a MySQL-compatible SQL database with commits, branches, merges, and cell-level history, not just a versioned file store. The README describes dolt_history_<table> and dolt_diff_<table> as a way to see which commit changed a given cell, and says a schema change can be tested on its own branch and then merged.",
+  "status": "unknown. The README I fetched has no release date, last-commit date, or version number. It does mention a Doltgres Beta, a roadmap page, and blog posts from October and December 2024, but I did not check release or commit history, so I cannot give evidence for maintained versus quiet.",
+  "caveats": "The binary is about 103 MB. Building from source needs cgo and a C toolchain. The README says that MySQL 9.0 cannot connect to a Dolt SQL server by default and needs extra auth configuration, and recommends MySQL 8.4. The README's getting-started output shows a Vitess-style server version string. Dolt is MySQL-compatible, not MySQL itself. The README says its commands match Git's, but it does not list which Git features are missing. The 'best database for agent memory' claim is the author's own. License is Apache-2.0.",
+  "quotes": [
+   "Dolt is Git for Data!",
+   "Git versions files. Dolt versions tables. It's like Git and MySQL had a baby.",
+   "The `dolt` CLI has the same commands as `git`, with some extras.",
+   "Dolt is a SQL database that you can fork, clone, branch, merge, push and pull just like a Git repository."
+  ],
+  "links": [
+   {
+    "label": "Homepage (DoltHub)",
+    "url": "https://www.dolthub.com"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/dolthub/dolt"
+   },
+   {
+    "label": "Documentation: What is Dolt",
+    "url": "https://dolthub.com/docs/introduction/what-is-dolt"
+   },
+   {
+    "label": "Explainer video",
+    "url": "https://www.youtube.com/watch?v=H2iZy0Cme10"
+   }
+  ],
+  "fetch_log": [
+   "https://www.dolthub.com: loaded, but returned only the word \"DoltHub\" with no readable content.",
+   "https://github.com/dolthub/dolt: loaded; the full README was returned and used for this brief. Docs links were not followed."
+  ]
+ }
+}

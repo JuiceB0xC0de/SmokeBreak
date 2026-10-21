@@ -1,0 +1,86 @@
+{
+ "name": "badread",
+ "desc": "Long read simulator that can imitate many types of read problems",
+ "homepage": "https://github.com/rrwick/Badread",
+ "installs_365d": 287,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "simulation",
+  "library"
+ ],
+ "why": "A long-read sequencing simulator that fakes realistic error modes, a genuine simulation of sequencing failure you can watch and disturb.",
+ "brief": {
+  "what_it_is": "Badread is a command-line long-read simulator written in Python. It takes a reference FASTA (optionally gzipped) and a quantity such as 50x, and writes simulated long reads to standard output in FASTQ format. Its purpose is to produce reads with controllable problems: chimeras, low-quality regions, junk and random reads, adapter leftovers, and systematic basecalling-style glitches. Each problem rate can be turned up or down.",
+  "why_it_exists": "The author made it to test tools that take long reads as input, by letting users raise the rate of different read problems and see what effect they have. The README says it is not meant to be the most faithful imitation of real reads; the goal is control over read quality.",
+  "how_it_works": "For each read, Badread samples a fragment length from a gamma distribution and picks a fragment from the reference, usually on either strand and allowing circular or hairpin ends. It adds adapters, may chain further fragments as chimeras, and inserts glitches (random sequence added or sequence skipped). It then adds errors using a trained error model until the read reaches a target percent identity, checking periodically with alignments, and finally generates per-base qscores from a qscore model. Error models include nanopore2018, nanopore2020, nanopore2023, pacbio2016, pacbio2021, and random, and users can supply their own model file.",
+  "commands_seen": [
+   {
+    "cmd": "pip3 install ./Badread",
+    "context": "Install from a local clone of the repository (needs pip and Git; Python 3.6 or later)."
+   },
+   {
+    "cmd": "pip3 install git+https://github.com/rrwick/Badread.git",
+    "context": "Install directly from GitHub without cloning first."
+   },
+   {
+    "cmd": "badread --help",
+    "context": "Check that the installed command works and show its options."
+   },
+   {
+    "cmd": "badread simulate --reference ref.fasta --quantity 50x | gzip > reads.fastq.gz",
+    "context": "Default run, which is meant to mimic mediocre ONT R10.4.1 reads, piped through gzip."
+   },
+   {
+    "cmd": "badread simulate --reference ref.fasta --quantity 50x --error_model nanopore2020 --qscore_model nanopore2020 --identity 90,98,5 | gzip > reads.fastq.gz",
+    "context": "Simulate older R9.4.1 Nanopore reads with the 2020 models and a tuned identity distribution."
+   },
+   {
+    "cmd": "badread simulate --reference ref.fasta --quantity 50x --error_model pacbio2021 --qscore_model pacbio2021 --identity 30,3 | gzip > reads.fastq.gz",
+    "context": "Simulate PacBio HiFi-style reads using the 2021 Sequel IIe models."
+   },
+   {
+    "cmd": "badread simulate --reference ref.fasta --quantity 50x --glitches 1000,100,100 --junk_reads 5 --random_reads 5 --chimeras 10 --identity 80,90,6 --length 4000,2000 | gzip > reads.fastq.gz",
+    "context": "The README's 'Very bad reads' preset, with high rates of glitches, junk, random reads and chimeras."
+   },
+   {
+    "cmd": "badread simulate --reference ref.fasta --quantity 50x --error_model random --qscore_model ideal --glitches 0,0,0 --junk_reads 0 --random_reads 0 --chimeras 0 --identity 30,3 --length 40000,20000 --start_adapter_seq \"\" --end_adapter_seq \"\" | gzip > reads.fastq.gz",
+    "context": "The README's 'Very good reads' preset, with every problem turned off and adapters removed."
+   },
+   {
+    "cmd": "Badread/badread-runner.py -h",
+    "context": "Run directly from the cloned repository without installing, after making sure the Python dependencies are present."
+   }
+  ],
+  "install_notes": "Needs Python 3.6 or later, pip and Git. Installation pulls in Edlib, NumPy, SciPy and Matplotlib. The README says it runs on macOS and Linux; on Windows it suggests WSL. If pip3 or gcc fails, the README points to a wiki page on installation issues. No accounts are needed. The README also suggests downloading a Klebsiella pneumoniae SGH10 assembly as a test reference (a bit.ly link). Running in parallel is described on a separate wiki page.",
+  "standout": "Badread is built around deliberately bad reads and exposes the failure modes as explicit dials: glitch rate, size and skip; junk and random read percentages; chimera rate; and adapter rate and amount. Its beta-distribution and gamma-distribution parameters are expressed as mean and standard deviation rather than shape and scale, and it ships Desmos plots for exploring them. It is also a JOSS-published tool.",
+  "status": "unknown. The fetched README has no release date, last-commit date or changelog. It does mention 2023 models (nanopore2023 is the default), so the project was updated at least that year. The README is active in tone, with a JOSS citation and Zenodo DOI, but I could not confirm recent activity from this page.",
+  "caveats": "Runs on macOS and Linux; the README says Windows may not work natively and suggests WSL. Requires Python 3.6 or later. Accuracy simulation is slow because it realigns periodically to hit the target identity; the README points to a wiki page on running in parallel. The README says the output is meant to be controllable, not to match real reads best. Licensed GPL v3, which matters if you plan to embed it in closed software. Installation issues are documented on the wiki rather than in the README.",
+  "quotes": [
+   "Badread is a long-read simulator tool that makes \u2013 you guessed it \u2013 bad reads!",
+   "Badread does not try to be best at imitating real reads (though it's not too bad, see this comparison between Badread and other long-read simulators).",
+   "it was intended to give users control over the quality of its simulated reads."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/rrwick/Badread"
+   },
+   {
+    "label": "JOSS paper, doi:10.21105/joss.01316",
+    "url": "https://doi.org/10.21105/joss.01316"
+   },
+   {
+    "label": "Zenodo archive, doi:10.5281/zenodo.2622997",
+    "url": "https://doi.org/10.5281/zenodo.2622997"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/rrwick/Badread: fetched OK; returned the README in full, which was detailed enough that no further links were followed."
+  ]
+ }
+}

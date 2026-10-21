@@ -1,0 +1,84 @@
+{
+ "name": "patchelf",
+ "desc": "Modify dynamic ELF executables",
+ "homepage": "https://github.com/NixOS/patchelf",
+ "installs_365d": 4935,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering"
+ ],
+ "why": "Edits dynamic ELF executables in place; a useful door into how binaries link, though widely used.",
+ "brief": {
+  "what_it_is": "PatchELF is a command-line utility that edits existing dynamic ELF executables and shared libraries in place. You give it a binary and one or more flags, and it rewrites the binary's header metadata: the dynamic loader (ELF interpreter), the RPATH/RUNPATH search directories, the DT_NEEDED dependency list, and a library's SONAME. The README also describes a newer option that pre-resolves DT_NEEDED entries against the run path and records the result in a .note.nixos.ldcache note. It does not recompile anything.",
+  "why_it_exists": "The README gives no explicit problem statement. It introduces PatchELF as a simple utility for modifying existing ELF executables and libraries, and the operations it lists (changing the interpreter, trimming RPATH, editing DT_NEEDED) are the fixes you reach for when a prebuilt binary cannot find its libraries or loader.",
+  "how_it_works": "The README does not explain the internals. It describes the effect of each operation: --shrink-rpath removes every RPATH directory that contains no library referenced by the binary's DT_NEEDED entries, and --allowed-rpath-prefixes can narrow that further. The --add-needed, --remove-needed and --replace-needed flags edit the DT_NEEDED list directly.",
+  "commands_seen": [
+   {
+    "cmd": "patchelf --set-interpreter /lib/my-ld-linux.so.2 my-program",
+    "context": "Changes the dynamic loader (ELF interpreter) of an executable."
+   },
+   {
+    "cmd": "patchelf --set-rpath /opt/my-libs/lib:/other-libs my-program",
+    "context": "Sets the RPATH of an executable or library."
+   },
+   {
+    "cmd": "patchelf --shrink-rpath my-program",
+    "context": "Removes RPATH directories that do not contain a library referenced by DT_NEEDED."
+   },
+   {
+    "cmd": "patchelf --shrink-rpath --allowed-rpath-prefixes /usr/lib:/foo/lib my-program",
+    "context": "Shrinks RPATH while keeping only entries under the allowed prefixes, so a build-tree path like /tmp is dropped."
+   },
+   {
+    "cmd": "patchelf --remove-needed libfoo.so.1 my-program",
+    "context": "Removes a DT_NEEDED dependency; the option can be repeated."
+   },
+   {
+    "cmd": "patchelf --add-needed libfoo.so.1 my-program",
+    "context": "Adds a DT_NEEDED dependency; the option can be repeated."
+   },
+   {
+    "cmd": "patchelf --replace-needed liboriginal.so.1 libreplacement.so.1 my-program",
+    "context": "Swaps one DT_NEEDED dependency for another."
+   },
+   {
+    "cmd": "patchelf --set-soname libnewname.so.3.4.5 path/to/libmylibrary.so.1.2.3",
+    "context": "Changes the SONAME of a dynamic library."
+   },
+   {
+    "cmd": "patchelf --build-resolution-cache my-program",
+    "context": "Pre-resolves DT_NEEDED entries against the run path and stores the result in a .note.nixos.ldcache note."
+   },
+   {
+    "cmd": "./bootstrap.sh && ./configure && make && make check && sudo make install",
+    "context": "Autotools build, run as separate lines in the README: bootstrap, configure, make, test, install."
+   }
+  ],
+  "install_notes": "The README gives three build routes, each a source build: GNU Autotools (./bootstrap.sh, ./configure, make, make check, sudo make install), CMake with Ninja (mkdir build, cmake .. -GNinja, ninja all, sudo ninja install), and Meson with Ninja (meson configure build, then ninja all and sudo ninja install). It can also be built with Nix: nix build produces ./result/bin/patchelf, nix build .#patchelf-musl builds against musl, and nix develop gives a dev shell. No accounts, runtimes beyond a C toolchain and the chosen build system, or first-run configuration are mentioned. The Homebrew formula is the simplest path.",
+  "standout": "It is a small, focused tool that edits binaries after the fact, with no rebuild needed, which makes it a direct way to see how the dynamic loader and link-time metadata work. The --shrink-rpath behaviour, which prunes RPATH entries by checking which DT_NEEDED libraries they actually satisfy, is a neat concrete illustration of how library search paths are resolved.",
+  "status": "Maintained, as far as the page shows, though I could not confirm it. The repository is hosted under the NixOS organisation. The README's copyright line reads 2004-2019, and I saw no release date or recent-commit note on the README page. I did not check the releases or commit pages, so the current activity level is unverified.",
+  "caveats": "The README does not state platform support beyond ELF, so Linux and other ELF systems are implied. It is GPL v3 or later, which matters for embedding it in other work. Edits to binaries can break them if the new interpreter or RPATH is wrong, and the README gives no safety checks for that. The build-resolution-cache option depends on a loader that understands the .note.nixos.ldcache note, which the README does not describe further. The 'widely used' claim comes from the brew scout note, not from the README.",
+  "quotes": [
+   "PatchELF is a simple utility for modifying existing ELF executables and libraries.",
+   "This removes from the `RPATH` all directories that do not contain a library referenced by `DT_NEEDED` fields of the executable or library.",
+   "Pre-resolve each `DT_NEEDED` dependency against the run path and record the result in a `.note.nixos.ldcache` note, so a loader that understands the note can skip the run-path search at startup:"
+  ],
+  "links": [
+   {
+    "label": "Homepage / source (GitHub)",
+    "url": "https://github.com/NixOS/patchelf"
+   },
+   {
+    "label": "Matrix chat #patchelf:nixos.org",
+    "url": "https://matrix.to/#/#patchelf:nixos.org"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/NixOS/patchelf: fetched OK, README returned; README was complete enough that I did not follow further links."
+  ]
+ }
+}

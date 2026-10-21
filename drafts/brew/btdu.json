@@ -1,0 +1,143 @@
+{
+ "name": "btdu",
+ "desc": "Sampling disk usage profiler for btrfs",
+ "homepage": "https://github.com/CyberShadow/btdu",
+ "installs_365d": 58,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "tui",
+  "quick",
+  "simulation"
+ ],
+ "why": "A sampling disk usage profiler for btrfs that estimates space statistically, a clever idea that exposes filesystem internals.",
+ "brief": {
+  "what_it_is": "btdu is a terminal disk usage profiler for btrfs filesystems, written in D. Instead of walking every file, it picks random points on the disk in use, finds what owns each point, and adds that path to a tree. It takes a mounted btrfs filesystem path (which must be the top-level subvolume) and shows a browsable, interactive tree of estimated sizes. It can also run headless and print a tree to stdout, or export results to .btdu (binary) or .json files, and compare a live run against a saved baseline. Sizes are statistical estimates that become more accurate the longer it runs.",
+  "why_it_exists": "The README says btrfs features like subvolumes, file and extent cloning, and compression make classic analyzers such as ncdu unable to give an accurate picture of actual disk usage. Sampling sidesteps that by asking the filesystem what is at random points, so results appear instantly and converge over time.",
+  "how_it_works": "Each sample picks a random point on the used disk, resolves what is located there, and records the path; the README says it queries raw filesystem metadata, which is why it needs root. An extent shared by several files or snapshots is placed at the shortest path (ties broken lexicographically), so each extent is counted once. The README describes eventual accuracy and says roughly 100 samples give about 1% resolution.",
+  "commands_seen": [
+   {
+    "cmd": "# btdu /path/to/filesystem/root",
+    "context": "Basic interactive launch as root; the path must be the top-level subvolume."
+   },
+   {
+    "cmd": "# btdu --headless --max-time=30s /mnt/btrfs",
+    "context": "Runs without the TUI for 30 seconds and prints a tree of items over 1% of total space to stdout."
+   },
+   {
+    "cmd": "# btdu --headless --export=results.json --max-time=10m /mnt/btrfs",
+    "context": "Headless run for 10 minutes that saves results to a JSON file for later viewing in the UI."
+   },
+   {
+    "cmd": "$ btdu --import results.json",
+    "context": "Loads a saved export into the interactive UI instead of sampling a live filesystem."
+   },
+   {
+    "cmd": "# btdu -j1 --max-samples=10000 /mnt/btrfs --compare=baseline.btdu",
+    "context": "Samples live with deterministic settings and shows size deltas against a previously exported baseline."
+   },
+   {
+    "cmd": "$ btdu --import new.btdu --compare=old.btdu",
+    "context": "Compares two exported snapshots without any live sampling."
+   },
+   {
+    "cmd": "nix run github:CyberShadow/btdu",
+    "context": "Runs btdu straight from the flake without installing it."
+   },
+   {
+    "cmd": "nix profile install github:CyberShadow/btdu",
+    "context": "Installs btdu permanently into the Nix profile."
+   },
+   {
+    "cmd": "nix build github:CyberShadow/btdu",
+    "context": "Builds the binary; it appears at ./result/bin/btdu."
+   },
+   {
+    "cmd": "dub build -b release",
+    "context": "Manual source build step after installing a D compiler, Dub, and libncursesw5-dev or equivalent."
+   }
+  ],
+  "install_notes": "Besides brew, the README lists a package-manager install where packaged, static binaries on the GitHub releases page or the latest CI run, and a Nix flake. Source builds need a D compiler, Dub, and the ncurses wide-character development library (libncursesw5-dev on Debian-family systems). The README warns that not all distributions package compatible versions of the dependencies, so success is not guaranteed for manual builds; it recommends Nix in that case. Running it requires root, and the target must be the top-level subvolume, or you must remount with -o subvol=/,subvolid=5. Recent versions also offer --auto-mount for non-top-level mounts. No accounts or runtimes are needed beyond that.",
+  "standout": "Its sampling approach gives usable answers almost immediately and handles snapshots, reflinks, and compression without special cases. The README also says it can estimate unreachable 'dark matter' extent space, which it calls a feature unique to btdu, and the shortest-path placement lets snapshot sizes be read as the amount of new data.",
+  "status": "Maintained. The GitHub releases page shows v0.7.2 marked Latest, dated 05 Jan (the year is not shown in the fetched text), preceded by v0.7.1 on 02 Jan and v0.7.0 on 01 Jan, with a steady history back to v0.3.1. The v0.7.0 notes say btdu is feature complete relative to its original vision and that it is the last major release before 1.0. I did not check commit history.",
+  "caveats": "Requires root privileges, because it reads raw btrfs metadata. It analyses whole filesystems only, with no way to restrict a run to one subdirectory or subvolume. Early results are wildly inaccurate and only settle with time. Deleting files outside btdu during a run skews the numbers until you restart sampling. Manual builds can fail on mismatched dependencies. Licensed GPL v2, inherited from btrfs-progs. The Homebrew package has no caveats of its own. The README's See Also section names btsdu, a similar btrfs snapshot analyzer.",
+  "quotes": [
+   "btdu needs to collect only 100 samples to achieve a ~1% resolution, which means it can identify space hogs very quickly.",
+   "Though it works by taking random samples, it is \"eventually\" accurate.",
+   "A feature unique to btdu is the ability to estimate the amount of space used by unreachable parts of extents"
+  ],
+  "links": [
+   {
+    "label": "Homepage / repository",
+    "url": "https://github.com/CyberShadow/btdu"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/CyberShadow/btdu/releases"
+   },
+   {
+    "label": "CONCEPTS.md (size metrics and btrfs concepts, linked relatively from the README)",
+    "url": "https://github.com/CyberShadow/btdu/blob/master/CONCEPTS.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/CyberShadow/btdu - worked, README returned in full",
+   "https://github.com/CyberShadow/btdu/releases - worked, but the page text is noisy; used it for release dates and notes"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Its statistical sampling makes btrfs space accounting usable quickly while revealing how snapshots, shared extents, compression, and even unreachable space complicate disk usage."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "btdu",
+  "tldr": "A btrfs disk usage profiler that samples random points on the disk and asks the filesystem who owns them, so answers appear instantly and sharpen over time.",
+  "deeper_look": "btdu is a terminal disk usage tool for btrfs, written in D. Where ncdu walks every file and adds up sizes, btdu picks a random point in the used part of the disk, works out which path owns that point, and adds it to a tree. You browse that tree interactively while it fills in. It can also run headless, print a tree to stdout, and export results to `.btdu` or `.json` files.\n\nThe README says btrfs makes classic analyzers unreliable: subvolumes, cloned files and extents, and compression all break the idea that a file's size is the space it takes. Sampling sidesteps the problem by asking the filesystem directly what sits at each point. In the README's words, \"btdu needs to collect only 100 samples to achieve a ~1% resolution\", and \"Though it works by taking random samples, it is 'eventually' accurate.\"\n\nThe idea underneath is that a statistical question can be easier than an exact one. When an extent is shared by several files or snapshots, btdu assigns it to the shortest path, with ties broken lexicographically, so each extent is counted once. A side effect is that a snapshot's size reads as the amount of new data in it. It can also estimate \"dark matter\", space held by unreachable parts of extents, which the README calls unique to btdu.\n\nYou can save a run and compare it against a baseline later, which turns it into a way to see what changed between two points in time.",
+  "install": "brew install btdu\n# Needs root, and a mounted btrfs filesystem. The path must be the top-level subvolume (or remount with -o subvol=/,subvolid=5).",
+  "try_this": [
+   {
+    "cmd": "btdu --help",
+    "what_happens": "Lists the options, including headless mode, export, import and compare."
+   },
+   {
+    "cmd": "sudo btdu --headless --max-time=30s /mnt/btrfs",
+    "what_happens": "Samples for 30 seconds without the TUI, then prints a tree of items over 1% of total space."
+   },
+   {
+    "cmd": "sudo btdu --headless --export=results.json --max-time=10m /mnt/btrfs",
+    "what_happens": "Samples for ten minutes and saves the results, which you can later open with `btdu --import results.json`."
+   }
+  ],
+  "whats_unique": "It answers the question with random sampling instead of a full scan, so it handles snapshots, reflinks and compression without special cases. It also estimates the dark-matter space that file-walking tools cannot see.",
+  "caveats": "It needs root and a btrfs filesystem, analyses only whole filesystems, and early numbers are wildly off until enough samples accumulate.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "btrfs",
+   "filesystem",
+   "tui",
+   "sampling",
+   "disk-usage"
+  ],
+  "links": [
+   {
+    "label": "Homepage / repository",
+    "url": "https://github.com/CyberShadow/btdu"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/CyberShadow/btdu/releases"
+   },
+   {
+    "label": "CONCEPTS.md (size metrics and btrfs concepts)",
+    "url": "https://github.com/CyberShadow/btdu/blob/master/CONCEPTS.md"
+   }
+  ]
+ }
+}

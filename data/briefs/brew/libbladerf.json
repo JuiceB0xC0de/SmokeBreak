@@ -1,0 +1,89 @@
+{
+ "name": "libbladerf",
+ "desc": "USB 3.0 Superspeed Software Defined Radio Source",
+ "homepage": "https://nuand.com/",
+ "installs_365d": 1361,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "library",
+  "radio"
+ ],
+ "why": "Driver library for the bladeRF software defined radio, a doorway into transceiver hardware and raw RF streams you can actually play with.",
+ "brief": {
+  "what_it_is": "libbladeRF is the host-side C driver library for the bladeRF software defined radio, a USB 3.0 SuperSpeed SDR board from Nuand. Software on a computer talks to the board over USB and gets back raw RF sample streams, or sends samples out to be transmitted, across the radio's tuning range of about 47 MHz to 6 GHz with 2x2 MIMO channels and up to 61.44 MHz sampling. The Homebrew package adds four command-line tools on top of the library: bladeRF-cli, bladeRF-fsk, bladeRF-power and bladeRF-update. The repository also contains the FX3 USB controller firmware and the Cyclone IV FPGA HDL that the hardware needs. Without the physical bladeRF board the library has nothing to talk to.",
+  "why_it_exists": "The repository's own framing is that by providing source code, thorough documentation, easy to grasp tutorials, and a place for open discussion, modern radio systems will be demystified. The brew scout note describes it as a doorway into transceiver hardware and raw RF streams you can actually play with.",
+  "how_it_works": "The host library talks to the bladeRF board over USB through a libusb backend (a Cypress FX3 SDK backend is available on Windows only). The FX3 controller firmware handles the USB side and the Cyclone IV FPGA carries the radio's signal-processing logic. Tools such as bladeRF-cli load the FPGA, query the device, and drive it from the command line.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/Nuand/bladeRF.git",
+    "context": "Clones the full bladeRF source repository (host library, FX3 firmware, HDL) as the first step of the quick start."
+   },
+   {
+    "cmd": "bladeRF-cli -p",
+    "context": "Lists attached bladeRF devices so you can confirm the board is visible over USB."
+   },
+   {
+    "cmd": "bladeRF-cli -e info -e version",
+    "context": "Prints device information and version details once the board is detected."
+   },
+   {
+    "cmd": "bladeRF-cli -f <firmware_file>",
+    "context": "Flashes a firmware image when the tool warns that a firmware update is needed."
+   },
+   {
+    "cmd": "mkdir -p build",
+    "context": "Creates a build directory inside host/ so all build output can be removed with one rm -r build/."
+   },
+   {
+    "cmd": "cmake [options] ../",
+    "context": "Configures the host build from the build directory; options are the project's CMake flags."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles libbladeRF and the utilities after CMake configuration."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the libraries and applications, by default under /usr/local."
+   },
+   {
+    "cmd": "sudo ldconfig",
+    "context": "Refreshes the dynamic linker cache so the newly installed libbladeRF is found."
+   }
+  ],
+  "install_notes": "Beyond brew install you need physical bladeRF hardware, which Nuand sells (the homepage lists the bladeRF 2.0 micro xA4 and xA9 variants). The FPGA image and FX3 firmware image are separate downloads from nuand.com, and a firmware update may be needed on first use; the README points to the wiki for the FPGA and firmware steps. Build dependencies are libusb (1.0.16 or later recommended on Linux, 1.0.19 on Windows) and CMake 2.8.5 or later. On Linux the build installs udev rules to /etc/udev/rules.d for the plugdev group by default. On Fedora, /usr/local/lib and /usr/local/lib64 may need adding to ld.so.conf.d before ldconfig finds the library. Windows uses CMake GUI plus Visual Studio, with an optional Cypress FX3 SDK, and the homepage also links Windows installers.",
+  "standout": "The bladeRF 2.0 micro can be gain calibrated, and the bladeRF-power tool then turns the radio into a power meter for measuring received signals or transmitting at set output levels. bladeRF-fsk is a host-software CPFSK modem that turns two bladeRFs into a text chat or file transfer link at a raw rate of 250 kbps.",
+  "status": "Maintained, judging by the homepage. A blog post on 30 Mar 2026 covers the bladeRF-fsk modem, a 2025.10 release post dated 20 Nov 2025 describes the tagged release and Windows installer, and the site footer reads 2026. I could not see a last-commit date for the repository, so the activity on the code itself is unconfirmed.",
+  "caveats": "The homepage I fetched is the Nuand shop and news page, not the library's own README; the library details came from the GitHub repository README and host/README.md. The Windows build was last validated on Windows 10 with CMake 3.9.0, libusb 1.0.21 and Visual Studio 2017. The README warns that unplugging the device during a firmware upgrade can leave it in the FX3 bootloader, and that recovery is documented under the recovery command in bladeRF-cli. The hardware costs several hundred dollars, so most people cannot try this without buying a board. I did not find documentation for bladeRF-update in the pages I read. The brew caveats field is empty.",
+  "quotes": [
+   "This repository contains all the source code required to program and interact with a bladeRF platform, including firmware for the Cypress FX3 USB controller, HDL for the Altera Cyclone IV FPGA, and C code for the host side libraries, drivers, and utilities.",
+   "bladeRF-fsk is a host-software based modem utility implemented with continuous-phase frequency shift keying (CPFSK) modulation.",
+   "Gain calibrated bladeRFs can be used to transmit at precise output power levels, and to accurately measure the power of received RF signals \u2013 the bladeRF basically becomes a power meter!"
+  ],
+  "links": [
+   {
+    "label": "Nuand homepage",
+    "url": "https://nuand.com/"
+   },
+   {
+    "label": "bladeRF source repository (GitHub)",
+    "url": "https://github.com/Nuand/bladeRF"
+   },
+   {
+    "label": "bladeRF wiki",
+    "url": "https://github.com/nuand/bladeRF/wiki"
+   }
+  ],
+  "fetch_log": [
+   "https://nuand.com/ - worked, but it is the Nuand shop and news homepage, not the library README; used for product, blog and release-date evidence",
+   "https://github.com/Nuand-LLC/bladeRF - failed with HTTP 404 (guessed org name, wrong)",
+   "https://github.com/Nuand/bladeRF - worked, returned the root README with build layout and quick start",
+   "https://github.com/Nuand/bladeRF/blob/master/host/README.md - worked, returned host build instructions, dependencies and CMake options"
+  ]
+ }
+}

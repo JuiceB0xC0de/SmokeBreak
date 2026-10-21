@@ -1,0 +1,117 @@
+{
+ "name": "lzfse",
+ "desc": "Apple LZFSE compression library and command-line tool",
+ "homepage": "https://github.com/lzfse/lzfse",
+ "installs_365d": 721,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "library"
+ ],
+ "why": "Apple's LZFSE compressor is an unusual, little-known codec whose design and format are worth exploring, though it is mostly a library.",
+ "brief": {
+  "what_it_is": "A reference C implementation of the LZFSE compression algorithm, Apple's Lempel-Ziv style codec that uses Finite State Entropy coding. It ships as a library (liblzfse.a with lzfse.h) plus a command-line tool called lzfse. The README does not show the tool's input and output syntax, so the exact CLI usage is not confirmed from these pages.",
+  "why_it_exists": "The README says LZFSE targets similar compression rates to deflate (zlib) at higher compression and decompression speed. It presents the project as a reference implementation of the compressor Apple introduced in its Compression library with OS X 10.11 and iOS 9.",
+  "how_it_works": "LZFSE is a Lempel-Ziv style algorithm that finds repeated byte sequences, then uses Finite State Entropy coding to encode the result. The source tree separates the pieces: lzfse_encode*.c and lzfse_decode*.c for the LZFSE entry points, lzfse_fse.c for the entropy coder, and lzvn_encode_base.c and lzvn_decode_base.c for a separate LZVN codec in the same tree.",
+  "commands_seen": [
+   {
+    "cmd": "$ xcodebuild install DSTROOT=/tmp/lzfse.dst",
+    "context": "Builds and installs on macOS with Xcode; puts the lzfse binary, lzfse.h, and liblzfse.a under /tmp/lzfse.dst."
+   },
+   {
+    "cmd": "$ make install INSTALL_PREFIX=/tmp/lzfse.dst/usr/local",
+    "context": "Builds and installs on Linux (and macOS via the Makefile) using the top-level Makefile; the prefix is set to a staging directory."
+   },
+   {
+    "cmd": "$ mkdir build",
+    "context": "First step of the CMake build: creates a build directory."
+   },
+   {
+    "cmd": "$ cd build",
+    "context": "Enters the build directory before running cmake."
+   },
+   {
+    "cmd": "$ cmake ..",
+    "context": "Configures the CMake build from the parent source directory."
+   },
+   {
+    "cmd": "$ make install",
+    "context": "Builds and installs the header, library, and command-line tool into /usr/local when using CMake."
+   }
+  ],
+  "install_notes": "Three build routes are documented: Xcode (xcodebuild install), a Makefile for Linux and macOS (make install with INSTALL_PREFIX), and CMake (cmake .. then make install, which installs to /usr/local). No accounts, hardware, or runtime configuration are mentioned. The README gives no Homebrew-specific steps; the brew formula is the usual route.",
+  "standout": "It is an Apple-authored codec that was open-sourced as a clean C reference, which is unusual; most people meet zlib or zstd instead. The design goal is zlib-level ratios at faster speed by pairing LZ matching with FSE entropy coding.",
+  "status": "unknown. The README has no release dates, changelog, or version numbers, and the fetch tool returned only the README, so I could not check the last commit or release date. The Linux build was tested on Ubuntu 15.10 with gcc 5.2.1 and clang 3.6.2, which suggests the build notes are old.",
+  "caveats": "The README is brief and gives no CLI usage examples, no benchmark numbers, and no API walkthrough. Its tested Linux toolchains are old (Ubuntu 15.10, gcc 5.2.1, clang 3.6.2), and the README says only 'should work on any recent distribution'. The Apple Compression link points to an old developer.apple.com/library URL that may no longer resolve. The README does not state a license in the text I read. The scout note calls it 'mostly a library'; the README agrees, with the CLI as a secondary artifact. Brew caveats are empty.",
+  "quotes": [
+   "This is a reference C implementation of the LZFSE compressor introduced in the Compression library with OS X 10.11 and iOS 9.",
+   "LZFSE is a Lempel-Ziv style data compression algorithm using Finite State Entropy coding.",
+   "It targets similar compression rates at higher compression and decompression speed compared to deflate using zlib."
+  ],
+  "links": [
+   {
+    "label": "LZFSE GitHub repository (homepage)",
+    "url": "https://github.com/lzfse/lzfse"
+   },
+   {
+    "label": "Python bindings: dimkr/pylzfse",
+    "url": "https://github.com/dimkr/pylzfse"
+   },
+   {
+    "label": "Apple Compression library reference (cited in README)",
+    "url": "https://developer.apple.com/library/mac/documentation/Performance/Reference/Compression/index.html"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/lzfse/lzfse: fetched OK, README returned (no other pages fetched; README was sufficient)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "An obscure Apple codec pairing LZ matching with finite-state entropy coding offers a concrete, inspectable compression design beyond another generic library."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "lzfse",
+  "tldr": "Apple's open-sourced LZFSE compressor in plain C, pairing Lempel-Ziv matching with Finite State Entropy coding for zlib-like ratios at higher speed.",
+  "deeper_look": "lzfse is the reference C implementation of the compressor Apple introduced in its Compression library with OS X 10.11 and iOS 9. It ships as a small library (`liblzfse.a` and `lzfse.h`) plus a command-line tool called `lzfse`. The README calls LZFSE \"a Lempel-Ziv style data compression algorithm using Finite State Entropy coding\" and says it targets \"similar compression rates at higher compression and decompression speed compared to deflate using zlib.\"\n\nThe idea underneath is the two-stage split common to modern compressors. First, an LZ pass finds repeated byte sequences and replaces them with references. Then an entropy coder squeezes the result. Here the entropy stage is Finite State Entropy, a table-driven coder that stands in for the Huffman step used in deflate. That pairing is how the design aims for zlib-level ratios at better speed.\n\nThe source tree is small enough to read in an afternoon, and it is laid out to show the seams. `lzfse_encode*.c` and `lzfse_decode*.c` hold the LZFSE entry points, `lzfse_fse.c` holds the entropy coder, and `lzvn_encode_base.c` and `lzvn_decode_base.c` hold LZVN, a separate codec that lives in the same tree. Most people meet zlib or zstd; this is a rare chance to read a production codec that came out of Apple.",
+  "install": "brew install lzfse",
+  "try_this": [
+   {
+    "cmd": "lzfse --help",
+    "what_happens": "Prints the tool's usage. The README shows no input and output syntax, so this is the way to find the options."
+   }
+  ],
+  "whats_unique": "It is an Apple-authored codec released as a clean C reference, in a field where most people only ever meet zlib or zstd. LZVN, a second Apple codec, sits in the same source tree.",
+  "caveats": "The README is brief, with no CLI examples or benchmarks, and its build notes are old (tested on Ubuntu 15.10 with gcc 5.2.1), so the project's current maintenance status is unclear.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "compression",
+   "library",
+   "c",
+   "apple",
+   "codec"
+  ],
+  "links": [
+   {
+    "label": "LZFSE GitHub repository",
+    "url": "https://github.com/lzfse/lzfse"
+   },
+   {
+    "label": "Python bindings: dimkr/pylzfse",
+    "url": "https://github.com/dimkr/pylzfse"
+   },
+   {
+    "label": "Apple Compression library reference (old URL, may no longer resolve)",
+    "url": "https://developer.apple.com/library/mac/documentation/Performance/Reference/Compression/index.html"
+   }
+  ]
+ }
+}

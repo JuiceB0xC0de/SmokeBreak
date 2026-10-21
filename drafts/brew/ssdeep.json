@@ -1,0 +1,78 @@
+{
+ "name": "ssdeep",
+ "desc": "Recursive piecewise hashing tool",
+ "homepage": "https://ssdeep-project.github.io/ssdeep/",
+ "installs_365d": 601,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "math"
+ ],
+ "why": "Fuzzy piecewise hashing reveals similarity between files, a real door into malware analysis and forensics.",
+ "brief": {
+  "what_it_is": "ssdeep is a command-line program, with a companion library (libfuzzy), for computing context triggered piecewise hashes (CTPH), also called fuzzy hashes. You feed it files and it produces fuzzy hash strings. Those hashes can then be compared to estimate how similar two inputs are. The homepage says CTPH can match inputs that share sequences of identical bytes in the same order, even when the bytes between those sequences differ in content and length. The homepage does not spell out the exact output format or comparison syntax.",
+  "why_it_exists": "The homepage frames the problem as identifying almost identical files, which ordinary cryptographic hashes cannot do because changing one byte changes the whole hash. It points to the Digital Investigation paper \"Identifying almost identical files using context triggered piecewise hashing\" as the full explanation. It also says ssdeep is widely used for simple identification, for example in the Basic Properties section of VirusTotal.",
+  "how_it_works": "The homepage gives only a high-level description. Hashes are computed piecewise, with boundaries set by content (the context-triggered part), so shared byte runs produce matching pieces even when the surrounding bytes differ. The complete mechanism is in the linked paper, which the homepage did not reproduce.",
+  "commands_seen": [],
+  "install_notes": "Available as a package on Ubuntu, Fedora, Debian, EPEL for CentOS and other RHEL-based distros, Arch Linux (community repository, no manual compile needed), and FreeBSD Ports (security/ssdeep, compile required). Windows has a 32-bit binary package on the GitHub project page, tested on Windows 7 and Windows 10 version 1703. Other *nix systems need a source build from GitHub using GNU Autotools. No accounts, hardware, or runtimes are mentioned on the homepage.",
+  "standout": "ssdeep is the long-standing de facto fuzzy hashing tool. The homepage says it remains a primary choice despite newer \"better fuzzy hashes\" because it is fast, claimed to be about twice as fast as TLSH. Its wide adoption, including in VirusTotal, makes it a common reference point in malware triage and forensics.",
+  "status": "Quiet. The homepage names 2.14.1 as the latest version, released 2017-11-07, and the changelog highlights are from that release. Tsukasa OI is listed as the current maintainer. I could not see commit history or a recent release, so I cannot confirm recent activity.",
+  "caveats": "Official Windows binaries are 32-bit only. Other platforms need a source build if their distribution does not package ssdeep. The speed comparison with TLSH and the claim that hashes are a de facto standard are the project's own statements. The GitHub README fetch returned only the word \"README\", so I could not check commands, usage, or the project's own install and run instructions. The Quick Start and manpage links were not followed because the homepage did not give their URLs. License is GPL v2 or later, for both the program and the library.",
+  "quotes": [
+   "ssdeep is a program for computing context triggered piecewise hashes (CTPH).",
+   "CTPH can match inputs that have homologies.",
+   "ssdeep hashes are now widely used for simple identification purposes.",
+   "Although \"better fuzzy hashes\" are available, ssdeep is still one of the primary choices because of its speed"
+  ],
+  "links": [
+   {
+    "label": "ssdeep project homepage",
+    "url": "https://ssdeep-project.github.io/ssdeep/"
+   }
+  ],
+  "fetch_log": [
+   "https://ssdeep-project.github.io/ssdeep/ - worked; returned the homepage text with introduction, platforms, download, documentation, license, and people sections.",
+   "https://github.com/ssdeep-project/ssdeep - returned only the word \"README\", not the README body; treated as thin, no further fetches made."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Context-triggered piecewise hashing is a distinctive way to compare near-identical files, and ssdeep makes this useful idea accessible in a small forensic tool."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "ssdeep",
+  "tldr": "A hashing tool that scores how similar two files are instead of just whether they match, widely used in malware triage and forensics.",
+  "deeper_look": "ssdeep computes context triggered piecewise hashes (CTPH), also called fuzzy hashes. You give it files and it prints a hash string for each. Those strings can be compared to estimate how alike the original inputs are. A companion library, libfuzzy, exposes the same idea to other programs.\n\nOrdinary cryptographic hashes are built so that changing one byte changes the whole result. That is right for integrity checks and useless for asking whether two files are nearly the same. ssdeep takes the opposite approach. In the homepage's words, \"CTPH can match inputs that have homologies\": runs of identical bytes in the same order, even when the bytes between them differ in content and length.\n\nThe trick is in the name. The file is split into pieces, and the split points are set by the content itself rather than by fixed offsets. An insertion or edit in one place disturbs only nearby pieces, and the rest still line up. The full mechanism is in the Digital Investigation paper \"Identifying almost identical files using context triggered piecewise hashing\", which the homepage links.\n\nThat makes it a door into malware analysis and forensics, where you often want to know whether a new sample is a variant of one you have already seen. The homepage notes that ssdeep hashes appear in the Basic Properties section of VirusTotal.",
+  "install": "brew install ssdeep",
+  "try_this": [
+   {
+    "cmd": "ssdeep --help",
+    "what_happens": "Prints the list of options, including how to hash files and how to compare them against each other."
+   }
+  ],
+  "whats_unique": "It is the long-standing reference fuzzy hash. The project says that despite newer alternatives it stays a primary choice because it is fast, which it claims is about twice as fast as TLSH.",
+  "caveats": "The latest release listed is 2.14.1 from 2017, so it is quiet rather than actively developed, and the speed claims against TLSH are the project's own.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "hashing",
+   "forensics",
+   "malware",
+   "similarity"
+  ],
+  "links": [
+   {
+    "label": "ssdeep project homepage",
+    "url": "https://ssdeep-project.github.io/ssdeep/"
+   }
+  ]
+ }
+}

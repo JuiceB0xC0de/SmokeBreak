@@ -1,0 +1,118 @@
+{
+ "name": "sparse",
+ "desc": "Static C code analysis tool",
+ "homepage": "https://sparse.wiki.kernel.org/",
+ "installs_365d": 490,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "science",
+  "reverse-engineering"
+ ],
+ "why": "Linux kernel's semantic C checker, built on annotations; a window into how the kernel polices itself.",
+ "brief": {
+  "what_it_is": "Sparse is a semantic C parser and static analysis tool. It takes C source files, including most of ANSI C and many GCC extensions, and builds a complete parse tree for each whole file. It ships with sample compiler backends, one of which is a static analyzer also called sparse. The analyzer checks type-level semantics, such as which address space a pointer points to or which locks a function acquires or releases, using annotations in the source. The brew formula installs two executables, cgcc and sparse. I did not verify what each one does.",
+  "why_it_exists": "The homepage says Linus Torvalds began Sparse in 2003 to catch problems such as mixing pointers into user address space with pointers into kernel address space. The GitHub mirror README describes it as a small library whose one mission is to create a semantic parse tree for further analysis, not a tokenizer or a generic parser.",
+  "how_it_works": "The GitHub mirror README says parsing runs in five phases: full-file tokenization, preprocessing (which can trigger tokenization of another file), semantic parsing, lazy type evaluation, and inline function expansion with tree simplification. Type details are computed only when a back end asks for them. The README stresses that a whole file is parsed before any result is available, with no partial results.",
+  "commands_seen": [
+   {
+    "cmd": "git clone git://git.kernel.org/pub/scm/devel/sparse/sparse.git",
+    "context": "Homepage's way to get the latest source from the kernel.org Git repository."
+   },
+   {
+    "cmd": "cd sparse",
+    "context": "Enter the cloned source tree before building."
+   },
+   {
+    "cmd": "make",
+    "context": "Build Sparse from source."
+   },
+   {
+    "cmd": "make install",
+    "context": "Install Sparse into ~/bin, per the homepage."
+   },
+   {
+    "cmd": "make PREFIX=<some directory> install",
+    "context": "Install Sparse into a directory of your choice instead of ~/bin."
+   }
+  ],
+  "install_notes": "Beyond brew install, the homepage describes building from source: clone the Git repo (or use the GitHub mirror at lucvoo/sparse, or download signed release tarballs from kernel.org), then run make and make install. The default install target is ~/bin. A custom location is set with PREFIX. I saw no mention of hardware, accounts, or runtime requirements beyond a C build toolchain.",
+  "standout": "It is a small, lazy-typed semantic parser built for analysis tools, not a compiler, and its annotation scheme lets authors describe address spaces and locking in ordinary C. The homepage frames it as the Linux kernel's semantic checker, but the docs describe a general C tool that the kernel uses.",
+  "status": "Probably maintained, but unverified. The homepage is Sphinx docs for version 0.6.4 with a copyright of 2003 to 2024. The docs say maintainership passed from Josh Triplett (2006) to Christopher Li (2009) to Luc Van Oostenryck (late 2018). I saw no release date or last commit date. The GitHub mirror README is older text that describes library design and does not match the homepage's framing.",
+  "caveats": "The GitHub mirror README is outdated and describes Sparse mainly as a library, while the homepage presents it as an analyzer. I saw no license text, no platform list, and no sample output. The brew formula says nothing extra (caveats field empty). The docs link to the kernel bugzilla and a mailing list for bug reports, so those are the places to check for current status.",
+  "quotes": [
+   "Sparse, the semantic parser, provides a compiler frontend capable of parsing most of ANSI C as well as many GCC extensions, and a collection of sample compiler backends, including a static analyzer also called sparse.",
+   "Sparse provides a set of annotations designed to convey semantic information about types, such as what address space pointers point to, or what locks function acquires or releases.",
+   "It has one mission in life: create a semantic parse tree for some arbitrary user for further analysis."
+  ],
+  "links": [
+   {
+    "label": "Sparse documentation homepage",
+    "url": "https://sparse.wiki.kernel.org/"
+   },
+   {
+    "label": "GitHub mirror (lucvoo/sparse)",
+    "url": "https://github.com/lucvoo/sparse"
+   },
+   {
+    "label": "Release tarballs and signatures (kernel.org)",
+    "url": "https://www.kernel.org/pub/software/devel/sparse/dist/"
+   }
+  ],
+  "fetch_log": [
+   "https://sparse.wiki.kernel.org/ - worked; Sphinx docs for sparse 0.6.4, copyright 2003-2024",
+   "https://github.com/lucvoo/sparse - worked; returned README text (older library-oriented description)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Sparse\u2019s annotation-driven checks for C address spaces and locking offer a distinctive window into how the Linux kernel catches semantic bugs."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Sparse",
+  "tldr": "Linus Torvalds's semantic C checker, which uses annotations in ordinary C to catch mixups like kernel pointers passed where user-space pointers belong.",
+  "deeper_look": "Sparse is a C parser that builds a full semantic parse tree for a source file, handling most of ANSI C and many GCC extensions. It ships with sample back ends, one of which is a static analyzer also called sparse. The brew formula installs two executables, `sparse` and `cgcc`; the brief does not verify what `cgcc` does.\n\nThe homepage says Linus Torvalds started it in 2003 to catch problems such as mixing pointers into user address space with pointers into kernel address space. Those two kinds of pointers look identical to a normal compiler. Sparse lets you label them in the source, then checks that the labels stay consistent.\n\nThat is the idea underneath: a set of annotations that carry meaning about types, such as which address space a pointer belongs to, or which locks a function acquires or releases. In the project's words: \"Sparse provides a set of annotations designed to convey semantic information about types, such as what address space pointers point to, or what locks function acquires or releases.\" It is a way to see how the Linux kernel polices itself with extra type information layered on plain C.\n\nInternally, the older GitHub README describes five phases: tokenizing the whole file, preprocessing, semantic parsing, lazy type evaluation, and inline function expansion with tree simplification. Types are only computed when a back end asks. The parser needs the whole file before it gives any result. The same README calls it a library with \"one mission in life: create a semantic parse tree for some arbitrary user for further analysis.\"",
+  "install": "brew install sparse\n# needs a C build toolchain only if you build from source instead:\n# git clone git://git.kernel.org/pub/scm/devel/sparse/sparse.git && cd sparse && make && make install",
+  "try_this": [
+   {
+    "cmd": "sparse --help",
+    "what_happens": "Lists the analyzer's command-line options, including which warnings it can turn on or off."
+   },
+   {
+    "cmd": "cgcc --help",
+    "what_happens": "Shows the options for the second executable the formula installs."
+   }
+  ],
+  "whats_unique": "It is a small, lazily typed parser built for analysis tools rather than a compiler, and its annotations let authors describe address spaces and locking in ordinary C.",
+  "caveats": "The brief found no sample output, license text or platform list, and the GitHub mirror README is older and describes it differently from the homepage, so check the kernel.org docs for current status.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "c",
+   "static-analysis",
+   "linux-kernel",
+   "parsers"
+  ],
+  "links": [
+   {
+    "label": "Sparse documentation homepage",
+    "url": "https://sparse.wiki.kernel.org/"
+   },
+   {
+    "label": "GitHub mirror (lucvoo/sparse)",
+    "url": "https://github.com/lucvoo/sparse"
+   },
+   {
+    "label": "Release tarballs and signatures (kernel.org)",
+    "url": "https://www.kernel.org/pub/software/devel/sparse/dist/"
+   }
+  ]
+ }
+}

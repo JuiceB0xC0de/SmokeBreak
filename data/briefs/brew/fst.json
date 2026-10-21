@@ -1,0 +1,52 @@
+{
+ "name": "fst",
+ "desc": "Represent large sets and maps compactly with finite state transducers",
+ "homepage": "https://github.com/BurntSushi/fst",
+ "installs_365d": 87,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "library",
+  "math",
+  "afternoon"
+ ],
+ "why": "Finite state transducers compress huge sorted sets and maps, a clever data structure worth an afternoon of poking.",
+ "brief": {
+  "what_it_is": "A Rust crate (library, not a standalone program) that provides ordered sets and maps built on finite state transducers. You feed it keys, typically already sorted, and it builds a compact automaton that stores them and can be searched directly. Lookups, prefix and range queries, and fuzzy queries run against that automaton, and large structures can be memory-mapped. The brew formula lists an `fst` executable, but the README describes only the library API and shows no command-line tool.",
+  "why_it_exists": "The README frames it as a way to index very large key collections compactly while keeping them easy to search, citing the author's blog post on indexing 1.6 billion keys with automata and Rust.",
+  "how_it_works": "Keys are stored as paths through a finite state machine, and values are emitted as output along those transitions, so the machine maps keys to values as it runs. Sharing common prefixes and suffixes is what keeps the storage compact. Searches are made by running an automaton, such as a Levenshtein automaton for fuzzy matching, over the transducer, and memory maps make range queries fast.",
+  "commands_seen": [],
+  "install_notes": "Not a brew-installed tool in any meaningful sense: the README's installation is adding `fst = \"0.4\"` to a Cargo.toml under [dependencies], so it needs a Rust toolchain and Cargo. The fuzzy Levenshtein automaton requires enabling the `levenshtein` cargo feature, which is disabled by default and adds a utf8-ranges dependency. The optional `transducer` feature integrates with regex-automata DFAs.",
+  "standout": "Sorted keys become a compact, searchable automaton rather than a hash or tree of strings, so the same structure answers exact lookup, range queries, and typo-tolerant fuzzy searches. The README's example queries a set of short words for everything within one edit of \"foo\".",
+  "status": "Unknown from the README alone. The repo has a CI badge pointing at GitHub Actions and a crates.io badge, but the README gives no release date, changelog, or last-commit information, and I did not fetch the crates.io or GitHub commit pages.",
+  "caveats": "The Levenshtein fuzzy search is off by default and needs a feature flag. The brew formula's `fst` executable is not described anywhere in the README, so the Homebrew package may not be what the README documents. The README has no shell commands, so the usage examples are Rust code only. Dual-licensed MIT or Unlicense.",
+  "quotes": [
+   "This crate provides a fast implementation of ordered sets and maps using finite state machines.",
+   "Using finite state machines as data structures enables us to store keys in a compact format that is also easily searchable.",
+   "Check out my blog post Index 1,600,000,000 Keys with Automata and Rust for extensive background, examples and experiments."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/BurntSushi/fst"
+   },
+   {
+    "label": "API documentation on docs.rs",
+    "url": "https://docs.rs/fst"
+   },
+   {
+    "label": "Author's blog post: Index 1,600,000,000 Keys with Automata and Rust",
+    "url": "https://blog.burntsushi.net/transducers/"
+   },
+   {
+    "label": "crates.io package",
+    "url": "https://crates.io/crates/fst"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/BurntSushi/fst: fetched OK, README returned (no further fetches made; README was sufficient for the description but gave no release or commit dates)."
+  ]
+ }
+}

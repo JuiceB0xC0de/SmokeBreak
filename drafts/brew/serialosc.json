@@ -1,0 +1,144 @@
+{
+ "name": "serialosc",
+ "desc": "Opensound control server for monome devices",
+ "homepage": "https://github.com/monome/docs/blob/gh-pages/serialosc/osc.md",
+ "installs_365d": 276,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "quick",
+  "audio",
+  "needs-hardware",
+  "network"
+ ],
+ "why": "The OSC bridge for monome grid controllers, a door into the small-instrument scene and live-performance hardware.",
+ "brief": {
+  "what_it_is": "serialosc is a daemon and OSC server for monome grid and arc controllers. It waits for a monome device to be plugged in, then starts a dedicated server process that routes OSC messages to and from that device. The homepage is the OSC protocol reference, not a general readme. It lists the addresses a client sends and receives, such as /serialosc/list, /sys/info, <prefix>/grid/key and <prefix>/grid/led/set. The daemon also advertises a _monome-osc._udp service over zeroconf (bonjour). The brew metadata lists three executables: serialosc-detector, serialosc-device and serialoscd. I did not see those names in the fetched text.",
+  "why_it_exists": "The README says serialosc is 'an osc server for monome devices', which gives a standard network route into monome hardware for music and performance software. The protocol page describes it as the way to discover connected devices and their ports, so clients can talk to each one directly.",
+  "how_it_works": "The serialosc server listens on UDP port 12002. Clients send /serialosc/list or /serialosc/notify to learn which devices are connected and which port each one uses. When a device is connected, serialosc spawns a new port for it, and the client then sends grid, tilt or arc messages to that device's prefix. Key presses come back as messages such as <prefix>/grid/key iii x y s, and LED state is set with messages such as <prefix>/grid/led/set iii x y s.",
+  "commands_seen": [
+   {
+    "cmd": "./waf configure",
+    "context": "README build step with waf. Run after git submodule update --init --recursive."
+   },
+   {
+    "cmd": "./waf",
+    "context": "README build step with waf, run after configure."
+   },
+   {
+    "cmd": "sudo ./waf install",
+    "context": "README install step with waf, which installs the built binaries system-wide."
+   },
+   {
+    "cmd": "cmake .. -DCMAKE_BUILD_TYPE=Release",
+    "context": "README build with cmake, marked experimental. Run from a build directory after git submodule update."
+   },
+   {
+    "cmd": "cmake --build .",
+    "context": "README cmake build step, run inside the build directory."
+   },
+   {
+    "cmd": "/serialosc/list si <host> <port>",
+    "context": "OSC protocol message sent to the serialosc server to request the list of connected devices, which are sent to host:port."
+   },
+   {
+    "cmd": "/sys/info localhost 9999",
+    "context": "OSC example from the protocol page that asks a serialosc device to send its settings to localhost:9999."
+   },
+   {
+    "cmd": "<prefix>/grid/led/set iii <x> <y> <s>",
+    "context": "OSC message from the protocol page that sets the LED at (x,y) to state s (0 or 1)."
+   }
+  ],
+  "install_notes": "The README lists these requirements: libmonome, liblo and libuv. Build with waf (./waf configure, ./waf, sudo ./waf install) after git submodule update --init --recursive. A cmake build is also documented and marked experimental. It builds statically linked binaries with bundled libmonome, liblo and libuv, and is the suggested route on Windows under msys2. Mac and Windows installers are on the GitHub releases page. Preference file locations: linux $HOME/.config/serialosc, macos ~/Library/Preferences/org.monome.serialosc, windows C:\\Users\\<username>\\AppData\\Local\\Monome\\serialosc. I did not find any account, hardware or first-run steps beyond plugging in a monome device.",
+  "standout": "Unlike a typical MIDI or HID bridge, serialosc uses OSC over UDP and spawns a separate port for each device, so any OSC-capable environment can drive a grid directly. The protocol page also documents the 64-LED and 256-LED quad layouts in bitmask form, which is more compact than per-LED messages.",
+  "status": "unknown. The fetched README and protocol page carry no release dates, last-commit dates or maintenance notes. The docs site and releases page are linked, so a writer could check those before calling it active.",
+  "caveats": "The homepage is a GitHub blob of the protocol reference, not a project landing page, so the software description comes from the serialosc repo README I fetched second. Build requirements are libmonome, liblo and libuv. The cmake build is labelled experimental. The protocol page notes that January 2011 devices support only four intensity levels, while June 2012 and later support all 16. Tilt and arc message formats are documented but I did not verify them against hardware. The brew caveats field is empty.",
+  "quotes": [
+   "serialosc is an osc server for monome devices",
+   "it is a daemon that waits for you to plug a monome in, then it spawns off a dedicated server process to route OSC messages to and from your monome.",
+   "The serialosc server listens on port 12002."
+  ],
+  "links": [
+   {
+    "label": "OSC protocol reference (homepage)",
+    "url": "https://github.com/monome/docs/blob/gh-pages/serialosc/osc.md"
+   },
+   {
+    "label": "serialosc repository",
+    "url": "https://github.com/monome/serialosc"
+   },
+   {
+    "label": "serialosc releases (mac and windows installers)",
+    "url": "https://github.com/monome/serialosc/releases"
+   },
+   {
+    "label": "serialosc documentation",
+    "url": "https://monome.org/docs/serialosc"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/monome/docs/blob/gh-pages/serialosc/osc.md: worked. Returned the OSC protocol reference page, not a project readme. The serialosc overview section was empty in the fetched text.",
+   "https://github.com/monome/serialosc: worked. Returned the serialosc README with requirements, build steps and preference file locations."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It turns a distinctive physical grid controller into a discoverable, bidirectional OSC instrument, offering a concise doorway into networked live-performance hardware."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "serialosc",
+  "tldr": "A daemon that turns monome grid and arc controllers into OSC devices, so any music software that speaks OSC can read their buttons and light their LEDs.",
+  "deeper_look": "serialosc is a small server for monome hardware, the minimalist grids of buttons and knob rings used in the small-instrument and live-performance scene. In its own words, it is \"a daemon that waits for you to plug a monome in, then it spawns off a dedicated server process to route OSC messages to and from your monome.\"\n\nThe protocol is plain OSC over UDP. The main server listens on port 12002. A client sends `/serialosc/list` or `/serialosc/notify` to learn which devices are attached and which port each one uses. Each device gets its own port, and the client talks to it directly. Key presses arrive as messages like `<prefix>/grid/key`, and LEDs are set with messages like `<prefix>/grid/led/set`. The daemon also advertises a `_monome-osc._udp` service over zeroconf, so clients can find it on the network.\n\nThe idea underneath is that a physical object becomes a few lines of network messages. Anything that can send UDP, such as a script, a patching environment or a sequencer, can treat a grid of lit buttons as a display and an input. The protocol reference also documents compact bitmask messages for the 64-LED and 256-LED layouts, which is more efficient than setting LEDs one at a time. Reading that page is a good way to see how a hardware interface gets designed.",
+  "install": "brew install serialosc\nNeeds a monome grid or arc plugged in to do anything useful. Mac and Windows installers are also on the GitHub releases page.",
+  "try_this": [
+   {
+    "cmd": "serialoscd --help",
+    "what_happens": "Shows the options for the daemon that waits for a monome to be plugged in."
+   },
+   {
+    "cmd": "serialosc-detector --help",
+    "what_happens": "Shows the options for the helper that detects connected monome devices."
+   },
+   {
+    "cmd": "serialosc-device --help",
+    "what_happens": "Shows the options for the per-device server process the daemon spawns."
+   }
+  ],
+  "whats_unique": "Unlike a typical MIDI or HID bridge, serialosc uses OSC over UDP and gives each device its own port, so any OSC-capable environment can drive a grid directly.",
+  "caveats": "It is only useful with monome hardware, and the brief found no release or maintenance dates, so check the releases page for activity.",
+  "commitment": "quick",
+  "category": "sound-and-live-coding",
+  "tags": [
+   "quick",
+   "audio",
+   "osc",
+   "needs-hardware",
+   "network",
+   "monome"
+  ],
+  "links": [
+   {
+    "label": "OSC protocol reference (homepage)",
+    "url": "https://github.com/monome/docs/blob/gh-pages/serialosc/osc.md"
+   },
+   {
+    "label": "serialosc repository",
+    "url": "https://github.com/monome/serialosc"
+   },
+   {
+    "label": "serialosc releases (mac and windows installers)",
+    "url": "https://github.com/monome/serialosc/releases"
+   },
+   {
+    "label": "serialosc documentation",
+    "url": "https://monome.org/docs/serialosc"
+   }
+  ]
+ }
+}

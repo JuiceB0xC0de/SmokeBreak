@@ -1,0 +1,89 @@
+{
+ "name": "blisp",
+ "desc": "ISP tool & library for Bouffalo Labs RISC-V Microcontrollers and SoCs",
+ "homepage": "https://github.com/pine64/blisp",
+ "installs_365d": 199,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "reverse-engineering"
+ ],
+ "why": "Flashing tool for Bouffalo RISC-V chips, a real door into microcontroller firmware if you own the board.",
+ "brief": {
+  "what_it_is": "BLISP is an open source command-line tool and C library for flashing firmware onto Bouffalo Labs RISC-V microcontrollers over serial (ISP, in-system programming). The CLI takes a firmware .bin file plus a target chip name (bl60x or bl70x) and an optional serial port, writes the image to the chip, and can reset it afterward. The README lists BL602, BL604, TG7100C, LF686, LF688, BL702, BL704, and BL706 as supported, and says the same flow covers BL61X, BL808 and BL606P over USB. Supported host systems are Windows, macOS, Linux, and FreeBSD, with the Pinecil V2 and Pinecone boards named as devices.",
+  "why_it_exists": "The README describes it as an open source tool to flash Bouffalo RISC-V MCUs, giving an alternative to the vendor's flashing software. It also serves as the update path for the Pinecil V2 soldering iron, whose firmware is updated with a BLISP-based updater.",
+  "how_it_works": "The README says the tool works at the lowest level of serial communication. A debug option (LIBSERIALPORT_DEBUG) prints that serial traffic. The README notes that this layer is not packet-aware and does not understand the chip's command set, so it is mainly useful for debugging low-level device or tool problems.",
+  "commands_seen": [
+   {
+    "cmd": "git clone --recursive https://github.com/pine64/blisp.git",
+    "context": "Clones the repository with submodules, the first step of building from source."
+   },
+   {
+    "cmd": "git submodule update --init --recursive",
+    "context": "Fills in vendor/argtable3 and vendor/libserialport if the recursive clone missed them; the README says these directories must not be empty."
+   },
+   {
+    "cmd": "cmake -DBLISP_BUILD_CLI=ON ..",
+    "context": "Configures the build from a build/ directory with the command-line tool enabled."
+   },
+   {
+    "cmd": "cmake --build .",
+    "context": "Compiles the library and the blisp CLI after configuration."
+   },
+   {
+    "cmd": "cmake -DBLISP_USE_SYSTEM_LIBRARIES=ON -DBLISP_BUILD_CLI=ON ..",
+    "context": "Alternative configure step that links against preinstalled vendor libraries, intended for system maintainers."
+   },
+   {
+    "cmd": ".\\blisp.exe write --chip=bl70x --reset .\\name_of_firmware.bin",
+    "context": "Windows example: flashes a BL70X-family image over USB, auto-detecting the serial port, and resets the chip afterward."
+   },
+   {
+    "cmd": "blisp write --chip bl60x --reset -p /dev/ttyUSB0 name_of_firmware.bin",
+    "context": "Flashes a BL60X chip; here the serial port must be given explicitly with -p."
+   },
+   {
+    "cmd": "LIBSERIALPORT_DEBUG=y ./a.out write -c bl70x -p /dev/tty.usbmodem0000000200001",
+    "context": "Runs a write with low-level serial debug output turned on, using a macOS-style port name."
+   },
+   {
+    "cmd": "cmake -DBLISP_BUILD_CLI=ON -DCOMPILE_TESTS=ON ..",
+    "context": "Configures the build with unit tests enabled."
+   },
+   {
+    "cmd": "xattr -d com.apple.quarantine blisp",
+    "context": "macOS fix: removes the quarantine flag from a downloaded binary so Gatekeeper lets it run."
+   }
+  ],
+  "install_notes": "The README gives no brew-specific steps. Building from source needs git with submodules, CMake, and a C toolchain. Two build modes exist: the bundled vendor libraries, or system libraries via BLISP_USE_SYSTEM_LIBRARIES. The Windows CLI is a blisp.exe in the release. On macOS, downloaded binaries may need the quarantine flag removed. Serial port access is needed, and BL60X needs the port named with -p. The README points to the wiki for fuller build instructions and Pinecil update steps, which I did not fetch.",
+  "standout": "Serial port auto-detection on Windows for the BL70X family, and the README's frank note that the low-level serial debug output is not useful for ordinary flashing. The project also doubles as a library, which is less common for flashing tools.",
+  "status": "Unknown in detail. The badges point to release v0.0.5 as the latest tagged release, and the repo has an active Discord link and a wiki. The README gives no date for the release and I did not see a last-commit date. The README warns that the library API and CLI arguments are not stable yet.",
+  "caveats": "The README says the library API and blisp CLI arguments are not stable. Build from source needs submodules and must be checked for empty vendor directories. macOS may block the binary without the quarantine-removal step. BL60X needs the serial port named by hand, while BL70X can auto-detect on Windows. The README's supported-device table has only check marks, so per-platform support is not fully spelled out. Flashing is a write to device firmware, so the README's guidance applies to boards the user owns.",
+  "quotes": [
+   "an open source tool to flash Bouffalo RISC-V MCUs.",
+   "NOTE: Library API and `blisp` tool cli arguments are not stable yet.",
+   "Because this is done at the lowest level of serial communication, the displays aren't packet-aware or know about the chip's command set or such."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/pine64/blisp"
+   },
+   {
+    "label": "Wiki: Update Pinecil V2 (install and build details)",
+    "url": "https://github.com/pine64/blisp/wiki/Update-Pinecil-V2"
+   },
+   {
+    "label": "Releases (v0.0.5 is the latest tag in badges)",
+    "url": "https://github.com/pine64/blisp/releases/tag/v0.0.5"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/pine64/blisp (homepage, README returned successfully; wiki and releases pages not fetched)"
+  ]
+ }
+}

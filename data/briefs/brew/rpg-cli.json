@@ -1,0 +1,94 @@
+{
+ "name": "rpg-cli",
+ "desc": "Your filesystem as a dungeon!",
+ "homepage": "https://olano.dev/blog/deconstructing-the-role-playing-videogame/",
+ "installs_365d": 46,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "games",
+ "tags": [
+  "afternoon",
+  "game",
+  "tui"
+ ],
+ "why": "Turns your filesystem into a role-playing dungeon, a playful idea that makes you see directories differently.",
+ "brief": {
+  "what_it_is": "rpg-cli is a minimalist computer role-playing game written in Rust, played from the command line. Its CLI works as a cd replacement: as you change directories, the hero walks deeper into the filesystem, and enemies sometimes appear and battle automatically. Input is ordinary shell commands like cd, ls, buy and todo, and the output is a text status block showing HP, MP, XP, stats, equipment and gold. The hero's location is the working directory, and directories farther from home hold tougher enemies and treasure chests.",
+  "why_it_exists": "The author wanted to strip a JRPG down to its underlying mechanics, \"the simplest thing that could possibly pass as a video game,\" and the command line was the narrowest interface he could think of. The blog post describes it as a constraint that fostered creativity and as a side project meant to yield something usable within a few months.",
+  "how_it_works": "The game keeps its own record of the hero's location and turns directory changes into movement, rolling for random encounters on the way. Battles are fully automatic: each side acts according to its speed stat, and the player's default action is to attack unless HP is low and a potion is available. Because a program cannot change its parent shell's directory, a small shell function forwards arguments to rpg-cli and then runs cd to the path rpg-cli pwd reports. Death is permanent, and a tombstone left in the dead hero's directory can be looted by a new hero.",
+  "commands_seen": [
+   {
+    "cmd": "cargo install --git https://github.com/facundoolano/rpg-cli --force --tag 1.2.0",
+    "context": "Installs rpg-cli from source at tag 1.2.0 via Cargo, the Rust package manager; the binary lands in ~/.cargo/bin."
+   },
+   {
+    "cmd": "brew install rpg-cli",
+    "context": "Homebrew install on macOS, as listed in the README's other-methods section."
+   },
+   {
+    "cmd": "rpg () { rpg-cli \"$@\"; cd \"$(rpg-cli pwd)\"; }",
+    "context": "Basic shell wrapper function that runs rpg-cli and then moves the shell to the hero's location. Written in the README as a multi-line sh function."
+   },
+   {
+    "cmd": "cd () { rpg-cli cd \"$@\"; builtin cd \"$(rpg-cli pwd)\"; }",
+    "context": "The hardcore version from the README: overrides the built-in cd so that every directory change moves the hero and can trigger battles."
+   },
+   {
+    "cmd": "rpg reset",
+    "context": "Re-rolls the hero with new random stats; the README shows it before running rpg to view the new character."
+   },
+   {
+    "cmd": "rpg class mage",
+    "context": "Switches the hero to the mage class, which enables magic attacks and an MP bar."
+   },
+   {
+    "cmd": "rpg cd dev/",
+    "context": "Moves the hero into the dev/ subdirectory, which can trigger random battles along the way."
+   },
+   {
+    "cmd": "rpg ls",
+    "context": "Inspects the current directory for hidden treasure chests."
+   },
+   {
+    "cmd": "rpg buy",
+    "context": "Lists items sold in the home directory, with prices in gold, such as sword, shield, potion, remedy and escape."
+   },
+   {
+    "cmd": "rpg todo",
+    "context": "Shows the hero's quest checklist, which renews as the level rises and gives rewards for completed items."
+   }
+  ],
+  "install_notes": "Prebuilt binaries for Linux, macOS and Windows are on the GitHub releases page. Building with Cargo needs a Rust toolchain. Other channels are Homebrew (macOS), Nixpkgs, Portage (Gentoo) and pacman (Arch extra repo). The binary must be on PATH, and for a cargo install that means ~/.cargo/bin. No accounts or runtimes beyond that are needed. For real cd integration, add the shell function to your rc file; the README gives fish equivalents in its shell integration guide. Custom character classes can go in ~/.local/share/rpg/classes.yaml, and the README points to the dirs crate docs for the data path on other OSes.",
+  "standout": "Auto-battle is borrowed from Suikoden 2's auto-battle button, and the classic JRPG stats are cut down to hp, strength and speed. Equipment is generic and level-based (sword[1], sword[5]), so stronger gear replaces weaker gear without any selling. Using cd as the way to explore a dungeon, with difficulty set by distance from home, is an unusual framing that is hard to find elsewhere.",
+  "status": "Unknown from the sources I read. The homepage is a blog post dated 2024-07-16 that calls rpg-cli a fondest personal project and describes its history back to 2021. The README pins the install tag to 1.2.0 and lists packages in Homebrew, Nixpkgs, Gentoo and Arch extra, which suggests it is active enough to be packaged. I saw no last-commit or last-release date, so I cannot confirm whether development is ongoing.",
+  "caveats": "The macOS release binary is not signed, so the first launch needs right-click, then Open. Death is permanent and the game is hard to play well: the README says going too far or too long without healing will likely get your hero killed. Gameplay is non-interactive, so there are no choices during battle beyond the auto-battle rules. The cd override is invasive and can confuse other shell habits. The blog post says the author dropped a follow-up roguelike, rpg-tui, and the README does not mention that project. The license was not in the README text I read.",
+  "quotes": [
+   "rpg-cli is a minimalist computer RPG written in Rust. Its command-line interface can be used as a cd replacement where you randomly encounter enemies as you change directories.",
+   "Death is permanent: you can't save your progress and reload after dying, but if you take your new hero to the location of the previous one's death, you can recover gold, items and equipment.",
+   "To me, a classic JRPG is pure mechanism, a kind of puzzle."
+  ],
+  "links": [
+   {
+    "label": "Homepage (blog post: Deconstructing the Role-Playing Video Game)",
+    "url": "https://olano.dev/blog/deconstructing-the-role-playing-videogame/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/facundoolano/rpg-cli"
+   },
+   {
+    "label": "GitHub releases (prebuilt binaries)",
+    "url": "https://github.com/facundoolano/rpg-cli/releases/latest"
+   },
+   {
+    "label": "Shell integration guide",
+    "url": "https://github.com/facundoolano/rpg-cli/blob/main/shell/README.md"
+   }
+  ],
+  "fetch_log": [
+   "https://olano.dev/blog/deconstructing-the-role-playing-videogame/ (homepage): loaded. It is a blog post by Facundo Olano dated 2024-07-16, not a README. It covers design and development history, with code excerpts and the shell wrapper functions.",
+   "https://github.com/facundoolano/rpg-cli (repository, which I guessed from the author's name and the README link on the homepage): loaded. The README gave install options, shell integration, gameplay examples, class customisation and troubleshooting. I did not fetch the linked shell/README.md or the releases page."
+  ]
+ }
+}

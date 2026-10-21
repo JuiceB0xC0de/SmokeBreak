@@ -1,0 +1,143 @@
+{
+ "name": "cryptominisat",
+ "desc": "Advanced SAT solver",
+ "homepage": "https://www.msoos.org/cryptominisat5/",
+ "installs_365d": 1013,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "math",
+  "library"
+ ],
+ "why": "A capable SAT solver is fascinating to feed puzzles, but solvers are a known niche and this is mostly a tool for experts.",
+ "brief": {
+  "what_it_is": "CryptoMiniSat is a SAT solver, a program that decides whether a Boolean formula can be satisfied. It takes a CNF file in DIMACS format, extended with XOR clauses, and prints 's SATISFIABLE' with a variable assignment ('v' lines) or 's UNSATISFIABLE'. It runs from the command line and also has C++, Python (pycryptosat) and C/Rust wrappers that support assumptions and repeated solve calls. A loop that bans each model it finds can enumerate all solutions, and it can write XLRUP proofs that an independent checker verifies.",
+  "why_it_exists": "The README frames it as an advanced incremental SAT solver for users who need to embed or drive SAT solving from code, not just run one-off files. The homepage describes it as a modern, multi-threaded, feature-rich, simplifying solver, and asks users to cite its SAT 2009 paper.",
+  "how_it_works": "The README does not explain the internals. The homepage, which describes the CryptoMiniSat 4 era, says the solver simplifies the instance during search (inprocessing) using variable elimination, subsumption, vivification and failed-literal probing. It also says XOR clauses are recovered and manipulated, and that redundant clauses are removed based on tracked usefulness. The current build pulls in the CaDiCaL and CaDiBack solvers as dependencies.",
+  "commands_seen": [
+   {
+    "cmd": "cryptominisat5 --verb 0 file.cnf",
+    "context": "README: runs the solver on a DIMACS CNF file with verbosity 0 and prints the result line and model."
+   },
+   {
+    "cmd": "./cryptominisat --verb 0 --maxsol 10 problem.cnf",
+    "context": "Homepage (older binary name): lists up to 10 solutions, then prints UNSATISFIABLE when no more exist."
+   },
+   {
+    "cmd": "nix shell github:msoos/cryptominisat",
+    "context": "README: the second-best install route after release binaries; gives you the cryptominisat5 binary."
+   },
+   {
+    "cmd": "sudo apt-get install build-essential cmake ninja-build git pkg-config \\\\ libgmp-dev zlib1g-dev",
+    "context": "README: Debian/Ubuntu system packages needed to build from source."
+   },
+   {
+    "cmd": "brew install cmake ninja pkgconf gmp",
+    "context": "README: macOS system packages needed to build from source."
+   },
+   {
+    "cmd": "cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ..",
+    "context": "README: configures a Release build from a build directory, using Ninja."
+   },
+   {
+    "cmd": "cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF ..",
+    "context": "README: same configure step, but produces a fully static binary with no runtime shared-library dependencies."
+   },
+   {
+    "cmd": "pip3 install pycryptosat",
+    "context": "README: installs the Python package for incremental use from Python 3."
+   },
+   {
+    "cmd": "./cryptominisat5 input.cnf proof.xlrup",
+    "context": "README: solves the file and writes an XLRUP proof to proof.xlrup."
+   },
+   {
+    "cmd": "./cake_xlrup --no-binary input.cnf proof.xlrup",
+    "context": "README: checks that proof with the formally verified cake_xlrup checker, which should print 's VERIFIED'."
+   }
+  ],
+  "install_notes": "Release binaries are the README's first recommendation. Otherwise use Nix, or build from source with CMake and Ninja, which needs GMP and pkg-config (zlib optional for gzipped CNF). The build downloads and compiles CaDiCaL and CaDiBack from GitHub, so it needs network access unless you point cmake at pre-built copies with -Dcadical_DIR and -Dcadiback_DIR. Windows is supported through MSYS2 with MinGW packages. The Python module installs with pip3 install pycryptosat, and building it from source uses the same system packages. No account or hardware is needed.",
+  "standout": "Unlike a plain solver binary, it supports incremental solving with assumptions and proof output checked by a formally verified checker (cake_xlrup). Its README also notes the author's companion tools, Arjun for model counting and preprocessing, which places it in a wider research toolchain.",
+  "status": "Probably maintained, but I could not confirm a date. The fetched pages show no release date or last-commit date. The README is current: it mentions CaDiBack, XLRUP proofs, the Rust bindings and a build badge. The homepage is an older CryptoMiniSat 5 blog-style page that still uses an old binary name and Python 2 print syntax.",
+  "caveats": "The homepage says XOR recovery uses the GPL-licensed M4RI library, and that you should compile without it for LGPL. The README says the project is MIT licensed, so the two sources disagree and the current licence needs checking. The homepage's technique list describes CryptoMiniSat 4. The homepage uses the old ./cryptominisat binary name and Python 2 syntax, while the README uses cryptominisat5. The build needs network access to fetch CaDiCaL and CaDiBack. The README does not say which features or options beyond the ones listed are current. The scout note calls this a tool for experts, and the README is written for practitioners who know CNF and assumptions.",
+  "quotes": [
+   "CryptoMiniSat is a modern, multi-threaded, feature-rich, simplifying SAT solver.",
+   "Use of the release binaries is _strongly_ encouraged.",
+   "When citing, always reference our SAT 2009 conference paper."
+  ],
+  "links": [
+   {
+    "label": "Homepage (blog-style CryptoMiniSat 5 page)",
+    "url": "https://www.msoos.org/cryptominisat5/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/msoos/cryptominisat"
+   },
+   {
+    "label": "Arjun, the companion model counting and preprocessing tool",
+    "url": "https://www.github.com/meelgroup/arjun"
+   }
+  ],
+  "fetch_log": [
+   "https://www.msoos.org/cryptominisat5/ - worked; blog-style page with feature list, usage examples and links marked 'HERE' whose targets were not visible in the text",
+   "https://github.com/msoos/cryptominisat - worked; returned the README text (no page header, releases or commit dates)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Its XOR-aware solving and independently checkable proofs make SAT a hands-on rabbit hole in computational logic, not just another expert command-line utility."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "CryptoMiniSat",
+  "tldr": "A SAT solver that decides whether a Boolean formula can be satisfied, then hands back a working assignment or a proof that none exists.",
+  "deeper_look": "CryptoMiniSat reads a formula in DIMACS CNF format, extended with XOR clauses, and prints either `s SATISFIABLE` followed by `v` lines giving a variable assignment, or `s UNSATISFIABLE`. It runs from the command line. It also has C++, Python (pycryptosat), C and Rust interfaces, which support assumptions and repeated solve calls on the same problem.\n\nThe idea underneath is that a huge range of problems can be rewritten as a pile of true/false constraints: scheduling, circuit verification, puzzle solving, cryptanalysis. A SAT solver then searches that space far better than hand-written code would. The homepage describes it as \"a modern, multi-threaded, feature-rich, simplifying SAT solver\". The simplifying part means it rewrites the problem while it searches, using techniques such as variable elimination, subsumption, vivification and failed-literal probing. It also recovers XOR structure, which matters for crypto-style problems. The homepage describes the CryptoMiniSat 4 era, and the README does not explain the internals.\n\nTwo features make it more than a plain solver binary. You can enumerate every solution by banning each model as you find it, and the older homepage shows `--maxsol` for listing several. It can also write XLRUP proofs of its answers, which a formally verified checker called cake_xlrup can confirm independently. So an answer does not have to be taken on trust.\n\nThe README is written for people who already know CNF and assumptions. Encode a small puzzle yourself and watch what comes back, and you get a first look at the field.",
+  "install": "brew install cryptominisat\n# installs cryptominisat5 and oracle; needs gmp (pulled in automatically)\n# Python bindings: pip3 install pycryptosat",
+  "try_this": [
+   {
+    "cmd": "cryptominisat5 --help",
+    "what_happens": "Lists the solver's options, a quick view of how many knobs a modern SAT solver has."
+   },
+   {
+    "cmd": "cryptominisat5 --verb 0 file.cnf",
+    "what_happens": "Solves a DIMACS CNF file quietly and prints `s SATISFIABLE` with `v` assignment lines, or `s UNSATISFIABLE`."
+   },
+   {
+    "cmd": "cryptominisat5 input.cnf proof.xlrup",
+    "what_happens": "Solves the file and writes an XLRUP proof that the cake_xlrup checker can verify."
+   }
+  ],
+  "whats_unique": "It supports incremental solving with assumptions and XOR clauses, and writes proofs that a formally verified checker can confirm. It also sits in a wider research toolchain with the author's Arjun model counter.",
+  "caveats": "The README assumes you already know CNF and assumptions, and the homepage is an older page with outdated binary names, Python 2 syntax and a licence note that disagrees with the README's MIT.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "math",
+   "sat",
+   "logic",
+   "solver",
+   "library"
+  ],
+  "links": [
+   {
+    "label": "Homepage (CryptoMiniSat 5 page)",
+    "url": "https://www.msoos.org/cryptominisat5/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/msoos/cryptominisat"
+   },
+   {
+    "label": "Arjun, companion model counting and preprocessing tool",
+    "url": "https://www.github.com/meelgroup/arjun"
+   }
+  ]
+ }
+}

@@ -1,0 +1,97 @@
+{
+ "name": "innoextract",
+ "desc": "Tool to unpack installers created by Inno Setup",
+ "homepage": "https://constexpr.org/innoextract/",
+ "installs_365d": 10213,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "reverse-engineering",
+  "quick",
+  "file-formats"
+ ],
+ "why": "Unpacks Windows Inno Setup installers without running them, a good way to peek inside game and app installers.",
+ "brief": {
+  "what_it_is": "innoextract is a command-line tool that unpacks Windows installers built with Inno Setup. You give it a setup .exe and it writes the packaged files into the current directory. It runs on Linux, macOS (via Homebrew or MacPorts), Windows, FreeBSD and other systems, and it does not need Windows or Wine. The page says it supports Inno Setup versions 1.2.10 through 6.2.2, plus some modified variants such as GOG.com's game installers.",
+  "why_it_exists": "Inno Setup installers normally have to be run on Windows, or under Wine, before their contents can be reached. innoextract lets you extract such installers without running the setup executable, and the page says it is meant to work across C++98 to C++17 compilers and platforms supported by CMake, Boost, liblzma and optionally iconv.",
+  "how_it_works": "The page does not describe the internals beyond saying it reads the Inno Setup format directly rather than executing the installer. It names the Inno Setup data format as the thing that changes between versions, which is why each innoextract release lists the Inno Setup range it supports. For GOG installers it can reassemble GOG Galaxy split parts into the original files, and it can use unrar or unar for certain RAR-packed GOG archives.",
+  "commands_seen": [
+   {
+    "cmd": "$ innoextract <file>",
+    "context": "Usage example from the page: extracts a setup file into the current directory."
+   },
+   {
+    "cmd": "$ innoextract --help",
+    "context": "Lists the available command-line options."
+   },
+   {
+    "cmd": "$ man 1 innoextract",
+    "context": "Opens the man page documentation."
+   }
+  ],
+  "install_notes": "Homebrew and MacPorts packages exist for macOS, and the page says there are no prebuilt macOS binaries. Building from source needs CMake, Boost, liblzma, and optionally iconv, and the page links to build instructions. Windows binaries are a zip and work on XP or newer. Linux binaries come as a tar.xz that includes x86, amd64 and ARMEL builds. For GOG.com multi-part RAR-packed installers, the --gog option needs unrar or unar installed. No accounts or licences are required, and no runtime configuration is mentioned.",
+  "standout": "It reads the installer's data directly and never runs the setup program, so it avoids both Windows and Wine. The page also lists a long roster of downstream projects that depend on it, including game-data-packager, play.it, and the Arx Libertatis installers, which shows it has become infrastructure for GOG game extraction.",
+  "status": "The homepage lists 1.9 as the current version, with an announcement dated 2020-08-09, and the Inno Setup compatibility table runs to 6.2.2. Many distro packages from 2024 and 2025 also ship 1.9. I could not see a commit log or a newer release date, so activity is unclear. The evidence points to a stable, slowly updated tool rather than an active one.",
+  "caveats": "There are no prebuilt macOS binaries, so macOS users need Homebrew, MacPorts or a source build. The tool cannot extract individual components, and file filtering by name is limited. Included scripts and checks are not executed. Support for newer Inno Setup formats depends on future releases, and the author says forward compatibility cannot be guaranteed. Multi-file installers must follow the standard data slice naming scheme. Support for older versions was reverse-engineered and may be incomplete. Inno Setup 1.3.0 to 1.3.23 installers are not handled by 1.7 and older. The code is under the zlib/libpng licence.",
+  "quotes": [
+   "innoextract allows to extract such installers without running the actual setup executable under Windows or using Wine.",
+   "Included scripts and checks are not executed.",
+   "innoextract cannot guarantee good forward compatibility as the Inno Setup data format changes frequently."
+  ],
+  "links": [
+   {
+    "label": "innoextract homepage",
+    "url": "https://constexpr.org/innoextract/"
+   }
+  ],
+  "fetch_log": [
+   "https://constexpr.org/innoextract/ - fetched successfully; the page contains the README-style description, usage, compatibility table, limitations and download list."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It turns Windows installer executables into inspectable payloads without running them, a useful and quietly revealing bit of format reverse engineering rather than ordinary package plumbing."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "innoextract",
+  "tldr": "Unpacks Windows Inno Setup installers on any OS without running them or needing Wine, so you can see what a setup.exe actually contains.",
+  "deeper_look": "innoextract takes a setup .exe built with Inno Setup and writes the packaged files into the current directory. It reads the installer's data format directly instead of executing anything. That means it works on Linux, macOS, FreeBSD and Windows, with no Windows machine and no Wine.\n\nInno Setup installers are common for Windows apps and games, and normally the only way to reach the contents is to run the installer. innoextract skips that. The page says it supports Inno Setup versions 1.2.10 through 6.2.2, plus some modified variants such as GOG.com's game installers. For GOG it can reassemble GOG Galaxy split parts into the original files, and it can use unrar or unar for certain RAR-packed archives.\n\nThe idea underneath is that an installer is just a file format. Once someone has reverse-engineered the layout, you can open it like an archive and look at what it would have put on your disk, without trusting it to run. The format changes between Inno Setup versions, which is why each release lists the range it handles. The project's own caveat is that it \"cannot guarantee good forward compatibility as the Inno Setup data format changes frequently.\"\n\nIt has also become plumbing for other projects. The page lists downstream users such as game-data-packager, play.it and the Arx Libertatis installers, which rely on it to pull game data out of GOG installers on Linux.",
+  "install": "brew install innoextract\n# For GOG multi-part RAR-packed installers, the --gog option needs unrar or unar installed.",
+  "try_this": [
+   {
+    "cmd": "innoextract --help",
+    "what_happens": "Lists the available command-line options."
+   },
+   {
+    "cmd": "innoextract <file>",
+    "what_happens": "Extracts the given Inno Setup installer into the current directory, without running it."
+   },
+   {
+    "cmd": "man 1 innoextract",
+    "what_happens": "Opens the man page documentation."
+   }
+  ],
+  "whats_unique": "It reads the installer's data directly and never runs the setup program, so it needs neither Windows nor Wine. It has also become the quiet foundation for GOG game extraction tools on Linux.",
+  "caveats": "The homepage lists 1.9 (August 2020) as current, so it looks stable but slowly updated, it cannot extract individual components, and support for newer Inno Setup formats depends on future releases.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "reverse-engineering",
+   "file-formats",
+   "installers",
+   "gog"
+  ],
+  "links": [
+   {
+    "label": "innoextract homepage",
+    "url": "https://constexpr.org/innoextract/"
+   }
+  ]
+ }
+}

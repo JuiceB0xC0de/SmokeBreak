@@ -1,0 +1,90 @@
+{
+ "name": "sshfs",
+ "desc": "File system client based on SSH File Transfer Protocol",
+ "homepage": "https://github.com/libfuse/sshfs",
+ "installs_365d": 870,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "protocol",
+  "network",
+  "afternoon"
+ ],
+ "why": "Mounting a remote filesystem over SFTP is a neat door into SSH file transfer, though the tool itself is fairly common.",
+ "brief": {
+  "what_it_is": "SSHFS is a file system client that mounts a remote directory over SFTP, the SSH File Transfer Protocol, so it appears as a local folder. You give it a [user@]hostname:[directory] target and a local mountpoint, and it runs ssh underneath to connect, asking for a password if needed. Remote files then read and write through the local mountpoint. The README says most SSH servers already enable SFTP, so nothing needs to be set up on the server side.",
+  "why_it_exists": "The README presents it as a simple way to use the SFTP access most SSH servers already support: 'Most SSH servers support and enable this SFTP access by default, so SSHFS is very simple to use - there's nothing to do on the server-side.'",
+  "how_it_works": "SSHFS runs ssh to reach the remote host and uses the SFTP subsystem there, with FUSE (libfuse 3) providing the mounted file system on the client. The README also describes an optional bypass of SSH, where a direct connection goes to sftp-server (via a TCP port or Linux vsock) for performance, at the cost of encryption in the TCP case.",
+  "commands_seen": [
+   {
+    "cmd": "sshfs [user@]hostname:[directory] mountpoint",
+    "context": "Basic usage: mounts the remote directory (or the remote home directory if omitted) at a local mountpoint; the README recommends running it as a regular user, not root."
+   },
+   {
+    "cmd": "fusermount -u mountpoint",
+    "context": "Unmounts the filesystem on Linux."
+   },
+   {
+    "cmd": "umount mountpoint",
+    "context": "Unmounts the filesystem on BSD and macOS."
+   },
+   {
+    "cmd": "socat tcp-listen:1234,reuseaddr,fork  exec:/usr/lib/openssh/sftp-server",
+    "context": "Server-side setup for the directport bypass: listens on port 1234 and serves sftp-server over unencrypted TCP. The README warns to use this only on localhost or trusted networks."
+   },
+   {
+    "cmd": "sshfs -o directport=1234 127.0.0.1:/tmp /tmp/mnt",
+    "context": "Client-side mount that connects to the directport listener instead of going through SSH."
+   },
+   {
+    "cmd": "socat VSOCK-LISTEN:12345 EXEC:\"/usr/lib/openssh/sftp-server\",nofork",
+    "context": "Host-side listener for the vsock option, serving sftp-server to a VM over a Linux vsock socket."
+   },
+   {
+    "cmd": "sshfs -o vsock=2:12345 unused_host: ./tmp",
+    "context": "Client-side mount over vsock using CID 2 and port 12345 (the README's example for reaching a VM)."
+   },
+   {
+    "cmd": "meson ..",
+    "context": "Configures the build from a build directory; the README recommends Meson 0.38 or newer."
+   },
+   {
+    "cmd": "ninja",
+    "context": "Compiles the project after Meson has configured it."
+   },
+   {
+    "cmd": "sudo ninja install",
+    "context": "Installs the built SSHFS system-wide."
+   }
+  ],
+  "install_notes": "Download the latest release tarball from the GitHub releases page. Requires libfuse 3.1.0 or newer (or a libfuse3-compatible library on your OS) and GLib with development headers, usually from your OS package manager. Build with Meson (0.38 or newer) and Ninja: mkdir build; cd build; meson ..; then ninja, optionally python3 -m pytest test/ (needs the py.test Python module), then sudo ninja install. Defaults normally work; mesonconf lists and sets build options. For use, the mountpoint must be owned by the user running sshfs. No Homebrew-specific notes were in the README, and the README does not mention macOS installation steps beyond unmounting with umount.",
+  "standout": "The server side needs nothing beyond a normal SSH server with SFTP, so any SSH host works as a mount target. The README also documents a bypass path that skips SSH entirely, using socat with a TCP port or a Linux vsock to reach a VM.",
+  "status": "Maintained, but with limited development. The README says SSHFS is shipped by all major Linux distributions and that the current maintainer still applies pull requests and makes regular releases. It also says there are no active regular contributors and that only high-impact issues get attention, so most bug reports may go unanswered. The README gives no release date or last-commit date, so the exact recency is unknown from these pages.",
+  "caveats": "The README warns that the directport option is insecure because the connection is unencrypted, so use it only on localhost or trusted networks. It says most bug reports will get no response unless they include a pull request or are critical. Building from source needs libfuse 3.1.0 or newer, GLib headers, and Meson and Ninja, which adds build friction. Unmount commands differ between Linux (fusermount -u) and BSD/macOS (umount). The README does not describe licensing in the text I read.",
+  "quotes": [
+   "SSHFS allows you to mount a remote filesystem using SFTP.",
+   "there's nothing to do on the server-side.",
+   "at present SSHFS does not have any active, regular contributors, and there are a number of known issues",
+   "Note that this is insecure as connection will happen without encryption. Only use this on localhost or trusted networks."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/libfuse/sshfs"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/libfuse/sshfs/releases"
+   },
+   {
+    "label": "Issue tracker",
+    "url": "https://github.com/libfuse/sshfs/issues"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/libfuse/sshfs (homepage, GitHub README): fetched successfully; README covered usage, bypass options, installation, and status, so no further links were followed."
+  ]
+ }
+}

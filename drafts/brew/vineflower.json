@@ -1,0 +1,111 @@
+{
+ "name": "vineflower",
+ "desc": "Java decompiler",
+ "homepage": "https://vineflower.org/",
+ "installs_365d": 548,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "library"
+ ],
+ "why": "A Java decompiler that turns bytecode back into readable source, a real look inside compiled programs, though well known in RE circles.",
+ "brief": {
+  "what_it_is": "Vineflower is a Java decompiler: it takes compiled JVM bytecode and turns it back into readable Java source. Per the README it is a general-purpose JVM decompiler that also covers other JVM languages, and it supports Java 21+ features such as records, sealed classes, switch expressions and pattern matching. Input can be a jar, zip, folder, or class file. Output goes to a folder, zip, or jar, or to the console if no destination is given. It can also be used as a library.",
+  "why_it_exists": "The README frames it as aiming to be as accurate as possible without sacrificing the readability of the generated code, with the stated focus on the best quality, speed, and usability. The project describes itself as a fork and continuation of earlier work, not a clean start.",
+  "how_it_works": "The README does not explain the internal decompilation mechanism. It says the project is a fork of JetBrains' Fernflower, MinecraftForge's ForgeFlower, and FabricMC's fork of Fernflower, and a direct continuation of Quiltflower. Its features are listed as clean code generation with automatic output formatting, and multithreaded decompilation.",
+  "commands_seen": [
+   {
+    "cmd": "java -jar vineflower.jar <arguments> <source> <destination>",
+    "context": "Basic command-line invocation from the README. <source> is a jar, zip, folder, or class file; omit <destination> to print to the console."
+   },
+   {
+    "cmd": "./gradlew build",
+    "context": "Builds Vineflower from source, per the README's Building section."
+   }
+  ],
+  "install_notes": "The primary distribution is the jar, from the GitHub Releases tab or Maven Central. Running it requires a Java 17 or newer JVM. Classpath context can be loaded from any other JVM with the -jrt CLI parameter. Using it as a library means adding the org.vineflower:vineflower Maven artifact as a dependency; the README's Gradle snippet is implementation 'org.vineflower:vineflower:<version>'. Library versions 1.9+ need Java 11 or higher, and 1.11+ needs Java 17 or higher. There is also an IntelliJ IDEA plugin that replaces Fernflower in IDEA with Vineflower. The homepage's full CLI flags are on the usage page, which I did not open. Homebrew's own caveats were empty.",
+  "standout": "It is a fork-of-a-fork lineage (Fernflower to ForgeFlower/Fabric's fork to Quiltflower to Vineflower), and it publishes a dedicated output-comparison page showing its decompiled output side by side with other decompilers. It also ships as a plain jar that runs on the command line with no install step beyond a Java 17+ runtime.",
+  "status": "unknown. The homepage shows version v1.12.0, and the README points to active development: a contributions guide, a plugin system, and a request to target the latest develop/1.xx.y branch. I did not find a release date or last-commit date in the pages I read, so I cannot confirm recency.",
+  "caveats": "Requires Java 17+ to run. Library use needs Java 11+ (1.9+) or 17+ (1.11+). The README calls it a work-in-progress project. The README does not state a license, so check the repository before reusing code. Building from source uses Gradle.",
+  "quotes": [
+   "Vineflower is a modern general purpose Java & JVM language decompiler focused on providing the best quality, speed, and usability.",
+   "Vineflower is a modern Java decompiler aiming to be as accurate as possible, while not sacrificing the readability of the generated code.",
+   "Vineflower is a fork of Jetbrains' Fernflower, MinecraftForge's ForgeFlower, FabricMC's fork of Fernflower, and a direct continuation of work on Quiltflower."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://vineflower.org/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/Vineflower/vineflower"
+   },
+   {
+    "label": "Output comparison",
+    "url": "https://vineflower.org/output-comparison/"
+   }
+  ],
+  "fetch_log": [
+   "https://vineflower.org/ : worked; returned the site HTML with the Vineflower v1.12.0 intro, Downloads, and Development sections, but no command examples. The sidebar lists Usage (Command Line), which I did not follow.",
+   "https://github.com/Vineflower/vineflower : worked; returned the README, which contains the java -jar and ./gradlew build commands and the Java version notes. Used as the main source."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It turns opaque JVM bytecode back into readable source, making compiled programs inspectable; Vineflower is a capable, lesser-known way to explore that process."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Vineflower",
+  "tldr": "A Java decompiler that turns compiled JVM bytecode back into readable source, from a jar, a folder, or a single class file.",
+  "deeper_look": "Vineflower reads compiled JVM bytecode and writes Java source back out. Feed it a jar, a zip, a folder, or one class file. It writes to a folder, zip, or jar, or prints to the console if you give no destination. The README says it also handles other JVM languages, and supports newer Java features such as records, sealed classes, switch expressions and pattern matching.\n\nIts stated aim is to be \"as accurate as possible, while not sacrificing the readability of the generated code.\" The README lists clean code generation with automatic formatting and multithreaded decompilation as features. It does not explain how the decompilation works internally.\n\nThe project is a fork of forks. It descends from JetBrains' Fernflower, through MinecraftForge's ForgeFlower and FabricMC's fork, and is a direct continuation of Quiltflower. That lineage is a reminder that a compiled program is not a sealed box: bytecode keeps a lot of structure, and a decompiler rebuilds loops, branches and classes from it.\n\nA good way in is to decompile a jar you already have and read what comes out, then compare with the project's output-comparison page, which shows its results next to other decompilers. It can also be used as a library, and there is an IntelliJ IDEA plugin that swaps it in for Fernflower.",
+  "install": "brew install vineflower\nRequires a Java runtime (Homebrew pulls in openjdk). The README says running the jar needs Java 17 or newer.",
+  "try_this": [
+   {
+    "cmd": "vineflower --help",
+    "what_happens": "Prints the command-line options the installed launcher accepts."
+   },
+   {
+    "cmd": "java -jar vineflower.jar <source> <destination>",
+    "what_happens": "Decompiles a jar, zip, folder, or class file into the destination folder, zip, or jar. This is the README's form for the raw jar, not the brew launcher."
+   },
+   {
+    "cmd": "java -jar vineflower.jar <source>",
+    "what_happens": "Leaves out the destination, so the decompiled source prints to the console."
+   }
+  ],
+  "whats_unique": "It is the latest in a Fernflower fork lineage, and it publishes a side-by-side output comparison against other decompilers. It ships as a plain jar with no install step beyond a Java runtime.",
+  "caveats": "Needs Java 17 or newer to run, and the README calls it a work-in-progress project; the brief could not confirm a recent release date.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "java",
+   "decompiler",
+   "reverse-engineering",
+   "jvm",
+   "bytecode"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://vineflower.org/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/Vineflower/vineflower"
+   },
+   {
+    "label": "Output comparison",
+    "url": "https://vineflower.org/output-comparison/"
+   }
+  ]
+ }
+}

@@ -1,0 +1,90 @@
+{
+ "name": "snort",
+ "desc": "Flexible Network Intrusion Detection System",
+ "homepage": "https://www.snort.org",
+ "installs_365d": 1862,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "afternoon"
+ ],
+ "why": "A classic intrusion detection engine with rule-based packet inspection, a good door into how network traffic is actually read.",
+ "brief": {
+  "what_it_is": "Snort is an open source network intrusion detection and prevention system. It inspects network packets against a set of rules that describe malicious activity, and it generates alerts when packets match. It can run inline to stop matching packets, or work as a packet sniffer or packet logger for traffic debugging. Input is live network traffic or pcap files (the README runs it on a.pcap); output is alerts and logs. The Homebrew formula also installs snort2lua, which converts Snort 2.X configs and rules to the new format, plus show_flows, u2boat, u2spewfoo, and appid_detector_builder.sh.",
+  "why_it_exists": "The homepage describes Snort as the foremost open source intrusion prevention system, meant to be downloaded and configured for personal and business use alike. The README frames Snort 3 as the next generation Snort IPS, with new features and all Snort 2.X features and bug fixes.",
+  "how_it_works": "Rules define malicious network activity, and Snort matches captured packets against them to raise alerts. Rules come in a Community Ruleset, freely available and QAed by Cisco Talos, and a Snort Subscriber Ruleset, developed and approved by Cisco Talos and delivered in real time to subscribers. The Snort 3 config is a Lua file (snort.lua), and the README says the rules are pulled in automatically once an Oinkcode is entered.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/snort3/snort3.git",
+    "context": "Gets the Snort 3 source from GitHub (also shown on the snort.org Get Started page)."
+   },
+   {
+    "cmd": "./configure_cmake.sh --prefix=$my_path",
+    "context": "Configures a cmake build into a new build subdirectory, with the install prefix set to $my_path."
+   },
+   {
+    "cmd": "make -j $(nproc) install",
+    "context": "Run from the build directory; compiles in parallel and installs Snort under $my_path."
+   },
+   {
+    "cmd": "src/snort -V",
+    "context": "README note: if this runs, the build succeeded."
+   },
+   {
+    "cmd": "$my_path/bin/snort --help",
+    "context": "Lists command-line help for the installed binary."
+   },
+   {
+    "cmd": "$my_path/bin/snort -r a.pcap",
+    "context": "Reads and examines a pcap file; replace a.pcap with your own capture."
+   },
+   {
+    "cmd": "$my_path/bin/snort -c $my_path/etc/snort/snort.lua -R $my_path/etc/snort/sample.rules -r a.pcap -A alert_test -n 100000",
+    "context": "IDS mode example: loads the config and rules, runs over a pcap, and writes alerts with the alert_test output. The README splits this across two lines with a backslash; joined here."
+   },
+   {
+    "cmd": "$my_path/bin/snort -c $my_path/etc/snort/snort.lua -R $my_path/etc/snort/sample.rules -r a.pcap -A alert_test -n 100000 --lua \"suppress = { { gid = 1, sid = 2123 } }\"",
+    "context": "Same run with an inline Lua override that suppresses rule 1:2123, instead of editing the conf."
+   },
+   {
+    "cmd": "CC=clang CXX=clang++ ./configure_cmake.sh --enable-fuzz-sanitizer --enable-fuzzers --enable-address-sanitizer",
+    "context": "Configures a fuzzing build with Clang and AddressSanitizer; the README says building fuzzers requires Clang."
+   },
+   {
+    "cmd": "./fuzz/file_olefile_fuzz ./file_olefile_fuzz_corpus",
+    "context": "Runs one libFuzzer target against a corpus directory; press Ctrl+C to stop."
+   }
+  ],
+  "install_notes": "Dependencies per the README: CMake, DAQ (github.com/snort3/libdaq) for packet IO, dnet, flex 2.6.0 or newer, g++ 7 or newer or another C++17 compiler, hwloc, LuaJIT, OpenSSL, libpcap, PCRE2, pkg-config, and zlib. Optional extras are in a separate snort3_extra repo. Config: set any needed variables at the top of snort.lua and snort_defaults.lua before using Talos rules or configs. For rules, sign up on snort.org for an Oinkcode, which pulls the rules into your instance; the Registered ruleset is free, and the Subscriber ruleset is paid. From the Homebrew caveats (not the README): on macOS, Snort needs read permission on the BPF devices, set with sudo chmod o+r /dev/bpf*, or with a startup item that does this at boot.",
+  "standout": "Snort 3 is configured with a scriptable Lua file, supports multiple packet threads, autodetects services for portless configuration, and has pluggable components. The README also includes a libFuzzer fuzzing setup with coverage reports, which is less common for a long-running IDS.",
+  "status": "unknown. I found no release date or last-commit date in the pages I read. The README still points to the 3.0.0 tarball snort-3.0.0-a3 and says 'Version = 3.0.0 (Build 250)', so parts of it look dated. The snort.org homepage is active: it says 'Snort 3 is here!', lists Snort 3.1.0.0 setup guides, and shows a 2026 copyright.",
+  "caveats": "Windows support is listed only as a roadmap item, and proxy mode and hardware offload are also roadmap. Rule syntax changed from Snort 2: content sub-options need comma separation, buffer selectors must come before content, and pcre buffer selectors were removed. The most current rules need a paid Subscriber ruleset. Build needs a C++17 compiler and several libraries, and fuzzing needs Clang. The README says the how-and-why documentation is thin, and the manual is the main reference. I did not check the license terms beyond the homepage link to the Snort License, so I cannot say more about licensing.",
+  "quotes": [
+   "Snort 3 is the next generation Snort IPS (Intrusion Prevention System).",
+   "Protect your network with the world's most powerful Open Source detection software.",
+   "We hope you are as excited about Snort++ as we are."
+  ],
+  "links": [
+   {
+    "label": "Snort homepage",
+    "url": "https://www.snort.org"
+   },
+   {
+    "label": "Snort 3 source and README (GitHub)",
+    "url": "https://github.com/snort3/snort3"
+   },
+   {
+    "label": "Snort 3 releases (GitHub)",
+    "url": "https://github.com/snort3/snort3/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://www.snort.org: worked; marketing and documentation index page, no install steps.",
+   "https://github.com/snort3/snort3: worked; returned the README, which covers dependencies, build, run, fuzzing, and docs. Not followed further; the README was sufficient."
+  ]
+ }
+}

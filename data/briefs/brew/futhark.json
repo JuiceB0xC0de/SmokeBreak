@@ -1,0 +1,88 @@
+{
+ "name": "futhark",
+ "desc": "Data-parallel functional programming language",
+ "homepage": "https://futhark-lang.org/",
+ "installs_365d": 2309,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language",
+  "library"
+ ],
+ "why": "A data-parallel functional language compiling to GPU code, an unusual language with real depth and little mainstream awareness.",
+ "brief": {
+  "what_it_is": "Futhark is a small, statically typed, purely functional array language in the ML family, built for data-parallel code. You write array functions in Futhark, and its ahead-of-time optimising compiler turns them into GPU code (via CUDA, HIP, or OpenCL) or multi-threaded CPU code. The homepage's example is a one-line average over an array of 64-bit floats: def average (xs: []f64) = reduce (+) 0 xs / f64.i64 (length xs). The compiler output can be a Python module that drives PyOpenCL, or plain C that any language with a basic FFI can call. It is developed at DIKU, the University of Copenhagen.",
+  "why_it_exists": "The homepage pitches it as \"nicer than writing CUDA or OpenCL by hand\". The stated intent is to use it only for small, compute-intensive parts of a larger application, not to replace general-purpose languages.",
+  "how_it_works": "The compiler is described as heavily optimising and ahead-of-time, emitting CUDA, HIP, OpenCL, or multi-threaded CPU code, or C and Python modules. The language supports nested data-parallelism and automatic differentiation, and offers imperative-style in-place array updates while keeping purity through alias analysis and consumption effects.",
+  "commands_seen": [
+   {
+    "cmd": "brew install futhark",
+    "context": "Installs the latest release on macOS or Linux via Homebrew (the docs' recommended route on Linux and macOS)."
+   },
+   {
+    "cmd": "brew install --HEAD futhark",
+    "context": "Installs the unreleased development version on macOS; the docs say it compiles from source and takes 20-30 minutes."
+   },
+   {
+    "cmd": "sudo apt install libtinfo-dev libgmp-dev zlib1g-dev",
+    "context": "Debian/Ubuntu packages needed to build from source on Linux and macOS (gmp, tinfo, zlib)."
+   },
+   {
+    "cmd": "git clone https://github.com/diku-dk/futhark.git",
+    "context": "Source install step: clones the repository before building."
+   },
+   {
+    "cmd": "cd futhark",
+    "context": "Source install step: enters the cloned directory."
+   },
+   {
+    "cmd": "make configure",
+    "context": "Source install step: downloads metadata about Futhark's dependencies."
+   },
+   {
+    "cmd": "make build",
+    "context": "Source install step: builds the compiler and its dependencies; the docs say this needs at least 8GiB of memory."
+   },
+   {
+    "cmd": "make install",
+    "context": "Source install step: copies the binaries to $HOME/.local/bin (override with PREFIX)."
+   },
+   {
+    "cmd": "nix-shell -p opencl-headers -p ocl-icd",
+    "context": "NixOS/Nix example for putting OpenCL headers and loader into the environment when using the OpenCL backend."
+   }
+  ],
+  "install_notes": "Easiest route is Homebrew (brew install futhark), also in Nixpkgs and the Arch AUR. Building from source needs GHC 9.0 or later (via ghcup or a package manager) plus cabal, and about 8GiB of RAM for make build. The Linux binaries are statically linked. Running OpenCL or CUDA output needs those libraries and GPU drivers; for OpenCL you need both the OpenCL host library and a vendor ICD. Precompiled nightly tarballs exist for Linux x86_64, macOS ARM64, and Windows x86_64, and you still need your own C compiler. On Windows, the docs suggest WSL, or w64devkit for the C compiler, and HIP requires the ROCm/HIP SDK plus three environment variables (CPATH, LIBRARY_PATH, PATH).",
+  "standout": "It is a niche, research-grade language that compiles high-level ML-style array code to several GPU backends and to plain C or Python modules, with automatic differentiation and purity kept intact through alias analysis. The docs also present it as production-ready despite still being a research project.",
+  "status": "maintained. The homepage says it is \"production-ready\" and actively seeking applications. The docs being read are for version 0.29.0 with copyright dates 2013-2025, and a Windows/HIP note was written in Jan 2025. There is a CI badge, a Zenodo DOI, and daily nightly snapshots. I did not find an exact last-release or last-commit date.",
+  "caveats": "Windows is only partially supported, and the multicore backend does not work there. Linux binary tarballs are only provided for x86_64. Building from source needs a lot of memory and time, and the macOS HEAD build takes 20-30 minutes. On macOS, the OpenCL CPU device is not fully functional and Futhark does not pick it by default. The nightly snapshots are unvetted and track Git HEAD. The homepage says the project is an ongoing research project and that Futhark is not designed for graphics programming. It is meant only for small compute-heavy parts of an application. Running compiled output also needs GPU drivers or OpenCL/CUDA libraries that are installed separately. The README gives no licence information, so I could not confirm the licence.",
+  "quotes": [
+   "Because it's nicer than writing CUDA or OpenCL by hand!",
+   "Futhark is a small programming language designed to be compiled to efficient parallel code.",
+   "Futhark is not intended to replace existing general-purpose languages.",
+   "While the Futhark language and compiler is an ongoing research project, it is quite usable for real programming, and can compile nontrivial programs which then run on real machines at high speed."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://futhark-lang.org/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/diku-dk/futhark"
+   },
+   {
+    "label": "User's guide (Read the Docs)",
+    "url": "http://futhark.readthedocs.io"
+   }
+  ],
+  "fetch_log": [
+   "https://futhark-lang.org/ - worked; homepage text read, with overview, examples, and links to docs.",
+   "https://github.com/diku-dk/futhark - worked; README returned. It links to the examples, installation, user's guide, prelude docs, and libraries, and has no command lines.",
+   "http://futhark.readthedocs.io/en/latest/installation.html - worked; Futhark 0.29.0 installation page, which supplied the install commands."
+  ]
+ }
+}

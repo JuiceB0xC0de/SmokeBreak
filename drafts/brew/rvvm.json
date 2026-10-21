@@ -1,0 +1,146 @@
+{
+ "name": "rvvm",
+ "desc": "RISC-V Virtual Machine",
+ "homepage": "https://github.com/LekKit/RVVM",
+ "installs_365d": 122,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "simulation",
+  "afternoon",
+  "reverse-engineering"
+ ],
+ "why": "A RISC-V virtual machine that can boot real operating systems, a good way to watch a foreign architecture execute.",
+ "brief": {
+  "what_it_is": "RVVM is a virtual machine and emulator for RISC-V guest systems. You give it a RISC-V firmware image (for example OpenSBI plus U-Boot, bundled as fw_payload.bin), optionally a disk image, and memory, core, and display settings on the command line. It then boots the guest OS in a window with a framebuffer display, UART terminal, and keyboard and mouse input. The README also describes a userland emulation mode, still marked WIP, for running RISC-V applications on a foreign-architecture host without a guest OS.",
+  "why_it_exists": "The README frames RVVM as an emulator that emphasizes performance, security, lean code and portability, and says it already runs many guest operating systems, including Linux, Haiku, FreeBSD and OpenBSD. It also aims to run RISC-V applications on a foreign-arch host without full OS guest and isolation.",
+  "how_it_works": "The README says the CPU runs through a tracing JIT with x86_64, ARM64 and RISC-V backends, and claims this is faster than QEMU TCG. It also lists an interpreter for the RV64IMAFDC instruction set in its contributor notes, and describes a librvvm library API that the rvvm binary builds on. The README does not explain the JIT or the kernel-level isolation mechanism in more detail.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/LekKit/RVVM",
+    "context": "Clones the source repository before building with make or CMake."
+   },
+   {
+    "cmd": "cd RVVM",
+    "context": "Enters the cloned source directory."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds RVVM with GNU Make, the recommended method in the README."
+   },
+   {
+    "cmd": "cd release.linux.x86_64",
+    "context": "Changes into the Make output directory for a Linux x86_64 build."
+   },
+   {
+    "cmd": "./rvvm_x86_64 -h",
+    "context": "Runs the freshly built binary with -h to print help."
+   },
+   {
+    "cmd": "cmake -S. -Bbuild",
+    "context": "Configures the alternative CMake build in a build directory."
+   },
+   {
+    "cmd": "cmake --build build --target all",
+    "context": "Compiles the CMake build."
+   },
+   {
+    "cmd": "cd build",
+    "context": "Enters the CMake build directory."
+   },
+   {
+    "cmd": "./rvvm -h",
+    "context": "Runs the CMake-built binary with -h to print help."
+   },
+   {
+    "cmd": "rvvm fw_payload.bin -i drive.img -m 2G -smp 2 -res 1280x720 -portfwd tcp/127.0.0.1:2022=22",
+    "context": "Example run: two-core VM with 2 GiB RAM and a 1280x720 display, booting OpenSBI and U-Boot firmware with an EFI guest from drive.img, and forwarding host port 2022 to guest SSH port 22."
+   }
+  ],
+  "install_notes": "The README gives no brew instructions. Install options listed are: nightly build artifacts via nightly.link, an Arch Linux AUR package named rvvm-git, or building from source with GNU Make (recommended) or CMake, which the README says is extremely portable. Cross-compilation and advanced builds are covered on a wiki page. To actually run a guest you need your own firmware image (OpenSBI and U-Boot in the example) and a guest disk image; the wiki covers recommended firmware and images. Memory defaults to 256M, the machine is 64-bit by default (-rv32 switches to 32-bit), and it is single-core unless -smp is given.",
+  "standout": "It is a RISC-V emulator with a tracing JIT that the authors claim beats QEMU TCG, and it aims for kernel-level isolation of the guest. It also ships a librvvm library under MPL 2.0 for embedding and for writing new devices, separate from the GPL 3.0 rvvm front end.",
+  "status": "Looks active but the README gives no release date or commit date. The version badge reads 0.7-git, the build status badge points at the staging branch, and the contributor table and roadmap are current, so the evidence leans toward maintained. I did not check the commit history, so treat this as unknown-leaning-active.",
+  "caveats": "Userland emulation and shadow pagetable acceleration are both marked WIP. The TODO list includes Svpbmt and Svnapot, a sparse image format, suspend and migration, USB XHCI, sound, a FPU JIT, vector extensions and virtio devices. KVM hypervisor support is an open question in the TODO. VFIO PCIe passthrough needs suitable hardware. The rvvm and rvvm-user binaries are GPL 3.0, while librvvm is MPL 2.0. The RISC-V logo carries a trademark notice and a CC BY-NC font note. The README says it aims for full spec compliance and self-describes it as fully compliant, which is the author's claim rather than something I verified.",
+  "quotes": [
+   "RVVM is a virtual machine / emulator for RISC-V guests, which emphasizes on performance, security, lean code and portability.",
+   "Tracing JIT with x86_64, ARM64, RISC-V backends - Faster than QEMU TCG",
+   "Kernel-level isolation to prevent and contain vulnerability exploitation"
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repository",
+    "url": "https://github.com/LekKit/RVVM"
+   },
+   {
+    "label": "Wiki (features, building, running)",
+    "url": "https://github.com/LekKit/RVVM/wiki"
+   },
+   {
+    "label": "WASM demo",
+    "url": "https://lekkit.github.io/test/index.html"
+   },
+   {
+    "label": "Nightly build artifacts",
+    "url": "https://nightly.link/LekKit/RVVM/workflows/build/staging"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/LekKit/RVVM (homepage, GitHub README): fetched OK. No further links were followed; the README was complete enough to write the brief."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "This obscure emulator boots full RISC-V systems and uses a tracing JIT, offering a hands-on way to explore an architecture beyond generic VM plumbing."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "RVVM",
+  "tldr": "A RISC-V emulator with a tracing JIT that boots real operating systems like Linux, Haiku and the BSDs in a window, from one small binary.",
+  "deeper_look": "RVVM emulates a RISC-V computer. You hand it a firmware image (the README's example uses OpenSBI plus U-Boot as `fw_payload.bin`), optionally a disk image, and some settings for memory, cores and display. It then boots the guest in a window with a framebuffer, a UART terminal, and keyboard and mouse input. The README says guests already include Linux, Haiku, FreeBSD and OpenBSD.\n\nThe project describes itself as emphasizing \"performance, security, lean code and portability\". The CPU runs through a tracing JIT with x86_64, ARM64 and RISC-V backends, which the README claims is faster than QEMU TCG. The README also lists an interpreter for RV64IMAFDC, and a `librvvm` library that the `rvvm` binary builds on. That library is MPL 2.0 and meant for embedding and writing new devices, while the front end is GPL 3.0.\n\nThe idea underneath is that an instruction set is just a contract, and an emulator is a small program that honors it. RISC-V is open and compact, so it is a good place to watch a foreign architecture boot: firmware hands off to a bootloader, which hands off to a kernel, all running on a machine that does not physically exist. There is also a work-in-progress userland mode for running single RISC-V programs on a different host architecture, with no guest OS.",
+  "install": "brew install rvvm\n# Needs sdl2-compat (pulled in by brew). To boot anything you must supply your own RISC-V firmware image (e.g. OpenSBI + U-Boot) and a guest disk image; the project wiki lists recommended ones.",
+  "try_this": [
+   {
+    "cmd": "rvvm -h",
+    "what_happens": "Prints the help text listing the options for memory, cores, display, disks and networking."
+   },
+   {
+    "cmd": "rvvm fw_payload.bin -i drive.img -m 2G -smp 2 -res 1280x720 -portfwd tcp/127.0.0.1:2022=22",
+    "what_happens": "Boots a two-core, 2 GiB guest from firmware and a disk image in a 1280x720 window, forwarding host port 2022 to the guest's SSH port."
+   }
+  ],
+  "whats_unique": "It aims to be a lean, portable RISC-V emulator whose tracing JIT the authors say beats QEMU TCG, and it ships an embeddable library for writing new devices.",
+  "caveats": "Userland emulation and shadow pagetable acceleration are marked WIP, sound, USB XHCI and virtio devices are on the TODO list, and you must find your own firmware and guest images.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "risc-v",
+   "emulator",
+   "virtual-machine",
+   "jit",
+   "operating-systems"
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repository",
+    "url": "https://github.com/LekKit/RVVM"
+   },
+   {
+    "label": "Wiki (features, building, running)",
+    "url": "https://github.com/LekKit/RVVM/wiki"
+   },
+   {
+    "label": "WASM demo",
+    "url": "https://lekkit.github.io/test/index.html"
+   },
+   {
+    "label": "Nightly build artifacts",
+    "url": "https://nightly.link/LekKit/RVVM/workflows/build/staging"
+   }
+  ]
+ }
+}

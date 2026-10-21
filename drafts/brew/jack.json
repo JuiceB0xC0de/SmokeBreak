@@ -1,0 +1,94 @@
+{
+ "name": "jack",
+ "desc": "Audio Connection Kit",
+ "homepage": "https://jackaudio.org/",
+ "installs_365d": 5963,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "afternoon",
+  "audio"
+ ],
+ "why": "A low-latency audio connection kit that lets programs patch audio between each other, a door into live audio routing.",
+ "brief": {
+  "what_it_is": "JACK (JACK Audio Connection Kit) is a sound server API plus a pair of daemon implementations that provide real-time, low-latency connections for audio and MIDI data between applications. Programs connect to it as clients, and the server moves audio and MIDI between them so one program's output can feed another program's input. The homepage describes it as a professional tool for routing audio between software and sharing devices, with a cross-platform API for developers. The executable named in the metadata is jackd.",
+  "why_it_exists": "The homepage frames the problem as wanting to send one program's audio output to another, or to several others, and then record the result in the first program. It also pitches JACK to developers who need a cross-platform API for device sharing and inter-application audio routing that is easy to learn and use.",
+  "how_it_works": "JACK runs as a server daemon that drives a processing graph of clients, each of which runs once per audio cycle. The JACK2 README (jackdmp, a C++ implementation for multiprocessor machines) says it uses a data-flow activation model that lets clients run simultaneously when they are independent in the graph, and lock-free graph access so connections can change without interrupting the audio stream. The server can run in synchronous mode, waiting for all clients each cycle, or asynchronous mode, reusing the previous cycle's output for clients that miss a deadline.",
+  "commands_seen": [],
+  "install_notes": "The README and homepage give no install steps, no runtime or hardware requirements, and no first-run configuration beyond the brew install already named in the metadata. The README does mention that JACK2 is a separate implementation (jackdmp) from the original JACK1 server, which may matter when choosing a build, but it does not say which one the Homebrew formula installs.",
+  "standout": "Unlike a plain audio router, JACK is a real-time server that treats audio and MIDI as one routing graph that any program can join. JACK2 adds a lock-free graph and an asynchronous mode that reuses the previous cycle's output, so a late client yields a partial result rather than a dropout for everyone.",
+  "status": "unknown. The fetched pages show no release date, last-commit date, or version. The JACK2 README carries a Travis CI badge pointing to travis-ci.org, which is a legacy hosting address, so it may be stale, but I could not confirm that from the pages I read.",
+  "caveats": "The README describes JACK2 as aimed at multiprocessor machines and does not say which platforms it supports. The fetched pages give no usage examples, so I could not show how to start jackd or connect a client. Install and configuration details were not in the pages I read. The Travis CI badge points to a legacy service, so the project's current CI status is unclear.",
+  "quotes": [
+   "JACK Audio Connection Kit (or JACK) is a professional sound server API and pair of daemon implementations to provide real-time, low-latency connections for both audio and MIDI data between applications.",
+   "Have you ever wanted to take the audio output of one piece of software and send it to another?",
+   "JACK2 aka jackdmp is a C++ version of the JACK low-latency audio server for multi-processor machines."
+  ],
+  "links": [
+   {
+    "label": "JACK homepage",
+    "url": "https://jackaudio.org/"
+   },
+   {
+    "label": "JACK2 source repository (GitHub)",
+    "url": "https://github.com/jackaudio/jack2"
+   },
+   {
+    "label": "JACK wiki",
+    "url": "https://github.com/jackaudio/jackaudio.github.com/wiki"
+   }
+  ],
+  "fetch_log": [
+   "https://jackaudio.org/ - worked; returned the homepage text (project description, no commands or install steps)",
+   "https://github.com/jackaudio/jack2 - worked; returned the JACK2 README (architecture notes, no commands); this URL was my guess at the repo the homepage's 'View on GitHub' link points to, not a link I read on the page",
+   "Wiki (https://github.com/jackaudio/jackaudio.github.com/wiki) - not fetched; linked from the JACK2 README"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "JACK turns audio and MIDI apps into a live, patchable real-time processing graph\u2014a useful, unusual idea beyond ordinary audio routing."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "JACK",
+  "tldr": "A real-time audio server that lets any program's sound output feed another program's input, treating audio and MIDI as one patchable graph.",
+  "deeper_look": "JACK (JACK Audio Connection Kit) is a sound server API with a pair of daemon implementations. Programs connect to it as clients, and the server moves audio and MIDI between them with low latency. The homepage opens with a question: \"Have you ever wanted to take the audio output of one piece of software and send it to another?\" That is the whole pitch. One program's output can feed another program's input, or several, and the result can be recorded back in the first program.\n\nUnderneath is a processing graph. The server drives it, and each client runs once per audio cycle. The JACK2 README (jackdmp, a C++ implementation aimed at multiprocessor machines) describes a data-flow activation model. Clients that don't depend on each other in the graph can run at the same time. The graph is accessed without locks, so connections can change while audio keeps playing.\n\nThe server can run in synchronous mode, waiting for every client each cycle. In asynchronous mode it reuses the previous cycle's output for any client that misses its deadline. A late client then gives a partial result rather than a dropout for everyone.\n\nThe idea it opens up is modular audio: small programs that each do one thing with sound, wired together like a patch bay. For developers, JACK offers a cross-platform API for device sharing and routing between applications, which the homepage calls easy to learn and use.",
+  "install": "brew install jack",
+  "try_this": [
+   {
+    "cmd": "jackd --help",
+    "what_happens": "Prints the server's options, including how to choose a driver and set up the audio device it will run on."
+   }
+  ],
+  "whats_unique": "JACK treats audio and MIDI as one real-time routing graph that any program can join. With JACK2, a late client degrades gracefully instead of stalling the whole chain.",
+  "caveats": "The pages read give no usage examples, no release dates, and no word on which JACK implementation the Homebrew formula installs, and the README's Travis CI badge points to a legacy service.",
+  "commitment": "afternoon",
+  "category": "sound-and-live-coding",
+  "tags": [
+   "afternoon",
+   "audio",
+   "midi",
+   "routing",
+   "real-time",
+   "daemon"
+  ],
+  "links": [
+   {
+    "label": "JACK homepage",
+    "url": "https://jackaudio.org/"
+   },
+   {
+    "label": "JACK2 source repository (GitHub)",
+    "url": "https://github.com/jackaudio/jack2"
+   },
+   {
+    "label": "JACK wiki",
+    "url": "https://github.com/jackaudio/jackaudio.github.com/wiki"
+   }
+  ]
+ }
+}

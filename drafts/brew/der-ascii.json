@@ -1,0 +1,105 @@
+{
+ "name": "der-ascii",
+ "desc": "Reversible DER and BER pretty-printer",
+ "homepage": "https://github.com/google/der-ascii",
+ "installs_365d": 144,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "protocol"
+ ],
+ "why": "A reversible DER and BER pretty-printer that lets you edit ASN.1 certificate and X.509 structures as text and round-trip them back to binary.",
+ "brief": {
+  "what_it_is": "DER ASCII is a small, human-editable text language for writing DER or BER encodings of ASN.1 structures, including deliberately malformed variants. It ships two command-line tools. ascii2der takes DER ASCII text and emits the binary encoding. der2ascii goes the other way, taking a binary DER or BER input and producing a DER ASCII text disassembly that can be edited and reassembled. The README also presents it as a readable view of DER structures.",
+  "why_it_exists": "The README says the tools exist to make test inputs without manually fixing up length prefixes: disassemble an existing DER or BER structure, adjust it as text, and reassemble it to binary. It also says the format is meant to emit invalid encodings as well as valid ones.",
+  "how_it_works": "ascii2der tokenizes the text and emits byte strings in sequence. Tokens cover quoted strings, UTF-16 and UTF-32 literals, hex and bit-string literals, integers, OIDs, booleans, tag expressions like [0] or [UNIVERSAL 2 PRIMITIVE], and curly-brace blocks that get length prefixes computed automatically, with options such as indefinite, long-form:N and adjust-length:N for deliberately odd lengths. der2ascii is a heuristic disassembler: it greedily parses BER elements, recurses into constructed bodies, and decodes known tags like INTEGER, OID, BOOLEAN, BIT STRING and BMPString, falling back to hex literals when parsing fails. The language spec notes that the disassembly is not unique, so the same bytes can have more than one text form.",
+  "commands_seen": [
+   {
+    "cmd": "go install github.com/google/der-ascii/cmd/...@latest",
+    "context": "Install command from the README that builds and installs both ascii2der and der2ascii from the Go module."
+   }
+  ],
+  "install_notes": "The README's only install instruction is the go install line above, which implies a Go toolchain is needed. No accounts, hardware, or configuration are mentioned. The README does not describe a first-run step. Homebrew installs the same two executables (ascii2der, der2ascii).",
+  "standout": "It is reversible by design: the text form keeps every encoding variation (indefinite lengths, non-minimal lengths, constructed BER strings), and it can deliberately encode broken input such as wrong length prefixes or wrong constructed bits. Most ASN.1 printers normalize, which is the opposite goal. The disassembler also has a special case for X.509 mistakenly using BIT STRING for SubjectPublicKeyInfo and signatures.",
+  "status": "unknown. The README and language spec show no release date, version, or changelog, and I did not check the commit history or releases page. The README has a backwards-compatibility section that describes intended stability of the CLI and language, but nothing about current maintenance.",
+  "caveats": "The README says der2ascii is a heuristic, so its output may change between versions, including formatting and OID recognition. Malformed input may disassemble to a raw hex literal that is hard to edit. The README says the project is not an official Google project. The README does not state a license in the parts I read. The scout note's mention of certificates and X.509 comes from the disassembler notes in the spec rather than from a dedicated X.509 section in the README.",
+  "quotes": [
+   "DER ASCII is a small human-editable language to emit DER or BER encodings of ASN.1 structures and malformed variants of them.",
+   "This avoids having to manually fix up all the length prefixes. As a bonus, it acts as a human-readable view for DER structures.",
+   "This is not an official Google project."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/google/der-ascii"
+   },
+   {
+    "label": "Language specification (language.txt)",
+    "url": "https://github.com/google/der-ascii/blob/main/language.txt"
+   },
+   {
+    "label": "Samples directory",
+    "url": "https://github.com/google/der-ascii/tree/main/samples"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/google/der-ascii: fetched OK, README returned (intro, install line, backwards-compatibility section, disclaimer).",
+   "https://github.com/google/der-ascii/blob/main/language.txt: fetched OK, but the page came back as GitHub HTML with line numbers. The spec text was readable. The samples directory was linked from the README but not fetched."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A reversible text language for inspecting and editing ASN.1 encodings\u2014including deliberately malformed BER/DER\u2014makes binary structures unusually approachable and useful for testing."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "der-ascii",
+  "tldr": "Turns binary DER and BER into editable text and back again, so you can hand-craft ASN.1 structures, including deliberately broken ones, without counting bytes.",
+  "deeper_look": "DER ASCII is a small text language for writing DER or BER encodings of ASN.1 structures. Two tools ship with it. `der2ascii` disassembles a binary file into text. `ascii2der` assembles text back into bytes. Curly-brace blocks get their length prefixes computed automatically, so you edit the content and the tool fixes the lengths.\n\nThe project's stated reason is test inputs: disassemble an existing structure, change it as text, reassemble it. In its own words, \"This avoids having to manually fix up all the length prefixes. As a bonus, it acts as a human-readable view for DER structures.\" The language is also built to emit invalid encodings. Options such as `indefinite`, `long-form:N` and `adjust-length:N` let you write wrong or odd lengths on purpose.\n\nThe idea underneath is that ASN.1 is the binary format behind certificates and many other protocol structures, and most printers show a cleaned-up view of it. This one keeps every encoding variation, so the text round-trips to the same bytes. That makes it a way to see how tag-length-value encoding works, and to see what a parser does when the bytes lie.\n\nThe disassembler is a heuristic. It parses BER elements greedily, recurses into constructed bodies, decodes known types like INTEGER, OID, BOOLEAN, BIT STRING and BMPString, and falls back to hex literals when parsing fails. The spec notes that disassembly is not unique, so the same bytes can have more than one text form.",
+  "install": "brew install der-ascii\n# Upstream's own route, which needs a Go toolchain:\n# go install github.com/google/der-ascii/cmd/...@latest",
+  "try_this": [
+   {
+    "cmd": "der2ascii --help",
+    "what_happens": "Lists the options for turning a binary DER or BER file into DER ASCII text."
+   },
+   {
+    "cmd": "ascii2der --help",
+    "what_happens": "Lists the options for assembling DER ASCII text back into binary DER."
+   }
+  ],
+  "whats_unique": "Most ASN.1 printers normalize what they show. This one is reversible by design and can deliberately encode broken input, such as wrong length prefixes or wrong constructed bits.",
+  "caveats": "The README says der2ascii is a heuristic whose output, including formatting and OID recognition, may change between versions, and that this is not an official Google project; maintenance status was not checked.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "asn1",
+   "der",
+   "ber",
+   "reverse-engineering",
+   "protocol",
+   "x509",
+   "go"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/google/der-ascii"
+   },
+   {
+    "label": "Language specification (language.txt)",
+    "url": "https://github.com/google/der-ascii/blob/main/language.txt"
+   },
+   {
+    "label": "Samples directory",
+    "url": "https://github.com/google/der-ascii/tree/main/samples"
+   }
+  ]
+ }
+}

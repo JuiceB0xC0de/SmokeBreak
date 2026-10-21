@@ -1,0 +1,81 @@
+{
+ "name": "lziprecover",
+ "desc": "Data recovery tool and decompressor for files in the lzip compressed data format",
+ "homepage": "https://www.nongnu.org/lzip/lziprecover.html",
+ "installs_365d": 90,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering"
+ ],
+ "why": "Recovers damaged lzip archives by exploiting redundancy in the format, a fine door into how compressed files fail.",
+ "brief": {
+  "what_it_is": "Lziprecover is a command-line tool that decompresses and tests files in the lzip (.lz) compressed format, and tries to recover data from damaged ones. It takes damaged or intact .lz files, plus optional reference copies or FEC files, and writes recovered or decompressed output, or .fec files. It can also append a recovery record to a tar.lz archive, and it can remove damaged members from multimember files. Its FEC files can protect any kind of file, not only lzip files, and they are offered as an alternative to par2.",
+  "why_it_exists": "The author presents it as a last line of defense for when backups are also damaged, and argues that lzip's format makes automatic repair practical in a way it is not for gzip. The page also says compressed copies can be more useful redundancy than uncompressed ones, because lziprecover can combine the good parts of several damaged copies.",
+  "how_it_works": "Lzip's LZMA stream treats any match distance larger than the dictionary size as a forbidden symbol, so the decoder can locate roughly where a bit flip occurred, and the CRC and sizes handle the rest. Byte-repair mode can fix up to one single-byte error per member, merge mode rebuilds a correct file from the good parts of several damaged copies, and reproduce mode regenerates a zeroed sector from a reference file using the same lzip version that made the file. FEC data uses Galois fields GF(2^8) or GF(2^16) and is applied as recovery blocks alongside the file.",
+  "commands_seen": [
+   {
+    "cmd": "tar -xf lziprecover[version].tar.gz",
+    "context": "Unpacks the source tarball from the download directory before building."
+   },
+   {
+    "cmd": "cd lziprecover[version] && ./configure && make check",
+    "context": "Configures the source, then runs the test suite. The homepage gives this as the build step."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the built program. The homepage says to run it as root."
+   },
+   {
+    "cmd": "lziprecover -cd foo.tar.lz | tar -xf -",
+    "context": "Decompresses foo.tar.lz to standard output and pipes it into tar to extract the archive."
+   },
+   {
+    "cmd": "lziprecover -cd --ignore-errors file.lz > file",
+    "context": "Manual's last-resort extraction: writes whatever is recoverable from a file too damaged to repair, possibly with errors and garbage at the end of damaged members."
+   },
+   {
+    "cmd": "lziprecover -cd -i file.lz > file",
+    "context": "Short form of the same ignore-errors extraction, described in the options section."
+   },
+   {
+    "cmd": "lziprecover -cd rec*file > recovered_data",
+    "context": "Used after --split: decompresses the rec1file, rec2file, and so on, in order, with a wildcard."
+   },
+   {
+    "cmd": "lziprecover -t",
+    "context": "Tests the integrity of a file without writing decompressed output. The manual mentions it in the split section."
+   }
+  ],
+  "install_notes": "Homepage gives a source build: unpack the tarball, run ./configure, run make check, then make install as root. Nothing is said about runtime dependencies or accounts. The reproduce mode needs the lzip executable, and by default it uses one named lzip, which must match the version that created the file.",
+  "standout": "Most compression tools fail completely on corruption, but lziprecover uses the lzip format's built-in redundancy to find and fix errors, and it can rebuild a file from several damaged copies. The author's example is a gzip archive where any damage is effectively unrecoverable, while the same damage in lzip can often be repaired automatically.",
+  "status": "Maintained. The manual is versioned 1.27-pre1 dated 30 July 2026, the homepage shows an update dated 2026-08-05, and the copyright runs to 2026. I did not check a commit history or a list of releases.",
+  "caveats": "Byte-repair handles only one single-byte error per member, and it works best when integrity is checked often enough that a second error does not develop first. Lziprecover cannot help with total device failure, and the author says it is not a replacement for backups. For damaged media, the page recommends pairing it with GNU ddrescue. Reproduce mode needs the same lzip version that created the file. Licensed under GPL v2 or later. The manual was truncated by the fetch tool at about 40,000 characters, so I did not read the later sections on examples and file names. Brew-specific notes were not present on the homepage.",
+  "quotes": [
+   "Lziprecover is not a replacement for regular backups, but a last line of defense for the case where the backups are also damaged.",
+   "Lziprecover is able to provide unique data recovery capabilities because the lzip format is extraordinarily safe.",
+   "It would be difficult to write an automatic recovery tool like lziprecover for the gzip format. And, as far as I know, it has never been written."
+  ],
+  "links": [
+   {
+    "label": "Lziprecover homepage",
+    "url": "https://www.nongnu.org/lzip/lziprecover.html"
+   },
+   {
+    "label": "Online manual",
+    "url": "https://www.nongnu.org/lzip/manual/lziprecover_manual.html"
+   },
+   {
+    "label": "Release downloads",
+    "url": "http://download.savannah.nongnu.org/releases/lzip/lziprecover/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.nongnu.org/lzip/lziprecover.html: fetched OK, homepage text read.",
+   "https://www.nongnu.org/lzip/manual/lziprecover_manual.html: fetched OK, but truncated at about 40,000 characters, so later sections were not read."
+  ]
+ }
+}

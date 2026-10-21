@@ -1,0 +1,121 @@
+{
+ "name": "oakc",
+ "desc": "Portable programming language with a compact intermediate representation",
+ "homepage": "https://github.com/adam-mcdaniel/oakc",
+ "installs_365d": 26,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language"
+ ],
+ "why": "A small portable language built around a compact intermediate representation, an unusual corner worth a look.",
+ "brief": {
+  "what_it_is": "Oak (repo name oakc) is a small programming language whose frontend is high level and Rust-inspired, and whose backend is a compact intermediate representation (IR) of only 17 instructions. The oak compiler takes .ok source files and turns them into IR, then assembles that IR for a target. The README lists C, Go, and TypeScript backends. Its one-line description is 'An infinitely more portable alternative to the C programming language.' The installed executable is `oak`, which compiles files and also has a `doc` subcommand for generating documentation from attributes in the source.",
+  "why_it_exists": "The README presents portability as the goal: 'The goal of oak is to be as high level as possible in the frontend, but as small and low level as possible in the backend.' It also says oak is 'essentially a more robust and high level version' of the author's earlier project 'free'.",
+  "how_it_works": "Every IR instruction operates on a single memory tape of double-precision floats that serves as both stack and heap. Variables get fixed offsets relative to a per-function base pointer, and the compiler rewrites variable references into those addresses. The compiler flattens struct methods into plain functions that take a pointer to the struct, then lowers expressions into IR, and a backend implements the IR's instructions through a `Target` trait so new languages can be targeted.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/adam-mcdaniel/oakc",
+    "context": "Clones the repository to get the development build."
+   },
+   {
+    "cmd": "cd oakc",
+    "context": "Enters the cloned repository before installing from source."
+   },
+   {
+    "cmd": "cargo install -f --path .",
+    "context": "Builds and installs the development version from the local checkout."
+   },
+   {
+    "cmd": "cargo install -f oakc",
+    "context": "Installs the current release from crates.io; the README says the same command also updates oakc."
+   },
+   {
+    "cmd": "oak c examples/hello_world.ok -c",
+    "context": "Compiles the hello_world example with the oak binary; the README shows the output as main.exe."
+   }
+  ],
+  "install_notes": "Installation is via Cargo (Rust toolchain), not Homebrew-specific: either clone the repo and run `cargo install -f --path .` for the development build, or run `cargo install -f oakc` for the crates.io release. The README lists runtime dependencies per backend: any GCC supporting C99 for the C backend, Golang 1.14 compiler for the Go backend, and TypeScript 3.9 compiler for the TypeScript backend. No accounts or hardware are needed. The README does not describe first-run configuration beyond compiling an example file.",
+  "standout": "The backend is claimed to fit in under 100 lines of C, and the entire IR is 17 instructions, which the author compares to brainfuck. Portability comes from keeping the target surface tiny, and adding a target means implementing those 17 instructions via a Rust trait. The source syntax is Rust-like, and the compiler also has a built-in documentation subcommand that reads #[doc(...)] attributes.",
+  "status": "unknown. The README gives no release dates, changelog, or commit history, and I did not fetch the releases or commit pages. It does point to a crates.io release (oakc) and to a development build from the repo, so it has at least been published. The author's bio in the README reads as an early-career developer's personal page.",
+  "caveats": "The README is the only source and gives no tests, license, or stability statement. The 100-line backend claim and the portability claims are the author's own framing. The compile-process section uses illustrative pseudocode (for example the Date example and the `-> 3` size annotations), so it may not match current syntax exactly. The README includes a funding link to Buy Me a Coffee. The dependency list means targeting C, Go, or TypeScript requires those toolchains installed separately. The IR table documents 17 instructions, which matches the count in the text.",
+  "quotes": [
+   "An infinitely more portable alternative to the C programming language.",
+   "The key to oak's insane portability is its incredibly compact backend implementation. The code for Oak's backend can be expressed in under 100 lines of C.",
+   "Oak's IR is only composed of 17 different instructions. That's on par with brainfuck!",
+   "The goal of oak is to be as high level as possible in the frontend, but as small and low level as possible in the backend."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/adam-mcdaniel/oakc"
+   },
+   {
+    "label": "crates.io package",
+    "url": "https://crates.io/crates/oakc"
+   },
+   {
+    "label": "Predecessor project 'free'",
+    "url": "https://github.com/adam-mcdaniel/free"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/adam-mcdaniel/oakc - fetched OK; returned the README (repo has no separate docs site linked; the README is the only page read)."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Its Rust-like language lowers to a 17-instruction IR over one shared memory tape, making the unusual portability strategy worth exploring despite its unclear maturity."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "oakc",
+  "tldr": "Oak is a small Rust-flavoured language that compiles down to a 17-instruction intermediate representation, so porting it to a new target means implementing a handful of operations.",
+  "deeper_look": "Oak (the repo is called oakc) has a high-level frontend with Rust-like syntax and a deliberately tiny backend. The `oak` compiler reads `.ok` source files, lowers them into an intermediate representation of just 17 instructions, and then assembles that IR for a target. The README lists C, Go, and TypeScript backends.\n\nThe design goal is stated plainly: \"The goal of oak is to be as high level as possible in the frontend, but as small and low level as possible in the backend.\" The README also describes oak as a more robust, higher-level version of the author's earlier project, `free`.\n\nThe interesting part is the machine underneath. Every IR instruction works on a single memory tape of double-precision floats that serves as both stack and heap. Variables become fixed offsets from a per-function base pointer. Struct methods are flattened into plain functions that take a pointer to the struct. A backend implements the instructions through a `Target` trait in Rust. The README claims the C backend fits in under 100 lines and compares the instruction count to brainfuck: \"That's on par with brainfuck!\"\n\nIt is a good door into how compilers separate a friendly frontend from a minimal target, and why a small IR makes a language easy to carry to new places. The compiler also has a `doc` subcommand that generates documentation from `#[doc(...)]` attributes.",
+  "install": "brew install oakc\n# The README's own routes use the Rust toolchain: cargo install -f oakc\n# Targeting a backend needs that toolchain separately: a C99 GCC, Go 1.14, or TypeScript 3.9. No accounts or hardware needed.",
+  "try_this": [
+   {
+    "cmd": "oak --help",
+    "what_happens": "Lists the compiler's subcommands and options, including the documentation generator."
+   },
+   {
+    "cmd": "git clone https://github.com/adam-mcdaniel/oakc",
+    "what_happens": "Fetches the repository, which includes the examples directory used in the next step."
+   },
+   {
+    "cmd": "oak c examples/hello_world.ok -c",
+    "what_happens": "Compiles the hello world example through the C backend; the README shows the output as main.exe."
+   }
+  ],
+  "whats_unique": "The whole backend contract is 17 instructions over one float tape, so adding a target is a small job rather than a project. Few languages put their portability argument that bluntly.",
+  "caveats": "The README is the only source read, it gives no release dates or stability statement, and the portability and 100-line claims are the author's own; some of its compile-process examples are illustrative pseudocode.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "language",
+   "compiler",
+   "rust",
+   "intermediate-representation"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/adam-mcdaniel/oakc"
+   },
+   {
+    "label": "crates.io package",
+    "url": "https://crates.io/crates/oakc"
+   },
+   {
+    "label": "Predecessor project 'free'",
+    "url": "https://github.com/adam-mcdaniel/free"
+   }
+  ]
+ }
+}

@@ -1,0 +1,64 @@
+{
+ "name": "snowflake",
+ "desc": "Pluggable Transport using WebRTC, inspired by Flashproxy",
+ "homepage": "https://www.torproject.org",
+ "installs_365d": 585,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "Pluggable transport routing Tor traffic through volunteer WebRTC browsers, a fascinating censorship-circumvention protocol door.",
+ "brief": {
+  "what_it_is": "Snowflake is a pluggable transport for Tor, written in Go, that lets Tor traffic travel through volunteer-run WebRTC proxies. A blocked user's Tor client finds an available volunteer proxy through a broker, which is reached over a domain-fronted signalling channel. The client and the proxy then open a WebRTC peer connection, and the proxy relays the Tor traffic on to a Tor relay. The repository contains four programs: snowflake-broker, snowflake-client, snowflake-proxy and snowflake-server. The volunteer side can be a browser extension or a standalone proxy.",
+  "why_it_exists": "The README frames Snowflake as combining the advantages of flashproxy and meek: the convenience of meek, but able to support far more users at negligible CDN cost, and the unlimited volunteer proxies of flashproxy without manual port forwarding.",
+  "how_it_works": "Volunteers visit websites that host the snowflake proxy, as in flashproxy. Tor clients locate available browser proxies through the Broker, which is a domain-fronted signalling channel, and then establish a WebRTC peer connection with the proxy. The proxy connects to a relay and Tor traffic flows over that DataChannel. Domain fronting is only used for brief signalling and NAT piercing, not for carrying the traffic itself.",
+  "commands_seen": [
+   {
+    "cmd": "vagrant up",
+    "context": "From the Android AAR reproducible build section: creates and provisions the Vagrant VM that can be used as a development environment for the gomobile-based Android build."
+   },
+   {
+    "cmd": "vagrant ssh",
+    "context": "From the same section: logs into the Vagrant VM to use it as a development environment."
+   }
+  ],
+  "install_notes": "The README does not give client installation steps. For Tor use, you add Bridge and ClientTransportPlugin lines to your torrc, and the README points to a client README for building and running the client, which I did not fetch. Running a proxy can be done in a browser or as a standalone Go program, with setup documented on the Tor community site. Android builds use gomobile to produce shared libraries per architecture. These run in GitLab CI, or in a Vagrant VM. A Docker-based test environment called snowbox is also linked.",
+  "standout": "Volunteers can run a proxy just by leaving a browser tab open, and Snowflake disguises Tor traffic as a WebRTC video or voice call. Because domain fronting only handles signalling, it avoids the CDN cost that made meek hard to scale.",
+  "status": "unknown. The official GitLab repository returned HTTP 403, so I could not check its commit or release history. The GitHub mirror README I read (keroserene/snowflake) still has a Travis CI badge pointing to travis-ci.org, which suggests it is old. The snowflake.torproject.org site says Snowflake is 'continuously being improved' and shows a live counter of 127,599 snowflakes, so the deployed project appears active, but I could not confirm dates.",
+  "caveats": "The brew homepage (torproject.org) is the general Tor Project site, not a Snowflake page, so the Snowflake-specific information came from the README and the snowflake.torproject.org site. The README I read is from a GitHub mirror, and its Travis badge is for a CI service that has since shut down. The README's link for the v2.1 pluggable transports specification has an empty URL, and the torrc manual link points to a 2019 archive. The browser addon cannot be used to circumvent censorship; it is for helping others do so. The Android AAR build needs gomobile and either GitLab CI or Vagrant. The client and proxy setup guides were not read.",
+  "quotes": [
+   "Pluggable Transport using WebRTC, inspired by Flashproxy.",
+   "Snowflake combines the advantages of flashproxy and meek.",
+   "NATs are no longer a usability barrier - no need for manual port forwarding!"
+  ],
+  "links": [
+   {
+    "label": "Snowflake project site",
+    "url": "https://snowflake.torproject.org/"
+   },
+   {
+    "label": "Snowflake wiki",
+    "url": "https://gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/snowflake/-/wikis/home"
+   },
+   {
+    "label": "Community guide to running a Snowflake proxy",
+    "url": "https://community.torproject.org/relay/setup/snowflake/"
+   },
+   {
+    "label": "Source mirror (GitHub, keroserene/snowflake)",
+    "url": "https://github.com/keroserene/snowflake"
+   }
+  ],
+  "fetch_log": [
+   "https://www.torproject.org (worked, but it is the general Tor Project homepage and says nothing specific about Snowflake)",
+   "https://gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/snowflake (failed, HTTP 403)",
+   "https://github.com/keroserene/snowflake (worked, README returned)",
+   "https://snowflake.torproject.org/ (worked, project site)"
+  ]
+ }
+}

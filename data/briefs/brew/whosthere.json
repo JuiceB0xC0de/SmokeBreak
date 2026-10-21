@@ -1,0 +1,90 @@
+{
+ "name": "whosthere",
+ "desc": "LAN discovery tool with a modern TUI written in Go",
+ "homepage": "https://github.com/ramonvermeulen/whosthere",
+ "installs_365d": 3903,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "tui",
+  "protocol"
+ ],
+ "why": "LAN discovery TUI that surfaces ARP and mDNS chatter, a readable door into local network protocols.",
+ "brief": {
+  "what_it_is": "Whosthere is a Local Area Network discovery tool written in Go, with an interactive terminal UI. It runs mDNS and SSDP scanners concurrently, sweeps the local subnet with TCP/UDP connection attempts so the OS fills the ARP cache, then reads that cache to list devices. Each device is enriched with a manufacturer name from OUI lookups. It can run as the TUI, as a one-shot CLI scan that prints results (optionally JSON), or as a background daemon with a small HTTP API. Devices can be given aliases, stored in a local bbolt database.",
+  "why_it_exists": "The README frames it as a friendly way to answer the question every network administrator asks: \"Who's there on my network?\" It says it was created primarily for educational purposes and home network exploration.",
+  "how_it_works": "The mDNS and SSDP scanners listen for multicast service announcements. For ARP, the sweeper opens TCP/UDP connections to each address in the subnet, which triggers ARP resolution by the OS without elevated privileges, and then reads the ARP cache to find live hosts. Optional port scanning checks a configurable list of TCP ports on found devices.",
+  "commands_seen": [
+   {
+    "cmd": "brew install whosthere",
+    "context": "Homebrew install, the first option listed in the README."
+   },
+   {
+    "cmd": "go install github.com/ramonvermeulen/whosthere@latest",
+    "context": "Fallback install via the Go toolchain when no package manager entry exists."
+   },
+   {
+    "cmd": "make build",
+    "context": "Build from source after cloning the repository and cd-ing into it."
+   },
+   {
+    "cmd": "whosthere",
+    "context": "Launches the interactive TUI for discovery."
+   },
+   {
+    "cmd": "whosthere scan -t 5",
+    "context": "Runs a single scan for 5 seconds as a CLI and prints results."
+   },
+   {
+    "cmd": "whosthere scan -t 5 --json --pretty > devices.json",
+    "context": "Single scan with pretty JSON output redirected to devices.json."
+   },
+   {
+    "cmd": "whosthere daemon --port=8080",
+    "context": "Runs in the background and serves the HTTP API on port 8080."
+   },
+   {
+    "cmd": "whosthere aliases import ./aliases.yaml",
+    "context": "Bulk-imports device aliases from a YAML file into the local database."
+   },
+   {
+    "cmd": "whosthere aliases export --stdout",
+    "context": "Prints the current aliases as YAML to stdout instead of writing the default file."
+   },
+   {
+    "cmd": "whosthere --help",
+    "context": "Lists additional command line options."
+   }
+  ],
+  "install_notes": "Other install routes in the README: nix profile install nixpkgs#whosthere on NixOS, yay -S whosthere-bin on Arch Linux, or pre-built binaries from the GitHub releases page. Building from source needs git and make, with a Go toolchain implied. No elevated privileges are needed. Config is optional: YAML at --config, WHOSTHERE_CONFIG, $XDG_CONFIG_HOME/whosthere/config.yaml, or ~/.config/whosthere/config.yaml. Every key can also be set with WHOSTHERE__-prefixed environment variables. For clipboard copy (y/Y keys), install pbcopy (macOS, built in), clip.exe (Windows), or xsel/xclip (X11) or wl-copy (Wayland) on Linux and BSD.",
+  "standout": "It gets device discovery without root by making the OS populate the ARP cache through ordinary TCP/UDP connection attempts, then reading that cache, rather than sending raw ARP packets. It combines that with mDNS and SSDP in one terminal UI with regex search, theme switching, and a daemon HTTP API.",
+  "status": "unknown. The README has a release badge and a releases page, but it shows no release date, last commit date, or maintenance note, and I did not fetch the GitHub release or commit pages.",
+  "caveats": "Listed platforms are Linux, macOS and Windows. Clipboard features depend on external copy tools being installed. The port scanner should only be used on devices you have permission to scan. Scanning subnets larger than /16 sends a large amount of traffic, and the config file warns about this. If two interfaces share a subnet with all_interfaces enabled, devices can be merged because they are keyed by IP. Importing a changed aliases file overwrites aliases for every MAC in it. The README says results may not be comprehensive and that it is not a professional monitoring tool. Licence type was not visible in the README, only a badge.",
+  "quotes": [
+   "Discover, explore, and understand your LAN in an intuitive way.",
+   "Whosthere provides a friendly, intuitive way to answer the question every network administrator asks: \"Who's there on my network?\"",
+   "This technique populates the ARP cache without requiring elevated privileges."
+  ],
+  "links": [
+   {
+    "label": "Homepage and README (GitHub)",
+    "url": "https://github.com/ramonvermeulen/whosthere"
+   },
+   {
+    "label": "Releases and pre-built binaries",
+    "url": "https://github.com/ramonvermeulen/whosthere/releases"
+   },
+   {
+    "label": "Available themes (theme.go)",
+    "url": "https://github.com/ramonvermeulen/whosthere/blob/main/internal/ui/theme/theme.go"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/ramonvermeulen/whosthere (homepage, fetched OK; README returned in full, so no further fetches were needed)"
+  ]
+ }
+}

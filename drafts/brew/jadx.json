@@ -1,0 +1,139 @@
+{
+ "name": "jadx",
+ "desc": "Dex to Java decompiler",
+ "homepage": "https://github.com/skylot/jadx",
+ "installs_365d": 36947,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "tui",
+  "gui"
+ ],
+ "why": "A Dex-to-Java decompiler is a real window into Android apps, though it is well known in reversing circles.",
+ "brief": {
+  "what_it_is": "jadx is a command-line and GUI tool that turns Android app files into readable Java source code. It takes .apk, .dex, .aab, .xapk, .apkm, .apks and .zip files, plus Java .jar, .class and .aar files and .smali files. It writes out Java source and decoded resources, including AndroidManifest.xml decoded from resources.arsc. The jadx-gui front end adds syntax highlighting, jump to declaration, find usages and full-text search.",
+  "why_it_exists": "The README frames it simply as a \"Dex to Java decompiler\" and describes itself as \"Command-line and GUI tools for producing Java source code from Android Dex and APK files\". It does not state a broader motivation.",
+  "how_it_works": "The README does not explain the internals. It says the tool decompiles Dalvik bytecode to Java, can also convert Java bytecode, and includes a deobfuscator. It also mentions a smali debugger in jadx-gui, with setup described on a wiki page.",
+  "commands_seen": [
+   {
+    "cmd": "brew install jadx",
+    "context": "Installs jadx on macOS via Homebrew, the install route that matches this catalogue entry."
+   },
+   {
+    "cmd": "sudo pacman -S jadx",
+    "context": "Installs jadx on Arch Linux from the official extra repository."
+   },
+   {
+    "cmd": "flatpak install flathub com.github.skylot.jadx",
+    "context": "Installs the Flathub build of jadx."
+   },
+   {
+    "cmd": "jadx -d out classes.dex",
+    "context": "Basic use: decompiles classes.dex and writes the output to the directory out."
+   },
+   {
+    "cmd": "jadx --rename-flags \"none\" classes.dex",
+    "context": "Decompiles classes.dex with all identifier renaming turned off."
+   },
+   {
+    "cmd": "jadx --rename-flags \"valid, printable\" classes.dex",
+    "context": "Decompiles classes.dex, renaming identifiers only to make them valid and printable."
+   },
+   {
+    "cmd": "jadx --log-level ERROR app.apk",
+    "context": "Decompiles app.apk and shows only error-level log output."
+   },
+   {
+    "cmd": "jadx -Pdex-input.verify-checksum=no app.apk",
+    "context": "Decompiles app.apk with the dex checksum check disabled through a plugin option."
+   },
+   {
+    "cmd": "./gradlew dist",
+    "context": "Builds jadx from source; the README says JDK 17 or higher must be installed first. The output goes to build/jadx/bin and build/jadx-<version>.zip."
+   }
+  ],
+  "install_notes": "The README asks for 64-bit Java 11 or later, except for the with-jre bundle, which does not need it. On Windows, download the zip or the .exe bundle, and the Java installer link points to oracle.com. Arch, Homebrew and Flathub each have their own package. Building from source needs JDK 17 or higher and runs with ./gradlew dist (gradlew.bat on Windows). Optional environment variables set config, cache and temp directories (JADX_CONFIG_DIR, JADX_CACHE_DIR, JADX_TMP_DIR). Zip-bomb and XML security limits are on by default and can be turned off with environment variables. The README does not describe a first-run wizard.",
+  "standout": "It covers a wide input range in one tool: APKs, app bundles and split packages, plain Java classes, and smali. It also decodes binary resources, bundles a deobfuscator and a plugin marketplace command, and ships a GUI with a smali debugger. The README does not compare it with other decompilers, so any claim about its reputation rests on sources outside this page.",
+  "status": "The README has CI build-status, contributor, download and Maven Central badges, and it links to current Arch, Homebrew and Flathub packages. It also mentions a JDK 25 download link, which suggests recent upkeep. The README shows no release date or last-commit date, so I could not confirm the exact last release from the fetched text.",
+  "caveats": "The README warns that in most cases jadx \"can't decompile 100% of the code, so errors will occur\", and it points to a troubleshooting wiki page. It requires 64-bit Java 11 or later at runtime, and JDK 17 or higher to build from source. The licence is Apache 2.0. The README does not describe platform limits beyond the Windows bundles and the .bat files for double-click use.",
+  "quotes": [
+   "Command-line and GUI tools for producing Java source code from Android Dex and APK files",
+   "in most cases **jadx** can't decompile 100% of the code, so errors will occur.",
+   "deobfuscator included"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README (homepage)",
+    "url": "https://github.com/skylot/jadx"
+   },
+   {
+    "label": "Troubleshooting Q&A wiki",
+    "url": "https://github.com/skylot/jadx/wiki/Troubleshooting-Q&A"
+   },
+   {
+    "label": "jadx-gui features overview",
+    "url": "https://github.com/skylot/jadx/wiki/jadx-gui-features-overview"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/skylot/jadx (homepage, fetched and returned the README; worked)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A mature Android reverse-engineering workbench turns opaque APKs and DEX files into browsable source and decoded resources\u2014a tangible way to take everyday apps apart."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "jadx",
+  "tldr": "jadx turns Android APKs and Dex files back into readable Java source, with a command-line tool and a GUI for browsing the result.",
+  "deeper_look": "jadx takes a compiled Android app and writes out Java source plus decoded resources. It accepts .apk, .dex, .aab, .xapk, .apkm, .apks and .zip files, and also plain Java .jar, .class and .aar files and .smali files. Binary resources are decoded too, so AndroidManifest.xml comes out readable rather than packed inside resources.arsc.\n\nThe idea underneath is that an app you install is not a sealed box. Android apps ship as Dalvik bytecode, and that bytecode keeps enough structure to be turned back into something that looks like the original code. Reading that output is a good way to see how a real app is put together: which permissions it asks for, how screens are wired, what it does at startup.\n\nThe command-line tool writes a directory of sources. The jadx-gui front end adds syntax highlighting, jump to declaration, find usages and full-text search, which makes a large app navigable. A deobfuscator is included for apps whose names have been scrambled, and jadx-gui has a smali debugger, with setup described on a wiki page.\n\nThe decompiler is honest about its limits. The README says that \"in most cases jadx can't decompile 100% of the code, so errors will occur.\" Expect some methods to come out broken or as commented-out fallback code.",
+  "install": "brew install jadx\n# needs 64-bit Java 11 or later at runtime; the Homebrew formula depends on openjdk",
+  "try_this": [
+   {
+    "cmd": "jadx --help",
+    "what_happens": "Lists every option, including the deobfuscation and renaming flags."
+   },
+   {
+    "cmd": "jadx -d out app.apk",
+    "what_happens": "Decompiles the APK and writes Java sources and decoded resources into the directory out. The brief shows this form with classes.dex; an .apk is an accepted input too."
+   },
+   {
+    "cmd": "jadx --log-level ERROR app.apk",
+    "what_happens": "Decompiles the APK and prints only error-level log output, which quiets the noise on big apps."
+   }
+  ],
+  "whats_unique": "One tool covers APKs, app bundles, split packages, plain Java classes and smali, and also decodes binary resources. It ships both a command-line tool and a GUI with search, usage lookup and a smali debugger.",
+  "caveats": "It cannot decompile everything; the README warns that errors will occur in most cases, and points to a troubleshooting wiki.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "reverse-engineering",
+   "android",
+   "decompiler",
+   "java",
+   "gui"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README (homepage)",
+    "url": "https://github.com/skylot/jadx"
+   },
+   {
+    "label": "jadx-gui features overview",
+    "url": "https://github.com/skylot/jadx/wiki/jadx-gui-features-overview"
+   },
+   {
+    "label": "Troubleshooting Q&A wiki",
+    "url": "https://github.com/skylot/jadx/wiki/Troubleshooting-Q&A"
+   }
+  ]
+ }
+}

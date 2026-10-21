@@ -1,0 +1,81 @@
+{
+ "name": "fpp",
+ "desc": "CLI program that accepts piped input and presents files for selection",
+ "homepage": "https://facebook.github.io/PathPicker/",
+ "installs_365d": 273,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "tui"
+ ],
+ "why": "Piping grep or git output into a file picker is a neat workflow trick that makes shell plumbing feel interactive.",
+ "brief": {
+  "what_it_is": "Facebook PathPicker, invoked as the command fpp, is a command-line tool that reads whatever text another program prints on stdin. It scans that text for entries that look like file paths, shows the matches in a curses selector UI, and lets you pick some of them. From there you can open the chosen files in your $EDITOR or run an arbitrary command against them. The homepage says it accepts a wide range of input, including git output, grep results, and searches. The README describes it as a bash script that calls some Python.",
+  "why_it_exists": "The README calls it a solution to 'the perpetual problem of selecting files out of bash output.' The homepage tagline is 'Why Pipe when you can Pick?'",
+  "how_it_works": "A bash script pipes stdout into a Python module that extracts filename candidates with a series of regular expressions, rather than using a specialized parser for each program. A curses-based selector UI then lets you choose files or type a command. Finally, the Python side writes a command to a bash file that the original bash script executes. The README notes that candidates are restricted to limit filesystem existence checks, so single-word extensionless names without a directory prefix, such as 'test', can be missed.",
+  "commands_seen": [
+   {
+    "cmd": "brew update; brew install fpp; fpp",
+    "context": "Homepage install line: refresh the Homebrew recipe list, install fpp, then run it."
+   },
+   {
+    "cmd": "git status | fpp",
+    "context": "README example: pipe git status output into fpp to select changed files."
+   },
+   {
+    "cmd": "grep -r \"FooBar\" . | fpp",
+    "context": "README example: recursive grep results piped into fpp for file selection."
+   },
+   {
+    "cmd": "find . -iname \"*.js\" | fpp",
+    "context": "README example: find output piped into fpp to pick JavaScript files."
+   },
+   {
+    "cmd": "git clone https://github.com/facebook/PathPicker.git",
+    "context": "Linux/manual install: clone the repository, first step before packaging or symlinking."
+   },
+   {
+    "cmd": "ln -s \"$(pwd)/fpp\" /usr/local/bin/fpp",
+    "context": "Manual install: symlink the fpp bash script into a directory on PATH."
+   },
+   {
+    "cmd": "fpp --help # should work!",
+    "context": "Manual install check, and the README's pointer to where all documentation and configuration options live."
+   },
+   {
+    "cmd": "cat $F | wc -l",
+    "context": "Advanced usage: the $F token places selected files mid-command, here counting lines across them."
+   }
+  ],
+  "install_notes": "Requires Python 3. Homebrew is the easy route: brew update, then brew install fpp. On Debian-based systems, clone the repo, cd into PathPicker/debian, run ./package.sh (the README references fakeroot), and install the resulting pathpicker_*_all.deb. On Arch, install the AUR package fpp-git. For manual installs, clone the repo somewhere like /usr/local, then symlink the fpp script into /usr/local/bin. Shell caveat: if your default shell and current shell are in different families (bash/zsh versus fish/rc), you must manually export $SHELL to your current shell. Optional: tmux-fpp adds a tmux key binding to run PathPicker on the last stdout.",
+  "standout": "Instead of writing a parser for each tool's output, it treats all piped text as noisy and fishes out path-like candidates with regexes, then lets you act on the selection with any command you type. Selected paths are appended to your command, or placed with a $F token.",
+  "status": "Unknown from what I fetched. The README has a tests badge and an MIT license badge, and the Homebrew recipe is described as 'new', but I saw no release date or last-commit date in the pages I read.",
+  "caveats": "Requires Python 3. Shell support varies: bash works best, zsh lacks alias expansion in command-line mode, and fish/rc may have quirks in older versions. By default it only selects files that exist on disk; use --no-file-checks (or -nfc) to include deleted files such as those in git status. Single-word extensionless filenames without a directory prefix are a known miss. The README describes the architecture as 'not the most elegant,' and the install paths shown are Homebrew, Debian packaging, AUR, and manual symlink. No Windows install path appears in the README. The homepage also carries a Ukraine aid banner unrelated to the tool.",
+  "quotes": [
+   "Facebook PathPicker is a simple command line tool that solves the perpetual problem of selecting files out of bash output.",
+   "Why Pipe when you can Pick?",
+   "It's not the most elegant architecture in the world but, in our opinion, it provides a lot of utility."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://facebook.github.io/PathPicker/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/facebook/PathPicker"
+   },
+   {
+    "label": "asciinema demo",
+    "url": "https://asciinema.org/a/19519"
+   }
+  ],
+  "fetch_log": [
+   "https://facebook.github.io/PathPicker/ - worked; marketing page with install line, short feature blurbs, and a link to the GitHub README",
+   "https://github.com/facebook/PathPicker - worked; README returned as text, containing install, usage, and architecture sections"
+  ]
+ }
+}

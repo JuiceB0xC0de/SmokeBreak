@@ -1,0 +1,59 @@
+{
+ "name": "zmap",
+ "desc": "Network scanner for Internet-wide network studies",
+ "homepage": "https://zmap.io",
+ "installs_365d": 787,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "An Internet-wide scanner that sweeps the whole IPv4 space, a striking way to see how the public internet actually responds.",
+ "brief": {
+  "what_it_is": "ZMap is an open source command-line network scanner that sends single probe packets across the public IPv4 address space, or a chosen part of it, to find which hosts answer on a given port or protocol. You give it a target port and probe module, and it prints the responding IP addresses to stdout, with a live progress line on stderr. The homepage zmap.io is an umbrella page for the wider ZMap Project, which also covers ZGrab, ZDNS, LZR, ZCrypto, ZLint and others; the Homebrew formula installs the zmap binary plus zblocklist, ziterate and ztee helpers.",
+  "why_it_exists": "The README frames it as a tool for 'Internet-wide network surveys', so researchers can measure the hosts and services that make up the public internet. The README says it is designed to scan the whole IPv4 space on one port in under 45 minutes on a gigabit connection.",
+  "how_it_works": "ZMap is described as stateless: it sends one packet per target, such as a TCP SYN, and records replies without keeping per-connection state, which is what makes the speed possible. The companion tool ZGrab 2 handles stateful application-layer handshakes when deeper detail is needed. The README mentions optional netmap or PF_RING for 10GbE speeds, and the 2025-era release notes mention an optional JA4TS fingerprint of SYN-ACK replies and RTT measurement on TCP SYN probes.",
+  "commands_seen": [
+   {
+    "cmd": "sudo zmap -p 80",
+    "context": "README's first example: a simple scan of the entire IPv4 space on TCP port 80. It needs root privileges."
+   }
+  ],
+  "install_notes": "Homebrew is the easy path. The README says ZMap needs root (sudo) to run. The README points to an INSTALL.md in the repo for package-manager or from-source installs; I did not fetch INSTALL.md, so build requirements are unverified. Optional high-speed capture needs netmap or PF_RING on a 10GbE link. No account or API key is mentioned.",
+  "standout": "Unlike a typical port scanner such as nmap, ZMap is built for sweeping the entire IPv4 space in minutes, using stateless single-packet probes and a random permutation of addresses. The surrounding suite (ZGrab, LZR, ZIterate, ZBlocklist) is a full measurement pipeline, and the README has a strong ethics section on scanning responsibly.",
+  "status": "maintained. The latest stable release is v4.4.0, which the GitHub release page dates to 29 May (the year is not shown in the fetched text). The release notes list recent CI fixes and new features, and the README has a build badge. I did not check the last commit date.",
+  "caveats": "The README says it runs on GNU/Linux, macOS and BSD. Windows is not mentioned. Root is required. Internet-wide scans have ethical and operational consequences, and the README asks users to scan at the slowest necessary speed and to offer an opt-out. The zmap.io homepage also lists deprecated tools (ZTag, ZBrowse), so it is not all current. It is a single-packet scanner, so banner grabs and TLS handshakes need ZGrab 2. The README asks researchers to cite the 2013 USENIX Security paper.",
+  "quotes": [
+   "ZMap is a fast stateless single packet network scanner designed for Internet-wide network surveys.",
+   "Performing Internet-wide scans can have serious ethical and operational implications.",
+   "Rules of thumb are to scan at the slowest speed necessary, scan slower if you're scanning a smaller target space, and provide a way for network operators to opt-out."
+  ],
+  "links": [
+   {
+    "label": "ZMap Project homepage",
+    "url": "https://zmap.io"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/zmap/zmap"
+   },
+   {
+    "label": "Getting Started Guide (wiki)",
+    "url": "https://github.com/zmap/zmap/wiki/Getting-Started-Guide"
+   },
+   {
+    "label": "Original ZMap paper (USENIX Security 2013)",
+    "url": "https://zmap.io/paper.pdf"
+   }
+  ],
+  "fetch_log": [
+   "https://zmap.io: worked. It is the ZMap Project umbrella page covering ZMap, ZGrab, ZDNS, LZR and others, not a zmap-specific page.",
+   "https://github.com/zmap/zmap: worked. Returned the README, which was the main source for this brief.",
+   "https://github.com/zmap/zmap/releases/tag/v4.4.0: worked, but the text was noisy. Used for the release date and release notes. Not fetched: the wiki, INSTALL.md, and the docs links."
+  ]
+ }
+}

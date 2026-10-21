@@ -1,0 +1,91 @@
+{
+ "name": "csmith",
+ "desc": "Generates random C programs conforming to the C99 standard",
+ "homepage": "https://github.com/csmith-project/csmith",
+ "installs_365d": 64,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "generative",
+  "reverse-engineering",
+  "language",
+  "science"
+ ],
+ "why": "Generates random valid C programs to find compiler bugs, a strange and genuinely clever way to stress-test toolchains.",
+ "brief": {
+  "what_it_is": "Csmith is a random generator of C programs. You run the csmith command, optionally with options, and it writes one randomly generated C program to standard output, which you redirect to a .c file. The README says the output is free of undefined behaviors and also produces statistics about each generated program. The generated programs are meant to be compiled and run, and their output compared across compilers.",
+  "why_it_exists": "The primary purpose is to find compiler bugs with random programs, using differential testing as the test oracle. The README also says it can serve anyone who needs a test suite of C programs and doesn't want to write them by hand.",
+  "how_it_works": "Csmith generates a random C program for each run. You compile that program with two or more compilers (for example gcc and clang), run both binaries, and compare their outputs. Any difference points to a bug in one compiler, or in the unlikely case, in Csmith itself. The README says to repeat this in scripts to amplify the testing and to apply timeouts, since generated programs might contain infinite loops.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/csmith-project/csmith.git",
+    "context": "Clones the source repository for building from source."
+   },
+   {
+    "cmd": "sudo apt install g++ cmake m4",
+    "context": "Installs build prerequisites on Ubuntu, as the README describes."
+   },
+   {
+    "cmd": "cmake -DCMAKE_INSTALL_PREFIX=<INSTALL-PREFIX> .",
+    "context": "Configures the build with cmake, with <INSTALL-PREFIX> as a placeholder for the install location."
+   },
+   {
+    "cmd": "make && make install",
+    "context": "Builds Csmith and installs it to the chosen prefix."
+   },
+   {
+    "cmd": "export PATH=$PATH:$HOME/csmith/bin",
+    "context": "Adds the Csmith bin directory to PATH, assuming Csmith is installed in $HOME/csmith."
+   },
+   {
+    "cmd": "csmith > random1.c",
+    "context": "Generates one random C program and writes it to random1.c."
+   },
+   {
+    "cmd": "gcc random1.c -I$HOME/csmith/include -o random1",
+    "context": "Compiles the generated program with gcc, using Csmith's include directory."
+   },
+   {
+    "cmd": "./random1",
+    "context": "Runs the compiled test program."
+   },
+   {
+    "cmd": "clang random2.c -I$HOME/csmith/include -o random2_clang",
+    "context": "Compiles the same kind of generated program with clang for differential testing against gcc."
+   },
+   {
+    "cmd": "csmith -h",
+    "context": "Lists the command line options for customizing generation (README also mentions -hh for a fuller list)."
+   }
+  ],
+  "install_notes": "The README gives source build steps for Ubuntu: install g++, cmake and m4, then cmake, make and make install. Tarball downloads are listed as coming soon. Windows builds have a separate guide in doc/build-csmith-on-windows.md. The brew metadata (not the README) recommends setting the environment variable CSMITH_PATH to $HOMEBREW_CELLAR/csmith/2.3.0/include/csmith-2.3.0. Compiled test programs need the Csmith include directory on the compiler's include path, as the examples show with -I. Installed executables are csmith, compiler_test.pl and launchn.pl.",
+  "standout": "Instead of checking a program against an expected answer, it generates valid C programs that avoid undefined behavior and uses disagreement between compilers as the bug signal. The README notes that producing UB-free programs is not trivial, and that the project was built as research on finding bugs in C compilers.",
+  "status": "Quiet, with evidence from the README only. It says the project is maintained on the authors' discretionary time and that responses to bug reports or feature requests might be delayed. The fetched page showed no release date or last commit date, so I could not confirm recent activity. The brew description is a single line.",
+  "caveats": "The README's install steps are written for Ubuntu. Tarball releases are marked coming soon. The generated programs can contain infinite loops, so timeouts are needed. Responses to issues may be slow. Windows building needs a separate guide. The README does not say what license applies.",
+  "quotes": [
+   "Csmith is a random generator of C programs. It's primary purpose is to find compiler bugs with random programs, using differential testing as the test oracle.",
+   "Csmith outputs C programs free of undefined behaviors (believe us, that's not trivial), and the statistics of each generated program.",
+   "The generated programs might contain infinite loops. The best practice is to apply timeout to their executions."
+  ],
+  "links": [
+   {
+    "label": "Csmith GitHub repository and README",
+    "url": "https://github.com/csmith-project/csmith"
+   },
+   {
+    "label": "Using Csmith for compiler testing (slightly outdated guide)",
+    "url": "http://embed.cs.utah.edu/csmith/using.html"
+   },
+   {
+    "label": "Finding and Understanding Bugs in C Compilers (PLDI 2011 paper)",
+    "url": "https://www.cs.utah.edu/~regehr/papers/pldi11-preprint.pdf"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/csmith-project/csmith: fetched OK, README returned. Did not follow further links; the README was substantive enough."
+  ]
+ }
+}

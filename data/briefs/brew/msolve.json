@@ -1,0 +1,79 @@
+{
+ "name": "msolve",
+ "desc": "Library for Polynomial System Solving through Algebraic Methods",
+ "homepage": "https://msolve.lip6.fr",
+ "installs_365d": 776,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "math",
+  "science",
+  "library"
+ ],
+ "why": "A serious computer algebra solver for polynomial systems that you can run at home on real math problems.",
+ "brief": {
+  "what_it_is": "msolve is an open-source C library and command-line program for solving multivariate polynomial systems exactly. You give it a text file listing variables, a field characteristic (0 for rationals, or a prime), and the polynomials. It can compute Groebner bases, decide whether the system has finitely many complex solutions, and isolate the real solutions as rational boxes. It writes its results to an output file.",
+  "why_it_exists": "The homepage presents it as a library for exact, algebraic solving of polynomial systems, built on computer algebra (symbolic computation) rather than floating-point numerics. The README says it is meant to be usable from other computer algebra systems as well as directly.",
+  "how_it_works": "It uses Groebner basis algorithms, including F4 and changes of monomial ordering, as its core. For systems with finitely many complex solutions and rational coefficients, it computes real root isolation. Over prime fields it computes a parametrization of the solutions. The README says multi-threading is applied to the linear algebra for prime-field Groebner bases, to multi-modular real solving, and to real root isolation.",
+  "commands_seen": [
+   {
+    "cmd": "./msolve -f in.ms -o out.ms",
+    "context": "Basic run: reads the input system from in.ms and writes results to out.ms. Detects dimension zero, then isolates real roots (rational coefficients) or computes a parametrization (prime field)."
+   },
+   {
+    "cmd": "./msolve -v 2 -f in.ms -o out.ms",
+    "context": "Same basic run with verbosity set to 2 so you can see what msolve is doing."
+   },
+   {
+    "cmd": "./msolve -g 1 -f in.ms -o out.ms",
+    "context": "Computes only the leading monomials of the reduced Groebner basis in graded reverse lexicographic order, from which dimension and degree of the ideal can be read."
+   },
+   {
+    "cmd": "./msolve -g 2 -f in.ms -o out.ms",
+    "context": "Returns the full reduced Groebner basis in graded reverse lexicographic order."
+   },
+   {
+    "cmd": "./msolve -e 1 -g 2 -f in.ms -o out.ms",
+    "context": "Groebner basis with one-block elimination order, eliminating the first variable. Using -e k eliminates the first k variables."
+   },
+   {
+    "cmd": "./msolve -t 4 -f in.ms -o out.ms",
+    "context": "Runs with 4 threads."
+   }
+  ],
+  "install_notes": "The README points to an INSTALL file in the repository for build steps; I did not read it. It does not support 32-bit architectures. Beyond the Homebrew formula, there are no accounts or hardware requirements mentioned. Input format: first line is comma-separated variables, second line is the field characteristic (e.g. 0), then polynomials, each ending in a comma except the last. Rational coefficients use /, e.g. -2/3*x2*y1^2. Each monomial should appear only once per polynomial. Prime-field Groebner computation requires characteristic below 2^31.",
+  "standout": "Unlike many solvers that return approximate numerical roots, msolve returns exact encodings: rational isolating boxes for real roots and rational parametrizations. It is also embedded in Oscar, SageMath (via Variety) and Macaulay2, so it can be used without learning its file format directly.",
+  "status": "Unknown, leaning active. The homepage lists release v0.11.0 but gives no date. I did not see a last-commit date or release date in the README I read. Signs of ongoing work: it is wired into Oscar, SageMath and Macaulay2, the README cites a 2021 ISSAC paper, and it lists current funding from the RPTU research initiative and ANR.",
+  "caveats": "Licensed GPLv2+, which matters if you want to embed it in closed-source software. No 32-bit support. Groebner computations over prime fields are limited to characteristic below 2^31. Real root isolation applies only when the system has finitely many complex solutions and rational coefficients. The input parser's behaviour is undefined if a monomial repeats, so you must avoid that. The brew description calls it a library, but the Homebrew formula installs an msolve executable.",
+  "quotes": [
+   "msolve is a library, written in plain C, for solving multivariate polynomial systems.",
+   "msolve is distributed under the license GPLv2+",
+   "open source C library implementing computer algebra algorithms for solving polynomial systems (with rational coefficients or coefficients in a prime field)."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://msolve.lip6.fr"
+   },
+   {
+    "label": "Tutorial (PDF)",
+    "url": "https://msolve.lip6.fr/downloads/msolve-tutorial.pdf"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/algebraic-solving/msolve"
+   },
+   {
+    "label": "ISSAC 2021 paper (PDF)",
+    "url": "https://hal.sorbonne-universite.fr/hal-03191666v2/file/main.pdf"
+   }
+  ],
+  "fetch_log": [
+   "https://msolve.lip6.fr: worked. Returned the landing page with the description, release v0.11.0, feature list and a Download button. The page contains no README-level usage detail.",
+   "https://github.com/algebraic-solving/msolve: worked. Returned the README. I chose this URL from knowledge of the project, not from a link on the homepage; it appears to be the upstream repository, but the URL was not confirmed by the homepage. The INSTALL file and the tutorial PDF were not fetched."
+  ]
+ }
+}

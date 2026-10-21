@@ -1,0 +1,147 @@
+{
+ "name": "doltlite",
+ "desc": "SQLite fork with Git-style version control via prolly trees",
+ "homepage": "https://github.com/dolthub/doltlite",
+ "installs_365d": 77,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "library",
+  "language"
+ ],
+ "why": "SQLite with git-style versioning built on prolly trees, a strange and genuinely original database idea to explore.",
+ "brief": {
+  "what_it_is": "DoltLite is a fork of SQLite that replaces SQLite's B-tree storage engine with a content-addressed prolly tree, giving Git-style version control over a SQL database. The parser, planner and VDBE stay upstream-derived; below SQLite's btree.h seam, a single-file chunk store backs the prolly trees. Version control is exposed as dolt_* SQL functions and virtual tables such as dolt_commit, dolt_branch, dolt_merge, dolt_diff_<table> and dolt_log. It ships as a doltlite CLI shell, a doltlite-remotesrv sync server and a libdoltlite C library with bindings for Python, Ruby, Node, Rust, Go and other languages. Stock SQLite files are still opened on the original B-tree engine.",
+  "why_it_exists": "The README frames it as a way to bring Dolt's versioned, prolly-tree design to embedded, local-first use: DoltLite \"can be embedded in any language enabling local-first use cases for Dolt.\" The linked blog post \"Why DoltLite?\" gives the longer rationale, which I did not fetch.",
+  "how_it_works": "Each database is one content-addressed chunk-store file rather than SQLite pages. Prolly trees are built from immutable nodes with rolling-hash boundaries, the same design the README says Dolt uses. Branches, commits, diffs and merges operate on those trees, and each connection selects its own branch.",
+  "commands_seen": [
+   {
+    "cmd": "cd build",
+    "context": "Build step: enter the build directory before configuring."
+   },
+   {
+    "cmd": "../configure",
+    "context": "Build step: run configure from build/ to generate the Makefile."
+   },
+   {
+    "cmd": "make",
+    "context": "Build step: compile doltlite and libdoltlite."
+   },
+   {
+    "cmd": "./doltlite :memory:",
+    "context": "First run after building: open the shell on an in-memory database."
+   },
+   {
+    "cmd": "sudo bash -c 'curl -fsSL https://github.com/dolthub/doltlite/releases/latest/download/install.sh | bash'",
+    "context": "Recommended install on macOS (Apple Silicon) or Linux; pipes the release install.sh to bash as root."
+   },
+   {
+    "cmd": "SELECT dolt_commit('-m', 'Add users');",
+    "context": "Commit loop: commit staged changes with a message; the README also shows dolt_commit('-Am', 'msg') as a shorthand."
+   },
+   {
+    "cmd": "SELECT dolt_branch('feature');",
+    "context": "Create a branch named feature."
+   },
+   {
+    "cmd": "SELECT dolt_checkout('feature');",
+    "context": "Switch the current connection to the feature branch."
+   },
+   {
+    "cmd": "SELECT dolt_push('origin', 'main');",
+    "context": "Push the main branch to remote origin."
+   },
+   {
+    "cmd": "SELECT dolt_gc();",
+    "context": "Run DoltLite garbage collection on the chunk store."
+   },
+   {
+    "cmd": "pip install doltlite",
+    "context": "Python binding install, from the bindings table."
+   }
+  ],
+  "install_notes": "No Homebrew-specific steps appear in the README. Options: a curl-piped install.sh for macOS arm64 and Linux (needs sudo); Debian/Ubuntu .deb packages for amd64 and arm64 (the example version lookup needs jq); a Windows zip containing doltlite.exe that you add to PATH; or building from source with cd build, ../configure, make. Language bindings are installed through each ecosystem's package manager (pip, gem, npm, composer, dotnet, cargo, go get, SwiftPM, Gradle). C embedding needs #include <doltlite.h> and linking libdoltlite.a -lpthread -lz. Nothing in the README mentions accounts or hardware.",
+  "standout": "It puts Git-style branches, merges, diffs and conflict resolution inside an ordinary embedded SQL database that is one file, instead of a separate server like Dolt. Merge conflicts exist only inside the transaction that produced them and never reach disk, and the built-in vec1 vector index is versioned and merges like the rest of the data.",
+  "status": "The README labels DoltLite Beta and links a 2026-08-31 beta announcement; it also states that storage format version 12 is frozen for the beta. The fetched README shows no release tag, release date or last-commit date, so I cannot confirm activity from this page alone. Maintenance status: unknown.",
+  "caveats": "Beta software. A write transaction may touch only one file-backed database. PRAGMA journal_mode reports wal and ignores changes. Non-integer primary keys are clustered and NOT NULL, and rowid is read-only for them. doltlite-remotesrv binds to localhost until TLS and authentication are configured. Vector PQ training needs at least 512 vectors. The README gives no license information, and I did not check the repository's license file. Windows is distributed as a zip rather than an installer.",
+  "quotes": [
+   "A SQLite fork that replaces the B-tree storage engine with a content-addressed prolly tree, giving Git-like version control on a SQL database.",
+   "Each connection has its own branch; uncommitted work belongs to the branch.",
+   "Conflicts are never durable; they live only in the transaction that made them."
+  ],
+  "links": [
+   {
+    "label": "GitHub homepage and README",
+    "url": "https://github.com/dolthub/doltlite"
+   },
+   {
+    "label": "Detective demo (tutorial, per README)",
+    "url": "https://github.com/dolthub/doltlite/blob/main/doc/doltlite/demo.md"
+   },
+   {
+    "label": "Why DoltLite? (DoltHub blog)",
+    "url": "https://www.dolthub.com/blog/2026-04-27-why-doltlite/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/dolthub/doltlite: fetched, worked; README returned. The README was complete, so I did not follow further links. The demo URL under links is built from the README's relative path doc/doltlite/demo.md and was not fetched."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "An embedded SQLite fork with content-addressed storage and SQL-native branches, commits, diffs, and merges is a genuinely unusual way to make databases versioned."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "DoltLite",
+  "tldr": "A SQLite fork that swaps the B-tree for a prolly tree, so a single-file SQL database gets Git-style branches, commits, diffs and merges.",
+  "deeper_look": "DoltLite keeps SQLite's parser, query planner and virtual machine, but replaces the storage engine beneath them. Instead of pages in a B-tree, each database is one content-addressed chunk-store file holding prolly trees: immutable nodes whose boundaries are chosen by a rolling hash. Because identical content produces identical nodes, two versions of a table can share almost all their storage, and comparing them is cheap.\n\nVersion control is exposed through SQL. You call functions such as `dolt_commit`, `dolt_branch`, `dolt_checkout` and `dolt_merge`, and query virtual tables such as `dolt_log` and `dolt_diff_<table>`. Each connection sits on its own branch, and uncommitted work belongs to that branch. Merge conflicts live only inside the transaction that produced them and never reach disk.\n\nIt comes from the team behind Dolt, a versioned database that runs as a server. The README's pitch for DoltLite is that it \"can be embedded in any language enabling local-first use cases for Dolt.\" The package ships a `doltlite` shell, a `doltlite-remotesrv` sync server, and a C library with bindings for Python, Ruby, Node, Rust, Go and others. Stock SQLite files still open on the original B-tree engine.\n\nThe underlying idea is worth the visit even if you never use the tool: if a database's storage is a Merkle-style tree of content-addressed chunks, then history, diff and merge stop being bolted-on features and become properties of the data structure.",
+  "install": "brew install doltlite\n# Alternatives from the README: a curl-piped install.sh (macOS arm64/Linux, needs sudo), .deb packages, a Windows zip, or build from source with: cd build && ../configure && make\n# Language bindings install via each ecosystem's package manager, e.g. pip install doltlite",
+  "try_this": [
+   {
+    "cmd": "doltlite :memory:",
+    "what_happens": "Opens the shell on a throwaway in-memory database, where you can create a table and try the dolt_* functions."
+   },
+   {
+    "cmd": "SELECT dolt_commit('-m', 'Add users');",
+    "what_happens": "Inside the shell, commits your staged changes with a message, the start of the commit loop."
+   },
+   {
+    "cmd": "SELECT dolt_branch('feature');",
+    "what_happens": "Creates a branch named feature; follow it with dolt_checkout('feature') to switch this connection onto it."
+   }
+  ],
+  "whats_unique": "It puts Git-style branching, merging and conflict resolution inside an ordinary single-file embedded SQL database rather than a separate server. Even the built-in vec1 vector index is versioned and merges like the rest of the data.",
+  "caveats": "It is labelled Beta, a write transaction may touch only one file-backed database, and the brief could not confirm recent maintenance activity.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "sqlite",
+   "database",
+   "version-control",
+   "prolly-tree",
+   "embedded",
+   "sql"
+  ],
+  "links": [
+   {
+    "label": "GitHub homepage and README",
+    "url": "https://github.com/dolthub/doltlite"
+   },
+   {
+    "label": "Detective demo (tutorial, per README)",
+    "url": "https://github.com/dolthub/doltlite/blob/main/doc/doltlite/demo.md"
+   },
+   {
+    "label": "Why DoltLite? (DoltHub blog)",
+    "url": "https://www.dolthub.com/blog/2026-04-27-why-doltlite/"
+   }
+  ]
+ }
+}

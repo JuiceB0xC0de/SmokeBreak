@@ -1,0 +1,93 @@
+{
+ "name": "nextpnr-ice40",
+ "desc": "Portable FPGA place and route tool for Lattice iCE40",
+ "homepage": "https://github.com/YosysHQ/nextpnr",
+ "installs_365d": 355,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "science"
+ ],
+ "why": "Place and route for iCE40 FPGAs lets you watch a circuit get laid out on silicon, a real hardware rabbit hole.",
+ "brief": {
+  "what_it_is": "nextpnr-ice40 is the iCE40 target of nextpnr, a place and route tool for FPGAs. It takes a synthesized netlist in JSON (the README's example produces it with Yosys) and a PCF file that maps design signals to physical pins, plus a device flag such as --hx1k. It writes an ASCII configuration file (.asc), which the IceStorm tool icepack converts to a binary bitstream that iceprog uploads to the board. An optional GUI mode shows the design being packed, placed, and routed. The README describes nextpnr as a whole, and iCE40 is one of several supported architectures.",
+  "why_it_exists": "The README says nextpnr aims to be a vendor neutral, timing driven, FOSS FPGA place and route tool. It is meant to replace vendor-specific place and route flows with an open one.",
+  "how_it_works": "nextpnr reads the Yosys JSON netlist and the PCF pin constraints, then runs packing, placement, and routing against the iCE40 chip database that Project IceStorm provides. The README notes that the HeAP analytic placer's solver can optionally use OpenMP for very large designs. The output is a text .asc file, and the bitstream step is handled separately by icepack.",
+  "commands_seen": [
+   {
+    "cmd": "git submodule update --init --recursive",
+    "context": "First step of the Getting started section, run in the nextpnr source tree before building."
+   },
+   {
+    "cmd": "cmake .. -DARCH=ice40",
+    "context": "Configures the build for the iCE40 architecture only, run from the build directory. Requires IceStorm to be installed first."
+   },
+   {
+    "cmd": "yosys -p 'synth_ice40 -top blinky -json blinky.json' blinky.v",
+    "context": "Synthesizes the blinky example Verilog into blinky.json for nextpnr to consume."
+   },
+   {
+    "cmd": "nextpnr-ice40 --hx1k --json blinky.json --pcf blinky.pcf --asc blinky.asc",
+    "context": "Runs place and route for the HX1K device, producing blinky.asc. This is the core command."
+   },
+   {
+    "cmd": "icepack blinky.asc blinky.bin",
+    "context": "Converts the ASCII output into a binary bitstream. This step is from IceStorm, not nextpnr."
+   },
+   {
+    "cmd": "iceprog blinky.bin",
+    "context": "Uploads the bitstream to the iCEstick dev board. Also an IceStorm tool."
+   },
+   {
+    "cmd": "nextpnr-ice40 --json blinky.json --pcf blinky.pcf --asc blinky.asc --gui",
+    "context": "Launches the GUI, where toolbar buttons or the Python console drive pack, place, route, and file output. Needs a GUI build."
+   },
+   {
+    "cmd": "cmake .. -DARCH=ice40 -DCMAKE_BUILD_TYPE=Debug -DBUILD_PYTHON=OFF -DICE40_DEVICES=1k",
+    "context": "Debug build of iCE40 with no GUI, no Python, and HX1K-only support."
+   },
+   {
+    "cmd": "valgrind --leak-check=yes --tool=memcheck ./nextpnr-ice40 --json ice40/blinky.json",
+    "context": "Memory-check example from the Testing section."
+   },
+   {
+    "cmd": "ffmpeg -f image2 -r 1 -i movie_%05d.png -c:v libx264 nextpnr.mp4",
+    "context": "Stitches frames saved by the GUI recording feature into an MP4 movie of place and route."
+   }
+  ],
+  "install_notes": "Install Project IceStorm first to /usr/local or another prefix, then pass it to CMake as -DICESTORM_INSTALL_PREFIX=/usr (the README's example). Then run mkdir -p build && cd build, cmake .. -DARCH=ice40, make -j$(nproc), and sudo make install. Prerequisites for any architecture: CMake 3.25 or later, a C++17 compiler, Python 3.5 or later with development libraries (3.9 or later for himbaechel), Boost (filesystem, thread, program-options, iostreams), and Eigen3. Yosys is needed to synthesize the demo design. On macOS the README gives brew install cmake python boost eigen, and on Windows it advises vcpkg and a specific Python 3.6.4 embeddable build. The GUI is off by default; enable it with -DBUILD_GUI=ON and install Qt6 and OpenGL. For a static build, use -DSTATIC_BUILD=ON. No hardware is needed to build, but running the blinky example requires an iCEstick board.",
+  "standout": "The README frames nextpnr as one tool with many architecture back ends, so the iCE40 part is a plug-in to a shared timing-driven router and placer. It also includes a GUI with a Python console and a movie-recording feature that captures place and route frames.",
+  "status": "unknown. The fetched README has no release dates, changelog, or commit history. It describes a current toolchain (CMake 3.25, Qt6, Ubuntu 22.04) and ongoing work on several back ends, which suggests active development, but I did not verify that.",
+  "caveats": "The iCE40 build depends on Project IceStorm being installed first. The GUI is not built by default. Experimental back ends (Cyclone V, MachXO2, Xilinx 7-series, generic) are labeled experimental, and the Cyclone V README says its API is being refactored and may change between versions. The Windows instructions are tied to older toolchains (Visual Studio 2017, Python 3.6.4). The README does not state a license in the parts I read. Only the iCE40 path and the general prerequisites are covered here; the other architectures need their own databases.",
+  "quotes": [
+   "nextpnr aims to be a vendor neutral, timing driven, FOSS FPGA place and route tool.",
+   "Use the toolbar buttons or the Python command console to perform actions such as pack, place, route, and write output files.",
+   "The HeAP placer's solver can optionally use OpenMP for a speedup on very large designs."
+  ],
+  "links": [
+   {
+    "label": "nextpnr homepage (GitHub repo)",
+    "url": "https://github.com/YosysHQ/nextpnr"
+   },
+   {
+    "label": "arXiv paper on the Yosys+nextpnr flow",
+    "url": "https://arxiv.org/abs/1903.10407"
+   },
+   {
+    "label": "Project IceStorm (iCE40 bitstream tools)",
+    "url": "https://github.com/YosysHQ/icestorm"
+   },
+   {
+    "label": "Yosys",
+    "url": "https://yosyshq.net/yosys/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/YosysHQ/nextpnr: fetched OK, README returned in full. Did not follow the linked docs/faq.md or docs/archapi.md because the README was complete and the brief did not need them."
+  ]
+ }
+}

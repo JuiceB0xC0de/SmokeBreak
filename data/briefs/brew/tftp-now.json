@@ -1,0 +1,77 @@
+{
+ "name": "tftp-now",
+ "desc": "Single-binary TFTP server and client that you can use right now",
+ "homepage": "https://github.com/puhitaku/tftp-now",
+ "installs_365d": 725,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "A single-binary TFTP server is a door into a 1980s boot protocol that still runs routers and PXE boots.",
+ "brief": {
+  "what_it_is": "tftp-now is a single Go-style standalone binary that acts as either a TFTP server or a TFTP client. Its README lists prebuilt executables for Linux (amd64, arm, arm64, riscv64, mipsle, mips64le), macOS (amd64, arm64) and Windows (amd64, arm64), plus a Homebrew install. As a server, it serves a directory over TFTP on 0.0.0.0:69 with the serve subcommand. As a client, its read and write subcommands copy a file to or from a TFTP server, given a host, a remote path and a local path. The README describes the current version as 1.2.0.",
+  "why_it_exists": "The author, who installs OpenWrt on routers, needs a temporary TFTP server or client to transfer images to a bootloader, and found setting one up on macOS, Linux and Windows a hassle. The README frames it as: \"It's frustrating that setting up a TFTP server is always such a hassle. This is why I created tftp-now.\"",
+  "how_it_works": "The README does not explain the internals of the protocol implementation. It does say that the server's block size is clamped to the smaller of the block size a client requests and the MTU (minus overhead) of the interface. It also says that if the executable or a link to it is named tftp-now-serve, running it starts a server with no explicit subcommand.",
+  "commands_seen": [
+   {
+    "cmd": "brew install tftp-now",
+    "context": "Homebrew install option listed for macOS in the tl;dr."
+   },
+   {
+    "cmd": "chmod +x tftp-now-darwin-arm64",
+    "context": "Makes the downloaded binary executable; the README's example for macOS."
+   },
+   {
+    "cmd": "tftp-now-{OS}-{ARCH} serve",
+    "context": "Starts the TFTP server from the downloaded binary (tl;dr step 3)."
+   },
+   {
+    "cmd": "tftp-now-{OS}-{ARCH} read -remote remote/path/to/read.bin -local read.bin",
+    "context": "Client read (receive) from a server, using the downloaded binary's filename pattern."
+   },
+   {
+    "cmd": "tftp-now-{OS}-{ARCH} write -remote remote/path/to/write.bin -local write.bin",
+    "context": "Client write (send) to a server, using the downloaded binary's filename pattern."
+   },
+   {
+    "cmd": "tftp-now serve",
+    "context": "Start serving on 0.0.0.0:69 (the README's example for the installed binary)."
+   },
+   {
+    "cmd": "tftp-now read -host 192.168.1.1 -remote dir/foo -local bar",
+    "context": "Receive '{server root}/dir/foo' from 192.168.1.1 and save it as 'bar'."
+   },
+   {
+    "cmd": "tftp-now write -host 192.168.1.1 -remote dir/foo -local bar",
+    "context": "Send local 'bar' to '{server root}/dir/foo' on 192.168.1.1."
+   }
+  ],
+  "install_notes": "Download the binary for your OS and architecture from the latest release page, or use brew install tftp-now on macOS. Then make it executable on Unix-like systems with chmod +x. No package installation or configuration is required, according to the README. If no binary runs on your system, the README asks you to open an issue. The README does not mention needing root or admin rights to bind port 69, and it does not mention accounts, runtimes or firstrun steps.",
+  "standout": "The project is one file with no install or config step, and it has a naming trick: a binary named tftp-now-serve starts a server with no subcommand. The author's pitch is built around the router-bootloader use case, which is more specific than a general TFTP tool.",
+  "status": "unknown. The README shows version 1.2.0 in its help output and points to the latest release, but it gives no release date, last-commit date or maintenance note, and I did not fetch the releases or commit pages.",
+  "caveats": "The README does not state a license. Server block size depends on the interface MTU. Port 69 is the default in the examples, and privileged-port requirements are not discussed. The README does not describe missing features, but it is a narrow tool focused on TFTP's bootloader use case. Windows and macOS support depends on the prebuilt binaries, and if none fits your system you have to open an issue. The example commands use a placeholder {OS}-{ARCH} filename pattern that you must replace with the real binary name.",
+  "quotes": [
+   "Single-binary TFTP server and client that you can use right now. No package installation, no configuration, no frustration.",
+   "I enjoy installing OpenWrt onto routers, but one of the main challenges is transferring it to the bootloader via TFTP.",
+   "It's frustrating that setting up a TFTP server is always such a hassle. This is why I created tftp-now."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repo, README)",
+    "url": "https://github.com/puhitaku/tftp-now"
+   },
+   {
+    "label": "Latest release downloads",
+    "url": "https://github.com/puhitaku/tftp-now/releases/latest"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/puhitaku/tftp-now \u2014 worked; GitHub repository, README returned. The README was complete enough that I did not follow further links."
+  ]
+ }
+}

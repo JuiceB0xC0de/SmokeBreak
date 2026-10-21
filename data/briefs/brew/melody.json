@@ -1,0 +1,91 @@
+{
+ "name": "melody",
+ "desc": "Language that compiles to regular expressions",
+ "homepage": "https://yoav-lavi.github.io/melody/book",
+ "installs_365d": 53,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "quick",
+  "tui"
+ ],
+ "why": "A language that compiles down to regular expressions, a genuinely odd transform of ideas.",
+ "brief": {
+  "what_it_is": "Melody is a small domain-specific language that compiles to regular expressions. You write statements such as 16 of \"na\"; or some of <digit>; and the compiler emits a plain regex, for example (?:na){16} or \\d+. The README says the output targets ECMAScript regex syntax. The melody_cli tool reads a file or stdin and prints the compiled regex, and can also test it against a string (-t) or a file (-f), or open a REPL (-r). The compiler also ships as WASM bindings, an npm package, a Deno module, and a Babel plugin.",
+  "why_it_exists": "The homepage says Melody 'is a language that compiles to regular expressions and aims to be more easily readable and maintainable'. The README wording is 'while aiming to be more readable and maintainable'.",
+  "how_it_works": "The compiler is written in Rust and is split into crates, with melody_compiler as the core and melody_cli as a wrapper. Each Melody construct maps to a regex construct: 'some of' becomes +, 'any of' becomes *, 'option of' becomes ?, 'match' becomes (?:...), and 'capture' becomes (...). The README performance section, measured on v0.20.0 on an M1 Pro with criterion, reports about 4.4 microseconds for 8 lines and about 470 milliseconds for 1M lines.",
+  "commands_seen": [
+   {
+    "cmd": "cargo install melody_cli",
+    "context": "Installs the CLI from crates.io using the Rust toolchain. This is the first option under the Install section."
+   },
+   {
+    "cmd": "brew install melody",
+    "context": "Homebrew install for macOS and Linux, from the community formula listed in the README."
+   },
+   {
+    "cmd": "cargo install --path crates/melody_cli",
+    "context": "Builds and installs the CLI from a local clone of the repository."
+   },
+   {
+    "cmd": "git clone https://github.com/yoav-lavi/melody.git",
+    "context": "First step of the from-source install, followed by cd melody."
+   },
+   {
+    "cmd": "paru -Syu melody",
+    "context": "Installs the Arch Linux AUR package using the paru AUR helper."
+   },
+   {
+    "cmd": "nix-env -iA nixos.melody",
+    "context": "Imperative NixOS install of the melody package."
+   },
+   {
+    "cmd": "melody [OPTIONS] [INPUT_FILE_PATH]",
+    "context": "Usage line from the README CLI section. Input comes from a file path, or from stdin using - or a pipe. Options include -t to test a string, -f to test a file, -o to write output, and -r for the REPL."
+   },
+   {
+    "cmd": "cargo bench",
+    "context": "Runs the benchmarks that the README says reproduce the Performance numbers."
+   },
+   {
+    "cmd": "cargo xtask benchmark",
+    "context": "Alternative command the README gives for reproducing the benchmarks."
+   }
+  ],
+  "install_notes": "Homebrew: brew install melody works on macOS and Linux. Cargo: cargo install melody_cli needs a Rust toolchain; the v0.20.0 release sets the MSRV to Rust 1.74.0. Source builds run cargo install --path crates/melody_cli from a clone. macOS binaries (aarch64 and x86_64) are on the GitHub releases page. Arch (AUR) and NixOS packages are community-maintained. The CLI can generate shell completions with --generate-completions. No accounts or configuration are mentioned. Melody source files use the .mdy or .melody extension. Editor extensions exist for VSCode and IntelliJ.",
+  "standout": "Quantifiers and symbols are written as English-like words, such as 'some of', 'option of', '2 to 5 of', '<digit>', and '<start>', instead of punctuation. It is a readability layer that transpiles to ordinary regex, not a new regex engine, so the output can be pasted into any ECMAScript-flavoured tool. The README's Batman example shows 16 of 'na' followed by 2 of a match block compiling to (?:na){16}(?: batman){2}.",
+  "status": "Maintained, as far as the pages show. The GitHub releases page lists v0.20.0 as Latest, dated 24 Nov, though the year does not appear in the fetched text. Earlier releases run back to v0.14.0 in April, and the notes mention dependency updates, clippy fixes, and an MSRV bump. The README includes a future-feature status table. I did not check commit history or the crates.io dates.",
+  "caveats": "Unicode category matching (<category::...>) is not supported when testing in the CLI with -t or -f, because the test engine does not support it. Several features are marked partial in the README's status table: 'not' on literals, variables and macros, and <...::...> categories. Listed as not implemented: file watcher and multiline groups in the REPL. Listed as undecided: flags, backreference syntax, and standard library patterns. Output targets ECMAScript regex, so flavour differences from PCRE or RE2 matter. The homepage only shows a welcome page, so most of the detail is in the README. The homepage says 'compiles to regular expressions', while the README says 'ECMAScript regular expressions'.",
+  "quotes": [
+   "Melody is a language that compiles to ECMAScript regular expressions, while aiming to be more readable and maintainable.",
+   "Note: these are for the currently supported syntax and may change",
+   "Melody will automatically escape characters as needed."
+  ],
+  "links": [
+   {
+    "label": "Homepage (mdBook documentation)",
+    "url": "https://yoav-lavi.github.io/melody/book"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/yoav-lavi/melody"
+   },
+   {
+    "label": "Browser playground",
+    "url": "https://melody-playground.vercel.app/"
+   },
+   {
+    "label": "melody_cli on crates.io",
+    "url": "https://crates.io/crates/melody_cli"
+   }
+  ],
+  "fetch_log": [
+   "https://yoav-lavi.github.io/melody/book: worked, but returned only the mdBook shell and a short welcome paragraph, so I followed the GitHub link.",
+   "https://github.com/yoav-lavi/melody: worked, returned the README with the full syntax reference, install options, CLI usage, and performance notes.",
+   "https://github.com/yoav-lavi/melody/releases: worked, used to check the latest release and dates. The year is not shown in the fetched text."
+  ]
+ }
+}

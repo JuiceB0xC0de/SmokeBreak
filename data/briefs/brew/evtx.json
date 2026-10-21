@@ -1,0 +1,94 @@
+{
+ "name": "evtx",
+ "desc": "Windows XML Event Log parser",
+ "homepage": "https://github.com/omerbenamram/evtx",
+ "installs_365d": 987,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "protocol",
+  "forensics"
+ ],
+ "why": "Parses Windows binary event logs into readable records, a window into an opaque format most Unix people never open.",
+ "brief": {
+  "what_it_is": "A cross-platform Rust parser for Windows XML EventLog (.evtx) files, the binary event log format Windows writes. It takes .evtx files as input and emits each record as XML or JSON (or JSON Lines). It ships as a Rust library crate, a command-line tool called evtx_dump, Python bindings (pyevtx-rs / PyPI 'evtx'), and a browser-based viewer called EVTX Web that runs the same core as WebAssembly and handles files locally.",
+  "why_it_exists": "The README does not state a formal motivation. It frames the project around speed and format coverage: it calls itself 'a cross-platform parser for the Windows XML EventLog format' and claims to be faster than other implementations.",
+  "how_it_works": "The README says XML and JSON outputs are both built directly from a shared intermediate representation, so no XML-to-JSON conversion step happens. Parsing is multithreaded by default, which means records can come out of order unless you pass -t 1. It also has some basic recovery for missing records or chunks. Optional WEVT_TEMPLATE support can pull message templates out of provider DLL/EXE/SYS files into an offline cache and use them to render records.",
+  "commands_seen": [
+   {
+    "cmd": "evtx_dump <evtx_file>",
+    "context": "Dumps the records of an .evtx file as XML to stdout (the default output)."
+   },
+   {
+    "cmd": "evtx_dump -o json <evtx_file>",
+    "context": "Dumps the records as JSON."
+   },
+   {
+    "cmd": "evtx_dump -f <output_file> -o json <input_file>",
+    "context": "Writes the JSON records to a named output file instead of stdout."
+   },
+   {
+    "cmd": "cat <evtx_file> | evtx_dump -o jsonl -",
+    "context": "Reads the .evtx file from stdin (the trailing - means stdin) and emits JSON Lines; useful for piping or decompression."
+   },
+   {
+    "cmd": "fd -e evtx -x evtx_dump -o jsonl",
+    "context": "Uses the fd file finder to run evtx_dump over every .evtx file in a folder, producing JSON Lines output for batch processing."
+   },
+   {
+    "cmd": "fd -e evtx -x evtx_dump '{}' -f '{.}.xml'",
+    "context": "Writes an .xml file next to each .evtx file, recursively, using fd's placeholder syntax."
+   },
+   {
+    "cmd": "cargo install evtx",
+    "context": "Builds and installs the evtx crate from source with Cargo, the alternative to downloading a release binary."
+   },
+   {
+    "cmd": "evtx_dump extract-wevt-templates --input <provider.dll> --output /tmp/wevt_cache.wevtcache --overwrite",
+    "context": "Extracts WEVT message templates from a provider binary into a single portable .wevtcache file. Requires the wevt_templates Cargo feature."
+   },
+   {
+    "cmd": "evtx_dump --wevt-cache /tmp/wevt_cache.wevtcache <log.evtx>",
+    "context": "Dumps an .evtx file using the template cache, applied only to records that fail due to a missing or corrupt template GUID."
+   },
+   {
+    "cmd": "evtx_dump apply-wevt-cache --cache /tmp/wevt_cache.wevtcache --template-guid <GUID> --evtx <log.evtx> --record-id <ID>",
+    "context": "Renders one specific template GUID with its substitutions for a given record, printing XML to stdout (debugging helper)."
+   }
+  ],
+  "install_notes": "Release binaries are on the GitHub releases page for Windows, macOS, and Linux, but only 64-bit builds are provided. Otherwise install from source with 'cargo install evtx', which needs a Rust toolchain. The WEVT_TEMPLATE template features need the Cargo feature 'wevt_templates' at build time, though the README says release binaries may already include it. No accounts or external services are needed. The Python bindings are a separate package on PyPI. The browser viewer needs no install and works offline after first load.",
+  "standout": "The browser viewer runs the same Rust core as WebAssembly, with DuckDB-WASM for faceted filtering, so you can open large logs locally without installing anything. The parser also claims to be written in 100% safe Rust, and it renders XML and JSON from one intermediate representation rather than converting between them.",
+  "status": "maintained. The README has a June 2026 benchmark run against version 0.12.2 and references a recent compiled-template rewrite, and it links a current viewer on GitHub Pages. I did not check the commit history or the crates.io release date, so the exact last-commit date is unknown.",
+  "caveats": "Not yet implemented: CDATA nodes and the EVTHandle node type. If the parser errors on either, the author asks for a sample in an issue. Multithreaded output is not ordered unless you pass -t 1. Template rendering needs the wevt_templates feature. The benchmark table is the author's own, on one Ryzen 3900X with Arch Linux, and the competitor numbers are partly carried over from an earlier run. The README claims it is 'faster than any other implementation by order(s) of magnitude', so treat that as the author's claim. Licensed under Apache-2.0 or MIT at your option.",
+  "quotes": [
+   "A cross-platform parser for the Windows XML EventLog format",
+   "Implemented using 100% safe rust - and works on all platforms supported by rust (that have stdlib).",
+   "Everything happens locally \u2013 files never leave your machine."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/omerbenamram/evtx"
+   },
+   {
+    "label": "EVTX Web viewer (in browser)",
+    "url": "https://omerbenamram.github.io/evtx/"
+   },
+   {
+    "label": "Crate on crates.io",
+    "url": "https://crates.io/crates/evtx"
+   },
+   {
+    "label": "WEVT template docs (docs/wevt_templates.md)",
+    "url": "https://github.com/omerbenamram/evtx/blob/master/docs/wevt_templates.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/omerbenamram/evtx \u2014 fetched OK; README returned. README was complete, so I did not follow any further links. The docs/wevt_templates.md link is taken from the README and was not fetched; its branch name is assumed to be master."
+  ]
+ }
+}

@@ -1,0 +1,131 @@
+{
+ "name": "chromaprint",
+ "desc": "Core component of the AcoustID project (Audio fingerprinting)",
+ "homepage": "https://acoustid.org/chromaprint",
+ "installs_365d": 7911,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "audio",
+  "quick",
+  "library",
+  "science"
+ ],
+ "why": "Turns audio into compact fingerprints you can match against, a neat transform from sound into a signature anyone can run.",
+ "brief": {
+  "what_it_is": "Chromaprint is a client-side C library, plus a command-line tool called fpcalc, that turns decoded audio into a compact acoustic fingerprint. It takes raw, uncompressed audio samples and returns a fingerprint string. It does not read audio file formats such as MP3, MP4 or FLAC, so the calling application must decode those first. It is the core component of the AcoustID identification project.",
+  "why_it_exists": "It exists to identify near-identical audio, for AcoustID and related uses. The README says it is 'designed to identify near-identical audio' with fingerprints 'as compact as possible', aimed at full-file identification, duplicate detection and long-stream monitoring.",
+  "how_it_works": "The README does not explain the algorithm in detail. The homepage points to a blog post, 'How does Chromaprint work?', for an overview of the extraction process. The README credits published work on computer-vision-style music identification, index-based audio matching and pairwise boosted fingerprints as background for the ideas used.",
+  "commands_seen": [
+   {
+    "cmd": "$ git clone https://github.com/acoustid/chromaprint.git",
+    "context": "From the homepage: fetch the development source from GitHub."
+   },
+   {
+    "cmd": "$ cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TOOLS=ON .",
+    "context": "README's most common build: configure a Release build that includes the fpcalc tool."
+   },
+   {
+    "cmd": "$ make",
+    "context": "README: build after configuring."
+   },
+   {
+    "cmd": "$ sudo make install",
+    "context": "README: install the built library and tools system-wide."
+   },
+   {
+    "cmd": "$ cmake -DFFT_LIB=kissfft .",
+    "context": "README: explicitly choose the KissFFT library, the slowest option but with a permissive licence and no external dependency."
+   },
+   {
+    "cmd": "$ cmake -DFFMPEG_ROOT=/path/to/local/ffmpeg/install .",
+    "context": "README: point the build at an FFmpeg installed in a non-standard location."
+   },
+   {
+    "cmd": "$ make docs",
+    "context": "README: generate Doxygen API documentation."
+   },
+   {
+    "cmd": "$ cmake -DBUILD_TESTS=ON .",
+    "context": "README: configure the test suite; needs Google Test sources."
+   },
+   {
+    "cmd": "$ make check",
+    "context": "README: build and run the unit tests."
+   }
+  ],
+  "install_notes": "Beyond brew install, the README's build route needs a C++ compiler and CMake. FFmpeg libraries are needed to build fpcalc, and FFmpeg also handles audio decoding and resampling inside fpcalc. Chromaprint can use FFmpeg, FFTW3, KissFFT or vDSP (macOS) as its FFT library; FFmpeg is preferred except on macOS. KissFFT is bundled as a fallback. Prebuilt fpcalc archives are on the homepage for Linux arm64 and x86_64, macOS arm64, x86_64 and universal, and Windows x86_64. The homepage says most Linux distributions also package Chromaprint. The README gives no account, licence key or first-run configuration.",
+  "standout": "Fingerprints are deliberately small and tuned for search speed over precision and robustness, so the README says it is not a general-purpose fingerprinting tool. fpcalc can emit JSON, which makes it usable from any language without binding to the C API.",
+  "status": "Maintained, judging by the homepage. It lists v1.6.2 as the latest release, dated 2026-10-15, and offers prebuilt binaries for several platforms. I could not see a last-commit date on the GitHub page, so I cannot confirm recent development activity beyond that release.",
+  "caveats": "The library takes only raw uncompressed audio and does not decode files, so the application must handle decoding. The README says it is not a general-purpose fingerprinter and trades precision and robustness for search performance. Building fpcalc requires FFmpeg. FFTW3 is GPL, which would make the resulting binary GPL. The README's build steps run cmake in the source directory. The homepage states the release date as 2026-10-15, which I could not check against today's date. The Homebrew formula's caveats field was empty.",
+  "quotes": [
+   "It's designed to identify near-identical audio and the fingerprints it generates are as compact as possible to achieve that.",
+   "It trades precision and robustness for search performance.",
+   "This is the recommended way to use Chromaprint if all you need is generate fingerprints for AcoustID."
+  ],
+  "links": [
+   {
+    "label": "Chromaprint homepage",
+    "url": "https://acoustid.org/chromaprint"
+   },
+   {
+    "label": "Chromaprint GitHub repository",
+    "url": "https://github.com/acoustid/chromaprint"
+   },
+   {
+    "label": "pyacoustid (Python wrapper)",
+    "url": "https://github.com/beetbox/pyacoustid"
+   }
+  ],
+  "fetch_log": [
+   "https://acoustid.org/chromaprint: fetched OK, homepage text with download list and usage notes",
+   "https://github.com/acoustid/chromaprint: fetched OK, README returned with build notes, related projects and references"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Chromaprint turns sound into compact fingerprints that can identify near-identical recordings\u2014a useful, approachable glimpse into acoustic matching and signal processing."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Chromaprint",
+  "tldr": "Chromaprint turns audio into a compact fingerprint string with one command, the same kind of signature AcoustID uses to recognise songs.",
+  "deeper_look": "Chromaprint is a C library plus a command-line tool called fpcalc. The library takes decoded, uncompressed audio samples and returns a short fingerprint. fpcalc wraps it and uses FFmpeg to decode and resample files first, so you can point it at ordinary audio files.\n\nIt was built as the client side of the AcoustID project, which identifies recordings by matching fingerprints. In the README's words, it is \"designed to identify near-identical audio and the fingerprints it generates are as compact as possible to achieve that.\" The intended uses are full-file identification, duplicate detection and monitoring long streams.\n\nThe idea underneath is that sound can be reduced to a small signature that survives re-encoding, so two copies of the same recording produce similar fingerprints even when the bytes differ. The README does not walk through the algorithm. The homepage links a blog post, \"How does Chromaprint work?\", and the README credits published work on computer-vision-style music identification and index-based audio matching as background.\n\nThe design is a deliberate trade. The README says it \"trades precision and robustness for search performance\", so it is not a general-purpose fingerprinter. fpcalc can also emit JSON, which makes it easy to call from any language without binding to the C API.",
+  "install": "brew install chromaprint\n# installs the fpcalc executable; ffmpeg is pulled in as a dependency\n# no account or configuration needed to generate fingerprints",
+  "try_this": [
+   {
+    "cmd": "fpcalc --help",
+    "what_happens": "Lists the options fpcalc supports, including how to choose the output format."
+   }
+  ],
+  "whats_unique": "It is the fingerprinting engine behind AcoustID, small enough to run as one command, with fingerprints tuned for fast searching rather than for general-purpose precision.",
+  "caveats": "It only generates fingerprints; identifying a song needs a separate AcoustID lookup, and the library itself does not decode audio files, so fpcalc relies on FFmpeg.",
+  "commitment": "quick",
+  "category": "quick-weird-payoffs",
+  "tags": [
+   "audio",
+   "fingerprinting",
+   "acoustid",
+   "ffmpeg",
+   "quick"
+  ],
+  "links": [
+   {
+    "label": "Chromaprint homepage",
+    "url": "https://acoustid.org/chromaprint"
+   },
+   {
+    "label": "Chromaprint GitHub repository",
+    "url": "https://github.com/acoustid/chromaprint"
+   },
+   {
+    "label": "pyacoustid (Python wrapper)",
+    "url": "https://github.com/beetbox/pyacoustid"
+   }
+  ]
+ }
+}

@@ -1,0 +1,91 @@
+{
+ "name": "lldpd",
+ "desc": "Implementation of IEEE 802.1ab (LLDP)",
+ "homepage": "https://lldpd.github.io/",
+ "installs_365d": 1352,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "A door into LLDP, the neighbour-discovery protocol your switches chatter over constantly, and almost nobody looks at it.",
+ "brief": {
+  "what_it_is": "lldpd is a Unix daemon and command-line tool that implements IEEE 802.1AB, the Link Layer Discovery Protocol (LLDP). It sends LLDP frames out of each network interface and listens for frames from neighbouring devices, so a server or host can learn which switch port it is plugged into. The collected neighbour data is queried with the lldpcli command, as text or XML, or through SNMP. It runs on FreeBSD, GNU/Linux, macOS, NetBSD, OpenBSD and Solaris. It also partially supports LLDP-MED and some vendor protocols (CDP, FDP, SONMP, EDP).",
+  "why_it_exists": "LLDP is an industry-standard, inter-vendor mechanism for link-layer notifications, meant to replace proprietary protocols such as Cisco's CDP and Extreme's EDP. The homepage frames the goal as: \"LLDP allows you to know exactly on which port is a server (and reciprocally).\"",
+  "how_it_works": "The lldpd daemon uses privilege separation: a small root process handles the privileged work, and a second unprivileged process in a chroot does most of the work. The daemon both receives and transmits LLDP frames on each interface, and it can also answer with CDP, FDP, SONMP or EDP when it sees those frames. Linux kernel version affects which VLAN, bond and bridge information it can read through Netlink.",
+  "commands_seen": [
+   {
+    "cmd": "./autogen.sh",
+    "context": "First step of building lldpd from a Git checkout (README, Installation)."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Configures the build from a Git checkout; step after autogen.sh."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles lldpd after configure."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the built binaries system-wide."
+   },
+   {
+    "cmd": "brew install lldpd",
+    "context": "macOS install via Homebrew, from the README's macOS section."
+   },
+   {
+    "cmd": "docker exec lldpd lldpcli show neighbors",
+    "context": "Docker: queries the running container for the neighbours it has discovered."
+   },
+   {
+    "cmd": "docker exec -it lldpd lldpcli",
+    "context": "Docker: opens an interactive lldpcli shell inside the running container."
+   },
+   {
+    "cmd": "sudo ./libtool execute src/daemon/lldpd -L $PWD/src/client/lldpcli -d",
+    "context": "Development: runs lldpd from the build tree without make install, pointing it at the built lldpcli."
+   },
+   {
+    "cmd": "make check",
+    "context": "Runs the general test suite (integration tests additionally need pytest and Linux containers)."
+   },
+   {
+    "cmd": "tcpdump -s0 -vv -pni eth0 ether dst 01:80:c2:00:00:0e",
+    "context": "Troubleshooting: captures LLDP frames (sent to the LLDP multicast address) on eth0 to check whether packets arrive."
+   }
+  ],
+  "install_notes": "Beyond brew install: building from a Git checkout requires autogen.sh, configure, make and make install. Privilege separation needs a system user and group both named _lldpd (configurable at configure time) and an empty root-owned directory /usr/local/var/run/lldpd. lldpcli can run unprivileged if installed setuid or setgid _lldpd. The macOS route can also build an installer package with make -C osx pkg. Android requires the NDK version 22 or later, a hand-written compile.sh, and manual copying of files to /system, so it is a substantial job. Docker needs --net=host, --uts=host, NET_RAW and NET_ADMIN capabilities. The official website has the full installation guide, which the README recommends over its own text.",
+  "standout": "It is a small, widely deployed, open-source daemon for a protocol most people never see, and it includes an LLDP sender and receiver that also speak vendor protocols. The README's troubleshooting section is unusually candid about kernel patches, VLAN-tagged LLDP frames, and Intel X710 and ice cards that swallow LLDP in firmware, with the exact sysctl and debugfs commands for each.",
+  "status": "Appears active, but I could not confirm dates. The homepage lists version 1.0.21 and the GitHub README has a CI build badge. I saw no release date or last-commit date in the pages fetched.",
+  "caveats": "Windows is not supported; the README points to WinLLDPService, which is transmit-only. Kernels older than Linux 4.0 need the --enable-oldies configure flag for some functions. Bonding and VLAN behaviour depends on kernel versions, and some network cards need promiscuous mode or extra VLAN interfaces. Intel X710 and ice cards may need their firmware LLDP agent stopped. lldpcli links GNU Readline (GPL) when available, unless you configure --without-readline. Building for Android is involved. The core code is ISC-licensed.",
+  "quotes": [
+   "LLDP allows you to know exactly on which port is a server (and reciprocally).",
+   "lldpd is an ISC-licensed implementation of LLDP for various Unixes. It also supports some proprietary protocols.",
+   "The custom binary protocol between liblldpctl.so and lldpd is not stable. Therefore, the library should always be shipped with lldpd."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://lldpd.github.io/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/lldpd/lldpd"
+   },
+   {
+    "label": "Installation guide",
+    "url": "https://lldpd.github.io/installation.html"
+   }
+  ],
+  "fetch_log": [
+   "https://lldpd.github.io/ - worked; homepage text only, with no working links to sub-pages returned, so the features, install and configuration pages were not fetched",
+   "https://github.com/lldpd/lldpd - worked; full README returned and used as the main source",
+   "https://lldpd.github.io/installation.html - not fetched; cited from the README link only"
+  ]
+ }
+}

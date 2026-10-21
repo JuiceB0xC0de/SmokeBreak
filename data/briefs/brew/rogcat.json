@@ -1,0 +1,90 @@
+{
+ "name": "rogcat",
+ "desc": "Adb logcat wrapper",
+ "homepage": "https://github.com/flxo/rogcat",
+ "installs_365d": 82,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "protocol"
+ ],
+ "why": "Adb logcat wrapper with some Android device depth, a close call for a hardware-facing door into Android logs.",
+ "brief": {
+  "what_it_is": "rogcat is a command-line wrapper around Android's `adb logcat`, written in Rust by Felix Obenhuber. By default it runs `adb logcat` and reads the device's log stream, parses each record, applies optional filters, and writes the result as a colored, column-based view on the terminal or to a file in csv, raw, html, human or json format. It can also read from a custom command's stdout/stderr, one or more files, stdin, a TCP port, or a SocketCAN device on Linux. A `--fx` switch runs Fuchsia's `ffx log` instead of adb. The README calls the painted, reformatted view its main feature.",
+  "why_it_exists": "The README says `adb logcat` exposes Android's internal log buffers, and that rogcat \"tries to give access to those logs in a convenient way including post processing capabilities.\"",
+  "how_it_works": "Each run is a pipeline: read records from the chosen source, parse them, apply tag, pid, thread and message filters (RE2 regexes, with a leading '!' to invert), then format the output. With no command given, rogcat runs adb logcat and restarts it when adb exits, so it reconnects after device power cycles or disconnects. Profiles in a TOML file bundle filters and settings under names selected with -p, and a profile can extend others.",
+  "commands_seen": [
+   {
+    "cmd": "rogcat",
+    "context": "Default live capture from a connected device; runs adb logcat and displays it unconditionally."
+   },
+   {
+    "cmd": "rogcat -o testrun.log",
+    "context": "Write captured logs to testrun.log."
+   },
+   {
+    "cmd": "rogcat -o ./trace/testrun.log -n 1000",
+    "context": "Start a new output file every 1000 records; the README says ./trace is created if missing."
+   },
+   {
+    "cmd": "rogcat -t \"^ADB.*\" -t \\!X -m pattern",
+    "context": "Filter on tag matching ^ADB.*, exclude tag X, and require the message to include 'pattern'."
+   },
+   {
+    "cmd": "rogcat -i trace* -m hmmm  -o /tmp/filtered",
+    "context": "Read all files matching trace* in alphanumerical order and write lines matching 'hmmm' to /tmp/filtered."
+   },
+   {
+    "cmd": "rogcat tcp://traceserver:1234",
+    "context": "Read logs from a TCP host and port."
+   },
+   {
+    "cmd": "rogcat can://can0",
+    "context": "Open a SocketCAN device and read frames (Linux only)."
+   },
+   {
+    "cmd": "rogcat bugreport -z bugreport.zip",
+    "context": "Capture an Android bugreport and write it zipped to bugreport.zip; the README says this only works for Android versions prior to 7."
+   },
+   {
+    "cmd": "rogcat log \"some text\"",
+    "context": "Write a message into the device log buffer, e.g. annotations during manual testing."
+   },
+   {
+    "cmd": "cargo install --path .",
+    "context": "Build and install from a source checkout; the README says this requires Rust 2018 edition."
+   }
+  ],
+  "install_notes": "adb must be on PATH at runtime; the Homebrew caveat says it can be installed with `brew install --cask android-platform-tools`. Building from source needs Rust (2018 edition) via cargo, and on Debian-based systems the package libudev-dev (and its dependencies) is needed. Binary releases are on the GitHub releases page. Optional config.toml (per-OS path: $HOME/Library/Preferences/rogcat/ on macOS, $HOME/.config/rogcat/ on Linux, %HOME%/AppData/Roaming/rogcat/ on Windows) sets defaults such as restart, buffer and terminal options. Optional profiles.toml sits in the same directory, or at the path in ROGCAT_PROFILES. Fuchsia use needs ffx installed.",
+  "standout": "It is more than a viewer: input can come from adb, a serial port, a SocketCAN bus, a TCP stream or a file, and the output can be fed back into rogcat, with TOML profiles that can extend each other. The Fuchsia `--fx`/ffx path and SocketCAN support also make it an unusual single tool for reading device logs across ecosystems.",
+  "status": "quiet. The latest GitHub release is v0.5.0, published 26 Nov (the asset timestamps show 2024-11-26). The prior release, v0.4.7, is dated 01 Aug with no year shown on the page. The README usage text still shows 0.4.8-pre. I did not check commit history, and the README does not state a status.",
+  "caveats": "SocketCAN is Linux only. The bugreport subcommand only works on Android versions before 7. The html output cannot be used as input, and the README says its \"page layout needs some love\". Only csv, raw and json output can be re-read by rogcat; human and html cannot. A Windows 7 bug stops rogcat restarting adb, so restart needs to be turned off there. The README is loosely written in places. The live section says the default buffers are main, events, crash and kernel, while the usage text says -b all, so check the behavior before relying on it. The LICENSE file exists, but I did not read it and the README does not name the license.",
+  "quotes": [
+   "`rogcat` tries to give access to those logs in a convenient way including post processing capabilities.",
+   "The main feature probably is a painted and reformatted view.",
+   "Except the `human` and `html` format the output of `rogcat` is parseable by `rogcat`."
+  ],
+  "links": [
+   {
+    "label": "GitHub homepage and README",
+    "url": "https://github.com/flxo/rogcat"
+   },
+   {
+    "label": "Releases (binary downloads)",
+    "url": "https://github.com/flxo/rogcat/releases"
+   },
+   {
+    "label": "crates.io package",
+    "url": "https://crates.io/crates/rogcat"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/flxo/rogcat (homepage, README returned, worked)",
+   "https://github.com/flxo/rogcat/releases (worked, used only to check release dates for status)"
+  ]
+ }
+}

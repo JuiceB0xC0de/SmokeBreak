@@ -1,0 +1,145 @@
+{
+ "name": "dnstwist",
+ "desc": "Test domains for typo squatting, phishing and corporate espionage",
+ "homepage": "https://dnstwist.it",
+ "installs_365d": 1252,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "quick"
+ ],
+ "why": "Generates typosquatted domain variants and resolves them, a window into DNS and how phishing domains get found.",
+ "brief": {
+  "what_it_is": "dnstwist is a Python command-line tool that takes a domain name and generates lookalike variants of it using several fuzzing algorithms (homoglyph, hyphenation, and others), plus optional dictionary words and TLDs. By default it then does DNS lookups on each variant and reports which ones resolve, along with their DNS records. Output goes to the terminal, CSV, or JSON, or can be limited to bare permutations with no lookups. Optional modes fetch each live site and compare its HTML fuzzy hash (ssdeep or TLSH) or headless-Chromium screenshot pHash against the original, and can add GeoIP country and rogue MX detection.",
+  "why_it_exists": "The README frames it as a way to \"See what sort of trouble users can get in trying to type your domain name\" and to \"Find lookalike domains that adversaries can use to attack you.\" It is meant as a source of targeted threat intelligence for defenders such as SOC and incident response teams.",
+  "how_it_works": "It permutes the input domain with its fuzzers, then resolves each permutation to see whether it is registered. With --lsh it fetches the HTTP content of resolving domains, normalizes the HTML, and compares a fuzzy hash to the original site's hash as a similarity percentage. With --phash it uses headless Chromium to take screenshots and compares perceptual hashes. The README also notes that the homoglyph fuzzer is built from Unicode characters that can actually be registered.",
+  "commands_seen": [
+   {
+    "cmd": "pip install dnstwist[full]",
+    "context": "Installs dnstwist from PyPI with all extra packages (the README's recommended Python route)."
+   },
+   {
+    "cmd": "brew install dnstwist",
+    "context": "macOS install; the README says it installs dependencies and puts the binary on $PATH."
+   },
+   {
+    "cmd": "docker run -it elceef/dnstwist",
+    "context": "Pulls and runs the official image from Docker Hub without a local install."
+   },
+   {
+    "cmd": "dnstwist --registered domain.name",
+    "context": "Quick start: runs the fuzzers on domain.name and shows only the permutations that are registered."
+   },
+   {
+    "cmd": "dnstwist --dictionary dictionaries/english.dict domain.name",
+    "context": "Adds extra permutations built from a dictionary file, such as the bundled English list of phishing-campaign words."
+   },
+   {
+    "cmd": "dnstwist --fuzzers \"homoglyph,hyphenation\" domain.name",
+    "context": "Restricts generation to a comma-separated list of named fuzzing algorithms."
+   },
+   {
+    "cmd": "dnstwist --format json domain.name | jq",
+    "context": "Exports results as JSON for piping into jq; --format csv works the same way for CSV."
+   },
+   {
+    "cmd": "dnstwist --format list domain.name",
+    "context": "Prints bare permutations with no DNS lookups, which the README describes as passive mode."
+   },
+   {
+    "cmd": "dnstwist --lsh domain.name",
+    "context": "Fetches live pages for each variant and reports HTML fuzzy-hash similarity to the original, as a percentage."
+   },
+   {
+    "cmd": "dnstwist --phash --screenshots /tmp/domain domain.name",
+    "context": "Uses headless Chromium to compare screenshot pHash values and saves the PNG screenshots to /tmp/domain."
+   }
+  ],
+  "install_notes": "Beyond brew install, the README lists pip install dnstwist[full] (with all extras) or bare pip install dnstwist plus manual extras, a git clone and pip install . route, sudo apt install dnstwist (Debian/Ubuntu/Kali), sudo dnf install dnstwist (Fedora), yay -S dnstwist (Arch AUR), and Docker. For GeoIP, the GeoIP2 library is used by default, and the country database path must be set in the $GEOLITE2_MMDB environment variable; otherwise it falls back to the older GeoIP Legacy. Proxies are picked up from standard <scheme>_proxy environment variables. The --phash mode needs Chromium installed. Heavy runs may need an external resolver via --nameservers, including DNS-over-HTTPS.",
+  "standout": "Most lookalike-domain tools stop at listing permutations. This one adds a phishing-page check, comparing fuzzy HTML hashes and screenshot perceptual hashes against the original site. It is also built to be used as a library, with a dnstwist.run() API that returns a list of dictionaries.",
+  "status": "Unknown from the material I read. The GitHub page I got back shows the README with no release date or last-commit date, and the README has no maintenance note. Signs of an active project: multiple package routes (PyPI, apt, dnf, AUR, Homebrew, Docker Hub) and a long list of security-vendor integrations. I did not verify a recent commit or release.",
+  "caveats": "Heavy use can overwhelm DNS resolvers, and the README advises a fast external resolver for large runs. --phash needs a full Chromium install and substantial free memory because of its multithreaded browser use. GeoIP needs a separate MaxMind-style database file. The README says coverage is deliberately limited to likely permutations and that exhaustive checking is impractical for long domains. It also says a 100% HTML hash match is unlikely even in MITM kits, and that a phishing site can have completely different HTML. The README does not discuss legal or ethical limits on probing or fetching third-party domains. The homepage text I got showed only a Scan box and a source link, and I did not test that web interface.",
+  "quotes": [
+   "Find lookalike domains that adversaries can use to attack you.",
+   "DNS fuzzing is an automated workflow that aims to uncover potentially malicious domains that target your organization.",
+   "In a hurry? Try it in your web browser: dnstwist.it",
+   "However, it's essential to note that attackers' imagination is unlimited."
+  ],
+  "links": [
+   {
+    "label": "Homepage (web scanner)",
+    "url": "https://dnstwist.it"
+   },
+   {
+    "label": "Source code (GitHub)",
+    "url": "https://github.com/elceef/dnstwist"
+   },
+   {
+    "label": "README with full usage notes",
+    "url": "https://github.com/elceef/dnstwist/blob/master/docs/README.md"
+   }
+  ],
+  "fetch_log": [
+   "https://dnstwist.it: loaded, but only the page title, a 'Scan' button, and a '[source code]' label came through. No README text and no link target.",
+   "https://github.com/elceef/dnstwist: returned only the string 'docs/README.md'. I took this as a pointer and did not get the README from it. I had inferred this GitHub address from the source-code label; the homepage did not show the link target.",
+   "https://github.com/elceef/dnstwist/blob/master/docs/README.md: loaded and returned the full README text, which is the source for this brief. Page chrome was mixed in, and the content was readable."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It makes typosquatting tangible by generating domain variants, checking DNS, and comparing live pages to spot phishing lookalikes."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "dnstwist",
+  "tldr": "Give it a domain and it generates lookalike typo and homoglyph variants, then checks which ones are actually registered and what they serve.",
+  "deeper_look": "dnstwist takes a domain name and runs it through a set of fuzzing algorithms: homoglyphs, hyphenation, and others. It can also add words from a dictionary file. Each permutation is then resolved over DNS to see whether someone has registered it, and the records come back in the terminal, as CSV, or as JSON. A passive mode skips the lookups and just prints the permutations.\n\nThe README frames the purpose as seeing \"what sort of trouble users can get in trying to type your domain name\". It is built for defenders, such as SOC and incident response teams, who want to find lookalike domains before an attacker uses them. The homoglyph fuzzer draws on Unicode characters that can actually be registered, so the list reflects what an attacker could really buy.\n\nTwo optional modes go past DNS. With `--lsh`, it fetches each live page, normalizes the HTML, and compares a fuzzy hash against the original site, reporting a similarity percentage. With `--phash`, it takes headless Chromium screenshots and compares perceptual hashes. Both are attempts to tell a parked domain from a copied login page.\n\nUnderneath is a good way into how DNS, internationalized domain names, and phishing infrastructure fit together. You see how easily one name fans out into hundreds of near-neighbors, and how few of them need to resolve to cause trouble. It also works as a Python library through `dnstwist.run()`, which returns a list of dictionaries.",
+  "install": "brew install dnstwist\n# Optional: --phash needs Chromium installed; GeoIP needs a MaxMind-style database with its path in $GEOLITE2_MMDB",
+  "try_this": [
+   {
+    "cmd": "dnstwist --format list example.com",
+    "what_happens": "Prints the bare permutations with no DNS lookups, so you can see what the fuzzers produce without touching anyone's servers."
+   },
+   {
+    "cmd": "dnstwist --registered example.com",
+    "what_happens": "Runs the fuzzers, resolves each variant, and shows only the ones that are registered."
+   },
+   {
+    "cmd": "dnstwist --fuzzers \"homoglyph,hyphenation\" example.com",
+    "what_happens": "Limits generation to the named algorithms, which makes it easy to compare what each one contributes."
+   }
+  ],
+  "whats_unique": "Most lookalike-domain tools stop at listing permutations. This one also fetches the live pages and compares fuzzy HTML hashes and screenshot perceptual hashes against the original site.",
+  "caveats": "Large runs can overwhelm your DNS resolver, so the README advises a fast external one, and `--phash` needs a full Chromium install and a lot of memory.",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "dns",
+   "phishing",
+   "security",
+   "python",
+   "unicode"
+  ],
+  "links": [
+   {
+    "label": "Homepage (web scanner)",
+    "url": "https://dnstwist.it"
+   },
+   {
+    "label": "Source code (GitHub)",
+    "url": "https://github.com/elceef/dnstwist"
+   },
+   {
+    "label": "README with full usage notes",
+    "url": "https://github.com/elceef/dnstwist/blob/master/docs/README.md"
+   }
+  ]
+ }
+}

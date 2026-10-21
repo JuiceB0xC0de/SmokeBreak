@@ -1,0 +1,82 @@
+{
+ "name": "pacparser",
+ "desc": "Library to parse proxy auto-config (PAC) files",
+ "homepage": "https://github.com/manugarg/pacparser",
+ "installs_365d": 334,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "protocol",
+  "network",
+  "library",
+  "afternoon"
+ ],
+ "why": "A door into proxy auto-config PAC files, a protocol-adjacent mechanism most people never see running.",
+ "brief": {
+  "what_it_is": "Pacparser is a library for parsing proxy auto-config (PAC) files, which are JavaScript files that tell a browser or program which proxy to use for a given URL. You give it a PAC file path, a URL and a host name, and it returns the proxy string, such as 'DIRECT' or 'PROXY proxy1.manugarg.com:3128; PROXY proxy2.manugarg.com:3128; DIRECT'. It ships as a shared C library (libpacparser.so, libpacparser.dylib or pacparser.dll) and as a Python module. The Homebrew formula also installs a pactester executable, which the README does not document.",
+  "why_it_exists": "The README says PAC files are widely used for proxy configuration and can return different proxies based on URL, source IP, protocol or time of day. Its stated goal is to 'make it easy to add PAC-file parsing capability to any program (C and python supported right now)'.",
+  "how_it_works": "Pacparser runs the PAC file's JavaScript with the QuickJS engine. The README says the standard's helper functions, which are not part of plain JavaScript, come from Mozilla's PAC implementation, except for a couple of DNS functions that pacparser defines itself. The author describes the result as 'as close to standard as it gets :)'.",
+  "commands_seen": [
+   {
+    "cmd": "python -m pip install pacparser",
+    "context": "Installs the Python module from PyPI with pip; prebuilt wheels are listed for 64-bit Linux, Windows, MacOS-Intel and MacOS-ARM."
+   },
+   {
+    "cmd": "python -m pip install pacparser==1.5.0",
+    "context": "Installs a specific pacparser version (1.5.0) from PyPI, per the README's inline note."
+   },
+   {
+    "cmd": "pacparser.parse_pac('examples/wpad.dat')",
+    "context": "Python: loads a PAC file after pacparser.init()."
+   },
+   {
+    "cmd": "pacparser.find_proxy('http://www.google.com', 'www.google.com')",
+    "context": "Python: returns the proxy string for a URL and host; the README example returns 'DIRECT' by default."
+   },
+   {
+    "cmd": "pacparser.setmyip(\"192.168.1.134\")",
+    "context": "Python: sets the client IP address that the PAC script sees, which changes the result of later find_proxy calls."
+   },
+   {
+    "cmd": "gcc -o pactest pactest.c -lpacparser",
+    "context": "C: compiles the README's example program against the pacparser shared library (the README's prompt prefix is omitted here)."
+   },
+   {
+    "cmd": "./pactest wpad.dat http://www.google.com www.google.com",
+    "context": "C: runs the compiled example with a PAC file, a URL and a host, and prints the proxy string."
+   }
+  ],
+  "install_notes": "For Python, pip install pacparser works with prebuilt modules for 64-bit Linux, Windows, MacOS-Intel and MacOS-ARM, on Python 3.8 through 3.14. Other prebuilt binaries are on the GitHub releases page, and the latest builds are on GitHub Actions artifacts. Building from source is described in an INSTALL file in the repo. C programs link with -lpacparser. The README shows no accounts, licence keys or runtime configuration beyond calling init, parse_pac and cleanup in order.",
+  "standout": "It is a small embeddable parser for a mechanism most people never see running: browsers run a PAC script to pick a proxy and the script can branch on URL, source IP and time. It runs that JavaScript in an embedded QuickJS engine, so any C or Python program can make the same proxy decision.",
+  "status": "Unknown as to date. The README has a GitHub Actions build badge, a PyPI version badge and a Repology badge, and it lists Python wheels up to 3.14 and a pinned version of 1.5.0. The fetched page showed no release date or last-commit date, so I could not confirm recent activity.",
+  "caveats": "The API is not thread-safe. It keeps all state in process-global variables, so callers must serialise every call with their own lock, and must never call cleanup while another thread is inside find_proxy or parse_pac. Tested platforms are Linux (all Debian architectures), FreeBSD, Mac OS X and Win32. The README does not mention a licence, and the Homebrew formula's pactester executable is not documented there; the README's C example is called pactest.",
+  "quotes": [
+   "Pacparser is a library to parse proxy auto-config (PAC) files.",
+   "The idea behind pacparser is to make it easy to add PAC-file parsing capability to any program (C and python supported right now).",
+   "As a result, pacparser is as close to standard as it gets :)"
+  ],
+  "links": [
+   {
+    "label": "Project homepage and online PAC file tester",
+    "url": "http://pacparser.manugarg.com"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/manugarg/pacparser"
+   },
+   {
+    "label": "Wikipedia: Proxy auto-config",
+    "url": "http://en.wikipedia.org/wiki/Proxy_auto-config"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/manugarg/pacparser/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/manugarg/pacparser (worked; returned README)"
+  ]
+ }
+}

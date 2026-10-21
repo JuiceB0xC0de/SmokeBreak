@@ -1,0 +1,70 @@
+{
+ "name": "htslib",
+ "desc": "C library for high-throughput sequencing data formats",
+ "homepage": "https://www.htslib.org/",
+ "installs_365d": 5012,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "science",
+  "library",
+  "afternoon"
+ ],
+ "why": "Core library for genomic sequence file formats; a real bioinformatics door, though it leans toward plumbing.",
+ "brief": {
+  "what_it_is": "HTSlib is a C library for reading and writing the file formats used in high-throughput sequencing, such as SAM, BAM, CRAM and VCF. Programs link against it to open these files, read records, and write them back out. The README says it only depends on zlib and is known to compile with gcc, g++ and clang. The same repository also ships the tabix indexer, which builds .tbi and .csi indexes, and the bgzip compression utility. The brew executables list also includes htsfile, ref-cache and annot-tsv, but the README does not describe those, so I did not verify them.",
+  "why_it_exists": "The README calls HTSlib a unified C library for accessing common sequencing file formats and says it is the core library used by samtools and bcftools. The GigaScience paper says it was split out of the original SAMtools implementation, with a focus on performance and robustness.",
+  "how_it_works": "It implements a generalized BAM index with the extension .csi (coordinate-sorted index). The reader looks for the new .csi index first and falls back to the old index if the new one is absent. The paper also reports multithreaded use and CRAM support.",
+  "commands_seen": [
+   {
+    "cmd": "autoreconf -i",
+    "context": "Builds the configure script and installs the helper files it uses. Needed only when building from a Git checkout, because release tarballs already include generated files."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Optional but recommended step for choosing extra functionality before building."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds HTSlib from source."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the built library and tools."
+   }
+  ],
+  "install_notes": "Building from the Git repository needs autoreconf -i first, which the README says is not required for release tarballs. The README points to an INSTALL file for full details. The only stated dependency is zlib. No accounts, runtimes or hardware are mentioned.",
+  "standout": "It is the shared engine behind samtools and bcftools, and the paper says it has been used directly by about 900 GitHub projects and embedded in Perl, Python, Rust and R bindings. It also defines the .csi index format that the reader prefers over the older index.",
+  "status": "Date of latest release or commit not seen in what I fetched, so the status is unknown. The README shows active Linux, macOS and Windows CI badges, and the Samtools homepage copyright reads 2025, which suggests active upkeep.",
+  "caveats": "The homepage https://www.htslib.org/ is actually the Samtools project page; it describes HTSlib as one of three repositories and only links out to it, so the HTSlib-specific facts come from the GitHub README. Building from Git needs extra steps. The paper gives the licence as MIT/BSD. The executables tabix, bgzip, htsfile, ref-cache and annot-tsv came from the brew listing, and only tabix and bgzip are confirmed in the README.",
+  "quotes": [
+   "HTSlib is an implementation of a unified C library for accessing common file formats, such as SAM, CRAM and VCF, used for high-throughput sequencing data, and is the core library used by samtools and bcftools.",
+   "HTSlib only depends on zlib.",
+   "Release tarballs contain generated files that have not been committed to this repository, so building the code from a Git repository requires extra steps:"
+  ],
+  "links": [
+   {
+    "label": "Homepage (Samtools project page)",
+    "url": "https://www.htslib.org/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/samtools/htslib"
+   },
+   {
+    "label": "GigaScience paper (doi 10.1093/gigascience/giab007)",
+    "url": "https://doi.org/10.1093/gigascience/giab007"
+   },
+   {
+    "label": "Download page",
+    "url": "http://www.htslib.org/download/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.htslib.org/ : worked, but returned the Samtools project page rather than an HTSlib page; it links to HTSlib only as one of three repositories",
+   "https://github.com/samtools/htslib : worked, returned the README (CI badges, description, build steps, citation, support)"
+  ]
+ }
+}

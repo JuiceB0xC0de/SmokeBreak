@@ -1,0 +1,140 @@
+{
+ "name": "ctl",
+ "desc": "Programming language for digital color management",
+ "homepage": "https://github.com/aces-aswf/CTL",
+ "installs_365d": 185,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "language",
+  "visual"
+ ],
+ "why": "A small programming language for color transforms in film and VFX pipelines, an odd domain with a real design of its own.",
+ "brief": {
+  "what_it_is": "CTL (Color Transformation Language) is a small domain-specific programming language for describing digital color transforms as programs. A color management system includes an interpreter that loads a CTL program and runs it on the pixels of an input image, producing a transformed output image. The command-line tool ctlrender applies a CTL transform to image files, for example ctlrender -ctl transform.ctl input.exr output.exr. Parameters such as exposure can be set to adjust a transform.",
+  "why_it_exists": "The README argues that general-purpose languages like C, C++ or Python are poor for sharing color transforms, because recipients may need to compile code, portability is hard to guarantee, bugs can crash a host application, and malware protection is difficult. CTL is restricted to the operations color transforms need, which the author says improves portability, protects host applications and users, and allows efficient interpreters.",
+  "how_it_works": "A color management system with CTL support runs an interpreter that loads a specific CTL program and applies it to the original image, which is the program's input, producing the transformed image as output. Two parties with the same CTL program and the same parameter settings get identical results, so transforms are shared by distributing the program. The language is limited to single-pixel operations, so it cannot express neighborhood operations such as blurs or whole-image statistics.",
+  "commands_seen": [
+   {
+    "cmd": "brew install ctl",
+    "context": "README's quick start for macOS via Homebrew; the INSTALL.md says this also handles required and optional dependencies."
+   },
+   {
+    "cmd": "mkdir build && cd build",
+    "context": "Source build step from the root of the CTL source tree on Linux or macOS."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Configures the source build from the build directory."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles CTL after CMake configuration."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the built CTL system-wide on Linux or macOS."
+   },
+   {
+    "cmd": "docker build --rm -f Dockerfile -t ctl:latest .",
+    "context": "Builds the Docker image for running CTL in a container, from INSTALL.md."
+   },
+   {
+    "cmd": "docker run -it --rm -v /home/user/data:/data ctl:latest",
+    "context": "Runs the CTL container on Linux or macOS with a host folder mounted at /data so it can process files."
+   },
+   {
+    "cmd": "ctlrender -help",
+    "context": "Suggested check that ctlrender is installed and working, shows its help menu."
+   },
+   {
+    "cmd": "ctlrender -ctl transform.ctl input.exr output.exr",
+    "context": "Applies a CTL transform program to an input EXR image and writes the output EXR."
+   }
+  ],
+  "install_notes": "On macOS, brew install ctl is the recommended route and is said to pull in dependencies. Building from source is for Linux (Ubuntu/Debian/Red Hat) or custom macOS builds and needs a C++ compiler, CMake 3.12+, and OpenEXR; libTIFF and the ACES Container are optional. Windows builds use vcpkg with the CMake toolchain file, with openexr and tiff installed through vcpkg. Docker is offered as an isolated alternative, and host folders must be mounted to reach your files. No accounts or runtimes are mentioned beyond that.",
+  "standout": "CTL is a deliberately locked-down language: it can only express single-pixel color math, so transforms can be shared as plain program text with predictable results and no risk of arbitrary code running in a host application. That sandboxed-by-design stance is unusual for a scripting language, and the README is explicit that CTL is separate from ACES even though ACES uses it for its reference transforms.",
+  "status": "unknown. The README and the INSTALL.md I read show no release version, last-commit date, or maintenance note. The repo is hosted under the aces-aswf organization and includes CI workflows and Docker files, which suggests active upkeep, but I could not confirm recency from the pages.",
+  "caveats": "The language is restricted to color space and other single-pixel operations, so it cannot do blurs, sharpening, or whole-image statistics. Source builds take real work: a C++ compiler plus CMake, OpenEXR and optional libTIFF, and Windows needs vcpkg. Docker users must mount a host folder or they cannot reach their files. The README says the language is documented in SMPTE RDD 15 and in the repo docs. The INSTALL.md URL on the main branch returned 404 and I read the master-branch copy instead. The brew_caveats field was empty.",
+  "quotes": [
+   "CTL is a color transformation language, and can be used to express any color transform.",
+   "CTL is restricted to color space transforms and other single-pixel operations.",
+   "CTL \u2260 ACES - CTL's utility extends far beyond its usage in the ACES framework."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/aces-aswf/CTL"
+   },
+   {
+    "label": "INSTALL.md (install guide)",
+    "url": "https://github.com/aces-aswf/CTL/blob/master/INSTALL.md"
+   },
+   {
+    "label": "SMPTE RDD 15 (CTL syntax and functions)",
+    "url": "https://pub.smpte.org/doc/rdd15/20070924-pub/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/aces-aswf/CTL: worked, README returned.",
+   "https://github.com/aces-aswf/CTL/blob/main/INSTALL.md: HTTP 404, failed.",
+   "https://github.com/aces-aswf/CTL/blob/master/INSTALL.md: worked, returned the GitHub page wrapper with the INSTALL.md text readable among the page chrome."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "CTL is an unusual, deliberately sandboxed language for portable per-pixel color transforms, opening a hands-on door into color science and film workflows."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "CTL",
+  "tldr": "A deliberately tiny language for color transforms: write pixel math as a program, run it on an image, and share it as plain text.",
+  "deeper_look": "CTL, the Color Transformation Language, describes a digital color transform as a small program. An interpreter loads the program, runs it on every pixel of an input image, and writes the transformed image. The command-line tool `ctlrender` does this for image files, and parameters such as exposure can be set to adjust a transform.\n\nThe reason it exists is about sharing. The README argues that C, C++ or Python are poor vehicles for passing color transforms around: the recipient may have to compile code, portability is hard to guarantee, a bug can crash the host application, and malware is difficult to rule out. CTL is restricted to the operations color transforms need, which the author says improves portability, protects host applications and users, and allows efficient interpreters.\n\nThe idea underneath is that a language gets safer and more useful by being able to say less. CTL only handles single-pixel operations, so it cannot blur, sharpen or compute whole-image statistics. In exchange, two parties with the same program and the same parameters get identical results, and the transform can travel as program text. Color management in film and VFX leans on exactly that guarantee.\n\nThe README is explicit that CTL is not the same thing as ACES, the film color framework that uses it for its reference transforms: \"CTL's utility extends far beyond its usage in the ACES framework.\" The language is documented in SMPTE RDD 15.",
+  "install": "brew install ctl\n# Installs the ctlrender, exr_ctl_exr and exrdpx tools. Dependencies (imath, libtiff, openexr) come along via brew. You will need an EXR image and a .ctl program of your own to do anything useful.",
+  "try_this": [
+   {
+    "cmd": "ctlrender -help",
+    "what_happens": "Prints the help menu and confirms the tool is installed and working."
+   },
+   {
+    "cmd": "ctlrender -ctl transform.ctl input.exr output.exr",
+    "what_happens": "Runs your CTL program over every pixel of input.exr and writes the result to output.exr."
+   },
+   {
+    "cmd": "exrdpx --help",
+    "what_happens": "Shows the options for the bundled tool that converts between EXR and DPX image files."
+   }
+  ],
+  "whats_unique": "It is a scripting language locked down by design: only single-pixel color math, so a transform can be shared as plain text with predictable results and no arbitrary code running in a host application.",
+  "caveats": "It cannot do blurs, sharpening or any neighborhood operation, and the brief could not confirm how recently the project was updated.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "language",
+   "color",
+   "image",
+   "vfx",
+   "dsl"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/aces-aswf/CTL"
+   },
+   {
+    "label": "INSTALL.md (install guide)",
+    "url": "https://github.com/aces-aswf/CTL/blob/master/INSTALL.md"
+   },
+   {
+    "label": "SMPTE RDD 15 (CTL syntax and functions)",
+    "url": "https://pub.smpte.org/doc/rdd15/20070924-pub/"
+   }
+  ]
+ }
+}

@@ -1,0 +1,90 @@
+{
+ "name": "dovi_tool",
+ "desc": "CLI tool for Dolby Vision metadata on video streams",
+ "homepage": "https://github.com/quietvoid/dovi_tool/",
+ "installs_365d": 1536,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "audio",
+  "visual",
+  "reverse-engineering"
+ ],
+ "why": "Reads and edits Dolby Vision RPU metadata inside video bitstreams, a rare look into hidden structure in video files.",
+ "brief": {
+  "what_it_is": "dovi_tool is a command-line tool for Dolby Vision metadata. It reads the RPU (Reference Processing Unit) metadata carried in HEVC video streams and in Matroska files that contain HEVC, and it can print, export, plot, generate, and edit that metadata. It also converts between Dolby Vision profiles (for example to profile 8.1 or 8.4), demuxes dual-layer files into base and enhancement layers, muxes them back together, and injects or removes RPU data. Outputs include JSON, CSV, binary RPU files, PNG plots, and HEVC bitstreams. The repo also hosts the dolby_vision Rust crate and the C-compatible libdovi library.",
+  "why_it_exists": "The README describes dovi_tool as \"a CLI tool combining multiple utilities for working with Dolby Vision\" and says it provides \"an important set of tools for analyzing, editing and generating Dolby Vision metadata.\" The page gives no further background on the motivation.",
+  "how_it_works": "Subcommands operate on binary RPU files or on HEVC bitstreams. Extraction and injection work by locating RPU NAL units inside the HEVC stream. Conversion modes (-m 0 to 5) rewrite the RPU for a target profile, and the editor and generate commands take JSON configuration files that describe the metadata to write. The README does not describe the internal parsing approach in detail.",
+  "commands_seen": [
+   {
+    "cmd": "cargo build --release",
+    "context": "Builds the release binary, which ends up at target/release/dovi_tool."
+   },
+   {
+    "cmd": "dovi_tool info -i RPU.bin -f 123",
+    "context": "Prints the parsed RPU for frame index 123 as JSON. The README comment says frame 124, but the command uses -f 123 and frame indices start at 0."
+   },
+   {
+    "cmd": "dovi_tool generate --xml dolbyvision_metadata.xml -o RPU_from_xml.bin",
+    "context": "Builds a binary RPU from an exported CMv2.9 or CMv4.0 Dolby Vision XML metadata file."
+   },
+   {
+    "cmd": "dovi_tool generate -j assets/generator_examples/default_cmv40.json -o RPU_generated.bin",
+    "context": "Generates a binary RPU from a profile 5, 8.1, or 8.4 configuration JSON file."
+   },
+   {
+    "cmd": "dovi_tool editor -i RPU.bin -j assets/editor_examples/mode.json -o RPU_mode2.bin",
+    "context": "Edits an existing binary RPU according to a JSON config. Indices start at 0 and are inclusive."
+   },
+   {
+    "cmd": "dovi_tool export -i RPU.bin -d all=RPU_export.json",
+    "context": "Exports the full RPU list to a JSON file. This is also the default when -d is omitted."
+   },
+   {
+    "cmd": "dovi_tool plot RPU.bin -t \"Dolby Vision L1 plot\" -o L1_plot.png",
+    "context": "Plots L1 brightness metadata to a PNG with a title. The -o flag appears only in this example and is not in the plot options list."
+   },
+   {
+    "cmd": "dovi_tool -m 2 convert --discard file.hevc",
+    "context": "Converts a single-layer HEVC file's RPU to profile 8.1 and discards the enhancement layer."
+   },
+   {
+    "cmd": "dovi_tool demux file.hevc",
+    "context": "Splits a single-track dual-layer Dolby Vision HEVC file into base layer and enhancement layer files."
+   },
+   {
+    "cmd": "dovi_tool extract-rpu video.hevc",
+    "context": "Extracts the Dolby Vision RPU from an HEVC file. Matroska input also works directly, for example video.mkv."
+   }
+  ],
+  "install_notes": "The README does not mention brew install. To build from source, you need Rust 1.88.0 or newer and then run cargo build --release. On Linux, fontconfig is required; alternatively build with --no-default-features --features internal-font to bypass system fonts. Build artifacts are also available from the GitHub Actions runs. No accounts, hardware, or runtime configuration are mentioned.",
+  "standout": "Most metadata tools only read Dolby Vision metadata. This one can rewrite it, including converting FEL to MEL, moving a profile 5 stream to 8.1, and changing profile 8.4 output, and it can also demux and remux dual-layer files. The scout note calls it a rare look into hidden structure in video files, and the README supports that with commands that touch the RPU NAL units directly.",
+  "status": "unknown. The README has CI and artifact badges, and it requires Rust 1.88.0, which suggests recent toolchain updates. It gives no release dates, changelog, or last-commit information, and I did not fetch the releases or commits page, so I cannot confirm maintenance activity.",
+  "caveats": "The README does not state a license. Building on Linux needs fontconfig unless you use the internal-font feature. Some README details are inconsistent: the info example comment says frame 124 but the command uses -f 123, and the plot example uses -o even though it is not listed among the plot options. Matroska input is documented only for extract-rpu. The README says of the feature set: \"More features may or may not be added in the future.\" Several of the mode and profile conversions, including FEL to MEL, have side effects that the README describes only briefly, so check the output before relying on it.",
+  "quotes": [
+   "dovi_tool is a CLI tool combining multiple utilities for working with Dolby Vision.",
+   "Rust port of yusesope's python tool. Credits goes to them.",
+   "More features may or may not be added in the future."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repository)",
+    "url": "https://github.com/quietvoid/dovi_tool/"
+   },
+   {
+    "label": "Editor documentation (docs/editor.md, linked from README, not fetched)",
+    "url": "https://github.com/quietvoid/dovi_tool/blob/main/docs/editor.md"
+   },
+   {
+    "label": "Generator documentation (docs/generator.md, linked from README, not fetched)",
+    "url": "https://github.com/quietvoid/dovi_tool/blob/main/docs/generator.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/quietvoid/dovi_tool/ : worked, README returned. The README links to docs/generator.md, docs/editor.md, and dolby_vision/README.md, but I did not fetch them because the README was detailed enough for this brief."
+  ]
+ }
+}

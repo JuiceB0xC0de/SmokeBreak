@@ -1,0 +1,131 @@
+{
+ "name": "zvbi",
+ "desc": "Vertical Blanking Interval (VBI) decoding library",
+ "homepage": "https://github.com/zapping-vbi/zvbi",
+ "installs_365d": 139,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "library",
+  "protocol",
+  "afternoon"
+ ],
+ "why": "Decodes Vertical Blanking Interval data like teletext and closed captions hidden in analog TV signals, a door into forgotten broadcast protocols.",
+ "brief": {
+  "what_it_is": "ZVBI (libzvbi) is a C library for capturing and decoding data carried in the vertical blanking interval of analog TV signals. It reads raw VBI from Linux V4L/V4L2 and FreeBSD BKTR capture devices, from Linux DVB devices, or through a VBI proxy that shares devices between applications. It demodulates raw VBI into sliced data in software and decodes services such as Teletext and Closed Caption. It also has a Teletext cache with search and text export and rendering functions. It ships a few command-line tools, including zvbi-ntsc-cc for NTSC closed captions. The README says it offers everything a VBI application needs except the user interface.",
+  "why_it_exists": "The README says the VBI is the interval where the screen's electron beam returns to the top, so data sent there would not be displayed, and it can carry test signals, closed captioning and other digital data. The library was written for the Zapping TV viewer and is meant to supply the decoding layer so applications only need a UI.",
+  "how_it_works": "The library reads raw VBI frames from capture devices (V4L, V4L2, BKTR, DVB) or through the zvbid proxy. It demodulates them in software into sliced VBI data, then runs decoders for services like Teletext and Closed Caption. The README does not go into more detail than that.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/zapping-vbi/zvbi.git",
+    "context": "Obtains a local copy of the repository for building from source."
+   },
+   {
+    "cmd": "cd zvbi && ./autogen.sh",
+    "context": "Creates the missing autotools configuration files after cloning."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Generates the Makefiles."
+   },
+   {
+    "cmd": "CONFIGURE=1 ./autogen.sh",
+    "context": "Optional: runs autogen and then configure in one step."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles and builds the library and binaries; also builds Doxygen docs if Doxygen is installed."
+   },
+   {
+    "cmd": "make check",
+    "context": "Runs the test suite."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the built files."
+   }
+  ],
+  "install_notes": "Build from source with GNU autotools: clone, run ./autogen.sh, then ./configure, make, and make install. Doxygen is optional and only needed for the HTML API docs. The README points to distribution packages (a Debian package and a FreeBSD port are named, and RPMs come from distro repos), so a package manager may be easier. Capturing live data needs a supported capture device (V4L/V4L2, BKTR, or a Linux DVB card). The README does not list any runtime or account requirements.",
+  "standout": "It is a reusable decoding library rather than an app, and it covers both raw capture and software demodulation of old broadcast data services like Teletext in one place. It also includes a VBI proxy (zvbid) that lets several applications share one capture device.",
+  "status": "Maintained, judging by the README. The repo was moved from SourceForge to GitHub in September 2022 for current development, and the first release on this repo is 0.2.36. The copyright line runs to 2026. I did not find a last-release or last-commit date on the page, so the activity level is inferred.",
+  "caveats": "The README says it has been tested only on Linux and FreeBSD. It is a library with no user interface, and the README does not explain how to use zvbi-ntsc-cc beyond its one-line description. Capturing live signals needs compatible hardware. Licensing is GPL-2+ for the project, with LGPL, MIT, and BSD code included elsewhere. Building requires GNU autotools.",
+  "quotes": [
+   "The vertical blanking interval can be used to carry data, since anything sent during the VBI would naturally not be displayed; various test signals, closed captioning, and other digital data can be sent during this time period.",
+   "Basically ZVBI offers all functions needed by VBI applications except for the user interface.",
+   "The library has been tested on Linux and FreeBSD."
+  ],
+  "links": [
+   {
+    "label": "Homepage / repository",
+    "url": "https://github.com/zapping-vbi/zvbi"
+   },
+   {
+    "label": "INSTALL file",
+    "url": "https://github.com/zapping-vbi/zvbi/blob/main/INSTALL"
+   },
+   {
+    "label": "Perl bindings (Video::ZVBI)",
+    "url": "https://search.cpan.org/~TOMZO/Video-ZVBI"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/zapping-vbi/zvbi: fetched OK, README returned. This was the only fetch; the README covered build, binaries, and licensing, so I did not follow further links."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It opens up forgotten broadcast protocols by demodulating hidden analog-TV data such as Teletext and captions, a distinctive rabbit hole beyond ordinary tooling."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "zvbi",
+  "tldr": "A C library that pulls Teletext and closed captions out of the vertical blanking interval of analog TV signals, the hidden data lines above the picture.",
+  "deeper_look": "In an analog TV signal, the electron beam has to fly back to the top of the screen between frames. That gap is the vertical blanking interval, and because nothing sent during it is displayed, broadcasters used it to carry other data. The README lists test signals, closed captioning and other digital data. ZVBI is the layer that captures and decodes that data.\n\nIt reads raw VBI from Linux V4L and V4L2 capture devices, FreeBSD BKTR devices, or Linux DVB devices. A proxy daemon, zvbid, lets several applications share one capture device. The library demodulates the raw samples into sliced data in software, then decodes services such as Teletext and Closed Caption. It also has a Teletext page cache with search, text export and rendering functions.\n\nIt was written for the Zapping TV viewer, and the README puts it this way: \"Basically ZVBI offers all functions needed by VBI applications except for the user interface.\" That makes it a library first. The one tool in the Homebrew formula is zvbi-ntsc-cc, which handles NTSC closed captions.\n\nThe larger idea is that a video signal was never only a picture. Teletext pages and captions rode along in lines nobody saw, and reading the library is a way into how those forgotten broadcast data services were encoded.",
+  "install": "brew install zvbi\n\nLive capture needs a supported device: V4L/V4L2, BKTR, or a Linux DVB card. Building from source needs GNU autotools (git clone, ./autogen.sh, ./configure, make, make install).",
+  "try_this": [
+   {
+    "cmd": "zvbi-ntsc-cc --help",
+    "what_happens": "Prints the options for the NTSC closed caption extractor, the one command-line tool the formula installs."
+   },
+   {
+    "cmd": "CONFIGURE=1 ./autogen.sh",
+    "what_happens": "When building from a cloned repo, generates the autotools files and runs configure in one step."
+   },
+   {
+    "cmd": "make check",
+    "what_happens": "Runs the library's test suite after building from source."
+   }
+  ],
+  "whats_unique": "It is a reusable decoding library, not an app. It covers raw capture, software demodulation and decoding of old broadcast data services like Teletext in one place, and includes a proxy for sharing a capture device.",
+  "caveats": "It is a library with no user interface, the README barely explains zvbi-ntsc-cc, and seeing real data needs analog or DVB capture hardware; it is tested only on Linux and FreeBSD.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "library",
+   "teletext",
+   "closed-captions",
+   "analog-tv",
+   "broadcast",
+   "vbi"
+  ],
+  "links": [
+   {
+    "label": "Homepage / repository",
+    "url": "https://github.com/zapping-vbi/zvbi"
+   },
+   {
+    "label": "INSTALL file",
+    "url": "https://github.com/zapping-vbi/zvbi/blob/main/INSTALL"
+   },
+   {
+    "label": "Perl bindings (Video::ZVBI)",
+    "url": "https://search.cpan.org/~TOMZO/Video-ZVBI"
+   }
+  ]
+ }
+}

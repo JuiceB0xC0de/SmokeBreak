@@ -1,0 +1,76 @@
+{
+ "name": "spglib",
+ "desc": "C library for finding and handling crystal symmetries",
+ "homepage": "https://spglib.readthedocs.io/en/latest/",
+ "installs_365d": 165,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "math",
+  "library"
+ ],
+ "why": "Finds crystal symmetry groups, real crystallography you can run at home on your own structures.",
+ "brief": {
+  "what_it_is": "Spglib is a C library that finds and handles crystal symmetries. You give it a crystal structure (lattice vectors, atom positions, atom types, and a symmetry tolerance called symprec) and it returns symmetry information. The main call, spg_get_dataset, returns a SpglibDataset struct with the space group number and related data, which you free with spg_free_dataset. The feature list covers finding symmetry operations, identifying the space-group type, assigning Wyckoff positions, refining a structure, finding a primitive cell, and searching irreducible k-points. Python, Fortran, Rust, and Ruby interfaces exist alongside the C API.",
+  "why_it_exists": "The README frames it as a software library for crystal symmetry search, citing the authors' 2024 paper 'Spglib: a software library for crystal symmetry search' and a 2023 paper on magnetic symmetry search. The docs describe it as a tool for finding and handling crystal symmetries.",
+  "how_it_works": "The caller supplies a structure and a tolerance so that small distortions in the atomic coordinates still count as symmetric. The library searches for symmetry operations under that tolerance, then identifies the space group from them. The README says the memory for the returned operations is allocated dynamically, so the caller must free the dataset afterward.",
+  "commands_seen": [
+   {
+    "cmd": "pip install spglib",
+    "context": "Installs the Python package from PyPI. The README calls this the officially supported route alongside conda."
+   },
+   {
+    "cmd": "conda install -c conda-forge spglib",
+    "context": "Installs the conda package, which bundles the C and Fortran libraries."
+   },
+   {
+    "cmd": "cmake . -B ./build",
+    "context": "First step of the minimal manual build from source: configures the CMake project into a build directory."
+   },
+   {
+    "cmd": "cmake --build ./build",
+    "context": "Second step of the manual build: compiles the configured project."
+   },
+   {
+    "cmd": "cmake --install ./build",
+    "context": "Third step of the manual build: installs the built library."
+   },
+   {
+    "cmd": "ctest --test-dir ./build",
+    "context": "Runs the C library tests, which are enabled by default in the CMake project. Python tests are separate."
+   }
+  ],
+  "install_notes": "Officially supported packaging is conda and pip only, according to the README. Fedora packaging is said to be planned. The Homebrew badge appears in the README, but I did not check the brew formula. For other systems, the README points to manual compilation with CMake. The Python package uses a system-installed Spglib if one is found through LD_LIBRARY_PATH on Linux or DYLD_LIBRARY_PATH on macOS, and otherwise falls back to a bundled copy. No accounts or hardware are needed. The C library requires C11 or later.",
+  "standout": "It is the reference symmetry-finding library behind many crystallography tools, and it supports magnetic space-group search as well as ordinary space groups. Its tolerance-based approach handles slightly distorted real structures, not only idealized ones.",
+  "status": "Maintained, judging by the evidence. The docs page reports version v2.7.1.dev21, which means development continues 21 commits past the v2.7.1 tag. The repo has active CI, Codecov, and packaging badges, and the README lists current main developers. I did not see a release date or last-commit date, so I cannot give an exact date.",
+  "caveats": "Official packaging covers only conda and pip. Other platforms need manual CMake builds. The C standard floor is C11. The license is BSD-3-Clause. The docs page I read was the index, and I did not follow the detailed API pages. The README does not show a full worked example beyond the short C snippet, which I did not count as a command.",
+  "quotes": [
+   "Spglib is a library for finding and handling crystal symmetries written in C.",
+   "A crystal structure is given to a spglib function to obtain symmetry information.",
+   "To tolerate tiny distortion of crystal structure, it has to be specified when calling symmetry search function.",
+   "We currently only officially support conda and pip packaging of spglib, with plans to expand to FedoraProject in the near future."
+  ],
+  "links": [
+   {
+    "label": "Documentation (homepage)",
+    "url": "https://spglib.readthedocs.io/en/latest/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/spglib/spglib"
+   },
+   {
+    "label": "Citation paper (Sci. Technol. Adv. Mater., Meth. 2024)",
+    "url": "https://www.tandfonline.com/doi/full/10.1080/27660400.2024.2384822"
+   }
+  ],
+  "fetch_log": [
+   "https://spglib.readthedocs.io/en/latest/ - worked; returned the docs index page with the project description, feature list, and citations, but not the detailed API pages",
+   "https://github.com/spglib/spglib - worked; returned the README with install, build, test, and citation sections"
+  ]
+ }
+}

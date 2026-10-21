@@ -1,0 +1,94 @@
+{
+ "name": "checksec",
+ "desc": "Security feature auditing for ELF binaries and Linux kernels",
+ "homepage": "https://slimm609.github.io/checksec",
+ "installs_365d": 184,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering"
+ ],
+ "why": "Audits ELF binaries for hardening features like RELRO, canaries and NX, a useful window into how binaries are armoured.",
+ "brief": {
+  "what_it_is": "checksec is a command-line auditor that inspects the hardening properties of ELF executables, running processes, and the Linux kernel. For a binary it reports protections such as RELRO, stack canaries, NX, PIE, control-flow integrity (CFI), and FORTIFY_SOURCE. It takes a file, directory, PID, or the running kernel's configuration as input and prints a table, with optional CLI, JSON, XML, or YAML output. The homepage also describes an --exploit mode that reasons about which attack techniques the posture leaves open, and a -o llm mode that emits a Markdown report meant to be pasted into an LLM assistant.",
+  "why_it_exists": "The project is a Go rewrite of a bash script that Tobias Klein wrote in 2011 to check binary hardening. The README frames the rewrite as a response to dependency bloat: the bash version needed more and more tools as checks and distributions changed, which made it a poor fit for embedded systems, distroless containers, and cross-platform checks.",
+  "how_it_works": "The tool reads each ELF file's properties and reports them as a row of checks (RELRO, canary, NX, PIE, RPATH, RUNPATH, symbols, FORTIFY). For kernel checks it reads the running system's kernel configuration and sysctl values and lists each one with its CONFIG_ key or sysctl name. The Go version ships as a single static binary. The README says it is much faster than the bash version: 0.69s against 10.3s to check 694 files in a directory.",
+  "commands_seen": [
+   {
+    "cmd": "install -m 0755 checksec /usr/local/bin/checksec",
+    "context": "Manual binary install step from the GitHub releases page, placing the prebuilt binary on PATH."
+   },
+   {
+    "cmd": "docker run --rm -v \"$PWD:/data\" slimm609/checksec:latest file /data/your-binary",
+    "context": "Runs the published container image against a binary mounted from the current directory, with no local install."
+   },
+   {
+    "cmd": "go install github.com/slimm609/checksec/v3@latest",
+    "context": "Builds and installs checksec from source using the Go toolchain."
+   },
+   {
+    "cmd": "checksec file /bin/ls",
+    "context": "Quick-start check of a single ELF binary; prints the RELRO, canary, NX, PIE, and RPATH table."
+   },
+   {
+    "cmd": "checksec dir /usr/bin -r",
+    "context": "Recursively checks every file in a directory."
+   },
+   {
+    "cmd": "checksec proc 1",
+    "context": "Checks a running process by PID, here PID 1."
+   },
+   {
+    "cmd": "checksec kernel",
+    "context": "Lists the running kernel's hardening configuration, such as CONFIG_STACKPROTECTOR and sysctl values."
+   },
+   {
+    "cmd": "checksec file /bin/ls --exploit",
+    "context": "Adds exploitability reasoning: which attack techniques the mitigation posture fails to block, with evidence cited."
+   },
+   {
+    "cmd": "checksec file /bin/ls -o llm",
+    "context": "Emits a self-grounding Markdown report designed to be pasted into an LLM assistant."
+   },
+   {
+    "cmd": "checksec file /bin/ls --output yaml",
+    "context": "From the GitHub README: YAML output of the same checks (YAML is new in the Go version)."
+   },
+   {
+    "cmd": "checksec kernel --output json",
+    "context": "From the GitHub README: kernel config results as a JSON array with name, desc, type, and value fields."
+   }
+  ],
+  "install_notes": "No account, API key, or runtime is needed for the prebuilt binary. Download it from the GitHub releases page and place it on PATH. Each release also ships .deb, .rpm, and .apk packages. Docker users can run the slimm609/checksec:latest image. Building from source uses go install with the module path github.com/slimm609/checksec/v3. Kernel checks must run on the live system they audit, because they read kernel resources directly. Offline checks of a cross-compiled root filesystem work for most file checks; for FORTIFY, pass --libc to point at the cross-compiled libc, or use chroot. The kernel config file can be given with -k.",
+  "standout": "Most binary checkers stop at the mitigation table. checksec adds an --exploit mode that reasons about which attack techniques the observed posture leaves open, and it states that it never claims a binary is 'exploitable', only tiers of evidence. The -o llm output is built to be fed to an LLM so the model reasons from the tool's output rather than from memory.",
+  "status": "Unknown in a strict sense: the homepage and GitHub README give no release date and no last-commit date. The README pins the current version at 3.0.1, and the project has a documentation site with checks, usage, and exploitability pages, which suggests active upkeep. Verify the release date on GitHub before writing 'maintained'.",
+  "caveats": "On macOS, checksec can scan Linux ELF files, but some checks are limited because they depend on OS resources such as glibc. Kernel checks only print the settings the running kernel's config supports. Offline FORTIFY checks use the host's libc unless --libc is given. The README says CSV output is being dropped from the Go version, and it has no equivalent for the bash-era output. Embedded targets may lack readelf or binutils, which would stop parts of the tool from working. The homepage's sample FORTIFY output is labelled 'Coming Soon', so that feature looks incomplete.",
+  "quotes": [
+   "checksec inspects the security properties of ELF executables, running processes, and the Linux kernel",
+   "--exploit reasons about which attack techniques the mitigation posture fails to obstruct",
+   "Over time as more checks were supported and Linux distributions have changed, this has brought more dependencies into checksec.",
+   "The checksec tool's normal use case is for runtime checking of the systems configuration."
+  ],
+  "links": [
+   {
+    "label": "Homepage and documentation",
+    "url": "https://slimm609.github.io/checksec"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/slimm609/checksec"
+   },
+   {
+    "label": "Original bash checksec by Tobias Klein",
+    "url": "http://www.trapkit.de/tools/checksec.html"
+   }
+  ],
+  "fetch_log": [
+   "https://slimm609.github.io/checksec: worked. Returned the rendered docs page with install options, quick start, and links to usage, output, checks, exploitability, and LLM-output pages. Those subpages were not fetched.",
+   "https://github.com/slimm609/checksec: worked. Returned the README, with version 3.0.1, history, examples, and cross-compile notes."
+  ]
+ }
+}

@@ -1,0 +1,87 @@
+{
+ "name": "sipp",
+ "desc": "Traffic generator for the SIP protocol",
+ "homepage": "https://sipp.sourceforge.net/",
+ "installs_365d": 1134,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "A SIP traffic generator that opens a real door into the telephony protocol running behind calls and VoIP systems.",
+ "brief": {
+  "what_it_is": "SIPp is a free, open source test tool and traffic generator for the SIP protocol, the signalling protocol behind VoIP and call systems. It ships with a few basic SIPstone UAC and UAS user-agent scenarios that set up and tear down multiple calls with INVITE and BYE. It also reads custom XML scenario files describing call flows from very simple to complex, and it can send RTP media through RTP echo or pcap replay. Its output is live statistics on the terminal (call rate, round trip delay, message counts), periodic CSV dumps, and a passed/failed verdict when run as a single call.",
+  "why_it_exists": "The homepage says SIPp is for testing real SIP equipment such as proxies, B2BUAs, media servers, gateways and PBXes, and for emulating thousands of user agents calling your SIP system. It is aimed at traffic, stress and performance testing, though it can also run one call and exit.",
+  "how_it_works": "Scenarios are described in XML call flows, and the tool drives them over UDP, TCP, TLS, or SCTP, with retransmission management and adjustable call rates. Regular expressions extract protocol fields from received messages so they can be re-injected into later messages, and CSV files can inject per-user field data to emulate live users. Call-specific variables, conditional branches, and actions on message receipt (logging, running a system command, stopping the call) are also supported.",
+  "commands_seen": [
+   {
+    "cmd": "cmake .",
+    "context": "Configure the build with CMake from the source directory; the README's normal build is this followed by make."
+   },
+   {
+    "cmd": "make",
+    "context": "Compile SIPp after running cmake."
+   },
+   {
+    "cmd": "cmake . -DUSE_SCTP=1 -DUSE_PCAP=1 -DUSE_GSL=1",
+    "context": "Configure with optional features enabled: SIP over SCTP, media playback from PCAP files, and GNU Scientific Library random distributions."
+   },
+   {
+    "cmd": "regress/runtests",
+    "context": "Run the full regression test suite in regress/."
+   },
+   {
+    "cmd": "SIPP=/path/to/sipp regress/runtests",
+    "context": "Run the regression tests against a SIPp binary in a build directory other than the source tree or build/."
+   },
+   {
+    "cmd": "docker build -t sipp -f docker/Dockerfile --output=. --target=bin .",
+    "context": "Produce a static SIPp binary with the Alpine-based Dockerfile, after git submodule update --init."
+   },
+   {
+    "cmd": "docker build -t sipp -f docker/Dockerfile.debian .",
+    "context": "Build a non-static Debian-based container image that supports wolfSSL."
+   },
+   {
+    "cmd": "sphinx-build docs _build",
+    "context": "Build the documentation locally from the docs/ directory."
+   }
+  ],
+  "install_notes": "The README's normal route is CMake and make from a source checkout, and the master branch (3.8.x) needs a C++17 compiler. Optional flags enable SCTP (-DUSE_SCTP=1), PCAP media playback (-DUSE_PCAP=1), and GSL (-DUSE_GSL=1). TLS key logging needs OpenSSL 1.1.1 or newer and the -DTLS_KEY_LOGGING=1 flag; it writes to the file named by SSLKEYLOGFILE for decrypting SIPS traffic in Wireshark. Static builds (-DBUILD_STATIC=1) are documented only for Alpine Linux, through Docker. Running the regression tests on Linux needs unprivileged user namespaces (unshare -rn) and the ip tool. I did not see first-run configuration steps; the brew formula also installs a sipp-multi.py executable, which I did not find documented.",
+  "standout": "Scenarios are plain XML call flows with regex capture and re-injection, so one tool can act as caller, callee, or both across very different SIP call patterns, and it can also replay RTP media from pcap. It is one of the few open source SIP load tools that covers this breadth, and it can double as a one-shot pass/fail test.",
+  "status": "maintained. The GitHub README carries a 2003-2026 copyright, says the master branch is 3.8.x, and says the maintainer tries to be responsive to GitHub issues, with an active mailing list. The homepage still labels v3.4 as current and the 3.3 and 3.2 documentation as older, so the website is behind the repository. I did not see a release date or last commit date.",
+  "caveats": "The master branch needs a C++17 compiler, and the README's static build path is only documented for Alpine Linux. Regression tests on Linux depend on unprivileged user namespaces. The homepage video needs the Windows Media Player 9 codec. The homepage is dated (copyright 2004-2013) and its download section points to SourceForge for releases up to 3.3. The README notes that TLS key-log security has its own considerations section.",
+  "quotes": [
+   "SIPp is a free Open Source test tool / traffic generator for the SIP protocol.",
+   "While optimized for traffic, stress and performance testing, SIPp can be used to run one single call and exit, providing a passed/failed verdict.",
+   "It is also very useful to emulate thousands of user agents calling your SIP system.",
+   "I try and be responsive to issues raised on Github, and there's a reasonably active mailing list."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://sipp.sourceforge.net/"
+   },
+   {
+    "label": "Documentation (html, readthedocs)",
+    "url": "https://sipp3.readthedocs.io/en/latest/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/SIPp/sipp"
+   },
+   {
+    "label": "Mailing list",
+    "url": "https://lists.sourceforge.net/lists/listinfo/sipp-users"
+   }
+  ],
+  "fetch_log": [
+   "https://sipp.sourceforge.net/ : worked; homepage text with feature list, version links, and credits",
+   "https://github.com/SIPp/sipp : worked; returned the README with build, test, static build, and contributing sections"
+  ]
+ }
+}

@@ -1,0 +1,96 @@
+{
+ "name": "dqlite",
+ "desc": "Embeddable, replicated and fault-tolerant SQLite-powered engine",
+ "homepage": "https://dqlite.io",
+ "installs_365d": 8,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "library",
+  "protocol"
+ ],
+ "why": "A replicated SQLite engine using the Raft protocol; a real door into distributed consensus, though it is a library.",
+ "brief": {
+  "what_it_is": "dqlite is a C library that implements an embeddable, replicated SQL database engine with high availability and automatic failover. It extends SQLite with a network protocol so that several instances of an application can connect and act as one highly available cluster, with no external database needed. Applications link it in and use it like SQLite, and the nodes replicate data among themselves using the Raft consensus algorithm. The homepage describes the output as a fast, persistent SQL database with automatic leader election and failover. The README does not document a client API or a standalone server binary; the demo it points to lives in the Go bindings.",
+  "why_it_exists": "The name stands for \"distributed SQLite\". The homepage frames it for edge and IoT deployments, where appliances in remote locations cannot be quickly monitored, managed, or replaced, so the data needs to survive machine loss and fail over quickly.",
+  "how_it_works": "Each node runs an asynchronous, single-threaded event loop built on libuv, and nodes talk to each other over a custom wire protocol designed around SQLite primitives and data types. Writes are replicated across the cluster with the Raft algorithm, so data survives loss of machines as long as a majority remains. The homepage says the Raft implementation is C-Raft, a separate hand-tuned C implementation.",
+  "commands_seen": [
+   {
+    "cmd": "sudo add-apt-repository -y ppa:dqlite/dev && sudo apt install dqlite-tools",
+    "context": "Homepage: installs the bleeding-edge dev PPA and the dqlite-tools package on Ubuntu."
+   },
+   {
+    "cmd": "sudo add-apt-repository ppa:dqlite/dev",
+    "context": "README Install section: adds the dqlite dev PPA on a Debian-based system."
+   },
+   {
+    "cmd": "sudo apt update",
+    "context": "README Install section: refreshes package lists after adding the PPA."
+   },
+   {
+    "cmd": "sudo apt install libdqlite-dev",
+    "context": "README Install section: installs the libdqlite development library and headers from the PPA."
+   },
+   {
+    "cmd": "sudo apt install pkg-config autoconf automake libtool make libuv1-dev libsqlite3-dev liblz4-dev",
+    "context": "README Build section: installs the build dependencies on Debian-based distros (libuv and SQLite headers, optional LZ4)."
+   },
+   {
+    "cmd": "$ autoreconf -i",
+    "context": "README Build section: generates the configure script from a source checkout."
+   },
+   {
+    "cmd": "$ ./configure",
+    "context": "README Build section: configures the build with the default /usr/local prefix."
+   },
+   {
+    "cmd": "$ make",
+    "context": "README Build section: compiles libdqlite."
+   },
+   {
+    "cmd": "$ sudo make install",
+    "context": "README Build section: installs the shared library and headers."
+   },
+   {
+    "cmd": "$ ./configure --prefix=/usr",
+    "context": "README Build section: alternative configure step to install under a different prefix."
+   }
+  ],
+  "install_notes": "On Debian/Ubuntu, the easiest route is the dev PPA (ppa:dqlite/dev) and the libdqlite-dev package. Building from source needs pkg-config, Autoconf, Automake, libtool and make, plus libuv 1.8.0 or later with headers, SQLite 3.22.0 or later with headers, and optionally LZ4 1.7.1 or later. After make install on the default /usr/local prefix you may need sudo ldconfig so the linker finds libdqlite.so. For static linking, pass --with-static-deps to configure. With musl libc, the README recommends LDFLAGS=\"-Wl,-z,stack-size=1048576\". contrib/build-static.sh demonstrates a fully static build including libc. No accounts or runtime services are required. Tracing is turned on with the LIBDQLITE_TRACE environment variable, set before startup, with levels 0 to 5.",
+  "standout": "Unlike rqlite or Litestream, dqlite is not a server you talk to: it is a C library that turns your own application processes into a replicated SQLite cluster with no external database, and it is built on Canonical's C-Raft implementation with an asynchronous libuv core. The README also says the library can be statically linked into a proprietary product under a modified LGPLv3 with an exception.",
+  "status": "maintained. The GitHub README has a live CI badge and codecov badge, the Canonical homepage is current and mentions Ubuntu Summit 26.10, and a dev PPA is offered. I did not see a release date or last-commit date in the pages I fetched, so the evidence is indirect.",
+  "caveats": "Linux only: the README says it requires a kernel with native async I/O support (io_setup), not POSIX AIO. It is a C library, so the integration work is in your application; the README points to the Go bindings' demo as the simplest way to see it running. Static builds on musl need a larger stack size. The license is a modified LGPLv3, so read the LICENSE file before relying on the exception. The homepage's claim of ARM, x86, POWER and IBM Z support is not stated in the README. I did not fetch the separate docs site beyond the protocol link, and the README's wire protocol page is referenced but I did not read it.",
+  "quotes": [
+   "dqlite is a C library that implements an embeddable and replicated SQL database engine with high availability and automatic failover.",
+   "The acronym \"dqlite\" stands for \"distributed SQLite\", meaning that dqlite extends SQLite with a network protocol that can connect together various instances of your application and have them act as a highly-available cluster, with no dependency on external databases.",
+   "Asynchronous single-threaded implementation using libuv as event loop.",
+   "Custom wire protocol optimized for SQLite primitives and data types."
+  ],
+  "links": [
+   {
+    "label": "dqlite homepage",
+    "url": "https://dqlite.io"
+   },
+   {
+    "label": "GitHub repository (canonical/dqlite)",
+    "url": "https://github.com/canonical/dqlite"
+   },
+   {
+    "label": "Wire protocol documentation",
+    "url": "https://dqlite.io/docs/protocol"
+   },
+   {
+    "label": "FOSDEM 2020 talk",
+    "url": "https://fosdem.org/2020/schedule/event/dqlite/"
+   }
+  ],
+  "fetch_log": [
+   "https://dqlite.io (worked; Canonical marketing page with the homepage copy, no README content)",
+   "https://github.com/canonical/dqlite (worked; README returned)",
+   "Not fetched: https://dqlite.io/docs/protocol and the FOSDEM talk page, because the README was sufficient for the brief within the fetch limit."
+  ]
+ }
+}

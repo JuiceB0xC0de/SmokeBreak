@@ -1,0 +1,153 @@
+{
+ "name": "slirp4netns",
+ "desc": "User-mode networking for unprivileged network namespaces",
+ "homepage": "https://github.com/rootless-containers/slirp4netns",
+ "installs_365d": 36173,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "A user-mode TCP/IP stack that gives unprivileged containers networking, a neat door into how network namespaces and NAT work.",
+ "brief": {
+  "what_it_is": "slirp4netns is a user-mode networking program for Linux network namespaces that an unprivileged user can create. You run it on the host with the PID of a process in the namespace and a TAP device name, such as tap0. It attaches that TAP device to a user-space TCP/IP stack (libslirp, the \"slirp\" stack), which gives the namespace outbound internet access without root. The namespace ends up with a tap0 interface (the README example shows 10.0.2.100/24) and can reach the Internet through the host. It runs as a separate process alongside the namespace rather than as a library.",
+  "why_it_exists": "The README says that since Linux 3.8 unprivileged users can create network and user namespaces, but those namespaces were not very useful because creating veth pairs across the host and namespace still needs root, so a namespace had no internet connection.",
+  "how_it_works": "slirp4netns connects a TAP device inside the target network namespace to the user-mode TCP/IP stack from libslirp. The README says it is optimized to avoid copying packets across namespaces, and it benchmarks faster than vde_plug and VPNKit on an iperf3 test from 2018. The example sets up a resolver by pointing resolv.conf at the 10.0.2.3 nameserver that slirp provides.",
+  "commands_seen": [
+   {
+    "cmd": "unshare --user --map-root-user --net --mount",
+    "context": "Terminal 1: creates user, network, and mount namespaces as an unprivileged user, the first step of the quick start."
+   },
+   {
+    "cmd": "slirp4netns --configure --mtu=65520 --disable-host-loopback $(cat /tmp/pid) tap0",
+    "context": "Terminal 2: starts slirp4netns against the namespace PID saved in /tmp/pid and creates a tap0 device with the given MTU."
+   },
+   {
+    "cmd": "echo \"nameserver 10.0.2.3\" > /tmp/resolv.conf",
+    "context": "Run inside the namespace: writes a resolv.conf that points at the slirp DNS address 10.0.2.3."
+   },
+   {
+    "cmd": "mount --bind /tmp/resolv.conf /etc/resolv.conf",
+    "context": "Run inside the namespace: bind-mounts the custom resolv.conf over /etc/resolv.conf so name lookups work."
+   },
+   {
+    "cmd": "curl https://example.com",
+    "context": "Run inside the namespace as a final check that outbound internet access works."
+   },
+   {
+    "cmd": "slirp4netns --version",
+    "context": "Prints the slirp4netns version and the linked libslirp version, shown in the maintenance section."
+   },
+   {
+    "cmd": "sudo apt-get install slirp4netns",
+    "context": "Example of installing the distribution package on Debian or Ubuntu."
+   },
+   {
+    "cmd": "sudo apt-get install libglib2.0-dev libslirp-dev libcap-dev libseccomp-dev",
+    "context": "Build dependencies for compiling from source on apt-based systems."
+   },
+   {
+    "cmd": "./autogen.sh",
+    "context": "First step of the source build, run from the repository root."
+   },
+   {
+    "cmd": "./configure --prefix=/usr",
+    "context": "Configures the source build with /usr as the install prefix, before make and make install."
+   }
+  ],
+  "install_notes": "Static binaries for x86_64, aarch64, armv7l, s390x, ppc64le, and riscv64 are on the GitHub releases page, and packages exist for RHEL/CentOS, Fedora, Arch, openSUSE, SUSE, Debian, Ubuntu, NixOS, Gentoo, Slackware, Void, and Alpine. If unshare fails, the README says some distros (Debian, Arch, old CentOS 7) may need sysctl changes: set user.max_user_namespaces=28633 and, where present, kernel.unprivileged_userns_clone=1, then run sudo sysctl --system. Building from source needs libglib, libslirp (v4.1.0 or later), libcap, and libseccomp development packages. For a static build, configure with LDFLAGS=-static. If --prefix is set to $HOME, make install does not need sudo. No account or hardware is required.",
+  "standout": "It turns an unprivileged namespace, which is otherwise cut off from the network, into a working internet connection without root or veth pairs. The 'slirp' idea is decades old, but it is now the networking backend for rootless Podman, Buildah, RootlessKit, and k3s.",
+  "status": "maintained. The README's maintenance table lists v1.2.x as Active and older branches as End of Life, with the most recent EOL date May 2, 2022. It links to releases and security advisories. I did not check the releases page or the latest commit date, so the most recent release date is unknown.",
+  "caveats": "Linux only, because it depends on Linux network namespaces. The README's iperf3 benchmark is from August 2018, on RootlessKit's Travis CI, and the README does not say it has been rerun, though it mentions a regular make benchmark on CI. Before v1.0.0 the repo tracked libslirp/QEMU CVEs, and it no longer does, so the security record for libslirp sits elsewhere. The README also mentions that unshare may need kernel or sysctl changes on some distros. The GPL-2.0-or-later license is in COPYING. The manual (slirp4netns.1.md) has a Bugs section that I did not read.",
+  "quotes": [
+   "slirp4netns allows connecting a network namespace to the Internet in a completely unprivileged way, by connecting a TAP device in a network namespace to the usermode TCP/IP stack (\"slirp\").",
+   "Starting with Linux 3.8, unprivileged users can create network_namespaces(7) along with user_namespaces(7).",
+   "slirp4netns is faster than vde_plug and VPNKit because slirp4netns is optimized to avoid copying packets across the namespaces."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/rootless-containers/slirp4netns"
+   },
+   {
+    "label": "Releases (static binaries)",
+    "url": "https://github.com/rootless-containers/slirp4netns/releases"
+   },
+   {
+    "label": "Manual (slirp4netns.1.md)",
+    "url": "https://github.com/rootless-containers/slirp4netns/blob/master/slirp4netns.1.md"
+   },
+   {
+    "label": "libslirp",
+    "url": "https://gitlab.freedesktop.org/slirp/libslirp"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/rootless-containers/slirp4netns (homepage): fetched OK, README returned in full. It is not thin, so I did not follow further links.",
+   "https://github.com/rootless-containers/slirp4netns/blob/master/slirp4netns.1.md (manual): not fetched, link added to the links list only.",
+   "https://github.com/rootless-containers/slirp4netns/releases: not fetched, release date unknown."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It makes isolated Linux network namespaces reach the internet without root by bridging them to a user-space TCP/IP stack\u2014a useful, surprising way to explore networking fundamentals."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "slirp4netns",
+  "tldr": "Gives an unprivileged Linux network namespace a working internet connection with no root, using a TCP/IP stack that runs entirely in user space.",
+  "deeper_look": "Since Linux 3.8, an ordinary user can create network and user namespaces. The README points out the catch: those namespaces were not very useful, because linking one to the host with a veth pair needs root. So the namespace sat there with no internet.\n\nslirp4netns fills the gap. You run it on the host, give it the PID of a process inside the namespace and the name of a TAP device, and it attaches that device to libslirp, a TCP/IP stack in user space. The namespace gets a tap0 interface (the README example shows 10.0.2.100/24), a built-in nameserver at 10.0.2.3, and outbound access through the host. It runs as a separate process next to the namespace, not as a library.\n\nThe idea underneath is old. Slirp emulates a network in ordinary program code: it takes packets from one side and re-makes them as normal sockets on the other, a bit like NAT done by an application instead of the kernel. That is why no privileges are needed. The README says this one is tuned to avoid copying packets across namespaces, and it cites a 2018 iperf3 benchmark in which it beat vde_plug and VPNKit.\n\nIt is also plumbing that real tools depend on. The brief names rootless Podman, Buildah, RootlessKit and k3s as users. Running the quick start by hand shows what they do for you: make a namespace, wire it up, and point DNS at the right place.",
+  "install": "brew install slirp4netns\n# Linux only: it depends on Linux network namespaces. No account or hardware needed.\n# If unshare fails on Debian, Arch or old CentOS 7, you may need: user.max_user_namespaces=28633 and, where present, kernel.unprivileged_userns_clone=1, then sudo sysctl --system",
+  "try_this": [
+   {
+    "cmd": "unshare --user --map-root-user --net --mount",
+    "what_happens": "Terminal 1: creates user, network and mount namespaces as a normal user. This is the first step of the quick start, and the namespace has no network yet."
+   },
+   {
+    "cmd": "slirp4netns --configure --mtu=65520 --disable-host-loopback $(cat /tmp/pid) tap0",
+    "what_happens": "Terminal 2: attaches a tap0 device to the namespace whose PID you saved in /tmp/pid, backed by the user-space stack."
+   },
+   {
+    "cmd": "curl https://example.com",
+    "what_happens": "Run inside the namespace, after pointing resolv.conf at the nameserver 10.0.2.3, to confirm outbound access works without root."
+   }
+  ],
+  "whats_unique": "It makes an otherwise cut-off unprivileged namespace reach the internet with no root and no veth pairs. It is the networking backend behind rootless Podman, Buildah, RootlessKit and k3s.",
+  "caveats": "Linux only, and unshare may need sysctl or kernel changes on some distros; the README's iperf3 benchmark dates from 2018.",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "network",
+   "namespaces",
+   "containers",
+   "linux",
+   "nat",
+   "rootless"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/rootless-containers/slirp4netns"
+   },
+   {
+    "label": "Manual (slirp4netns.1.md)",
+    "url": "https://github.com/rootless-containers/slirp4netns/blob/master/slirp4netns.1.md"
+   },
+   {
+    "label": "Releases (static binaries)",
+    "url": "https://github.com/rootless-containers/slirp4netns/releases"
+   },
+   {
+    "label": "libslirp",
+    "url": "https://gitlab.freedesktop.org/slirp/libslirp"
+   }
+  ]
+ }
+}

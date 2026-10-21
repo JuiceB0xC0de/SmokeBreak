@@ -1,0 +1,112 @@
+{
+ "name": "openfast",
+ "desc": "NREL-supported OpenFAST whole-turbine simulation code",
+ "homepage": "https://openfast.readthedocs.io",
+ "installs_365d": 186,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "simulation",
+  "science",
+  "days-off",
+  "math"
+ ],
+ "why": "NREL's whole-turbine simulator lets you model wind turbine dynamics in software, real engineering you can run at home.",
+ "brief": {
+  "what_it_is": "OpenFAST is an open-source wind turbine simulation tool, a multi-physics, multi-fidelity framework that couples aerodynamics, hydrodynamics for offshore structures, control and electrical (servo) dynamics, and structural dynamics. You give it a turbine description (input files covering the rotor, tower, substructure, controller and so on) plus inflow and wave conditions, and it runs nonlinear, coupled aero-hydro-servo-elastic simulations in the time domain. The README does not spell out the output files in the pages I read, but the docs describe running time-series simulations and linearization about operating points to get natural frequencies, damping and mode shapes. It is a simulator with no GUI described in these pages.",
+  "why_it_exists": "The docs present it as a community model for research labs, academia and industry, built to be well tested, well documented and self-sustaining, and it is the successor to FAST v8. The brew description calls it NREL-supported; the README now credits the National Laboratory of the Rockies (NLR), with support from the US Department of Energy's Wind Energy Technology Office.",
+  "how_it_works": "The glue code (the coupler) connects separate modules for aerodynamics, hydrodynamics, control and electrical systems, and structural dynamics through a modular interface, and advances them together in time. The glue code and most modules are Fortran 2003, and modules can also be written in C or C++. The FAST.Farm extension runs one OpenFAST model per turbine to simulate multi-turbine wind farms.",
+  "commands_seen": [
+   {
+    "cmd": "git tag",
+    "context": "Inline mention in the README: the release tag history can be obtained with the git tag command. Not a run-the-simulator command."
+   },
+   {
+    "cmd": "git fetch",
+    "context": "Inline mention in the README: developers working on the dev branch are told to run git fetch often. Not a run-the-simulator command."
+   }
+  ],
+  "install_notes": "The docs list several routes: download binaries, run via Docker, install the openfast_io Python wrapper, compile from source, plus a C++ API, FAST.Farm and Simulink pages. The docs say compiling works on Unix-based and Windows machines, and the release page carries Windows executables. The repo has main (stable, tagged releases) and dev (newer, less static) branches. I did not read the install pages, so I cannot give build dependencies or the compiler toolchain. The brew formula installs an executable named openfast.",
+  "standout": "Rather than being one monolithic simulator, it is a glue framework that lets you swap in different aero, hydro, control and structural modules and run them coupled. Its scope covers floating and fixed-bottom offshore turbines, lattice or tubular towers, and wind farm wake effects through FAST.Farm.",
+  "status": "Maintained and actively developed. The docs site shows version v5.0.0 dated Mar 12, 2026, and the README says OpenFAST is under active development and is managed by the NLR team. I did not check the GitHub release list or last commit date directly.",
+  "caveats": "The README does not state a license in the pages I read (a Licensing section exists on the docs site but I did not fetch it), so check that before reuse. Building from source is a multi-language job (Fortran, with optional C/C++ modules), and the docs describe Windows and Unix paths. The brew description says NREL while the README says National Laboratory of the Rockies, so the naming is in transition. The brew scout note says 'run at home', which is my reading of the brew note, not a claim the README makes.",
+  "quotes": [
+   "OpenFAST is a multi-physics, multi-fidelity tool for simulating the coupled dynamic response of wind turbines.",
+   "OpenFAST is under active development.",
+   "Our objective is to ensure that OpenFAST is well tested, well documented, and self-sustaining software."
+  ],
+  "links": [
+   {
+    "label": "Documentation homepage",
+    "url": "https://openfast.readthedocs.io"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/OpenFAST/openfast"
+   },
+   {
+    "label": "Releases and Windows executables",
+    "url": "https://github.com/OpenFAST/openfast/releases"
+   },
+   {
+    "label": "Installation docs",
+    "url": "https://openfast.readthedocs.io/en/latest/source/install/index.html"
+   }
+  ],
+  "fetch_log": [
+   "https://openfast.readthedocs.io: worked. Returned the documentation index and overview, which is mostly a table of contents with a short intro.",
+   "https://github.com/OpenFAST/openfast: worked. Returned the repository README (reStructuredText), which covers the project description, branches, documentation links and help channels. It contains no run commands beyond the inline git mentions."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A modular aero-hydro-servo-elastic simulator for exploring coupled wind-turbine dynamics and offshore wind farms is a distinctive engineering rabbit hole."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "OpenFAST",
+  "tldr": "A research-grade wind turbine simulator that couples aerodynamics, waves, controls and structural flex into one time-domain model of a whole turbine.",
+  "deeper_look": "OpenFAST simulates how a wind turbine behaves as one connected system. You describe the turbine in input files (rotor, tower, substructure, controller) and set the wind and wave conditions. It then runs nonlinear, coupled aero-hydro-servo-elastic simulations in the time domain. The docs also describe linearizing about an operating point to get natural frequencies, damping and mode shapes.\n\nIt is built as a glue code that connects separate modules for aerodynamics, hydrodynamics (for offshore structures), control and electrical dynamics, and structural dynamics. The coupler advances them together in time through a modular interface. The glue code and most modules are Fortran 2003, and modules can also be written in C or C++. A FAST.Farm extension runs one OpenFAST model per turbine to study wake effects across a wind farm.\n\nThe docs describe it as a community model for research labs, academia and industry, and the successor to FAST v8. The stated aim is software that is \"well tested, well documented, and self-sustaining\". The idea underneath is that a turbine is a feedback loop between wind, flexing steel, water and a controller, and you can swap any one of those parts out and watch how the whole thing responds.\n\nThere is no GUI described in the pages read. It is a command-line simulator driven by input files.",
+  "install": "brew install openfast\n# Installs the `openfast` executable. Pulls in gcc and openblas as dependencies. You will need a turbine input file to run a simulation; the docs also offer Docker, binaries, a Python wrapper (openfast_io) and source builds.",
+  "try_this": [
+   {
+    "cmd": "openfast --help",
+    "what_happens": "Prints the command-line usage so you can see how the simulator expects to be pointed at a turbine input file."
+   }
+  ],
+  "whats_unique": "Rather than one monolithic simulator, it is a coupler that lets you swap aero, hydro, control and structural modules and run them together. It covers fixed-bottom and floating offshore turbines, and whole farms through FAST.Farm.",
+  "caveats": "You need turbine input files to do anything real, and the brief did not cover the input format or example cases, so expect to read the docs before your first run.",
+  "commitment": "days-off",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "days-off",
+   "simulation",
+   "science",
+   "wind-energy",
+   "fortran",
+   "engineering"
+  ],
+  "links": [
+   {
+    "label": "Documentation homepage",
+    "url": "https://openfast.readthedocs.io"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/OpenFAST/openfast"
+   },
+   {
+    "label": "Installation docs",
+    "url": "https://openfast.readthedocs.io/en/latest/source/install/index.html"
+   },
+   {
+    "label": "Releases and Windows executables",
+    "url": "https://github.com/OpenFAST/openfast/releases"
+   }
+  ]
+ }
+}

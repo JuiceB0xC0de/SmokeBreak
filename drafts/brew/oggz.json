@@ -1,0 +1,121 @@
+{
+ "name": "oggz",
+ "desc": "Command-line tool for manipulating Ogg files",
+ "homepage": "https://www.xiph.org/oggz/",
+ "installs_365d": 45,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "audio"
+ ],
+ "why": "Manipulating Ogg container internals is a real door into file formats, though the tool itself is fairly plain.",
+ "brief": {
+  "what_it_is": "Oggz is a command-line tool, with a C library underneath, for inspecting, editing and validating Ogg files. Its front end is the single oggz binary with subcommands such as info, dump, scan, validate, chop, merge, sort, rip, comment, diff and codecs, and the package also installs separate oggz-* executables for many of them. It reads Ogg multiplexed files conforming to RFC3533 and can parse headers for CELT, CMML, FLAC, Kate, PCM, Speex, Theora and Vorbis, plus Ogg Skeleton logical bitstreams. Output is either a new Ogg file, text reports, or hexdumps of packets, and dump can also turn such a hexdump back into an Ogg file.",
+  "why_it_exists": "The homepage presents Oggz as the toolkit around liboggz, a C library for reading and writing Ogg files and streams that it says improves on the reference libogg with seeking, validation and timestamp interpretation. The command-line tool exposes that library for everyday inspection and editing of Ogg media.",
+  "how_it_works": "Oggz reads the Ogg page framing and the codec headers of each logical bitstream, then either reports on them or rewrites the pages. For chop, the output keeps copies of the input headers plus the codec data needed to decode the requested time range, including the prior keyframe for codecs with data dependencies like video. The oggz-chop binary also detects when it is run as a CGI script by checking environment variables and then reads a t= query parameter, so a web server can serve time ranges over HTTP.",
+  "commands_seen": [
+   {
+    "cmd": "oggz  [options] filename ...",
+    "context": "Usage line from the homepage for the main oggz tool, which takes options and one or more filenames."
+   },
+   {
+    "cmd": "oggz help chop",
+    "context": "Example given for the help subcommand, which displays help for a specific subcommand."
+   },
+   {
+    "cmd": "apt-get install oggz-tools",
+    "context": "Debian install command listed on the downloads section."
+   },
+   {
+    "cmd": "dnf install liboggz",
+    "context": "Fedora install command listed on the downloads section."
+   },
+   {
+    "cmd": "emerge liboggz",
+    "context": "Gentoo install command listed on the downloads section."
+   },
+   {
+    "cmd": "git clone https://gitlab.xiph.org/xiph/liboggz.git",
+    "context": "Shown with a leading $ prompt on the homepage; checks out the current development code."
+   }
+  ],
+  "install_notes": "The homepage lists no Homebrew instructions. Packages are listed for Debian (oggz-tools), Fedora (liboggz) and Gentoo (liboggz). Source tarball liboggz-1.1.3.tar.gz is available, and the git repository can be cloned for development code. The only stated dependency is libogg, available from most free software distributions or from xiph.org/downloads. The homepage says Apache is needed only if you want the oggz-chop CGI setup, and an example configuration lives in the liboggz source tree. Bash completion is provided as bash-completion/oggz, which you source from your profile or install into /etc/bash_completion.d.",
+  "standout": "The oggz-chop tool can serve time slices of Ogg media over HTTP through any CGI-capable web server, which is a neat way to get seekable clips without a streaming server. Most of the package is conventional, but the trick of keeping the codec dependencies so a cut begins decodable is what makes chop useful.",
+  "status": "Maintained, judging by the homepage. It names version 1.1.3 as the latest, released Feb 22 2025, and offers a git repository. The footer copyright reads 1994 - 2016, which looks like stale boilerplate and does not reflect the release date. I did not check the gitlab commit history.",
+  "caveats": "Header parsing and seeking are only built in for a specific set of codecs (Dirac, FLAC, Speex, Theora, Vorbis per the homepage), so other codecs may not be understood. The chop CGI setup needs an Apache or similar server configured by hand. The homepage gives no licence information. I did not fetch a README or the gitlab page, so build details and license are unverified.",
+  "quotes": [
+   "oggz is a commandline tool for manipulating Ogg files.",
+   "Oggz comprises liboggz and the tool oggz, which provides commands to inspect, edit and validate Ogg files.",
+   "liboggz is a C library for reading and writing Ogg files and streams."
+  ],
+  "links": [
+   {
+    "label": "Oggz homepage",
+    "url": "https://www.xiph.org/oggz/"
+   },
+   {
+    "label": "liboggz git repository (gitlab)",
+    "url": "https://gitlab.xiph.org/xiph/liboggz"
+   },
+   {
+    "label": "Xiph downloads",
+    "url": "https://xiph.org/downloads/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.xiph.org/oggz/ - fetched OK, homepage text with usage, command summaries, download and dependency info. Not followed further because the homepage was detailed enough; no README was fetched from gitlab."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Oggz makes container internals tangible, and its codec-aware chopping can produce decodable time slices\u2014even serving them directly through CGI."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "oggz",
+  "tldr": "A command-line toolkit for looking inside Ogg files: dump packets, validate streams, cut by time, and merge or sort logical bitstreams.",
+  "deeper_look": "Oggz is a C library, liboggz, with a command-line tool on top. The main `oggz` binary takes subcommands such as info, dump, scan, validate, chop, merge, sort, rip, comment and diff. Most of them also install as separate `oggz-*` executables. It reads Ogg files that follow RFC3533 and can parse the headers for CELT, CMML, FLAC, Kate, PCM, Speex, Theora and Vorbis, plus Ogg Skeleton streams.\n\nThe homepage describes liboggz as an improvement on the reference libogg, adding seeking, validation and timestamp interpretation. The tool exposes those features for everyday work. Output is either a new Ogg file, a text report, or a hexdump of packets. `dump` can also turn a hexdump back into an Ogg file, so you can edit packets by hand and rebuild the file.\n\nThe underlying idea is that Ogg is a container: pages of packets, grouped into logical bitstreams, with the codec data inside. Oggz lets you see that structure. Its `chop` command shows why it matters. To cut a time range, it keeps copies of the input headers plus the codec data needed to start decoding, including the prior keyframe for video codecs. The clip therefore begins in a decodable state.\n\n`oggz-chop` can also detect that it is running as a CGI script and read a `t=` query parameter. A web server can then serve time slices of Ogg media over HTTP without a streaming server.",
+  "install": "brew install oggz",
+  "try_this": [
+   {
+    "cmd": "oggz --help",
+    "what_happens": "Lists the subcommands and options for the main tool."
+   },
+   {
+    "cmd": "oggz help chop",
+    "what_happens": "Shows help for the chop subcommand, which cuts a time range out of an Ogg file."
+   }
+  ],
+  "whats_unique": "It treats Ogg as a container you can open up, with packet hexdumps that round-trip back to a file. Its time-based chop keeps the codec dependencies so a cut clip still decodes, and it can run as a CGI script.",
+  "caveats": "Header parsing and seeking only cover a specific set of codecs, so other codecs may not be understood, and the chop CGI setup needs a web server configured by hand.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "audio",
+   "ogg",
+   "file-formats",
+   "containers",
+   "cli"
+  ],
+  "links": [
+   {
+    "label": "Oggz homepage",
+    "url": "https://www.xiph.org/oggz/"
+   },
+   {
+    "label": "liboggz git repository (gitlab)",
+    "url": "https://gitlab.xiph.org/xiph/liboggz"
+   },
+   {
+    "label": "Xiph downloads",
+    "url": "https://xiph.org/downloads/"
+   }
+  ]
+ }
+}

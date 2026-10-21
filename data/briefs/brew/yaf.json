@@ -1,0 +1,40 @@
+{
+ "name": "yaf",
+ "desc": "Yet another flowmeter: processes packet data from pcap(3)",
+ "homepage": "https://tools.netsa.cert.org/yaf/",
+ "installs_365d": 496,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "afternoon"
+ ],
+ "why": "A flowmeter that turns raw packet captures into IPFIX flow records, a good door into how network traffic is summarised.",
+ "brief": {
+  "what_it_is": "YAF (Yet Another Flowmeter) is a sensor that reads network traffic, either live from an interface or from PCAP files, and turns the packet stream into flow records describing each connection it observed. It examines payloads for supported application protocols and exports protocol-specific fields alongside the flow, which the site calls deep packet inspection. Output is IPFIX, a binary format that is much smaller than the original packets. The brew executables include yaf, yafMeta2Pcap, yafscii, yafcollect, airdaemon, filedaemon and getFlowKeyHash.",
+  "why_it_exists": "The homepage says YAF is the data collection component of the CERT NetSA Security Suite, whose purpose is to turn packets into network flows for downstream tools such as Analysis Pipeline, SiLK and Mothra. It began as an experimental implementation tracking IETF IPFIX work on bidirectional flows, archival formats and structured DPI export.",
+  "how_it_works": "YAF groups observed packets into bidirectional flows and writes IPFIX records using templates suited to the data, discarding most packet payload. Application-level fields (DNS, SSL, HTTP(S), SMTP and so on) are added only when a protocol is recognised through regular-expression or plug-in labelling, which must be enabled. For PCAP input it can split captures with --pcap and --max-pcap and write a metadata file of flow key hash, millisecond start time and capture file name, so flows can be located across captures.",
+  "commands_seen": [],
+  "install_notes": "The homepage does not give install steps. It links to an 'Installation Instructions & Dependencies' page, which I did not fetch, so hardware, runtime and dependency details are unknown. The homepage also describes running on commodity or low-end single-board hardware, with specialty hardware recommended at scale.",
+  "standout": "The packet-per-flow mode turns each packet into a one-packet flow, keeping per-packet volume and timing without the full capture, which the homepage proposes for covert timing channel and session hijack analysis. The flow key hash metadata index, which lets analysts find the same flow across multiple capture points and then pull matching packets back out of the original PCAPs, is also unusual.",
+  "status": "unknown. The homepage lists 3.0.0.alpha4 as the current download and 3.x as pre-release, with 2.x as the stable line. Copyright runs to 2026. I saw no release date or last-commit date on the page.",
+  "caveats": "The current 3.x line is labelled pre-release (3.0.0.alpha4), and the stable line is 2.x. DPI fields appear only when application labelling is enabled and the protocol is recognised. The installation page, license and FAQ were not read, so the license and platform support are unknown. The homepage was reachable, but the brief is based on it alone.",
+  "quotes": [
+   "Yet Another Flowmeter (YAF) is a sensor that captures traffic on a network, either live or from PCAP files.",
+   "YAF is the data collection component of the CERT NetSA Security Suite.",
+   "Flow records use a binary format, so they are much smaller than full packet captures or textual representations of the data."
+  ],
+  "links": [
+   {
+    "label": "YAF homepage",
+    "url": "https://tools.netsa.cert.org/yaf/"
+   }
+  ],
+  "fetch_log": [
+   "https://tools.netsa.cert.org/yaf/ - worked, returned the homepage text. No further fetches; the installation and documentation pages are linked but their URLs were not given in the text, so I did not guess them."
+  ]
+ }
+}

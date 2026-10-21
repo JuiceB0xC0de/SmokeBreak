@@ -1,0 +1,65 @@
+{
+ "name": "ssocr",
+ "desc": "Seven Segment Optical Character Recognition",
+ "homepage": "https://www.unix-ag.uni-kl.de/~auerswal/ssocr/",
+ "installs_365d": 138,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "visual",
+  "science"
+ ],
+ "why": "Point it at a photo of a seven-segment display and it reads the digits back, a delightful image-to-number transform.",
+ "brief": {
+  "what_it_is": "ssocr (Seven Segment Optical Character Recognition) is a command-line C program that reads an image of one row of seven-segment digits and writes the recognized number to standard output. It takes an image file, or image data piped in with - as the image name, and optionally runs image-cleanup commands first (threshold, crop, invert, shear, rotate, filters). It supports decimal points, minus signs, hex digits and character sets, and can print a debug image showing its segmentation and recognition steps. It is source-only: you build it yourself.",
+  "why_it_exists": "The author wrote it to read the number on an RSA SecurID 600 token from a USB camera, because general OCR software could not handle seven-segment digits whose segments are not connected. The homepage says it began as a proof of concept to test the recognition algorithm.",
+  "how_it_works": "The image is optionally filtered and thresholded to a monochrome image with the digits as foreground. Segmentation scans columns from the left to find digit-shaped stretches, then scans vertically, and discards pieces that are too small or the wrong count. Each digit is classified by scanning for the three horizontal segments and the vertical segments at fixed positions, with ratio rules for the digit one, minus sign and decimal point, and a table lookup maps the segment pattern to a character.",
+  "commands_seen": [
+   {
+    "cmd": "ssocr -T",
+    "context": "Shown at the top of the homepage as the way to recognize the example image above, using the iterative (k-means) thresholding method."
+   },
+   {
+    "cmd": "ssocr -Dillustrate_algo.png -T six_digits.png",
+    "context": "Example from the Visualization section that writes a debug image illustrating the algorithm for a six-digit picture."
+   },
+   {
+    "cmd": "ssocr crop 230 195 220 60 -t 20",
+    "context": "From the RSA SecurID example: crops the image to a 220x60 region at (230,195) and sets the threshold to 20 percent to get the token number."
+   },
+   {
+    "cmd": "pkg install ssocr",
+    "context": "Installs ssocr on FreeBSD from the ports/packages collection; the FreeBSD port is maintained by a third party."
+   },
+   {
+    "cmd": "brew install ssocr",
+    "context": "The homepage says ssocr can be installed via Homebrew on macOS and x86-64 GNU/Linux this way; the Homebrew formula is maintained by others."
+   },
+   {
+    "cmd": "make CPPFLAGS=-I/opt/X11/include",
+    "context": "Build workaround the homepage suggests for macOS when the X11 include path must be given manually (see GitHub issue 3)."
+   }
+  ],
+  "install_notes": "You must build ssocr from the C source tarball (ssocr-2.25.1.tar.bz2) or the GitHub mirror; the author does not provide ready-made binaries. Building needs Imlib2 (the homepage notes it is found through pkg-config since 2.22.1) and a C compiler. On macOS, Imlib2 can be installed via Homebrew. Packages exist for some distributions (Debian 10+, Ubuntu 19.04+, NixOS, FreeBSD ports, Homebrew), but those are maintained by third parties. On Windows the author suggests Cygwin or WSL, and the binary may need renaming to ssocr.exe. No accounts or runtimes are needed beyond that.",
+  "standout": "It is deterministic and uses no machine learning, which makes results repeatable and explainable through debug images and tuning options. The author's history with the RSA token gives the tool an unusually concrete origin: a camera pointed at a token inside a cookie box, feeding a login script.",
+  "status": "Apparently maintained: the homepage lists version 2.25.1 with copyright 2004-2025 and a detailed version history through 2.25.1, which fixes a debug-message bug. The homepage gives no explicit release date and I did not check the GitHub mirror, so I cannot confirm recent commit activity.",
+  "caveats": "Only seven-segment displays; it cannot read other display types, and it reads only a single row of digits. Skewed digits often break segmentation, a common symptom being a missed 7, and a decimal point sitting close to a digit may be dropped; the fix is usually shear, rotate, crop or threshold tuning. Dark-background displays need --foreground white or invert. It is not optimized for speed, and the author says third-party image tools can be faster. Imlib2 does not work well with Netpbm images. The author develops only on GNU/Linux and says he cannot test on macOS or Windows. The license is GPL v3 or later.",
+  "quotes": [
+   "The algorithm used by ssocr is quite simple and completely deterministic.",
+   "It uses neither machine learning nor artificial intelligence.",
+   "I do not provide ready to use binaries."
+  ],
+  "links": [
+   {
+    "label": "ssocr homepage (author's page with README-style docs and usage)",
+    "url": "https://www.unix-ag.uni-kl.de/~auerswal/ssocr/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.unix-ag.uni-kl.de/~auerswal/ssocr/ - fetched OK; text was cut off at about 40000 characters, so the Lessons Learned section and the end of the page were not read. The linked man page and GitHub mirror were mentioned but their URLs were not given in the fetched text, so I did not fetch them."
+  ]
+ }
+}

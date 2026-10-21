@@ -1,0 +1,94 @@
+{
+ "name": "tlsx",
+ "desc": "Fast and configurable TLS grabber focused on TLS based data collection",
+ "homepage": "https://github.com/projectdiscovery/tlsx",
+ "installs_365d": 323,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "quick"
+ ],
+ "why": "A TLS grabber exposing certificate and handshake data at scale, a useful door into TLS that is still a scanner in a busy niche.",
+ "brief": {
+  "what_it_is": "tlsx is a command-line TLS grabber from ProjectDiscovery, written in Go. You give it hosts, IPs, CIDR ranges, ASNs, or URLs, and it connects to each one on port 443 by default (configurable) and records what the TLS endpoint presents: certificate subject names, issuer, validity dates, negotiated TLS version and cipher, and fingerprints (MD5, SHA1, SHA256, JARM, JA3). It also flags certificate misconfigurations such as expired, self-signed, mismatched, revoked, or untrusted certificates. Output goes to stdout as plain text or JSON lines, and it can also be piped into other ProjectDiscovery tools such as dnsx and httpx.",
+  "why_it_exists": "The README frames it as a tool for TLS-based data collection and analysis: a fast, fully configurable way to pull certificate and handshake data at scale. The usage examples point to hostname discovery from certificates, and to finding hosts that still accept old TLS versions or weak ciphers.",
+  "how_it_works": "Each target is connected to with one of four TLS libraries selected by -sm: ctls (Go crypto/tls), ztls (zcrypto/tls), openssl, or auto (the default), which falls back to ztls and openssl when a connection fails, so older TLS versions still get scanned. A pre-handshake option (-ps) ends the connection right after the ServerHello and certificate arrive, which is faster and makes fewer connections. The README also describes a Certificate Transparency streaming mode (-ctl) that reads new certificates from public CT logs instead of scanning hosts.",
+  "commands_seen": [
+   {
+    "cmd": "go install github.com/projectdiscovery/tlsx/cmd/tlsx@latest",
+    "context": "Installs tlsx from source with Go; the README says Go 1.25 is required, and pre-built binaries are also on the releases page."
+   },
+   {
+    "cmd": "tlsx -h",
+    "context": "Prints the full flag list, grouped into INPUT, SCAN-MODE, PROBES, MISCONFIGURATIONS, CONFIGURATIONS, OPTIMIZATIONS, UPDATE, OUTPUT, PDCP, and DEBUG."
+   },
+   {
+    "cmd": "echo 173.0.84.0/24 | tlsx",
+    "context": "Default run: probes every IP in the CIDR range on port 443 and lists the ones that accept a TLS connection."
+   },
+   {
+    "cmd": "echo 173.0.84.0/24 | tlsx -san -cn -silent",
+    "context": "Lists subject alternative names and common names from each host's certificate, one host per line, with names in brackets."
+   },
+   {
+    "cmd": "echo example.com | tlsx -json -silent | jq .",
+    "context": "Emits full JSON for each target, with fields such as tls_version, cipher, not_before, not_after, subject_an, issuer_dn, and fingerprint_hash, piped through jq for formatting."
+   },
+   {
+    "cmd": "tlsx -l hosts.txt -expired -self-signed -mismatched -revoked -untrusted",
+    "context": "Reads a host list and prints only the hosts whose certificates have one of the listed misconfigurations, tagged in brackets."
+   },
+   {
+    "cmd": "echo hackerone.com | tlsx -jarm -silent",
+    "context": "Prints the JARM TLS server fingerprint for the host."
+   },
+   {
+    "cmd": "echo tls-v1-0.badssl.com | tlsx -port 1010 -sm ztls",
+    "context": "Scans a host on a non-default port using the ztls connection mode, which the README uses to reach an old TLS 1.0 test server."
+   },
+   {
+    "cmd": "tlsx -ctl -silent | jq .subject_an",
+    "context": "Streams newly issued certificates from public Certificate Transparency logs and prints the subject alternative names of each one."
+   },
+   {
+    "cmd": "tlsx -u example.com -max-version tls10",
+    "context": "Caps the negotiated TLS version at 1.0 to test whether a host still accepts it."
+   }
+  ],
+  "install_notes": "Requires Go 1.25 for the go install route; a pre-compiled binary is available from the GitHub releases page. Using the openssl scan mode needs the openssl binary on the system (check with openssl version), or you can point to it with -ob. Optional PDCP dashboard upload needs an API key passed with -auth, plus a team ID (-tid) or asset details, depending on the upload mode. No account is needed for basic scanning. The -cipher-input option takes a cipher list, and the README links a wiki page for supported ciphers per mode.",
+  "standout": "Four TLS stacks behind one flag, with auto mode retrying on older stacks, so one command reaches both modern and legacy servers. The pre-handshake mode is a deliberate speed and footprint trade-off, and the Certificate Transparency streaming mode turns the tool into a near-real-time hostname feed without scanning anything.",
+  "status": "unknown. The README mentions Go 1.25, which suggests recent maintenance, but it shows no release date, changelog, or last-commit date. The banner examples show v0.0.1, which is older than the other version references in the document. I did not fetch the releases or commits page to confirm.",
+  "caveats": "The README warns: 'Use with caution. You are responsible for your actions.' The pre-handshake mode uses ztls and is limited to TLS 1.2, since ztls does not support TLS 1.3. The openssl mode depends on an installed openssl binary. Going by the README alone, I could not confirm a license beyond the MIT badge, which the README links to. CT log mode relies on a large inverse bloom filter to drop duplicates. Scanning CIDR ranges and ASNs at scale needs care with the README's responsibility warning. The README uses a long list of PayPal hostnames as sample output, which is a real third-party network.",
+  "quotes": [
+   "A fast and configurable TLS grabber focused on TLS based data collection and analysis.",
+   "Use with caution. You are responsible for your actions.",
+   "Developers assume no liability and are not responsible for any misuse or damage.",
+   "tlsx does support multiple probe flags to query specific data, but all the information is always available in JSON format"
+  ],
+  "links": [
+   {
+    "label": "Homepage / repository",
+    "url": "https://github.com/projectdiscovery/tlsx"
+   },
+   {
+    "label": "Releases (pre-built binaries)",
+    "url": "https://github.com/projectdiscovery/tlsx/releases"
+   },
+   {
+    "label": "Hunting Certificates and Servers (pre-handshake background, PDF by erbbysam)",
+    "url": "https://github.com/erbbysam/Hunting-Certificates-And-Servers/blob/master/Hunting%20Certificates%20%26%20Servers.pdf"
+   },
+   {
+    "label": "Cipher support wiki",
+    "url": "https://github.com/projectdiscovery/tlsx/wiki/Ciphers"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/projectdiscovery/tlsx: worked, returned the README in full, including installation, usage, flags, configuration, and the Certificate Transparency section"
+  ]
+ }
+}

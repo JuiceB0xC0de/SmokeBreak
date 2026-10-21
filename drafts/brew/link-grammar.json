@@ -1,0 +1,152 @@
+{
+ "name": "link-grammar",
+ "desc": "Carnegie Mellon University's link grammar parser",
+ "homepage": "https://github.com/opencog/link-grammar",
+ "installs_365d": 38,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "language",
+  "library"
+ ],
+ "why": "A link grammar parser that diagrams English sentences as linked word pairs; a real window into computational linguistics.",
+ "brief": {
+  "what_it_is": "Link Grammar Parser is a natural-language parser from the OpenCog project, based on the Carnegie Mellon link grammar theory. It takes a plain-text sentence and produces a graph of typed links between the words, drawn as ASCII diagrams with per-word disjunct lists and costs. The README says it covers English, Thai, Russian, Arabic, Persian and limited subsets of several other languages. It ships a command-line tool, link-parser, plus C, Python, Java, Node.js and other bindings. The README says it is at version 5.13.0 and that the package also includes an experimental link-generator for filling blanks in sentences.",
+  "why_it_exists": "The README frames it as going a bit deeper than conventional parsers: it gives finer-grained syntactico-semantic structure, and HPSG-style constituent or dependency trees can be derived from it by conversion rules. It is the reference implementation of a theory first published in 1991 by Temperley, Lafferty and Sleator.",
+  "how_it_works": "Each word has a dictionary entry of connectors, and a parse is a set of links that pair compatible connectors between words, with the links forming a planar graph. Each word's chosen connector set is its disjunct, and disjunct costs roughly reflect how likely that grammatical usage is. The README also describes morphology handling through a tokenizer that can offer alternative splittings, and dictionaries that can be updated at run time while parsing continues safely across threads.",
+  "commands_seen": [
+   {
+    "cmd": "link-parser",
+    "context": "Starts the interactive parser prompt (linkparser>), which accepts a sentence and prints linkages, costs and the ASCII diagram. The README says !var lists settings and !help lists more commands."
+   },
+   {
+    "cmd": "link-parser ru -verbosity=4",
+    "context": "Runs the parser on the Russian dictionary at verbosity level 4, which the README suggests for debugging dictionary lookup problems."
+   },
+   {
+    "cmd": "link-parser < corpus-basic.batch",
+    "context": "Runs the parser in batch mode over a test corpus file, for checking the system on many sentences."
+   },
+   {
+    "cmd": "man link-generator",
+    "context": "Opens the man page for the experimental sentence generator, which fills words into wildcard slots while keeping the sentence grammatical."
+   },
+   {
+    "cmd": "./configure",
+    "context": "First step of building from source: configures the build (the README lists make and make check afterwards)."
+   },
+   {
+    "cmd": "make check",
+    "context": "Runs the build's test suite after compiling."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the library, headers and dictionaries into /usr/local by default; the README says to run it as root, followed by ldconfig."
+   },
+   {
+    "cmd": "make installcheck",
+    "context": "Verifies an installed copy, run as a non-root user."
+   },
+   {
+    "cmd": "./configure --disable-java-bindings",
+    "context": "Skips building the Java bindings, which the README recommends if you do not need them."
+   },
+   {
+    "cmd": "autogen.sh",
+    "context": "Generates the configure script when building from the GitHub source, which does not ship one."
+   }
+  ],
+  "install_notes": "The brew formula is the easiest route per the task brief, but the README describes building from source. Source builds need make, m4, gcc or clang, autoconf, libtool, autoconf-archive and pkg-config. Optional extras are sqlite3, zlib, libedit (arrow-key line editing), hunspell or aspell (spell guessing), pcre2 (strongly recommended), flex, swig, Apache Ant (Java) and graphviz (word-graph display). Python bindings need python3 development headers, and the README says Python 2 is no longer supported. Java bindings need JAVA_HOME set correctly so configure can find jni.h. The dictionaries install to /usr/local/share/link-grammar and are found by two-letter language directory, such as link-parser ru. No accounts or hardware are needed.",
+  "standout": "Unlike most parsers, which output one tree, this one gives a set of ranked linkages and shows each word's disjunct, which the README calls a very fine-grained part of speech. Its non-planar link crossings are handled with a split-link workaround instead of relaxing the parser. The README also notes that dictionaries can be updated while parsing runs, which fits continuous-learning use.",
+  "status": "Maintained, as far as the README shows: it names version 5.13.0 and has CI badges for the main build and the JavaScript bindings. The fetched text shows no release date or last-commit date, so recency is not confirmed beyond that.",
+  "caveats": "The README says the GitHub master branch can be unstable and is aimed at developers; end users are pointed to the tarball. The tarball link goes to a gnucash.org address. The README warns that aspell 0.60.8 has a memory leak, so spell guessing is discouraged on production servers. The README says Python 2 bindings are no longer supported. Its own test corpora report known errors, for example about 88 for en/corpus-basic.batch. The README also says that some English link-crossing cases are only handled by a workaround. The license is LGPL, which the README describes as allowing private and commercial use with few restrictions. The fetched README was cut off at 40000 characters, so later sections were not read.",
+  "quotes": [
+   "The Link Grammar Parser exhibits the linguistic (natural language) structure of English, Thai, Russian, Arabic, Persian and limited subsets of a half-dozen other languages.",
+   "This structure is a graph of typed links (edges) between the words in a sentence.",
+   "the disjunct `S- O+` indicates a transitive verb: its a verb that takes both a subject and an object.",
+   "This code is released under the LGPL license, making it freely available for both private and commercial use, with few restrictions."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/opencog/link-grammar"
+   },
+   {
+    "label": "Main project web page",
+    "url": "https://opencog.github.io/link-grammar-website/"
+   },
+   {
+    "label": "English link type documentation",
+    "url": "https://opencog.github.io/link-grammar-website/dict/index.html"
+   },
+   {
+    "label": "Link Grammar on Wikipedia",
+    "url": "https://en.wikipedia.org/wiki/Link_grammar"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/opencog/link-grammar: fetched OK; README returned, truncated at 40000 characters. Did not follow further links, since the README was long and covered the install, usage and theory details."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A working parser that exposes sentences as ranked graphs of typed links offers an unusual, hands-on entry into a distinct theory of grammar."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "link-grammar",
+  "tldr": "A parser that draws English sentences as ASCII diagrams of typed links between words, from a 1991 theory of grammar that still runs.",
+  "deeper_look": "Link Grammar Parser takes a plain sentence and returns a graph of typed links between its words, drawn as an ASCII diagram in the terminal. Each link joins two words and carries a label for the kind of relationship, such as subject to verb or verb to object. It ships dictionaries for English, Thai, Russian, Arabic, Persian and limited subsets of several other languages.\n\nThe idea underneath is the connector. Each word's dictionary entry lists the connectors it can offer, and a parse is a set of links pairing compatible connectors, with the links forming a planar graph. The connector set a word actually uses in a parse is its disjunct. The README's example: `S- O+` marks a transitive verb, one that takes both a subject and an object. The README calls the disjunct a very fine-grained part of speech, and costs on disjuncts roughly reflect how likely each usage is.\n\nMost parsers hand back one tree. This one gives a ranked set of linkages for the same sentence, so ambiguity is something you see. The theory was first published in 1991 by Temperley, Lafferty and Sleator at Carnegie Mellon. This is the reference implementation, now maintained under the OpenCog project. The README says HPSG-style constituent or dependency trees can be derived from the output by conversion rules.\n\nThe package also installs `link-generator`, an experimental tool that fills words into wildcard slots while keeping the sentence grammatical. Bindings exist for C, Python, Java, Node.js and others, so the parser can be pulled into your own code once you have played with it.",
+  "install": "brew install link-grammar\n# no accounts or hardware needed; dictionaries are found by two-letter language directory, e.g. `link-parser ru`",
+  "try_this": [
+   {
+    "cmd": "link-parser",
+    "what_happens": "Opens the linkparser> prompt. Type a sentence and it prints the linkages, their costs and the ASCII diagram. The README says !var lists settings and !help lists more commands."
+   },
+   {
+    "cmd": "link-parser ru -verbosity=4",
+    "what_happens": "Runs the parser on the Russian dictionary with verbose output, which the README suggests for debugging dictionary lookups."
+   },
+   {
+    "cmd": "man link-generator",
+    "what_happens": "Opens the man page for the experimental generator that fills wildcard slots in sentences with words that keep them grammatical."
+   }
+  ],
+  "whats_unique": "Instead of one tree, it gives ranked linkages and shows each word's disjunct. It comes straight from the original 1991 theory, with dictionaries for many languages that can be updated while parsing continues.",
+  "caveats": "The README's own test corpora report known errors (about 88 for en/corpus-basic.batch), some English link-crossing cases are handled only by a workaround, and the README did not show a recent release date.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "language",
+   "linguistics",
+   "parser",
+   "nlp",
+   "library"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/opencog/link-grammar"
+   },
+   {
+    "label": "Main project web page",
+    "url": "https://opencog.github.io/link-grammar-website/"
+   },
+   {
+    "label": "English link type documentation",
+    "url": "https://opencog.github.io/link-grammar-website/dict/index.html"
+   },
+   {
+    "label": "Link Grammar on Wikipedia",
+    "url": "https://en.wikipedia.org/wiki/Link_grammar"
+   }
+  ]
+ }
+}

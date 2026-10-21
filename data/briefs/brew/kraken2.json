@@ -1,0 +1,88 @@
+{
+ "name": "kraken2",
+ "desc": "Taxonomic sequence classification system",
+ "homepage": "https://github.com/DerrickWood/kraken2",
+ "installs_365d": 586,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "science",
+  "afternoon",
+  "library",
+  "needs-hardware"
+ ],
+ "why": "Real k-mer taxonomic classification of sequencing reads, a genuine bioinformatics tool, though it needs large reference databases.",
+ "brief": {
+  "what_it_is": "Kraken 2 is a taxonomic sequence classifier written in C++ with Perl and shell scripts, plus a newer Python wrapper called k2. It takes DNA (or, with a protein database, amino acid) sequence reads or assemblies in FASTA or FASTQ form, optionally compressed with gzip, bzip2 or xz. It assigns each sequence a taxonomic label by looking up its k-mers in a prebuilt or custom reference database, and writes a per-sequence classification file plus an optional sample-level report of counts per taxon. The README itself is short and points to docs/MANUAL.html (version 2.1.6) for usage.",
+  "why_it_exists": "The README describes Kraken 2 as 'the second version of the Kraken taxonomic sequence classification system' and says it is a rewrite of Kraken 1 that is not backwards compatible. The manual says Kraken 2 was created because Kraken 1's large k-mer/LCA list needed a lot of memory, and it cites the original Kraken, KrakenUniq and protocol papers.",
+  "how_it_works": "Kraken 2 stores only minimizers of k-mers in a compact probabilistic hash table, mapping each minimizer to the lowest common ancestor (LCA) of the genomes containing it. Query reads are reduced to minimizers and looked up, and the manual notes the hash table can occasionally return a false positive in under 1% of queries, which confidence thresholds can compensate for. The k2 wrapper adds multi-database classification (merging per-database results by LCA) and HTTP-based NCBI downloads.",
+  "commands_seen": [
+   {
+    "cmd": "./install_kraken2.sh $KRAKEN2_DIR",
+    "context": "From the unpacked source directory, compiles everything and installs Kraken 2 into $KRAKEN2_DIR. Success is the message 'Kraken 2 installation complete.' (from the manual)."
+   },
+   {
+    "cmd": "cp $KRAKEN2_DIR/kraken2{,-build,-inspect} $HOME/bin",
+    "context": "Optional step to copy the main scripts into a directory on PATH, as the manual suggests."
+   },
+   {
+    "cmd": "k2 classify --db archaea,viral,univec --output output.txt --threads 9 --unclassified-out unclassified.fasta --classified-out 'classified.fasta' --report report.txt reads.fna",
+    "context": "Manual example of multi-database classification against three NCBI databases, writing per-read output, classified and unclassified FASTA, and a report. The manual includes a sample INFO log from this run dated 2025-11-04."
+   },
+   {
+    "cmd": "k2 build --help",
+    "context": "Shows build options such as --standard, --special {greengenes,rdp,silva,gtdb}, --kmer-len, --minimizer-len and --max-db-size. The manual's listing includes --standard, which builds archaea, bacteria, human, plasmid, UniVec_Core and viral."
+   },
+   {
+    "cmd": "k2 inspect --help",
+    "context": "Shows options for inspecting a database's contents, including --skip-counts, --use-mpa-style and --memory-mapping."
+   },
+   {
+    "cmd": "k2 classify --help",
+    "context": "Shows classification options such as --db, --confidence, --report, --paired, --memory-mapping and --use-daemon."
+   },
+   {
+    "cmd": "k2 download-library --help",
+    "context": "Shows how k2 downloads NCBI libraries; the --library option accepts a taxid, accession or project ID, and the manual says it uses the NCBI Datasets API to resolve accessions."
+   },
+   {
+    "cmd": "k2 clean --stop-daemon",
+    "context": "Quoted in the help text for classify --use-daemon. Stops the background process that keeps indexes in memory."
+   }
+  ],
+  "install_notes": "The README gives no install steps beyond the badge. The manual says the install path is ./install_kraken2.sh, which needs a C++11-capable g++, Bash, Perl, and Linux utilities such as sed, find and wget. The k2 wrapper needs only Python 3's standard library. OpenMP is needed for multithreading. Standard database builds need about 100 GB of disk (the manual's 2018 figures were 42 GB library, 26 GB taxonomy and 29 GB hash table). Running needs enough RAM to hold the database (about 29 GB for the default as of Jan 2018), unless --memory-mapping is used. The manual recommends against NFS for the database and notes that NCBI downloads may need proxy environment variables or --use-ftp. The Homebrew formula is the usual route; the manual's install steps are for source builds.",
+  "standout": "Instead of storing every k-mer, Kraken 2 stores only minimizers and accepts a small false-positive rate in exchange for speed and lower memory. The manual also describes two ways to shrink a database for low-memory machines: larger k relative to minimizer length, and hash-based downsampling via --max-db-size.",
+  "status": "maintained. The README links to a Bioconda recipe and a usegalaxy.eu tool. The manual is titled Version 2.1.6, and its k2 section refers to version 2.17.0, so the docs are not fully consistent. I did not see a last-commit or release date, so recent activity is unconfirmed.",
+  "caveats": "The manual says macOS and other non-Linux systems are not explicitly supported by the developers. On macOS, the default GCC lacks OpenMP, which limits the tool to single-threaded runs. The standard database needs roughly 100 GB of disk and about 29 GB of RAM or more, so the scout note about large databases holds. Classification is probabilistic, so false positives occur in under 1% of queries. The manual says zstd input is not yet supported. RDP databases are unavailable because their URLs no longer work. The manual says the --threads option on download-library can get the client kicked off NCBI's servers. I did not find the license in the pages I read.",
+  "quotes": [
+   "The second version of the Kraken taxonomic sequence classification system",
+   "Note that Kraken 2 is a rewrite of Kraken 1 and is not backwards compatible with Kraken 1.",
+   "Kraken is a taxonomic sequence classifier that assigns taxonomic labels to DNA sequences.",
+   "MacOS and other non-Linux operating systems are not explicitly supported by the developers"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/DerrickWood/kraken2"
+   },
+   {
+    "label": "Operating Manual (docs/MANUAL.html)",
+    "url": "https://github.com/DerrickWood/kraken2/blob/master/docs/MANUAL.html"
+   },
+   {
+    "label": "Kraken 2 paper (Genome Biology 2019)",
+    "url": "https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1891-0"
+   },
+   {
+    "label": "Project site (ccb.jhu.edu)",
+    "url": "https://ccb.jhu.edu/software/kraken2/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/DerrickWood/kraken2 \u2014 worked; README fetched. Short, with a Bioconda badge and pointer to docs/MANUAL.html; cites papers.",
+   "https://github.com/DerrickWood/kraken2/blob/master/docs/MANUAL.html \u2014 worked, but the output was cut at 40,000 characters, so the sections after the k2 download-library options (including the rest of add-to-library, clean, the database and classification sections, and environment variables) were not read."
+  ]
+ }
+}

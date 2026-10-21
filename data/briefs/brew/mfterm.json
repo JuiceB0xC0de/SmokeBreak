@@ -1,0 +1,86 @@
+{
+ "name": "mfterm",
+ "desc": "Terminal for working with Mifare Classic 1-4k Tags",
+ "homepage": "https://github.com/4ZM/mfterm",
+ "installs_365d": 62,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "tui",
+  "reverse-engineering"
+ ],
+ "why": "A terminal for reading and writing Mifare Classic RFID cards opens a real door into card security and key cracking.",
+ "brief": {
+  "what_it_is": "mfterm is a terminal interface for working with Mifare Classic tags, the 1k to 4k MIFARE RFID cards. It takes in a physical tag, a tag dump file, a key file, a key dictionary file, or a spec file, and it writes out tag data to a file or to a physical tag. You get an interactive prompt with tab completion and command history, and you manipulate a 'current tag', a 'current keys' set, a dictionary, and a spec in it. The README does not say what hardware reader is needed for physical reads and writes.",
+  "why_it_exists": "The README gives no stated motivation. It describes itself only as 'a terminal interface for working with Mifare Classic tags'.",
+  "how_it_works": "A 'current tag' is loaded from a file or read from a physical card with 'load' or 'read'. Reading a physical tag needs the 'current keys' set to that tag's keys, and writing needs the 'current keys' set to values the card accepts. The 'dict attack' command tries keys from a loaded dictionary against a tag's sectors, and 'mac compute' computes a DES MAC over the UID plus 14 bytes of a block. A spec file names parts of the tag data so you can reach them with dotted paths such as '.sector_0.block_0.atqa'.",
+  "commands_seen": [
+   {
+    "cmd": "brew install mfterm",
+    "context": "Mac OS install command given in the README."
+   },
+   {
+    "cmd": "dict load",
+    "context": "Imports a key dictionary file. Several loads merge into a union with duplicates removed."
+   },
+   {
+    "cmd": "dict attack",
+    "context": "Runs a dictionary attack on the sectors of a tag using the loaded dictionary."
+   },
+   {
+    "cmd": "keys test",
+    "context": "Tests whether the 'current keys' can authenticate with a physical tag."
+   },
+   {
+    "cmd": "write unlocked",
+    "context": "Writes to block 0 on some 1k pirate cards, per the README."
+   },
+   {
+    "cmd": "mac compute",
+    "context": "Computes a DES MAC over the UID plus the 14 leftmost bytes of the specified block. Needs a 64-bit key set with 'mac key'."
+   },
+   {
+    "cmd": "spec load",
+    "context": "Loads a specification file that defines names for parts of the tag data. The README cites mfc-spec.txt as a sample."
+   },
+   {
+    "cmd": ".sector_0.block_0.atqa",
+    "context": "Example specification path entered in the terminal. The README says it displays two bytes of data starting at byte 6."
+   },
+   {
+    "cmd": "keys import",
+    "context": "Sets the 'current keys' to match the 'current tag'."
+   },
+   {
+    "cmd": "./configure; make; make install",
+    "context": "Standard build-from-source sequence. The README points to an INSTALL file for details."
+   }
+  ],
+  "install_notes": "On Mac OS the README gives 'brew install mfterm'. On Linux it says only that a precompiled package exists in Kali Linux. Otherwise build from source with './configure; make; make install', and see the INSTALL file. The README mentions no runtime, account, or hardware setup, and no first-run steps. Its reference to 'other libnfc tools' suggests libnfc is involved, but the README does not state that as a requirement.",
+  "standout": "It is a shell-style interface built around tag dumps, key files, and dictionary attacks on Mifare Classic sectors, with a spec-file path syntax for naming fields. The README also documents writing to 'pirate cards' and computing DES MACs. The scout note frames it as a route into card security and key cracking, and the README does describe dictionary attacks as a built-in feature.",
+  "status": "unknown. The README has no release date, version, or changelog. The Travis CI badge points at travis-ci.org, which suggests the CI setup is old, but I did not verify the last commit or release date, so I cannot call it maintained or abandoned.",
+  "caveats": "The README's own warning says the software is 'neither thoroughly tested nor widely used' and 'likely contains a number of serious bugs that can be exploited to compromise your computer'. It says not to run it as root and to load only tag, dictionary, and spec files from people you trust. Mac install is only via brew, and Linux is only through a Kali package or a source build. The README does not name a license or a supported NFC reader.",
+  "quotes": [
+   "mfterm is a terminal interface for working with Mifare Classic tags.",
+   "The mfterm software is neither thoroughly tested nor widely used. It likely contains a number of serious bugs that can be exploited to compromise your computer.",
+   "Do NOT run the mfterm software as a privileged user (e.g. root), and ONLY load tag, dictionary and specification files that you get from people you trust."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/4ZM/mfterm"
+   },
+   {
+    "label": "Kali Linux (Linux package source named in README)",
+    "url": "https://www.kali.org/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/4ZM/mfterm: fetched OK, README returned. The README covers usage, commands, and build steps, so I did not follow further links."
+  ]
+ }
+}

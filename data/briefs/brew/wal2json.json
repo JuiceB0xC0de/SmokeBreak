@@ -1,0 +1,93 @@
+{
+ "name": "wal2json",
+ "desc": "Convert PostgreSQL changesets to JSON format",
+ "homepage": "https://github.com/eulerto/wal2json",
+ "installs_365d": 286,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "protocol",
+  "library"
+ ],
+ "why": "A PostgreSQL logical decoding plugin that turns the WAL change stream into JSON, a door into database replication internals.",
+ "brief": {
+  "what_it_is": "wal2json is an output plugin for PostgreSQL logical decoding. It sits inside a logical replication slot and reads the database's write-ahead log change stream, then emits each change as JSON. The README says the plugin can see the tuples produced by INSERT and UPDATE, and the old row versions for UPDATE and DELETE depending on the table's replica identity. Output comes in two shapes: format version 1 gives one JSON object per transaction, and format version 2 gives one JSON object per tuple, with optional begin and end records. Changes are consumed either through the streaming protocol with pg_recvlogical or through SQL functions.",
+  "why_it_exists": "The README frames it as a way to get the changes from a PostgreSQL logical replication slot as JSON, so that other systems can consume them. It is a plugin for logical decoding rather than a standalone tool.",
+  "how_it_works": "After wal_level is set to logical and wal2json is loaded as an output plugin, a logical replication slot is created with wal2json as its plugin. Reading from the slot, through pg_recvlogical streaming or pg_logical_slot_get_changes, returns the decoded changes as JSON. Dozens of parameters control what is included (xids, timestamps, types, primary keys, schemas), what is filtered (filter-tables, add-tables, filter-origins, message prefixes), and the output layout (format-version, pretty-print, write-in-chunks, actions).",
+  "commands_seen": [
+   {
+    "cmd": "$ sudo yum install wal2json_18",
+    "context": "Installs the packaged wal2json for PostgreSQL 18 on Red Hat/CentOS from the PostgreSQL yum repository."
+   },
+   {
+    "cmd": "$ sudo apt-get install postgresql-18-wal2json",
+    "context": "Installs the packaged wal2json for PostgreSQL 18 on Debian/Ubuntu from the PostgreSQL apt repository."
+   },
+   {
+    "cmd": "$ git clone https://github.com/eulerto/wal2json.git",
+    "context": "Clones the repository to build the latest fixes and features instead of using a release tarball."
+   },
+   {
+    "cmd": "$ make",
+    "context": "Builds wal2json from the source directory, after putting the PostgreSQL bin directory on PATH."
+   },
+   {
+    "cmd": "$ make install",
+    "context": "Installs the built wal2json library into the PostgreSQL installation."
+   },
+   {
+    "cmd": "wal_level = logical",
+    "context": "The one required postgresql.conf setting; the README says a restart is needed after changing it."
+   },
+   {
+    "cmd": "output_plugin_libraries = 'pgoutput, test_decoding, wal2json'",
+    "context": "On PostgreSQL 18.6, 17.11, 16.15, 15.19, 14.24 and later, adds wal2json to the allowed output plugin list; a reload is enough."
+   },
+   {
+    "cmd": "$ pg_recvlogical -d postgres --slot test_slot --create-slot -P wal2json",
+    "context": "Creates a logical replication slot named test_slot that uses the wal2json plugin."
+   },
+   {
+    "cmd": "$ pg_recvlogical -d postgres --slot test_slot --start -o pretty-print=1 -o add-msg-prefixes=wal2json -f -",
+    "context": "Starts streaming changes from test_slot to stdout as pretty-printed JSON, including wal2json messages."
+   },
+   {
+    "cmd": "SELECT 'init' FROM pg_create_logical_replication_slot('test_slot', 'wal2json');",
+    "context": "SQL alternative to pg_recvlogical for creating the slot with the wal2json plugin."
+   },
+   {
+    "cmd": "SELECT data FROM pg_logical_slot_get_changes('test_slot', NULL, NULL, 'pretty-print', '1', 'add-msg-prefixes', 'wal2json');",
+    "context": "Reads and consumes pending changes from the slot through SQL, returning wal2json JSON in the data column."
+   }
+  ],
+  "install_notes": "Needs PostgreSQL 10 or later with server header files: postgresql18-devel with the yum repository, or postgresql-server-dev-18 with the apt repository. Add the PostgreSQL bin directory to PATH, then run make and make install from the source tree. On Windows the README describes two routes: building inside PostgreSQL's contrib directory, or editing wal2json.vcxproj to point at your PostgreSQL prefix, building in Visual Studio, and copying wal2json.dll to pg_config --pkglibdir. Configuration: set wal_level = logical and restart. On newer patch releases, add wal2json to output_plugin_libraries and reload. For pg_recvlogical, add a replication connection rule to pg_hba.conf, for example: local mydatabase myuser trust. The README's example uses trust authentication, which is for local testing only.",
+  "standout": "It turns PostgreSQL's internal logical decoding into plain JSON that any program can parse, with a large set of switches over what is included and filtered. The examples also show that non-transactional messages emitted with pg_logical_emit_message can flow through the same stream.",
+  "status": "Probably maintained, though the fetched README gives no release or commit date. Evidence: the copyright line reads 2013-2026, it documents PostgreSQL 18 packages, and it mentions a 2026 PostgreSQL security fix (CVE-2026-6471) and matching minor releases. The install examples reference the wal2json_2_7 tarball.",
+  "caveats": "Requires wal_level = logical and a server restart. On the newer PostgreSQL patch releases listed in the README, the library must be added to output_plugin_libraries or slot creation and reads fail with 'library \"wal2json\" may not be used as an output plugin'. UPDATE and DELETE need a primary key or replica identity to carry old keys. Tables without one are skipped with a warning (the README's example shows this for an UPDATE). Format version 1 does not emit truncate events. The include-unchanged-toast parameter is deprecated. Windows builds need manual project editing and Visual Studio. Supported platforms are whatever PostgreSQL supports.",
+  "quotes": [
+   "wal2json is an output plugin for logical decoding.",
+   "format version 2 produces a JSON object per tuple.",
+   "The library name must be exactly `wal2json`. Otherwise, creating or reading from a slot fails with:"
+  ],
+  "links": [
+   {
+    "label": "wal2json GitHub repository (homepage and README)",
+    "url": "https://github.com/eulerto/wal2json"
+   },
+   {
+    "label": "PostgreSQL yum repository (packages)",
+    "url": "https://yum.postgresql.org"
+   },
+   {
+    "label": "PostgreSQL apt repository wiki (packages)",
+    "url": "https://wiki.postgresql.org/wiki/Apt"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/eulerto/wal2json (fetched OK; README returned in full, so no further links were followed)"
+  ]
+ }
+}

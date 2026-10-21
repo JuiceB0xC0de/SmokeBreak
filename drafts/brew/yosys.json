@@ -1,0 +1,144 @@
+{
+ "name": "yosys",
+ "desc": "Framework for Verilog RTL synthesis",
+ "homepage": "https://yosyshq.net/yosys/",
+ "installs_365d": 6401,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "hardware",
+  "science",
+  "afternoon",
+  "library"
+ ],
+ "why": "Open-source Verilog synthesis lets you turn hardware descriptions into real netlists, a genuine door into circuit design.",
+ "brief": {
+  "what_it_is": "Yosys is a framework for Verilog RTL synthesis, driven from a command-line binary with an interactive shell or from synthesis scripts. It takes Verilog-2005 designs, and per the GitHub README also an informally defined synthesizable subset of SystemVerilog (IEEE 1800-2017 or 2023), via the sv-elab and slang libraries. It outputs gate-level netlists mapped to ASIC standard cell libraries in Liberty format or to Xilinx 7-Series, Lattice iCE40 and ECP5 FPGAs, and it can also convert designs to BLIF, EDIF, BTOR, SMT-LIB or simple RTL Verilog. It has built-in formal methods for property and equivalence checking.",
+  "why_it_exists": "The homepage presents Yosys as a foundation and front-end for custom flows: \"Yosys can be adapted to perform any synthesis job by combining the existing passes (algorithms) using synthesis scripts and adding additional passes as needed by extending the Yosys C++ code base.\" It also serves as the backend for formal tools such as sby and mcy.",
+  "how_it_works": "You chain named passes in a script or the interactive shell. Typical steps are read_verilog, hierarchy -top, proc and opt to turn always blocks into netlist elements, techmap to map to the internal cell library, dfflibmap -liberty for flip-flops, abc -liberty for combinational logic, then write_verilog. The synth command bundles a good default script that you can build on.",
+  "commands_seen": [
+   {
+    "cmd": "read_verilog mydesign.v",
+    "context": "Homepage example script: reads the Verilog source file into Yosys."
+   },
+   {
+    "cmd": "synth -top mytop",
+    "context": "Homepage: the default generic synthesis script, with mytop as the top module; see help synth for details."
+   },
+   {
+    "cmd": "abc -liberty mycells.lib",
+    "context": "Homepage example: maps logic onto the standard cell library in a Liberty file."
+   },
+   {
+    "cmd": "write_verilog synth.v",
+    "context": "Homepage example: writes the synthesized gate-level netlist as Verilog."
+   },
+   {
+    "cmd": "sudo apt-get install gawk git make python3 lld bison clang flex libffi-dev libfl-dev libreadline-dev pkg-config tcl-dev zlib1g-dev graphviz xdot",
+    "context": "GitHub README: installs build dependencies on Ubuntu 22.04 (shown across line continuations in the README)."
+   },
+   {
+    "cmd": "git clone --recurse-submodules https://github.com/YosysHQ/yosys.git",
+    "context": "GitHub README: clones the source with submodules for building from source."
+   },
+   {
+    "cmd": "cmake --preset default",
+    "context": "GitHub README: configures the default build preset."
+   },
+   {
+    "cmd": "cmake --build build --parallel $(nproc)",
+    "context": "GitHub README: builds Yosys in the build directory using all cores."
+   },
+   {
+    "cmd": "./build/yosys",
+    "context": "GitHub README: starts the interactive Yosys shell, where you type commands such as help or read -sv."
+   },
+   {
+    "cmd": "./yosys synth.ys",
+    "context": "GitHub README: runs a synthesis script file non-interactively."
+   }
+  ],
+  "install_notes": "The Homebrew formula's caveats are empty. The README's easiest route is a binary suite: the free OSS CAD Suite from github.com/YosysHQ/oss-cad-suite-build releases (includes all dependencies and related tools), or the commercial Tabby CAD Suite, which needs a YosysHQ evaluation license. Many Linux distributions package Yosys too, though versions vary. Building from source needs many packages, CMake, git submodules (--recurse-submodules), and a C++ toolchain; release builds use cmake --preset release. Building the docs additionally needs Sphinx, pdf2svg, faketime and a LaTeX install. No first-run configuration beyond running the binary was described.",
+  "standout": "Yosys is a scriptable pipeline of named passes rather than a fixed black-box tool, and it is extensible in C++, so you can build custom flows. Formal property and equivalence checking is built in, and it doubles as the synthesis backend for other formal tools such as sby and mcy.",
+  "status": "Appears maintained, but I could not confirm a date. I did not see a release date or last-commit date in the pages I read. The README references recent work, including IEEE 1800-2023 SystemVerilog support, CMake presets, and a commercial vendor (YosysHQ) that sells the Tabby CAD Suite, plus a blog and a Discourse forum. Status is therefore probably active, but not verified from commit or release data.",
+  "caveats": "read_verilog does no syntax checking, so the README suggests linting with Verilator first. SystemVerilog support is for an informally defined synthesizable subset, and industry-grade SystemVerilog and VHDL parsers are gated behind the commercial Tabby CAD Suite evaluation license. Building from source has a heavy dependency list and needs submodules. Linux distro packages may lag. Licensed under ISC, which the README says is GPL-compatible; third-party code in the abc and libs subdirectories has its own licence terms. The brew caveats field is empty.",
+  "quotes": [
+   "Yosys is a framework for Verilog RTL synthesis.",
+   "Yosys is controlled using synthesis scripts.",
+   "Yosys is free software licensed under the ISC license (a GPL compatible license that is similar in terms to the MIT license or the 2-clause BSD license)."
+  ],
+  "links": [
+   {
+    "label": "Yosys homepage",
+    "url": "https://yosyshq.net/yosys/"
+   },
+   {
+    "label": "Yosys GitHub repository",
+    "url": "https://github.com/YosysHQ/yosys"
+   },
+   {
+    "label": "Yosys documentation (Read the Docs)",
+    "url": "https://yosyshq.readthedocs.io/projects/yosys"
+   }
+  ],
+  "fetch_log": [
+   "https://yosyshq.net/yosys/ - worked, returned the About page with the feature list and example synthesis scripts",
+   "https://github.com/YosysHQ/yosys - worked, returned the README with installation, build and getting-started sections"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Yosys turns Verilog into mapped gate-level circuits through an inspectable, scriptable synthesis pipeline, opening a fascinating path into hardware design and formal checking."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Yosys",
+  "tldr": "Yosys turns Verilog hardware descriptions into gate-level netlists through a chain of scriptable passes, so you can watch a circuit get synthesized step by step.",
+  "deeper_look": "Yosys is a framework for Verilog RTL synthesis. You give it a hardware description written in Verilog-2005 (the README also mentions an informally defined synthesizable subset of SystemVerilog) and it works down to a netlist of logic gates and flip-flops. It can target ASIC standard cell libraries in Liberty format, or Xilinx 7-Series, Lattice iCE40 and ECP5 FPGAs. It can also write BLIF, EDIF, BTOR, SMT-LIB or plain RTL Verilog.\n\nYou drive it from an interactive shell or from a synthesis script, chaining named passes. A typical flow reads the Verilog, picks a top module with hierarchy, uses proc and opt to turn always blocks into netlist elements, maps to an internal cell library with techmap, then hands flip-flops and combinational logic to dfflibmap and abc before writing the result back out. The synth command bundles a sensible default script that you can build on.\n\nThe idea underneath is that synthesis is not a black box. It is a pipeline of small, inspectable transformations, and you can stop after any pass to see what the design looks like. The homepage says Yosys \"can be adapted to perform any synthesis job by combining the existing passes (algorithms) using synthesis scripts and adding additional passes as needed by extending the Yosys C++ code base.\"\n\nIt also has built-in formal methods for property and equivalence checking, and it serves as the synthesis backend for other formal tools such as sby and mcy. That makes it a door into both digital design and formal verification.",
+  "install": "brew install yosys",
+  "try_this": [
+   {
+    "cmd": "yosys --help",
+    "what_happens": "Lists the command-line options of the binary."
+   },
+   {
+    "cmd": "read_verilog mydesign.v",
+    "what_happens": "Typed inside the yosys shell, this loads your Verilog source into the design."
+   },
+   {
+    "cmd": "synth -top mytop",
+    "what_happens": "Runs the default generic synthesis script with mytop as the top module; help synth explains each step."
+   }
+  ],
+  "whats_unique": "It is a scriptable pipeline of named passes rather than a fixed tool, extensible in C++, with formal checking built in. It also underpins other open-source formal tools.",
+  "caveats": "read_verilog does no syntax checking (the README suggests linting with Verilator first), and SystemVerilog support covers only a synthesizable subset.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "hardware",
+   "verilog",
+   "synthesis",
+   "fpga",
+   "formal-methods"
+  ],
+  "links": [
+   {
+    "label": "Yosys homepage",
+    "url": "https://yosyshq.net/yosys/"
+   },
+   {
+    "label": "Yosys GitHub repository",
+    "url": "https://github.com/YosysHQ/yosys"
+   },
+   {
+    "label": "Yosys documentation (Read the Docs)",
+    "url": "https://yosyshq.readthedocs.io/projects/yosys"
+   }
+  ]
+ }
+}

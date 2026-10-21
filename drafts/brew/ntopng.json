@@ -1,0 +1,153 @@
+{
+ "name": "ntopng",
+ "desc": "Next generation version of the original ntop",
+ "homepage": "https://www.ntop.org/products/traffic-analysis/ntop/",
+ "installs_365d": 1586,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "A traffic analysis tool that lets you watch the protocols running through your network, a close call on the door it opens.",
+ "brief": {
+  "what_it_is": "ntopng is a web-based network traffic monitoring application, released under GPLv3, that the ntop project describes as a network traffic probe. It takes in traffic from SPAN/mirror ports, TAP devices, NetFlow/sFlow exporters, and nProbe probes, and it sends back a browser UI and REST API showing live and historical traffic: top talkers, Layer-7 application protocols (via nDPI), hosts, flows, and alerts. The homepage says the UI is 'encrypted' and HTML5-based.",
+  "why_it_exists": "The README says ntopng is 'the new incarnation of the original ntop written in 1998, and now revamped in terms of performance, usability, and features.'",
+  "how_it_works": "ntopng captures packets with libpcap or PF_RING (on Linux) from a mirror or TAP interface, or receives flows over ZeroMQ from an nProbe instance that collects NetFlow, IPFIX, or sFlow from routers and switches. It uses Redis as a backing store, and the README says Redis must be running on the same host unless --redis points to a remote one. The web interface is served by ntopng itself on port 3000 by default, and its REST endpoints are under /lua/rest/.",
+  "commands_seen": [
+   {
+    "cmd": "ntopng -i tcp://127.0.0.1:5556",
+    "context": "Starts ntopng as a flow collector, reading flows from an nProbe ZeroMQ endpoint on that address."
+   },
+   {
+    "cmd": "nprobe --zmq \"tcp://*:5556\" -i ethX -n none -b 2",
+    "context": "Runs nProbe on the probe side, publishing flows over ZeroMQ on port 5556 from interface ethX."
+   },
+   {
+    "cmd": "ntopng -i tcp://127.0.0.1:5556,tcp://192.168.0.1:5556",
+    "context": "Merges flows from multiple ZeroMQ endpoints onto one ntopng interface, separated by commas."
+   },
+   {
+    "cmd": "curl --cookie \"user=admin; password=admin\" \"http://127.0.0.1:3000/lua/rest/get/interface/data.lua?ifid=0\"",
+    "context": "Queries the REST API for interface 0 from the command line, authenticating with a cookie instead of a browser login."
+   },
+   {
+    "cmd": "ntopng -d /path1 -r 127.0.0.1:6379@1 -w 3001",
+    "context": "First of two example commands for running multiple independent instances: separate data directory, Redis database 1, and HTTP port 3001."
+   },
+   {
+    "cmd": "ntopng -d /path2 -r 127.0.0.1:6379@2 -w 3002",
+    "context": "Second instance example, using its own data directory, Redis database 2, and HTTP port 3002."
+   },
+   {
+    "cmd": "ntopng -i eth0 -i eth1 -i view:eth0,eth1",
+    "context": "Monitors two physical interfaces separately and adds a virtual view interface that merges both."
+   },
+   {
+    "cmd": "sudo dnf install -y valkey",
+    "context": "On recent Rocky Linux, which has no redis-server package, installs Valkey as a drop-in Redis replacement."
+   },
+   {
+    "cmd": "sudo systemctl enable --now valkey",
+    "context": "Enables and starts the Valkey service so it is running for ntopng."
+   },
+   {
+    "cmd": "handle SIGPIPE nostop noprint pass",
+    "context": "A gdb command from the README's 'Debugging ntopng' section, used to stop gdb from halting on SIGPIPE."
+   }
+  ],
+  "install_notes": "Pre-built packages come from packages.ntop.org for Debian/Ubuntu x64, CentOS/RHEL/Rocky/Alma x64, Windows x64, Raspberry Pi/Debian ARM, and FreeBSD/OPNsense/pfSense; the README says to compile from source using doc/README.md and README.compilation. Redis must be installed and running on the host, or pointed to with --redis. On Windows, ntopng must be started as a service from the Services control panel, and Redis must be started first. The default login is admin / admin, so change it. The homepage lists hardware sizing: small networks (100 Mbps) need 2 cores and 2 GB RAM, medium (1 Gbps) 4 cores and 4 GB, and large (10 Gbps+) 8+ cores and 16+ GB. Recent Rocky Linux has no redis-server package, so Valkey is the suggested replacement.",
+  "standout": "It is one binary that works as both a probe and a flow collector: it can capture packets itself or ingest flows from nProbe over ZeroMQ, and it has a built-in browser UI with nDPI application detection, which is less common in open-source tools. It can also merge several interfaces into one virtual view.",
+  "status": "Appears actively maintained, though I could not confirm a release date or last-commit date. Evidence: the GitHub README shows a live Build Status badge on the dev branch and an OSS-Fuzz badge, the docs cover current Rocky Linux releases, and the homepage lists current versions and pricing. No deprecation notice appeared in what I read.",
+  "caveats": "The Community edition is free and aimed at small networks. Pro is listed at 299 EUR and Enterprise from 699+ EUR, both under EULA terms, and the homepage says some features (LDAP, historical reports, extended SNMP, and others) are paid-only. Default credentials are admin/admin. Redis is a hard dependency. Windows runs as a service, not a plain binary. Scaling to 100 Gbit needs the separate paid nProbe Cento product. Some of the homepage and doc text I got back was mostly page markup, so I took the specifics from the README text.",
+  "quotes": [
+   "ntopng is a network traffic probe that provides 360\u00b0 Network visibility, with its ability to gather traffic information from traffic mirrors, NetFlow exporters, SNMP devices, Firewall logs, Intrusion Detection systems.",
+   "ntopng \u2013 yes, it\u2019s all lowercase \u2013 provides a intuitive, encrypted web user interface for the exploration of realtime and historical traffic information.",
+   "ntopng\u00ae is a web-based network traffic monitoring application released under GPLv3. It is the new incarnation of the original ntop written in 1998, and now revamped in terms of performance, usability, and features."
+  ],
+  "links": [
+   {
+    "label": "Homepage (ntop.org product page)",
+    "url": "https://www.ntop.org/products/traffic-analysis/ntop/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/ntop/ntopng"
+   },
+   {
+    "label": "User's Guide",
+    "url": "https://www.ntop.org/guides/ntopng/"
+   },
+   {
+    "label": "API documentation",
+    "url": "https://www.ntop.org/guides/ntopng/api/index.html"
+   }
+  ],
+  "fetch_log": [
+   "https://www.ntop.org/products/traffic-analysis/ntop/ - worked, but the text was mostly page markup and marketing copy with the feature lists",
+   "https://github.com/ntop/ntopng - worked, README returned (introduction, packages, docs links)",
+   "https://github.com/ntop/ntopng/blob/dev/doc/README.md - worked, returned the doc text with the commands, though much of it was GitHub page chrome",
+   "Not fetched: the User's Guide and API docs, which were linked but outside the five-fetch limit"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "ntopng turns mirrored packets and exported flows into live application-protocol visibility, making otherwise invisible conversations on a network tangible."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "ntopng",
+  "tldr": "A web-based traffic monitor that shows which hosts and application protocols are crossing your network, live, from a browser tab on port 3000.",
+  "deeper_look": "ntopng is a network traffic probe with a web interface built in. It reads packets from an interface, or takes in flows from NetFlow, sFlow and IPFIX exporters, and shows top talkers, hosts, flows and alerts. It also identifies Layer-7 application protocols through nDPI, so you see 'TLS' or 'DNS' or a named service rather than just a port number.\n\nIt is the successor to ntop, which was written in 1998. The README calls ntopng 'the new incarnation of the original ntop written in 1998, and now revamped in terms of performance, usability, and features.' So the idea is old: put a tap or mirror port on a network and look at what is actually on the wire.\n\nUnder the hood it captures with libpcap, or PF_RING on Linux. Alternatively it receives flows over ZeroMQ from nProbe, a companion tool that collects flow data from routers and switches. Redis is the backing store and must be running. The web UI is served by ntopng itself, and a REST API lives under /lua/rest/, so you can query it with curl.\n\nThe door it opens is the protocol layer of your own network. Pointed at a home router's mirror port, or even just your own interface, it turns invisible background chatter such as DNS lookups, mDNS, TLS sessions and update checks into something you can sort and click through.",
+  "install": "brew install ntopng\n# Redis must be installed and running on the same host, or pass --redis to point at a remote one.\n# Capturing packets usually needs root. The default web login is admin / admin, so change it.",
+  "try_this": [
+   {
+    "cmd": "ntopng --help",
+    "what_happens": "Lists the options, including interface selection (-i), the web port (-w) and the Redis address (-r)."
+   },
+   {
+    "cmd": "ntopng -i eth0 -i eth1 -i view:eth0,eth1",
+    "what_happens": "Monitors two interfaces separately and adds a virtual 'view' interface that merges both. Substitute your own interface names."
+   },
+   {
+    "cmd": "curl --cookie \"user=admin; password=admin\" \"http://127.0.0.1:3000/lua/rest/get/interface/data.lua?ifid=0\"",
+    "what_happens": "Asks the running instance for interface 0's data through the REST API, with no browser involved."
+   }
+  ],
+  "whats_unique": "One binary works as both a packet-capturing probe and a flow collector, with a built-in browser UI and nDPI application detection. It can also merge several interfaces into a single virtual view.",
+  "caveats": "The Community edition is free and aimed at small networks; some features such as LDAP and historical reports are paid-only under EULA terms, and Redis is a hard dependency.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "network",
+   "protocol",
+   "traffic-analysis",
+   "web-ui",
+   "dpi"
+  ],
+  "links": [
+   {
+    "label": "Homepage (ntop.org product page)",
+    "url": "https://www.ntop.org/products/traffic-analysis/ntop/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/ntop/ntopng"
+   },
+   {
+    "label": "User's Guide",
+    "url": "https://www.ntop.org/guides/ntopng/"
+   },
+   {
+    "label": "API documentation",
+    "url": "https://www.ntop.org/guides/ntopng/api/index.html"
+   }
+  ]
+ }
+}

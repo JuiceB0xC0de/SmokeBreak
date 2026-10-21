@@ -1,0 +1,94 @@
+{
+ "name": "gmssl",
+ "desc": "Toolkit for Chinese national cryptographic standards",
+ "homepage": "https://github.com/guanzhi/GmSSL",
+ "installs_365d": 309,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "protocol",
+  "library",
+  "afternoon",
+  "science"
+ ],
+ "why": "An open toolkit for Chinese national cryptographic standards like SM2, SM3 and SM4 is a rare window onto a different crypto world.",
+ "brief": {
+  "what_it_is": "GmSSL is an open-source cryptography library and command-line toolkit, written in C and built with CMake, that implements the Chinese national commercial cryptography standards: SM2, SM3, SM4, SM9 and ZUC. The README is in Chinese and says it was developed independently at Peking University. It also covers TLCP (GB/T 38636-2020), TLS 1.2 and TLS 1.3 with the RFC 8998 SM4-GCM-SM3 suite, X.509 certificates, CRLs, CSRs, PEM/PKCS #8 keys, SM2 digital envelopes, and some post-quantum signature schemes. Inputs are data, keys, certificates and protocol traffic; outputs are ciphertexts, digests, signatures, certificates and TLS sessions, through a `gmssl` CLI or a C library (libgmssl). Language bindings are provided as separate sub-projects.",
+  "why_it_exists": "The README says GmSSL is a domestic commercial cryptography library that gives full coverage of the national (GM/guomi) algorithms, standards and secure communication protocols, and that it is meant to make it easier to build products that must pass Chinese cryptographic product certification. It also supports Chinese cryptographic hardware (SDF PCI-E cards and servers, SKF USB keys).",
+  "how_it_works": "The library is organised around the national algorithms and protocols, with the TLS stack written as a state machine that supports non-blocking mode. GmSSL 3 can be configured to include only the national algorithms and the TLCP protocol, and it avoids dynamic memory allocation so it can run on bare-metal MCUs and SoCs. Hardware keys are reached through SDF or SKF interfaces, and the SoftSDF sub-project offers a software SDF module for development and testing.",
+  "commands_seen": [
+   {
+    "cmd": "mkdir build",
+    "context": "Create a build directory inside the unpacked source tree (Unix build steps)."
+   },
+   {
+    "cmd": "cd build",
+    "context": "Enter the build directory before running CMake."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Configure the build from the parent source directory; add -DBUILD_SHARED_LIBS=OFF to get libgmssl.a instead of a shared library."
+   },
+   {
+    "cmd": "make",
+    "context": "Compile GmSSL after configuration."
+   },
+   {
+    "cmd": "make test",
+    "context": "Run the project's test suite."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Install the gmssl CLI, the gmssl header directory and libgmssl.so or libgmssl.dylib into system locations."
+   },
+   {
+    "cmd": "cmake .. -G \"NMake Makefiles\" -DWIN32=ON",
+    "context": "Configure a Windows build from a Visual Studio command prompt."
+   },
+   {
+    "cmd": "nmake",
+    "context": "Build on Windows after the NMake configuration step."
+   },
+   {
+    "cmd": "cmake .. -DENABLE_TEST_SPEED=ON",
+    "context": "Configure with speed tests enabled, for benchmarking."
+   },
+   {
+    "cmd": "./bin/sm4_cltest; ./bin/sm4test; ./bin/sm3test; ./bin/sm2_signtest; ./bin/sm2_enctest; ./bin/sm9test; ./bin/zuctest",
+    "context": "Run the benchmark binaries for SM4, SM3, SM2, SM9 and ZUC after the speed-test build."
+   }
+  ],
+  "install_notes": "Standard CMake build: mkdir build, cmake .., make, make test, sudo make install. The build no longer depends on Perl. Windows uses Visual Studio with the NMake generator and -DWIN32=ON. Android NDK, iOS and OpenHarmony builds are covered by CI badges in the README. Hardware support is optional: SDF and SKF devices, or SoftSDF as a software stand-in. No accounts or runtimes are mentioned.",
+  "standout": "Few open-source libraries cover the Chinese national crypto suite (SM2/SM3/SM4/SM9/ZUC plus TLCP and the RFC 8998 TLS 1.3 suite) as a complete, cross-platform package with a CLI. The OpenSSL-Compatibility-Layer lets Nginx 1.16 to 1.25 run on GmSSL, and the README says it has been tested with those versions.",
+  "status": "unknown. The README names GmSSL-3.2.0 as the current stable release and has a ChangeLog that runs from 3.1.1 onward, with CI badges for several platforms. It gives no release date or last-commit date, so the README alone cannot confirm recent activity.",
+  "caveats": "The README is in Chinese; this brief is based on a translation of the key points. The hardware-tested list is an unfinished placeholder ('to be added'). GmSSL 3 is not API- or drop-in compatible with OpenSSL, and the compatibility layer is limited to the tested Nginx range. Benchmark numbers are the author's own, on Apple M2 and a 2018 Intel MacBook Pro. Licence is not stated in the README I read. The README gives no usage examples for the gmssl CLI itself.",
+  "quotes": [
+   "\u8d85\u8f7b\u91cf\uff1aGmSSL 3 \u5927\u5e45\u5ea6\u964d\u4f4e\u4e86\u5185\u5b58\u9700\u6c42\u548c\u4e8c\u8fdb\u5236\u4ee3\u7801\u4f53\u79ef\uff0c\u4e0d\u4f9d\u8d56\u52a8\u6001\u5185\u5b58\uff0c\u53ef\u4ee5\u7528\u4e8e\u65e0\u64cd\u4f5c\u7cfb\u7edf\u7684\u4f4e\u529f\u8017\u5d4c\u5165\u5f0f\u73af\u5883(MCU\u3001SOC\u7b49)",
+   "\u66f4\u5408\u89c4\uff1aGmSSL 3 \u53ef\u4ee5\u914d\u7f6e\u4e3a\u4ec5\u5305\u542b\u56fd\u5bc6\u7b97\u6cd5\u548c\u56fd\u5bc6\u534f\u8bae(TLCP\u534f\u8bae)",
+   "GmSSL 3.0\u7248\u672c\u91cd\u5199\u4e86\u6240\u6709\u7684\u4ee3\u7801\u5e76\u6539\u53d8\u4e86\u539f\u6709API\uff0c\u56e0\u6b64\u5f53\u524dGmSSL\u7248\u672c\u548cOpenSSL\u4e0d\u517c\u5bb9\uff0c\u65e0\u6cd5\u76f4\u63a5\u7528GmSSL\u66ff\u6362OpenSSL\u8fdb\u884c\u7f16\u8bd1"
+  ],
+  "links": [
+   {
+    "label": "GmSSL homepage (GitHub)",
+    "url": "https://github.com/guanzhi/GmSSL"
+   },
+   {
+    "label": "SoftSDF (software SDF module)",
+    "url": "https://github.com/GmSSL/SoftSDF"
+   },
+   {
+    "label": "OpenSSL-Compatibility-Layer",
+    "url": "https://github.com/GmSSL/OpenSSL-Compatibility-Layer"
+   },
+   {
+    "label": "GmSSL-Python (ctypes binding)",
+    "url": "https://github.com/GmSSL/GmSSL-Python"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/guanzhi/GmSSL (GitHub repo; returned README in Chinese; worked)"
+  ]
+ }
+}

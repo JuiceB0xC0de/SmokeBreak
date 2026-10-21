@@ -1,0 +1,92 @@
+{
+ "name": "bloaty",
+ "desc": "Size profiler for binaries",
+ "homepage": "https://github.com/google/bloaty",
+ "installs_365d": 3634,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "tui"
+ ],
+ "why": "Shows where every byte in a binary goes, a useful lens for taking compiled programs apart.",
+ "brief": {
+  "what_it_is": "Bloaty is a command-line size profiler for compiled binaries. You point it at an ELF, Mach-O, PE/COFF, or WebAssembly file (or an object file or static library), and it prints a table that breaks the file down by sections, symbols, segments, compile units, inlines, or input files, showing how many bytes each piece takes on disk (FILE SIZE) and in memory (VM SIZE). It can also compare two binaries and show which parts grew or shrank. Output is human-readable by default, with --csv and --tsv options.",
+  "why_it_exists": "The README asks 'Ever wondered what's making your binary big?' and says Bloaty will show a size profile so you can understand what is taking up space inside a binary. It says it aims to attribute every byte of the binary to the symbol or compile unit that produced it.",
+  "how_it_works": "Bloaty uses its own ELF, DWARF, and Mach-O parsers rather than relying on external tools. It maps each byte of the file to a section, segment, symbol, or debug-info entry, and it will disassemble the binary to find references to anonymous data. Debug-based sources such as compileunits and symbols need debug information, which can live in a separate file matched by build ID.",
+  "commands_seen": [
+   {
+    "cmd": "cmake -B build -G Ninja -S .",
+    "context": "Configure a build directory with CMake using the Ninja generator (from the README Install section)."
+   },
+   {
+    "cmd": "cmake --build build",
+    "context": "Build Bloaty in the configured build directory."
+   },
+   {
+    "cmd": "cmake --build build --target install",
+    "context": "Install the built binary using the CMake install target."
+   },
+   {
+    "cmd": "git submodule update --init --recursive",
+    "context": "Check out bundled dependency submodules if the repo was not cloned with --recursive."
+   },
+   {
+    "cmd": "./bloaty bloaty -d compileunits",
+    "context": "Run Bloaty on itself, breaking the binary down by compile unit (source file). Needs debug info."
+   },
+   {
+    "cmd": "./bloaty -d segments,sections bloaty",
+    "context": "Hierarchical profile combining segments and sections in one report (from doc/using.md)."
+   },
+   {
+    "cmd": "./bloaty bloaty -- oldbloaty",
+    "context": "Size diff: compares bloaty against oldbloaty, the file after -- being the diff base (from doc/using.md)."
+   },
+   {
+    "cmd": "./bloaty -d symbols --debug-file=bloaty bloaty.stripped",
+    "context": "Profile a stripped copy using symbols from a separate unstripped debug file, matched by build ID (from doc/using.md)."
+   },
+   {
+    "cmd": "./bloaty -c bloaty_package.bloaty -d bloaty_package bloaty",
+    "context": "Run a custom data source defined in a config file that regex-rewrites compileunits labels into library buckets (from doc/using.md)."
+   },
+   {
+    "cmd": "./bloaty --help",
+    "context": "Print the full list of options, including --demangle, -n, -s, --domain, and --source-filter."
+   }
+  ],
+  "install_notes": "The README says to build with CMake (configure, build, optional install), with Ninja as one example generator. Bloaty bundles libprotobuf, re2, capstone, and pkg-config as Git submodules and prefers system copies if present. If the repo was not cloned recursively, run git submodule update --init --recursive. Tests are described in tests/README.md. The brew formula gave no caveats. Separate debug files need build IDs: gcc adds them by default, while Clang needs -Wl,--build-id on the link line.",
+  "standout": "Bloaty is a statically linked C++ binary built on its own parsers, and it attributes bytes by source compile unit and by inlined source line, not just by symbol. Its size-diff mode is pitched for CI, and custom data sources are RE2 regex rewrites of built-in breakdowns, so you can bucket results by library or package.",
+  "status": "unknown. The README has a GitHub Actions build badge and says 'GitHub issues and PRs welcome', but I saw no release date, version number, or last-commit date in the pages I read, so I cannot say whether it is active.",
+  "caveats": "PE/COFF and WebAssembly support are marked experimental, and --disassemble is marked EXPERIMENTAL. Separate debug files depend on build IDs; the README says GNU debuglink and build-ID lookup of debug files are not supported. Clang does not add build IDs by default, so you may need to add -Wl,--build-id. Some data sources do not work on object files, especially those that read debug info. Building needs CMake and submodules. The README says: This is not an official Google product. The license was not checked in the pages I read.",
+  "quotes": [
+   "Ever wondered what's making your binary big?",
+   "Bloaty performs a deep analysis of the binary.",
+   "easy to deploy: statically-linked C++ binary, easy to copy around",
+   "This is not an official Google product."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/google/bloaty"
+   },
+   {
+    "label": "User Documentation (doc/using.md)",
+    "url": "https://github.com/google/bloaty/blob/main/doc/using.md"
+   },
+   {
+    "label": "How Bloaty Works (doc/how-bloaty-works.md)",
+    "url": "https://github.com/google/bloaty/blob/main/doc/how-bloaty-works.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/google/bloaty: worked, README returned.",
+   "https://github.com/google/bloaty/blob/main/doc/using.md: worked, but the returned text was cut off at 40000 characters partway through the custom data sources section, so later sections were not read. Mostly GitHub page chrome around the content.",
+   "https://github.com/google/bloaty/blob/main/doc/how-bloaty-works.md: not fetched; the fetch limit of five was not reached, but the README already covered the analysis and it was not needed."
+  ]
+ }
+}

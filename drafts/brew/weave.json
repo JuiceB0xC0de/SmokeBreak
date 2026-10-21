@@ -1,0 +1,147 @@
+{
+ "name": "weave",
+ "desc": "Entity-level semantic merge driver for Git using tree-sitter",
+ "homepage": "https://ataraxy-labs.github.io/weave/",
+ "installs_365d": 1365,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "library",
+  "language"
+ ],
+ "why": "Entity-level merging via tree-sitter is a clever angle on version control, but it is a git plumbing add-on with limited strangeness.",
+ "brief": {
+  "what_it_is": "Weave is an entity-level semantic merge driver for Git. It plugs into `git merge` and, instead of comparing lines, parses the base, ours, and theirs versions of a file with tree-sitter into functions, classes, and keys, then merges those entities. Two edits to different functions in one file merge cleanly, while two incompatible edits to the same entity still conflict. It takes source files in about 38 languages and formats (including JSON, YAML, TOML, CSV, and Markdown) and writes one merged file, with conflict markers that name the entity and the reason where a conflict remains. Files it can't handle fall back to Git's line merge. It ships as the `weave` CLI, the `weave-driver` binary that git invokes, and a `weave-mcp` server for AI agents.",
+  "why_it_exists": "The homepage argues that Git merges by line, so two independent changes to different functions in the same file still produce a conflict, which is common when several AI agents edit one codebase. The README frames it as Git 'declaring a conflict' on changes that are 'completely independent'.",
+  "how_it_works": "Weave runs as a git merge driver (configured through `.gitattributes` and git config, with `%O %A %B %L %P` arguments). It parses all three revisions into entities, matches them by identity (file, type, name, parent, including renames), then resolves each entity: one-side changes win, and when both sides change the same entity it attempts an intra-entity three-way merge and conflicts only if that fails. The merge is a pure, stateless function over three file revisions, not a CRDT. A separate Automerge-based layer (`weave-crdt`) tracks live agent claims, but the merge path does not depend on it.",
+  "commands_seen": [
+   {
+    "cmd": "brew install weave",
+    "context": "Homebrew install, the homepage's primary install path."
+   },
+   {
+    "cmd": "cargo install --path crates/weave-cli",
+    "context": "Source build of the `weave` CLI from a clone; needs Rust. Add --force when upgrading a source install."
+   },
+   {
+    "cmd": "cargo install --path crates/weave-driver",
+    "context": "Source build of `weave-driver`, the binary git itself calls on every merge."
+   },
+   {
+    "cmd": "weave setup",
+    "context": "Run inside a Git repo to make git merge use weave for supported file types (writes .gitattributes)."
+   },
+   {
+    "cmd": "weave setup --global",
+    "context": "Makes weave the default merge driver for all repos via ~/.gitconfig and the global attributes file."
+   },
+   {
+    "cmd": "weave setup --off",
+    "context": "Reverts to normal git merging."
+   },
+   {
+    "cmd": "weave preview feature-branch",
+    "context": "Dry-run a merge of a branch and print per-file verdicts; nothing is written."
+   },
+   {
+    "cmd": "weave explain <file>",
+    "context": "Shows per-hunk detail for one conflicted file, read off the git stages."
+   },
+   {
+    "cmd": "weave check",
+    "context": "Verifies the working tree resolution against the three merge stages; exits 1 on findings, 2 if it could not verify."
+   },
+   {
+    "cmd": "weave land --onto origin/main --verify-cmd 'go build ./... && go test ./...'",
+    "context": "Merges the target branch, gates the result, runs the configured validation, and publishes fast-forward only."
+   },
+   {
+    "cmd": "claude mcp add --scope user weave -- weave-mcp",
+    "context": "Registers the weave-mcp server with Claude Code."
+   }
+  ],
+  "install_notes": "brew install weave ships both `weave` and `weave-driver`; both must be on PATH, and `weave setup` fails without weave-driver. Building from source requires Rust and two cargo install commands (one per binary). Jujutsu (jj) users can add a [merge-tools.weave] block to their jj config and run `jj resolve --tool weave`. For agents, add the weave-mcp server to an MCP client; the live CRDT coordination tools appear only with WEAVE_EXPERIMENTAL=1. `weave stats` only accumulates counters if WEAVE_STATS=1 is set. No accounts or hosted services are required for the local tool.",
+  "standout": "It refuses on purpose: when two branches add different decorators to the same Python or TypeScript function, weave declines to pick a stacking order, because decorator order is semantic. It also publishes a benchmark page and a README that disclose regressions against Git and against real repos, rather than only headline wins. The conflict markers carry entity names and the internal guard that refused the auto-merge.",
+  "status": "Maintained, as far as the README shows. The README contains a benchmark note dated 2026-09-01 for the 0.5.3 engine, and it describes a small team that reviews incoming PRs. I did not see a release date or last-commit date on the pages I read, so the evidence is the README's own dating rather than repo activity.",
+  "caveats": "Vue, Svelte, ERB, and Haskell are deliberately not merged by weave and fall back to Git's line merge. Files over 1MB and binary files fall back too. The homepage and README disagree on current numbers: the homepage says 0 regressions on C, Python, and Go, while the README's 0.5.3 table shows 23 regressions on git/git (C), 37 on Go, and 1 on Flask, with 86 regressions total across five repos, which the README says is partly by design. The 31-scenario benchmark is the author's own corpus. Live claims are advisory and a crashed agent's claims are not released automatically. The `weave-github` crate is a hosted-service component and not an installable binary. The homepage's 'Every time' promise is marketing; the README is more hedged. License is MIT OR Apache-2.0.",
+  "quotes": [
+   "Merge without conflicts.",
+   "Two agents edit different functions in the same file? Clean merge. Every time.",
+   "Weave refuses rather than fabricate an order, and a tool that merges those cleanly is wrong, not better."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://ataraxy-labs.github.io/weave/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/Ataraxy-Labs/weave"
+   },
+   {
+    "label": "Benchmarks page",
+    "url": "https://ataraxy-labs.github.io/weave/benchmarks.html"
+   }
+  ],
+  "fetch_log": [
+   "https://ataraxy-labs.github.io/weave/ - worked; marketing page with install line, benchmark summary, and language list, but no full docs or links to a README.",
+   "https://github.com/ataraxy-labs/weave - worked (GitHub redirects to Ataraxy-Labs/weave); README returned in full. I guessed this URL from the homepage's organisation name rather than following a link. The README was enough, so I did not fetch the benchmarks page or the sem-core docs."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It turns Git\u2019s line-based merge into entity-level merging, with tree-sitter parsing and deliberate refusals when syntax order makes an automatic merge unsafe."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "weave",
+  "tldr": "A Git merge driver that parses files with tree-sitter and merges functions and classes instead of lines, so edits to different functions stop conflicting.",
+  "deeper_look": "Git merges by line. If you change one function and a teammate changes another function in the same file, Git can still declare a conflict when the edits sit close together. Weave replaces that step. It parses the base, ours, and theirs versions of a file with tree-sitter into entities (functions, classes, config keys), matches them by identity including renames, and merges entity by entity.\n\nThe rules are simple. If only one side changed an entity, that side wins. If both changed the same entity, weave tries a three-way merge inside it and conflicts only if that fails. The merge is a pure function over three file revisions. It covers about 38 languages and formats, including JSON, YAML, TOML, CSV, and Markdown. Anything it can't handle falls back to Git's normal line merge.\n\nThe interesting part is where it declines to merge. When two branches add different decorators to the same Python or TypeScript function, weave won't pick a stacking order, because decorator order changes meaning. In the project's words: \"Weave refuses rather than fabricate an order, and a tool that merges those cleanly is wrong, not better.\" Remaining conflict markers name the entity and the reason.\n\nThe stated motivation is several AI agents editing one codebase, which makes false conflicts common. The package also ships `weave-mcp`, a server for agents. You don't need that to use it as a plain merge driver.",
+  "install": "brew install weave\n# installs both `weave` and `weave-driver`; both must be on PATH, since `weave setup` fails without weave-driver\n# building from source needs Rust and two `cargo install --path` commands, one per binary",
+  "try_this": [
+   {
+    "cmd": "weave setup",
+    "what_happens": "Run inside a Git repo, it writes .gitattributes so git merge uses weave for supported file types."
+   },
+   {
+    "cmd": "weave preview feature-branch",
+    "what_happens": "Dry-runs a merge of that branch and prints a verdict per file without writing anything."
+   },
+   {
+    "cmd": "weave setup --off",
+    "what_happens": "Reverts the repo to normal Git merging."
+   }
+  ],
+  "whats_unique": "It treats merging as a question about code entities rather than text lines, and it refuses on purpose where a merge would be semantically wrong. Its README and benchmark page also disclose regressions against Git.",
+  "caveats": "The homepage and README disagree on benchmark numbers (the README's 0.5.3 table lists regressions against Git on several repos), the benchmark corpus is the author's own, and Vue, Svelte, ERB, Haskell, binary files, and files over 1MB fall back to line merge.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "git",
+   "merge",
+   "tree-sitter",
+   "version-control",
+   "ai-agents"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://ataraxy-labs.github.io/weave/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/Ataraxy-Labs/weave"
+   },
+   {
+    "label": "Benchmarks page",
+    "url": "https://ataraxy-labs.github.io/weave/benchmarks.html"
+   }
+  ]
+ }
+}

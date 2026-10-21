@@ -1,0 +1,90 @@
+{
+ "name": "grex",
+ "desc": "Command-line tool for generating regular expressions",
+ "homepage": "https://pemistahl.github.io/grex-js/",
+ "installs_365d": 2317,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "math"
+ ],
+ "why": "Given example strings, it synthesizes a regular expression that matches them, a satisfying inversion of the usual regex workflow.",
+ "brief": {
+  "what_it_is": "grex is a generator for regular expressions. You give it example strings, the test cases, and it returns a single regular expression that matches all of them. The output is anchored with ^ and $ by default, so it matches only the inputs given and nothing else. The Homebrew package is the Rust command-line tool, which prints the pattern to stdout. The homepage is the demo site for grex-js, a WebAssembly build of the same Rust library for browsers and Node.js.",
+  "why_it_exists": "The author describes writing regexes by hand as a often complicated and tedious task, and wants grex to produce a correct starting expression automatically. The project began as a Rust port of the JavaScript tool regexgen by Devon Govett, whose development had apparently ceased.",
+  "how_it_works": "grex builds a deterministic finite automaton from the input strings, then reduces it with Hopcroft's DFA minimization algorithm. The minimized automaton is treated as a system of linear equations and solved with Brzozowski's algebraic method, which yields the final regex. The README notes that this aims for the shortest regex but often produces something longer than needed, so hand-tuning is still expected.",
+  "commands_seen": [
+   {
+    "cmd": "grex a b c",
+    "context": "Basic CLI use. Test cases are passed as arguments; the output for these inputs is ^[a-c]$."
+   },
+   {
+    "cmd": "grex -r b ba baa baaa",
+    "context": "The -r flag turns repeated substrings into {min,max} quantifiers. The output for these inputs is ^b(?:a{1,3})?$."
+   },
+   {
+    "cmd": "grex \"I \u2665 cake\" \"I \u2665 cookies\"",
+    "context": "Inputs containing blank space must be wrapped in quotation marks. The output is ^I \u2665 c(?:ookies|ake)$."
+   },
+   {
+    "cmd": "cat test_cases.txt | grex -",
+    "context": "Reads test cases from a Unix pipe, with - standing for stdin."
+   },
+   {
+    "cmd": "grex -f test_cases.txt",
+    "context": "Reads one test case per line from a file, as an alternative to passing arguments."
+   },
+   {
+    "cmd": "grex -e --with-surrogates <INPUT>",
+    "context": "Escapes non-ASCII characters as \\u{...} sequences and converts astral code points to surrogate pairs, for older JavaScript engines."
+   },
+   {
+    "cmd": "grex -dswW <INPUT>",
+    "context": "Combines the digit, whitespace and word flags with their negated forms, replacing the matching character classes with \\d, \\s, \\w, \\W and similar."
+   },
+   {
+    "cmd": "( brew | cargo | choco | huber | port | scoop ) install grex",
+    "context": "The README's summary of package-manager install options for the CLI."
+   },
+   {
+    "cmd": "cargo build",
+    "context": "Builds the Rust source from a git clone. The README says the CLI needs Rust 1.70.0 or newer."
+   },
+   {
+    "cmd": "npm install @pemistahl/grex",
+    "context": "Installs the JavaScript/WebAssembly library from npm, which is the package this grex-js homepage documents."
+   }
+  ],
+  "install_notes": "For the CLI, Homebrew (brew install grex) is the simplest route; the README also lists Scoop, Chocolatey, MacPorts, Huber, cargo, and direct release binaries. Building from source with cargo needs the stable Rust toolchain, version 1.70.0 or newer for the CLI. For the JavaScript library, use npm install @pemistahl/grex. In the browser it needs a bundler, and the README says only Webpack 5 is currently compatible, with experiments.asyncWebAssembly set to true. No accounts, API keys or configuration files are mentioned.",
+  "standout": "It inverts the usual regex workflow: you supply the strings that must match and get a pattern back, rather than writing the pattern first. Its default output is the most specific regex, and generalization is opt-in through flags such as -d, -w and -r.",
+  "status": "Maintained, judging by the README. The CLI README references version 1.4.6 and a planned 1.5.0 milestone. The grex-js README says its npm 1.0.2 corresponds to Rust library 1.4.2, so the JavaScript package lags the Rust release. I did not see a last-commit or release date, so activity beyond the README is unverified.",
+  "caveats": "The Homebrew formula is the Rust CLI, so the grex-js homepage describes a library with a web demo and no CLI of its own. Generated regexes target PCRE and the Rust regex crate, and only partly match JavaScript RegExp; the README says some PCRE features are unsupported and that other engines are untested. Turning on \\w or \\d conversion makes the pattern match much more than the inputs, which the README warns about. The output is not guaranteed to be the shortest or the most elegant. Building the CLI from source needs Rust 1.70 or newer. Both projects are Apache 2.0 licensed. The Homebrew caveats field was empty, and the homepage fetch returned only its title, so the demo page itself was not read.",
+  "quotes": [
+   "grex is a library as well as a command-line utility that is meant to simplify the often complicated and tedious task of creating regular expressions.",
+   "The philosophy of this project is to generate the most specific regular expression possible by default which exactly matches the given input only and nothing else.",
+   "Definitely, yes! ... So, please learn how to write regular expressions!"
+  ],
+  "links": [
+   {
+    "label": "Demo website (homepage)",
+    "url": "https://pemistahl.github.io/grex-js/"
+   },
+   {
+    "label": "grex CLI and Rust library source",
+    "url": "https://github.com/pemistahl/grex"
+   },
+   {
+    "label": "grex-js source and README",
+    "url": "https://github.com/pemistahl/grex-js"
+   }
+  ],
+  "fetch_log": [
+   "https://pemistahl.github.io/grex-js/ : loaded, but returned only the page title 'grex - Generate regular expressions from test cases', so no body text was read",
+   "https://github.com/pemistahl/grex-js : loaded, README returned (grex-js library documentation)",
+   "https://github.com/pemistahl/grex : loaded, README returned (Rust library and CLI documentation, including the full grex -h output)"
+  ]
+ }
+}

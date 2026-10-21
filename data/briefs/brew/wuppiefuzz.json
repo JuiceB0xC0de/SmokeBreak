@@ -1,0 +1,93 @@
+{
+ "name": "wuppiefuzz",
+ "desc": "Coverage-guided REST API fuzzer developed on top of LibAFL",
+ "homepage": "https://github.com/TNO-S3/WuppieFuzz",
+ "installs_365d": 255,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "network",
+  "library"
+ ],
+ "why": "Coverage-guided fuzzing of REST APIs built on LibAFL, a genuinely clever way to watch a service crack under feedback.",
+ "brief": {
+  "what_it_is": "WuppieFuzz is a coverage-guided fuzzer for REST APIs, built on LibAFL and developed by TNO. You give it an OpenAPI specification (YAML) and a running target service, and it generates and mutates HTTP requests against that API, using coverage feedback to steer the search. Output goes to a timestamped subdirectory under reports/ when you pass --report: endpoint coverage (from the spec alone) and, for JaCoCo targets, code coverage. A database of request data is also written, which can be explored in a Grafana dashboard.",
+  "why_it_exists": "TNO says it targets a wide audience of end-users, with a strong focus on ease-of-use, explainability of the discovered flaws and modularity. The README says it supports black box, grey box and white box testing.",
+  "how_it_works": "The OpenAPI spec tells WuppieFuzz how to build and mutate requests, and the target must already be running (instrumented, if you want code coverage). Coverage from the target, such as a JaCoCo agent or LCOV for Python, feeds back into the fuzzing loop. Endpoint coverage needs only the spec; code coverage needs a mapping from coverage data to source files.",
+  "commands_seen": [
+   {
+    "cmd": "docker build . -t wuppiefuzz:local",
+    "context": "Builds the WuppieFuzz Docker image locally, tagged wuppiefuzz:local."
+   },
+   {
+    "cmd": "docker run \\\n  --network host \\\n  -v ./fuzzing-folder:/fuzzing-folder \\  # The folder will be populated with wuppiefuzz outputs\n  -w /fuzzing-folder \\\n  wuppiefuzz:local fuzz --timeout 60 --report openapi.json",
+    "context": "Runs the container with host networking (needed when fuzzing a service running locally, outside Docker), mounts a folder with the OpenAPI spec, and fuzzes for 60 seconds with a report. The README's own comment on the -v line is included as written."
+   },
+   {
+    "cmd": "cargo run -- --help",
+    "context": "Shows the help text with required parameters and flags, including the usage line Usage: wuppiefuzz [OPTIONS] [OPENAPI_SPEC.YAML]."
+   },
+   {
+    "cmd": "cargo run -- fuzz openapi.yaml --coverage-format jacoco --jacoco-class-dir ../Targets/app/target/classes/",
+    "context": "Example run against a Java target with the JaCoCo agent attached, giving the spec, the JaCoCo coverage format and the classes directory."
+   },
+   {
+    "cmd": "cargo run -- fuzz --config=config.yaml --report --coverage-host=localhost:6300 --timeout=10 ./openapi.yaml",
+    "context": "Combines a YAML config file with command-line flags; the command-line --timeout=10 overrides the value set in the config file."
+   },
+   {
+    "cmd": "sudo apt install -y build-essential pkg-config cmake",
+    "context": "Installs general build tools needed to build the project from source on Debian/Ubuntu."
+   },
+   {
+    "cmd": "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh",
+    "context": "Installs the Rust toolchain via rustup, a development prerequisite."
+   },
+   {
+    "cmd": "sudo apt install libssl-dev libsqlite3-dev",
+    "context": "System libraries for a development build that avoids vendored dependencies (Debian/Ubuntu)."
+   },
+   {
+    "cmd": "brew install z3",
+    "context": "Installs Z3 4.15+ via Homebrew; the README says apt's libz3-dev is too old for the z3 crate."
+   },
+   {
+    "cmd": "cargo dev-build",
+    "context": "Cargo alias from .cargo/config.toml that builds with --no-default-features, linking against system libraries rather than vendored ones."
+   }
+  ],
+  "install_notes": "Install with brew install wuppiefuzz or grab a binary from the GitHub releases page. To build from source you need build-essential, pkg-config and cmake, plus Rust via rustup. By default, C dependencies (OpenSSL, SQLite, Z3) are vendored, so a plain cargo build works. For faster dev builds you can link system libraries instead, which needs libssl-dev and libsqlite3-dev, plus Z3 4.15+ (the README recommends Homebrew on Linux, and the Homebrew library path must be added to LIBRARY_PATH and LD_LIBRARY_PATH). Fedora 42+ uses openssl-devel, sqlite-devel and z3-devel; macOS uses brew install openssl sqlite z3. Docker is an option too: build the image locally and mount a folder containing the OpenAPI spec. Configuration can come from a YAML file via --config; example configs for JaCoCo (Java) and LCOV (Python) are in example_configs/. The target must be started before WuppieFuzz runs.",
+  "standout": "It covers black box, grey box and white box REST API fuzzing in one tool. Endpoint coverage comes from the OpenAPI spec alone, so you get a coverage figure even without instrumenting the target. A Grafana dashboard visualises the request database from a campaign.",
+  "status": "unknown",
+  "caveats": "Code coverage is currently supported only for JaCoCo; the README says more formats are planned. The target must be instrumented and running beforehand. Z3 4.15+ is needed for system-library builds, and most Linux distribution packages are too old, so Homebrew is recommended. Docker needs host networking to reach a service running on the host. The README does not state a license beyond Apache-2.0, a last release date, or a last commit date. The brew formula has no caveats.",
+  "quotes": [
+   "targeting a wide audience of end-users, with a strong focus on ease-of-use, explainability of the discovered flaws and modularity",
+   "WuppieFuzz supports all three settings of testing (black box, grey box and white box).",
+   "By default, WuppieFuzz vendors its C dependencies (OpenSSL, SQLite, Z3) so that a regular `cargo build` works out of the box."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repository)",
+    "url": "https://github.com/TNO-S3/WuppieFuzz"
+   },
+   {
+    "label": "Tutorial (repo ./tutorial directory; branch assumed to be main)",
+    "url": "https://github.com/TNO-S3/WuppieFuzz/tree/main/tutorial"
+   },
+   {
+    "label": "Short how-to video (YouTube)",
+    "url": "https://www.youtube.com/watch?v=-oR4d9aXrqo"
+   },
+   {
+    "label": "Preferred publication (DOI): Rooijakkers et al., 2026, ICISSP",
+    "url": "https://doi.org/10.5220/0000217100004061"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/TNO-S3/WuppieFuzz (homepage, GitHub repo, README returned, worked). Version shown in README is v1.8.0. Linked tutorial, CITATION.cff and other subdirectory READMEs were not fetched; the 5-fetch budget was not used beyond this one."
+  ]
+ }
+}

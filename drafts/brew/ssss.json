@@ -1,0 +1,93 @@
+{
+ "name": "ssss",
+ "desc": "Shamir's secret sharing scheme implementation",
+ "homepage": "http://point-at-infinity.org/ssss/",
+ "installs_365d": 152,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "math",
+  "library"
+ ],
+ "why": "Shamir's secret sharing in a command-line tool; split a secret into pieces and reconstruct it from a threshold of them.",
+ "brief": {
+  "what_it_is": "ssss is a command-line implementation of Shamir's secret sharing scheme for UNIX and Linux machines. In split mode, it takes a secret typed at a prompt (up to 128 ASCII characters in the example) and a threshold t and total n, then prints n share strings, one per line, each prefixed with its share number. In combine mode, it takes any t of those share strings, entered one per line, and prints the reconstructed secret. It is free software under the GNU GPL v2.",
+  "why_it_exists": "The page explains secret sharing as a way to split a secret among participants so that only a threshold of them can reconstruct it, with example uses like protecting a password across several safe places or guarding a bank vault code. It was written by B. Poettering in 2006 as a practical tool for this.",
+  "how_it_works": "The page says the usual technique is polynomial interpolation (Lagrange interpolation), which Adi Shamir invented in 1979. The author says the scheme is provably secure: with fewer than t valid shares, an attacker gains nothing over having none. The tool links against GNU libgmp for multiprecision arithmetic and reads from /dev/random as its entropy source. For secrets larger than the tool is meant for, the page recommends a hybrid approach: encrypt the data with a block cipher (openssl, gpg, etc.) and share only the key.",
+  "commands_seen": [
+   {
+    "cmd": "% ssss-split -t 3 -n 5",
+    "context": "Splits a secret into 5 shares using a (3,5) threshold scheme, so any 3 shares can reconstruct it. The tool prompts for the secret, then prints the shares."
+   },
+   {
+    "cmd": "% ssss-combine -t 3",
+    "context": "Reconstructs the secret from 3 shares. It prompts for each share on its own line and then prints 'Resulting secret: ...'."
+   }
+  ],
+  "install_notes": "The page says ssss links against the GNU libgmp multiprecision library, and version 4.1.4 works well. It needs /dev/random as an entropy source. Source tarballs for versions 0.1 through 0.5 are published with SHA1 checksums. The page says some people had compilation problems with 0.5, and that if the code does not process correctly, you should replace line 351 of ssss.c with 'int restore_secret(int n, void *A, mpz_t b[])'. The page also notes a Debian package exists. The man page is available in groff and HTML versions. No accounts or runtimes are mentioned.",
+  "standout": "It is a small, single-purpose Unix tool that does one thing with the classic (t,n) threshold construction, and the page is unusually frank about the scheme's limits, including the hybrid encryption advice for larger secrets. It is also very old-school in presentation: a plain HTML page that doubles as the documentation, with an interactive demo mentioned on the page.",
+  "status": "Quiet. The homepage was last modified on Tue Jan 2 00:52:52 CEST 2018, and the latest tarball listed is ssss-0.5. The page also says a fix for ssss-0.5 compilation problems will come 'in the upcoming release', but it gives no date and no later version. I did not check a repository or release feed, so the actual last release date is unknown beyond what this page shows.",
+  "caveats": "It is for UNIX and Linux only according to the page. The author notes a Windows port exists, but it is of an outdated version and, in the author's opinion, uses a 'lightly too sloppy' random number generator. Version 0.5 may not compile without a manual edit. Dependencies include libgmp and /dev/random. The example prompt caps the secret at 128 ASCII characters, and the page recommends a hybrid encryption approach for larger data. The homepage links to a demo page and a man page, but I did not fetch either. The text is GPL-licensed.",
+  "quotes": [
+   "ssss is an implementation of Shamir's secret sharing scheme for UNIX/linux machines. It is free software, the code is licensed under the GNU GPL v2.",
+   "Note that Shamir's scheme is provable secure, that means: in a (t,n) scheme one can prove that it makes no difference whether an attacker has t-1 valid shares at his disposal or none at all",
+   "If larger secrets are to be shared a hybrid technique has to be applied: encrypt the secret with a block cipher (using openssl, gpg, etc) and apply secret sharing to just the key."
+  ],
+  "links": [
+   {
+    "label": "ssss homepage (project page with docs and downloads)",
+    "url": "http://point-at-infinity.org/ssss/"
+   }
+  ],
+  "fetch_log": [
+   "http://point-at-infinity.org/ssss/ - fetched OK. Not a GitHub repo; full HTML project page with description, usage examples, download list, and license notes. Demo page and man page are mentioned but not fetched."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A small, hands-on CLI makes threshold cryptography tangible: split a secret among people or places and recover it only when enough shares come together."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "ssss",
+  "tldr": "Split a secret into n shares so any t of them rebuild it and fewer reveal nothing, using Shamir's 1979 scheme from the command line.",
+  "deeper_look": "ssss is a small command-line implementation of Shamir's secret sharing. In split mode it asks for a secret at a prompt, takes a threshold t and a share count n, and prints n share strings, one per line, each prefixed with its share number. In combine mode you paste in any t of those lines and it prints the secret back.\n\nThe idea underneath is polynomial interpolation. The secret becomes a point on a random polynomial, and each share is another point on it. With t points you can recover the polynomial by Lagrange interpolation, and with fewer you cannot. The page puts it plainly: \"in a (t,n) scheme one can prove that it makes no difference whether an attacker has t-1 valid shares at his disposal or none at all\". That is a proof, not a hope about computational hardness.\n\nB. Poettering wrote it in 2006 for practical uses such as spreading a password across several safe places or guarding a vault code. It links against GNU libgmp for the big-number arithmetic and reads randomness from /dev/random. The example prompt caps secrets at 128 ASCII characters. For anything larger, the author recommends encrypting the data with openssl or gpg and sharing only the key.",
+  "install": "brew install ssss\n# builds against gmp; needs /dev/random as an entropy source. The brew formula installs ssss-split (ssss-combine is the matching reconstruct command).",
+  "try_this": [
+   {
+    "cmd": "ssss-split -t 3 -n 5",
+    "what_happens": "Prompts for a secret, then prints five shares, any three of which can reconstruct it."
+   },
+   {
+    "cmd": "ssss-combine -t 3",
+    "what_happens": "Prompts for three shares, one per line, then prints 'Resulting secret: ...'."
+   },
+   {
+    "cmd": "ssss-split --help",
+    "what_happens": "Lists the options for splitting."
+   }
+  ],
+  "whats_unique": "It is a single-purpose Unix tool for the classic (t,n) threshold construction, and its homepage is frank about the scheme's limits, including the hybrid-encryption advice for larger secrets.",
+  "caveats": "The project is quiet: the homepage was last modified in 2018, the latest tarball is 0.5, and the page says 0.5 may need a manual edit to compile; it is UNIX/Linux only.",
+  "commitment": "quick",
+  "category": "quick-weird-payoffs",
+  "tags": [
+   "quick",
+   "math",
+   "cryptography",
+   "secret-sharing",
+   "unix"
+  ],
+  "links": [
+   {
+    "label": "ssss homepage (project page with docs and downloads)",
+    "url": "http://point-at-infinity.org/ssss/"
+   }
+  ]
+ }
+}

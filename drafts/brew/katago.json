@@ -1,0 +1,144 @@
+{
+ "name": "katago",
+ "desc": "Neural Network Go engine with no human-provided knowledge",
+ "homepage": "https://katagotraining.org/",
+ "installs_365d": 2704,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "ai",
+  "game",
+  "science"
+ ],
+ "why": "A Go engine learning from self-play alone is a real AI rabbit hole, though it is somewhat known in the Go community.",
+ "brief": {
+  "what_it_is": "KataGo is an open-source Go engine (board game) that uses a neural network trained purely by self-play. It runs as a command-line GTP engine with no graphical interface of its own: a GUI or analysis tool launches it and sends it moves over the Go Text Protocol. It takes a neural network weights file (.bin.gz) plus a config file, and returns move choices, win rates, estimated score, and territory ownership. It also has a JSON-based analysis engine for batch evaluation of whole games. The brew formula installs the engine binary, not the training run.",
+  "why_it_exists": "The README frames it as a strong Go bot that reaches top levels from scratch with no outside data, improving only via self-play, and as a tool for players and developers that estimates score and territory rather than only win rate. The homepage also hosts KataGo's public distributed training run, where volunteers contribute GPU time to self-play.",
+  "how_it_works": "KataGo is an AlphaZero-like self-play system with many added enhancements, written in C++. It uses Monte-Carlo Graph Search, which extends MCTS to graphs instead of trees, and it has six neural-network backends (OpenCL, CUDA, TensorRT, ROCm, ONNX Runtime, Eigen CPU, plus Metal on macOS via Homebrew). The README points to arXiv 1902.10565 and docs/KataGoMethods.md for the methods.",
+  "commands_seen": [
+   {
+    "cmd": "brew install katago",
+    "context": "Homebrew install on macOS; the README says community Homebrew packages may lag official releases slightly."
+   },
+   {
+    "cmd": "./katago.exe benchmark -model <NEURALNET>.bin.gz -config gtp_custom.cfg",
+    "context": "Checks that KataGo works with a given network and config, and reports a suggested thread count; on OpenCL it also tunes for the GPU."
+   },
+   {
+    "cmd": "./katago.exe genconfig -model <NEURALNET>.bin.gz -output gtp_custom.cfg",
+    "context": "Interactively generates a custom GTP config file by asking questions."
+   },
+   {
+    "cmd": "./katago.exe gtp -model <NEURALNET>.bin.gz -config gtp_custom.cfg",
+    "context": "Starts the GTP engine; this is the command you give to a GUI so it can run KataGo."
+   },
+   {
+    "cmd": "katago gtp -config $(brew list --verbose katago | grep 'gtp.*\\.cfg') -model $(brew list --verbose katago | grep .gz | head -1)",
+    "context": "Homebrew-specific way to run the GTP engine using the config and network installed in the formula's share directory."
+   },
+   {
+    "cmd": "./katago.exe gtp -model <NEURALNET>.bin.gz -human-model b18c384nbt-humanv0.bin.gz -config gtp_human5k_example.cfg",
+    "context": "Runs KataGo in human-style mode with the human SL model, configured to imitate 5-kyu players."
+   },
+   {
+    "cmd": "./katago analysis -model <NEURALNET>.gz -config <ANALYSIS_CONFIG>.cfg",
+    "context": "Starts the JSON-based analysis engine for batched evaluation from a backend service."
+   },
+   {
+    "cmd": "./katago tuner -config <GTP_CONFIG>.cfg",
+    "context": "Forces the OpenCL tuner to re-tune."
+   },
+   {
+    "cmd": "./katago version",
+    "context": "Prints the KataGo version."
+   },
+   {
+    "cmd": "./katago contribute -config contribute_example.cfg",
+    "context": "From the homepage: command-line method for contributing spare compute to the distributed training run, after editing the example config with your username and password. Linux form; on Windows it is katago.exe contribute -config contribute_example.cfg."
+   }
+  ],
+  "install_notes": "On Windows and Linux, download precompiled executables from the GitHub releases page; building from source is documented in Compiling.md. Neural nets are separate downloads from katagotraining.org, and the README recommends the strongest or most recent b18-sized net (b18c384nbt). The first run on OpenCL can take seconds to many minutes while it tunes for your GPU. Set numSearchThreads to the thread count that benchmark suggests. Avoid spaces in file and directory paths, which GUIs often mishandle. CUDA needs CUDA and cuDNN installed, and TensorRT may need to be installed from NVIDIA. Human-style play needs a separate human SL model file. The distributed-training path needs a free account on katagotraining.org with a verified email.",
+  "standout": "It reaches strong play from zero outside data, and it scores by estimated final score and territory rather than only win rate, which makes handicap and weaker-player games easier to review. The README also describes a human-style mode that imitates a chosen kyu level and a public volunteer training run on the same engine.",
+  "status": "Maintained. The homepage lists updates through 2026-09-15 (retiring pre-v1.18.0 clients, transformer networks), and the README says 'As of 2026'. I did not check commit dates or the releases page directly.",
+  "caveats": "KataGo is a command-line engine, so it needs a GUI such as KaTrain, Sabaki, Lizzie, or LizzieYzy for normal play. Some GPUs and drivers are known to fail: the README names the AMD Radeon RX 5700 with OpenCL, Mesa OpenCL drivers, and some Intel integrated graphics. Startup can hang on first-run tuning, which GUIs often hide. The Homebrew package can lag official releases, and the README says to pick a network that matches the release notes. The license is a custom LICENSE file that permits free use or modification, and I did not read its full text. Some bundled external libraries have their own licenses. Building from source uses the stable branch, not master, according to the homepage.",
+  "quotes": [
+   "It does NOT have a graphical interface on its own. So generally, you will want to use KataGo along with a GUI or analysis program.",
+   "is capable of reaching top levels rapidly and entirely from scratch with no outside data, improving only via self-play.",
+   "Estimates territory and score, rather than only \"winrate\", helping analyze kyu and amateur dan games besides only on moves that actually would swing the game outcome at pro/superhuman-levels of play."
+  ],
+  "links": [
+   {
+    "label": "KataGo distributed training homepage",
+    "url": "https://katagotraining.org/"
+   },
+   {
+    "label": "KataGo GitHub repository (README)",
+    "url": "https://github.com/lightvector/KataGo"
+   },
+   {
+    "label": "Accelerating Self-Play Learning in Go (arXiv paper)",
+    "url": "https://arxiv.org/abs/1902.10565"
+   }
+  ],
+  "fetch_log": [
+   "https://katagotraining.org/ - fetched OK. Training-run homepage with updates, download and contribution instructions, and stats. It is not the engine's own README.",
+   "https://github.com/lightvector/KataGo - fetched OK. README returned in full, including install, backend, and command details. Docs and docs/KataGoMethods.md were not fetched."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "KataGo is a deep, hands-on look at self-play learning, with unusual score-and-territory analysis and a public distributed training run\u2014not merely a game-playing engine."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "KataGo",
+  "tldr": "A Go engine that taught itself to play at top levels from self-play alone, and tells you estimated score and territory, not just win rate.",
+  "deeper_look": "KataGo is an open-source Go engine written in C++. It is an AlphaZero-like self-play system: a neural network plays against itself, learns from the games, and repeats. Per the README, it \"is capable of reaching top levels rapidly and entirely from scratch with no outside data, improving only via self-play.\" It searches with Monte-Carlo Graph Search, which extends MCTS from trees to graphs.\n\nThe engine has no graphical interface. It speaks the Go Text Protocol (GTP), so a GUI such as KaTrain, Sabaki, or Lizzie launches it and sends moves. It needs a separate neural network weights file (.bin.gz) and a config file. It also has a JSON analysis engine for batch evaluation of whole games.\n\nWhat sets it apart for players is the output. It estimates final score and territory ownership rather than only win rate. That makes handicap games and weaker-player games easier to review, because win rate alone says little when one side is far ahead. There is also a human-style mode, using a separate model, that imitates a chosen kyu level.\n\nThe homepage, katagotraining.org, hosts a public distributed training run. Volunteers donate GPU time to generate self-play games, so the same engine you install is the one producing the next network. The brew formula installs only the engine, not the training run. The methods are described in arXiv 1902.10565.",
+  "install": "brew install katago\n# Neural network weights are a separate download from https://katagotraining.org/ (the README recommends the strongest recent b18 net, b18c384nbt).\n# You will want a GUI such as KaTrain, Sabaki, or Lizzie for normal play.\n# Uses a GPU backend (OpenCL, CUDA, TensorRT, ROCm, ONNX, Metal on macOS) or the Eigen CPU backend.",
+  "try_this": [
+   {
+    "cmd": "katago version",
+    "what_happens": "Prints the installed KataGo version, a quick check that the binary runs."
+   },
+   {
+    "cmd": "katago genconfig -model <NEURALNET>.bin.gz -output gtp_custom.cfg",
+    "what_happens": "Asks a series of questions and writes a custom GTP config file."
+   },
+   {
+    "cmd": "katago benchmark -model <NEURALNET>.bin.gz -config gtp_custom.cfg",
+    "what_happens": "Checks that the network and config work, suggests a thread count, and on OpenCL tunes for your GPU."
+   }
+  ],
+  "whats_unique": "It reaches strong play with no outside game data, and it reports score and territory instead of only win rate. The same engine also powers a public volunteer training run.",
+  "caveats": "It is a command-line engine that needs a separate network file and a GUI for normal play, first-run GPU tuning can take minutes, and some GPUs and drivers are known to fail.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "ai",
+   "go",
+   "neural-network",
+   "self-play",
+   "game"
+  ],
+  "links": [
+   {
+    "label": "KataGo distributed training homepage",
+    "url": "https://katagotraining.org/"
+   },
+   {
+    "label": "KataGo GitHub repository (README)",
+    "url": "https://github.com/lightvector/KataGo"
+   },
+   {
+    "label": "Accelerating Self-Play Learning in Go (arXiv paper)",
+    "url": "https://arxiv.org/abs/1902.10565"
+   }
+  ]
+ }
+}

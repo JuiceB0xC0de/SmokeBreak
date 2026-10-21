@@ -1,0 +1,144 @@
+{
+ "name": "janet",
+ "desc": "Dynamic language and bytecode vm",
+ "homepage": "https://janet-lang.org",
+ "installs_365d": 898,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language",
+  "library"
+ ],
+ "why": "A small Lisp-like language with a bytecode VM and PEG grammar support, unusual and fun to explore.",
+ "brief": {
+  "what_it_is": "Janet is a dynamic, functional-and-imperative programming language with a bytecode virtual machine, mostly written in standard C99. You run it by typing code into its REPL or by passing it a script file such as janet myscript.janet, and it prints results or program output. Its syntax is prefix notation in the Lisp style. The homepage says the whole language (core library, interpreter, compiler, assembler, PEG) is under 1MB. Projects can be exported as standalone executables with the companion build tool jpm.",
+  "why_it_exists": "The homepage pitches Janet as a system scripting language and as a language to embed in other programs, and says it suits rapid prototyping and other domains where dynamic languages shine. It positions itself as embeddable but with more included out of the box than most embeddable languages, such as threads, networking, an event loop, subprocess handling and PEG.",
+  "how_it_works": "The janet binary runs as a bytecode VM: source is read, compiled, and executed, and the compiler can also write an image file with the --compile option. Janet is embedded by adding a single C source file and a single header (janet.c and janet.h) to a host project. Parsing Expression Grammars are built into the core library rather than supplied as a separate package.",
+  "commands_seen": [
+   {
+    "cmd": "brew install janet",
+    "context": "Homepage and docs: the macOS install route through Homebrew; the --HEAD flag installs the latest git version."
+   },
+   {
+    "cmd": "janet",
+    "context": "With no arguments, launches the REPL (the homepage example shows (+ 1 2 3) returning 6 there)."
+   },
+   {
+    "cmd": "janet -h",
+    "context": "Prints the usage text, including options like -e, -c, -i, -k, -l and -b for bundle install."
+   },
+   {
+    "cmd": "janet myscript.janet",
+    "context": "Runs an individual script file, per the homepage's Usage section."
+   },
+   {
+    "cmd": "(doc)",
+    "context": "Typed inside the REPL, lists all available macros, functions and constants; (doc defn) shows one docstring."
+   },
+   {
+    "cmd": "make -j",
+    "context": "Docs' macOS and Unix-like source build; builds Janet into the build/ directory."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the janet binary and libraries, to /usr/local by default."
+   },
+   {
+    "cmd": "make test",
+    "context": "Runs the test suite after building from source."
+   },
+   {
+    "cmd": "janet bootstrap.janet",
+    "context": "Run from inside a cloned jpm repository to install the Janet Project Manager (jpm) after the core install."
+   },
+   {
+    "cmd": "export PREFIX=\"$HOME\"/.local",
+    "context": "Non-root install: sets the install prefix before make install, so janet and jpm land under ~/.local."
+   }
+  ],
+  "install_notes": "Prebuilt: Windows installer from the releases page (the docs say Scoop support is being dropped); Arch Linux has a janet package in the official repos; macOS via Homebrew. Building from source needs make on POSIX or build_win on Windows; FreeBSD needs gmake with CC=gcc. Core config is edited in src/conf/janetconf.h before compiling. Installing jpm native extensions on Windows requires Visual Studio, run from the x64 Native Tools or Developer Command Prompt. A Meson build also exists but is not the main supported system. Making a non-root install sets PREFIX and adds PREFIX/bin to PATH.",
+  "standout": "A full-featured language with threads, networking, an event loop, PEG, first-class green threads and Erlang-style supervision trees, all in under 1MB, and it embeds into a C project by dropping in two files. The docs also describe a small-build recipe that strips features for a smaller binary.",
+  "status": "Maintained, as far as the pages show: the docs site lists versions up to 1.42.0 and labels its current docs 1.42.0-dev, and the homepage REPL example shows 1.40.1. I did not see a last-commit date or a release date, so this is inferred rather than confirmed.",
+  "caveats": "Homebrew's caveats say uninstalling needs manual deletion of $HOMEBREW_PREFIX/lib/janet, $HOMEBREW_PREFIX/bin/jpm and $HOMEBREW_PREFIX/share/man/man1/jpm.1. The homepage says it runs on Windows, Linux, macOS and BSDs and 'should run on other systems with some porting'. Windows native module builds need Visual Studio. The Windows Scoop package is no longer maintained. Licensing was not checked on the pages I read. The scout note's 'Lisp-like' is accurate for syntax, but the homepage describes it as functional and imperative. I did not fetch the README or GitHub repository.",
+  "quotes": [
+   "Janet makes a good system scripting language, or a language to embed in other programs.",
+   "Minimal setup - one binary and you are good to go!",
+   "The entire language (core library, interpreter, compiler, assembler, PEG) is less than 1MB.",
+   "Add to a project with just janet.c and janet.h"
+  ],
+  "links": [
+   {
+    "label": "Janet homepage",
+    "url": "https://janet-lang.org"
+   },
+   {
+    "label": "Janet documentation (installation and language guide)",
+    "url": "https://janet-lang.org/docs/index.html"
+   },
+   {
+    "label": "Janet Zulip community",
+    "url": "https://janet.zulipchat.com"
+   }
+  ],
+  "fetch_log": [
+   "https://janet-lang.org \u2014 worked; homepage text with feature list, usage, and library list (not a GitHub repo, so no README returned)",
+   "https://janet-lang.org/docs/index.html \u2014 worked; Introduction and Installation sections, plus the docs index (URL guessed from the homepage's Documentation link)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Janet\u2019s tiny embeddable VM combines built-in PEG parsing, networking, event loops, and supervised green threads, making it an unusually self-contained language worth exploring."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Janet",
+  "tldr": "A small Lisp-style scripting language with a bytecode VM, built-in PEG parsing, green threads and networking, all under 1MB and embeddable via two C files.",
+  "deeper_look": "Janet is a dynamic language that mixes functional and imperative styles, with Lisp-style prefix syntax. It is mostly standard C99. You can type into its REPL or run a script with `janet myscript.janet`. Source is read, compiled to bytecode and run on a VM, and the compiler can also write an image file with `--compile`.\n\nThe homepage pitches it two ways: as a system scripting language, and as a language to embed in other programs. Embedding means adding `janet.c` and `janet.h` to a C project. Most embeddable languages ship lean and leave you to bolt on the rest. Janet instead includes threads, networking, an event loop, subprocess handling and Parsing Expression Grammars in the core. The homepage says the whole thing (core library, interpreter, compiler, assembler, PEG) is \"less than 1MB\".\n\nThe door it opens is how much language fits in a small, readable C codebase. PEGs are built into the core, so you can write real parsers as ordinary data structures in a few lines. The docs also describe first-class green threads and Erlang-style supervision trees. The companion build tool `jpm` can export a project as a standalone executable.",
+  "install": "brew install janet\n# the latest git version: brew install --HEAD janet\n# jpm, the project manager, is a separate install: run `janet bootstrap.janet` from a cloned jpm repository",
+  "try_this": [
+   {
+    "cmd": "janet",
+    "what_happens": "Starts the REPL. The homepage example types (+ 1 2 3) and gets 6 back."
+   },
+   {
+    "cmd": "(doc)",
+    "what_happens": "Typed inside the REPL, lists every macro, function and constant. (doc defn) shows a single docstring."
+   },
+   {
+    "cmd": "janet -h",
+    "what_happens": "Prints usage, including the -e, -c, -i, -k, -l and -b options."
+   }
+  ],
+  "whats_unique": "It is a full language with an event loop, networking, PEG and Erlang-style supervision trees in under 1MB, and it embeds by dropping in two C files.",
+  "caveats": "Homebrew's uninstall leaves files behind: you must manually delete $HOMEBREW_PREFIX/lib/janet, $HOMEBREW_PREFIX/bin/jpm and the jpm man page.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "language",
+   "lisp",
+   "embeddable",
+   "peg",
+   "bytecode-vm"
+  ],
+  "links": [
+   {
+    "label": "Janet homepage",
+    "url": "https://janet-lang.org"
+   },
+   {
+    "label": "Janet documentation (installation and language guide)",
+    "url": "https://janet-lang.org/docs/index.html"
+   },
+   {
+    "label": "Janet Zulip community",
+    "url": "https://janet.zulipchat.com"
+   }
+  ]
+ }
+}

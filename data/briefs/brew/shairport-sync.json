@@ -1,0 +1,53 @@
+{
+ "name": "shairport-sync",
+ "desc": "AirTunes emulator that adds multi-room capability",
+ "homepage": "https://github.com/mikebrady/shairport-sync",
+ "installs_365d": 1061,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "network",
+  "audio",
+  "afternoon",
+  "protocol"
+ ],
+ "why": "An AirPlay receiver that reveals how AirTunes audio streams over the network, though it is mostly a practical server.",
+ "brief": {
+  "what_it_is": "Shairport Sync is an AirPlay audio receiver for Linux, FreeBSD, macOS and OpenBSD. It takes audio streamed from Apple devices and from AirPlay sources such as OwnTone, and sends it to a sound system (ALSA, sndio, PipeWire, PulseAudio, CoreAudio), a unix pipe, or STDOUT. It can be built for AirPlay 2 (stereo and multichannel, including lossless 24-bit stereo at 48,000 frames per second) or as classic AirPlay 1. It can also expose metadata such as artist and cover art, and accept remote control, over MQTT, an MPRIS-like interface and D-Bus.",
+  "why_it_exists": "The README frames it as a practical AirPlay player for Linux and other Unix-like systems, with a substantial rewrite of Shairport 1.0 as its heritage. The README says Apple's AirPlay protocols are unpublished, so the project is the result of study and analysis of how those protocols behave.",
+  "how_it_works": "Shairport Sync keeps the source's timestamps in step with the local machine's clock, so audio plays at the time the source specifies. When used with ALSA, sndio, CoreAudio, PipeWire or PulseAudio, it compares source timestamps with timing feedback from the audio system and resamples frames slightly to add or remove them as needed; libsoxr gives higher-quality resampling when the CPU can afford it. For AirPlay 2, a companion application called NQPTP handles PTP-based clock sync, and classic AirPlay uses a variant of NTP-style synchronisation.",
+  "commands_seen": [],
+  "install_notes": "The README gives no install commands; it points to BUILD.md for building from source and to CONFIGURATION FLAGS.md for build-time options, since some features need them. AirPlay 2 builds need the separate NQPTP companion app. Runtime settings are documented in scripts/shairport-sync.conf. A Docker image is on Docker Hub (mikebrady/shairport-sync), with docker/README.md. The README says it needs roughly Raspberry Pi B-class power or better. For best sync, it recommends a dedicated headless system with ALSA and a decent DAC. Updaters should read RELEASENOTES.md for breaking changes. The man page covers command-line options. The brew caveats field was empty, and I did not verify the Homebrew formula itself.",
+  "standout": "Full audio synchronisation: rather than just buffering, it stretches or shrinks the audio stream by resampling so that playback stays locked to the source clock on the local clock, to within a fraction of a millisecond with ALSA. It also ships its own AirPlay 2 timing daemon (NQPTP) and offers MQTT, D-Bus and MPRIS interfaces for metadata and remote control.",
+  "status": "unknown. The fetched README shows no release date, last-commit date, or deprecation notice. It does mention AirPlay 2 support in Version 4.x, Docker automation, and recent Linux and FreeBSD versions, which suggests active development, but I did not verify that.",
+  "caveats": "No AirPlay video or photo streaming. AirPlay 2 has listed limitations (linked as AIRPLAY2.md). The README warns that AirPlay protocols are unofficial, so there is no assurance it will keep working. Some features need build-time configuration. Timing accuracy is weaker through PipeWire and PulseAudio than through ALSA or sndio. Higher-quality libsoxr resampling needs a lot of CPU, so many embedded devices can't use it. Apple Silicon Macs have built-in AirPlay and don't need it. The README did not state a license, and I did not check it.",
+  "quotes": [
+   "Shairport Sync is an AirPlay audio player for Linux, FreeBSD, macOS and OpenBSD.",
+   "Shairport Sync does not support AirPlay video or photo streaming.",
+   "Shairport Sync offers full audio synchronisation. Full audio synchronisation means that audio is played on the output device at exactly the time specified by the audio source."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repo and README)",
+    "url": "https://github.com/mikebrady/shairport-sync"
+   },
+   {
+    "label": "Building guide (BUILD.md)",
+    "url": "https://github.com/mikebrady/shairport-sync/blob/master/BUILD.md"
+   },
+   {
+    "label": "Docker Hub image",
+    "url": "https://hub.docker.com/r/mikebrady/shairport-sync"
+   },
+   {
+    "label": "AirPlay 2 features and limitations (AIRPLAY2.md)",
+    "url": "https://github.com/mikebrady/shairport-sync/blob/master/AIRPLAY2.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/mikebrady/shairport-sync: fetched, worked, returned the README. Linked docs (BUILD.md, CONFIGURATION FLAGS.md, AIRPLAY2.md) were not fetched; the README was substantial enough to write the brief without them, and I stayed within the fetch limit."
+  ]
+ }
+}

@@ -1,0 +1,90 @@
+{
+ "name": "zlint",
+ "desc": "X.509 Certificate Linter focused on Web PKI standards and requirements",
+ "homepage": "https://zmap.io/",
+ "installs_365d": 182,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "protocol",
+  "reverse-engineering"
+ ],
+ "why": "A linter that checks X.509 certificates against Web PKI rules, a rare window into how certificate standards are enforced in practice.",
+ "brief": {
+  "what_it_is": "ZLint is an X.509 certificate linter written in Go. You give it a certificate (PEM file) and it runs a set of checks against it, reporting where the certificate departs from RFC 5280, CA/Browser Forum Baseline Requirements, root store policies, and ETSI standards. It runs as a command-line tool (the bundled zlint executable) or as a Go library that CA software can call. The lints are grouped by source, and you can include or exclude whole sources or individual lints by name. It also handles certificate revocation lists (CRLs) in PEM form. On the ZMap homepage it appears as one tool in a family of Internet-measurement utilities, described as checking 'conformity with X.509 RFCs, CA/Browser Forum baseline requirements, root store policies, and ETSI standards.'",
+  "why_it_exists": "The README says the Mozilla root program strongly recommends pre-issuance linting, so CAs can catch certificate errors before they go out. ZLint started focused on RFC 5280 and v1.4.8 of the CA/Browser Forum baseline requirements, and was restructured so lints from other sources could be added more easily.",
+  "how_it_works": "Each lint is a named check tied to a source document, and all lints sit in a global registry that can be filtered by source or name. A certificate is parsed with ZCrypto's x509 package (a lenient parser: if parsing fails, the certificate counts as rejected), then the applicable lints run against it. Lints that need settings read them from an optional TOML configuration file, which the CLI can print as a full example with -exampleConfig.",
+  "commands_seen": [
+   {
+    "cmd": "go get github.com/zmap/zlint/v3/cmd/zlint",
+    "context": "Installs the zlint command-line binary from Go source (the README's CLI setup)."
+   },
+   {
+    "cmd": "zlint mycert.pem",
+    "context": "Lints mycert.pem with all applicable lints."
+   },
+   {
+    "cmd": "zlint -includeNames=e_mp_exponent_cannot_be_one,e_mp_modulus_must_be_divisible_by_8 mycert.pem",
+    "context": "Lints the certificate with only the two named lints."
+   },
+   {
+    "cmd": "zlint -list-lints-source",
+    "context": "Lists the available lint sources."
+   },
+   {
+    "cmd": "zlint -excludeSources=ETSI_ESI mycert.pem",
+    "context": "Lints with all lints except the ETSI ESI-sourced ones."
+   },
+   {
+    "cmd": "zlint -exampleConfig",
+    "context": "Prints the full default configuration for all configurable lints."
+   },
+   {
+    "cmd": "zlint -config configFile.toml mycert.pem",
+    "context": "Lints the certificate using a custom TOML configuration for configurable lints."
+   },
+   {
+    "cmd": "zlint -list-profiles",
+    "context": "Lists the predefined lint profiles (named collections of lints)."
+   },
+   {
+    "cmd": "zlint -h",
+    "context": "Shows all command-line options."
+   }
+  ],
+  "install_notes": "The README requires Go 1.16.x or newer, with the go command on your PATH; the CLI setup instructions assume this. The documented CLI install is go get github.com/zmap/zlint/v3/cmd/zlint, not a binary download. No accounts, API keys, or first-run setup are mentioned. Configuration is optional. For CRLs, the file must be PEM-encoded ASN.1 with the 'X509 CRL' PEM armor, and no special flag is needed. I did not check the Homebrew formula itself, so I can't confirm what brew installs.",
+  "standout": "Most linters check syntax or a single spec. ZLint combines lints from RFCs, CA/Browser Forum rules, Mozilla's root policy, Apple's CT policy, and ETSI standards, with each lint tagged by source so consumers can choose which to apply. The README lists CAs and tools that integrate it, including Let's Encrypt/Boulder, Sectigo, crt.sh, Google Trust Services, and Microsoft, which makes it a practical window into how Web PKI rules are enforced in issuance pipelines.",
+  "status": "unknown. The README has CI badges for Go tests, integration tests, and golangci-lint, and its copyright line reads 2026, which suggests recent activity. It also describes a release-candidate process and a mailing list for announcements. I did not find a release date or last commit date in the fetched text, so I can't give one. The homepage does not mark ZLint as deprecated (ZTag and ZBrowse are listed as deprecated).",
+  "caveats": "The README says lint coverage is 'not complete', and the original BR coverage is tracked in an external spreadsheet. Lints are versioned, and changes in lint names or results can be breaking under semantic versioning, which matters for downstream policy decisions. Go 1.16 or newer is required, so building from source needs a Go toolchain. The README does not spell out the output format, so I can't describe it beyond saying each lint reports a result. Licensed under Apache 2.0. The README says it is part of the ZMap project, copyright University of Michigan.",
+  "quotes": [
+   "ZLint is a X.509 certificate linter written in Go that checks for consistency with standards (e.g. RFC 5280) and other relevant PKI requirements",
+   "It can be used as a command line tool or as a library integrated into CA software.",
+   "Pre-issuance linting is **strongly recommended** by the Mozilla root program"
+  ],
+  "links": [
+   {
+    "label": "ZMap Project homepage",
+    "url": "https://zmap.io/"
+   },
+   {
+    "label": "ZLint GitHub repository and README",
+    "url": "https://github.com/zmap/zlint"
+   },
+   {
+    "label": "Contributing guide (extending ZLint with new lints)",
+    "url": "https://github.com/zmap/zlint/blob/master/CONTRIBUTING.md"
+   },
+   {
+    "label": "ZCertificate (command-line certificate parser that links against ZLint)",
+    "url": "https://github.com/zmap/zcertificate"
+   }
+  ],
+  "fetch_log": [
+   "https://zmap.io/ - worked. It is the ZMap Project index page listing its tools (ZMap, ZGrab, ZLint, and others). It gives only a one-line description of ZLint and no install or usage detail.",
+   "https://github.com/zmap/zlint - worked. The tool returned the repository README, which I used as the primary source. I did not follow the CONTRIBUTING.md link or the external coverage spreadsheet."
+  ]
+ }
+}

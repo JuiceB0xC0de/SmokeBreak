@@ -1,0 +1,88 @@
+{
+ "name": "witr",
+ "desc": "Why is this running?",
+ "homepage": "https://github.com/pranshuparmar/witr",
+ "installs_365d": 12557,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "tui"
+ ],
+ "why": "Explains why a process is running by tracing its causes; a neat look at process ancestry, though a niche small tool.",
+ "brief": {
+  "what_it_is": "witr is a command-line tool (with an interactive terminal dashboard) that explains why a process, port, container, or file is running by tracing it back to the chain of things that started it. You give it a process name, PID, port, file path, or container name, and it prints a narrative of the ancestry chain (for example systemd \u2192 pm2 \u2192 node), the source that supervises it, the working directory, sockets, and warnings. Output can be human-readable text, a short or tree view, or JSON for scripts. It is distributed as a single static binary for Linux, macOS, FreeBSD, and Windows.",
+  "why_it_exists": "The README says existing tools like ps, top, lsof, ss, systemctl, and docker ps show what is running but leave the user to infer why by correlating output across tools. witr's stated aim is to make that causality explicit in one readable answer.",
+  "how_it_works": "witr maps a target (name, port, file, container, or PID) to a PID, then builds a causal ancestry chain for that PID and picks one primary source, such as a systemd unit, launchd job, container, pm2, cron, SSH session, or tmux session. Per the README it reads /proc on Linux, uses ps, lsof, sysctl and pgrep on macOS, uses procstat, ps and lsof on FreeBSD, and calls Win32 APIs directly on Windows. If the original parent has exited, the chain marks the break rather than guessing. Exit codes (0 clean, 1 warnings, 2 not found, 3 permission denied, 4 invalid input, 5 internal error, 6 cause unknown) let scripts act on the result.",
+  "commands_seen": [
+   {
+    "cmd": "curl -fsSL https://raw.githubusercontent.com/pranshuparmar/witr/main/install.sh | bash",
+    "context": "Quick install script for Unix (Linux, macOS, FreeBSD); installs to /usr/local/bin/witr and the man page to /usr/local/share/man/man1/witr.1."
+   },
+   {
+    "cmd": "brew install witr",
+    "context": "Homebrew install on macOS or Linux."
+   },
+   {
+    "cmd": "witr node",
+    "context": "Name-based query; prints the chain, source, working directory, git repo and sockets for matching processes."
+   },
+   {
+    "cmd": "witr --port 5000 --short",
+    "context": "Port query with short output, showing only the ancestry chain, e.g. systemd (pid 1) \u2192 PM2 \u2192 python."
+   },
+   {
+    "cmd": "witr --pid 143895 --tree",
+    "context": "PID query rendered as an ancestry tree, including up to 10 child processes."
+   },
+   {
+    "cmd": "witr nginx -x",
+    "context": "Exact-name match instead of the default substring match."
+   },
+   {
+    "cmd": "witr --file /var/lib/dpkg/lock",
+    "context": "Explains which process is holding a given file open."
+   },
+   {
+    "cmd": "witr --container redis",
+    "context": "Looks up a container by name, ID, image, command, or Compose project/service across the supported runtimes."
+   },
+   {
+    "cmd": "witr --port <PORT> --json",
+    "context": "Recommended form for AI coding agents, per the README's agent-instructions section, to get machine-readable output for a port already in use."
+   },
+   {
+    "cmd": "witr --version",
+    "context": "Verifies the installation."
+   }
+  ],
+  "install_notes": "No accounts or runtimes are required for the binary. Options are the install script, Homebrew, MacPorts, Conda/mamba/pixi, AUR, winget, Chocolatey, Scoop, npm, FreeBSD pkg or ports, apt on recent Debian/Ubuntu, deb/rpm/apk release packages, go install, Nix flake, and pixi exec. The install script verifies a SHA256 checksum optionally. On Windows the PowerShell script adds the bin directory to the user PATH. Shell completions are enabled with eval \"$(witr completion bash)\" (or zsh) or witr completion fish. Container lookups need the relevant runtime CLI (docker, podman, nerdctl, crictl, incus, lxc, jls) on PATH. Full visibility often needs sudo on Linux/FreeBSD/macOS, or an Administrator terminal on Windows.",
+  "standout": "It treats every question (port, service, container, file) as a question about a PID and then explains the causal chain, rather than just listing state. It also has an explicit design for AI coding agents: a stable JSON contract, documented exit codes, and a suggested AGENTS.md snippet. A browser-based simulated Linux box lets people try it without installing.",
+  "status": "unknown. The README shows a Latest Release badge and lists many packagers (Debian, Homebrew, AUR, Winget, Conda, FreeBSD ports), and it refers to Ubuntu 26.04 and a Hacker News discussion, which suggests active use. However, no release date, last commit date, or maintenance note appears in the fetched README, so I cannot confirm recent activity.",
+  "caveats": "The README does not state a license, so reuse terms are unknown. Platform support differs: Windows lacks tmux/screen detection, schedule detection, file locks, process actions, and some other features; macOS lacks capability warnings, and SIP blocks some process details even with sudo; FreeBSD lacks restart counts and schedule detection. Process actions (kill, pause, renice) are Unix only. Some details require sudo or an Administrator terminal. Without a terminal the TUI will not open, and output-mode flags without a target exit with code 4. The README calls the source selection best-effort. The brew caveats field was empty.",
+  "quotes": [
+   "Trace any process, port, container, or file back to the exact chain that started it \u2014 one command, machine-readable JSON, or an interactive TUI.",
+   "Why is this running?",
+   "witr treats everything as a process question."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/pranshuparmar/witr"
+   },
+   {
+    "label": "Browser tutorial and sandbox (simulated Linux box)",
+    "url": "https://pranshuparmar.github.io/witr/"
+   },
+   {
+    "label": "Author's write-up: witr, why is this running?",
+    "url": "https://medium.com/@pranshu.parmar/witr-why-is-this-running-a9a97cbedd18"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/pranshuparmar/witr: fetched OK; GitHub repository README returned in full (no further fetches needed)."
+  ]
+ }
+}

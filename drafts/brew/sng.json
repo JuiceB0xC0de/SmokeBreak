@@ -1,0 +1,112 @@
+{
+ "name": "sng",
+ "desc": "Enable lossless editing of PNGs via a textual representation",
+ "homepage": "https://sng.sourceforge.net/",
+ "installs_365d": 54,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "visual",
+  "reverse-engineering",
+  "library"
+ ],
+ "why": "Turns PNGs into a textual representation you can edit losslessly, a transform that opens the file format up.",
+ "brief": {
+  "what_it_is": "SNG (Scriptable Network Graphics) is a small text language that describes the full contents of a PNG file: its chunks, pixel data, and ancillary metadata. The sng program is a compiler and decompiler that converts PNG to SNG and back. Input is a PNG or an SNG text file, and output is the other format. Per the manual, the conversion is meant to be lossless, so you can edit the text with ordinary text tools and compile it back to PNG. The homepage is a SourceForge resource page for version 1.1.2, not a GitHub repository.",
+  "why_it_exists": "Graphics editors don't handle many obscure PNG ancillary chunks, so SNG exposes them as editable text. The README also says SNG is easy to generate from scripts, so sng can finish a pipeline that programmatically produces PNG images.",
+  "how_it_works": "An SNG file starts with #SNG and a colon, then a series of chunk blocks such as IHDR, PLTE, IDAT, and tEXt that mostly map one-to-one onto PNG chunks. The IMAGE block is translated into IDAT, with interlacing and compression handled automatically. Pixel data can be written as a string, hex, base64, or P1/P3 PBM/PPM text. With no file arguments, sng reads stdin and picks a direction by checking whether the first character is printable.",
+  "commands_seen": [
+   {
+    "cmd": "sng [file\u2026]",
+    "context": "Synopsis from the man page. Translates each named file, choosing direction by extension (.png or .sng), and writes the result with the opposite extension."
+   },
+   {
+    "cmd": "make check",
+    "context": "From the README. Runs a basic regression test on the source distribution."
+   }
+  ],
+  "install_notes": "Packaged as 'sng' in many distributions. Building from the sng-1.1.2.tar.gz source tarball is documented, and the README says it requires libpng-1.2 or later. The README also states that older libpng versions may work but are untested and unsupported. The distribution has a Makefile and a regression harness called sng_regress. I did not find any account, runtime, or hardware requirements.",
+  "standout": "It is a lossless text round-trip for the entire PNG container, including exotic chunks that editors drop, and the author is Eric S. Raymond, a libpng contributor. The same format is meant to be both hand-edited and script-generated.",
+  "status": "Maintained, judging by recent activity. The homepage is dated 16 Mar 2026 and lists version 1.1.2. The man page was last updated 2026-02-03 and the README on 2026-01-29. The recent-changes section lists fixes for buffer overruns and dimension checks, and says the code was hardened with ChatGPT 5.2.",
+  "caveats": "The -i option is documented as not working yet in the man page BUGS section, pending libpng support for suppressing special IDAT handling. Base64 encoding is only usable when every byte is below 64, so it is limited to small bit depths or small palettes. Named colours come from the X rgb.txt database, which the man page says is not portable across hosts or displays. The README says testing covered the non-broken images of the PNG test suite. I did not read the COPYING file, so the license is unverified. The homepage asks for Patreon support.",
+  "quotes": [
+   "SNG (Scriptable Network Graphics) is a minilanguage designed specifically to represent the entire contents of a PNG (Portable Network Graphics) file in an editable form.",
+   "It can be useful especially for viewing and editing data in obscure ancillary chunks that graphics editors won\u2019t handle.",
+   "The -i option doesn\u2019t work yet, and won\u2019t until libpng\u2019s ability to suppress special handling of IDAT is working."
+  ],
+  "links": [
+   {
+    "label": "Homepage (SourceForge resource page)",
+    "url": "https://sng.sourceforge.net/"
+   },
+   {
+    "label": "sng(1) manual page",
+    "url": "https://sng.sourceforge.net/sng.html"
+   },
+   {
+    "label": "README",
+    "url": "https://sng.sourceforge.net/README.html"
+   }
+  ],
+  "fetch_log": [
+   "https://sng.sourceforge.net/ - worked; SourceForge resource page, not a GitHub repo, so it gave a summary and resource list rather than a README",
+   "https://sng.sourceforge.net/sng.html - worked; full sng(1) man page with the SNG syntax reference",
+   "https://sng.sourceforge.net/README.html - worked; project README with file list and build note"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "SNG makes the full PNG container losslessly inspectable and editable as text, including obscure chunks that ordinary graphics editors discard."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "sng",
+  "tldr": "Turns a PNG into editable text and compiles it back, so you can read and change every chunk of the file in a text editor.",
+  "deeper_look": "SNG, short for Scriptable Network Graphics, is a small text language that describes the full contents of a PNG: its header, palette, pixel data and metadata chunks. The `sng` program is both compiler and decompiler. Give it a PNG and it writes SNG text. Give it SNG text and it writes a PNG. The manual says the round trip is meant to be lossless.\n\nAn SNG file starts with `#SNG` and then lists chunk blocks such as IHDR, PLTE and tEXt, which mostly map one-to-one onto PNG chunks. The pixel data lives in an IMAGE block, which becomes the IDAT chunk, with interlacing and compression handled for you. Pixels can be written as a string, hex, base64, or P1/P3 PBM/PPM text.\n\nThe reason it exists is that graphics editors ignore many obscure ancillary chunks. Showing them as plain text lets you see and change data that normally stays hidden. The README also notes that SNG is easy to generate from scripts, so `sng` can be the last step in a pipeline that produces PNGs programmatically.\n\nThe underlying idea is that a binary container format becomes much easier to understand once you can read it as text. Decompile a few images and you learn how PNG is put together. The author is Eric S. Raymond.",
+  "install": "brew install sng",
+  "try_this": [
+   {
+    "cmd": "sng --help",
+    "what_happens": "Prints the usage summary for the compiler/decompiler."
+   },
+   {
+    "cmd": "sng image.png",
+    "what_happens": "Decompiles the PNG into image.sng, a text file you can open in any editor. Direction is chosen by file extension."
+   },
+   {
+    "cmd": "sng image.sng",
+    "what_happens": "Compiles the edited text back into image.png."
+   }
+  ],
+  "whats_unique": "It is a lossless text round trip for the whole PNG container, including exotic chunks that editors drop. The same format is meant to be edited by hand and generated by scripts.",
+  "caveats": "The -i option is documented as not working yet, and base64 pixel data only works when every byte is below 64, so it suits small palettes or low bit depths.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "png",
+   "file-formats",
+   "reverse-engineering",
+   "text"
+  ],
+  "links": [
+   {
+    "label": "Homepage (SourceForge resource page)",
+    "url": "https://sng.sourceforge.net/"
+   },
+   {
+    "label": "sng(1) manual page",
+    "url": "https://sng.sourceforge.net/sng.html"
+   },
+   {
+    "label": "README",
+    "url": "https://sng.sourceforge.net/README.html"
+   }
+  ]
+ }
+}

@@ -1,0 +1,66 @@
+{
+ "name": "depqbf",
+ "desc": "Solver for quantified boolean formulae (QBF)",
+ "homepage": "https://lonsing.github.io/depqbf/",
+ "installs_365d": 15,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "math",
+  "library"
+ ],
+ "why": "Solver for quantified boolean formulae, a niche corner of logic and complexity theory you can actually run and feed problems.",
+ "brief": {
+  "what_it_is": "DepQBF is a command-line solver for quantified boolean formulae (QBF) in prenex conjunctive normal form. It reads a QBF from a file, such as a QDIMACS input, and reports whether the formula is satisfiable (exit code 10) or unsatisfiable (exit code 20). It can also print a partial assignment for the outermost quantifier block with --qdo, or a resolution trace in QRP format with --trace. It is also usable as a C library (libqdpll.a, API in qdpll.h) and through a Java wrapper called DepQBF4J.",
+  "why_it_exists": "The homepage presents DepQBF as a research system from Florian Lonsing's group, built to implement and evaluate QBF solving ideas from their papers. The site frames it as a search-based solver beyond traditional QCDCL, and it is aimed at users who want to run and feed QBF problems.",
+  "how_it_works": "It is a search-based solver built on QDPLL with conflict-driven clause learning and solution-driven cube learning (QCDCL) using generalized axioms. Since version 6.0 it calls PicoSAT and Nenofex as oracles to check satisfiability of formulas that arise during axiom applications. It computes the standard dependency scheme of the formula, a compact graph representing which variables depend on which, to find independent variables and widen decision freedom, and since version 5.0 it runs dynamic blocked clause elimination interleaved with the search.",
+  "commands_seen": [
+   {
+    "cmd": "./compile.sh",
+    "context": "Build command from the README. It downloads and compiles PicoSAT and Nenofex, then compiles DepQBF. This replaces 'make' from version 6.0 onward."
+   },
+   {
+    "cmd": "./compile.sh nobloqqer",
+    "context": "From a 2017 homepage news item about version 6.01, the option for compiling without Bloqqer as a library. Bloqqer was later dropped in 6.02 and 6.03, so this may not apply to the current release."
+   },
+   {
+    "cmd": "./depqbf -h",
+    "context": "Displays the usage information and command-line options. The README says to call it to learn about configuration."
+   },
+   {
+    "cmd": "./depqbf --trace input-formula.qdimacs > trace.qrp",
+    "context": "README example that dumps every resolution step of a QBF to trace.qrp in QRP format, for later certificate extraction with other tools. The README notes tracing is not supported in incremental solving."
+   }
+  ],
+  "install_notes": "The distribution is source only: download the ZIP or TAR from the homepage, unpack it, and run './compile.sh'. That script downloads and compiles PicoSAT and Nenofex, so the build needs network access and a C toolchain. The build produces optimized code without assertions by default. Setting FULL_ASSERT to 1 in qdpll_config.h enables expensive assertions, and COMPUTE_STATS enables statistics. The README recommends running with no command-line parameters for performance comparisons, since the defaults were tuned on QBFLIB instances. Nothing in the pages mentions a Homebrew formula-specific step, and I did not check the brew package.",
+  "standout": "Few solvers expose the standard dependency scheme and dynamic blocked clause elimination, and DepQBF also ships an incremental API (push/pop and clause groups), unsatisfiable-core extraction, and certificate output. Its solver returns the SAT-competition-style exit codes 10 and 20.",
+  "status": "Quiet. The latest release is version 6.03, dated 2017-08-02 on the homepage, and the README is dated August 2017. The newest news item, from 2018-05-03, is about the related QRATPre+ preprocessor rather than a DepQBF release. I could not see commit history, so I can't say more than this.",
+  "caveats": "Source-only distribution: the homepage offers source archives, and the README describes building from source only. Since version 6.0 it depends on PicoSAT and Nenofex, which are downloaded during the build and carry their own licenses. Bloqqer preprocessing may hurt performance under the default dynamic QBCE. QBCE variants are not available in incremental mode. Tracing is not supported in incremental solving and needs --dep-man=simple, and with lazy QPUP it also needs --no-lazy-qpup. The input is prenex CNF only. The README says undocumented command-line parameters are experimental. Licensed under GPLv3.",
+  "quotes": [
+   "DepQBF is a search-based solver for quantified boolean formulae (QBF) in prenex conjunctive normal form.",
+   "With version 6.0 the compilation process has changed. Instead of 'make', run the script 'compile.sh'.",
+   "The solver returns exit code 10 if the given instance was found satisfiable and exit code 20 if the instance was found unsatisfiable. Any other exit code indicates that the instance was not solved."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://lonsing.github.io/depqbf/"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/lonsing/depqbf"
+   },
+   {
+    "label": "Nenofex, the QBF solver bundled as an oracle since 6.0",
+    "url": "https://github.com/lonsing/nenofex"
+   }
+  ],
+  "fetch_log": [
+   "https://lonsing.github.io/depqbf/ - worked; project homepage with news, downloads, and descriptions",
+   "https://github.com/lonsing/depqbf - worked; returned the README (dated August 2017) with build, usage, and feature notes"
+  ]
+ }
+}

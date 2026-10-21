@@ -1,0 +1,92 @@
+{
+ "name": "dirt",
+ "desc": "Experimental sample playback",
+ "homepage": "https://codeberg.org/uzu/dirt",
+ "installs_365d": 214,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "afternoon",
+  "audio",
+  "library",
+  "tui",
+  "generative"
+ ],
+ "why": "A live-coded sample playback environment from the Strudel-adjacent Uzu ecosystem, a real instrument you can perform from a terminal.",
+ "brief": {
+  "what_it_is": "Dirt is a sample playback engine, mostly written in C, described as the original 'classic dirt' sampler for TidalCycles and friends; it was later ported to SuperCollider as SuperDirt. It takes OSC messages sent to port 7771 (selector /dirt/play, with name/value field pairs such as s, n, speed, pan, cut, delay, cutoff) and sends audio out through SDL2, JACK, PulseAudio or PortAudio. Samples are WAV files in a folder tree: s picks the folder and n picks the zero-based file index in alphabetical order. It builds as the dirt command-line program and dirt-gui, both thin wrappers around a libdirt library. The scout note calls it Strudel-adjacent, but the README ties it to TidalCycles and does not mention Strudel; it also doesn't describe a terminal performance interface, only OSC-driven playback.",
+  "why_it_exists": "The README says it is 'An unimpressive thingie for playing bits of samples with some level of accuracy', built to be the sample voice for Tidal-style live coding. Timing comes from OSC bundle timestamps, which are sent ahead of time so scheduling avoids jitter.",
+  "how_it_works": "A client such as Tidal sends OSC bundles to Dirt; the bundle timestamp carries the scheduling time, and each /dirt/play message lists field names followed by values (defaults are given per field, e.g. speed 1, pan 0.5, gain 1). The engine loads samples from a sample root (changeable with -s or in dirt-gui), applies a fixed effect chain (filters, shape, crush, delay, envelope) and writes to the chosen audio backend. The README's signals.dot / signals.png diagram documents the audio signal flow.",
+  "commands_seen": [
+   {
+    "cmd": "./dirt -o sdl2",
+    "context": "Run Dirt on the SDL2 audio backend from the source directory; the README calls SDL2 the easiest to start with on Linux."
+   },
+   {
+    "cmd": "./dirt -o jack &",
+    "context": "Start Dirt on the JACK backend after a JACK server is already running, backgrounded."
+   },
+   {
+    "cmd": "./dirt -o pulse",
+    "context": "Start Dirt on the PulseAudio backend."
+   },
+   {
+    "cmd": "./dirt -o portaudio",
+    "context": "Start Dirt on the PortAudio backend."
+   },
+   {
+    "cmd": "make clean; make",
+    "context": "Build Dirt from source on Debian/Ubuntu-style Linux after installing the listed libraries and cloning imgui and imgui-filebrowser next to it."
+   },
+   {
+    "cmd": "make clean; make; make install",
+    "context": "Build and install into ~/.local/ (the README's per-user install path)."
+   },
+   {
+    "cmd": "make clean; make SDL2=0 PULSE=0 PORTAUDIO=0",
+    "context": "macOS source build with only the JACK backend enabled, per the macOS section."
+   },
+   {
+    "cmd": "jackd -d coreaudio &",
+    "context": "macOS: start a JACK server on CoreAudio before launching ./dirt &. The README notes these macOS steps are untested for a while."
+   },
+   {
+    "cmd": "make WINDOWS=1",
+    "context": "Cross-compile the Windows build from Linux using MinGW, after build-scripts has produced the Windows dependencies."
+   },
+   {
+    "cmd": "make clean; make JACK=0 SDL2=0 PULSE=0 PORTAUDIOALSA=0 dirt",
+    "context": "Build the command-line dirt in Termux on Android, with the listed backends disabled."
+   }
+  ],
+  "install_notes": "Homebrew is the install you named, but the README says the Homebrew recipe comes without any sounds, so samples must be fetched separately. Samples: download Dirt-Samples (about 170 to 200 MB zip) from the tidalcycles GitHub repo, unzip, and rename the folder to dirt/samples/ (or pass the path with -s). Linux source builds need build-essential, libsndfile1-dev, libsamplerate0-dev, liblo-dev, libpulse-dev, portaudio19-dev, libsdl2-dev, libjack-jackd2-dev, plus cloning imgui and imgui-filebrowser beside the repo. macOS needs liblo, libsndfile and libsamplerate, plus JACK (Homebrew jack or JackOSX/JackPilot). Windows needs a MinGW cross-compile toolchain and build-scripts; Cygwin and Android (SDK/NDK, ./android.sh prepare and debug/release) are also documented. Android has no official APK; the README points to an unofficial build on mathr.co.uk and requires a package name you choose yourself.",
+  "standout": "It is a small, old-school sampler whose whole control surface is a plain OSC message format with timestamped bundles, so any tool that can send OSC can drive it. The library is modular (sample loader, OSC server, audio output and locking can each be compiled out) and has bindings for C, C++, Haskell, Lua, Python and Rust via SWIG and FFI, which makes it usable for offline rendering as well as live play.",
+  "status": "Maintained. The Codeberg repo shows 420 commits, 9 branches, 2 tags, 17 open issues and 2 open pull requests. The latest commit is 123b399f55 'fix libdirt-example (consider empty string as no output)', dated 2026-06-21, and several other commits are from June 2026. The README is copyright 2005-2026.",
+  "caveats": "GPLv3 license. No bundled samples; you must download about 200 MB separately. The macOS and Cygwin sections say they have not been tested for a while. Android has no official APK, and the README says there is no elegant way to stop or restart the engine. Several OSC fields are marked Unused (offset, velocity, kriole, orbit). The old /play OSC format is described as awkward and is not recommended. The README calls the project 'an unimpressive thingie', and the ecosystem note is that it is for TidalCycles, not Strudel. The Codeberg page also shows a notice that it requires JavaScript; I did not need it to read the README.",
+  "quotes": [
+   "An unimpressive thingie for playing bits of samples with some level of accuracy.",
+   "Timing information is taken from OSC bundle timestamp (sent ahead of time for accurate scheduling without jitter).",
+   "Dirt no longer comes with bundled audio samples.",
+   "There is no official Dirt APK yet."
+  ],
+  "links": [
+   {
+    "label": "Codeberg repository (homepage)",
+    "url": "https://codeberg.org/uzu/dirt"
+   },
+   {
+    "label": "Dirt-Samples zip (sample pack the README tells you to download)",
+    "url": "https://github.com/tidalcycles/Dirt-Samples/archive/refs/heads/master.zip"
+   },
+   {
+    "label": "Unofficial Dirt Android build (mathr.co.uk)",
+    "url": "https://mathr.co.uk/web/dirt.html#Android"
+   }
+  ],
+  "fetch_log": [
+   "https://codeberg.org/uzu/dirt - worked; returned the repository page with the README text included. No further fetches were needed."
+  ]
+ }
+}

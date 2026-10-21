@@ -1,0 +1,116 @@
+{
+ "name": "u-boot-tools",
+ "desc": "Universal boot loader",
+ "homepage": "https://u-boot-project.org/",
+ "installs_365d": 1670,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "needs-hardware"
+ ],
+ "why": "Tools like mkimage and dumpimage open up bootloader images, a real door into firmware, though fairly niche.",
+ "brief": {
+  "what_it_is": "The u-boot-tools Homebrew formula installs three host-side utilities (dumpimage, mkenvimage, mkimage) from the U-Boot project. U-Boot itself is a free, open-source boot loader for many architectures (ARM, MIPS, PowerPC, RISC-V, x86, x86_64) that initializes hardware and then boots the device's OS kernel. The homepage does not describe these three tools specifically, and the docs I read do not show their inputs or outputs. The docs only explain how to build the host tools from the U-Boot source tree.",
+  "why_it_exists": "The homepage frames U-Boot as a boot loader whose purpose is to perform various hardware initialization tasks and boot the device's operating system kernel. The docs say the tools-only build exists so distributions can ship all possible tools in a generic way, without building specific tools for each machine.",
+  "how_it_works": "The docs describe a tools-only defconfig that builds the host utilities from the U-Boot source tree on Linux, with a separate route for Windows through MSYS2. On Windows it needs gcc, make, bison, diffutils and openssl-devel. By default the tools-only build also builds pylibfdt, and NO_PYTHON=1 turns that off. I did not read the mkimage, dumpimage or mkenvimage pages, so I cannot describe their internal workings.",
+  "commands_seen": [
+   {
+    "cmd": "make tools-only_defconfig",
+    "context": "Docs step for building host tools on Linux: configures the tree with the tools-only defconfig."
+   },
+   {
+    "cmd": "make tools-only",
+    "context": "Docs step that builds the host tools after the tools-only defconfig is applied."
+   },
+   {
+    "cmd": "NO_PYTHON=1 make tools-only_defconfig tools-only",
+    "context": "Docs variant that builds the host tools without pylibfdt, which is otherwise built by default."
+   }
+  ],
+  "install_notes": "The brew formula is a packaging of the U-Boot host tools, so I did not see a separate install procedure for it. Building from source needs a U-Boot source checkout and make. Windows builds use MSYS2 with gcc, make, bison, diffutils and openssl-devel. The pylibfdt Python binding is built by default unless NO_PYTHON=1 is set.",
+  "standout": "This is a niche, fairly unusual part of firmware tooling: small command-line utilities that work on U-Boot's own image formats. The docs say the tools are built from the same source tree as the boot loader, so they are tied to a specific U-Boot release.",
+  "status": "Maintained. The homepage lists v2026.10 as the latest stable release, dated 06 July 2026, and the project has a mailing list, IRC channel and custodian trees. I did not check the Homebrew formula's own update history.",
+  "caveats": "The homepage and docs describe U-Boot the boot loader, not the three binaries, so I could not confirm what mkimage, dumpimage or mkenvimage take in or produce. I saw no usage examples for them. The docs are described as a work in progress. Windows builds need MSYS2 and several specific package versions. The brew formula's caveats field is empty. The scout note calls the tools a 'real door into firmware', but I did not verify that claim from the pages I read.",
+  "quotes": [
+   "Das U-Boot, often shortened to U-Boot, is a free, open-source and extensible boot loader available for many architectures",
+   "U-Boot's source code is licensed under the GNU General Public License v2 or-later, and it is freely available for anyone to dive in.",
+   "Improvements to the documentation are welcome, reach out to us if you want to help out!"
+  ],
+  "links": [
+   {
+    "label": "U-Boot homepage",
+    "url": "https://u-boot-project.org/"
+   },
+   {
+    "label": "U-Boot documentation",
+    "url": "https://docs.u-boot-project.org/"
+   },
+   {
+    "label": "Host tools build page",
+    "url": "https://docs.u-boot-project.org/en/latest/build/tools.html"
+   }
+  ],
+  "fetch_log": [
+   "https://u-boot-project.org/ - fetched OK; homepage describing U-Boot, latest release v2026.10",
+   "https://docs.u-boot-project.org/ - fetched OK; docs index, listed a Host tools page",
+   "https://docs.u-boot-project.org/en/latest/build/tools.html - fetched OK; host tools build instructions (URL was guessed from the index, and it worked)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "mkimage, dumpimage, and mkenvimage let you build and inspect the image formats that boot embedded systems\u2014a hands-on doorway into firmware."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "u-boot-tools",
+  "tldr": "Host-side utilities from the U-Boot boot loader project, for working with the image and environment files that small devices boot from.",
+  "deeper_look": "U-Boot is a free, open-source boot loader used on many architectures, including ARM, MIPS, PowerPC, RISC-V and x86. It runs first on a device, initializes hardware, then hands off to the operating system kernel. This formula installs three of its host-side utilities, `mkimage`, `dumpimage` and `mkenvimage`, so they run on your own machine instead of on the device.\n\nThe docs describe these tools as a separate tools-only build from the U-Boot source tree. The stated reason is that distributions can ship all the possible tools in a generic way, without building specific tools for each machine. The project's docs I read did not describe what each of the three tools takes in or produces, so this entry does not either. By name, they deal with boot images and environment files.\n\nThe idea underneath is that a device's boot process is made of files that something has to build and package. Learning to read and make those files is a way into how firmware gets from storage to a running kernel. The tools are built from the same source tree as the boot loader, so they are tied to a specific U-Boot release.",
+  "install": "brew install u-boot-tools",
+  "try_this": [
+   {
+    "cmd": "mkimage --help",
+    "what_happens": "Prints the usage text for the image-building tool, the quickest way to see what it accepts."
+   },
+   {
+    "cmd": "dumpimage --help",
+    "what_happens": "Prints the usage text for the tool that inspects or extracts from images."
+   },
+   {
+    "cmd": "mkenvimage --help",
+    "what_happens": "Prints the usage text for the environment image tool."
+   }
+  ],
+  "whats_unique": "These are small command-line utilities for U-Boot's own image formats, a niche corner of firmware tooling that most developers never see.",
+  "caveats": "The docs I read cover building the tools, not using them, and describe themselves as a work in progress, so expect to learn usage from the --help output; real use also assumes you have a board or image to work on.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "firmware",
+   "bootloader",
+   "embedded",
+   "reverse-engineering",
+   "needs-hardware"
+  ],
+  "links": [
+   {
+    "label": "U-Boot homepage",
+    "url": "https://u-boot-project.org/"
+   },
+   {
+    "label": "U-Boot documentation",
+    "url": "https://docs.u-boot-project.org/"
+   },
+   {
+    "label": "Host tools build page",
+    "url": "https://docs.u-boot-project.org/en/latest/build/tools.html"
+   }
+  ]
+ }
+}

@@ -1,0 +1,94 @@
+{
+ "name": "c3c",
+ "desc": "Compiler for the C3 language",
+ "homepage": "https://c3-lang.org",
+ "installs_365d": 1465,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language",
+  "compiler"
+ ],
+ "why": "Compiler for the C3 language, a C successor with its own design choices; a strange-enough language to explore for an afternoon.",
+ "brief": {
+  "what_it_is": "C3 is a general-purpose, compiled programming language that is a near-C successor: its syntax and semantics stay close to C, with modern additions such as modules, generics via generic modules, slices, operator overloading, compile-time reflection, macros, contracts, and Result-style error handling. The Homebrew package installs the c3c compiler, which takes .c3 source files and produces native binaries (for example, `c3c compile main.c3` produces an executable named after the module). It also ships a standard library (std::io and others). The README says the compiler is verified on Windows, macOS, Linux, OpenBSD and NetBSD, and lists Wasm32 as a supported target.",
+  "why_it_exists": "The README frames C3 as 'an evolution, not a revolution': it aims to keep C's speed and familiar syntax while modernizing everyday development, and it explicitly takes inspiration from the C2 language, iterating on top of C rather than inventing an entirely new language. Its design principles include 'Try to stay close to C - only change what's really necessary' and 'Avoid big ideas & the more is better fallacy.'",
+  "how_it_works": "C3 source is compiled by the c3c compiler, which uses LLVM (the build fetches it with -DC3_FETCH_LLVM=ON, or uses system LLVM). Full C ABI compatibility means C3 code can be linked into C/C++ projects without special types; the README cites vkQuake as a demo where a portion was converted to C3. In debug builds the compiler inserts runtime bounds and value checks, and the standard library provides detailed stack traces for debug builds. Generic types are made by parameterizing an entire module, for example `module stack <Type>;` then `alias IntStack = Stack {int};`.",
+  "commands_seen": [
+   {
+    "cmd": "c3c compile main.c3",
+    "context": "Compiles the hello-world example; the binary is named after the module (hello_world)."
+   },
+   {
+    "cmd": "./build/c3c compile resources/examples/hash.c3",
+    "context": "Test command after building from source on Linux, compiling a bundled example."
+   },
+   {
+    "cmd": "cmake -B build -S . -DC3_FETCH_LLVM=ON -DCMAKE_BUILD_TYPE=Release",
+    "context": "Source build on Linux: configures the CMake build and fetches LLVM."
+   },
+   {
+    "cmd": "cmake --build build -j",
+    "context": "Source build on Linux: builds the compiler into the build directory."
+   },
+   {
+    "cmd": "curl -fsSL https://raw.githubusercontent.com/c3lang/c3c/refs/heads/master/install/install.sh | bash",
+    "context": "Official Linux install script; it also edits ~/.bashrc to add ~/.c3 to PATH."
+   },
+   {
+    "cmd": "xattr -d com.apple.quarantine c3c",
+    "context": "macOS precompiled-binary step to approve the unsigned executable."
+   },
+   {
+    "cmd": "c3c fetch windows-sdk",
+    "context": "Optional Windows step to download SDK files if Visual Studio 17 is not installed."
+   },
+   {
+    "cmd": "sudo pacman -S c3c",
+    "context": "Installs c3c from the Arch Linux extra repo."
+   },
+   {
+    "cmd": "c3c compile-test -O0 test/unit",
+    "context": "Recommended way to run the unit tests when contributing."
+   },
+   {
+    "cmd": "c3c vendor-fetch raylib",
+    "context": "Example of fetching a vendor binding; needs libcurl, and the README calls this optional."
+   }
+  ],
+  "install_notes": "Homebrew is not the only route: the README lists precompiled tarballs and zips for Windows, Linux, macOS (Arm64 only) and OpenBSD, plus install scripts, Scoop (`scoop install c3`), Arch, Fedora (COPR), NixOS flake, Gentoo GURU, and Docker builds. Building from source needs CMake, git, clang, and libcurl development headers; the README lists per-distro package names. The standard library must sit at ../lib/std/ or /lib/std/ relative to the compiler for hello world to build. The macOS binary is unsigned and needs the xattr step. Brew's own caveats field was empty.",
+  "standout": "C3 deliberately sits in the 'C with fixes' niche rather than being a new language: it keeps the C ABI and no mandatory headers, and replaces the preprocessor with semantic macros that read like functions and can use compile-time reflection over types. The language has Result-style errors with a catch syntax, and debug builds add extensive bounds checks and stack traces, which is unusual for something this close to C.",
+  "status": "maintained, as far as the README shows. It lists 0.8.5 as the current stable version and says 0.8.6 is upcoming, with an issues tracker and a Discord. The homepage shows v0.8.5_1. I did not see a release date or last-commit date, so I cannot confirm recency beyond that.",
+  "caveats": "The README says 'The language is still open for significant tweaks', so the language is pre-1.0 and may change. The support matrix is uneven: several platforms are 'Untested', iOS, Android, FreeBSD, NetBSD and freestanding ELF targets lack a native compiler, and inline asm is marked 'still a work in progress'. Stack traces are limited on OpenBSD. Licensing is split: the compiler source under src is LGPL 3.0, while the standard library, tests, and examples are MIT. The Linux install script edits ~/.bashrc. Building from source needs LLVM and libcurl, and the vendor-fetch feature needs libcurl. The homepage itself is a language site, not a repository, so I read the homepage and then the GitHub README at github.com/c3lang/c3c.",
+  "quotes": [
+   "The Ergonomic, Safe and Familiar Evolution of C",
+   "C3 is an evolution, not a revolution: The speed of C, shaped for modern software.",
+   "Data is inert."
+  ],
+  "links": [
+   {
+    "label": "C3 homepage and manual",
+    "url": "https://c3-lang.org"
+   },
+   {
+    "label": "GitHub repository (c3lang/c3c)",
+    "url": "https://github.com/c3lang/c3c"
+   },
+   {
+    "label": "Try it in the browser (learn-c3.org)",
+    "url": "https://learn-c3.org"
+   },
+   {
+    "label": "Community showcase of user projects",
+    "url": "https://github.com/c3lang/c3-showcase"
+   }
+  ],
+  "fetch_log": [
+   "https://c3-lang.org: worked; returned the homepage text with feature overview and code samples, but no install or command details.",
+   "https://github.com/c3lang/c3c: worked; returned the README, which contains install instructions, build steps, and the support matrix."
+  ]
+ }
+}

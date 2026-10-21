@@ -1,0 +1,126 @@
+{
+ "name": "usbtree",
+ "desc": "Live USB device tree in your terminal",
+ "homepage": "https://gnomeria.github.io/usbtree/",
+ "installs_365d": 172,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "radio-and-hardware",
+ "tags": [
+  "tui",
+  "needs-hardware",
+  "quick"
+ ],
+ "why": "A live view of the USB topology reveals hidden hub and device structure most people never see, a gentle door into the bus.",
+ "brief": {
+  "what_it_is": "usbtree is a cross-platform terminal UI (TUI) that shows your USB device tree live: hubs, device classes, link speeds, hot-plug events, and bandwidth. It reads the USB bus directly through the nusb Rust library, with no libusb and no root needed for the basic tree. Output is an interactive tree on screen, plus a --dump flag for scripts. A --demo flag shows the interface without hardware. It is distributed as one static binary per OS, with prebuilt releases for Linux, macOS and Windows.",
+  "why_it_exists": "The homepage positions it as 'Everything lsusb -t shows, plus names that make sense, hot-plug awareness, and live traffic.' It aims to make the USB topology visible and readable without needing lsusb or manual lookups.",
+  "how_it_works": "Names are resolved through a chain: your overrides.ids file, then device descriptor strings, then a downloadable usb.ids (via --updatelist), then an embedded snapshot, then vendor and class heuristics. The tree rescans every second, and hot-plugged devices flash green while unplugged ones linger as red crossed-out ghosts for 30 seconds, logged in an events panel. Live bandwidth is unprivileged URBs/s on Linux, and real bytes/s when run as root with the usbmon module loaded. Misc/IAD composite devices are classified by their interface classes.",
+  "commands_seen": [
+   {
+    "cmd": "curl -fsSL https://raw.githubusercontent.com/gnomeria/usbtree/main/scripts/install.sh | sh",
+    "context": "Shell installer for Linux and macOS; installs to /usr/local/bin or ~/.local/bin, verifies checksums."
+   },
+   {
+    "cmd": "usbtree --demo",
+    "context": "Runs the TUI with simulated devices so you can try it without USB hardware."
+   },
+   {
+    "cmd": "brew install usbtree",
+    "context": "Homebrew install on Linux or Apple Silicon macOS, using the prebuilt binary."
+   },
+   {
+    "cmd": "irm https://raw.githubusercontent.com/gnomeria/usbtree/main/scripts/install.ps1 | iex",
+    "context": "PowerShell installer for Windows; installs to %LOCALAPPDATA%\\usbtree\\bin and adds it to PATH."
+   },
+   {
+    "cmd": "tar -xzf usbtree_*_linux-amd64.tar.gz && ./usbtree",
+    "context": "Manual install from a release archive, then run the binary directly."
+   },
+   {
+    "cmd": "xattr -d com.apple.quarantine ./usbtree",
+    "context": "On macOS, removes the quarantine flag from a manually downloaded binary, since binaries are not notarized."
+   },
+   {
+    "cmd": "cargo install --git https://github.com/gnomeria/usbtree",
+    "context": "Builds and installs from source with Cargo; needs a stable toolchain with edition 2024."
+   },
+   {
+    "cmd": "cargo build --release",
+    "context": "Builds a release binary from a cloned repository."
+   }
+  ],
+  "install_notes": "Install options: Homebrew (Linux and Apple Silicon macOS only), shell script (Linux and macOS, pin with USBTREE_VERSION, override directory with USBTREE_INSTALL_DIR), PowerShell (Windows, pin with $env:USBTREE_VERSION), manual release archive, or Cargo from source. Prebuilt archives exist for linux-amd64, linux-arm64, darwin-arm64 and windows-amd64, and checksums are listed in checksums.txt. The installers need a published GitHub release; if none exists yet, install from source. No accounts or runtimes are required. Real per-device bytes/s on Linux needs root plus the usbmon kernel module. Safe eject uses udisks2 on Linux.",
+  "standout": "It is a live, color-coded USB tree in the terminal with friendly vendor and device names, hot-plug ghosts, and sparklines, all in one static binary with no libusb. The composite-device handling is notable: a MOTU audio interface shows as Audio instead of Misc, and it can safely eject USB drives without root through udisks2. It also has a PCI view toggled with p.",
+  "status": "unknown. The homepage gives no release date, version number or last-commit date, and I did not fetch the GitHub repository or releases page to check. It does describe a current feature set and install paths that refer to a published release.",
+  "caveats": "Live per-device traffic and real bandwidth are Linux-only; macOS and Windows expose no unprivileged per-device counter, and sudo does not help there. Safe eject is Linux-only for now. Prebuilt binaries are not code-signed or notarized: macOS needs xattr to clear quarantine, and Windows SmartScreen may warn on first run. Prebuilt binaries are not offered for Intel macOS (only darwin-arm64 is listed). Building from source needs a stable Rust toolchain supporting edition 2024. The homepage is the only page I read; the README and docs were not fetched.",
+  "quotes": [
+   "Your USB device tree, live in the terminal.",
+   "Everything lsusb -t shows \u2014 plus names that make sense, hot-plug awareness, and live traffic.",
+   "Pure Rust via nusb: no root, no libusb."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://gnomeria.github.io/usbtree/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/gnomeria/usbtree"
+   }
+  ],
+  "fetch_log": [
+   "https://gnomeria.github.io/usbtree/ - fetched OK; full homepage text with features, platform table, install options and keyboard map. README and docs not fetched because the homepage was complete."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A live view of hubs, link speeds, and hot-plug events makes the USB bus\u2019s hidden topology easy to explore, beyond simply listing connected devices."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "usbtree",
+  "tldr": "A live, color-coded USB device tree in your terminal that flashes hot-plugged devices and shows unplugged ones as red ghosts.",
+  "deeper_look": "usbtree is a terminal UI that draws the USB bus as a tree: hubs, the devices hanging off them, device classes, link speeds, and a panel logging plug and unplug events. It rescans every second. A newly plugged device flashes green, and an unplugged one lingers as a red crossed-out ghost for 30 seconds before it disappears.\n\nIt reads the bus through nusb, a pure-Rust library, so there is no libusb and no root needed for the basic tree. Names come from a fallback chain: your own overrides.ids file, then the strings the device reports about itself, then a downloadable usb.ids list (via `--updatelist`), then an embedded snapshot, then vendor and class guesses. Composite devices are classified by their interface classes, so a MOTU audio interface shows as Audio instead of a vague Misc.\n\nThe idea underneath is that USB is a tree, not a pile of ports. Every device sits behind a hub, hubs share bandwidth, and each device announces what it is through descriptors. Watching that tree change as you plug things in makes the topology visible. On Linux it can also show live traffic: URBs per second without privileges, or real bytes per second as root with the usbmon module loaded. A `p` key toggles a PCI view.\n\nThe homepage describes it as 'Everything lsusb -t shows, plus names that make sense, hot-plug awareness, and live traffic.'",
+  "install": "brew install usbtree\n# Homebrew covers Linux and Apple Silicon macOS. Other options: a shell installer (Linux/macOS), a PowerShell installer (Windows), release archives, or cargo install --git https://github.com/gnomeria/usbtree\n# No account or runtime needed. USB hardware is optional thanks to --demo.",
+  "try_this": [
+   {
+    "cmd": "usbtree --demo",
+    "what_happens": "Runs the interface with simulated devices, so you can see the tree and hot-plug effects without any hardware."
+   },
+   {
+    "cmd": "usbtree",
+    "what_happens": "Shows your real USB tree live. Plug and unplug something to watch it flash green or leave a red ghost."
+   },
+   {
+    "cmd": "usbtree --help",
+    "what_happens": "Lists the available options, including the `--dump` flag for scripts and `--updatelist` for refreshing names."
+   }
+  ],
+  "whats_unique": "It is a single static binary with no libusb, and it combines friendly names, hot-plug ghosts, live traffic sparklines and composite-device classification in one view.",
+  "caveats": "Live per-device traffic and safe eject only work on Linux, prebuilt binaries are unsigned (macOS needs xattr to clear quarantine), and there is no prebuilt Intel macOS build.",
+  "commitment": "quick",
+  "category": "radio-and-hardware",
+  "tags": [
+   "quick",
+   "tui",
+   "usb",
+   "rust",
+   "needs-hardware",
+   "hot-plug"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://gnomeria.github.io/usbtree/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/gnomeria/usbtree"
+   }
+  ]
+ }
+}

@@ -1,0 +1,54 @@
+{
+ "name": "pwnat",
+ "desc": "Proxy server that works behind a NAT",
+ "homepage": "https://samy.pl/pwnat/",
+ "installs_365d": 25,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "A clever hack that punches through NAT using UDP and ICMP, a real door into how NAT traversal actually works.",
+ "brief": {
+  "what_it_is": "pwnat is a command-line proxy tool that lets a client behind one NAT reach a server behind a different NAT without port forwarding, a DMZ, or any third party. The server runs in server mode and listens on a UDP proxy port (default 2222), and the client runs in client mode with a local port to listen on plus a remote host and port to reach. Traffic is carried over UDP between the two ends, so TCP services such as HTTP or SSH can be tunnelled through. The README says the client can reach any host and port, or a fixed destination chosen by the server.",
+  "why_it_exists": "Samy Kamkar's framing is that NAT blocks unsolicited inbound packets, so a server behind NAT normally cannot be reached, and the README presents pwnat as a way to get NAT-to-NAT connections with 'no port forwarding, no DMZ setup, and no 3rd party involvement.' He describes it as a follow-on to his earlier chownat and to udptunnel by Daniel Meekins.",
+  "how_it_works": "The server repeatedly sends ICMP echo requests to a fixed, unreachable address (3.3.3.3) so that its NAT creates a translation entry. When a client wants to connect, it sends an ICMP Time Exceeded packet to the server that embeds that same echo request; the server's NAT matches it and forwards it inward, which reveals the client's public IP to the server. After that, both sides send UDP packets to each other's public addresses, and each NAT treats the inbound packets as replies to outbound ones, so the UDP session opens from both sides. A keep-alive with a zero-byte payload runs at least every 5 seconds when no other data is flowing.",
+  "commands_seen": [
+   {
+    "cmd": "usage: ./pwnat <-s | -c> <args>",
+    "context": "Top-level usage synopsis; -s selects server mode and -c selects client mode."
+   },
+   {
+    "cmd": "./pwnat -s",
+    "context": "Starts the server side, allowing anyone to proxy through it (no allowed-host list given)."
+   },
+   {
+    "cmd": "./pwnat -c 8000 <pwnat.server.com> google.com 80",
+    "context": "Client example: listens on local port 8000 and forwards to google.com:80 via the pwnat server; the README then says to browse to http://localhost:8000."
+   }
+  ],
+  "install_notes": "The README only says pwnat works on most *nix systems and possibly Windows via cygwin, and that it was tested on Linux and OS X. It says the latest source is on GitHub or as a zip, with no build steps or dependencies listed on the page. The server also needs a public address that clients can reach, and the usage line shows an optional local IP argument. Nothing about Homebrew specifically.",
+  "standout": "It achieves NAT-to-NAT UDP connectivity without any relay or cooperating third party, using a stateful-NAT quirk: an ICMP Time Exceeded packet carrying a hard-coded echo request lets the server learn the client's address through its own NAT. The README also explains the rest of the mechanism in plain terms, which makes it a readable case study in NAT traversal.",
+  "status": "quiet. The only date on the homepage is 01/22/2010 at the bottom of the page, and the page gives no release number, changelog, or recent update. I did not check the GitHub repository, so I cannot confirm the last commit.",
+  "caveats": "The README says it 'will work behind many NATs and firewalls, but not all', and it does not say which NATs fail. It was tested only on Linux and OS X, with Windows support 'potentially' via cygwin. The hard-coded 3.3.3.3 probe and the ICMP tricks depend on how particular NAT devices treat ICMP and stateful translation, and the README gives no guarantee across devices. The page does not state a license and does not say whether the ICMP sending needs root privileges. The page is dated 2010, so it may not reflect current NAT behaviour.",
+  "quotes": [
+   "Yes. Try it!",
+   "Great question! I thought you'd never ask.",
+   "The connection is entirely direct, client to server.",
+   "no port forwarding *no* DMZ setup, and *no* 3rd party involvement."
+  ],
+  "links": [
+   {
+    "label": "pwnat homepage and README (samy.pl)",
+    "url": "https://samy.pl/pwnat/"
+   }
+  ],
+  "fetch_log": [
+   "https://samy.pl/pwnat/ - fetched OK; the page contains the full README text (description, usage, FAQ, how it works, example, contact). I did not follow the GitHub source link because the homepage was complete."
+  ]
+ }
+}

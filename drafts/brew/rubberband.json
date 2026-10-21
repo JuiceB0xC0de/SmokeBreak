@@ -1,0 +1,123 @@
+{
+ "name": "rubberband",
+ "desc": "Audio time stretcher tool and library",
+ "homepage": "https://breakfastquay.com/rubberband/",
+ "installs_365d": 100995,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "audio",
+  "quick",
+  "library"
+ ],
+ "why": "Time stretching and pitch shifting audio from the command line, a useful transform that opens onto signal processing.",
+ "brief": {
+  "what_it_is": "Rubber Band is an open-source audio time-stretching and pitch-shifting library written in C++, plus a free command-line tool built on it. It changes the tempo and pitch of an audio stream or recording independently of each other. The command-line tool takes an input audio file (WAV, via libsndfile) plus a time ratio and a pitch shift in semitones, and writes a new audio file with the altered speed and pitch. The library itself is meant for developers embedding this in their own apps.",
+  "why_it_exists": "The homepage pitches it as a way to make audio applications \"stretchier than ever\", offering high-quality tempo and pitch changes that are independent of each other. The README describes it as permitting \"changing the tempo and pitch of an audio recording independently of one another.\"",
+  "how_it_works": "The library exposes two C++ classes in the RubberBand namespace: RubberBandStretcher for general time and pitch manipulation, and RubberBandLiveShifter for simpler block-by-block pitch shifting. It has two processing engines: R2 (Faster), the default for the rubberband binary and the only engine in 2.x, and R3 (Finer), which the README says gives higher quality on most material, especially complex mixes, vocals and bass-heavy music, at much higher CPU cost. The README says the command-line tool is an example of offline use, and the LADSPA/LV2 plugins are examples of real-time use.",
+  "commands_seen": [
+   {
+    "cmd": "$ rubberband -t <timeratio> -p <semitones> <infile.wav> <outfile.wav>",
+    "context": "The basic invocation of the command-line tool: -t sets the time ratio, -p sets pitch shift in semitones, then input and output WAV files."
+   },
+   {
+    "cmd": "$ rubberband -t 1.5 -p 2.0 test.wav output.wav",
+    "context": "Example from the README: stretches test.wav to 50% longer, raises pitch by a whole tone, and writes output.wav."
+   },
+   {
+    "cmd": "rubberband -h",
+    "context": "Quoted in the README prose as the way to get the full list of options for the command-line tool."
+   }
+  ],
+  "install_notes": "Homepage offers a source release, a Windows command-line executable, and a macOS binary for v4.0.0. Building from source is covered in COMPILING.md in the repository (not fetched). The command-line tool needs libsndfile for audio file loading. The LADSPA and LV2 plugins need the ladspa.h and lv2.h headers, and the Vamp analysis plugin needs the Vamp plugin SDK; none of these are included. The library may optionally link external resampler and FFT code, depending on build configuration. Nothing else in the README suggests accounts or runtime setup.",
+  "standout": "Stretch and pitch are fully independent, and the tool offers two engines so you can trade CPU for quality (-2 for R2, -3 for R3). Its free command-line tool, library, and plugins all come from one codebase, and a Vamp plugin exposes the stretch decisions the library makes, which is unusual for this kind of tool.",
+  "status": "Maintained, as far as the evidence goes. Homepage announces v4.0 released 25 October 2024 with a new simplified pitch-shifting API. Homepage copyright reads 2025. The README says copyright 2007-2024. I could not see a last-commit date from the GitHub mirror page I fetched.",
+  "caveats": "Licence is GPL (v2 or later), so any application that links it must also be GPL-compatible unless you buy a commercial licence, which the README says is required for distributing it in proprietary apps and for Apple App Store distribution. Build and dependency setup is non-trivial, with optional FFTW3 (GPL with commercial option) and Intel IPP (proprietary) among the possible dependencies. Many options only affect the R2 engine. The C API is not documented separately from the C++ headers.",
+  "quotes": [
+   "Make your audio applications stretchier than ever",
+   "It permits you to change the tempo and pitch of an audio stream or recording dynamically and independently of one another.",
+   "The R3 engine produces higher-quality results than R2 for most material, especially complex mixes, vocals and other sounds that have soft onsets and smooth pitch changes, and music with substantial bass content."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://breakfastquay.com/rubberband/"
+   },
+   {
+    "label": "Usage text for the command-line tool",
+    "url": "https://breakfastquay.com/rubberband/usage.txt"
+   },
+   {
+    "label": "Conceptual notes and integration examples",
+    "url": "https://breakfastquay.com/rubberband/integration.html"
+   },
+   {
+    "label": "GitHub mirror",
+    "url": "https://github.com/breakfastquay/rubberband"
+   }
+  ],
+  "fetch_log": [
+   "https://breakfastquay.com/rubberband/ - worked; homepage text, no command lines, links to docs and downloads given as labels only",
+   "https://github.com/breakfastquay/rubberband - worked; README returned, includes the command-line examples and links to COMPILING.md and the docs"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A respected, approachable doorway into audio DSP: it independently changes tempo and pitch, with distinct engines trading processing cost for quality."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Rubber Band",
+  "tldr": "Change the speed of a recording without changing its pitch, or the pitch without the speed, from one command line.",
+  "deeper_look": "Rubber Band is a C++ audio time-stretching and pitch-shifting library, with a free command-line tool built on top of it. The tool reads a WAV file (via libsndfile), takes a time ratio and a pitch shift in semitones, and writes a new file. Slow a recording down and the pitch stays put. Shift the pitch and the length stays put.\n\nThat sounds like a small trick, but it is a real signal processing problem. Speeding up a tape raises its pitch because time and frequency are tied together in the waveform. Pulling them apart means analysing the audio and deciding what to repeat, drop, or blend. The library is built for developers who want that inside their own applications, and the command-line tool is the README's example of offline use. The LADSPA and LV2 plugins are its examples of real-time use.\n\nThere are two engines. R2 (Faster) is the default for the `rubberband` binary. R3 (Finer) is selected with `-3` or the `rubberband-r3` executable. According to the README, R3 gives better results on most material, especially complex mixes, vocals and bass-heavy music, at much higher CPU cost. Running the same file through both is a quick way to hear what the trade-off sounds like.",
+  "install": "brew install rubberband\n# command-line tool reads and writes audio files via libsndfile; WAV is the format the brief documents",
+  "try_this": [
+   {
+    "cmd": "rubberband -t 1.5 -p 2.0 test.wav output.wav",
+    "what_happens": "Stretches test.wav to 50% longer, raises the pitch by a whole tone, and writes output.wav."
+   },
+   {
+    "cmd": "rubberband -t 2.0 test.wav slow.wav",
+    "what_happens": "Doubles the duration while leaving the pitch alone (pitch is only changed if you pass -p)."
+   },
+   {
+    "cmd": "rubberband -h",
+    "what_happens": "Prints the full list of options for the command-line tool."
+   }
+  ],
+  "whats_unique": "Stretch and pitch are fully independent, and two engines let you trade CPU for quality. The same codebase also yields a library, plugins, and a Vamp plugin that exposes the stretch decisions the library makes.",
+  "caveats": "The license is GPL v2 or later, and a commercial license is needed to ship it in proprietary apps or on the Apple App Store.",
+  "commitment": "quick",
+  "category": "sound-and-live-coding",
+  "tags": [
+   "quick",
+   "audio",
+   "time-stretch",
+   "pitch-shift",
+   "dsp",
+   "library"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://breakfastquay.com/rubberband/"
+   },
+   {
+    "label": "Usage text for the command-line tool",
+    "url": "https://breakfastquay.com/rubberband/usage.txt"
+   },
+   {
+    "label": "Conceptual notes and integration examples",
+    "url": "https://breakfastquay.com/rubberband/integration.html"
+   },
+   {
+    "label": "GitHub mirror",
+    "url": "https://github.com/breakfastquay/rubberband"
+   }
+  ]
+ }
+}

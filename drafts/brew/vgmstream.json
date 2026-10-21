@@ -1,0 +1,121 @@
+{
+ "name": "vgmstream",
+ "desc": "Library for playing streamed audio formats from video games",
+ "homepage": "https://vgmstream.org",
+ "installs_365d": 1151,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "audio",
+  "reverse-engineering",
+  "library",
+  "ancient"
+ ],
+ "why": "Decodes hundreds of proprietary game audio formats, letting you hear streamed sound pulled out of old game files.",
+ "brief": {
+  "what_it_is": "vgmstream is a library and set of player and decoder components that play or convert the streamed, prerecorded audio used in video games. It takes game audio files in hundreds of proprietary or obscure formats and decodes them to sound. The command-line decoder, vgmstream-cli, can write each file out as a .wav. The README says it decodes and does not encode, so it cannot turn a .wav back into a game format. Other components include a Winamp plugin, a foobar2000 component, an XMPlay plugin, an Audacious plugin, and the vgmstream123 command-line player.",
+  "why_it_exists": "The README says the library exists for playback of 'hundreds of streamed (prerecorded) audio formats used in video games,' from typical game engine files to obscure single-game codecs, aiming for high accuracy and compatibility.",
+  "how_it_works": "The main library handles the internal conversion of game audio, and the end-user components wrap it for players and converters. It uses the file's internal metadata for smooth looped BGM with accurate sample counts, and it supports subsongs, companion files, and custom containers. Users can add formats through a TXTH description and set per-file options through TXTP, such as forced looping, removing channels, or fusing several files into one. External .m3u files can carry tags.",
+  "commands_seen": [
+   {
+    "cmd": "./make-build-cmake.sh",
+    "context": "Quick build script for Debian and Ubuntu-style Linux distros. The README says it installs dependencies first, so running the build steps manually is an alternative."
+   }
+  ],
+  "install_notes": "The homepage offers prebuilt command-line binaries for Windows (64-bit), Linux (static build, said to work on kernel 3.2 and above), and macOS, plus a foobar2000 component for Windows and an online web player. On Windows, convert by dragging one or more files onto vgmstream-cli.exe; the README says drag-and-drop support may vary by OS or distro. Building from source gives vgmstream.so (Audacious plugin) and vgmstream123, which cannot be statically linked, and requires several external libraries. The build guide is at doc/BUILD.md. The README points to a Linux script that installs dependencies first. Homebrew names the executables vgmstream-cli and vgmstream123.",
+  "standout": "The library reads game audio's own loop points and sample counts, so looped music plays seamlessly. Its TXTH and TXTP features let a user describe raw or unknown audio and configure playback per file without writing code. The format list is large, and the 'hundreds of formats' claim fits the project's stated aim of covering obscure single-game codecs.",
+  "status": "unknown. The README has no release date or changelog. The homepage advertises automated nightly builds with the latest changes, and the README links numbered releases (described as infrequent). The homepage's 'Recent changes' section was empty in my fetch, so I cannot confirm recent commits.",
+  "caveats": "The README says the Linux static CLI build works on kernel 3.2 and above, and the vgmstream123 player and vgmstream.so plugin cannot be statically linked, so building from source needs several external libraries. Feature parity across components is 'the aim' but differs in places. The format list is noted as 'not always current.' vgmstream cannot encode. The README does not state a license; I did not check it. The homepage said '\u03b2' next to the logo.",
+  "quotes": [
+   "A library for playback of hundreds of streamed (prerecorded) audio formats used in video games.",
+   "Decodes hundreds of video game music formats and codecs, from typical game engine files to obscure single-game codecs, aiming for high accuracy and compatibility.",
+   "Note that vgmstream cannot *encode* (convert from `.wav` to a game format), it only *decodes* (plays game audio)."
+  ],
+  "links": [
+   {
+    "label": "Homepage (nightly builds, web player, downloads)",
+    "url": "https://vgmstream.org"
+   },
+   {
+    "label": "Source on GitHub",
+    "url": "https://github.com/vgmstream/vgmstream"
+   },
+   {
+    "label": "Supported formats list",
+    "url": "https://github.com/vgmstream/vgmstream/blob/master/doc/FORMATS.md"
+   },
+   {
+    "label": "Usage guide",
+    "url": "https://github.com/vgmstream/vgmstream/blob/master/doc/USAGE.md"
+   },
+   {
+    "label": "Numbered releases",
+    "url": "https://github.com/vgmstream/vgmstream/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://vgmstream.org: worked. Returned the homepage, which is mostly navigation and download links. The description and the 'Recent changes' section were thin.",
+   "https://github.com/vgmstream/vgmstream: worked. Returned the README, which had the substantive content. I did not follow the linked docs, since the README covered what the brief needed."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It opens up hundreds of obscure game-audio formats, with loop-aware playback and file descriptions that let you explore even undocumented audio."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "vgmstream",
+  "tldr": "Decodes hundreds of proprietary video game audio formats, so streamed music and sound pulled from old game files plays or converts to .wav.",
+  "deeper_look": "vgmstream is a library with a set of players and converters built on top of it. Feed it a game's streamed audio file, in one of hundreds of formats, and it decodes the sound. `vgmstream-cli` writes the result out as a .wav, and `vgmstream123` plays it from the terminal. Other front ends include plugins for Winamp, foobar2000, XMPlay and Audacious.\n\nGame audio is a mess of formats. Some are typical engine containers, and some are obscure codecs used by a single game. The README says the project aims for \"high accuracy and compatibility\". It reads the loop points and sample counts stored in the files, so looped background music repeats seamlessly instead of clicking at the seam.\n\nTwo features let you handle files nobody has written support for. TXTH lets you describe a raw or unknown audio layout in a small text file. TXTP sets per-file options, such as forcing a loop, removing channels, or fusing several files into one. Neither needs code.\n\nThe door underneath is that a game's audio is data with a structure you can learn. Each format in the supported list is someone's reverse-engineering work, written down so the rest of us can hear it. It only decodes. In the README's words: \"vgmstream cannot *encode* (convert from `.wav` to a game format), it only *decodes* (plays game audio).\"",
+  "install": "brew install vgmstream",
+  "try_this": [
+   {
+    "cmd": "vgmstream-cli --help",
+    "what_happens": "Lists the decoder's options, including how to write a game audio file out as a .wav."
+   },
+   {
+    "cmd": "vgmstream123 --help",
+    "what_happens": "Shows the options for the terminal player, which plays game audio files directly."
+   }
+  ],
+  "whats_unique": "It treats each game's quirks, such as loop points, subsongs and companion files, as part of the format. Looped music plays the way the game intended. TXTH lets you teach it a new layout without code.",
+  "caveats": "It decodes only and cannot encode. The format list is described as \"not always current\", and the brief could not confirm recent commits.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "audio",
+   "reverse-engineering",
+   "game-audio",
+   "decoder",
+   "cli"
+  ],
+  "links": [
+   {
+    "label": "Homepage (nightly builds, web player, downloads)",
+    "url": "https://vgmstream.org"
+   },
+   {
+    "label": "Source on GitHub",
+    "url": "https://github.com/vgmstream/vgmstream"
+   },
+   {
+    "label": "Supported formats list",
+    "url": "https://github.com/vgmstream/vgmstream/blob/master/doc/FORMATS.md"
+   },
+   {
+    "label": "Usage guide",
+    "url": "https://github.com/vgmstream/vgmstream/blob/master/doc/USAGE.md"
+   },
+   {
+    "label": "Numbered releases",
+    "url": "https://github.com/vgmstream/vgmstream/releases"
+   }
+  ]
+ }
+}

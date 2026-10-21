@@ -1,0 +1,91 @@
+{
+ "name": "direwolf",
+ "desc": "Software \"soundcard\" AX.25 packet modem/TNC and APRS encoder/decoder",
+ "homepage": "https://github.com/wb2osz/direwolf",
+ "installs_365d": 570,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "afternoon",
+  "audio",
+  "radio-and-hardware",
+  "needs-hardware"
+ ],
+ "why": "A software soundcard turning audio into AX.25 packets and APRS, a delightful audio-to-data transform you can hear.",
+ "brief": {
+  "what_it_is": "Dire Wolf is an open-source software TNC (terminal node controller) and packet modem for amateur radio. It runs on Windows, Linux (including Raspberry Pi), and macOS. It takes audio from a radio through a computer's soundcard interface, or from SDR software such as gqrx, rtl_fm, or SDR#, and decodes AX.25 packets and APRS frames from it. It also encodes packets and transmits them back out through the radio. Without extra software it can act as an APRS tracker, digipeater, Internet gateway (IGate), or APRStt gateway, and it can serve as a virtual TNC for applications such as Xastir, YAAC, and Winlink Express over KISS (TCP, serial, or Bluetooth) or AGW interfaces. The package also ships a set of companion programs, including decode_aprs, gen_packets, atest, kissutil, the telem-*.pl and telem-*.py telemetry scripts, and coordinate converters such as ll2utm and utm2ll.",
+  "why_it_exists": "The README frames Dire Wolf as a replacement for the expensive hardware Terminal Node Controller of the early packet radio days. Its argument is that a computer soundcard with software decoding gives better receive performance at lower cost than a TNC built around an old modem chip.",
+  "how_it_works": "Radio audio goes into the computer's soundcard, and Dire Wolf does the modem work in software using digital signal processing. It supports several modem types: 300 bps AFSK for HF, 1200 bps AFSK for VHF/UHF, 2400 and 4800 bps PSK, 9600 bps GMSK/G3RUH, plus AIS and EAS SAME reception. FX.25 adds forward error correction in a form that remains compatible with ordinary AX.25 receivers. Version 1.7 added IL2P, a different FEC scheme with less overhead, which is not compatible with AX.25.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt-get install direwolf",
+    "context": "Installs the packaged Dire Wolf on Debian or Ubuntu. The README warns that the packaged version usually lags behind development."
+   },
+   {
+    "cmd": "git clone https://www.github.com/wb2osz/direwolf",
+    "context": "Clones the source repository. This is the README's recommended route on Linux and macOS."
+   },
+   {
+    "cmd": "git checkout dev",
+    "context": "Switches the clone to the development branch for the latest development version. Leave this out to build the most recent stable release."
+   },
+   {
+    "cmd": "mkdir build && cd build",
+    "context": "Creates a build directory inside the source tree for the CMake build."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Configures the build from the parent directory with CMake."
+   },
+   {
+    "cmd": "make -j4",
+    "context": "Compiles Dire Wolf using four parallel jobs."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the built binaries system-wide."
+   },
+   {
+    "cmd": "make install-conf",
+    "context": "Installs the sample configuration file."
+   },
+   {
+    "cmd": "brew install portaudio",
+    "context": "One of the Homebrew dependencies to install before the macOS source build. The README also lists brew install cmake and brew install hidapi."
+   },
+   {
+    "cmd": "sudo port install direwolf",
+    "context": "Installs the prebuilt MacPorts package for macOS. The README says it may lag behind development."
+   }
+  ],
+  "install_notes": "Windows: download the zip from the releases page with 'win' in its name, unzip it, and run direwolf.exe from a command window. Linux: install build dependencies (gcc, g++, make, cmake, libasound2-dev, libudev-dev, libavahi-client-dev, and libgpiod-dev only if you need GPIO PTT), then clone, build with CMake, and install. Version 1.8 added libgpiod v2 support, which Raspberry Pi OS trixie needs. Red Hat and Fedora use yum with alsa-lib-devel, libudev-devel, and avahi-devel. CentOS 6 and 7 need cmake 3.1 or later from EPEL. macOS: install Xcode Command Line Tools and Homebrew, then brew install cmake, portaudio, and hidapi, then build from source the same way as Linux. There is no brew install direwolf line in the README. The README also notes that Raspberry Pi setup has its own PDF guide, and that a radio interface is needed (sound card or a USB adapter such as a SignaLink, DRAWS, or CM108-based interface). No runtime or account is mentioned.",
+  "standout": "The README claims Dire Wolf decodes over 1000 error-free frames from Track 2 of the WA8LMF TNC Test CD, beating hardware TNCs and older soundcard modems. That is the author's own benchmark claim, and it is linked to a results PDF in the repo. The FX.25 design is also distinctive: it adds error correction that plain AX.25 receivers can ignore, so it is backward compatible.",
+  "status": "Maintained. The GitHub releases page shows version 1.8.1 released 13 November 2025 (fixing a sigsegv on AGW connection timeout), version 1.8 released 29 October 2025, and a 1.8 beta in October 2025. Earlier releases go back to 2018. The README points to an active groups.io discussion list.",
+  "caveats": "Windows and macOS are the least-trodden paths; the README says Mac support depends on volunteers, and the author says he does not have a Mac. Packaged versions via apt, yum, and MacPorts depend on volunteers and lag development, so the source build is recommended. IL2P is not compatible with AX.25. The README says the GitHub issue tracker is for defects and feature requests only, not for questions. The author's TNC-benchmark claim is the author's own. I did not fetch the User Guide in the doc directory, so details of configuration and hardware setup are not covered here.",
+  "quotes": [
+   "Decoded Information from Radio Emissions for Windows Or Linux Fans",
+   "Why waste $200 and settle for mediocre receive performance from a 1980's technology TNC using an old modem chip?",
+   "Dire Wolf is a modern software replacement for the old 1980's style TNC built with special hardware."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub README)",
+    "url": "https://github.com/wb2osz/direwolf"
+   },
+   {
+    "label": "Stable documentation (User Guide in doc directory)",
+    "url": "https://github.com/wb2osz/direwolf/tree/master/doc"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/wb2osz/direwolf/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/wb2osz/direwolf (worked; README returned)",
+   "https://github.com/wb2osz/direwolf/releases (worked; release list and notes returned, with a lot of page chrome)"
+  ]
+ }
+}

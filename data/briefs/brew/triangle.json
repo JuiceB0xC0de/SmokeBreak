@@ -1,0 +1,93 @@
+{
+ "name": "triangle",
+ "desc": "Convert images to computer generated art using Delaunay triangulation",
+ "homepage": "https://github.com/esimov/triangle",
+ "installs_365d": 90,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "visual",
+  "generative"
+ ],
+ "why": "Turns images into Delaunay triangulation art, a clear transform from pixels to geometry you can run in a minute.",
+ "brief": {
+  "what_it_is": "Triangle is a command-line tool, and also a Go library, that turns an ordinary image into an abstract picture made of Delaunay triangles. It takes a source image (a file, a URL passed to -in, or stdin) and writes a triangulated version as .jpg, .jpeg, .png, .bmp or .svg, with the output type inferred from the file extension. It can also process whole directories concurrently.",
+  "why_it_exists": "The README frames it as a tool for generating 'triangulated image' art: 'It takes a source image and converts it to an abstract image composed of tiles of triangles.' The implied appeal is computer-generated, low-poly-style art from photos.",
+  "how_it_works": "The README describes a fixed pipeline: the image is blurred to smooth sharp pixel edges, converted to grayscale, and run through a Sobel edge filter with an optional threshold to pick representative pixels. A convolution step then adjusts the result, and the Delaunay triangulation is run on the remaining points. More blur gives a more diffused output, and a lower points threshold makes the result look more like a cubist painting.",
+  "commands_seen": [
+   {
+    "cmd": "go install github.com/esimov/triangle/v2/cmd/triangle@v2.0.0",
+    "context": "Installs the CLI from source with Go, pinned to v2.0.0. Listed as the primary install method in the README."
+   },
+   {
+    "cmd": "brew install triangle",
+    "context": "Installs via Homebrew on macOS. The README says 'The library can be installed via Homebrew too.'"
+   },
+   {
+    "cmd": "triangle --help",
+    "context": "Prints the list of supported flags."
+   },
+   {
+    "cmd": "triangle -in <input_folder> -out <output-folder>",
+    "context": "Processes every image in a directory, including subdirectories, concurrently."
+   },
+   {
+    "cmd": "triangle -in <image_url> -out <output-folder>",
+    "context": "Takes the source image from a URL passed to -in."
+   },
+   {
+    "cmd": "curl -s <image_url> | triangle > out.jpg",
+    "context": "Pipe example: downloads an image with curl and triangulates it from stdin, writing to stdout."
+   },
+   {
+    "cmd": "triangle -in samples/input.jpg -out output.svg",
+    "context": "Writes the result as an SVG file, chosen from the .svg extension."
+   },
+   {
+    "cmd": "triangle -in samples/input.jpg -out output.svg -web=true",
+    "context": "Writes the SVG and opens it in the web browser via the -web flag."
+   },
+   {
+    "cmd": "triangle -in samples/input.jpg -out output.png -wf=0 -pts=3500 -st=2 -bl=2",
+    "context": "Tweak example: wireframe mode 0 (no stroke), 3500 max points, stroke width 2, blur radius 2."
+   },
+   {
+    "cmd": "triangle -in samples/input.jpg -out output.png -wf=2 -pts=5500 -st=1 -bl=10",
+    "context": "Tweak example: wireframe mode 2 (stroke only), 5500 max points, stroke width 1, blur radius 10."
+   }
+  ],
+  "install_notes": "Install with Go (go install ...@v2.0.0), by downloading a binary from the GitHub releases page, or with brew install triangle on macOS. The README mentions no accounts, API keys, or runtime configuration beyond the install. The Go API is shown with a Processor struct (MaxPoints, BlurRadius, PointRate, BlurFactor, EdgeFactor) and a Draw call that works on decoded image data.",
+  "standout": "The output can be exported as SVG with a -web flag that opens it in a browser, and stdin/stdout pipe support makes it easy to chain with curl. The README also mentions a Draw method that works on data streams, with a WebAssembly demo linked from the README.",
+  "status": "Appears maintained, though the README gives no date. Evidence: the badges point to release v2.0.0 with a Homebrew formula badge, a build workflow badge, and a Go Report Card. The README lists a GUI app as an unchecked TODO. I could not see a last-commit date or release date, so this is an inference, not a verified status.",
+  "caveats": "The README says nothing about Windows or Linux support, beyond Homebrew being the only package manager it names. The GUI application is an unchecked TODO item. The PNG sample images link to the master branch, so they may change. The default point rate in the flag table (0.075) differs from the value in the API example (0.75), so check the flags before relying on either. Licence is MIT, copyright 2018 Endre Simo.",
+  "quotes": [
+   "It takes a source image and converts it to an abstract image composed of tiles of triangles.",
+   "There is no need to specify the file type, the CLI tool can recognize automatically the input and output file type.",
+   "Setting a lower points threshold, the resulted image will be more like a cubic painting. You can even add a noise factor, generating a more artistic, grainy image."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/esimov/triangle"
+   },
+   {
+    "label": "Releases (binaries)",
+    "url": "https://github.com/esimov/triangle/releases"
+   },
+   {
+    "label": "Homebrew formula",
+    "url": "https://formulae.brew.sh/formula/triangle"
+   },
+   {
+    "label": "Go package reference",
+    "url": "https://pkg.go.dev/github.com/esimov/triangle"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/esimov/triangle - fetched OK, README returned in full (flags table, API example, install, features, examples, license). No further fetches needed."
+  ]
+ }
+}

@@ -1,0 +1,139 @@
+{
+ "name": "libmysofa",
+ "desc": "Reader for AES SOFA files to get better HRTFs",
+ "homepage": "https://github.com/hoene/libmysofa",
+ "installs_365d": 20,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "afternoon",
+  "audio",
+  "library",
+  "science"
+ ],
+ "why": "Reads SOFA head-related transfer function files, a real door into binaural spatial audio and how ears localise sound.",
+ "brief": {
+  "what_it_is": "libmysofa is a small C library for reading AES SOFA files that contain head-related transfer functions (HRTFs) in the AES69-2015 standard. It takes a .sofa file (or a buffer already in memory) and a target sample rate, then gives you the HRTF filter for any requested [x,y,z] position as left and right impulse responses plus left and right delays in samples or seconds. Filters can be linearly interpolated from nearest neighbours or taken exactly as stored. The README also documents spherical-to-Cartesian coordinate helpers. The brew formula lists an executable called mysofa2json, but the README does not describe it.",
+  "why_it_exists": "The README presents it as a simple reader so that software can use HRTF data stored in AES SOFA files, which the author's MySofa work relies on for personal HRTF design and better binaural audio.",
+  "how_it_works": "mysofa_open (or the normalising, advanced, in-memory or cached variants) parses the SOFA HDF5 data and builds a nearest-neighbour search structure over the measurement grid, with optional normalisation. mysofa_getfilter_float or mysofa_getfilter_short then returns a weighted sum of the nearest neighbours' filters for a position, or the exact stored filter via the _nointerp variant. The caller applies the returned delays and convolves audio with the impulse responses using FIR filtering.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt install zlib1g-dev libcunit1-dev libcunit1-dev git build-essential cmake nodejs",
+    "context": "Ubuntu prerequisites for building libmysofa, as listed in the Compile section."
+   },
+   {
+    "cmd": "cmake -DCMAKE_BUILD_TYPE=Debug ..",
+    "context": "Configures a Debug build from inside the build directory."
+   },
+   {
+    "cmd": "make -j8 all",
+    "context": "Builds the library and tools in parallel."
+   },
+   {
+    "cmd": "ctest -j8",
+    "context": "Runs the test suite in parallel."
+   },
+   {
+    "cmd": "cd build && cpack",
+    "context": "Produces a Debian package if you need one."
+   },
+   {
+    "cmd": "cmake install .",
+    "context": "Installs libraries and headers to the system location, usually needing sudo."
+   },
+   {
+    "cmd": "cmake -DCMAKE_BUILD_TYPE=Debug .. -DCMAKE_INSTALL_PREFIX=<CMAKE_INSTALL_PREFIX>",
+    "context": "Configures the build for a non-system install prefix before running make and cmake install."
+   },
+   {
+    "cmd": "export ASAN_SYMBOLIZER_PATH=/usr/bin/llvm-symbolizer",
+    "context": "Sets the symbolizer path for an AddressSanitizer build, used to check for memory leaks and bad pointers."
+   },
+   {
+    "cmd": "cmake -DCMAKE_BUILD_TYPE=Debug -DADDRESS_SANITIZE=ON -DVDEBUG=1 ..",
+    "context": "Configures a sanitizer-enabled debug build."
+   },
+   {
+    "cmd": "docker run --rm --privileged multiarch/qemu-user-static --reset -p yes",
+    "context": "Sets up QEMU emulation so the author can build and test on a big-endian s390x Ubuntu container from an x64 host."
+   }
+  ],
+  "install_notes": "Build needs CMake, a C compiler, zlib development headers and CUnit for tests; the README's apt line also includes nodejs and git. Tests run with ctest. Installing to a system path usually needs sudo, and a non-system prefix is set with CMAKE_INSTALL_PREFIX. Consuming CMake projects use find_package(mysofa CONFIG) and link mysofa::mysofa-shared or mysofa::mysofa-static, and may need CMAKE_PREFIX_PATH or mysofa_DIR to find the library. The README gives no account or hardware requirements, and the brew route is not covered beyond the formula name.",
+  "standout": "Rather than just parsing the file, it gives a ready-made lookup: you ask for a direction and distance, and it returns the filter and interpolated delays, with a cached open that shares one copy of a HRTF in memory across handles. The README also covers big-endian testing through QEMU, which is unusual for a small audio library.",
+  "status": "unknown. The fetched README has CI badges (AppVeyor, Coverity, codecov), a Repology packaging badge and a PayPal donation button, but shows no release version, date, or last-commit information. Its OS notes still cite Ubuntu 14.04 and OSX 7.3 CI, and the references date from 2017, so recent activity cannot be confirmed from the README alone.",
+  "caveats": "The README targets C and builds with CMake; it documents Linux, OSX and Windows (Windows through Visual Studio 2015 CI and MinGW via FFmpeg). Big-endian support was checked only through emulation. Interpolated lookups can skip true nearest neighbours if the search step is set too coarse, so the step must match the SOFA file's grid. The README does not describe mysofa2json, so its usage is unknown from these sources. The README does not state a licence; the disclaimer says the remaining source is BSD-3-Clause, while the K-D tree and resampler come from other authors. No brew caveats were given.",
+  "quotes": [
+   "This is a simple set of C functions to read AES SOFA files, if they contain HRTFs stored according to the AES69-2015 standard",
+   "Libmysofa compiles for Linux operating systems, OSX and Windows.",
+   "The greater the neighbor_*_step, the faster the neighbors search. The algorithm will end up skipping true nearest neighbors if these values are set too high."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/hoene/libmysofa"
+   },
+   {
+    "label": "MySofa project site (linked from README logo)",
+    "url": "https://mysofa.audio/"
+   },
+   {
+    "label": "AES Convention Paper 9764, MySofa: Design Your Personal HRTF",
+    "url": "http://www.aes.org/e-lib/browse.cfm?elib=18640"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/hoene/libmysofa: fetched OK, returned the README. It was complete enough that I did not follow further links."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It turns a spatial direction into interpolated left- and right-ear impulse responses, offering a concrete doorway into how binaural audio makes sound seem to come from a place."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "libmysofa",
+  "tldr": "A small C library that reads SOFA files of head-related transfer functions, so you can ask how a sound from any direction reaches each ear.",
+  "deeper_look": "libmysofa reads AES SOFA files, the AES69-2015 standard for storing head-related transfer functions (HRTFs). An HRTF is a pair of filters, one per ear, that describes how a sound from a given direction is changed by a head, ears and shoulders. Apply them to ordinary audio and it seems to come from outside your head, which is the basis of binaural spatial audio.\n\nYou give the library a .sofa file (or a buffer already in memory) and a target sample rate. Then you ask for a position as [x,y,z]. It returns left and right impulse responses plus left and right delays. It builds a nearest-neighbour search over the measurement grid. It can interpolate between neighbouring measurements or return the exact stored filter. Your code then applies the delays and convolves the audio with the impulse responses.\n\nThe author wrote it to support MySofa, work on designing personal HRTFs, since a filter measured on your own head tends to localise better than a generic one. The idea underneath is that hearing direction is mostly filtering, and a SOFA file is a lookup table of those filters. This makes it a good door into how ears localise sound.\n\nIt is a library rather than a program. The formula also installs an executable called mysofa2json, but the README does not describe it.",
+  "install": "brew install libmysofa\n# To build from source instead you need CMake, a C compiler, zlib headers and CUnit. No hardware or account is needed, but you need a .sofa file to read.",
+  "try_this": [
+   {
+    "cmd": "mysofa2json --help",
+    "what_happens": "Prints whatever usage the tool offers. The README does not document it, so this is the safest way to see what it does."
+   },
+   {
+    "cmd": "ctest -j8",
+    "what_happens": "Runs the test suite from a source build, which exercises reading real SOFA data."
+   }
+  ],
+  "whats_unique": "It goes beyond parsing the file and gives a ready lookup: ask for a direction and it returns an interpolated filter with delays. It also has a cached open that shares one copy of an HRTF across handles.",
+  "caveats": "Activity is hard to confirm from the README, which still mentions Ubuntu 14.04 CI and has references from 2017, and mysofa2json is undocumented there.",
+  "commitment": "afternoon",
+  "category": "sound-and-live-coding",
+  "tags": [
+   "afternoon",
+   "audio",
+   "library",
+   "hrtf",
+   "spatial-audio",
+   "c"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/hoene/libmysofa"
+   },
+   {
+    "label": "MySofa project site",
+    "url": "https://mysofa.audio/"
+   },
+   {
+    "label": "AES Convention Paper 9764, MySofa: Design Your Personal HRTF",
+    "url": "http://www.aes.org/e-lib/browse.cfm?elib=18640"
+   }
+  ]
+ }
+}

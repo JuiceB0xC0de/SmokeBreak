@@ -1,0 +1,142 @@
+{
+ "name": "crosstool-ng",
+ "desc": "Tool for building toolchains",
+ "homepage": "https://crosstool-ng.github.io/",
+ "installs_365d": 604,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "tui",
+  "library"
+ ],
+ "why": "Building cross-compilation toolchains from scratch reveals how compilers, libcs, and targets are actually assembled.",
+ "brief": {
+  "what_it_is": "Crosstool-NG is a generator for cross toolchains, the set of compiler, assembler, linker and C library that builds code for a different target machine than the one it runs on. Per the homepage it supports many architectures and components and has a menuconfig-style interface for choosing them. The README says the toolchain it produces will compile, assemble and link the code being developed, and that some pieces, such as static libraries, can end up inside the resulting binaries. Its command is ct-ng, which the README says is actually a make(2) script underneath. The README does not spell out the exact inputs and outputs beyond this, so treat the specifics of the configuration step as coming from the homepage description only.",
+  "why_it_exists": "The homepage calls it a versatile (cross) toolchain generator with a simple yet powerful menuconfig-style interface. The README's framing is that toolchains are an essential component of a software development project and that the project aims at building them.",
+  "how_it_works": "ct-ng is a make-driven script, and the README warns that ct-ng --help prints make's help instead, with no clean workaround. The install docs describe a working directory where you run ct-ng help, which suggests you configure and build from there. The docs index lists sections on configuring, building the toolchain, toolchain types and how a toolchain is constructed, but I did not open those pages, so I cannot describe the build mechanism beyond that.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/crosstool-ng/crosstool-ng",
+    "context": "From the README, clones the repository. The install docs say to use this when you want the current development version rather than a released tarball."
+   },
+   {
+    "cmd": "./bootstrap",
+    "context": "From the install docs, run before configure when building from a git clone."
+   },
+   {
+    "cmd": "./configure --prefix=/some/place",
+    "context": "From the install docs, the standard configure step for installing into a chosen prefix, after unpacking a release tarball."
+   },
+   {
+    "cmd": "make",
+    "context": "From the install docs, builds crosstool-NG after configure."
+   },
+   {
+    "cmd": "make install",
+    "context": "From the install docs, installs the built crosstool-NG into the configured prefix."
+   },
+   {
+    "cmd": "export PATH=\"${PATH}:/some/place/bin\"",
+    "context": "From the install docs, adds the install bin directory to PATH."
+   },
+   {
+    "cmd": "ct-ng help",
+    "context": "From the install docs, run inside a fresh work-dir to get crosstool-NG's own help. The README warns that ct-ng --help gives make's help instead."
+   },
+   {
+    "cmd": "./configure --enable-local",
+    "context": "From the install docs, the 'hacker's way': configure so crosstool-NG runs from the source directory without installing it."
+   },
+   {
+    "cmd": "./configure --prefix=/usr",
+    "context": "From the install docs, configure for packaging, paired with DESTDIR below."
+   },
+   {
+    "cmd": "make DESTDIR=/packaging/place install",
+    "context": "From the install docs, installs into a staging directory for packagers rather than the root filesystem."
+   }
+  ],
+  "install_notes": "Beyond a package manager install, the docs say to first install extra host OS packages, since not all dependencies are detected by the configure script and missing ones may later make ct-ng build fail; the docs link per-distro instructions. You can use a released tarball (bz2 or xz, with PGP signatures from named maintainers since 1.21.0) or clone the git repo, which needs ./bootstrap before configure. You can either install it and discard the sources, or run it from the source directory with --enable-local, in which case the sources must be kept. Install creates a working directory for builds, and a man page for ct-ng is installed. Bash completion is not installed automatically; you copy bash-completion/ct-ng system-wide or per user.",
+  "standout": "The fact that ct-ng is a make script, so asking it for --help gets you make's help, is a memorable quirk the README flags openly. The project also documents its own install paths for running from a source tree, which suits people who want to hack on the toolchain builder itself.",
+  "status": "maintained. The homepage news lists a release of 1.29.0 dated Aug 23, 2026, with a 1.28.0 release dated Sep 6, 2025 further down, so the dates on the page are not in order. The homepage also has an Aug 11, 2026 post about AI bots hitting its web infrastructure. I did not check commit dates or the release page, so 'maintained' rests on the news items.",
+  "caveats": "The README warns that ct-ng --help shows make's help, not crosstool-NG's own. Not all host dependencies are detected by configure, so ct-ng build can fail later. Old Mercurial repositories are read-only. Contributed code in contrib/ is unmerged and comes with no guarantee it applies or works. The README says bug reports lacking required information get closed without explanation. I did not find the license in the pages I read. The install docs are Linux-oriented and link per-distro setup, but I did not check other platforms.",
+  "quotes": [
+   "Crosstool-NG is a versatile (cross) toolchain generator.",
+   "It supports many architectures and components and has a simple yet powerful menuconfig-style interface.",
+   "Note: If you call `ct-ng --help` you will get help for `make(2)`. This is because ct-ng is in fact a `make(2)` script. There is no clean workaround for this.",
+   "Aloha! :-)"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://crosstool-ng.github.io/"
+   },
+   {
+    "label": "Documentation",
+    "url": "http://crosstool-ng.github.io/docs/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/crosstool-ng/crosstool-ng"
+   }
+  ],
+  "fetch_log": [
+   "https://crosstool-ng.github.io/ - worked (homepage with news items)",
+   "https://github.com/crosstool-ng/crosstool-ng - worked (README returned)",
+   "http://crosstool-ng.github.io/docs/ - worked (table of contents only, no commands)",
+   "http://crosstool-ng.github.io/docs/install/ - worked (installation instructions, source of most commands_seen)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It assembles cross-compilation toolchains from configurable compiler, linker, and libc pieces, making the host/target boundary tangible and worth exploring."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "crosstool-NG",
+  "tldr": "A menuconfig-driven generator that builds a complete cross-compiler toolchain (compiler, linker, C library) for a machine other than the one you're on.",
+  "deeper_look": "Crosstool-NG builds cross toolchains: the compiler, assembler, linker and C library needed to produce code for a different target than the host it runs on. The homepage calls it \"a versatile (cross) toolchain generator\" that \"supports many architectures and components and has a simple yet powerful menuconfig-style interface.\" You pick a target and the parts you want in a text menu, then it builds the whole stack.\n\nThe reason it exists is stated plainly in the README: toolchains are an essential component of a software development project, and the project aims at building them. Anyone targeting a router, a microcontroller board or an odd embedded Linux device needs one, and assembling the pieces by hand means matching versions of binutils, a compiler and a libc that all have to agree.\n\nThe idea underneath is that a toolchain is not a single program but a bootstrapped chain of them. Watching one get built shows how the pieces depend on each other. The docs index has sections on configuring, building, toolchain types and how a toolchain is constructed, though the brief did not cover their contents.\n\nct-ng is, in the README's words, a make script underneath. That explains its quirks and also makes it approachable if you want to read how it works.",
+  "install": "brew install crosstool-ng\n# The docs say not all host dependencies are detected by configure, so a missing package can make a later ct-ng build fail. Check the per-distro setup notes linked from the install docs.",
+  "try_this": [
+   {
+    "cmd": "ct-ng help",
+    "what_happens": "Prints crosstool-NG's own help, best run inside a fresh work directory, per the install docs."
+   },
+   {
+    "cmd": "ct-ng --help",
+    "what_happens": "Prints make's help instead, because ct-ng is a make script. The README says there is no clean workaround."
+   }
+  ],
+  "whats_unique": "It turns the assembly of an entire cross toolchain into a menuconfig-style choice list. It is also openly a make script, a quirk the README documents itself.",
+  "caveats": "Configure does not detect every host dependency, so a build can fail later, and the install docs are Linux-oriented; other platforms were not checked.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "toolchain",
+   "cross-compilation",
+   "compiler",
+   "tui",
+   "embedded"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://crosstool-ng.github.io/"
+   },
+   {
+    "label": "Documentation",
+    "url": "http://crosstool-ng.github.io/docs/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/crosstool-ng/crosstool-ng"
+   }
+  ]
+ }
+}

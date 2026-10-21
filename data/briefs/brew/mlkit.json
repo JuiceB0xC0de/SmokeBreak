@@ -1,0 +1,94 @@
+{
+ "name": "mlkit",
+ "desc": "Compiler for the Standard ML programming language",
+ "homepage": "https://melsman.github.io/mlkit",
+ "installs_365d": 48,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language",
+  "library"
+ ],
+ "why": "A Standard ML compiler is a rare, academic language implementation with a strong old-school flavour worth a detour.",
+ "brief": {
+  "what_it_is": "MLKit is a compiler toolkit for Standard ML. Its native backend (x64 on Linux, arm64 on Apple Silicon macOS) takes SML source and produces native executables, using region inference to decide where memory is allocated and freed, with optional reference-tracing garbage collection. It also ships an interactive REPL (run mlkit with no arguments), a region profiler, and ReML, a variant that adds explicit regions and effects to SML. A sibling backend, SMLtoJs, compiles SML to JavaScript for browsers, and the repo includes Barry, a source-to-source tool that eliminates modules.",
+  "why_it_exists": "The homepage presents it as a way to compile Standard ML to native code with region-based memory management and to give programmers more control over allocation and memory use (via ReML's explicit regions). The README describes it as covering all of Standard ML as defined in the 1997 Definition, plus most of the Standard ML Basis Library.",
+  "how_it_works": "Memory allocation and deallocation directives are inferred by the compiler from program analyses about lifetimes and storage layout, which is the region-inference scheme. Region inference can be combined with reference-tracing garbage collection for better memory behaviour, or the GC can be disabled to avoid unbounded pauses for real-time work. Modules are removed at compile time by a scheme called Static Interpretation.",
+  "commands_seen": [
+   {
+    "cmd": "./autobuild",
+    "context": "Run once after checking out the sources from GitHub, before configure."
+   },
+   {
+    "cmd": "./configure --with-compiler=mlkit",
+    "context": "Linux build using an existing MLKit as the seed compiler (tested with 1Gb RAM); the alternative is plain ./configure, which uses MLton."
+   },
+   {
+    "cmd": "make mlkit",
+    "context": "Builds the MLKit compiler from the configured source tree."
+   },
+   {
+    "cmd": "make mlkit_libs",
+    "context": "Pre-compiles the Basis library and kit-library."
+   },
+   {
+    "cmd": "make bootstrap && make mlkit_libs",
+    "context": "Optional step that compiles the compiler with itself; the README says it takes some time."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "System-wide install after compilation, including man pages and tools."
+   },
+   {
+    "cmd": "mlkit helloworld.sml",
+    "context": "Run inside a copy of /usr/share/mlkit/kitdemo to test the install; should produce an executable called run."
+   },
+   {
+    "cmd": "./run",
+    "context": "Runs the executable MLKit produced; prints 'hello world'."
+   },
+   {
+    "cmd": "mlkit -V",
+    "context": "Version check that the README shows for a working MLKit seed compiler."
+   },
+   {
+    "cmd": "SML_LIB=$PWD bin/mlkit",
+    "context": "Runs MLKit from the build directory without installing; SML_LIB must point at the build dir containing basis and lib."
+   }
+  ],
+  "install_notes": "The README says MLKit is not currently available through Homebrew, so the brew install route in this catalogue entry is not what the project documents. Install from a binary tarball: mlkit-bin-dist-darwin.tgz for Apple Silicon macOS or mlkit-bin-dist-linux.tgz for x64 Linux, from the latest GitHub release, then run make install in the unpacked directory (optionally PREFIX=... make install). Intel macOS is no longer supported. Building from source needs an existing SML compiler (MLton or a working MLKit >= 4.3.0) and gcc for the runtime; the README says Linux builds need Ubuntu, Debian, Gentoo or similar. On Apple Silicon, building from source needs Xcode command-line tools, Autoconf, and a native arm64 MLKit v4.7.23 or newer on PATH; the published v4.7.23 arm64 binaries require macOS 26 or newer, and the checkout path must have no spaces. Set SML_LIB to the checkout when running build outputs.",
+  "standout": "Few production-quality compilers for a functional language can point to inferred region-based memory management alongside an optional tracing GC, and ReML lets programmers write regions and effects by hand. The compiler also bootstraps itself (about 80,000 lines of SML) and ships a graphical region profiler.",
+  "status": "Maintained, from the evidence I saw. The homepage news lists MLKit 4.7.17 released 2025-12-16 and a revised manual. The GitHub README refers to v4.7.23 as a current requirement for the arm64 build and mentions macOS 26, and it describes a new arm64 backend. It has a CI badge. I did not check commit dates or the releases page, so exact recency is unverified.",
+  "caveats": "Not on Homebrew, despite the catalogue's brew-based packaging: install is a tarball plus make install. Intel macOS is no longer supported. Building from source is involved: it needs a seed compiler (MLton or an existing MLKit), specific RAM notes, and for macOS a recent arm64 MLKit and macOS 26 for the published binaries. ReML supports parallel threads but not reference-tracing GC. The homepage says the GPLv2 covers the compiler, while the runtime and libraries are MIT-licensed. The README mentions known bugs and limitations on a separate page, which I did not read. The README also says Linux is the tested platform and FreeBSD works only with tweaks.",
+  "quotes": [
+   "Compile Standard ML to native code with region-based memory management.",
+   "Memory allocation directives (both allocation and deallocation) are inferred by the compiler, which uses a number of program analyses concerning lifetimes and storage layout. The MLKit compiler is unique among ML implementations in this respect.",
+   "MLKit is not currently available through Homebrew."
+  ],
+  "links": [
+   {
+    "label": "MLKit homepage",
+    "url": "https://melsman.github.io/mlkit"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/melsman/mlkit"
+   },
+   {
+    "label": "Programming with Regions in the MLKit (PDF guide)",
+    "url": "https://github.com/melsman/mlkit/raw/master/doc/mlkit.pdf"
+   },
+   {
+    "label": "ReML",
+    "url": "https://melsman.github.io/mlkit"
+   }
+  ],
+  "fetch_log": [
+   "https://melsman.github.io/mlkit \u2014 worked; marketing homepage with feature list, news and links, but no install commands.",
+   "https://github.com/melsman/mlkit \u2014 worked; README returned with build, install and usage details. Used as the main source for commands and install notes."
+  ]
+ }
+}

@@ -1,0 +1,68 @@
+{
+ "name": "avra",
+ "desc": "Assembler for the Atmel AVR microcontroller family",
+ "homepage": "https://github.com/Ro5bert/avra",
+ "installs_365d": 94,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "library"
+ ],
+ "why": "Open AVR assembler; a close call, pairs with hardware hacking but the tool itself is a straightforward assembler.",
+ "brief": {
+  "what_it_is": "AVRA is a command-line assembler for Atmel AVR microcontrollers, written in C99. You give it an AVR assembly source file, such as mysource.S, and it writes an Intel HEX file named mysource.S.hex by default; the -o option changes that name. EEPROM data always goes to a separate file called program.eep.hex in Intel HEX format. It also writes a COFF file after a successful assembly so AVR Studio or another COFF-compatible debugger can simulate or emulate the program.",
+  "why_it_exists": "The README says AVRA is 'almost compatible with Atmel's own assembler, AVRASM32', and is designed 'to replace AVRASM32 without special changes in your current Atmel AVR Studio enviroment.' It adds features the author considered useful: extra preprocessor directives, more flexible macros, and build-time meta tags.",
+  "how_it_works": "AVRA reads the source in passes; the changelog mentions a second pass where variable values are kept. It adds extra directives (.define, .undef, .ifdef, .ifndef, .if, .else, .endif, .elif, .elseif, .warning) and enhanced macros that take bracketed parameters, with register pairs like r16:r17 and typed parameter suffixes such as _i and _16. Meta tags such as %DAY%, %MONTH%, %YEAR%, %HOUR% and %MINUTE% are replaced at assembly time, so a build can embed its own date or a serial number.",
+  "commands_seen": [
+   {
+    "cmd": "make",
+    "context": "Build step from the README: run in the project root to build the avra executable, which is produced at src/avra."
+   },
+   {
+    "cmd": "make install",
+    "context": "Install step from the README, run after make to install the built avra binary."
+   },
+   {
+    "cmd": "avra mysource.S",
+    "context": "From USAGE.md: basic usage. Compiles the source file and writes the result in Intel HEX format to mysource.S.hex."
+   },
+   {
+    "cmd": "avra -W NoRegDef",
+    "context": "From USAGE.md: suppresses register reassignment warnings, the only warning class the docs say can be suppressed."
+   }
+  ],
+  "install_notes": "Beyond brew install: build from source with make in the project root (binary at src/avra), then optionally make install. The default make OS is linux, which assumes a typical GNU toolchain; other platform files live in src/makefiles, and you override OS when calling make. The README says those other platforms are not all well tested. Building on Windows with MS Visual Studio 2019 needs additional files, pointed to by an external gist. No accounts, runtimes or hardware are mentioned.",
+  "standout": "AVRA is a drop-in-style replacement for Atmel's AVRASM32 that keeps its command-line conventions so it works inside AVR Studio, and it adds C-style preprocessor directives and overloaded, typed macros that accept multi-register operands like a:b. Its macro features are the main thing separating it from a plain assembler.",
+  "status": "quiet. The README lists the latest release as 1.4.2 (2020-07-18), and the changelog's newest entry is from that date. The README also says the project sat inactive for eight years before Virgil Dupras took it over to prepare v1.4. I did not see a last-commit date, so I cannot say more than that.",
+  "caveats": "Not all AVRASM32 command-line options are supported, and the -e eeprom file option is not supported; EEPROM always goes to program.eep.hex. Only Intel HEX output is supported. Forward references are not supported for .ifdef and .ifndef. The README says it is only 'almost compatible' with AVRASM32. Building outside Linux may need extra work, and the README says the non-Linux platform files are not all well tested. Windows builds need MS Visual Studio 2019 and extra files from an external gist. The README does not state a license in the parts I fetched, so check the repo before reusing the code.",
+  "quotes": [
+   "AVRA is an assembler for Atmel AVR microcontrollers, and it is almost compatible with Atmel's own assembler, AVRASM32.",
+   "Basically, AVRA is designed to replace AVRASM32 without special changes in your current Atmel AVR Studio enviroment.",
+   "AVRA creates a coff file everytime assembly is sucessful. This file allows AVR Studio or any coff compatible debugger to simulate or emulate the program.",
+   "If you have problems compiling AVRA, please open an issue in the tracker."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/Ro5bert/avra"
+   },
+   {
+    "label": "USAGE.md (directives, macros, usage)",
+    "url": "https://github.com/Ro5bert/avra/blob/master/USAGE.md"
+   },
+   {
+    "label": "CHANGELOG.md (release history)",
+    "url": "https://github.com/Ro5bert/avra/blob/master/CHANGELOG.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/Ro5bert/avra (homepage, README returned, worked)",
+   "https://github.com/Ro5bert/avra/blob/master/USAGE.md (worked, returned GitHub page with the USAGE text)",
+   "https://github.com/Ro5bert/avra/blob/master/CHANGELOG.md (worked, returned GitHub page with the changelog text)"
+  ]
+ }
+}

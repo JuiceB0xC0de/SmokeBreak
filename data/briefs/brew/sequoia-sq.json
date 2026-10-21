@@ -1,0 +1,95 @@
+{
+ "name": "sequoia-sq",
+ "desc": "Sequoia-PGP command-line tool",
+ "homepage": "https://sequoia-pgp.org",
+ "installs_365d": 577,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "protocol",
+  "library"
+ ],
+ "why": "A modern OpenPGP implementation with a CLI; the packet format it exposes is a worthwhile door, though it is a close call.",
+ "brief": {
+  "what_it_is": "sq is the command-line frontend for Sequoia, a Rust implementation of OpenPGP, installed as the executable 'sq'. It covers common OpenPGP tasks: encrypt and decrypt messages, sign and verify messages or detached signatures, download a file and check its signature, generate and manipulate keys and certificates, query keyrings, look up or publish certs over the network, and inspect any OpenPGP data (similar to file(1)). Inputs are files, stdin, URLs or keyrings, in binary or ASCII-armored form, and the tool handles armor automatically. Output is ASCII-armored by default. The homepage says Sequoia is a new OpenPGP library focused on safety and correctness and written in a memory-safe language.",
+  "why_it_exists": "The homepage frames Sequoia as 'a new OpenPGP Library' with a focus on safety and correctness, and says improving the security of OpenPGP users 'requires more than a new implementation', so the project is also improving the surrounding ecosystem. The sq manual pitches the CLI as a tool that makes OpenPGP usable for ordinary tasks and offers a Web of Trust authentication model as an alternative to X.509 certificate authorities.",
+  "how_it_works": "Commands are grouped into subcommands (encrypt, decrypt, sign, verify, download, inspect, cert, key, pki, network, keyring, packet, config, toc, version). The interface is not fully stateless: it uses a default certificate store under $HOME/.local/share/pgp.cert.d and a key store server under $HOME/.local/share/sequoia/keystore, which sq starts if none is running. Verification succeeds only if there are no bad signatures and the count of good ones meets the --signatures threshold. The CLI is versioned and --cli-version can pin an interface version. The --time and --policy-as-of flags let you verify or inspect data as of a past reference time.",
+  "commands_seen": [
+   {
+    "cmd": "sq encrypt --for-email=alice@example.org --signer-email=juliet@example.org document.txt",
+    "context": "Encrypts document.txt for a recipient looked up by email address and signs it with a second key identified by email."
+   },
+   {
+    "cmd": "sq decrypt --recipient-file juliet-secret.pgp ciphertext.pgp",
+    "context": "Decrypts ciphertext.pgp using a secret key file as the recipient key."
+   },
+   {
+    "cmd": "sq decrypt --recipient-file juliet-secret.pgp --signer-file romeo.pgp ciphertext.pgp",
+    "context": "Decrypts and also checks any signatures against the supplied signer certificate file. Verification only passes if signatures are good."
+   },
+   {
+    "cmd": "sq sign --signer-file juliet-secret.pgp --signature-file=document.txt.sig document.txt",
+    "context": "Creates a detached signature for document.txt in document.txt.sig. The manual wraps this line; it is joined here."
+   },
+   {
+    "cmd": "sq verify --signature-file=document.sig document.txt",
+    "context": "Verifies a detached signature document.sig against document.txt."
+   },
+   {
+    "cmd": "sq verify --time 2024-06-19 --message document.pgp",
+    "context": "Verifies a signed message as of June 19, 2024 at midnight UTC, using the reference time flag."
+   },
+   {
+    "cmd": "sq --policy-as-of 20070101 verify --message msg.pgp",
+    "context": "Verifies a message under the cryptographic policy as of January 1, 2007. The manual warns that this should only be used when you are confident the message has not been tampered with."
+   },
+   {
+    "cmd": "sq download --url=file://debian/SHA512SUMS --signature-url=file://debian/SHA512SUMS.sign --signer=DF9B9C49EAA9298432589D76DA87E80D6294BE9B --output=SHA512SUMS",
+    "context": "Downloads the Debian 12 checksum file and its signature, checks the signature against the given signer fingerprint, and writes the output. The manual wraps this line; it is joined here."
+   },
+   {
+    "cmd": "sq inspect --time 20130721 juliet.pgp",
+    "context": "Shows how a certificate looked on July 21, 2013, by inspecting it at a past reference time."
+   },
+   {
+    "cmd": "sq inspect message.pgp",
+    "context": "Describes an encrypted message in human-readable form, like file(1) does for other formats."
+   }
+  ],
+  "install_notes": "The GitLab README is only a one-line description plus the license, with no install steps seen, so no build or runtime requirements were visible beyond what the manual says. Default config lives at $HOME/.config/sequoia/sq/config.toml, and a config template can be created with sq config. A key store server starts automatically on first use unless --key-store=none is passed. The manual says sq uses the 'default' home unless --home is set, and --home or SEQUOIA_HOME can isolate its data. Nothing Homebrew-specific was seen.",
+  "standout": "Unlike many OpenPGP tools, sq treats time as a first-class input: --time and --policy-as-of let you inspect or verify data as of any past date, and sq download fetches and authenticates a file in one step. The manual also says sq packet dump is useful as a learning tool for the OpenPGP packet format, which matches the scout's note that the packet layer is the most interesting door, though this is a close call since the other features are more conventional.",
+  "status": "maintained. The homepage news includes posts dated January 12, 2026 and February 3, 2026. The manual is for version 1.5.0 and says the CLI interface is at version 1.5.0. The GitLab project was created February 17, 2023. No release date for 1.5.0 or last-commit date was visible.",
+  "caveats": "A January 2026 post on the Sequoia blog responds to a 39C3 talk ('To sign or not to sign') that reported vulnerabilities in GnuPG, Sequoia, age and minisign. The author argues the attack on sq came from a literal translation of gpg commands into sq commands, with the user ignoring sq's output, and says the ecosystem still needs to improve. Verification output is withheld: when a failed check writes to stdout, the last 25 MiB are withheld. The license is shown on GitLab as 'GNU Library General Public License v2 only', which is the LGPL-2.0-only name. The README is thin and the detailed docs live in the manual and the book, which I did not fetch. The homepage is mostly marketing and testimonials.",
+  "quotes": [
+   "A command-line frontend for Sequoia, an implementation of OpenPGP.",
+   "sq packet dump may be helpful to a wider audience both to provide valuable information in bug reports to OpenPGP-related software, and as a learning tool.",
+   "A command line application exposing a useful set of OpenPGP functionality for common tasks."
+  ],
+  "links": [
+   {
+    "label": "Sequoia-PGP homepage",
+    "url": "https://sequoia-pgp.org"
+   },
+   {
+    "label": "sequoia-sq source repository (GitLab)",
+    "url": "https://gitlab.com/sequoia-pgp/sequoia-sq"
+   },
+   {
+    "label": "sq manual pages",
+    "url": "https://sequoia-pgp.gitlab.io/sequoia-sq/"
+   },
+   {
+    "label": "Sequoia book (linked from the manual)",
+    "url": "https://book.sequoia-pgp.org/"
+   }
+  ],
+  "fetch_log": [
+   "https://sequoia-pgp.org: worked, but it is mostly marketing and testimonials with no sq command lines, so I followed to the repository.",
+   "https://gitlab.com/sequoia-pgp/sequoia-sq: worked, but the README is only a one-line description and the license, so I followed to the manual.",
+   "https://sequoia-pgp.gitlab.io/sequoia-sq/: worked, and it is the full sq manual page for version 1.5.0. Used for commands and behaviour. The linked book was not fetched."
+  ]
+ }
+}

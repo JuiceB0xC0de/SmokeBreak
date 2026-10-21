@@ -1,0 +1,104 @@
+{
+ "name": "radvd",
+ "desc": "IPv6 Router Advertisement Daemon",
+ "homepage": "https://radvd.litech.org/",
+ "installs_365d": 40,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "afternoon"
+ ],
+ "why": "IPv6 Router Advertisement daemon is a real door into SLAAC and NDP, the quiet protocol running every IPv6 network.",
+ "brief": {
+  "what_it_is": "radvd is the IPv6 Router Advertisement Daemon, a small server run on a Linux or BSD machine acting as an IPv6 router. It listens for Router Solicitation messages and sends Router Advertisement messages (RFC 4861) onto the local LAN, both periodically and when a host asks. Its input is a configuration file (radvd.conf) describing prefixes, lifetimes, DNS options and similar settings for each interface. Its output is the advertisements themselves, which let hosts configure their own addresses and pick a default router. The package also ships radvdump, a companion tool that dumps the Router Advertisements it sees on the wire.",
+  "why_it_exists": "The homepage says radvd is run by Linux or BSD systems acting as IPv6 routers and that its messages are required for IPv6 stateless autoconfiguration. The GitHub README adds that hosts can then configure addresses and other parameters automatically and choose a default router from these advertisements.",
+  "how_it_works": "radvd sends Router Advertisements periodically to the all-routers multicast group and answers Router Solicitations from hosts. Each advertisement carries the options the admin configured, such as prefixes, lifetimes, route information, and DNS (RDNSS and DNSSL) entries. The README's FAQ stresses the design philosophy: radvd only advertises, and it does not assign addresses, configure routes, or run a routing or forwarding daemon. Those jobs are left to the admin or init scripts.",
+  "commands_seen": [
+   {
+    "cmd": "./configure --prefix=/usr/local --sysconfdir=/etc --mandir=/usr/share/man",
+    "context": "Build step from the GitHub README; the example install configuration, with prefix, sysconfdir and mandir set explicitly."
+   },
+   {
+    "cmd": "git clone https://github.com/radvd-project/radvd.git",
+    "context": "Clones the source repository from the homepage for development or building from source."
+   },
+   {
+    "cmd": "make install",
+    "context": "Named in the README prose as the step after building: 'Run make and make install'. On BSD the README says you may need gmake instead of make."
+   }
+  ],
+  "install_notes": "Build from source: run ./configure (see configure --help for options), then make and make install. On BSD you may need gmake. Release tarballs (tar.gz or tar.xz) come with signatures and sha256/sha512 checksums. Configuration is described in INTRO.html, radvd.conf(8) and radvd.conf.example, which are not reached from the pages I read. The README and CHANGES mention libcheck for the make check test target, but I did not confirm the exact build dependencies. The README does not mention hardware or accounts. Root or the required privileges are needed, since it opens raw ICMPv6 and netlink sockets, but I did not read this in the pages.",
+  "standout": "It is a single-purpose daemon that deliberately does less than the router-config tools people expect: it advertises prefixes and options but never configures interfaces or addresses. It is also the reference implementation many Linux distributions use for SLAAC and RDNSS, and its changelog goes back to 2001.",
+  "status": "maintained. The homepage lists release v2.21 dated 2026/05/25, with a changelog covering CVE-2026-48715 in radvdump, and the GitHub README's RFC key is dated 2026/07/04. The maintainer is listed as Robin Hugh Johnson, with previous maintainers named. I did not see a last-commit date.",
+  "caveats": "The homepage says Linux is supported and BSD mileage may vary. The GitHub README says Secure Neighbor Discovery (SEND) is not implemented at all, and several RFC items are only partial, including RFC 4861 shutdown behaviour and RFC 6775. radvd does not configure addresses, routes, or routing/forwarding, so admins must set those up themselves. The homepage cites RFC 2461 while the GitHub README cites RFC 4861, which is the current spec. The homepage's mailing lists and IRC channel are for development, not support. License not checked.",
+  "quotes": [
+   "The router advertisement daemon (radvd) is run by Linux or BSD systems acting as IPv6 routers.",
+   "radvd is the router advertisement daemon for IPv6.",
+   "Radvd is not a routing or forwarding daemon."
+  ],
+  "links": [
+   {
+    "label": "radvd homepage",
+    "url": "https://radvd.litech.org/"
+   },
+   {
+    "label": "radvd GitHub repository",
+    "url": "https://github.com/radvd-project/radvd"
+   }
+  ],
+  "fetch_log": [
+   "https://radvd.litech.org/ : worked, returned the project homepage with the release list and changelog",
+   "https://github.com/radvd-project/radvd : worked, returned the README with build instructions, FAQ and RFC implementation table"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "radvd makes IPv6\u2019s often-invisible SLAAC and neighbor-discovery machinery tangible by emitting and inspecting the router advertisements that let hosts configure themselves."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "radvd",
+  "tldr": "A small daemon that sends IPv6 Router Advertisements, the quiet messages that let every device on a LAN pick its own address and default router.",
+  "deeper_look": "radvd is the IPv6 Router Advertisement Daemon. It runs on a Linux or BSD machine acting as an IPv6 router, listens for Router Solicitation messages from hosts, and sends Router Advertisements (RFC 4861) onto the local network. It also sends them periodically to the all-routers multicast group. Its input is a configuration file, radvd.conf, which describes prefixes, lifetimes, route information and DNS options for each interface.\n\nThe advertisements are what make IPv6 stateless autoconfiguration work. A host joins a network, asks who the routers are, and gets back a prefix and a default router. It then builds its own address with no DHCP server involved. radvd can also hand out DNS servers and search domains through the RDNSS and DNSSL options. The project's own line is that its messages are required for IPv6 stateless autoconfiguration.\n\nThe design is deliberately narrow. The README's FAQ is blunt: \"Radvd is not a routing or forwarding daemon.\" It advertises, and it does not assign addresses, set up routes or enable forwarding. Those jobs are left to the admin or init scripts. That makes it a clear view of one small piece of Neighbor Discovery.\n\nThe package also ships radvdump, which dumps the Router Advertisements it sees on the wire. Between the two, you can both send and inspect the messages that every IPv6 network sends constantly. The changelog goes back to 2001, and the project is still maintained.",
+  "install": "brew install radvd\n# Needs root or equivalent privileges to open raw ICMPv6 sockets, and a Linux or BSD router setup to be useful. Homebrew may not be the natural route here; the project builds from source with ./configure, make and make install.",
+  "try_this": [
+   {
+    "cmd": "radvd --help",
+    "what_happens": "Lists the daemon's command-line options, including how to point it at a configuration file."
+   },
+   {
+    "cmd": "radvdump --help",
+    "what_happens": "Shows the options for the companion tool that prints Router Advertisements seen on the wire."
+   }
+  ],
+  "whats_unique": "It does one job, advertising prefixes and options, and refuses to configure interfaces, addresses or routes. It is also the long-running reference daemon for SLAAC and RDNSS on many Linux systems.",
+  "caveats": "Linux is the supported platform and BSD mileage may vary; Secure Neighbor Discovery (SEND) is not implemented, and you must set up addresses, routes and forwarding yourself.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "ipv6",
+   "networking",
+   "protocol",
+   "ndp",
+   "slaac",
+   "daemon"
+  ],
+  "links": [
+   {
+    "label": "radvd homepage",
+    "url": "https://radvd.litech.org/"
+   },
+   {
+    "label": "radvd GitHub repository",
+    "url": "https://github.com/radvd-project/radvd"
+   }
+  ]
+ }
+}

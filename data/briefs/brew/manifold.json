@@ -1,0 +1,90 @@
+{
+ "name": "manifold",
+ "desc": "Geometry library for topological robustness",
+ "homepage": "https://github.com/elalish/manifold",
+ "installs_365d": 173,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "library",
+  "math",
+  "visual",
+  "afternoon"
+ ],
+ "why": "A robust geometry kernel for manifold meshes, close to the mathematics of solids and worth a deeper look.",
+ "brief": {
+  "what_it_is": "Manifold is a C++ geometry library for creating and operating on manifold triangle meshes, meaning meshes that represent closed solid objects. It takes in manifold meshes, which it can build with OpenSCAD-style constructors or from signed-distance functions via a level-set function, or external mesh data, which it rejects with an error status if the mesh is not manifold. It outputs manifold meshes from Boolean operations (union, difference and similar), smoothing and refinement, and file I/O. It has bindings for C, JS/TS via WASM, Python, and several other languages.",
+  "why_it_exists": "The author says the primary goal is reliability: \"guaranteed manifold output without caveats or edge cases.\" The secondary goal is performance through parallelization. The README calls a robust mesh Boolean algorithm \"an open problem for many years\" and claims the guaranteed-manifold Boolean is possibly the first of its kind.",
+  "how_it_works": "The core is a guaranteed-manifold mesh Boolean algorithm, which the README describes as the library's most significant contribution and as the basis for a CAD kernel. It uses vertex properties and IDs to track materials and which input object or face each surface came from. Parallelism comes through TBB when enabled, with a serial fallback for small problems and a serial-only WASM build. The README gives no deeper algorithm detail beyond links to the wiki.",
+  "commands_seen": [
+   {
+    "cmd": "git clone --recurse-submodules https://github.com/elalish/manifold.git",
+    "context": "Clones the repository with submodules, the first step of the Ubuntu-style build and test sequence."
+   },
+   {
+    "cmd": "cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON .. && make",
+    "context": "Configures a Release build with shared libraries from inside the build directory, then compiles it."
+   },
+   {
+    "cmd": "make test",
+    "context": "Runs the unit test suite after the build."
+   },
+   {
+    "cmd": "brew install nodejs",
+    "context": "macOS step for the WASM build: installs Node.js."
+   },
+   {
+    "cmd": "brew install emscripten",
+    "context": "macOS step for the WASM build: installs the Emscripten toolchain."
+   },
+   {
+    "cmd": "emcmake cmake -DCMAKE_BUILD_TYPE=MinSizeRel .. && emmake make",
+    "context": "Configures and builds the JS WASM library inside a buildWASM directory."
+   },
+   {
+    "cmd": "node ./manifold_test.js",
+    "context": "Runs the WASM test file from the test directory of the WASM build."
+   },
+   {
+    "cmd": "python3 run_all.py -e",
+    "context": "Runs the Python binding examples to export sample models; the README says to install trimesh and pytest first."
+   },
+   {
+    "cmd": "cmake . -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DMANIFOLD_DEBUG=ON -DMANIFOLD_PAR=${{matrix.parallel_backend}} -A x64 -B build",
+    "context": "Windows-oriented configure example taken from the CI workflow; the README notes the matrix variable is a CI placeholder."
+   },
+   {
+    "cmd": "help(manifold3d)",
+    "context": "Run inside the Python interpreter after importing manifold3d to see the binding documentation."
+   }
+  ],
+  "install_notes": "Only CMake, a C++ compiler, and Python are needed to build the core (tested with GCC, LLVM and MSVC). Optional dependencies add features: TBB for parallelism (strongly encouraged), Nanobind for Python bindings, Emscripten for JS/WASM, GTest for tests, Assimp for extras utilities, and Tracy for profiling. Missing dependencies are downloaded by default (MANIFOLD_DOWNLOADS=ON), and offline builds can point FETCHCONTENT_SOURCE_DIR_* at local sources. Package managers: vcpkg for C++, npm (manifold-3d), PyPI (manifold3d), Maven, NuGet, crates.io and others. Windows users are advised to build with -DBUILD_SHARED_LIBS=OFF. The WASM build needs Node.js plus Emscripten, installed via brew on macOS or emsdk on Linux. The CI workflow manifold.yml is the reference for platform-specific steps.",
+  "standout": "Few mesh-Boolean tools promise guaranteed manifold output, and the README says it is probably the first to do so. The project also refuses to write STL files as a matter of design and points users to 3MF or glTF with the EXT_mesh_manifold extension instead. It has an unusually long user list (OpenSCAD, Blender, Godot, BRL-CAD and others), and the author says the OpenSCAD-style samples are a deliberate nod to his own OpenSCAD designs.",
+  "status": "Probably maintained, but the README gives no release or commit date and I did not check the repository's release page. Evidence of ongoing work: it includes recent features such as MANIFOLD_NO_IOSTREAM, the npm and PyPI packages are linked with version badges, a Rust port was added, and the CI setup is referenced. Treat the activity level as unverified.",
+  "caveats": "Inputs that are not manifold produce an error, and the README says the Merge function only fixes slightly non-manifold meshes, so some files will need external repair tools. STL export is discouraged because it loses topology. OBJ I/O is limited and mainly for testing. The WASM build is serial-only, and MANIFOLD_PAR with Emscripten is not recommended because of possible memory corruption. The built-in TBB option causes duplicate TBB copies if other libraries bundle their own, and the README warns against installing that build. MANIFOLD_ASSERT adds about 20% runtime overhead. Polygon triangulation is serial. The README does not state a license, so I could not check it.",
+  "quotes": [
+   "Our primary goal is reliability: guaranteed manifold output without caveats or edge cases.",
+   "This library is fast with guaranteed manifold output.",
+   "Please avoid saving to STL files! They are lossy and inefficient - when saving a manifold mesh to STL there is no guarantee that the re-imported mesh will still be manifold, as the topology is lost."
+  ],
+  "links": [
+   {
+    "label": "C++ Documentation",
+    "url": "https://manifoldcad.org/docs/html/classmanifold_1_1_manifold.html"
+   },
+   {
+    "label": "Algorithm Documentation (wiki)",
+    "url": "https://github.com/elalish/manifold/wiki/Manifold-Library"
+   },
+   {
+    "label": "ManifoldCAD web app",
+    "url": "https://manifoldcad.org"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/elalish/manifold (homepage, README returned successfully; no further fetches made because the README was complete)"
+  ]
+ }
+}

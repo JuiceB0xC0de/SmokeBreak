@@ -1,0 +1,79 @@
+{
+ "name": "libansilove",
+ "desc": "Library for converting ANSI, ASCII, and other formats to PNG",
+ "homepage": "https://www.ansilove.org",
+ "installs_365d": 339,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "library",
+  "visual",
+  "quick",
+  "ancient"
+ ],
+ "why": "Renders old BBS-era ANSI art and ASCII files into PNG, a transform that brings back a forgotten scene and its file formats.",
+ "brief": {
+  "what_it_is": "libansilove is a C library that converts ANSI art and other BBS-era text-mode art formats into PNG images. It reads .ANS (ANSi, including PabloDraw 24-bit color sequences), .PCB (PCBoard), .BIN (raw text-mode video memory), .ADF (Artworx), .IDF (iCE Draw), .TND (TundraDraw) and .XB (XBin) files and writes PNG output. It is a library, not a command-line tool: the README points to an example directory showing how to call it, and the separate Ansilove converter is built on top of it. It is built with CMake and needs the GD graphics library.",
+  "why_it_exists": "The README describes it as a library to convert ANSi and artscene related file formats into PNG images. The homepage says the conversion code was split out of Ansilove/C 3.0.9 so it could be a reusable C library rather than code tied to one command-line converter.",
+  "how_it_works": "The loaders parse each format's escape sequences, font data and palettes (including SAUCE metadata) and draw the characters onto a canvas. The canvas is then output as a PNG through GD. The project's changelog shows the loaders moved to state machines and got extensive format validation and fuzzing, which matters because these are untrusted input files.",
+  "commands_seen": [
+   {
+    "cmd": "mkdir build",
+    "context": "README build step: create a build directory (Compiling section)."
+   },
+   {
+    "cmd": "cd build",
+    "context": "README build step: enter the build directory."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "README build step: configure the project with CMake from the build directory."
+   },
+   {
+    "cmd": "make",
+    "context": "README build step: compile the library after configuring."
+   },
+   {
+    "cmd": "make install",
+    "context": "README Installation section: install the built library."
+   },
+   {
+    "cmd": "brew install cmake gd",
+    "context": "README dependency install on macOS, listed before the build steps."
+   },
+   {
+    "cmd": "apt-get install build-essential cmake libgd-dev",
+    "context": "README dependency install on Debian / Ubuntu / Mint."
+   }
+  ],
+  "install_notes": "Needs a C compiler, CMake and the GD library with header files (libgd-dev on Debian, gd-devel on Fedora, gd on Homebrew). Build with mkdir build, cd build, cmake .., make, then make install. The Homebrew formula exists, so brew install libansilove is the simple path; executables list is empty, so it installs a library rather than a runnable program. No accounts or runtime configuration are mentioned.",
+  "standout": "It is the reusable core behind a long-running artscene tool, with a history back to 2003 and a format list covering the main BBS-era art formats in one small C library. It also has bindings for Racket and is used by a PS3 viewer, PixelView and Abydos, so the same converter reaches places far from the original PHP web tool.",
+  "status": "maintained. The homepage lists libansilove 1.4.2 on March 24 2025 and the companion ansilove 4.2.2 converter on June 10 2026, with a new changelog entry in each recent release. I did not check commit dates on the GitHub repository.",
+  "caveats": "The scout's homepage (ansilove.org) is really the site for the Ansilove converter and its news; libansilove's own page is the GitHub README. The README has no separate documentation or API reference; usage is only shown through the example directory, which I did not open. Build pain is limited to needing CMake and GD. Licensed BSD 2-Clause. Only the formats listed in the README are supported; other formats are not mentioned.",
+  "quotes": [
+   "libansilove is a library to convert ANSi and artscene related file formats into PNG images.",
+   "libansilove uses the `CMake` build system and requires the `GD` library and header files.",
+   "almost 200 commits have been made since that release, to transform the conversion code into a reusable C library."
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://www.ansilove.org"
+   },
+   {
+    "label": "libansilove GitHub repository",
+    "url": "https://github.com/ansilove/libansilove"
+   },
+   {
+    "label": "Ansilove converter (built on libansilove)",
+    "url": "https://github.com/ansilove/ansilove"
+   }
+  ],
+  "fetch_log": [
+   "https://www.ansilove.org - worked; returned the Ansilove site news page with release history and changelogs, not a libansilove-specific page.",
+   "https://github.com/ansilove/libansilove - worked; returned the README, which I used as the main source. I did not follow the docs or example directory."
+  ]
+ }
+}

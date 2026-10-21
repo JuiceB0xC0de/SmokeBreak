@@ -1,0 +1,86 @@
+{
+ "name": "gts",
+ "desc": "GNU triangulated surface library",
+ "homepage": "https://gts.sourceforge.net/",
+ "installs_365d": 134024,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "math",
+  "library",
+  "science"
+ ],
+ "why": "A GNU library for triangulated surfaces and geometry operations, a real computational geometry toolkit though mostly hidden as a dependency.",
+ "brief": {
+  "what_it_is": "GTS (GNU Triangulated Surface Library) is a C library for working with 3D surfaces meshed from interconnected triangles. It offers object-oriented structures for topology, 2D Delaunay and constrained Delaunay triangulation, boolean set operations (union, intersection, difference) on surfaces, surface refinement and coarsening, isosurface extraction, and metric operations such as area, volume and curvature. Its inputs are triangulated surface files (its own GTS text format, plus STL via converters), and its outputs are transformed or analysed surfaces, converted files (DXF, OOGL, STL) and triangulations. The Debian-style executable list includes delaunay, gts-config, gts2dxf, gts2oogl, gts2stl, gtscheck, gtscompare, gtstemplate, happrox, stl2gts and transform.",
+  "why_it_exists": "The homepage says the initial goal was to provide 'a simple and efficient library to scientists dealing with 3D computational surface meshes', written in C with an object-oriented design based mostly on GTK+.",
+  "how_it_works": "The library is organised as a GTK-style object hierarchy (points, vertices, segments, edges, triangles, faces, surfaces) with inheritance and virtual functions. Boolean operations and point-in-surface tests use Simulation of Simplicity (SoS) to handle degenerate geometric cases, and the floating-point predicates use fast adaptive arithmetic adapted from Jonathan Shewchuk's work. Bounding-box and Kd-trees support point location and intersection tests.",
+  "commands_seen": [],
+  "install_notes": "The homepage lists a 'Debian packages' page, sample files, Python bindings, a Darcs repository and daily snapshots, and an installation instructions document, but I did not open these, so I have no build commands. Release notes say the library builds with glib 1.2.8 or later, with glib 2.4 or later autodetected, and that pkgconfig is preliminarily supported. The gts-config script is provided for compiling against the library, in the style of glib. Windows support was added in stages: MinGW, Cygwin and Microsoft C were each mentioned as preliminary.",
+  "standout": "It is a real computational geometry toolkit with robust exact-style predicates and SoS-based boolean operations, but it is mostly invisible to users because it usually arrives as a dependency. Its 2002 marching tetrahedra isosurface method was added to avoid the topological defects of marching cubes.",
+  "status": "quiet. The newest item on the homepage is Release 0.7.6 dated March 29th 2006, and the news section has no entries after that. The homepage says version control moved from CVS to Darcs in 2005. I could not check a repository or the Debian package, so I cannot confirm whether later work exists.",
+  "caveats": "The homepage looks dated, with 2006 as its latest release and SourceForge-era hosting. The library is LGPL-licensed. Release notes say boolean operations could still fail with nested closed loops inside one another, and that results could contain degenerate faces that block later boolean operations until they are collapsed. Release 0.7.6 forces LC_ALL=POSIX in its executables to avoid locale-dependent floating-point issues. The homepage gives no installation instructions in the main text, and the homepage was reached without errors.",
+  "quotes": [
+   "GTS stands for the GNU Triangulated Surface Library.",
+   "Careful attention is paid to performance related issues as the initial goal of GTS is to provide a simple and efficient library to scientists dealing with 3D computational surface meshes.",
+   "Robust set operations on surfaces (union, intersection, difference)."
+  ],
+  "links": [
+   {
+    "label": "GTS homepage",
+    "url": "https://gts.sourceforge.net/"
+   }
+  ],
+  "fetch_log": [
+   "https://gts.sourceforge.net/ - fetched OK; legacy HTML page with news, feature list and release history; sub-page links (installation, reference manual, Debian packages, bibliography) were not fetched because their URLs were not given in the page text."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A substantial computational-geometry toolkit whose robust mesh booleans, adaptive predicates, and isosurface extraction make triangulated surfaces worth exploring despite its age."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "GTS: the GNU Triangulated Surface Library",
+  "tldr": "A C library and small toolset for 3D triangle meshes, with robust boolean operations, Delaunay triangulation and STL conversion, hiding behind many other programs.",
+  "deeper_look": "GTS is a C library for surfaces made of interconnected triangles. It covers 2D Delaunay and constrained Delaunay triangulation, union, intersection and difference of surfaces, refinement and coarsening, isosurface extraction, and measurements such as area, volume and curvature. The brew formula also installs a handful of command-line tools built on it: stl2gts, gts2stl, gts2dxf, gts2oogl, gtscheck, gtscompare, delaunay, happrox and transform.\n\nThe homepage says it began as \"a simple and efficient library to scientists dealing with 3D computational surface meshes\". It is written in C with a GTK-style object hierarchy: points, vertices, segments, edges, triangles, faces and surfaces, with inheritance and virtual functions. Bounding-box trees and Kd-trees handle point location and intersection tests.\n\nThe interesting idea is how geometry code survives degenerate cases. Boolean operations and point-in-surface tests use Simulation of Simplicity, a technique that treats ties and coincident points as if the input were perturbed slightly, so the code does not need a pile of special cases. The floating-point predicates use fast adaptive arithmetic adapted from Jonathan Shewchuk's work. The isosurface code uses marching tetrahedra, added in 2002 to avoid the topological defects of marching cubes.\n\nMost people meet GTS as a dependency of something else. Installing it directly gives you the converters and checkers, and a way into the robustness problems of computational geometry.",
+  "install": "brew install gts\n# Needs glib, netpbm and gettext, which brew pulls in. To write your own code against it, gts-config supplies compile flags, in the style of glib.",
+  "try_this": [
+   {
+    "cmd": "gtscheck --help",
+    "what_happens": "Shows the options of the surface checker, which tests a GTS surface for problems such as degenerate or intersecting faces."
+   },
+   {
+    "cmd": "stl2gts --help",
+    "what_happens": "Shows how to convert an STL mesh into GTS's own text format."
+   },
+   {
+    "cmd": "delaunay --help",
+    "what_happens": "Shows how to build a Delaunay triangulation from a set of points."
+   }
+  ],
+  "whats_unique": "It is a small, old, exact-predicate geometry kernel with Simulation of Simplicity boolean operations, and its source is readable enough to learn from.",
+  "caveats": "The latest release on the homepage is 0.7.6 from March 2006, the site looks dated, and the release notes say boolean operations can fail on some nested closed loops or degenerate faces.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "math",
+   "geometry",
+   "mesh",
+   "library",
+   "c"
+  ],
+  "links": [
+   {
+    "label": "GTS homepage",
+    "url": "https://gts.sourceforge.net/"
+   }
+  ]
+ }
+}

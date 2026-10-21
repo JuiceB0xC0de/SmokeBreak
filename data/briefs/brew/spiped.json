@@ -1,0 +1,69 @@
+{
+ "name": "spiped",
+ "desc": "Secure pipe daemon",
+ "homepage": "https://www.tarsnap.com/spiped.html",
+ "installs_365d": 43,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "quick"
+ ],
+ "why": "Secure pipe daemon built on a small, unusual symmetric-key design, a neat door into how encrypted tunnels can be kept minimal.",
+ "brief": {
+  "what_it_is": "Spiped (pronounced \"ess-pipe-dee\") is a command-line daemon that creates symmetrically encrypted and authenticated pipes between socket addresses. You connect to one address, such as a UNIX socket on localhost, and spiped transparently sets up a connection to another address, such as a UNIX socket or TCP port on a different machine. The homepage describes it as similar to 'ssh -L' but without SSH, and it requires a pre-shared symmetric key. The two executables are spiped (the daemon, run in -d or -e mode) and spipe (a client used in SSH ProxyCommand setups).",
+  "why_it_exists": "The homepage frames it as a way to get an encrypted, authenticated tunnel without SSH or port-knocking-style firewalling. The author's own example is forwarding mail from many systems to a central SMTP server, and protecting an SSH daemon so that unauthenticated traffic never reaches it.",
+  "how_it_works": "Key negotiation uses HMAC-SHA256 and an authenticated Diffie-Hellman exchange over the standard 2048-bit group 14. After negotiation, packets are encrypted with AES-256 in CTR mode and authenticated with HMAC-SHA256. Because data is authenticated before being forwarded to the target, an attacker who cannot produce valid traffic never reaches the backend service.",
+  "commands_seen": [
+   {
+    "cmd": "dd if=/dev/urandom bs=32 count=1 of=keyfile",
+    "context": "Generates a 32-byte random pre-shared key file on the server."
+   },
+   {
+    "cmd": "spiped -d -s '[0.0.0.0]:8025' -t '[127.0.0.1]:25' -k keyfile",
+    "context": "Server side in decrypt mode: listens on port 8025 on all interfaces and forwards decrypted traffic to local port 25."
+   },
+   {
+    "cmd": "spiped -e -s '[127.0.0.1]:25' -t $SERVERNAME:8025 -k keyfile",
+    "context": "Client side in encrypt mode: listens locally on port 25 and sends encrypted traffic to the server's port 8025."
+   },
+   {
+    "cmd": "dd if=/dev/urandom bs=32 count=1 of=/etc/ssh/spiped.key",
+    "context": "SSH example: generates the 32-byte key on the SSH server."
+   },
+   {
+    "cmd": "spiped -d -s '[0.0.0.0]:8022' -t '[127.0.0.1]:22' -k /etc/ssh/spiped.key",
+    "context": "SSH example: server-side daemon listening on 8022 and forwarding to the local sshd on port 22."
+   },
+   {
+    "cmd": "ProxyCommand spipe -t %h:8022 -k ~/.ssh/spiped_%h_key",
+    "context": "Line added to ~/.ssh/config under a Host block so that ssh connects through the spipe client; the homepage suggests then firewalling tcp/22."
+   }
+  ],
+  "install_notes": "Beyond the package manager, the homepage describes first-run setup: generate a 32-byte random key with dd from /dev/urandom, copy that same key file to the client, then start spiped in -d mode on the server and -e mode on the client. For SSH use, the key goes in ~/.ssh/config via a ProxyCommand line. No accounts, runtimes or hardware are required. Official source tarballs are listed with SHA256 hashes, and third-party Docker and configuration-management helpers exist.",
+  "standout": "The design is minimal rather than novel: it uses conventional primitives (HMAC-SHA256, DH group 14, AES-256-CTR) and a pre-shared key, with the whole program around 6000 lines of C, under 2000 of them spiped-specific. The distinctive part is that it gives you ssh -L style forwarding with no SSH stack, small enough to read in an afternoon.",
+  "status": "Maintained, judging by the official releases list: spiped 1.6.4 was released 2025-04-02, after 1.6.3 on 2025-01-25 and 1.6.2 on 2021-12-24. I did not check the git repository or commit history, which the homepage links to only by name, so recent commit activity is unverified.",
+  "caveats": "The homepage gives no license, platform list, or build instructions. Performance is one data point from the author's 2.5 GHz Intel Core 2 laptop, roughly 300 Mbps. The claim that the code's simplicity makes vulnerabilities unlikely is the author's assertion, not an external audit. Pre-shared keys must be distributed out of band and protected. The homepage warns that third-party helper scripts are unendorsed and should be checked before use with sensitive data. Homepage was reachable.",
+  "quotes": [
+   "spiped is a utility for creating symmetrically encrypted and authenticated pipes between socket addresses",
+   "This is similar to 'ssh -L' functionality, but does not use SSH and requires a pre-shared symmetric key.",
+   "The simplicity of the code makes it unlikely that spiped has any security vulnerabilities."
+  ],
+  "links": [
+   {
+    "label": "spiped homepage (Tarsnap)",
+    "url": "https://www.tarsnap.com/spiped.html"
+   },
+   {
+    "label": "spiped mailing list",
+    "url": "mailto:spiped@tarsnap.com"
+   }
+  ],
+  "fetch_log": [
+   "https://www.tarsnap.com/spiped.html: loaded successfully, full page text returned. Linked git repository and third-party helper pages were not fetched."
+  ]
+ }
+}

@@ -1,0 +1,68 @@
+{
+ "name": "cvs-fast-export",
+ "desc": "Export an RCS or CVS history as a fast-import stream",
+ "homepage": "http://www.catb.org/~esr/cvs-fast-export/",
+ "installs_365d": 275,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "ancient",
+  "reverse-engineering"
+ ],
+ "why": "Converts decades-old CVS repository history into a git fast-import stream, a fossil-digging tool.",
+ "brief": {
+  "what_it_is": "cvs-fast-export is a command-line converter that reads RCS files or a CVS project repository (directories of ,v master files) and writes a Git fast-import stream to standard output. It groups the per-file commits and tags into per-project changesets, then emits them in topological order. The package also includes cvssync, which mirrors masters from a remote CVS host, and cvsconvert, which runs a trial conversion and checks it against the original. A DOT-format graph of the commit DAG for graphviz can also be produced.",
+  "why_it_exists": "The homepage describes it as a way to export an RCS or CVS history as a fast-import stream, and the man page says that plain conversions contain fossils that reposurgeon is good at cleaning up. The author frames the tool as the first stage of a conversion, with reposurgeon used for sanity checks and polishing.",
+  "how_it_works": "Changesets are formed by coalescing per-file revisions that share a commitid, or, when there is no commitid, that have identical comments, authors and dates within a time-fuzz window (default 300 seconds). Tags become lightweight Git tags, found by a two-pass search for an existing snapshot or else a synthetic commit. HEAD is renamed to master, and .cvsignore files are translated to .gitignore. The program does not expand CVS $-keywords and does not re-encode file contents or comments.",
+  "commands_seen": [
+   {
+    "cmd": "cvs-fast-export . >stream.fi",
+    "context": "Typical invocation: convert the CVS or RCS masters in the current directory and write the fast-import stream to stream.fi."
+   },
+   {
+    "cmd": "find . | cvs-fast-export >stream.fi",
+    "context": "Alternative invocation that feeds the master filenames to stdin, one per line."
+   },
+   {
+    "cmd": "cvssync anonymous@cvs.savannah.gnu.org:/sources/groff groff",
+    "context": "Example from the man page: fetch the CVS masters for groff from a remote CVS host into a local directory named groff."
+   },
+   {
+    "cmd": "find groff | cvs-fast-export >groff.fi",
+    "context": "Example from the man page: convert the fetched groff masters into the stream file groff.fi."
+   }
+  ],
+  "install_notes": "Nothing beyond the Homebrew formula is described in the material I read. The GitLab project lists the package names cvs-fast-export, cvs-fast-export-tools and cvs-fast-export-doc. The docs I read state no runtime requirements, first-run configuration or accounts. The man page mentions that a -A authormap file can be supplied to map usernames to Git identities, but that is optional. I did not fetch the README.html or the cvsconvert/cvssync pages.",
+  "standout": "Rather than trying to reconstruct changesets from shared tags, it groups changesets only by commitid or by matching metadata within a time window, and it warns when history is ambiguous instead of guessing. It is built to hand off to reposurgeon, and it can emit cvs-revisions properties that reposurgeon uses as reference-lifting hints.",
+  "status": "Maintained. The homepage is a resource page for version 2.6, dated 06 Oct 2026, and its Recent Changes entry reads 'Improve handling of vendor branches.' The man page was last updated 2026-10-06. The GitLab project was created June 10, 2015, and the author is Eric S. Raymond.",
+  "caveats": "Nothing here installs or runs on Windows; the docs say nothing about Windows support. CVS vendor branches are a known source of trouble, and the program warns about some cases but not all, so output can be wrong for those. $-keywords are not expanded, which leaves unreliable $-header data. Memory use is proportional to the total volume of attributions, comments and blobs in the repository. History from before commitids (CVS older than 1.12) can be ordered wrongly because of clock skew. Incremental dumps must reanalyse the whole repository. CVSNT extension fields are ignored. The license is GPL v2 or later, per the GitLab page.",
+  "quotes": [
+   "Export an RCS or CVS history as a fast-import stream.",
+   "This tool is best used in conjunction with reposurgeon(1).",
+   "Plain cvs-fast-export conversions contain various sorts of fossils that reposurgeon is good for cleaning up.",
+   "cvs-fast-export will try to warn you about these cases rather than silently producing broken or incomplete translations, but there be dragons."
+  ],
+  "links": [
+   {
+    "label": "Homepage (resource page for 2.6)",
+    "url": "http://www.catb.org/~esr/cvs-fast-export/"
+   },
+   {
+    "label": "Man page / documentation for cvs-fast-export",
+    "url": "http://www.catb.org/~esr/cvs-fast-export/cvs-fast-export.html"
+   },
+   {
+    "label": "Source repository on GitLab",
+    "url": "https://gitlab.com/esr/cvs-fast-export"
+   }
+  ],
+  "fetch_log": [
+   "http://www.catb.org/~esr/cvs-fast-export/ (homepage): worked. It is a resource page, not a README. It lists the docs, the source tarball and the Recent Changes entry.",
+   "http://www.catb.org/~esr/cvs-fast-export/cvs-fast-export.html (man page, followed from the homepage): worked. This was the main source for the commands, options and caveats.",
+   "https://gitlab.com/esr/cvs-fast-export (repository): worked. It shows the summary, the GPL v2.0 or later license and the creation date. It contains no README text beyond the summary."
+  ]
+ }
+}

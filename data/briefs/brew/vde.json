@@ -1,0 +1,82 @@
+{
+ "name": "vde",
+ "desc": "Ethernet compliant virtual network",
+ "homepage": "https://github.com/virtualsquare/vde-2",
+ "installs_365d": 36354,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol",
+  "simulation"
+ ],
+ "why": "A virtual Ethernet switch that lets you wire up virtual networks and tunnels, a playful way into how Ethernet frames actually move.",
+ "brief": {
+  "what_it_is": "VDE (Virtual Distributed Ethernet) is a software Ethernet switch plus virtual cables for building Ethernet networks out of processes and machines. Its vde_switch daemon listens on a UNIX control socket, and vde_plug attaches a process's stdin and stdout to a switch, so frames move between attached units as they would on a real Ethernet segment. A host's tap interface can be bridged onto a switch, and two switches can be joined locally or across machines over ssh or netcat. The output is a virtual LAN that UML machines, the host, or other switches can share. The brew description calls it a virtual Ethernet switch for wiring up virtual networks and tunnels.",
+  "why_it_exists": "The README frames VDE as a way to connect many virtual machines and real hosts into one Ethernet-like network, including across several physical computers and through masqueraded networks. It was based on uml-router and is aimed at User-Mode Linux setups, and it supports mobility, where cables can be swapped without breaking existing connections.",
+  "how_it_works": "vde_switch is a daemon with a control socket (default /tmp/vde.ctl) that forwards Ethernet frames between plugged-in ports, and it can also run as a hub with -hub. A vde_plug process connects its standard input and output to a switch, and a VDE cable is two plugs joined by a pipe. dpipe, bundled with VDE, is a double pipe that feeds each command's stdout into the other's stdin, which is how a local or ssh-carried cable is built.",
+  "commands_seen": [
+   {
+    "cmd": "vde_switch [ -unix control-socket ] [ -tap tuntap-device ] [ -hub ] [-daemon]",
+    "context": "Synopsis for creating a switch. -unix sets the control socket (default /tmp/vde.ctl), -tap attaches a tap device, -hub makes it broadcast, and -daemon runs it in the background."
+   },
+   {
+    "cmd": "# vde_switch -tap tap0 -mod 777 -daemon",
+    "context": "Setup step 1 as root: starts a daemon bridged to tap0 in the background."
+   },
+   {
+    "cmd": "# ifconfig tap0 192.168.0.254",
+    "context": "Gives the tap0 host side an address on the virtual subnet."
+   },
+   {
+    "cmd": "% vde_switch /tmp/my.ctl",
+    "context": "Setup step 2, run without root: starts a second switch on a custom control socket."
+   },
+   {
+    "cmd": "% dpipe vde_plug = vde_plug /tmp/my.ctl",
+    "context": "Joins the default switch and the /tmp/my.ctl switch into one local cable."
+   },
+   {
+    "cmd": "% dpipe vde_plug /tmp/my.ctl = ssh remote_machine vde_plug",
+    "context": "Joins a local switch to a switch on a remote machine by running vde_plug on the far end over ssh."
+   },
+   {
+    "cmd": "vde-plug [-p port] [socketname]",
+    "context": "Synopsis for vde_plug. -p picks a switch port, and socketname is the switch's control socket."
+   },
+   {
+    "cmd": "dpipe cmd1 [arg1] = cmd2 [arg2]",
+    "context": "Synopsis for dpipe, a double pipe that connects each command's stdout to the other's stdin, since shells do not provide this."
+   },
+   {
+    "cmd": "# iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE",
+    "context": "Optional host NAT rule so the virtual network can reach the Internet through eth0."
+   },
+   {
+    "cmd": "dpipe vde-plug -g 1 = ssh -b 100.200.201.202 server-machine vde-plug -g 1",
+    "context": "Mobility step 5: builds a tunnel cable in group 1 bound to a specific source address. A second cable in the same group can then be added and the first removed."
+   }
+  ],
+  "install_notes": "The README shows no brew-specific steps. Creating a tap-backed switch needs root, because /dev/net/tun should not be writable by ordinary users. The host needs ifconfig or iproute2 for addressing, and policy routing (ip rule, ip route, rt_tables) for the tunnel example. Remote cables need ssh or netcat on both ends. Routing to the Internet uses ip_forward and iptables, and IPv6 uses radvd with a configured prefix. The README says vde_switch must be compiled with the FSTP flag to enable the spanning-tree work, but it does not describe the build itself.",
+  "standout": "The transport is just stdin and stdout, so a cable can be any pipe, including ssh, and the dpipe helper is built in because shells do not offer that. Mobility is handled by letting several cables share a group number, so you can move a live network between paths, such as from eth0 to ppp0, without restarting the connections on top.",
+  "status": "unknown. The fetched README shows copyright lines through 2011 and no release date, last-commit date, or changelog. It is also written in an older style (ifconfig, /proc paths, UML and MPS references) and mentions unfinished FSTP work. I could not confirm current activity from the README alone.",
+  "caveats": "The README says VDE does not implement spanning tree yet, so a loop in the topology can corrupt MAC forwarding tables and saturate the network. FSTP is described as incomplete and untested against 802.1d/w/s. VLAN 802.1q is described as only almost compatible. Tap mode needs root, and the README warns against making /dev/net/tun writable. Using netcat instead of ssh is explicitly described as insecure. During a cable handoff, multiple cables in one group produce duplicated packets, which can slow traffic. The README notes VDE is not related to www.vde.com. No license is stated in the fetched text. Some README examples use ifconfig and older paths, and the text has typos, such as hich-ups and becouse.",
+  "quotes": [
+   "All units connected to the VDE see each other as they were on a real ethernet.",
+   "dpipe cmd1 [arg1] = cmd2 [arg2] it is the double pipe command (it is here just becouse it is not provided by shells).",
+   "Please note also that the vde-switches do not manage (yet) the minimum spanning tree protocol thus a loop in the topology can lead to inconsistent MAC forward tables and to network saturation."
+  ],
+  "links": [
+   {
+    "label": "VDE 2 repository and README (homepage)",
+    "url": "https://github.com/virtualsquare/vde-2"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/virtualsquare/vde-2 : fetched OK, README text returned. No other pages followed because the README is substantive and gives its own usage examples. The README mentions a qemu-vde-HOWTO by Jim Brown, but gives no URL, so it was not fetched."
+  ]
+ }
+}

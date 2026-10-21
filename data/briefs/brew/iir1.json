@@ -1,0 +1,87 @@
+{
+ "name": "iir1",
+ "desc": "DSP IIR realtime filter library written in C++",
+ "homepage": "https://berndporr.github.io/iir1/",
+ "installs_365d": 380,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "library",
+  "audio",
+  "science"
+ ],
+ "why": "A realtime IIR filter library for DSP; the filters are fascinating, but as a library it is only a building block.",
+ "brief": {
+  "what_it_is": "iir1 is a C++ library of infinite impulse response (IIR) filters for Linux, Mac OS X and Windows. It implements Butterworth, RBJ and Chebyshev filters (types I and II) as lowpass, highpass, bandpass and bandstop/notch filters, and can import coefficients designed in Python with scipy. You feed it one sample at a time (float or double) with filter(x) and get the filtered sample back. The filter parameters are set with setup() using a sampling rate and analogue cutoff frequencies, or setupN() using normalised frequencies between 0 and 1/2.",
+  "why_it_exists": "The README frames it as a fast, realtime sample-by-sample filter for DSP work. It is a further development of Vinnie Falco's DSPFilters, which processes audio arrays; iir1 was adapted for per-sample realtime use, with the setup call no longer needing the order and the elliptic design code removed in favour of importing scipy coefficients.",
+  "how_it_works": "The filter order is a template argument, so the filter state is allocated at compile time and the README says it runs without any malloc or new calls. All realtime filter code is in header files, so the compiler can optimise the filter and the main program together. Invalid setup() values, or parameters that produce NaN coefficients, throw exceptions, and defining IIR1_NO_EXCEPTIONS switches that off.",
+  "commands_seen": [
+   {
+    "cmd": "cmake .",
+    "context": "Generates the Makefile for a Linux or Mac source build."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the library after cmake has generated the Makefile."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the library under /usr/local/lib and /usr/local/include."
+   },
+   {
+    "cmd": "make test",
+    "context": "Runs the unit tests; ctest also runs them. The tests check that filters relax to zero after a delta pulse, never produce NaN, and match scipy's sosfilt output for the Direct Form I and II filters."
+   },
+   {
+    "cmd": "sudo add-apt-repository ppa:berndporr/dsp",
+    "context": "Adds the author's PPA on Ubuntu LTS so the library can be installed as a precompiled package."
+   },
+   {
+    "cmd": "sudo apt install libiir-dev",
+    "context": "Installs the development files from the PPA; the library files come from sudo apt install libiir1."
+   },
+   {
+    "cmd": "cmake -G \"Visual Studio 16 2019\" -A x64 .",
+    "context": "Generates the Visual Studio solution for a 64-bit Windows build; the README recommends the static library on Windows."
+   },
+   {
+    "cmd": "f.setup (samplingrate, cutoff_frequency);",
+    "context": "Sets a Butterworth lowpass from sampling rate and cutoff in Hz, using the order given in the template argument."
+   },
+   {
+    "cmd": "y = f.filter(x);",
+    "context": "Processes one sample x and returns the filtered sample y; repeat inside a loop or event handler."
+   }
+  ],
+  "install_notes": "Prebuilt packages exist for Ubuntu LTS via the author's PPA, for 64-bit Intel and 32/64-bit ARM (Raspberry Pi). Building from source needs cmake plus a C++ compiler; the README says gcc and clang have been tested, and it also says it compiles directly on a Raspberry Pi. Linking can use cmake's find_package(iir) with iir::iir or iir::iir_static, or a plain -liir flag. Windows users are told to use the static library. Demo programs and unit tests can be turned off with IIR1_BUILD_DEMO and IIR1_BUILD_TESTING. No accounts or runtime services are needed.",
+  "standout": "The filter order is baked in at compile time through templates, so the per-sample path has no allocation, and the whole filter is header-only so the compiler can inline it into the caller. It takes scipy-designed second-order-section coefficients as a pasted C++ array, so elliptic filters can be designed in Python and run in C++.",
+  "status": "unknown. The fetched homepage is a generated Doxygen page showing 'Generated on ... by 1.15.0' with no date. The GitHub README shows no release, version or last-commit date, and I did not check the releases or commit history.",
+  "caveats": "The homepage is only generated API documentation; the install and usage details are in the GitHub README. Elliptic filter design was removed, so you need Python with scipy to design those coefficients and paste them in by hand. The README's scipy example uses a passband_ripple_in_dB variable name that does not match the lowercase name used in the surrounding code. Windows is covered only by a single cmake line, and the README gives no licence text in what was fetched. It is a library, not a tool, so it is a building block rather than something you run.",
+  "quotes": [
+   "It uses templates to allocate the required memory so that it can run without any malloc / new commands.",
+   "Memory is allocated at compile time so that there is never the risk of memory leaks.",
+   "While the original library processes audio arrays this library has been adapted to do fast realtime processing sample by sample."
+  ],
+  "links": [
+   {
+    "label": "Homepage (generated API docs)",
+    "url": "https://berndporr.github.io/iir1/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/berndporr/iir1"
+   },
+   {
+    "label": "Vinnie Falco's original DSPFilters",
+    "url": "https://github.com/vinniefalco/DSPFilters"
+   }
+  ],
+  "fetch_log": [
+   "https://berndporr.github.io/iir1/ - worked; returned the Doxygen-generated overview page with a short description and author credit, but no install or usage detail",
+   "https://github.com/berndporr/iir1 - worked; returned the README with usage, build, linking, PPA, and unit test instructions"
+  ]
+ }
+}

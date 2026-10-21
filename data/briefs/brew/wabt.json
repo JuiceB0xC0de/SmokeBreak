@@ -1,0 +1,89 @@
+{
+ "name": "wabt",
+ "desc": "Web Assembly Binary Toolkit",
+ "homepage": "https://github.com/WebAssembly/wabt",
+ "installs_365d": 7253,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "language"
+ ],
+ "why": "WebAssembly binary toolkit that lets you disassemble, inspect, and rewrite .wasm binaries into readable text and back.",
+ "brief": {
+  "what_it_is": "WABT (the WebAssembly Binary Toolkit) is a suite of command-line tools for working with WebAssembly files. It converts the text format (.wat/.wast) to the binary format (.wasm) with wat2wasm and back again with wasm2wat, and it can disassemble and inspect binaries with wasm-objdump and wasm-stats. It can also validate, strip sections from, and interpret binaries (wasm-interp, spectest-interp), convert binaries to C with wasm2c, and convert spec test files to JSON with wast2json. Inputs are .wat, .wast, .wasm, and spec-test JSON files; outputs are binaries, text, C source, JSON, or console reports.",
+  "why_it_exists": "The README says these tools are \"intended for use in (or for development of) toolchains or other systems that want to manipulate WebAssembly files.\" They are written in C/C++ so they are easier to integrate than the spec interpreter, and they aim for full spec fidelity rather than optimization.",
+  "how_it_works": "Each tool is a separate executable built from one C/C++ codebase. The README says the tools aim for \"1:1 round-trips with no changes to instructions,\" so converting a binary to text and back should preserve the instructions. The project also says it has been compiled to JavaScript with emscripten to power the online demos.",
+  "commands_seen": [
+   {
+    "cmd": "git clone --recursive https://github.com/WebAssembly/wabt",
+    "context": "Clones the repo with submodules; the README says this pulls in the testsuite and gtest repos needed for some tests."
+   },
+   {
+    "cmd": "make",
+    "context": "Top-level Makefile build: runs CMake, then Ninja, producing a debug Clang build in out/clang/Debug/ by default."
+   },
+   {
+    "cmd": "make clang-debug-asan",
+    "context": "Builds with the Address Sanitizer configuration appended to the target."
+   },
+   {
+    "cmd": "make test-everything",
+    "context": "Runs the full test set the GitHub CI bots run; the README recommends it before landing a change."
+   },
+   {
+    "cmd": "bin/wat2wasm test.wat",
+    "context": "Parses test.wat and writes a binary file with the same name (test.wasm)."
+   },
+   {
+    "cmd": "bin/wat2wasm spec-test.wast -v",
+    "context": "Parses a spec-test .wast file and prints verbose output, including the meaning of every byte."
+   },
+   {
+    "cmd": "bin/wasm2wat test.wasm -o test.wat",
+    "context": "Parses binary test.wasm and writes the text form to test.wat."
+   },
+   {
+    "cmd": "bin/wasm-interp test.wasm --run-all-exports --trace",
+    "context": "Runs all exported functions of test.wasm and traces the execution."
+   },
+   {
+    "cmd": "brew install wabt",
+    "context": "Homebrew install, as given in the README's prebuilt-binaries section."
+   },
+   {
+    "cmd": "sudo apt install wabt",
+    "context": "Install on apt-based Linux distributions, as given in the README."
+   }
+  ],
+  "install_notes": "Prebuilt packages: brew install wabt on Homebrew, sudo apt install wabt on apt-based Linux, or download binaries from the GitHub releases page. To build from source you need CMake, plus Ninja if using the top-level Makefile. Clone with --recursive, or run git submodule update --init afterward, to get the test submodules. For CMake directly, create a separate build directory, because running cmake from the repo root will not work. On Windows you need CMake and either Visual Studio 2015 or newer or MinGW. Building gperf is only needed if you add new lexer keywords.",
+  "standout": "Unlike Binaryen, which is an optimizer and higher-level compiler target, WABT is built for fidelity: it promises byte-exact, instruction-preserving round-trips and treats the spec as the target. The proposal table tracks which WebAssembly proposals each tool supports, with a flag for each, so you can see exactly which features are on by default.",
+  "status": "unknown. The README has a passing CI badge and a proposal table that includes recent proposals such as wide-arithmetic and custom-page-sizes, but it shows no release date or last-commit date, and I did not fetch the releases page to check.",
+  "caveats": "The README warns that the top-level Makefile may not build properly on some systems, typically macOS; in that case use CMake directly. The build needs CMake and sometimes Ninja. Threads support must be enabled with --enable-threads and is off by default. Several proposals (threads, custom-page-sizes, compact-imports, function-references, wide-arithmetic) are not default-on, and some are not supported by interpret or wasm2c. The README has no explicit licence statement, and I did not check the LICENSE file.",
+  "quotes": [
+   "WABT (we pronounce it \"wabbit\") is a suite of tools for WebAssembly, including:",
+   "Unlike Binaryen these tools do not aim to provide an optimization platform or a higher-level compiler target; instead they aim for full fidelity and compliance with the spec (e.g. 1:1 round-trips with no changes to instructions).",
+   "These tools are intended for use in (or for development of) toolchains or other systems that want to manipulate WebAssembly files."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/WebAssembly/wabt"
+   },
+   {
+    "label": "Online demos index",
+    "url": "https://webassembly.github.io/wabt/demo/"
+   },
+   {
+    "label": "wasm-objdump man page",
+    "url": "https://webassembly.github.io/wabt/doc/wasm-objdump.1.html"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/WebAssembly/wabt (homepage): fetched OK, README returned in full. README is substantive, so I did not follow further links."
+  ]
+ }
+}

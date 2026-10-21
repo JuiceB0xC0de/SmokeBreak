@@ -1,0 +1,127 @@
+{
+ "name": "wormhole-william",
+ "desc": "End-to-end encrypted file transfer",
+ "homepage": "https://github.com/psanford/wormhole-william",
+ "installs_365d": 140,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "quick",
+  "cryptography"
+ ],
+ "why": "Go implementation of magic-wormhole's PAKE-based transfer; a neat door into password-authenticated key exchange, though the wormhole protocol is the real subject.",
+ "brief": {
+  "what_it_is": "wormhole-william is a Go implementation of magic wormhole, a tool for sending text, files, or directories between two computers with end-to-end encryption. The sender gets a wormhole code, and the receiver types that same code to connect to them. It is wire-compatible with the official Python magic-wormhole CLI, so the two can talk to each other. It ships as a command-line tool (send and receive) and as a Go API package.",
+  "why_it_exists": "The README gives no explicit motivation beyond describing itself as a Go implementation of magic wormhole that provides secure end-to-end encrypted file transfers between computers.",
+  "how_it_works": "",
+  "commands_seen": [
+   {
+    "cmd": "wormhole-william send --help",
+    "context": "Shows the send usage: send [WHAT] with flags --code, --code-length, --hide-progress, and --verify, plus the global --relay-url flag."
+   },
+   {
+    "cmd": "wormhole-william receive --help",
+    "context": "Shows the receive usage: receive [code] with alias recv, plus --hide-progress and --verify and the global --relay-url flag."
+   },
+   {
+    "cmd": "go install github.com/psanford/wormhole-william@latest",
+    "context": "Installs the CLI using only the Go tool, with no Homebrew needed."
+   },
+   {
+    "cmd": "wormhole-william shell-completion -h",
+    "context": "Prints the instructions for enabling shell completion, which also completes the receive code."
+   }
+  ],
+  "install_notes": "Building from source needs a Go toolchain; the README says go modules require Go >= 1.11. To build, clone the repo outside GOPATH and run go build in the top-level directory. Shell completion is opt-in and set up via wormhole-william shell-completion -h. The send command accepts --code to choose a human-generated code phrase, and the global --relay-url flag selects a rendezvous relay. No accounts or servers are mentioned as required, and the README does not mention any first-run configuration.",
+  "standout": "Interoperates with the Python magic-wormhole implementation while also offering a Go library API, and the README lists third-party GUI and desktop apps (rymdport, riftshare, termshark integration, tmux-wormhole, and an Android app) built on top of it.",
+  "status": "unknown. The README shows no release dates, changelog, or commit dates, and I did not follow the repository's releases or commits pages. It does list a pkg.go.dev docs link and a set of third-party users.",
+  "caveats": "The README does not name a license, does not say which platforms are tested, and does not spell out the cryptographic mechanism (the scout note calls it PAKE-based, but the README itself does not say so). The feature list begins with 'Currently, wormhole-william supports', so it may not be complete. The build instructions cite Go 1.11 as the minimum, which is quite old. The API example uses ioutil, which is deprecated in modern Go. The README does not describe a verification string workflow beyond the --verify flag's one-line help.",
+  "quotes": [
+   "wormhole-william is a Go (golang) implementation of magic wormhole.",
+   "It provides secure end-to-end encrypted file transfers between computers.",
+   "The endpoints are connected using the same \"wormhole code\"."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/psanford/wormhole-william"
+   },
+   {
+    "label": "Go package docs (pkg.go.dev)",
+    "url": "https://pkg.go.dev/github.com/psanford/wormhole-william/wormhole?tab=doc"
+   },
+   {
+    "label": "Magic wormhole documentation (upstream protocol)",
+    "url": "https://magic-wormhole.readthedocs.io/en/latest/"
+   },
+   {
+    "label": "Examples directory",
+    "url": "https://github.com/psanford/wormhole-william/tree/master/examples"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/psanford/wormhole-william (homepage, README returned successfully)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A low-profile, interoperable implementation makes magic-wormhole\u2019s memorable-code encrypted transfer protocol easy to try from Go and exposes a library API."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "wormhole-william",
+  "tldr": "Send a file between two computers with a short spoken code instead of accounts or addresses, end-to-end encrypted, in a single Go binary.",
+  "deeper_look": "wormhole-william is a Go implementation of magic wormhole. One side runs `send` and gets a short code. The other side runs `receive` and types that code. The two machines find each other and the file, directory, or text goes across with end-to-end encryption. In the README's words: \"The endpoints are connected using the same \"wormhole code\".\"\n\nIt is wire-compatible with the official Python magic-wormhole client, so a Go sender can talk to a Python receiver and the other way round. It also ships as a Go library, and the README lists third-party tools built on it: desktop and Android apps, a tmux plugin, and a termshark integration.\n\nThe idea underneath is that a short, human-friendly code can stand in for a secret. No accounts, no key files, no addresses to look up. The scout's note describes the mechanism as password-authenticated key exchange, which is a good thread to pull on, though the README itself does not explain it. The upstream magic-wormhole documentation is the place to read about the protocol itself.\n\nThe `--code` flag on send lets you choose your own phrase, and `--verify` is there for checking a verification string. The global `--relay-url` flag selects a different relay.",
+  "install": "brew install wormhole-william\n# or, with a Go toolchain: go install github.com/psanford/wormhole-william@latest",
+  "try_this": [
+   {
+    "cmd": "wormhole-william send --help",
+    "what_happens": "Shows send usage, including --code, --code-length, --hide-progress, --verify and the global --relay-url flag."
+   },
+   {
+    "cmd": "wormhole-william receive --help",
+    "what_happens": "Shows receive usage, which takes a code and has the alias recv, plus --hide-progress and --verify."
+   },
+   {
+    "cmd": "wormhole-william shell-completion -h",
+    "what_happens": "Prints instructions for enabling shell completion, which also completes the receive code."
+   }
+  ],
+  "whats_unique": "It talks to the official Python magic-wormhole while being a single Go program that is also an importable library, with a small ecosystem of apps built on it.",
+  "caveats": "The README shows no release or commit dates, so how actively it is maintained is unclear, and its build notes and API example are dated (Go 1.11, ioutil).",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "network",
+   "protocol",
+   "cryptography",
+   "file-transfer",
+   "go"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/psanford/wormhole-william"
+   },
+   {
+    "label": "Go package docs (pkg.go.dev)",
+    "url": "https://pkg.go.dev/github.com/psanford/wormhole-william/wormhole?tab=doc"
+   },
+   {
+    "label": "Magic wormhole documentation (upstream protocol)",
+    "url": "https://magic-wormhole.readthedocs.io/en/latest/"
+   },
+   {
+    "label": "Examples directory",
+    "url": "https://github.com/psanford/wormhole-william/tree/master/examples"
+   }
+  ]
+ }
+}

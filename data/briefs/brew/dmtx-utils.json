@@ -1,0 +1,94 @@
+{
+ "name": "dmtx-utils",
+ "desc": "Read and write data matrix barcodes",
+ "homepage": "https://github.com/dmtx/dmtx-utils",
+ "installs_365d": 594,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "visual"
+ ],
+ "why": "Encodes and decodes Data Matrix barcodes, turning text into printable geometry and back.",
+ "brief": {
+  "what_it_is": "dmtx-utils is a set of command-line tools built on libdmtx, a C library for reading and writing Data Matrix barcodes of the ECC200 type. dmtxwrite takes a text message from a file or standard input and outputs a barcode image (PNG, to a file or stdout). dmtxread takes barcode images from a file or stdin and prints the encoded messages to stdout. The package also installs a third executable, dmtxquery, which the README I read does not describe.",
+  "why_it_exists": "The README says libdmtx lets programs read and write Data Matrix barcodes, and dmtx-utils 'provides command line utilities that allow scripts and command line users to use libdmtx functionality.' The libdmtx.org site describes dmtxread and dmtxwrite as 'the official command line interface for libdmtx' and as a code reference for programmers using the C API.",
+  "how_it_works": "The utilities are thin front ends over the libdmtx library, which does the encoding and decoding. Input and output go through files or standard input and output, so the tools can be piped together. The README notes that a barcode produced by dmtxwrite may differ in shape and bit pattern from the original image even when both encode the same message.",
+  "commands_seen": [
+   {
+    "cmd": "echo -n 123456 | dmtxwrite > image.png",
+    "context": "Writes the message 123456 to a barcode image via stdin and redirects the output to image.png (one of several equivalent forms)."
+   },
+   {
+    "cmd": "echo -n 123456 | dmtxwrite -o image.png",
+    "context": "Same as above, but dmtxwrite writes the image to the file given by -o."
+   },
+   {
+    "cmd": "dmtxwrite <(echo -n 123456) -o image.png",
+    "context": "Passes the message via a process substitution as the input file, with the image written to image.png."
+   },
+   {
+    "cmd": "dmtxread -n image.png",
+    "context": "Decodes the barcode in image.png and prints the message; the README says the -n option is used here and in the stdin form."
+   },
+   {
+    "cmd": "cat image.png | dmtxread -n",
+    "context": "Decodes a barcode image piped in on stdin."
+   },
+   {
+    "cmd": "dmtxread -n -N1 image1.png image2.png image3.png",
+    "context": "Reads several image files at once; the README gives this as an 'other typical case' without spelling out -N1."
+   },
+   {
+    "cmd": "dmtxread -n -N1 -m500 image.png",
+    "context": "Decodes one image with the -m500 option added; the README does not explain the flags."
+   },
+   {
+    "cmd": "echo 'Hello, world!' | dmtxwrite | dmtxread",
+    "context": "Round trip: encodes the text to a barcode and decodes it back, printing 'Hello, world!'."
+   },
+   {
+    "cmd": "dmtxread image1.png | dmtxwrite -o image2.png",
+    "context": "Decodes a barcode and re-encodes the message as a new image; the new barcode may look different."
+   },
+   {
+    "cmd": "./autogen.sh",
+    "context": "Generates the configure script when building from a Git checkout; needs autoconf, automake, libtool and pkgconfig."
+   },
+   {
+    "cmd": "./configure PKG_CONFIG_PATH=/usr/local/lib/pkgconfig",
+    "context": "Points configure at libdmtx.pc when it reports that dmtxread/dmtxwrite requires libdmtx >= 0.7.0. The path may differ on your system."
+   }
+  ],
+  "install_notes": "The README gives the source build sequence ./configure, make, sudo make install, and says the first step may need ./autogen.sh first when built from Git. Building needs autoconf, automake, libtool and pkgconfig in that case. dmtxread and dmtxwrite require libdmtx 0.7.0 or later; if the library was built from source, configure may need PKG_CONFIG_PATH set. If sudo is not available, run make install as root. The README also says to read the platform-specific README file (README.linux, README.osx and so on) and that the make step often fails from missing dependencies. No accounts, runtimes or first-run configuration are mentioned.",
+  "standout": "The tools work as Unix filters: messages go in on stdin and images come out on stdout, and the reverse, so they chain with pipes and shell redirection. A round trip such as echo 'Hello, world!' | dmtxwrite | dmtxread shows the whole loop in one line.",
+  "status": "Quiet. The libdmtx.org project page lists its latest release as libdmtx-0.7.4 on 02-Jun-2011, with later news items dated up to 2011, and its footer says Copyright 2013. The GitHub README mentions SourceForge, Ohloh and a mailing list that may no longer be active. I found no commit or release dates on the GitHub page itself.",
+  "caveats": "The README is an older, pre-GitHub document: it points to SourceForge, Ohloh and a mailing list, and mentions a wiki and platform README files that I did not open. dmtxquery is installed by the package but is not documented in anything I read. The README shows flags such as -n, -N1 and -m500 without explaining them, so the man pages would be needed for full usage. Building from source has known pitfalls: missing autotools, and configure failing on an old libdmtx unless PKG_CONFIG_PATH is set. The libdmtx.org site says the core library is under Simplified BSD and the other project software under LGPLv2. I did not check licence files in the repository.",
+  "quotes": [
+   "libdmtx is a software library that enables programs to read and write Data Matrix barcodes of the modern ECC200 variety.",
+   "In theory the following 3 steps will compile and install libdmtx on your system:",
+   "If the 'sudo' command is not configured on your system then alternatively you can yell \"Yeeehaww!\" as you log in as root and run this instead:"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage, README)",
+    "url": "https://github.com/dmtx/dmtx-utils"
+   },
+   {
+    "label": "libdmtx project site (what is libdmtx, release history)",
+    "url": "http://www.libdmtx.org"
+   },
+   {
+    "label": "libdmtx documentation wiki",
+    "url": "http://libdmtx.wikidot.com"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/dmtx/dmtx-utils: fetched OK, returned the dmtx-utils README text",
+   "http://www.libdmtx.org: fetched OK, project home page with status and news; used for release and status evidence",
+   "http://libdmtx.wikidot.com: not fetched; listed only as a link from the README"
+  ]
+ }
+}

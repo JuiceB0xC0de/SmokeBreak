@@ -1,0 +1,145 @@
+{
+ "name": "testssl",
+ "desc": "Tool which checks for the support of TLS/SSL ciphers and flaws",
+ "homepage": "https://testssl.sh/",
+ "installs_365d": 4883,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "network",
+  "protocol",
+  "afternoon",
+  "tui"
+ ],
+ "why": "A shell script that pokes TLS handshakes cipher by cipher, a revealing door into how servers actually negotiate crypto.",
+ "brief": {
+  "what_it_is": "testssl.sh is a free command-line TLS/SSL checker written as a bash script. You point it at a host, host:port, or HTTPS URL, and it probes the service for supported protocols and cipher suites, plus a set of known TLS flaws and misconfigurations. It also covers STARTTLS services (SMTP, IMAP, XMPP and others), MX records, and HTTP security headers. Output is colour-coded good/bad text, with optional CSV, JSON, HTML and log files.",
+  "why_it_exists": "The homepage describes it as a tool that checks a server's service on any port for TLS/SSL cipher and protocol support, along with recent cryptographic flaws and more. Its stated aims are clear output, no installation burden, and privacy: 'It's only you who sees the result, not a third party.'",
+  "how_it_works": "Most checks run over raw bash sockets, which the homepage says is true of almost every check since version 2.9.5. OpenSSL is still used for some core functions such as openssl verify, ocsp and pkey, and any OpenSSL or LibreSSL binary can serve as the helper. The docs say the bundled OpenSSL is recommended because it supports features like IPv6, proxy and STARTTLS for MySQL/PostgreSQL.",
+  "commands_seen": [
+   {
+    "cmd": "testssl.sh <hostname>",
+    "context": "The normal use case per the homepage: a default full run against a host (the README says the default run covers everything except -E and -g)."
+   },
+   {
+    "cmd": "testssl.sh -t pop3 pop.o2online.de:110",
+    "context": "STARTTLS check against a POP3 service on port 110, using the -t flag to name the protocol."
+   },
+   {
+    "cmd": "testssl.sh --starttls smtp <smtphost>.<tld>:587",
+    "context": "STARTTLS check against an SMTP submission port."
+   },
+   {
+    "cmd": "testssl.sh --mx google.com",
+    "context": "Tests a domain's MX records from highest to lowest priority via STARTTLS on port 25; the homepage notes outbound port 25 must be open."
+   },
+   {
+    "cmd": "testssl.sh -V x14",
+    "context": "Lists locally available OpenSSL ciphers matching the hex code x14. Use -V CBC to search by name instead."
+   },
+   {
+    "cmd": "testssl.sh -x ECDH google.com",
+    "context": "Tests only the ECDH ciphers offered by the target server, and also lists ones it does not offer."
+   },
+   {
+    "cmd": "testssl.sh --file <myfile>",
+    "context": "Mass testing: reads one testssl.sh command line per line from a file. Blank lines and # comments are allowed."
+   },
+   {
+    "cmd": "testssl.sh --header <URI>",
+    "context": "Checks HTTP response headers for HSTS and other security headers, colour-marked by strength, and can help fingerprint proxies."
+   },
+   {
+    "cmd": "testssl.sh --proxy=<proxyhost>:<proxyport> <your_other_cmds_here>",
+    "context": "Routes the openssl and bash-socket connections through an HTTP proxy. Proxy authentication is not supported."
+   },
+   {
+    "cmd": "git clone --depth 1 https://github.com/testssl/testssl.sh.git --branch 3.3dev",
+    "context": "Recommended install: a shallow clone of the 3.3dev development branch, then run the script from that directory."
+   }
+  ],
+  "install_notes": "No package manager or runtime is needed beyond /bin/bash. Clone the repo, or download a release tarball from testssl.sh (3.2.3 is the current stable tarball; each has a .asc signature). Works out of the box on Linux, macOS, FreeBSD, NetBSD, WSL/MSYS2/Cygwin; OpenBSD only needs bash installed. The homepage says System V Unix probably needs GNU grep. The README says bash >= 3.2 plus sed and awk are expected. Docker: 'docker run --rm -it ghcr.io/testssl/testssl.sh <your_cmd_line>'. The older Docker Hub name drwetter/testssl.sh also appears on the homepage. Homebrew is a packaging route noted in the README. The homepage also lists curl -L https://testssl.sh for a stable-code download. Some features need the files in etc/ present alongside the script.",
+  "standout": "It is a full TLS scanner in plain bash, with almost all handshake work done over bash sockets rather than delegating to an OpenSSL binary, so it can test cipher suites one at a time, including ones the local OpenSSL does not ship with. It also covers STARTTLS across many protocols and adds ROBOT and Opossum checks alongside the usual flaw list.",
+  "status": "Maintained. Its homepage lists 3.2.3 released February 12, 2026, a 3.3dev snapshot on February 13, 2026, and directory timestamps into 2026. The README says the project supports only the current dev branch and the one before it (n-1), and that 3.0.10 was the final 3.0.x release. The GitHub page shows 9.2k stars, 1.2k forks and about 5,590 commits.",
+  "caveats": "Licensed GPLv2. The README includes a no-warranty clause and says it is meant as a standalone CLI tool, not a web service. Windows support goes through WSL, MSYS2 or Cygwin, and the homepage calls MSYS2/Cygwin slow. Some core functions still need an OpenSSL binary, and the bundled one is old. The homepage says 3.2 will get no new features and 3.0.x support is paid. The dev branch is expected to change output and features, so scripts that parse output may break. The homepage's screenshots come from an older version. The homepage was fetched but its directory listing mixes many version files, so the exact current version was not fully verified from the page itself.",
+  "quotes": [
+   "testssl.sh is a free command line tool which checks a server's service on any port for the support of TLS/SSL ciphers, protocols as well as recent cryptographic flaws and more.",
+   "Flexibility: You can test any SSL/TLS enabled and STARTTLS service, not only webservers at port 443",
+   "Privacy: It's only you who sees the result, not a third party"
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://testssl.sh/"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/testssl/testssl.sh"
+   },
+   {
+    "label": "DeepWiki AI-generated docs",
+    "url": "https://deepwiki.com/testssl/testssl.sh"
+   }
+  ],
+  "fetch_log": [
+   "https://testssl.sh/ - fetched OK (homepage text, feature list, usage, changelog)",
+   "https://github.com/testssl/testssl.sh - fetched OK (README, install, status)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A standout TLS scanner whose mostly raw-Bash handshakes make cipher negotiation tangible, and whose STARTTLS support reaches far beyond ordinary web servers."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "testssl.sh",
+  "tldr": "A TLS scanner written in plain bash that probes a server's protocols, ciphers and known flaws one handshake at a time, on any port.",
+  "deeper_look": "testssl.sh takes a host, a host:port or an HTTPS URL and asks the service what it will speak. It lists the supported protocol versions and cipher suites, then checks for known TLS flaws and misconfigurations. Output is colour-coded good or bad. It also reads HTTP security headers, tests MX records, and handles STARTTLS services such as SMTP, IMAP, POP3 and XMPP, so it is not limited to web servers.\n\nMost checks run over raw bash sockets rather than through an OpenSSL binary. The homepage says this has been true of almost every check since version 2.9.5. That means the script builds and reads handshakes itself, and can test cipher suites the local OpenSSL was never compiled with. OpenSSL is still used for a few things such as verify, ocsp and pkey.\n\nThe idea underneath is that a TLS connection is a negotiation, and a server's answers to that negotiation can be read directly. Run it against a few hosts and you start to see what clients and servers offer each other, and why old protocol versions and cipher suites got retired. It is also private: in the project's words, \"It's only you who sees the result, not a third party.\"",
+  "install": "brew install testssl\n# Needs only /bin/bash at runtime (bash >= 3.2, plus sed and awk). Homebrew pulls in openssl@4 as a dependency.\n# Alternative: git clone --depth 1 https://github.com/testssl/testssl.sh.git --branch 3.3dev",
+  "try_this": [
+   {
+    "cmd": "testssl.sh <hostname>",
+    "what_happens": "Runs the default full check: protocols, ciphers, flaws and more, with colour-coded results."
+   },
+   {
+    "cmd": "testssl.sh -x ECDH google.com",
+    "what_happens": "Tests only the ECDH ciphers the server offers, and also lists the ones it does not."
+   },
+   {
+    "cmd": "testssl.sh --mx google.com",
+    "what_happens": "Tests the domain's mail servers in priority order via STARTTLS on port 25, which needs outbound port 25 open."
+   }
+  ],
+  "whats_unique": "It is a full TLS scanner in plain bash that does most handshake work over bash sockets, so it can test ciphers one by one, including ones the local OpenSSL lacks. It also covers STARTTLS across many protocols.",
+  "caveats": "Version 3.2 gets no new features, the 3.3dev branch may change output and break scripts that parse it, and some core functions still depend on an OpenSSL binary.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "tls",
+   "ssl",
+   "network",
+   "protocol",
+   "bash",
+   "starttls"
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://testssl.sh/"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/testssl/testssl.sh"
+   },
+   {
+    "label": "DeepWiki AI-generated docs",
+    "url": "https://deepwiki.com/testssl/testssl.sh"
+   }
+  ]
+ }
+}

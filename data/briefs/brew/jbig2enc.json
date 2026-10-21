@@ -1,0 +1,68 @@
+{
+ "name": "jbig2enc",
+ "desc": "JBIG2 encoder (for monochrome documents)",
+ "homepage": "https://github.com/agl/jbig2enc",
+ "installs_365d": 13049,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "library"
+ ],
+ "why": "A JBIG2 encoder that opens a compression format rarely seen outside scanned documents.",
+ "brief": {
+  "what_it_is": "jbig2enc is an encoder that compresses monochrome (1 bpp, bi-level) images into JBIG2, a format used in scanned documents. It takes image files such as JPG or TIF and writes either standalone JBIG2 streams or fragments for embedding in PDFs. Its `jbig2` program is the command-line front end, and `jbig2topdf.py` wraps the output into a PDF. It can also compress multipage documents.",
+  "why_it_exists": "The README says JBIG2 uses 'a number of clever tricks to get better compression than G4' on bi-level images, and this project is an open encoder for that format. The README does not give a longer origin story.",
+  "how_it_works": "The encoder supports generic region encoding, plus symbol mode: symbol extraction, classification, and text region coding, with optional refinement coding. In symbol mode, the classifier assigns each component instance to a symbol class and records where the class template is placed. The newer `--emit-json` flag writes that placement and class data to a JSON sidecar file, so it can be used for glyph clustering downstream.",
+  "commands_seen": [
+   {
+    "cmd": "jbig2 -s -a -p -v -T 100 -b imgs images/*.jpg && python jbig2topdf.py imgs >out.pdf",
+    "context": "Symbol-mode encode of a set of JPGs into a shared output base named imgs, then builds a PDF with jbig2topdf.py. Shown in the README as the main usage example."
+   },
+   {
+    "cmd": "jbig2 -a -p -v images/feyn.tif > feyn.jb2 && python jbig2topdf.py -s feyn.jb2 > feyn.pdf",
+    "context": "Generic-mode encode of one TIF to a .jb2 file, then wraps it into a PDF with jbig2topdf.py in standalone mode (-s)."
+   },
+   {
+    "cmd": "jbig2 -s -S -p -v -O out.png images/*.jpg",
+    "context": "Encodes JPGs and writes a viewable PNG output, so the result can be checked before it is put into a PDF."
+   },
+   {
+    "cmd": "jbig2 -s images/feyn.tif >feyn.jb2",
+    "context": "Writes a plain JBIG2 file to stdout, which the README says can be opened in STDU Viewer on Windows."
+   },
+   {
+    "cmd": "jbig2 -s -p -b output --emit-json output.json images/amoris.2.150.jpg",
+    "context": "Symbol mode with the --emit-json flag (requires -s). Writes output.sym, output.0000 and output.json with per-instance glyph provenance. The flag is off by default."
+   }
+  ],
+  "install_notes": "Requires the Leptonica library, version 1.74 or later; the README calls Leptonica Apache-ish licensed. The README describes build configurations for autotools, meson, and cmake, and CI badges show an MSYS2 build. Windows users have two options: use the latest git code with an MSVC build, or expand wildcard file names manually, since Windows Command Prompt does not expand '*.jpg'. The README does not describe first-run configuration or accounts.",
+  "standout": "It is an open encoder for a format most people only meet inside scanned PDFs. The `--emit-json` sidecar exposes the glyph classification that the encoder normally discards, so the tool can double as a glyph clustering layer.",
+  "status": "unknown. The README has CI badges for autotools, MSYS2, meson, and cmake, but I did not see a release date, last commit date, or maintenance note in the fetched text. The `--emit-json` section looks recent, but I could not date it.",
+  "caveats": "The README's Known bugs section says refinement coding causes Acrobat to crash, and that it is not known whether the bug is in Acrobat. Windows wildcard expansion is unsupported in Command Prompt. Leptonica 1.74 or later is required. The JSON sidecar's negative coordinates for components at the crop edge are documented as expected.",
+  "quotes": [
+   "JBIG2 encodes bi-level (1 bpp) images using a number of clever tricks to get better compression than G4.",
+   "The refinement coding causes Acrobat to crash. It's not known if this is a bug in Acrobat, though it may well be.",
+   "Windows Command Prompt does not support wildcard expansion, so `*.jpg` will not work."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/agl/jbig2enc"
+   },
+   {
+    "label": "jbig2enc-samples (linked in README)",
+    "url": "https://github.com/zdenop/jbig2enc-samples"
+   },
+   {
+    "label": "jbig2enc-minidjvu fork (linked in README)",
+    "url": "https://github.com/ImageProcessing-ElectronicPublications/jbig2enc-minidjvu"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/agl/jbig2enc: fetched OK, README returned. Linked docs (doc/fcd14492.pdf) and the samples repos were not fetched."
+  ]
+ }
+}

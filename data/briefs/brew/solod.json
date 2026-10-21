@@ -1,0 +1,79 @@
+{
+ "name": "solod",
+ "desc": "Strict subset of Go with transpiler that translates to regular C",
+ "homepage": "https://solod.dev/",
+ "installs_365d": 60,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "library",
+  "afternoon"
+ ],
+ "why": "A strict Go subset that transpiles to plain C is a neat idea for exploring language design and C output, though it's a close call.",
+ "brief": {
+  "what_it_is": "Solod is a strict subset of Go that transpiles to readable C11. You write ordinary Go source, using Solod's own packages (solod.dev/so/...) instead of the standard library, and the `so` tool emits a C header and implementation file for each package. The README says it supports structs, methods, interfaces, slices, maps, multiple returns and defer, with limited generics. Concurrency comes from the standard library rather than from language syntax. The output has no garbage collector or reference counting, and memory is stack-allocated unless you opt into the heap through the standard library.",
+  "why_it_exists": "The author wants Go developers to get systems-level control without learning a new language, and wants C programmers to get Go's safety, structure and tooling. The homepage headline is \"Solod: Go can be a better C\".",
+  "how_it_works": "The `so` command translates a Go module into C11, producing main.h and main.c for each package, and calls the C compiler set by CC (default cc) when you ask for a binary. The README says the generated code relies on GCC/Clang extensions such as statement expressions, __auto_type and alloca/VLAs. It also says C interop needs no CGO, and that the sobind tool can generate bindings from C headers.",
+  "commands_seen": [
+   {
+    "cmd": "go install solod.dev/cmd/so@latest",
+    "context": "Installs the Solod command-line tool `so` using the standard Go toolchain."
+   },
+   {
+    "cmd": "go mod init example",
+    "context": "Creates a new Go module, the first step of starting a Solod project."
+   },
+   {
+    "cmd": "go get solod.dev@latest",
+    "context": "Adds the Solod standard library as a dependency of the module."
+   },
+   {
+    "cmd": "so translate -o generated .",
+    "context": "Transpiles the module in the current directory to C, writing the output to the generated directory."
+   },
+   {
+    "cmd": "so build -o main .",
+    "context": "Transpiles and compiles to a binary named main in one step, using the C compiler from CC."
+   },
+   {
+    "cmd": "so run .",
+    "context": "Transpiles, compiles and runs the module without saving the binary. The README says commands take a module, not a single file, so use `so run .` rather than `so run main.go`."
+   }
+  ],
+  "install_notes": "Install with `go install solod.dev/cmd/so@latest`, which needs a Go toolchain. You also need a C compiler: the default is `cc`, and you can override it with the CC environment variable. Supported compilers are GCC, Clang, Emscripten and zig cc, and MSVC is not supported. To use the Solod standard library in your own project, run `go mod init` and `go get solod.dev@latest`. Use `main` or a commit hash instead of `latest` to get the development version. There is no account or runtime to set up beyond these.",
+  "standout": "The generated C is meant to be read: the README's example shows a Go method turning into a plain C function that takes a void pointer and a named struct type, with no runtime library. Concurrency is a thread pool and atomics in the standard library, not language keywords. The Go tests remain ordinary Go and are never transpiled, so `go test` still works next to `so test`.",
+  "status": "Quiet. The latest tagged release is v0.4, which the homepage describes as shipping an automatic binding generator and a freestanding mode. The roadmap says \"There are no more releases planned at this time.\" I did not see a last-commit date, so I cannot say whether development continues. The homepage says the project is not ready for production yet.",
+  "caveats": "The homepage says \"Solod isn't ready for production yet.\" Generics are limited. MSVC is not supported, so Windows builds depend on a GCC or Clang toolchain (the README links a Windows doc). The generated code depends on GCC/Clang extensions. The README calls the project \"highly opinionated\", so it may not suit anyone who wants the full Go language. The license is BSD 3-Clause, and the README credits the Go stdlib code to the Go Authors. Benchmarks and FAQ pages were linked but not fetched.",
+  "quotes": [
+   "Go in, C out. You write regular Go code and get readable C11 as output.",
+   "Zero runtime. No garbage collection, no reference counting, no hidden allocations.",
+   "Solod is highly opinionated. Simplicity is key. Heap allocations are explicit. Strictly Go syntax.",
+   "Even though Solod isn't ready for production yet, I encourage you to try it out on a hobby project or just keep an eye on it if you like the concept."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://solod.dev/"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/nalgeon/solod"
+   },
+   {
+    "label": "Playground (run code or view translated C)",
+    "url": "https://codapi.org/so/"
+   },
+   {
+    "label": "Solod by example",
+    "url": "https://github.com/solod-dev/example"
+   }
+  ],
+  "fetch_log": [
+   "https://solod.dev/ - fetched OK; homepage text only, with links to install, language and stdlib guides, by-example, and source code.",
+   "https://github.com/nalgeon/solod - fetched OK; README returned. I guessed this URL from the project name and the README's identity, not from a link on the homepage. The README also links to doc/ pages (spec, stdlib, building, testing, interop, windows, freestanding, faq), which I did not fetch."
+  ]
+ }
+}

@@ -1,0 +1,145 @@
+{
+ "name": "systemc",
+ "desc": "Core SystemC language and examples",
+ "homepage": "https://systemc.org/overview/systemc/",
+ "installs_365d": 771,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "simulation",
+  "language",
+  "library"
+ ],
+ "why": "A C++ hardware modelling language and simulator, an unusual door into hardware description and cycle-level simulation.",
+ "brief": {
+  "what_it_is": "SystemC is a C++ class library for modelling and simulating hardware and software systems. You write C++ programs against its classes, compile them against the SystemC libraries, and run the result as a simulation. The README calls it the reference implementation of the SystemC language, standardised as IEEE Std 1666-2023, and says it spans system-level modelling, architectural exploration, performance modelling, software development, functional verification and high-level synthesis. The Homebrew formula is described as core language and examples, so the package is the library plus its examples/ folder, not a standalone application.",
+  "why_it_exists": "The homepage argues that SoC design needs one language that covers both hardware and software, so architects can trade off partitioning, performance and power, and start embedded software before RTL or silicon exists. It frames SystemC as a unified design and verification language expressed as open-source C++ classes, independent of detailed implementation.",
+  "how_it_works": "SystemC is built as ordinary C++ with class libraries, not as a new syntax. According to INSTALL.md, the build uses QuickThreads when it supports the target processor, and otherwise falls back to POSIX threads on Unix or Fibers on Windows to run simulation processes. The README does not explain the scheduler or event model in detail; the IEEE standard is named as the definitive reference.",
+  "commands_seen": [
+   {
+    "cmd": "mkdir build",
+    "context": "INSTALL.md CMake steps: create a build subdirectory inside the SystemC source tree."
+   },
+   {
+    "cmd": "cd build/",
+    "context": "INSTALL.md CMake steps: change into the build directory before configuring."
+   },
+   {
+    "cmd": "ccmake ..",
+    "context": "INSTALL.md CMake steps: launch the interactive console configurator, pointing at the source root."
+   },
+   {
+    "cmd": "cmake-gui ..",
+    "context": "INSTALL.md: the graphical alternative to ccmake for the same configure step."
+   },
+   {
+    "cmd": "make",
+    "context": "INSTALL.md: compile the libraries after configuring and generating."
+   },
+   {
+    "cmd": "make check",
+    "context": "INSTALL.md: run the tests after compiling."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "INSTALL.md: install the libraries, by default under /opt/systemc on Unix."
+   },
+   {
+    "cmd": "cmake .. -DCMAKE_OSX_ARCHITECTURES='x86_64;arm64'",
+    "context": "INSTALL.md: example of configuring a macOS universal binary build from the command line."
+   }
+  ],
+  "install_notes": "The brew install route is the one given for this package. Beyond it, INSTALL.md describes a CMake-based build: install CMake 3.16 or later plus a compiler (GCC 9.3 or later, or Clang 13 or later, or MSVC 2019 or later), and GNU make or Ninja. Configure with ccmake or cmake-gui, then make, make check and sudo make install. Defaults include C++17, examples built (ENABLE_EXAMPLES ON), shared libraries on Unix, and install prefix /opt/systemc. Windows users follow a separate Visual Studio section that expects a msvc16 project and a SystemC.sln file. I did not verify the Homebrew formula itself.",
+  "standout": "Hardware modelling is delivered as an ordinary C++ class library standardised by the IEEE, not a separate HDL. Its one-liner in this brief is accurate, but the README itself frames it more as a system-level design and verification language, with hardware modelling as one use among several.",
+  "status": "Unknown from the pages I read: no release date or last-commit date appeared in the homepage or README. The IEEE 1666-2023 standard, the active Accellera working groups, and the INSTALL.md references to a 3.0.0 release suggest active development, but that is inference, not a dated signal.",
+  "caveats": "The homepage is a standards overview and marketing page, not a tool page; the README links out to the IEEE standard as the main documentation. Compiler baseline is C++17. INSTALL.md says only some platform and compiler combinations are well tested, and that the CMake scripts need more testing. Platforms covered are Linux, macOS and Windows (MinGW/MSYS or Visual C++). Licensing sits in separate LICENSE and NOTICE files that I did not read. The IEEE standard takes precedence over this implementation if they disagree.",
+  "quotes": [
+   "SystemC addresses the need for a system design and verification language that spans hardware and software.",
+   "It is a language built as an ANSI C++ class library created for design and verification.",
+   "The main documentation of SystemC is the IEEE Std. 1666-2023 Standard SystemC Language Reference Manual."
+  ],
+  "links": [
+   {
+    "label": "Homepage (SystemC overview)",
+    "url": "https://systemc.org/overview/systemc/"
+   },
+   {
+    "label": "GitHub reference implementation (accellera-official/systemc)",
+    "url": "https://github.com/accellera-official/systemc"
+   },
+   {
+    "label": "INSTALL.md (build and install notes)",
+    "url": "https://github.com/accellera-official/systemc/blob/master/INSTALL.md"
+   },
+   {
+    "label": "IEEE Std 1666-2023 (standard)",
+    "url": "https://ieeexplore.ieee.org/document/10246125"
+   }
+  ],
+  "fetch_log": [
+   "https://systemc.org/overview/systemc/ - loaded; marketing/overview page with standards descriptions and resource links, no commands",
+   "https://github.com/accellera-official/systemc - loaded; README returned, pointed to INSTALL.md and the IEEE standard for documentation",
+   "https://github.com/accellera-official/systemc/blob/master/INSTALL.md - loaded; full install guide returned, source of the commands and build details above"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "SystemC turns ordinary C++ into a standardized hardware and software simulation language, an unusual and substantial window into chip design."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "SystemC",
+  "tldr": "A C++ class library that lets you model and simulate hardware in ordinary C++, standardised as IEEE 1666, so software can run before the chip exists.",
+  "deeper_look": "SystemC is a library, not an application. You write a C++ program against its classes, compile it against the SystemC libraries, and the resulting binary is the simulation. There is no new syntax and no separate hardware description language. The Homebrew package is the core library plus its examples folder.\n\nThe idea behind it, as the project describes it, is that designing a system-on-chip needs one language spanning hardware and software. Architects can then weigh partitioning, performance and power, and embedded software can start before RTL or silicon exists. The README lists system-level modelling, architectural exploration, performance modelling, software development, functional verification and high-level synthesis as uses.\n\nUnder the hood, INSTALL.md says the build uses QuickThreads where it supports the processor, and otherwise falls back to POSIX threads on Unix or Fibers on Windows to run simulation processes. The README does not describe the scheduler or event model. For that, it points to the standard: \"The main documentation of SystemC is the IEEE Std. 1666-2023 Standard SystemC Language Reference Manual.\"\n\nThe door it opens is hardware modelling from the software side. Concurrent processes, simulated time and modules wired together are the concepts hardware designers work in, and you can explore them with a C++ compiler instead of a chip toolchain.",
+  "install": "brew install systemc\nNeeds a C++17 compiler to build your own models. To build from source instead, INSTALL.md describes CMake 3.16+ with GCC 9.3+, Clang 13+ or MSVC 2019+. The default install prefix is /opt/systemc.",
+  "try_this": [
+   {
+    "cmd": "mkdir build",
+    "what_happens": "First step of the INSTALL.md source build, creating a build directory inside the SystemC source tree."
+   },
+   {
+    "cmd": "ccmake ..",
+    "what_happens": "From inside build/, opens the interactive configurator. Examples are built by default (ENABLE_EXAMPLES is ON)."
+   },
+   {
+    "cmd": "make check",
+    "what_happens": "After make, runs the test suite, including the bundled examples."
+   }
+  ],
+  "whats_unique": "Hardware modelling is delivered as a plain C++ class library standardised by the IEEE, rather than as a separate hardware description language.",
+  "caveats": "This is a library with no executables, and the documentation is mostly the IEEE standard; INSTALL.md says only some platform and compiler combinations are well tested and the CMake scripts need more testing.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "simulation",
+   "language",
+   "library",
+   "c++",
+   "hardware-modelling"
+  ],
+  "links": [
+   {
+    "label": "Homepage (SystemC overview)",
+    "url": "https://systemc.org/overview/systemc/"
+   },
+   {
+    "label": "GitHub reference implementation (accellera-official/systemc)",
+    "url": "https://github.com/accellera-official/systemc"
+   },
+   {
+    "label": "INSTALL.md (build and install notes)",
+    "url": "https://github.com/accellera-official/systemc/blob/master/INSTALL.md"
+   },
+   {
+    "label": "IEEE Std 1666-2023 (standard)",
+    "url": "https://ieeexplore.ieee.org/document/10246125"
+   }
+  ]
+ }
+}

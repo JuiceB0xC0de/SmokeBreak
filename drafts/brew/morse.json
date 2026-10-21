@@ -1,0 +1,128 @@
+{
+ "name": "morse",
+ "desc": "QSO generator and morse code trainer",
+ "homepage": "http://www.catb.org/~esr/morse/",
+ "installs_365d": 123,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "quick",
+  "audio",
+  "ancient"
+ ],
+ "why": "Esr's QSO generator and morse trainer is a charming, unusual tool for turning pure sound into a radio skill.",
+ "brief": {
+  "what_it_is": "morse-classic 2.7, a command-line Morse code trainer with a companion QSO generator. The installed executables are morse and QSO. morse takes test text from standard input, from its command-line arguments, or generates random groups (-r), or plays back what you type (-i), and renders it as Morse beeps. QSO produces simulated contacts resembling those used in the ARRL test, and its output can be piped into morse. The README describes the target as aspiring radio hams preparing for the 5-words-per-minute Element 1 test. Many options control speed, Farnsworth spacing, frequency, volume, and typing-along and error-tracking modes.",
+  "why_it_exists": "The author frames it as a training program for aspiring radio hams, meant to help them pass the 5-word-per-minute Element 1 test. The homepage says it can generate random tests or simulated QSOs resembling those used in the ARRL test.",
+  "how_it_works": "morse plays Morse-code audio for text it receives from stdin, from arguments, or from its random generator, with -r starting with easy letters and slanting toward the ones you get wrong. In type-along modes (-t, -T, -s) you type back what you hear, and it tracks right and wrong answers per character to decide when to prompt you or speed up (-d). The QSO helper's output is fed to morse's standard input as a simulated contact.",
+  "commands_seen": [
+   {
+    "cmd": "morse -r -s -T -d -w 5 -F 15 -p 5 -E -10",
+    "context": "From the README's beginner sequence, 'Start learning the alphabet': random letters, stop after each character, type-along with visible characters, dynamic speed, 5 wpm, 15 wpm Farnsworth spacing, 5 penance repeats, error prompting setting -10."
+   },
+   {
+    "cmd": "morse -r -s -T -d -w 5 -F 15 -p 5 -E 0",
+    "context": "From the README's 'drill drill drill' step: same settings as the alphabet step with the error prompt threshold set to 0."
+   },
+   {
+    "cmd": "morse -r -T -d -w 5 -F 15 -M 2 -E 4",
+    "context": "From the README's 'Real-time drill, with hints if you really need it': random letters, type-along without per-character stopping, pause if two characters behind, prompt after four net wrong answers."
+   },
+   {
+    "cmd": "QSO | morse -e -T -d -w 5 -F 15",
+    "context": "From the README's 'Simulated test': pipes a generated QSO into morse, leaving off the <SK> sound at the end, with type-along at 5 wpm and 15 wpm Farnsworth."
+   },
+   {
+    "cmd": "morse -r -T -d -w 5 -F 15",
+    "context": "From the README's 'dreaded random-letter test': random letters with type-along at 5 wpm, 15 wpm Farnsworth."
+   },
+   {
+    "cmd": "morse -r -T -d -w 13 -F 24",
+    "context": "From the README's final step, 'try for greater and greater speed': random letters at 13 wpm with 24 wpm Farnsworth spacing."
+   }
+  ],
+  "install_notes": "Nothing beyond brew install was described on the homepage, the docs page, or the GitLab page. No accounts, runtimes, or first-run configuration are mentioned. The docs do not say what audio output backend it needs.",
+  "standout": "It is a Unix-style trainer where the QSO generator pipes its output into the trainer, so a simulated contact becomes audio you copy by ear. The random mode adapts to your mistakes, and the type-along and Farnsworth options target copying speed rather than just letter recognition.",
+  "status": "maintained. The homepage is dated 17 Mar 2026 and lists recent changes (code hardening for buffer-overflow prevention and a full documentation spellcheck). The GitLab repo was created June 12, 2019; I could not see a last-commit date, so I cannot say more precisely.",
+  "caveats": "Licensed under the BSD 2-Clause 'Simplified' license per the GitLab page; the homepage itself names the license file but not the type. The docs describe a Latin-1, prosign, and extended-character set behind flags (-A, -B, -S). The docs' synopsis line lists -f twice, a minor doc sloppiness. The homepage's package names include morse, morse-git, and utility/scientific/morse, so the installed name may vary. I did not find build or platform requirements.",
+  "quotes": [
+   "Morse Classic is a Morse-code training program for aspiring radio hams.",
+   "It can generate random tests or simulated QSOs resembling those used in the ARRL test (a QSO generator is included).",
+   "In one of the simpler modes, this program will take text from standard input and render it as Morse-code beeps."
+  ],
+  "links": [
+   {
+    "label": "Homepage (project resource page)",
+    "url": "http://www.catb.org/~esr/morse/"
+   },
+   {
+    "label": "Source repository (GitLab)",
+    "url": "https://gitlab.com/esr/morse-classic"
+   },
+   {
+    "label": "Manual page (morse.html)",
+    "url": "http://www.catb.org/~esr/morse/morse.html"
+   }
+  ],
+  "fetch_log": [
+   "http://www.catb.org/~esr/morse/ \u2014 worked; resource page with summary, resources, and supporter list.",
+   "https://gitlab.com/esr/morse-classic \u2014 worked but thin; project info and license line only, no README body or commands.",
+   "http://www.catb.org/~esr/morse/morse.html \u2014 worked; full manual with synopsis, options, prosign tables, and the beginner command sequence."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A focused Morse trainer that adapts drills to mistakes and pipes simulated radio contacts into ear-training, making a real-world skill approachable from the terminal."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "morse",
+  "tldr": "A command-line Morse code trainer that adapts to your mistakes, plus a QSO generator that pipes simulated radio contacts into it for copying by ear.",
+  "deeper_look": "morse-classic plays text as Morse beeps. The text can come from standard input, from command-line arguments, from a random letter generator (-r), or from what you type yourself (-i). The README describes it as \"a Morse-code training program for aspiring radio hams\", aimed at the 5-words-per-minute Element 1 test.\n\nThe training modes are what make it more than a beeper. In random mode it starts with easy letters and leans toward the ones you get wrong. In the type-along modes (-t, -T, -s) you type back what you hear, and the program keeps right and wrong counts per character. It uses them to decide when to prompt you, and with -d when to change speed. Farnsworth spacing (-F) keeps the characters fast while stretching the gaps, which targets hearing whole letters as sounds rather than counting dots and dashes.\n\nThe companion QSO program prints a simulated amateur radio contact, resembling those used in the ARRL test. Because it writes to standard output, you can pipe it into morse and copy a conversation that does not exist. This is the Unix idea doing something unexpected: text streams become a listening skill.\n\nThe README lays out a progression: learn the alphabet slowly, drill, do real-time drills with hints, take a simulated test, then push to 13 wpm with 24 wpm spacing. It is written by Eric S. Raymond and the homepage shows recent maintenance. It is an old-school tool and says so in its plain interface.",
+  "install": "brew install morse",
+  "try_this": [
+   {
+    "cmd": "morse -r -s -T -d -w 5 -F 15 -p 5 -E -10",
+    "what_happens": "Starts the README's alphabet-learning drill: random letters at 5 wpm with 15 wpm spacing, where you type back each character you hear."
+   },
+   {
+    "cmd": "QSO | morse -e -T -d -w 5 -F 15",
+    "what_happens": "Generates a simulated radio contact and plays it as Morse while you type along."
+   },
+   {
+    "cmd": "morse -r -T -d -w 13 -F 24",
+    "what_happens": "The README's speed-building step: random letters at 13 wpm with 24 wpm Farnsworth spacing."
+   }
+  ],
+  "whats_unique": "The QSO generator pipes straight into the trainer, so a fake radio contact becomes audio you copy by ear. Random mode adapts to the letters you miss.",
+  "caveats": "The docs do not say which audio backend it needs; Homebrew lists pulseaudio as a dependency, so sound output on your machine may take some sorting out.",
+  "commitment": "quick",
+  "category": "sound-and-live-coding",
+  "tags": [
+   "quick",
+   "audio",
+   "morse",
+   "ham-radio",
+   "trainer",
+   "ancient"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "http://www.catb.org/~esr/morse/"
+   },
+   {
+    "label": "Manual page",
+    "url": "http://www.catb.org/~esr/morse/morse.html"
+   },
+   {
+    "label": "Source repository (GitLab)",
+    "url": "https://gitlab.com/esr/morse-classic"
+   }
+  ]
+ }
+}

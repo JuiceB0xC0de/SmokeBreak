@@ -1,0 +1,137 @@
+{
+ "name": "nqp",
+ "desc": "Lightweight Raku-like environment for virtual machines",
+ "homepage": "https://github.com/Raku/nqp",
+ "installs_365d": 789,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language"
+ ],
+ "why": "A stripped-down Raku-flavoured language built to target virtual machines, a rare and interesting language-implementation artifact.",
+ "brief": {
+  "what_it_is": "NQP (\"Not Quite Perl\") is a small, Raku-flavoured language and runtime environment for building compilers and libraries on virtual machines. It takes NQP source files (such as hello.nqp) and runs them on one of three backends: MoarVM, the JVM, or JavaScript (the JVM and JavaScript backends are experimental). It is not a general-purpose Raku implementation. It provides a Raku object model and a regular expression engine with as small a runtime footprint as possible. Running `nqp` with no script starts a small interactive mode.",
+  "why_it_exists": "The README says NQP is designed to be a very small environment compared with Raku or Rakudo, focused on being a high-level way to create compilers and libraries for virtual machines like MoarVM and the JVM. It is a tool for writing Raku compilers, not a low-level module for Raku programmers.",
+  "how_it_works": "NQP is built with a Perl Configure.pl script followed by make, which produces an nqp executable. Configure.pl takes --backends to choose targets and either --with-moar to point at an existing MoarVM or --gen-moar to have MoarVM downloaded and built. The README gives no further internal detail on how the compiler or object model is implemented.",
+  "commands_seen": [
+   {
+    "cmd": "git clone git://github.com/Raku/nqp.git",
+    "context": "Obtains the NQP source directly from its repository."
+   },
+   {
+    "cmd": "perl Configure.pl --with-moar=/path/to/moar --backends=moar,jvm",
+    "context": "Configures the build to use an already-installed MoarVM and to enable the MoarVM and JVM backends."
+   },
+   {
+    "cmd": "perl Configure.pl --gen-moar --backends=moar,jvm",
+    "context": "Configures the build so that Configure.pl downloads and builds MoarVM itself, with the MoarVM and JVM backends enabled."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds NQP and creates the nqp executable in the current directory."
+   },
+   {
+    "cmd": "./nqp hello.nqp",
+    "context": "Runs an NQP program from the build directory."
+   },
+   {
+    "cmd": "ulimit -d 6144000",
+    "context": "Raises the shell's data memory limit; the README suggests this if the JVM backend reports it cannot reserve enough memory."
+   },
+   {
+    "cmd": "perl Configure.pl --backends=moar,js",
+    "context": "Configures the build with the MoarVM and JavaScript backends enabled. The JavaScript backend requires building the moar backend too."
+   },
+   {
+    "cmd": "./nqp-js file.nqp",
+    "context": "Runs an NQP file on the experimental JavaScript backend."
+   },
+   {
+    "cmd": "cd src/vm/js/nqp-runtime; npm link .",
+    "context": "Links the nqp-runtime package for JavaScript backend development so it is used instead of the installed copy."
+   }
+  ],
+  "install_notes": "Needs a make utility and Perl 5.8 or newer. A git client is needed if MoarVM is to be fetched automatically. The JVM backend requires JDK 9 or higher. The JavaScript backend requires node.js 10.10.0 or newer and a build of the moar backend. The README says make install puts NQP into the same location as the MoarVM installation used to build it, and that the executable only runs reliably from the build root until that step is done. Default MoarVM lookup and install goes to ./install unless --prefix is given. The README mentions an OS X workaround for a missing mach/mach.h header during configuration. The README does not mention an nqp-m executable, which Homebrew lists alongside nqp.",
+  "standout": "It is a deliberately tiny language runtime whose purpose is to build other language implementations. It carries a Raku object model and regex engine without the weight of Rakudo, and it targets several VMs from one source language.",
+  "status": "maintained. The repository has about 13,060 commits, GitHub Actions workflows and an azure-pipelines.yml, and the README copyright runs to 2026. I did not check the VERSION file or the release dates, so the most recent release date is unknown.",
+  "caveats": "The README says there is no end-user support and that behaviour can change without notice. The JVM and JavaScript backends are experimental. Configuration on OS X can fail with a missing mach/mach.h header. The JVM may report it cannot reserve enough memory. The JavaScript backend has few docs, and the README points users to the pmurias contact on IRC. The Homebrew executable nqp-m is not described in the README. The README does not state a licence, but it says the LICENSE file governs and the copyright belongs to The Raku Foundation.",
+  "quotes": [
+   "This is \"Not Quite Perl\" -- a lightweight Raku-like environment for virtual machines.",
+   "The key feature of NQP is that it's designed to be a very small environment (as compared with, say, raku or Rakudo)",
+   "It's a tool for writing Raku compilers, not a low-level module for Raku programmers."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/Raku/nqp"
+   },
+   {
+    "label": "Docs directory (opcodes and built-in routines)",
+    "url": "https://github.com/Raku/nqp/tree/main/docs"
+   },
+   {
+    "label": "Examples directory",
+    "url": "https://github.com/Raku/nqp/tree/main/examples"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/Raku/nqp (fetched OK, README content returned; docs and examples directories linked but not fetched)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A compact Raku-like language for building compilers, with one source language targeting multiple virtual machines, is an unusual and worthwhile rabbit hole."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "NQP (Not Quite Perl)",
+  "tldr": "A deliberately tiny Raku-flavoured language, with Raku's object model and regex engine, built for writing compilers that run on virtual machines.",
+  "deeper_look": "NQP stands for \"Not Quite Perl\". It is a small language and runtime that takes `.nqp` source files and runs them on a virtual machine. MoarVM is the main backend. JVM and JavaScript backends exist but are experimental. Run with no script, `nqp` drops into a small interactive mode.\n\nIt is not a general-purpose Raku. The README says it is \"a tool for writing Raku compilers, not a low-level module for Raku programmers.\" It is meant to be \"a very small environment (as compared with, say, raku or Rakudo)\" while still giving you a Raku object model and a regular expression engine.\n\nThe idea underneath is bootstrapping. To build a high-level language you first need a smaller, high-level language to write its compiler in, one that already knows how to talk to the VM. NQP fills that role for Raku's compiler, and it can target several VMs from one source language. If you are curious how a language implementation is layered on a VM, this is a compact place to look. The repository has docs on opcodes and built-in routines, and an examples directory.",
+  "install": "brew install nqp\n# pulls in moarvm as a dependency. Homebrew installs two executables: nqp and nqp-m.",
+  "try_this": [
+   {
+    "cmd": "nqp --help",
+    "what_happens": "Lists the command-line options of the NQP executable."
+   },
+   {
+    "cmd": "nqp",
+    "what_happens": "With no script, starts the small interactive mode where you can type NQP and see it run."
+   },
+   {
+    "cmd": "./nqp hello.nqp",
+    "what_happens": "Runs an NQP program file. The README shows this form from a source build directory, so with a Homebrew install use `nqp hello.nqp` instead."
+   }
+  ],
+  "whats_unique": "It is a tiny language runtime whose job is to build other language implementations. It carries Raku's object model and regex engine without the weight of Rakudo.",
+  "caveats": "The README says there is no end-user support and behaviour can change without notice; the JVM and JavaScript backends are experimental, and the README does not describe the nqp-m executable.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "language",
+   "raku",
+   "compilers",
+   "virtual-machine",
+   "moarvm"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/Raku/nqp"
+   },
+   {
+    "label": "Docs directory (opcodes and built-in routines)",
+    "url": "https://github.com/Raku/nqp/tree/main/docs"
+   },
+   {
+    "label": "Examples directory",
+    "url": "https://github.com/Raku/nqp/tree/main/examples"
+   }
+  ]
+ }
+}

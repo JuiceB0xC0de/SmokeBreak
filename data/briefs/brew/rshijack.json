@@ -1,0 +1,61 @@
+{
+ "name": "rshijack",
+ "desc": "TCP connection hijacker",
+ "homepage": "https://github.com/kpcyrd/rshijack",
+ "installs_365d": 23,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "afternoon"
+ ],
+ "why": "A TCP hijacker is a sharp door into how TCP sequence numbers and connection trust actually work.",
+ "brief": {
+  "what_it_is": "rshijack is a TCP connection hijacker written in Rust, described by its author as a rewrite of shijack from 2001. You give it a network interface and the source and destination addresses and ports of an established TCP connection. It sniffs for a packet from that connection, reads the SEQ and ACK fields, and then sends a crafted packet on a raw socket that the remote server accepts as valid. The README's example injects a shell command, piped in on stdin, into a live telnet session.",
+  "why_it_exists": "The README says it was written for TAMUctf 2018 (the brick house 100 challenge), where the target was a 2FA-protected telnet server. The team's solution was to wait until authentication finished and then inject a TCP packet into the open telnet connection.",
+  "how_it_works": "The tool sniffs for a packet belonging to the target connection and reads its SEQ and ACK fields. With those values it can build a packet on a raw socket that the remote end treats as part of the existing stream. The README notes that after some attempts the injected command was accepted and executed, and the server returned a packet containing the flag.",
+  "commands_seen": [
+   {
+    "cmd": "echo 'cat ~/.ctf_flag' | sudo rshijack tap0 172.16.13.20:37386 172.16.13.19:23",
+    "context": "Main example from the TAMUctf writeup: pipes a command into rshijack on interface tap0, targeting the connection from 172.16.13.20:37386 to 172.16.13.19:23 (telnet). The README says to use port 0 to match any port if you don't know one."
+   },
+   {
+    "cmd": "docker run -it --init --rm --net=host kpcyrd/rshijack eth0 172.16.13.20:37386 172.16.13.19:23",
+    "context": "Runs the published Docker image with host networking, using interface eth0 and the same example connection endpoints."
+   },
+   {
+    "cmd": "pacman -S rshijack",
+    "context": "Installs the package on Arch Linux."
+   }
+  ],
+  "install_notes": "Arch Linux users can install with pacman -S rshijack. A Docker image is also published as kpcyrd/rshijack; the README says it is about 10.2MB and must run with --net=host so it can reach the interface. The README mentions no other setup, accounts, or runtimes. Its usage examples run under sudo, which suggests root or raw socket privileges are needed.",
+  "standout": "It is a small Rust reimplementation of a classic 2001 tool, and the README ties it to a concrete CTF story about injecting into a telnet session after 2FA. The README also documents a real-world container-to-host escape that used it, linked from the notable mentions section.",
+  "status": "Unknown from the README. The README has a Crates.io badge and a Repology packaging badge, and it lists a merged 2020 patch and an August 2020 blog post. It gives no release date and no last-commit date, and the fetched page did not show either, so I cannot judge whether the project is actively maintained.",
+  "caveats": "It is an offensive tool for hijacking TCP connections. The README's example is a CTF challenge, and the tool should only be used against connections you are authorised to test. Injection needs a sniffable packet on the path, so it works only where you can see the traffic. The README gives no platform list beyond the Linux-oriented installs, and it documents no Windows or macOS support. It is GPLv3+ licensed. The README does not explain the raw-socket requirements beyond the sudo usage in its examples.",
+  "quotes": [
+   "tcp connection hijacker, rust rewrite of [shijack] from 2001.",
+   "This was written for TAMUctf 2018, brick house 100.",
+   "The way this works is by sniffing for a packet of a specific connection, then read the SEQ and ACK fields."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/kpcyrd/rshijack"
+   },
+   {
+    "label": "Crates.io package",
+    "url": "https://crates.io/crates/rshijack"
+   },
+   {
+    "label": "Blog post on GCE container escape using rshijack (linked from README)",
+    "url": "https://offensi.com/2020/08/18/how-to-contact-google-sre-dropping-a-shell-in-cloud-sql/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/kpcyrd/rshijack: fetched OK; README returned. Its links to shijack, sniffglue, and arpspoof were not followed, since the README was complete enough."
+  ]
+ }
+}

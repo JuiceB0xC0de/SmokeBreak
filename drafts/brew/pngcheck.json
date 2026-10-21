@@ -1,0 +1,100 @@
+{
+ "name": "pngcheck",
+ "desc": "Print info and check PNG, JNG, and MNG files",
+ "homepage": "https://github.com/pnggroup/pngcheck",
+ "installs_365d": 1847,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering"
+ ],
+ "why": "Dissects PNG, JNG, and MNG chunk structure, a useful way to see how image file formats are actually laid out.",
+ "brief": {
+  "what_it_is": "pngcheck is a command-line utility that checks PNG image files, including animated PNG, for validity, and prints information about the metadata inside a file (apart from the image data itself). It takes one or more image files as input and prints a chunk-by-chunk report to the terminal, with each chunk's offset and length, decoded header fields, and warnings or errors. The sample output shows it reporting dimensions, bit depth, and color profile chunks, and ending with 'ERRORS DETECTED' when it finds a problem. The README also covers JNG and MNG in the scout notes, though the README text itself focuses on PNG.",
+  "why_it_exists": "The README describes it as a way to check PNG files for validity and to report their metadata, and it tracks new PNG specification editions (Third and Fourth Edition) as they add chunks.",
+  "how_it_works": "It walks the file's chunk structure and decodes each chunk it recognizes, printing offsets, lengths, and field values, with -v giving the verbose per-chunk detail. It flags problems such as an eXIf chunk appearing after IDAT, which the README says browsers ignore and which the Third Edition no longer permits. It also reports deprecated chunks, as in the sample where an old cLLi chunk is flagged 'do not use'.",
+  "commands_seen": [
+   {
+    "cmd": "$ pngcheck -c -v test_pattern-PQ.png",
+    "context": "Sample usage from the README: checks the file with -c (colorized output) and -v (verbose), printing each chunk and ending with ERRORS DETECTED for that file. The -c and -v flags are described only by this example, not by a flag reference."
+   }
+  ],
+  "install_notes": "Nothing beyond the Homebrew formula was visible in the README. No runtime, account, or configuration is mentioned.",
+  "standout": "It is a chunk-level dissector that decodes the newest PNG features (cICP, mDCV, cLLI, animated PNG chunks, caBX content credentials, and Apple's iDOT) and flags obsolete or misplaced chunks, so it doubles as a readable map of how a PNG file is laid out. The README says all registered extension chunks are supported.",
+  "status": "Maintained as far as the README shows: it is at version 4.0.1 and adds PNG Fourth Edition features (caBX). It is hosted under the pnggroup organization. The README gives no release date, and I did not open the releases or commit history, so I cannot give a last-commit date.",
+  "caveats": "The README does not mention platform support, license, or known limitations. The README's own changelog-style text says it was derived from pngcheck 3.0.3, and the 3.0.3 README is linked but I did not fetch it. The brew description mentions JNG and MNG, but the README body discusses only PNG.",
+  "quotes": [
+   "pngcheck is a command-line utility to check PNG image files, including animated PNG, for validity",
+   "It also warns if eXIf is found after the image data IDAT, which will be ignored by web browsers and is no longer valid in PNG Third Edition.",
+   "All registered extension chunks are supported, including the recently registered (but widespread) Apple iDOT chunk."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/pnggroup/pngcheck"
+   },
+   {
+    "label": "PNG Fourth Edition specification (W3C)",
+    "url": "https://w3c.github.io/png/"
+   },
+   {
+    "label": "PNG Third Edition chunk definitions (W3C)",
+    "url": "https://w3c.github.io/png/#cICP-chunk"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/pnggroup/pngcheck (homepage, README returned successfully)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Its chunk-by-chunk dissection turns PNGs into readable structures, revealing how the format works while checking modern and obsolete features."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "pngcheck",
+  "tldr": "Walks a PNG file chunk by chunk, printing offsets, lengths and decoded fields, and flags anything invalid, misplaced or obsolete.",
+  "deeper_look": "pngcheck is a command-line tool that checks PNG files, including animated PNG, for validity and prints the metadata inside them. It reads one or more files and prints a report for each chunk: where it sits in the file, how long it is, what its header fields decode to, and any warnings or errors. The image data itself is not shown. A file with problems ends with `ERRORS DETECTED`.\n\nThe interesting part is what the report reveals. A PNG is a signature followed by a list of typed chunks, such as the header, palette, color profile, pixel data and metadata. Nothing is hidden, and pngcheck lays that list out in order. You can see the structure the format is built on, and see which tools wrote what into a file.\n\nIt also tracks the format as it changes. According to the README it supports all registered extension chunks, including newer ones like cICP, mDCV and cLLI, the animated PNG chunks, caBX content credentials and Apple's iDOT. It flags a chunk that is misplaced, such as an eXIf chunk after the image data, which the README says browsers ignore and PNG Third Edition no longer allows. It also flags deprecated chunks. In the README's sample, an old cLLi chunk is marked 'do not use'.\n\nThe Homebrew description also mentions JNG and MNG, the related JPEG and multi-image formats. The README text focuses on PNG.",
+  "install": "brew install pngcheck",
+  "try_this": [
+   {
+    "cmd": "pngcheck --help",
+    "what_happens": "Prints the usage summary and the list of options."
+   },
+   {
+    "cmd": "pngcheck -c -v test_pattern-PQ.png",
+    "what_happens": "Prints a colorized, verbose chunk-by-chunk dump of the file, ending with ERRORS DETECTED if it finds a problem. This is the README's own example."
+   }
+  ],
+  "whats_unique": "It is a chunk-level dissector that keeps up with the newest PNG specification chunks. The output doubles as a readable map of how a PNG file is laid out.",
+  "caveats": "The README gives no release date or platform notes, so how recently it was updated is unclear, though it is at version 4.0.1 and covers PNG Fourth Edition features.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "png",
+   "file-formats",
+   "image",
+   "reverse-engineering"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/pnggroup/pngcheck"
+   },
+   {
+    "label": "PNG Fourth Edition specification (W3C)",
+    "url": "https://w3c.github.io/png/"
+   },
+   {
+    "label": "PNG Third Edition chunk definitions (W3C)",
+    "url": "https://w3c.github.io/png/#cICP-chunk"
+   }
+  ]
+ }
+}

@@ -1,0 +1,153 @@
+{
+ "name": "uftrace",
+ "desc": "Function graph tracer for C/C++/Rust",
+ "homepage": "https://uftrace.github.io/slide/",
+ "installs_365d": 46,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "tui",
+  "reverse-engineering"
+ ],
+ "why": "Function graph tracer that shows what a program actually calls and when, good for watching programs execute.",
+ "brief": {
+  "what_it_is": "uftrace is a function call graph tracer for C, C++, Rust and Python programs. You run a program under it (or record a run first) and it hooks the entry and exit of each function, recording timestamps plus arguments and return values. The output is a nested, indented call tree with a duration on each call, and the same data can be filtered, reported on, graphed, or exported to Chrome trace viewer and flame graphs. It can also trace library calls, Linux kernel functions, scheduling events, and Python functions in one timeline.",
+  "why_it_exists": "The README says uftrace was heavily inspired by the Linux kernel's ftrace framework (especially its function graph tracer) and extends that idea to user-space programs. The slides say it is a tool to trace and analyze execution of C/C++ programs.",
+  "how_it_works": "Traditionally the program is compiled with -pg or -finstrument-functions, so the compiler inserts mcount or __cyg_profile_func_enter/exit calls into each function. Library calls are traced by hooking the PLT. The README also describes an experimental full dynamic tracing mode (-P.) that analyzes and patches function prologues at run time on x86_64 and AArch64, so no recompilation is needed. Recorded data goes into a uftrace.data directory that replay, report, graph, dump and info read later.",
+  "commands_seen": [
+   {
+    "cmd": "$ gcc -pg foobar.c",
+    "context": "Compile the sample C file with the profiling hooks that uftrace relies on (slides; the README says the program must be built with -pg or -finstrument-functions)."
+   },
+   {
+    "cmd": "$ uftrace record a.out",
+    "context": "Run the program and save its trace data to uftrace.data, for later analysis."
+   },
+   {
+    "cmd": "$ uftrace replay",
+    "context": "Print the recorded function trace as an indented call tree with durations."
+   },
+   {
+    "cmd": "$ uftrace a.out",
+    "context": "One-shot run: record and replay in a single step (the default 'live' command, which does not write files)."
+   },
+   {
+    "cmd": "$ uftrace -D 2 a.out",
+    "context": "Limit the trace to nesting depth 2 (the -D/--depth filter)."
+   },
+   {
+    "cmd": "$ uftrace -F foo a.out",
+    "context": "Trace only the function foo and its children (the -F/--filter option)."
+   },
+   {
+    "cmd": "$ uftrace -t 200ns a.out",
+    "context": "Hide functions that run for less than 200ns (the -t/--time-filter option)."
+   },
+   {
+    "cmd": "$ sudo uftrace -k a.out",
+    "context": "Trace kernel functions as well as user functions; needs root."
+   },
+   {
+    "cmd": "$ uftrace -a a.out 5",
+    "context": "Use debug info (gcc -g) or known libc prototypes to show argument and return types, as in the fibonacci example, where fib(5) = 5 is printed."
+   },
+   {
+    "cmd": "$ uftrace report",
+    "context": "Print per-function statistics on the recorded data: total time, self time, and call counts."
+   }
+  ],
+  "install_notes": "Beyond brew install: the README gives a source build path. Clone https://github.com/namhyung/uftrace, optionally run sudo misc/install-deps.sh to install optional dependencies, then run ./configure, make, and sudo make install (default prefix /usr/local). The configure output lists optional features that are off by default in the slide's first run: libdw (DWARF debug info), libpython (Python tracing and scripting), libluajit (Lua scripting), libncursesw (TUI), and capstone (full dynamic tracing). The README says the deps script is 'highly recommended'. Kernel tracing needs root and a kernel built with CONFIG_FUNCTION_GRAPH_TRACER=y. No accounts or hardware are mentioned. The brew caveats field was empty.",
+  "standout": "Most function tracers need the program recompiled. uftrace can also patch function prologues at run time (experimental, x86_64 and AArch64) and show argument and return values symbolically, optionally using DWARF debug info. It also merges user, library, kernel, and scheduler events on one timeline, and the README notes it can trace Python via Python's trace/profile infrastructure.",
+  "status": "unknown. The README has a nightly-test CI badge and a Repology packaging badge, which suggest active upkeep, but I did not see a release date or last-commit date in the fetched pages. The sample 'uftrace v0.8.1' in the README is example output, not a release reference.",
+  "caveats": "The README's limitations section says it cannot trace an already running process yet, it was not designed for system-wide tracing, and it mainly supports x86_64 and AArch64 (x86 32-bit and ARM v6/v7 work but some features may not). It targets Linux and Android. Full dynamic tracing is described as experimental. Kernel tracing needs root. Compiler-instrumented tracing requires rebuilding the program with -pg or -finstrument-functions. The README says the project is GPL v2. The homepage is a slide deck that was truncated in my fetch, so some of its later sections (report, graph, tui, Python scripting) were not read in full.",
+  "quotes": [
+   "uftrace is a function call graph tracer for C, C++, Rust and Python programs.",
+   "It hooks into the entry and exit of each function, recording timestamps as well as the function's arguments and return values.",
+   "Initially, uftrace only supported function tracing with compiler support. However, it now allows users to trace function calls without recompilation by analyzing instructions in each function prologue and dynamically and selectively patching those instructions."
+  ],
+  "links": [
+   {
+    "label": "Homepage (slide deck)",
+    "url": "https://uftrace.github.io/slide/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/namhyung/uftrace"
+   },
+   {
+    "label": "Tutorial (wiki)",
+    "url": "https://github.com/namhyung/uftrace/wiki/Tutorial"
+   },
+   {
+    "label": "Lightning talk (video)",
+    "url": "https://youtu.be/LNav5qvyK7I"
+   }
+  ],
+  "fetch_log": [
+   "https://uftrace.github.io/slide/ - worked, but the response was truncated at 40000 characters partway through the report section, so the later slides (graph, tui, scripting, dynamic tracing) were not read.",
+   "https://github.com/namhyung/uftrace - worked, returned the README in full; used for the description, usage, limitations and license."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "uftrace makes program execution tangible as a timed call tree, and its runtime function patching plus unified user-space and kernel tracing make it unusually revealing."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "uftrace",
+  "tldr": "uftrace records every function call a C, C++ or Rust program makes and prints it as an indented call tree with a duration on each line.",
+  "deeper_look": "uftrace runs a program and hooks the entry and exit of each function, recording timestamps along with arguments and return values. The result is a nested, indented tree of calls, each with its duration. The same recording can be replayed, summarised into per-function statistics, graphed, or exported to Chrome trace viewer and flame graphs.\n\nIt was heavily inspired by the Linux kernel's ftrace function graph tracer, and carries that idea into user-space programs. Traditionally the program is built with `-pg` or `-finstrument-functions`, so the compiler inserts a small hook call into every function. Library calls are caught by hooking the PLT. Recordings land in a `uftrace.data` directory that the other subcommands read later.\n\nThe README also describes an experimental dynamic mode (`-P.`) that analyzes and patches function prologues at run time on x86_64 and AArch64, so no recompilation is needed. User functions, library calls, kernel functions, scheduler events and Python functions can all be shown on one timeline. It is a good way to see what a program does, rather than what its source says it does.",
+  "install": "brew install uftrace\n# Compiler-instrumented tracing needs your program built with gcc -pg or -finstrument-functions.\n# Kernel tracing needs root and a kernel built with CONFIG_FUNCTION_GRAPH_TRACER=y.",
+  "try_this": [
+   {
+    "cmd": "gcc -pg foobar.c && uftrace a.out",
+    "what_happens": "Builds a sample program with profiling hooks, then runs it live and prints the call tree with durations."
+   },
+   {
+    "cmd": "uftrace record a.out && uftrace replay",
+    "what_happens": "Saves the trace to uftrace.data, then prints the recorded calls as an indented tree."
+   },
+   {
+    "cmd": "uftrace report",
+    "what_happens": "Prints per-function statistics from the recording: total time, self time and call counts."
+   }
+  ],
+  "whats_unique": "Most function tracers need the program recompiled. uftrace can also patch function prologues at run time (experimental), and it merges user, library, kernel and scheduler events into one timeline.",
+  "caveats": "It cannot attach to an already running process yet, mainly supports x86_64 and AArch64 on Linux and Android, and its no-recompile mode is experimental.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "tracing",
+   "profiling",
+   "c",
+   "cpp",
+   "rust",
+   "linux",
+   "tui"
+  ],
+  "links": [
+   {
+    "label": "Homepage (slide deck)",
+    "url": "https://uftrace.github.io/slide/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/namhyung/uftrace"
+   },
+   {
+    "label": "Tutorial (wiki)",
+    "url": "https://github.com/namhyung/uftrace/wiki/Tutorial"
+   },
+   {
+    "label": "Lightning talk (video)",
+    "url": "https://youtu.be/LNav5qvyK7I"
+   }
+  ]
+ }
+}

@@ -1,0 +1,145 @@
+{
+ "name": "libusbmuxd",
+ "desc": "USB multiplexor library for iOS devices",
+ "homepage": "https://www.libimobiledevice.org/",
+ "installs_365d": 38290,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "network",
+  "protocol"
+ ],
+ "why": "The usbmuxd multiplexing protocol that quietly connects iPhones to Macs is a door worth opening, though the library is plumbing.",
+ "brief": {
+  "what_it_is": "libusbmuxd is a C client library that lets applications speak the usbmux protocol, which multiplexes connections to iOS devices over USB. It does not talk to the device directly. It connects to a socket served by a usbmuxd daemon, which owns the USB link. The package also ships two command-line tools: iproxy, which binds local TCP ports and forwards them to ports on the device, and inetcat, a netcat-like tool that exposes a raw TCP connection to the device on stdin and stdout.",
+  "why_it_exists": "The README says the library is primarily used by applications built on libimobiledevice to reach services on iOS devices. The homepage explains that the usbmuxd daemon ships with iTunes on Windows and Mac OS X, and that the libimobiledevice project reimplemented it as open source for Linux and for people who do not want iTunes.",
+  "how_it_works": "Applications link against libusbmuxd and connect to the usbmuxd socket instead of opening USB themselves. The USBMUXD_SOCKET_ADDRESS environment variable can point the client at a socket on another host, such as a remote machine's usbmuxd. iproxy and inetcat use this same client interface to open TCP connections to ports on the device.",
+  "commands_seen": [
+   {
+    "cmd": "iproxy 2222:22",
+    "context": "Binds local TCP port 2222 and forwards it to port 22 on the first device connected via USB, so ssh localhost:2222 reaches sshd on the device (README notes this only works on jailbroken devices with sshd installed)."
+   },
+   {
+    "cmd": "iproxy --help",
+    "context": "Shows iproxy's usage information and command-line options."
+   },
+   {
+    "cmd": "man iproxy",
+    "context": "Opens the iproxy manual page for full option documentation."
+   },
+   {
+    "cmd": "ssh -oProxyCommand=\"inetcat 22\" root@localhost",
+    "context": "Uses inetcat as an SSH ProxyCommand to reach port 22 on a jailbroken iOS device without a port forward."
+   },
+   {
+    "cmd": "inetcat --help",
+    "context": "Shows inetcat's usage information and command-line options."
+   },
+   {
+    "cmd": "man inetcat",
+    "context": "Opens the inetcat manual page for full option documentation."
+   },
+   {
+    "cmd": "export USBMUXD_SOCKET_ADDRESS=192.168.179.1:27015",
+    "context": "Points libusbmuxd-based applications at a usbmuxd socket exposed on a remote host instead of the local default socket."
+   },
+   {
+    "cmd": "ideviceinfo",
+    "context": "Example libimobiledevice utility run after setting USBMUXD_SOCKET_ADDRESS, so it queries the device through the remote socket."
+   },
+   {
+    "cmd": "./autogen.sh --prefix=/usr/local",
+    "context": "Configures the source tree from a git checkout before building; ./configure with the same --prefix is the route for release tarballs."
+   },
+   {
+    "cmd": "brew install libtool autoconf automake pkg-config",
+    "context": "Installs the autotools and pkg-config needed to build libusbmuxd from source on macOS with Homebrew."
+   }
+  ],
+  "install_notes": "Built from source with autotools; the README lists no hardware or account requirements. Linux needs the usbmuxd daemon installed on the system, plus libplist and libimobiledevice-glue development packages. macOS has its own copy of usbmuxd, so only the build tools are needed. On Windows the usbmuxd daemon is provided by the Apple Mobile Device Support package (part of iTunes), and the README recommends building in an MSYS2 MinGW 64-bit shell. Set PKG_CONFIG_PATH if dependencies live under /usr/local. The Homebrew formula is named libusbmuxd and the homepage's macOS script builds the whole libimobiledevice stack.",
+  "standout": "The client can point at a usbmuxd socket on another machine via one environment variable, so tools on one host can reach an iPhone plugged into a different one. inetcat also turns an SSH ProxyCommand into a way to reach a device's port 22 without any port forward.",
+  "status": "maintained. The libimobiledevice homepage lists libusbmuxd 2.1.1 released 2025-06-04, and sibling components (libirecovery 1.3.1, ideviceinstaller 1.2.0, ifuse 1.2.0) shipped in October 2025 with news posts. The README was last updated 2024-10-22, and its sample build output still says 2.1.0. I did not check the repository's commit history.",
+  "caveats": "The homepage is for the whole libimobiledevice stack, so the libusbmuxd-specific details here come from the README. The library is LGPL-2.1, but iproxy and inetcat are GPL-2.0. The README says the project is independent and not authorized or approved by Apple. Windows support is limited: the homepage says usbmuxd is not fully supported there, and you need Apple's package installed. The SSH example applies only to jailbroken devices with sshd installed. The README's Linux build needs usbmuxd on the system. This is plumbing: on its own it does nothing visible, and you need a usbmuxd daemon or a remote socket to talk to.",
+  "quotes": [
+   "A client library to multiplex connections from and to iOS devices alongside command-line utilities.",
+   "The library does not establish a direct connection with a device but requires connecting to a socket provided by the usbmuxd daemon.",
+   "Provides the `iproxy` utility to proxy ports to the device",
+   "This utility is a simple netcat-like tool that allows opening a read/write interface to a TCP port on a usbmux device and expose it via STDIN/STDOUT."
+  ],
+  "links": [
+   {
+    "label": "libimobiledevice homepage",
+    "url": "https://www.libimobiledevice.org/"
+   },
+   {
+    "label": "libusbmuxd repository (README)",
+    "url": "https://github.com/libimobiledevice/libusbmuxd"
+   },
+   {
+    "label": "libusbmuxd issue tracker",
+    "url": "https://github.com/libimobiledevice/libusbmuxd/issues"
+   }
+  ],
+  "fetch_log": [
+   "https://www.libimobiledevice.org/ - worked; the libimobiledevice project homepage, which covers the whole stack and lists libusbmuxd 2.1.1 in its download section",
+   "https://github.com/libimobiledevice/libusbmuxd - worked; returned the libusbmuxd README, which has the usage and build details"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Though mostly plumbing, usbmuxd exposes the multiplexing layer behind iOS device access, and iproxy and inetcat make that protocol tangible from the terminal."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "libusbmuxd",
+  "tldr": "A client library and two tools, iproxy and inetcat, that tunnel TCP connections to an iPhone over USB, using the usbmux protocol Apple's own software uses.",
+  "deeper_look": "When an iPhone is plugged into a computer, programs do not talk to USB directly. A daemon called usbmuxd owns the USB link and multiplexes many TCP-style connections over it. Applications connect to a local socket the daemon serves and ask for a port on the device. libusbmuxd is the client library for that socket.\n\nTwo command-line tools ship with it. `iproxy` binds local TCP ports and forwards them to ports on the device, so an ordinary local client can reach a service running on the phone. `inetcat` is a netcat-like tool: it opens a TCP port on the device and exposes it on stdin and stdout, which makes it usable as an SSH ProxyCommand with no port forward at all.\n\nThe daemon ships with iTunes on Windows and Mac OS X. The libimobiledevice project reimplemented it as open source for Linux and for people who do not want iTunes. The library is mostly used by other libimobiledevice tools to reach services on iOS devices.\n\nThe odd part is the transport idea. A phone on a cable behaves like a host on a tiny private network, reached through a socket. Point the client at a different socket and the same tools work against a phone plugged into another machine.",
+  "install": "brew install libusbmuxd\nOn Linux, the usbmuxd daemon must be installed on the system. macOS has its own copy. Windows needs Apple's Apple Mobile Device Support package (part of iTunes). You need an iOS device plugged in over USB to do anything useful.",
+  "try_this": [
+   {
+    "cmd": "iproxy --help",
+    "what_happens": "Shows iproxy's usage and options."
+   },
+   {
+    "cmd": "iproxy 2222:22",
+    "what_happens": "Forwards local port 2222 to port 22 on the first USB-connected device, so ssh to localhost port 2222 reaches its sshd. Only works on jailbroken devices with sshd installed."
+   },
+   {
+    "cmd": "inetcat --help",
+    "what_happens": "Shows inetcat's usage and options."
+   }
+  ],
+  "whats_unique": "One environment variable, USBMUXD_SOCKET_ADDRESS, points the client at a usbmuxd socket on another machine, so tools on one host can reach a phone plugged into a different one. inetcat also turns an SSH ProxyCommand into a direct route to a device port.",
+  "caveats": "This is plumbing: it does nothing visible without a usbmuxd daemon and a device, and the SSH example only applies to jailbroken devices; Windows support is limited.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "usb",
+   "protocol",
+   "ios",
+   "tunneling"
+  ],
+  "links": [
+   {
+    "label": "libimobiledevice homepage",
+    "url": "https://www.libimobiledevice.org/"
+   },
+   {
+    "label": "libusbmuxd repository (README)",
+    "url": "https://github.com/libimobiledevice/libusbmuxd"
+   },
+   {
+    "label": "libusbmuxd issue tracker",
+    "url": "https://github.com/libimobiledevice/libusbmuxd/issues"
+   }
+  ]
+ }
+}

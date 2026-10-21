@@ -1,0 +1,154 @@
+{
+ "name": "orbuculum",
+ "desc": "Arm Cortex-M SWO/SWV Demux and Postprocess",
+ "homepage": "https://github.com/orbcode/orbuculum",
+ "installs_365d": 81,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "reverse-engineering",
+  "afternoon",
+  "embedded"
+ ],
+ "why": "Demuxes ARM SWO trace streams from a live microcontroller, a genuine window into watching firmware think.",
+ "brief": {
+  "what_it_is": "Orbuculum is a set of command-line tools that decode and present the trace output pins of an Arm Cortex-M CPU, either SWO (UART or Manchester encoded) or parallel TRACE pins via ORBTrace hardware. Input comes from a debug probe (Black Magic Probe, SEGGER J-Link, USB or FTDI serial, OpenOCD or PyOCD SWO, ORBTrace Mini) or from a saved raw file. Output is a network feed (orbflow on TCP 3402, legacy frames on 3443) that clients such as orbcat, orbtop, orbstat, orbmortem and orbzmq read to show printf-style text channels, program counter samples, statistics and, with ETM, instruction trace.",
+  "why_it_exists": "The README calls an Orbuculum a crystal ball, 'used for seeing things that would be otherwise invisible', with a nodding reference to the Black Magic Probe (BMP). It exists so that data a running microcontroller pushes out its trace pins can be read by ordinary host tools while the firmware runs.",
+  "how_it_works": "The orbuculum mux talks to the probe and exposes a network interface to which any number of clients can connect. Since 2.2.0 it speaks orbflow, a COBS-framed, sequenced packet protocol, and an ORBTrace Mini 1.4.0+ probe can strip TPIU framing itself, with clients falling back to legacy protocol when needed. The -T and -t options control TPIU stripping and which streams are routed.",
+  "commands_seen": [
+   {
+    "cmd": "orbuculum --monitor 1000",
+    "context": "Starts the mux with no source options, so it takes a BMP or ORBTrace Mini automatically; --monitor sets the link-report interval in ms. The prose says this gives 100ms, but the number on the command is 1000."
+   },
+   {
+    "cmd": "orbuculum --monitor 1000 --orbtrace '-p vtref,3.3 -e vtref,on'",
+    "context": "Same mux start, but also calls orbtrace on probe connect to switch on target power at 3.3V and configure it for Manchester SWO."
+   },
+   {
+    "cmd": "orbtop -e ~/Develop/STM32F103-skel/ofiles/firmware.elf",
+    "context": "Runs orbtop, which samples the PC and totals time per function; -e supplies the ELF so symbols can be resolved."
+   },
+   {
+    "cmd": "orbcat -c 0,\"%c\"",
+    "context": "Prints ITM channel 0 as characters on stdout, effectively replicating the target's channel 0 text output."
+   },
+   {
+    "cmd": "orbzmq -l tcp://localhost:1234 -c 0,text,%c -c 1,raw, -c 2,formatted,\"Value: 0x%08X\\n\" -e AWP,OFS,PC -v 1",
+    "context": "Publishes ITM channels and hardware events over ZeroMQ with topics text, raw, formatted and hwevent*. The README uses -l here, but its orbzmq option table lists -s and -z, so the example may not match the current binary."
+   },
+   {
+    "cmd": "sudo apt-get install libusb-1.0-0-dev cmake pkg-config libczmq5-dev ncurses-dev libelf-dev libsdl2-dev libzstd-dev libcapstone-dev",
+    "context": "Debian 12 package list the README gives for all Linux build dependencies."
+   },
+   {
+    "cmd": "brew install libusb zmq sdl2 libelf",
+    "context": "The macOS dependencies line; the README adds notes for Intel and Apple Silicon Macs."
+   },
+   {
+    "cmd": "pkg install capstone libzmq3 ncurses libelf ninja meson",
+    "context": "FreeBSD dependency install; the README then builds as normal."
+   },
+   {
+    "cmd": "meson setup build",
+    "context": "The standard build step on Linux, macOS and FreeBSD; the README follows it with ninja -C build."
+   },
+   {
+    "cmd": "source Support/gdbtrace.init",
+    "context": "Loads the gdb macro set (enableSTM32SWO, prepareSWO, dwtSamplePC and others) that configures the target's SWO output from a gdb session."
+   }
+  ],
+  "install_notes": "You need a supported probe, and the target must be configured to emit SWO or TRACE, which is usually done from gdb with Support/gdbtrace.init or from program code via the libtrace library. Linux builds need libusb, cmake, pkg-config and several dev libraries, and the udev rules in Support/60-orbcode.rules are installed automatically, or can be copied by hand. Binaries are available as GitHub Actions artifacts for Linux, Windows and macOS. Windows is built with MSYS2/MinGW-w64, and the README asks for the forked libusb used there. On Apple Silicon, avoid the Intel binutils environment variables. On FreeBSD you must adjust /dev/usb permissions yourself.",
+  "standout": "It moves probe-side work into the probe: an ORBTrace Mini FPGA strips TPIU framing and encodes orbflow messages on the device, which the README says saves a lot of bandwidth. The tools also accept SWO from almost any source, including a raw file, so the same clients work against live hardware or a recording.",
+  "status": "Maintained. The GitHub releases page shows 2.2.0 marked Latest, with a 2.2.0 Beta1 earlier in September and 2.1.0 and 2.0.0 before that (the fetched page did not show years). The README says bugfixes for 2.2.x land on the main branch and that issues are patched as they are found, and it links an active Discord.",
+  "caveats": "Parallel trace support (MTB, ETM3, ETM4) is labelled beta quality, and the README says 2.0.0 should be viewed as somewhat experimental. ETM4 decode in orbmortem is marked experimental. Known issue in 2.2.0: after dropping into an in-progress stream, the first packet can mis-decode and show phantom active streams for about 2 seconds. Windows relies on a forked libusb that the README says is not yet upstream. Individual clients can no longer strip TPIU, so you need the mux for that. The README warns that -T and -tx options are easy to get wrong and can produce confusing output, and that BMP needs traceswo enabled before data appears. Python support has moved to a separate project, pyorb. The fetched README was truncated at 40000 characters, so later sections may hold more caveats. No licence was visible in what I fetched.",
+  "quotes": [
+   "Orbuculum is a set of tools for decoding and presenting output flows from the tracing output pins of a CORTEX-M CPU.",
+   "An Orbuculum is a Crystal Ball, used for seeing things that would be otherwise invisible.",
+   "Orbuculum itself is specifically designed to be 'hardy' to probe and target disconnects and restarts (y'know, like you get in the real world)."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/orbcode/orbuculum"
+   },
+   {
+    "label": "GitHub releases",
+    "url": "https://github.com/orbcode/orbuculum/releases"
+   },
+   {
+    "label": "Orbcode project site",
+    "url": "https://www.orbcode.org"
+   },
+   {
+    "label": "Orbcode Discord",
+    "url": "https://discord.gg/P7FYThy"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/orbcode/orbuculum: worked; README returned, truncated at 40000 characters partway through the command-line options section",
+   "https://github.com/orbcode/orbuculum/releases: worked; release notes for 2.2.0, 2.2.0Beta1, 2.1.0, 2.0.0 and earlier read, dates shown without years",
+   "https://www.orbcode.org: worked; organisation landing page only, no project-level detail beyond a pointer to ORBTrace mini and Orbuculum"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Orbuculum turns otherwise invisible Cortex-M trace-pin traffic into live text, profiling, and instruction traces\u2014a genuinely unusual window into running firmware."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Orbuculum",
+  "tldr": "A crystal ball for microcontrollers: command-line tools that read the trace pins of an Arm Cortex-M chip and show printf text, profiles and instruction trace while firmware runs.",
+  "deeper_look": "Orbuculum is a set of command-line tools for decoding what an Arm Cortex-M CPU sends out of its trace pins. That means SWO (serial wire output, UART or Manchester encoded) and, with ORBTrace hardware, the parallel TRACE pins. The data arrives through a debug probe such as a Black Magic Probe, a SEGGER J-Link, an FTDI or USB serial adapter, OpenOCD or PyOCD, or an ORBTrace Mini. It can also be read from a saved raw file.\n\nThe design is a mux with clients. The `orbuculum` mux talks to the probe and offers a network feed that any number of clients can connect to. Clients then each do one job: `orbcat` prints ITM text channels like a serial console, `orbtop` samples the program counter and totals time per function, `orbstat` gathers statistics, `orbmortem` works with instruction trace, and `orbzmq` republishes channels over ZeroMQ. Since 2.2.0 the feed uses orbflow, a COBS-framed, sequenced packet protocol.\n\nThe idea underneath is observing a running chip without stopping it or adding much load. The README says an Orbuculum is a crystal ball, 'used for seeing things that would be otherwise invisible'. The mux is also built to survive probe and target disconnects and restarts, which happen constantly on a real bench.",
+  "install": "brew install orbuculum\nNeeds a supported debug probe and a Cortex-M target configured to emit SWO or TRACE. That is usually done from gdb with Support/gdbtrace.init, or from firmware code via the libtrace library. Without hardware you can only work from a saved raw capture.",
+  "try_this": [
+   {
+    "cmd": "orbuculum --monitor 1000",
+    "what_happens": "Starts the mux, which picks up a Black Magic Probe or ORBTrace Mini automatically and reports link status every 1000 ms."
+   },
+   {
+    "cmd": "orbcat -c 0,\"%c\"",
+    "what_happens": "Prints ITM channel 0 as characters on stdout, mirroring the text the target sends on that channel."
+   },
+   {
+    "cmd": "orbtop -e ~/Develop/STM32F103-skel/ofiles/firmware.elf",
+    "what_happens": "Samples the program counter and totals time per function, using your own firmware ELF to resolve symbol names."
+   }
+  ],
+  "whats_unique": "Any number of clients can read one trace feed, and the same clients work against live hardware or a recording. An ORBTrace Mini FPGA probe can also strip TPIU framing on the device itself to save bandwidth.",
+  "caveats": "It needs a supported debug probe and a configured Cortex-M target; parallel trace (ETM) support is beta, and ETM4 decode in orbmortem is experimental.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "embedded",
+   "arm",
+   "tracing",
+   "debugging",
+   "firmware"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/orbcode/orbuculum"
+   },
+   {
+    "label": "GitHub releases",
+    "url": "https://github.com/orbcode/orbuculum/releases"
+   },
+   {
+    "label": "Orbcode project site",
+    "url": "https://www.orbcode.org"
+   },
+   {
+    "label": "Orbcode Discord",
+    "url": "https://discord.gg/P7FYThy"
+   }
+  ]
+ }
+}

@@ -1,0 +1,119 @@
+{
+ "name": "nest",
+ "desc": "Neural Simulation Tool (NEST) with Python3 bindings (PyNEST)",
+ "homepage": "https://www.nest-simulator.org/",
+ "installs_365d": 614,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "science",
+  "simulation",
+  "afternoon",
+  "library"
+ ],
+ "why": "NEST simulates spiking neural networks with PyNEST bindings, a real scientific tool you can run at home.",
+ "brief": {
+  "what_it_is": "NEST is an open-source simulator for spiking neural network models. It focuses on the dynamics, size and structure of neural systems rather than the detailed morphology of individual neurons. You describe a network in Python through PyNEST, or drive the stand-alone nest application, and the simulation runs in NEST's C++ kernel. It provides over 50 neuron models and over 10 synapse models, including Tsodyks-Markram short-term plasticity and several STDP variants.",
+  "why_it_exists": "The homepage frames NEST as a way to follow the logic of an electrophysiological experiment inside a computer, where the experimenter defines the neural system being investigated. It is aimed at networks of spiking neurons of any size, such as cortical models, balanced random networks, and models of learning and plasticity.",
+  "how_it_works": "You define neurons and synapses, plus devices that stimulate or measure, much as a lab would set up instruments, then run the simulation. Connectivity is stored as an adjacency list rather than a weight matrix, so any two neurons can have several connections with different properties. You can inspect and modify the state of each neuron and connection during a run, and devices write their data to memory or to file.",
+  "commands_seen": [
+   {
+    "cmd": "pip install nest-simulator",
+    "context": "Quick install of NEST from PyPI, per the README's Installation section."
+   },
+   {
+    "cmd": "brew install libomp",
+    "context": "macOS only: installs the OpenMP runtime, which the README says is needed for NEST's multithreading to work correctly. Run before the pip install."
+   }
+  ],
+  "install_notes": "README quick install is pip install nest-simulator; the README links a pip-install documentation page for more options. On macOS, install libomp with Homebrew first. The homepage says NEST needs only a C++ compiler and everything else is optional. Homebrew formula metadata (not the README) says PyNEST and its dependencies are installed with the python@3.15 formula, and that to use PyNEST you should use the Python interpreter at $HOMEBREW_PREFIX/opt/python@3.15/bin, possibly adding that directory to your PATH. Installed executables are nest-config, nest-server and nest-server-mpi.",
+  "standout": "Connectivity is an adjacency list that allows multiple differently-parameterised connections between the same pair of neurons, rather than a single weight matrix. The project also says it has run since 1994 under the name SYNOD, and it is designed to scale from a laptop to supercomputers.",
+  "status": "maintained. The homepage lists the current release as NEST 3.10 (June 2026). The GitHub README carries CI, DOI and package badges for Ubuntu PPA, Fedora, conda-forge, Homebrew and Docker. I did not see a last-commit date or release history on the pages I read, so the exact date of the latest commit is unknown.",
+  "caveats": "Licensed under GPL v2 or later, which matters if you want to embed it in closed software. Runs on UNIX-like systems; the homepage says from MacBooks to BlueGene supercomputers. On macOS, multithreading needs libomp. Its focus is network-level dynamics, not detailed single-neuron morphology. The homepage's example list was truncated in my fetch, so I did not verify individual example contents.",
+  "quotes": [
+   "NEST is a simulator for spiking neural network models that focuses on the dynamics, size and structure of neural systems rather than on the exact morphology of individual neurons.",
+   "NEST has minimal dependencies. All it really needs is a C++ compiler. Everything else is optional.",
+   "A NEST simulation tries to follow the logic of an electrophysiological experiment that takes place inside a computer with the difference that the neural system to be investigated must be defined by the experimenter."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.nest-simulator.org/"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://nest-simulator.org/documentation"
+   },
+   {
+    "label": "pip install guide",
+    "url": "https://nest-simulator.org/documentation/installation/pip_install.html"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/nest/nest-simulator"
+   }
+  ],
+  "fetch_log": [
+   "https://www.nest-simulator.org/ - worked; returned homepage text with the About, Features and Download content. Example-list entries were truncated with [...].",
+   "https://github.com/nest/nest-simulator - worked; returned the README, which had the install commands and license text."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "NEST lets you build and probe spiking neural networks as virtual electrophysiology experiments, including learning and plasticity, from a laptop to supercomputers."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "NEST",
+  "tldr": "A simulator for networks of spiking neurons, running since 1994 and scaling from a laptop to supercomputers, driven from Python.",
+  "deeper_look": "NEST simulates spiking neural networks. It cares about the dynamics, size and structure of a whole network, not the physical shape of individual neurons. You describe the network in Python through PyNEST, or use the stand-alone nest application, and a C++ kernel runs the simulation. It ships with over 50 neuron models and over 10 synapse models, including Tsodyks-Markram short-term plasticity and several STDP variants.\n\nThe homepage says a NEST simulation \"tries to follow the logic of an electrophysiological experiment that takes place inside a computer\". You set up the instruments much as a lab would: neurons and synapses, plus devices that stimulate or record. Then you run it. You can inspect and change the state of each neuron and connection while the run is in progress, and devices write their data to memory or to file.\n\nConnectivity is stored as an adjacency list, not a single weight matrix. Two neurons can therefore have several connections with different properties between them. That is a small design choice with large consequences for what you can model.\n\nThe idea underneath is that you can build a model of cortex-like activity, balanced random networks, or learning and plasticity, and watch what the network does. The project says it has existed since 1994 under the name SYNOD, so this is long-running research software, not a toy.",
+  "install": "brew install nest\n# PyNEST lives with the Homebrew Python: add $HOMEBREW_PREFIX/opt/python@3.15/bin to your PATH to use it.\n# Alternative, per the README: brew install libomp (macOS only, for multithreading), then pip install nest-simulator",
+  "try_this": [
+   {
+    "cmd": "pip install nest-simulator",
+    "what_happens": "Installs NEST from PyPI, the README's quick install, so you can import it from Python."
+   },
+   {
+    "cmd": "nest-config --help",
+    "what_happens": "Shows the options of the helper that reports how your NEST was built and configured."
+   },
+   {
+    "cmd": "nest-server --help",
+    "what_happens": "Shows the options for the NEST server executable that Homebrew installs."
+   }
+  ],
+  "whats_unique": "Connectivity is an adjacency list, so the same pair of neurons can have several differently parameterised connections. It is also research software with a history back to 1994 that scales from a laptop to supercomputers.",
+  "caveats": "It models network-level dynamics, not detailed single-neuron morphology, it is GPL v2 or later, and on macOS multithreading needs libomp.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "science",
+   "simulation",
+   "neuroscience",
+   "python",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.nest-simulator.org/"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://nest-simulator.org/documentation"
+   },
+   {
+    "label": "pip install guide",
+    "url": "https://nest-simulator.org/documentation/installation/pip_install.html"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/nest/nest-simulator"
+   }
+  ]
+ }
+}

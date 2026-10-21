@@ -1,0 +1,98 @@
+{
+ "name": "soapyhackrf",
+ "desc": "SoapySDR HackRF module",
+ "homepage": "https://github.com/pothosware/SoapyHackRF/wiki",
+ "installs_365d": 481,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "library"
+ ],
+ "why": "A SoapySDR plugin for HackRF, a fine radio door but mostly glue between hardware and the SDR stack.",
+ "brief": {
+  "what_it_is": "SoapyHackRF is a plugin module that lets the HackRF software-defined radio be used through the SoapySDR API, and through any software that speaks SoapySDR. It is built with CMake against libhackrf and SoapySDR, and installs into the SoapySDR modules directory. Once installed, SoapySDR tools can probe the device and report its channels, gain stages, frequency range and sample rates. The wiki's probe example shows a HackRF One with one RX and one TX channel, sample rates from 1 to 20 MHz, and a frequency range of 0 to 7250 MHz.",
+  "why_it_exists": "The README frames it simply as providing 'a plugin module to use the Hack RF device within the SoapySDR API and software that supports SoapySDR.' It is a driver adapter, so HackRF hardware can be used by the wider SoapySDR-aware software ecosystem without each application writing its own HackRF code.",
+  "how_it_works": "The module sits between libhackrf, which talks to the hardware, and SoapySDR, the abstraction library that applications call. The CMake build finds the libhackrf and SoapySDR development files on the system and installs the resulting plugin where SoapySDR looks for modules. Applications then open the device through SoapySDR's generic interface rather than HackRF-specific calls.",
+  "commands_seen": [
+   {
+    "cmd": "sudo add-apt-repository -y ppa:myriadrf/drivers",
+    "context": "Ubuntu route: adds the myriadrf drivers PPA that provides the hackrf packages (wiki, Dependencies section)."
+   },
+   {
+    "cmd": "sudo apt-get update",
+    "context": "Refreshes package lists after adding the PPA (wiki, Dependencies section)."
+   },
+   {
+    "cmd": "sudo apt-get install hackrf libhackrf-dev",
+    "context": "Installs the HackRF runtime and libhackrf development headers on Ubuntu (wiki, Dependencies section)."
+   },
+   {
+    "cmd": "git clone https://github.com/pothosware/SoapyHackRF.git",
+    "context": "Fetches the plugin source from GitHub (wiki, Building section)."
+   },
+   {
+    "cmd": "cd SoapyHackRF",
+    "context": "Enters the cloned source directory (wiki, Building section)."
+   },
+   {
+    "cmd": "mkdir build",
+    "context": "Creates an out-of-tree build directory (wiki, Building section)."
+   },
+   {
+    "cmd": "cd build",
+    "context": "Changes into the build directory (wiki, Building section)."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Configures the build; CMake locates libhackrf and SoapySDR dev files (wiki, Building section)."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles the plugin module (wiki, Building section)."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the module into the SoapySDR modules directories (wiki, Building section)."
+   },
+   {
+    "cmd": "SoapySDRUtil --probe=\"driver=hackrf\"",
+    "context": "Probes the attached HackRF and prints its identification, channels, gain ranges, frequency range, sample rates and filter bandwidths (wiki, Probing section)."
+   }
+  ],
+  "install_notes": "Prerequisites are libhackrf (https://github.com/mossmann/hackrf/wiki) and SoapySDR (https://github.com/pothosware/SoapySDR/wiki). On Ubuntu, the hackrf and libhackrf-dev packages come from the myriadrf drivers PPA. Pre-built installers for Windows, OSX and Ubuntu are distributed through the Pothos SDR environment rather than Homebrew. Building from source needs git, CMake, make and a C++ toolchain, which the wiki implies but does not list. A HackRF must be attached to probe it, and the wiki does not describe udev or USB permission setup.",
+  "standout": "It is thin glue rather than a radio application: its job is to make HackRF look like every other SoapySDR device, so one probe command or one application works across many SDR front ends. The wiki's probe output is a useful, literal picture of what the HackRF exposes through the abstraction.",
+  "status": "Quiet, with thin evidence. The wiki home page was last edited by Josh Blum on Sep 8, 2017, and the probe sample reports version 2015.07.2. The repository README is short and shows no release date or recent activity, and I did not check commit history. Treat it as maintained at a low level, not actively developed.",
+  "caveats": "The README is minimal and the wiki is the real documentation, and parts of it look dated (2015 and 2017 material). Installation steps are Ubuntu-specific for the PPA, and no other distro, macOS or Windows source build steps are given. The probe output is a sample from one device and an old SoapySDR version, so current output will differ. The MIT license is stated in the README with a 2015 copyright line.",
+  "quotes": [
+   "The Soapy Hack RF project provides a plugin module to use the Hack RF device within the SoapySDR API and software that supports SoapySDR.",
+   "Pre-built installers for various systems are available through the Pothos SDR environment.",
+   "The CMake build system will locate libhackrf and SoapySDR development files on your system."
+  ],
+  "links": [
+   {
+    "label": "Project wiki (homepage)",
+    "url": "https://github.com/pothosware/SoapyHackRF/wiki"
+   },
+   {
+    "label": "Pothos SDR downloads (pre-built installers)",
+    "url": "https://github.com/pothosware/PothosCore/wiki/Downloads"
+   },
+   {
+    "label": "libhackrf wiki",
+    "url": "https://github.com/mossmann/hackrf/wiki"
+   },
+   {
+    "label": "SoapySDR wiki",
+    "url": "https://github.com/pothosware/SoapySDR/wiki"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/pothosware/SoapyHackRF/wiki (homepage): worked; wiki Home page text returned, including install, build and probe sections.",
+   "https://github.com/pothosware/SoapyHackRF (repository README): worked; short README with dependencies, documentation link and MIT license. Fetched because the wiki gave no status or commit information."
+  ]
+ }
+}

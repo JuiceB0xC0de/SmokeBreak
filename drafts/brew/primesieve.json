@@ -1,0 +1,146 @@
+{
+ "name": "primesieve",
+ "desc": "Fast C/C++ prime number generator",
+ "homepage": "https://github.com/kimwalisch/primesieve",
+ "installs_365d": 961,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "quick",
+  "math",
+  "science"
+ ],
+ "why": "Fast prime generator that lets you count primes to enormous limits and explore number theory at home.",
+ "brief": {
+  "what_it_is": "primesieve is a command-line program and C/C++ library for quickly generating prime numbers. You give it a range, such as primesieve 1e10 to count primes up to 10 billion, and it prints the count. With --print it lists the primes, and with --count=2 or --print=2 it counts or prints twin primes (k-tuplets up to 6 are supported). It can handle limits up to 2^64, and it also has a built-in CPU and RAM stress test.",
+  "why_it_exists": "The README frames it as a fast, cache-efficient way to generate primes and prime k-tuplets to very large limits, using all CPU cores when ordering does not matter. The scout notes describe it as a way to count primes to enormous limits and explore number theory at home.",
+  "how_it_works": "It uses the segmented sieve of Eratosthenes with wheel factorization, with run time O(n log log n) and memory O(sqrt n). For primes above 2^32 it uses the bucket sieve to improve cache efficiency. It detects the CPU's L1 and L2 cache sizes and sizes its data structures to match, using about 8 bytes per sieving prime per thread.",
+  "commands_seen": [
+   {
+    "cmd": "primesieve 1e10",
+    "context": "Counts the primes up to 1e10 using all CPU cores (the default action is counting)."
+   },
+   {
+    "cmd": "primesieve 1000000 --print",
+    "context": "Prints the primes up to 1000000 to standard output."
+   },
+   {
+    "cmd": "primesieve 1000000 --print > primes.txt",
+    "context": "Stores the primes up to 1000000 in a text file via shell redirection."
+   },
+   {
+    "cmd": "primesieve 1000000 --print=2",
+    "context": "Prints the twin primes up to 1000000."
+   },
+   {
+    "cmd": "primesieve 1e10 --dist=2^32 --count=3",
+    "context": "Counts the prime triplets inside the interval [1e10, 1e10+2^32]."
+   },
+   {
+    "cmd": "primesieve --stress-test --timeout 5m",
+    "context": "Runs the CPU stress test for five minutes; it checks prime counts on large ranges and reports OK per block, ending with All tests passed successfully!"
+   },
+   {
+    "cmd": "brew install primesieve",
+    "context": "Installs the command-line program on macOS via Homebrew."
+   },
+   {
+    "cmd": "cmake .",
+    "context": "First step of building from source: configures the build with CMake in the source directory."
+   },
+   {
+    "cmd": "cmake --build . --parallel",
+    "context": "Builds primesieve from source after configuration."
+   },
+   {
+    "cmd": "sudo cmake --install .",
+    "context": "Installs the built program and library system-wide."
+   },
+   {
+    "cmd": "sudo ldconfig",
+    "context": "Refreshes the shared library cache on Linux after a source install."
+   }
+  ],
+  "install_notes": "The README lists package-manager installs: winget install primesieve (Windows), brew install primesieve (macOS), sudo pacman -S primesieve (Arch), sudo apt install primesieve (Debian/Ubuntu), sudo dnf install primesieve (Fedora), pkg install primesieve (FreeBSD), and sudo zypper install primesieve (openSUSE). For development with libprimesieve, install libprimesieve-dev or libprimesieve-devel. Building from source needs a C++ compiler supporting C++14 or later and CMake 3.9 or newer, then cmake ., cmake --build . --parallel, sudo cmake --install ., and sudo ldconfig. Detailed steps are in doc/BUILD.md. No accounts or special hardware are mentioned. The RAM stress test needs about 1.2 GiB per thread.",
+  "standout": "The program sizes its sieve from the CPU's measured cache sizes, and it ships a stress test that uses prime counting over huge ranges as a workload. Each block has a known answer, so a miscalculation points to a hardware fault, which makes it a practical way to check cooling and stability.",
+  "status": "Looks maintained, but the fetched README has no release date or commit date. The README has active CI and benchmark badges, a stress-test sample output dated Apr 12, and a sponsor section that says the author is still maintaining it. Packaged across many distributions. Status is unknown beyond that evidence.",
+  "caveats": "Printing and writing to a file run single-threaded because output must be in order, and they use the standard output path rather than file-specific I/O. The README says that for maximum throughput you should use libprimesieve in memory instead. Source builds need a C++14 compiler and CMake 3.9 or newer. The RAM stress mode uses about 1.2 GiB per thread. The stress test's default timeout is 24 hours. The README does not state a license, and I did not check the LICENSE file.",
+  "quotes": [
+   "primesieve is a command-line program and C/C++ library for quickly generating prime numbers.",
+   "It is very cache efficient, it detects your CPU's L1 & L2 cache sizes and allocates its main data structures accordingly.",
+   "primesieve's stress test supports two modes: **CPU** (highest CPU load, uses little memory) and **RAM** (high memory usage, uses about 1.2 GiB per thread)."
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repository",
+    "url": "https://github.com/kimwalisch/primesieve"
+   },
+   {
+    "label": "C API documentation",
+    "url": "https://github.com/kimwalisch/primesieve/blob/master/doc/C_API.md"
+   },
+   {
+    "label": "C++ API documentation",
+    "url": "https://github.com/kimwalisch/primesieve/blob/master/doc/CPP_API.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/kimwalisch/primesieve: fetched OK, README returned in full. I did not follow the linked docs (ALGORITHMS.md, BUILD.md, C_API.md, CPP_API.md), so the C and C++ API links are listed but unread."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A high-performance sieve is familiar, but cache-aware segmentation, prime k-tuple counts, and known-answer stress tests make a satisfying number-theory and hardware rabbit hole."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "primesieve",
+  "tldr": "A very fast prime number generator that counts or prints primes, twin primes and larger k-tuplets up to 2^64, and doubles as a CPU stress test.",
+  "deeper_look": "primesieve is a command-line program and C/C++ library for generating prime numbers. Give it a limit and it counts the primes up to it. Ask it to print and it lists them. Ask for twin primes, or triplets, and it finds those instead, with k-tuplets up to 6 supported. Limits go as high as 2^64, and by default it uses every CPU core.\n\nUnderneath is the segmented sieve of Eratosthenes with wheel factorization. Run time is O(n log log n) and memory is O(sqrt n). The interesting engineering is about the machine rather than the maths: it detects your CPU's L1 and L2 cache sizes and sizes its main data structures to fit, and above 2^32 it switches to a bucket sieve to stay cache friendly. The sieve is old, and the speed comes from making it fit the hardware.\n\nThat same property gives it a second use. The built-in stress test counts primes over huge ranges, and every block has a known answer. A wrong count points to a hardware fault, so it works as a check on cooling and stability. It has a CPU mode and a RAM mode.\n\nFor a curious developer it is a door into number theory you can run at home: how dense primes get, how often twin primes appear, how counts behave at 10^10 and beyond. The library API is there if you want to build on it.",
+  "install": "brew install primesieve",
+  "try_this": [
+   {
+    "cmd": "primesieve 1e10",
+    "what_happens": "Counts the primes up to 10 billion across all CPU cores and prints the total."
+   },
+   {
+    "cmd": "primesieve 1000000 --print=2",
+    "what_happens": "Prints every twin prime pair up to one million."
+   },
+   {
+    "cmd": "primesieve 1e10 --dist=2^32 --count=3",
+    "what_happens": "Counts prime triplets in the interval from 1e10 to 1e10 plus 2^32."
+   }
+  ],
+  "whats_unique": "It tunes its sieve to your CPU's measured cache sizes, and it ships a stress test that uses prime counting with known answers to catch hardware faults.",
+  "caveats": "Printing runs single-threaded because output must be in order, and the stress test's default timeout is 24 hours, so set --timeout yourself.",
+  "commitment": "quick",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "quick",
+   "math",
+   "number-theory",
+   "primes",
+   "stress-test",
+   "c++"
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repository",
+    "url": "https://github.com/kimwalisch/primesieve"
+   },
+   {
+    "label": "C API documentation",
+    "url": "https://github.com/kimwalisch/primesieve/blob/master/doc/C_API.md"
+   },
+   {
+    "label": "C++ API documentation",
+    "url": "https://github.com/kimwalisch/primesieve/blob/master/doc/CPP_API.md"
+   }
+  ]
+ }
+}

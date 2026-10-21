@@ -1,0 +1,75 @@
+{
+ "name": "wv2",
+ "desc": "Programs for accessing Microsoft Word documents",
+ "homepage": "https://wvware.sourceforge.net/",
+ "installs_365d": 116,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "library",
+  "reverse-engineering",
+  "ancient"
+ ],
+ "why": "Old libwv2 utilities that dig into the binary Word format, a door into a messy legacy file format worth a look.",
+ "brief": {
+  "what_it_is": "A C library called wv (originally mswordview, renamed to avoid confusion with Microsoft's WordView) that lets other programs read Microsoft Word files. It parses Word 2000, 97, 95 and 6 formats (internally Word 9, 8, 7 and 6), and converts Word 2 documents to plain text. Input is a binary .doc file; output is parsed document content that other programs convert to other formats. The page also bundles older command-line utilities (wvWare, wvHtml, wvLatex, wvText, wvSummary and others) that wrap the library. The brew formula is named wv2 and its executable is wv2-config, but the homepage never mentions wv2 or wv2-config, so I could not confirm that the formula matches this page's version.",
+  "why_it_exists": "The library exists so that other programs can access Word documents, mainly to convert them to other formats. The page says it is used by AbiWord as its Word importer and that the KDE project's KWord uses concepts and code from it.",
+  "how_it_works": "The README does not explain the parsing internals. It says the library loads and parses the binary Word formats listed above and exposes that access to other programs. It names libgsf, libxml2 and glib as dependencies in the 1.2.0 release note, replacing libole2, Expat and libiconv.",
+  "commands_seen": [
+   {
+    "cmd": "AbiWord --to=html",
+    "context": "Recommended replacement for the wvHtml helper, which converts a Word document to HTML 4.0."
+   },
+   {
+    "cmd": "AbiWord --to=tex",
+    "context": "Recommended replacement for wvLatex and wvDVI, which convert a Word document to LaTeX."
+   },
+   {
+    "cmd": "AbiWord --print=file.ps && ps2pdf file.ps",
+    "context": "Recommended route to PDF for wvPDF, printing to PostScript and then converting with ps2pdf."
+   },
+   {
+    "cmd": "AbiWord --to=pdf",
+    "context": "Recommended replacement for wvPDF, which converts a Word document to PDF."
+   },
+   {
+    "cmd": "AbiWord --to=txt",
+    "context": "Recommended replacement for wvText, which converts a Word document to plain text."
+   },
+   {
+    "cmd": "cvs diff -u <filenames>",
+    "context": "How to produce a patch against the CVS repository for contributions."
+   },
+   {
+    "cmd": "diff -Naur wv-0.6.5 wv-0.6.5.mod > mod.patch",
+    "context": "Example of producing a patch by diffing a parallel source tree."
+   }
+  ],
+  "install_notes": "The page gives no installation steps beyond downloads from SourceForge. The 1.2.0 release notes say the library depends on libgsf, libxml2 and glib. On Windows the README says the GnuWin32 project maintains a port, which is required to build it on AbiWord's supported platforms. Development work is tracked on the AbiWord mailing list (abiword-dev) and CVS.",
+  "standout": "The project openly deprecates most of its own command-line tools in favor of AbiWord, while keeping wvSummary (which prints metadata from Office documents) as the one utility it still calls useful. The page says the wv utilities are no longer accepting bug reports.",
+  "status": "Quiet. The most recent dated item on the homepage is the March 2006 release of version 1.2.1, described as a minor bugfix release, and the previous news item is from October 2005. The maintainer is listed as Dom Lachowicz, and the README says the utilities are deprecated and no longer accepting bug reports. I did not check SourceForge or the bug tracker for later activity.",
+  "caveats": "The utilities other than wvSummary are deprecated, and the maintainers are not accepting bug reports or feature requests for them. The page says some features, such as tables of contents, cannot be achieved in wvWare's framework and that there are no plans to redesign it. Only the Word 6 through 2000 formats are parsed fully; Word 2 is reduced to plain text. The page says it compiles on most systems, with Linux the main development platform. Other systems, including OS/2, AIX, OSF1, AmigaOS and VMS, are reported to work with varying success. Windows needs the GnuWin32 port. The library is GPL-licensed. The page does not say which version the brew wv2 formula packages. Bug reports should go to the AbiWord bugzilla rather than SourceForge.",
+  "quotes": [
+   "wv is a library which allows access to Microsoft Word files.",
+   "Warning: all of the utilities (with the exception of wvSummary) should be considered deprecated in favor of using AbiWord.",
+   "wvSummary ... Not deprecated; actually useful.",
+   "If it breaks, you get to keep all of the pieces, and get told to use AbiWord."
+  ],
+  "links": [
+   {
+    "label": "wvWare homepage",
+    "url": "https://wvware.sourceforge.net/"
+   },
+   {
+    "label": "AbiWord bug tracker (named on the page for bug reports)",
+    "url": "http://bugzilla.abisource.com/"
+   }
+  ],
+  "fetch_log": [
+   "https://wvware.sourceforge.net/ \u2014 fetched OK; the homepage text served as the README-equivalent. Its links to the download page and the wvWare toolkit were not followed, since the homepage had enough detail for the brief."
+  ]
+ }
+}

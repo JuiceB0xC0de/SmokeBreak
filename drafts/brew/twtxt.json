@@ -1,0 +1,110 @@
+{
+ "name": "twtxt",
+ "desc": "Decentralised, minimalist microblogging service for hackers",
+ "homepage": "https://github.com/buckket/twtxt",
+ "installs_365d": 196,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "A decentralised microblogging format built on plain text files over HTTP, a quietly odd corner of the web.",
+ "brief": {
+  "what_it_is": "twtxt is a command-line tool and a plain-text format for microblogging. You publish short posts by appending lines to a publicly reachable text file, and the URL of that file serves as your identity. twtxt then fetches the text files you follow, much like a feed reader, and merges them into a single timeline. The README describes it as a CLI tool plus a format specification for self-hosted, flat-file microblogging.",
+  "why_it_exists": "The README frames it as an alternative to signing up at a closed or regulated microblogging platform: you put status updates in a publicly accessible text file instead. It also aims to be simple, human readable, and easy to combine with UNIX command-line utilities.",
+  "how_it_works": "Each user hosts a plain text file over HTTP, and each line is a timestamped post. The client acts like a feed reader that polls the files you track with asynchronous HTTP requests (asyncio/aiohttp) and builds a timeline from them. Posting can be as simple as appending a line to the file with a shell command.",
+  "commands_seen": [
+   {
+    "cmd": "echo -e \"`date +%FT%T%:z`\\tHello world!\" >> twtxt.txt",
+    "context": "README's example of posting without the official client: appends a tab-separated ISO timestamp and a message to twtxt.txt, the publicly hosted file."
+   }
+  ],
+  "install_notes": "The README gives no installation steps. It names Python 3, click for the CLI, and asyncio/aiohttp for HTTP. The PyPI badge indicates a pip-installable package named twtxt, and the Homebrew formula installs the twtxt executable. Hosting your feed requires a publicly accessible URL for the text file.",
+  "standout": "The identity model is a single text file at a URL, with no server or account. Posts are plain lines that a shell one-liner can write, and the timeline is built by polling other people's files as a feed reader would.",
+  "status": "unknown. The README shows PyPI version, build status, and coverage badges, and the MIT license is stated, but it gives no release date or last-commit date, and I did not check the GitHub releases or commit history.",
+  "caveats": "No install section and no docs were read; the full documentation is hosted on readthedocs and was not fetched. The README mentions no platform restrictions. Hosting and discovery depend on other users' files and third-party registries, and the README lists many external clients and registries whose status I did not check.",
+  "quotes": [
+   "twtxt is a decentralised, minimalist microblogging service for hackers.",
+   "The URL pointing to this file is your identity, your account.",
+   "Don\u2019t like the official client? Tweet using echo -e \"`date +%FT%T%:z`\\tHello world!\" >> twtxt.txt!"
+  ],
+  "links": [
+   {
+    "label": "GitHub homepage and README",
+    "url": "https://github.com/buckket/twtxt"
+   },
+   {
+    "label": "Documentation (readthedocs)",
+    "url": "http://twtxt.readthedocs.org/en/latest/"
+   },
+   {
+    "label": "Demo recording (asciinema)",
+    "url": "https://asciinema.org/a/1w2q3suhgrzh2hgltddvk9ot4"
+   },
+   {
+    "label": "Community list of active users (yarn.social)",
+    "url": "https://git.mills.io/yarnsocial/we-are-twtxt"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/buckket/twtxt - worked, README returned in full; README was not thin, so no further fetches were made"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It makes a quietly unusual social protocol out of append-only text files: a feed URL is your identity, and clients assemble timelines by polling them."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "twtxt",
+  "tldr": "A microblogging format where your account is one plain text file at a URL, and the client merges the files you follow into a timeline.",
+  "deeper_look": "twtxt is a command-line client and a small file format for microblogging. You publish by adding a line to a text file that is reachable over HTTP. Each line is a timestamp and a message. The URL of that file is your identity: in the README's words, \"The URL pointing to this file is your identity, your account.\"\n\nThe client works like a feed reader. It polls the text files of the people you follow with asynchronous HTTP requests (the README names asyncio and aiohttp) and merges the lines into one timeline. There is no central server and no sign-up. Anyone who can host a static file can take part.\n\nThe author's stated reason is to offer an alternative to closed or regulated microblogging platforms, while staying simple, human readable, and easy to combine with UNIX tools. Because a post is just a line of text, the client is optional. The README says so directly: \"Don't like the official client? Tweet using echo\" followed by a one-line shell command.\n\nThe idea underneath is that a social network can be reduced to a file format and a convention. Following someone is a fetch, posting is an append, and discovery is left to community lists and registries. It is a good way to see how little a decentralised service needs.",
+  "install": "brew install twtxt\n# Python 3 is pulled in by the formula. To be readable by others, your feed file must be hosted at a publicly reachable URL.",
+  "try_this": [
+   {
+    "cmd": "twtxt --help",
+    "what_happens": "Lists the client's subcommands so you can see how following, timelines, and posting are laid out."
+   },
+   {
+    "cmd": "echo -e \"`date +%FT%T%:z`\\tHello world!\" >> twtxt.txt",
+    "what_happens": "Appends a tab-separated ISO timestamp and a message to twtxt.txt, which is a complete post in the format, no client needed."
+   }
+  ],
+  "whats_unique": "Identity is nothing but a URL to a text file, with no server software or account, and a shell one-liner can write a valid post.",
+  "caveats": "The brief could not confirm the project's release or commit recency, and the many third-party clients and registries it lists were not checked, so how active the community is today is unknown.",
+  "commitment": "quick",
+  "category": "languages-and-oddities",
+  "tags": [
+   "quick",
+   "network",
+   "protocol",
+   "microblogging",
+   "plain-text",
+   "decentralised"
+  ],
+  "links": [
+   {
+    "label": "GitHub homepage and README",
+    "url": "https://github.com/buckket/twtxt"
+   },
+   {
+    "label": "Documentation (readthedocs)",
+    "url": "http://twtxt.readthedocs.org/en/latest/"
+   },
+   {
+    "label": "Demo recording (asciinema)",
+    "url": "https://asciinema.org/a/1w2q3suhgrzh2hgltddvk9ot4"
+   },
+   {
+    "label": "Community list of active users (yarn.social)",
+    "url": "https://git.mills.io/yarnsocial/we-are-twtxt"
+   }
+  ]
+ }
+}

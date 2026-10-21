@@ -1,0 +1,146 @@
+{
+ "name": "wasm-tools",
+ "desc": "Low level tooling for WebAssembly in Rust",
+ "homepage": "https://github.com/bytecodealliance/wasm-tools",
+ "installs_365d": 3507,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "reverse-engineering",
+  "afternoon",
+  "language"
+ ],
+ "why": "Swiss-army knife for WebAssembly binaries, letting you dissect, validate and convert the format by hand.",
+ "brief": {
+  "what_it_is": "wasm-tools is a Bytecode Alliance command-line program and set of Rust libraries for working with WebAssembly modules and components at a low level. The single wasm-tools binary has subcommands that take a .wasm binary or a .wat text file as input. They validate it, print it as text, parse text back to binary, mutate or generate test modules, strip or demangle sections, dump binary structure, and build or inspect components and WIT interface files. Output goes to stdout or to a file with -o.",
+  "why_it_exists": "The README describes the project as 'CLI and Rust libraries for low-level manipulation of WebAssembly modules,' and says the CLI 'contains useful tools for debugging WebAssembly modules and components.' It also states that the repository 'strives to implement any standardized proposal to WebAssembly.'",
+  "how_it_works": "Each CLI subcommand wraps a library in the same repo, such as wasmparser for validate, wat for parse, wasmprinter for print, wasm-smith for smith, and wasm-mutate for mutate. Commands follow shared conventions: stdin is read when no file is given, output goes to stdout unless -o is passed, -t emits text format, and -v adds log verbosity. Commands can be piped together. Proposal support is switched by a --features flag, and stage 4+ proposals are on by default in validation.",
+  "commands_seen": [
+   {
+    "cmd": "cargo install --locked wasm-tools",
+    "context": "Builds and installs the CLI from source using Cargo. Requires a Rust toolchain."
+   },
+   {
+    "cmd": "cargo binstall wasm-tools",
+    "context": "Installs the precompiled release artifacts with cargo-binstall instead of building from source."
+   },
+   {
+    "cmd": "wasm-tools --version",
+    "context": "Confirms the install worked."
+   },
+   {
+    "cmd": "wasm-tools validate foo.wasm",
+    "context": "Validates a binary WebAssembly file. A .wat file is also accepted and converted to binary first."
+   },
+   {
+    "cmd": "wasm-tools validate foo.wasm --features=-simd",
+    "context": "Validates with a default-enabled proposal (simd) turned off."
+   },
+   {
+    "cmd": "wasm-tools print foo.wasm -o foo.wat",
+    "context": "Converts a binary module to WebAssembly text format and writes it to foo.wat."
+   },
+   {
+    "cmd": "wasm-tools parse foo.wat -o foo.wasm",
+    "context": "Converts a text-format module to binary."
+   },
+   {
+    "cmd": "wasm-tools mutate foo.wasm --seed 192 | wasm-tools validate",
+    "context": "Produces a mutated module with a fixed seed and pipes it into validate to check that the output is still valid."
+   },
+   {
+    "cmd": "wasm-tools demangle foo.wasm | wasm-tools strip | wasm-tools objdump",
+    "context": "Demangles Rust and C++ names in the name section, strips other custom sections, then lists the remaining binary sections."
+   },
+   {
+    "cmd": "wasm-tools component wit component.wasm",
+    "context": "Prints the WIT interface of a component."
+   },
+   {
+    "cmd": "wasm-tools component new my-core.wasm -o my-component.wasm",
+    "context": "Wraps a core wasm module as a component. The core module must already have WIT metadata embedded."
+   }
+  ],
+  "install_notes": "Precompiled artifacts are published on the GitHub releases page for each release. Building from source needs the Rust toolchain, installed from rust-lang.org, and uses cargo install --locked. cargo binstall can fetch the precompiled binaries instead. No accounts, hardware, or runtime setup are mentioned. Converting a WASI core module into a component needs an adapter file passed with --adapt, such as wasi_snapshot_preview1.reactor.wasm, which the user has to supply.",
+  "standout": "It is a single binary that covers reading, writing, validating, and fuzzing WebAssembly. It includes wasm-smith (generates valid modules from a seed), wasm-mutate, and wasm-shrink for test-case work. Its subcommands pipe into one another, and its proposal list is shown with the stage status of each feature.",
+  "status": "Maintained. The README describes a release workflow run from GitHub Actions, a patch-release process for older 1.N.0 lines, and an active list of proposals. The README gives no release date or last-commit date, and I did not fetch the releases or commits pages, so the exact date of the latest release is unknown. It also states that releases have no strict cadence and are made as needed.",
+  "caveats": "The C/C++ bindings in crates/c-api do not cover all of the functionality. Only the wasm-tools CLI and the wat crate are considered API-stable. The other crates are versioned 0.X.Y and may break on each release, so the README says to expect upgrade friction. The README says to prefer the libraries over the CLI when embedding. wasm-tools compose is marked deprecated. The project is triple licensed under Apache 2.0, Apache 2.0 with LLVM exceptions, and MIT. Proposals beyond stage 4 are off by default in validation and may change.",
+  "quotes": [
+   "CLI and Rust libraries for low-level manipulation of WebAssembly modules",
+   "It's recommended to use the libraries directly rather than the CLI tooling when embedding into a separate project.",
+   "This repository strives to implement any standardized proposal to WebAssembly."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/bytecodealliance/wasm-tools"
+   },
+   {
+    "label": "Precompiled release artifacts",
+    "url": "https://github.com/bytecodealliance/wasm-tools/releases"
+   },
+   {
+    "label": "Online playground: parse (text to binary)",
+    "url": "https://bytecodealliance.github.io/wasm-tools/parse"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/bytecodealliance/wasm-tools: fetched OK, README returned in full"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "An authoritative WebAssembly workbench that exposes binary structure and component interfaces, then generates and mutates valid modules for a hands-on look inside the format."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "wasm-tools",
+  "tldr": "A single Rust binary that validates, prints, parses, mutates and generates WebAssembly, so you can read a .wasm file as text and rebuild it.",
+  "deeper_look": "wasm-tools is the Bytecode Alliance's command-line toolkit for WebAssembly. Its subcommands take a binary `.wasm` file or a `.wat` text file and do one job each: validate it, print it as text, parse text back to binary, dump its sections, strip or demangle names, or build and inspect components and WIT interface files.\n\nEach subcommand wraps a library in the same repository: wasmparser for validate, wat for parse, wasmprinter for print, wasm-smith for smith, wasm-mutate for mutate. The commands share conventions. They read stdin when no file is given, write to stdout unless you pass `-o`, and pipe into each other. A line like `wasm-tools demangle foo.wasm | wasm-tools strip | wasm-tools objdump` works as a small pipeline over a binary.\n\nThe idea underneath is that WebAssembly is a real, specified binary format with a readable text twin, and you can move between the two by hand. That makes the format easy to take apart. It also includes tools for test-case work: wasm-smith generates valid modules from a seed, wasm-mutate perturbs existing ones, and wasm-shrink reduces failing cases. The README says the repository \"strives to implement any standardized proposal to WebAssembly\", and a `--features` flag switches proposals on and off.",
+  "install": "brew install wasm-tools\n# alternatives: cargo install --locked wasm-tools (needs a Rust toolchain), or cargo binstall wasm-tools for precompiled binaries",
+  "try_this": [
+   {
+    "cmd": "wasm-tools print foo.wasm -o foo.wat",
+    "what_happens": "Converts a binary module to WebAssembly text format and writes it to foo.wat, where you can read it."
+   },
+   {
+    "cmd": "wasm-tools parse foo.wat -o foo.wasm",
+    "what_happens": "Turns the text file back into a binary module."
+   },
+   {
+    "cmd": "wasm-tools mutate foo.wasm --seed 192 | wasm-tools validate",
+    "what_happens": "Produces a mutated module from a fixed seed and pipes it into validate to check that it is still valid."
+   }
+  ],
+  "whats_unique": "One binary covers reading, writing, validating and fuzzing WebAssembly, and its subcommands pipe into one another. It also generates and mutates modules, not just inspects them.",
+  "caveats": "Only the wasm-tools CLI and the wat crate are considered API-stable; the other crates are 0.X.Y and may break on each release, and `wasm-tools compose` is deprecated.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "webassembly",
+   "wasm",
+   "reverse-engineering",
+   "rust",
+   "binary-formats"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/bytecodealliance/wasm-tools"
+   },
+   {
+    "label": "Precompiled release artifacts",
+    "url": "https://github.com/bytecodealliance/wasm-tools/releases"
+   },
+   {
+    "label": "Online playground: parse (text to binary)",
+    "url": "https://bytecodealliance.github.io/wasm-tools/parse"
+   }
+  ]
+ }
+}

@@ -1,0 +1,63 @@
+{
+ "name": "open62541",
+ "desc": "Open source implementation of OPC UA",
+ "homepage": "https://open62541.org/",
+ "installs_365d": 189,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol",
+  "library"
+ ],
+ "why": "An open implementation of OPC UA, the industrial protocol behind factory floors, a real door into a protocol nobody outside automation sees.",
+ "brief": {
+  "what_it_is": "open62541 is an open source implementation of OPC UA (OPC Unified Architecture, also IEC 62541), written in C99. It provides the building blocks for dedicated OPC UA clients and servers, or for adding OPC UA communication to an existing application. The homepage calls it an open source OPC UA stack in C99. The library is platform independent, with platform-specific code moved into exchangeable plugins. It also ships as a single-file distribution, a pair of open62541.c and open62541.h files that can be dropped into an existing project.",
+  "why_it_exists": "The README presents it as a free, portable way to implement OPC UA without proprietary licensing: the homepage says the stack is free of charge, even for commercial use, and that it targets everything from embedded systems to cloud servers.",
+  "how_it_works": "The core library in /src depends only on C99 standard headers. Architecture support sits behind an EventLoop plugin in /arch, and other backends such as crypto, information-model storage and so on are plugin interfaces in /plugins with default implementations. Some code is generated from the OPC UA standard's XML definitions by Python scripts during the build. Encryption can pull in mbedTLS or OpenSSL depending on the build configuration.",
+  "commands_seen": [
+   {
+    "cmd": "apt install libopen62541-1.4-dev",
+    "context": "On Debian/Ubuntu, installs the library and development headers from the distribution package."
+   },
+   {
+    "cmd": "gcc -std=c99 <server.c> -lopen62541 -o server",
+    "context": "Compiles an example server source file against the installed library using GCC."
+   },
+   {
+    "cmd": "git submodule update --init --recursive",
+    "context": "Run after cloning the repository to initialize all submodules before configuring the build with CMake."
+   }
+  ],
+  "install_notes": "Beyond brew: on Debian/Ubuntu, apt install libopen62541-1.4-dev, then compile with gcc -std=c99 and -lopen62541. For a source build, clone the repository, run git submodule update --init --recursive, then configure with CMake. The full build steps are in the docs at open62541.org/doc/master. The README says a bare-bones build needs only the C standard library, but some configurations need mbedTLS or OpenSSL for encryption. The example server listens on port 4840 by default. Its code uses UA_Server_new, UA_Server_addVariableNode and UA_Server_runUntilInterrupt, and the client connects to opc.tcp://localhost:4840 and reads a node with UA_Client_readValueAttribute. Nothing in the README mentions a runtime, account, or hardware requirement.",
+  "standout": "It is a small, portable C99 stack under MPLv2, so it can be linked into proprietary software without relicensing that code. Contributors keep their own copyright, which the README says prevents future relicensing. The project also publishes a long list of quality gates: zero OPC Foundation CTT errors, zero warnings under strict flags, fuzzing through oss-fuzz, and Valgrind and sanitizer runs. OPC UA is mostly invisible outside automation, and this is a readable C entry point into it.",
+  "status": "maintained. The homepage calls it an active community project with 'Active community development', lists a Stable Release 1.5 and a Development Branch, names o6 Automation GmbH as official maintainer, and advertises a training course for 10.11.26 to 12.11.26 in Karlsruhe. The README links a live issue tracker and mailing list. I could not see a last-commit or release date on either page, so the exact recency is unknown.",
+  "caveats": "The 'OPC UA Certified' claim applies to an example server built with v1.4 and checked against the Standard UA Server Profile 2017, not to every use of the library. A source build needs CMake and git submodules. Encryption adds a dependency on mbedTLS or OpenSSL. The homepage pushes paid support and training, and o6 Automation employs the core contributors. The homepage did not show a Homebrew-specific install path, and the brew formula notes were empty. The brief's scout notes frame it as a window into factory-floor protocols; the README itself does not say that.",
+  "quotes": [
+   "Open Source OPC UA licensed under the MPL v2.0",
+   "Written in C99 with minimal dependencies. Runs everywhere from embedded systems to cloud servers.",
+   "contributors retain their individual copyright. This prevents future relicensing under different license conditions."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://open62541.org/"
+   },
+   {
+    "label": "Source on GitHub",
+    "url": "https://github.com/open62541/open62541"
+   },
+   {
+    "label": "Documentation (development branch)",
+    "url": "https://www.open62541.org/doc/master/building.html"
+   }
+  ],
+  "fetch_log": [
+   "https://open62541.org/ - worked, marketing homepage with links to downloads, docs, and GitHub; no README content.",
+   "https://github.com/open62541/open62541 - worked, returned the repository README, which carried the commands and code samples used here. Followed because the homepage points to 'Code on GitHub'."
+  ]
+ }
+}

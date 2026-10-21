@@ -1,0 +1,118 @@
+{
+ "name": "flashrom",
+ "desc": "Identify, read, write, verify, and erase flash chips",
+ "homepage": "https://flashrom.org/",
+ "installs_365d": 2350,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "take-things-apart",
+ "tags": [
+  "needs-hardware",
+  "reverse-engineering",
+  "afternoon"
+ ],
+ "why": "Reads and writes BIOS and firmware chips directly, a serious gateway into hardware archaeology and firmware dumping.",
+ "brief": {
+  "what_it_is": "flashrom is a command-line utility for detecting, reading, writing, verifying and erasing flash chips. Its README says it is built to flash BIOS, EFI, coreboot, firmware and option ROM images on mainboards, network, graphics and storage controller cards, and other programmer devices. It supports parallel, LPC, FWH and SPI interfaces and many chip packages, including SOIC8, DIP8, TSOP and BGA. The README cites support for more than 627 flash chips, 407 chipsets, 539 mainboards, 94 PCI devices and 30 USB devices.",
+  "why_it_exists": "The README frames it as a way to reflash firmware remotely and at scale, without physical access, bootable media or a reboot: 'No keyboard or monitor needed. Simply reflash remotely via SSH.' It also presents crossflashing and hotflashing as recovery tools, and says it is faster than most vendor flash tools.",
+  "how_it_works": "The README does not explain the internals. It says the tool talks to the chip through a supported mainboard or programmer, using protocols such as LPC, FWH, parallel or SPI, and that root access is usually enough, though some programmers do not need it. Operations are identify, read, write, verify and erase.",
+  "commands_seen": [
+   {
+    "cmd": "meson setup builddir",
+    "context": "Configures a build directory for building flashrom from source with meson (first step of the README's TLDR)."
+   },
+   {
+    "cmd": "meson compile -C builddir",
+    "context": "Compiles flashrom in the build directory set up above."
+   },
+   {
+    "cmd": "meson test -C builddir",
+    "context": "Runs the test suite in the build directory."
+   },
+   {
+    "cmd": "meson install -C builddir",
+    "context": "Installs the built flashrom from the build directory."
+   }
+  ],
+  "install_notes": "The README's build path is meson: setup, compile, test, install. A full guide is under 'Building from source' in the docs, which I did not fetch. Packaged builds for other platforms are listed on repology.org. The README gives no runtime or account requirements beyond root access, and notes that some programmers do not need root. The homepage's brew metadata was not checked against the README.",
+  "standout": "It targets the firmware chip itself, not the OS. The README claims you can reflash a running machine remotely over SSH, verify it, and have the new firmware take effect on the next boot. Its contact channels (IRC, Discord, email) and the explicit 'do NOT turn off/reboot' emergency instructions also stand out for a flashing tool.",
+  "status": "unknown. The README shows the version as v2.0.0-devel (git:v1.8.0-91-gac50808d), which is a development build past v1.8.0, and the docs were built with Sphinx 8.1.3. I found no release date or last-commit date in the fetched pages.",
+  "caveats": "Writing to a flash chip can brick a machine. The README says to back up the chip before writing and not to use flashrom on laptops yet, because the embedded controller may interfere and brick the laptop. If flashing goes wrong, it says not to reboot and to ask for help on IRC, Discord or email, where volunteers may be slow to respond. Windows support is partial: there is no internal programmer, so BIOS flashing is not possible there. The README says nothing about licence.",
+  "quotes": [
+   "Do not use flashrom on laptops (yet)!",
+   "Please make a backup of your flash chip before writing to it.",
+   "No keyboard or monitor needed. Simply reflash remotely via SSH."
+  ],
+  "links": [
+   {
+    "label": "flashrom homepage (README)",
+    "url": "https://flashrom.org/"
+   },
+   {
+    "label": "Official website",
+    "url": "https://www.flashrom.org/"
+   },
+   {
+    "label": "Platform packaging list (repology)",
+    "url": "https://repology.org"
+   }
+  ],
+  "fetch_log": [
+   "https://flashrom.org/ : fetched OK. Returned the Sphinx-rendered README and navigation. I did not follow the Building from source, Supported hardware or Release notes links because the README had enough to write the brief."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It reaches beneath the operating system to inspect and rewrite firmware chips, making hardware recovery and firmware archaeology tangible rather than abstract."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "flashrom",
+  "tldr": "A command-line tool that identifies, reads, writes, verifies and erases the flash chips holding BIOS and firmware, on hundreds of boards and programmers.",
+  "deeper_look": "flashrom talks to the firmware chip itself rather than to the operating system. Its README says it is built to flash BIOS, EFI, coreboot, firmware and option ROM images on mainboards, network, graphics and storage controller cards, and other programmer devices. It supports parallel, LPC, FWH and SPI interfaces and chip packages such as SOIC8, DIP8, TSOP and BGA. The README counts more than 627 flash chips, 407 chipsets and 539 mainboards.\n\nThe project pitches itself as a way to reflash firmware at scale without physical access: \"No keyboard or monitor needed. Simply reflash remotely via SSH.\" You write and verify the image on a running machine, and the new firmware takes effect on the next boot. It also describes crossflashing and hotflashing as recovery techniques, and says it is faster than most vendor flash tools.\n\nThe idea underneath is that the firmware on your machine is just bytes on a small chip, and those bytes can be dumped, inspected and replaced. That is the starting point for firmware archaeology: read an image off a chip, back it up, and then open it in whatever binary analysis tools you like. The README does not explain the internals beyond naming the protocols. Root is usually enough, though some programmers do not need it.",
+  "install": "brew install flashrom\nMost real use needs hardware: either a supported mainboard (internal programmer) or an external programmer such as a USB device, plus root access in most cases. The formula pulls in libftdi, libjaylink, libusb and openssl.",
+  "try_this": [
+   {
+    "cmd": "flashrom --help",
+    "what_happens": "Lists the available options and programmers, a quick way to see how wide the tool's hardware support is."
+   },
+   {
+    "cmd": "meson setup builddir",
+    "what_happens": "Configures a source build, the first step of the README's build path, if you want to compile flashrom yourself."
+   },
+   {
+    "cmd": "meson test -C builddir",
+    "what_happens": "Runs the project's test suite from a configured build directory, with no flash chip required."
+   }
+  ],
+  "whats_unique": "It works on the firmware chip, not the OS, and one tool covers a very wide range of chips, chipsets and boards. The project's emergency instructions for a failed flash are unusually explicit for a command-line tool.",
+  "caveats": "Writing to a flash chip can brick a machine; the README says to back up the chip first and not to use flashrom on laptops yet, since the embedded controller may interfere.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "firmware",
+   "bios",
+   "reverse-engineering",
+   "spi"
+  ],
+  "links": [
+   {
+    "label": "flashrom homepage (README)",
+    "url": "https://flashrom.org/"
+   },
+   {
+    "label": "Official website",
+    "url": "https://www.flashrom.org/"
+   },
+   {
+    "label": "Platform packaging list (repology)",
+    "url": "https://repology.org"
+   }
+  ]
+ }
+}

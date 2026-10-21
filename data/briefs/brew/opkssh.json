@@ -1,0 +1,95 @@
+{
+ "name": "opkssh",
+ "desc": "Enables SSH to be used with OpenID Connect",
+ "homepage": "https://eprint.iacr.org/2023/296",
+ "installs_365d": 800,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "protocol",
+  "network"
+ ],
+ "why": "Uses OpenID Connect identities in SSH certificates, a door into how SSH authentication can be reinvented.",
+ "brief": {
+  "what_it_is": "opkssh is a command-line tool that lets people use OpenID Connect identities, such as alice@example.com, to log in over SSH instead of managing long-lived SSH keys. It does not replace SSH. Running `opkssh login` opens a browser so you can sign in with an OpenID Provider such as Google, Microsoft, GitLab, or Keycloak, then generates an SSH key at ~/.ssh/id_ecdsa that carries your PK Token (an OpenID Connect ID Token bound to a public key). On the server, opkssh works with sshd to check that token against an allow-list of identities and Linux accounts. Input is a browser login plus a policy file; output is an SSH key that ssh and sftp use as normal.",
+  "why_it_exists": "The README frames it as making SSH access manageable through identities like alice@example.com instead of long-lived SSH keys. It builds on OpenPubkey, which the README describes as adding user public keys to OpenID Connect without breaking compatibility with existing OpenID Providers.",
+  "how_it_works": "It uses two SSH features. First, SSH certificates can carry arbitrary extensions, so the PK Token (which includes the ID Token) is placed in an extension field of the SSH certificate. Second, sshd's AuthorizedKeysCommand sends the certificate to the installed opkssh program (configured as `opkssh verify %u %k %t`), which verifies the PK Token before the login is allowed.",
+  "commands_seen": [
+   {
+    "cmd": "brew tap openpubkey/opkssh",
+    "context": "Adds the opkssh Homebrew tap on macOS before installing."
+   },
+   {
+    "cmd": "brew install opkssh",
+    "context": "Installs the opkssh binary via Homebrew on macOS."
+   },
+   {
+    "cmd": "opkssh login",
+    "context": "Opens a browser to authenticate with your OpenID Provider and writes an SSH key at ~/.ssh/id_ecdsa containing your PK Token. Keys expire after 24 hours by default."
+   },
+   {
+    "cmd": "ssh user@example.com",
+    "context": "Ordinary ssh after login; the opkssh-generated key is presented to any server configured to use opkssh."
+   },
+   {
+    "cmd": "opkssh logout -i ~/.ssh/opkssh_server_group1",
+    "context": "Removes one specific opkssh-generated key pair."
+   },
+   {
+    "cmd": "sudo opkssh add root alice@gmail.com google",
+    "context": "On a server, adds a policy line allowing alice@gmail.com to log in as root via the google issuer shorthand."
+   },
+   {
+    "cmd": "wget -qO- \"https://raw.githubusercontent.com/openpubkey/opkssh/main/scripts/install-linux.sh\" | sudo bash",
+    "context": "Server install on Linux: downloads the opkssh binary to /usr/local/bin/opkssh and configures sshd. Run with root privileges."
+   },
+   {
+    "cmd": "opkssh login --provider=\"<issuer>,<client_id>\"",
+    "context": "Logs in against a custom OpenID Provider such as Authentik, Authelia, Keycloak, or Zitadel."
+   },
+   {
+    "cmd": "opkssh inspect ~/.ssh/id_ecdsa.pub",
+    "context": "Shows the details of an opkssh-generated SSH key or certificate."
+   },
+   {
+    "cmd": "CGO_ENABLED=false go build -v -o opkssh",
+    "context": "Developer build from source using Go, as given in the README's Building section."
+   }
+  ],
+  "install_notes": "Beyond brew: Windows users can use `winget install openpubkey.opkssh` or `choco install opkssh -y`; Nix users can run `nix-shell -p opkssh`; or download a binary from the GitHub releases page and chmod +x it on Linux/macOS. Logging in needs a browser on the client. Servers need root: the Linux installer creates a low-privilege opksshuser, adds AuthorizedKeysCommand and AuthorizedKeysCommandUser to /etc/ssh/sshd_config, and writes config under /etc/opk/. Windows servers use an elevated PowerShell script (Install-OpksshServer.ps1) and config under %ProgramData%\\opk\\. NixOS has a services.opkssh module. Custom providers can be set with a flag, a ~/.opk/config.yml file (created by `opkssh login --create-config`), or the OPKSSH_PROVIDERS environment variable. For production, the README says to register your own OpenID Connect client ID rather than the shipped defaults.",
+  "standout": "Rather than changing SSH's key format or running a new daemon, it hides the identity token inside a standard SSH certificate extension and lets sshd call a small verifier, so users keep using ssh and sftp unchanged. The README also says it works with existing identity providers without asking them to change anything.",
+  "status": "unknown. The README has no release date or changelog, and the fetched page did not show a last-commit date. It does show current-looking activity: a Go coverage badge, a mailing list, and support notes for Windows Server 2025, openSUSE Leap 16, and Forgejo v15.0+. The homepage's paper history (last revision 2025-03-29) refers to the paper, not the code.",
+  "caveats": "The homepage given in the request is the OpenPubkey research paper on eprint.iacr.org, not a project site; the code and docs live on GitHub. Client support: Linux, macOS, and Windows 11 are supported; Android is experimental (Termux). Server support: Linux and Windows Server; macOS servers are not supported yet. The shipped default client IDs are for testing and development only. The README warns not to reuse a client ID between opkssh and other OIDC services, because a server could replay the token elsewhere. The README's example config contains a Google client secret, which should not be reused. The Linux install is a curl-or-wget piped straight into sudo bash. Some providers need specific setup, such as public client mode for PocketID and not using confidential/secret mode. License was not checked.",
+  "quotes": [
+   "opkssh is a tool which enables ssh to be used with OpenID Connect allowing SSH access to be managed via identities like `alice@example.com` instead of long-lived SSH keys.",
+   "It does not replace SSH, but instead generates SSH public keys containing PK Tokens and configures sshd to verify them.",
+   "Do not reuse a client ID between opkssh and other OpenID Connect services."
+  ],
+  "links": [
+   {
+    "label": "Homepage as given (OpenPubkey paper, eprint 2023/296)",
+    "url": "https://eprint.iacr.org/2023/296"
+   },
+   {
+    "label": "opkssh GitHub repository and README",
+    "url": "https://github.com/openpubkey/opkssh"
+   },
+   {
+    "label": "opkssh CLI reference",
+    "url": "https://github.com/openpubkey/opkssh/blob/main/docs/cli/opkssh.md"
+   },
+   {
+    "label": "OpenPubkey (the library opkssh builds on)",
+    "url": "https://github.com/openpubkey/openpubkey"
+   }
+  ],
+  "fetch_log": [
+   "https://eprint.iacr.org/2023/296 - loaded, but it is the OpenPubkey paper page (Heilman et al., BastionZero), not an opkssh page; used only for context.",
+   "https://github.com/openpubkey/opkssh - loaded; the README was returned and used as the main source.",
+   "Not fetched: docs/cli/opkssh.md, docs/policyplugins.md, and other linked docs. The README was complete enough that I did not follow them, to stay within the fetch budget."
+  ]
+ }
+}

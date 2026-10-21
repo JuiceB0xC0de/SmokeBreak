@@ -1,0 +1,64 @@
+{
+ "name": "mac",
+ "desc": "Monkey's Audio lossless codec",
+ "homepage": "https://www.monkeysaudio.com",
+ "installs_365d": 1726,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "audio",
+  "library"
+ ],
+ "why": "Monkey's Audio lossless codec, a rarer audio format with a clever compression design worth reading into, though the CLI is modest.",
+ "brief": {
+  "what_it_is": "Monkey's Audio is a free lossless audio compressor that turns WAV, AIFF, W64, SND/AU, CAF and RF64 files into its own APE format, and can decompress APE files back to the exact original bytes. The homepage says it is also supported by players and rippers such as foobar2000, Winamp and Windows Media Player. The Windows GUI is described in the Help page, and the Homebrew package installs a command-line executable named mac, which the Help page's pipe examples use. Output is a smaller APE file that can be verified with per-file CRCs.",
+  "why_it_exists": "The author argues that lossy formats like mp3, ogg and wma permanently discard quality to save space, while Monkey's Audio makes bit-for-bit copies that still shrink, so you can always recreate the original CD. The homepage calls it 'a beefed-up Winzip for your music'.",
+  "how_it_works": "The Theory page describes the standard lossless pipeline: convert left/right to mid/side (X and Y), pass the samples through an adaptive predictor that subtracts an estimate and keeps a weight m that adjusts up or down as prediction helps, then entropy-code the residuals. It explains Rice coding as the baseline and says Monkey's Audio uses a 'slightly more advanced entropy coder'. The page is a primer and says it is 'by no means complete', so it does not give Monkey's Audio's exact predictor or coder details. Verification works by checking the whole-file CRC stored in modern APE files.",
+  "commands_seen": [
+   {
+    "cmd": "ffmpeg.exe -i input.flac -f wav - | mac.exe - output.ape -c2000",
+    "context": "Help page pipe example: FFmpeg decodes a FLAC to WAV on stdout, and mac reads it from stdin ('-') and writes output.ape at compression level -c2000."
+   },
+   {
+    "cmd": "flac.exe -dsc input.flac | mac.exe - output.ape -c2000",
+    "context": "Help page pipe example: flac decodes to stdout, piped into mac to produce output.ape at compression level -c2000."
+   },
+   {
+    "cmd": "-c3000 %source% %dest% -t Artist=\"%artist%\"|Album=\"%albumtitle%\"|Track=\"%tracknr1%/%numtracks%\"|Year=\"%year%\"|Title=\"%title%\"|Genre=\"%genre%\"",
+    "context": "Help page EAC setup: the arguments to give MAC.exe as an external compressor, using -c3000 (High) and writing APE tags from the EAC placeholders."
+   }
+  ],
+  "install_notes": "The homepage and Help page describe a Windows install (MAC.exe, a GUI with modes and options). Nothing about the Homebrew formula was checked beyond the brew JSON, which lists the executable as mac and has no caveats. The Help page's pipe examples require a separate FFmpeg or flac install to supply the decoded audio. No accounts or runtimes are mentioned.",
+  "standout": "The compression-level flags (-c2000, -c3000) and stdin pipe support make it usable as a back end for other tools, and the Theory page is an unusually readable primer on how lossless codecs work. The format has a 26-year history and a single author.",
+  "status": "maintained. The homepage lists Latest Version 13.42 dated October 20, 2026, and says copyright 2000-2026 with 'Thank you for your support through 26 great years'. I did not check the version history page or a repository, so the exact last release date is from the homepage alone.",
+  "caveats": "The docs are Windows-centric (GUI menus, Ctrl+1 to Ctrl+5 shortcuts, .exe names), so macOS command-line behaviour is only inferred from the executable name. Scout notes call the CLI modest, and the Help page covers the GUI more than the flags. The site says 'All rights reserved' in its footer while the feature list calls the software free with non-restrictive licensing. I did not read the License page to resolve that. The Theory page admits it is incomplete.",
+  "quotes": [
+   "Monkey's Audio only makes perfect, bit-for-bit copies of your music.",
+   "think of it as a beefed-up Winzip\\u2122 for your music",
+   "If a single bit is flipped, the file will fail.",
+   "Error detection \\u2014 Monkey\\u2019s Audio incorporates redundant CRC\\u2019s to ensure proper decompression of data (errors never go unnoticed)"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.monkeysaudio.com"
+   },
+   {
+    "label": "Theory primer",
+    "url": "https://www.monkeysaudio.com/theory.html"
+   },
+   {
+    "label": "Help",
+    "url": "https://www.monkeysaudio.com/help.html"
+   }
+  ],
+  "fetch_log": [
+   "https://www.monkeysaudio.com - worked, homepage text retrieved",
+   "https://www.monkeysaudio.com/theory.html - worked; URL was guessed from the nav menu, not taken from a link on the page",
+   "https://www.monkeysaudio.com/help.html - worked; URL was guessed from the nav menu, not taken from a link on the page"
+  ]
+ }
+}

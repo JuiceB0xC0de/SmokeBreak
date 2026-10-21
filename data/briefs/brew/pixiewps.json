@@ -1,0 +1,94 @@
+{
+ "name": "pixiewps",
+ "desc": "Offline Wi-Fi Protected Setup brute-force utility",
+ "homepage": "https://github.com/wiire-a/pixiewps",
+ "installs_365d": 321,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol",
+  "reverse-engineering"
+ ],
+ "why": "Offline WPS PIN recovery exploiting weak entropy in the protocol, a revealing look at how a Wi-Fi handshake can leak secrets.",
+ "brief": {
+  "what_it_is": "Pixiewps is a C command-line tool that brute-forces a Wi-Fi Protected Setup (WPS) PIN offline, using the \"pixie-dust\" weakness in some implementations' low or non-existent entropy. The user feeds it values captured from a WPS exchange (public keys, hashes, authentication key, nonces) and it prints the PIN if the target is vulnerable. Since version 1.4 it can also recover the WPA-PSK from a complete passive capture (M1 through M7) on some devices, using --mode 3. The README says the tool is meant for educational purposes only.",
+  "why_it_exists": "The README contrasts it with online WPS brute-forcing in tools like Reaver or Bully, which can take hours; Pixiewps aims to get the PIN in seconds or minutes, if the target is vulnerable. It is based on Dominique Bongard's 2014 offline attack research and started as a community project on the Kali Linux forums.",
+  "how_it_works": "The offline attack works from values captured during a WPS exchange rather than by sending guesses to the access point. The README says the common usage needs a modified Reaver or Bully that prints the Authentication Session key (--authkey), and recommends reaver-wps-fork-t6x. The --dh-small (-S) option, which relies on private key 1 and public key 2, is documented as deprecated and should never be used with Reaver.",
+  "commands_seen": [
+   {
+    "cmd": "apt-get -y install build-essential",
+    "context": "Installs the compiler toolchain needed to build pixiewps from source."
+   },
+   {
+    "cmd": "git clone https://github.com/wiire/pixiewps",
+    "context": "Downloads the source code (the README's URL differs slightly from the homepage's wiire-a path)."
+   },
+   {
+    "cmd": "wget https://github.com/wiire/pixiewps/archive/master.zip && unzip master.zip",
+    "context": "Alternative to git clone: downloads and unpacks the source as a zip archive."
+   },
+   {
+    "cmd": "cd pixiewps*/",
+    "context": "Enters the unpacked source directory before building."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the pixiewps binary with the default crypto code."
+   },
+   {
+    "cmd": "make OPENSSL=1",
+    "context": "Optional build that uses OpenSSL SHA-256 functions for faster speeds; the README says this needs OpenSSL."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the built binary system-wide."
+   },
+   {
+    "cmd": "pixiewps --pke ... --pkr ... --e-hash1 ... --e-hash2 ... --authkey ... --e-nonce ...",
+    "context": "The most common usage; the ellipses are placeholders for the captured values. Requires a Reaver or Bully build that prints the authkey."
+   },
+   {
+    "cmd": "pixiewps --help",
+    "context": "The README says this gives a verbose help screen with more usage examples (cited as --help in the usage section)."
+   },
+   {
+    "cmd": "-p \"\"",
+    "context": "Used in Reaver 1.6.1 and later to test the empty PIN, which the README says comes from a misconfigured access point, not from pixiewps itself."
+   }
+  ],
+  "install_notes": "Needs build-essential to compile. Versions before 1.2 need libssl-dev. Versions 1.4 and later use multi-threading and need POSIX threads (libpthread). OpenSSL is optional, enabled with make OPENSSL=1 for speed. Install with sudo make install. Practical use also needs a modified Reaver or Bully that prints the authentication session key; the README recommends reaver-wps-fork-t6x. Windows builds are possible through MinGW with pthread support. Since 1.4.1 it has been in the OpenWrt and LEDE official repositories. The README also mentions a man page.",
+  "standout": "The attack needs no online guessing against the access point: it works from captured handshake values and can finish in seconds, not hours. Version 1.4 added recovery of WPA-PSK from a passive capture on some devices, which the README presents as a way to show how a WPS exchange can leak the network passphrase.",
+  "status": "Unknown from the README alone. The README has no release date, last-commit date, or maintenance note. It documents version numbering and mentions 1.4.1 and OpenWrt/LEDE inclusion, but I did not check the releases or commit pages, so I can't confirm recent activity.",
+  "caveats": "The README says it is meant for educational purposes only. Licensed GPL v3 or later. Build needs a C toolchain, and older versions need OpenSSL and newer ones need pthreads. Usable only with a modified Reaver or Bully to get the authkey. Recovering WPA-PSK works only on some devices, and only with --mode 3. The --dh-small option is deprecated and the README says it should never be used with Reaver. The README's git clone URL (wiire/pixiewps) differs from the homepage (wiire-a/pixiewps). The Windows section has a typo, 'phtread'.",
+  "quotes": [
+   "It is meant for educational purposes only.",
+   "As opposed to the traditional online brute-force attack, implemented in tools like Reaver or Bully which aim to recover the pin in a few hours, this method can get the PIN in only a matter of **seconds** or **minutes**, depending on the target, **if vulnerable**.",
+   "Since version 1.4, it can also recover the **WPA-PSK** from a complete passive capture (M1 through M7) for some devices (currently **only some devices** which work with `--mode 3`)."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repo)",
+    "url": "https://github.com/wiire-a/pixiewps"
+   },
+   {
+    "label": "Project wiki",
+    "url": "https://github.com/wiire-a/pixiewps/wiki"
+   },
+   {
+    "label": "Dominique Bongard offline WPS attack slides (Hack.lu 2014)",
+    "url": "http://archive.hack.lu/2014/Hacklu2014_offline_bruteforce_attack_on_wps.pdf"
+   },
+   {
+    "label": "WPS Insecurity video presentation (NTNU)",
+    "url": "http://video.adm.ntnu.no/pres/549931214e18d"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/wiire-a/pixiewps \u2014 fetched OK, README returned. Thorough enough that I did not follow further links."
+  ]
+ }
+}

@@ -1,0 +1,81 @@
+{
+ "name": "arss",
+ "desc": "Analyze a sound file into a spectrogram",
+ "homepage": "https://arss.sourceforge.net/",
+ "installs_365d": 63,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "audio",
+  "visual"
+ ],
+ "why": "Turning a sound file into a spectrogram is a satisfying audio-to-image transform, if an old one.",
+ "brief": {
+  "what_it_is": "ARSS (Analysis & Resynthesis Sound Spectrograph) is a command-line program that analyses a sound file into a spectrogram image. It can also synthesise a spectrogram, or any other user-created image, back into a sound. Its spectrograph uses a base-2 logarithmic frequency scale and a filter bank rather than the usual short-time Fourier transform. The homepage describes uses such as time stretching, pitch shifting, filtering with an image editor, and drawing sounds by hand.",
+  "why_it_exists": "The homepage presents it as a tool for treating sound as an image, so that sounds can be stored as pictures, edited in image-editing programs, and turned back into audio. The author's stated aim is to leave room for experimentation: \"Who knows what else, there's a lot of room for experimentation\".",
+  "how_it_works": "Analysis runs the signal through overlapping logarithmic-scale Hann-window filter bank bands, then takes the magnitude of the analytic signal in each band as an envelope; each envelope becomes a horizontal line in the image, with amplitude mapped linearly to intensity. Synthesis upsamples each image line to the output sample rate and modulates it with either sine waves at each band's centre frequency or noise passed through the filter bank.",
+  "commands_seen": [
+   {
+    "cmd": "gcc *.c -o arss -lm -lfftw3 -O2",
+    "context": "Compile command given in a July 2008 news item for building ARSS from source on Mac OS X. Links the libm and FFTW3 libraries and produces the arss binary."
+   }
+  ],
+  "install_notes": "Building from source needs a C compiler (gcc), the math library, and FFTW3 (the -lfftw3 flag). The homepage gives no other setup steps. A 2008 news item mentions a Mac OS X Universal Binary with a double-click installer from a third party, and an AppleScript front end, also third party. Those are old and I did not check whether they still exist. The brew formula supplies the arss executable.",
+  "standout": "Instead of the STFT that most spectrographs use, ARSS uses a filter bank with envelope detection, closer to how analogue spectrographs worked. Because the image is a plain editable array of envelopes, the same tool that analyses also resynthesises, so you can paint or edit a spectrogram and hear the result.",
+  "status": "quiet. The homepage says \"This site is in hiatus. Last updated on February 23rd, 2009\". The latest release mentioned is ARSS 0.2.3 from May 30, 2008. The homepage says ARSS is \"now superseded by Photosounder\", a GUI program released December 17, 2008. The brew formula was not checked for a version date.",
+  "caveats": "The homepage is an old, hiatus-era project page with news dated 2008 to 2009, and it has no docs or install guide beyond the single gcc line. Platform details are dated: the Mac notes refer to PowerPC and Universal Binary builds. The author states the noise-synthesis volume may be \"way off\" for logarithmic bases other than 2 with linear frequency scale. The homepage's licence was not stated in the text I read. The Documentation, Download and Code pages were not followed because the page text did not expose their URLs.",
+  "quotes": [
+   "The Analysis & Resynthesis Sound Spectrograph (formerly known as the Analysis & Reconstruction Sound Engine), or ARSS, is a program that analyses a sound file into a spectrogram and is able to synthesise this spectrogram, or any other user-created image, back into a sound.",
+   "ARSS is now superseded by Photosounder, which makes use of most of the techniques offered by ARSS in a simple to use and powerful graphical user interface and built in editor.",
+   "This site is in hiatus. Last updated on February 23rd, 2009"
+  ],
+  "links": [
+   {
+    "label": "ARSS homepage (Michel Rouzic)",
+    "url": "https://arss.sourceforge.net/"
+   }
+  ],
+  "fetch_log": [
+   "https://arss.sourceforge.net/ : fetched OK; HTML page with About, news, and technical description. Navigation links to Download, Code, Examples, Documentation, MFAQ and Roadmap were listed by name only, with no URLs in the returned text, so I did not follow them."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It turns audio into editable images and back into sound, an unusually tangible transform with room for experimentation beyond a conventional spectrogram."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "arss",
+  "tldr": "Turns a sound file into a spectrogram image, then turns any image, edited or hand-drawn, back into sound.",
+  "deeper_look": "ARSS, the Analysis & Resynthesis Sound Spectrograph, is a command-line program that analyses a sound file into a spectrogram picture. The step that makes it interesting is the reverse. It can synthesise that picture, or any image you made yourself, back into audio. The homepage lists time stretching, pitch shifting, filtering in an image editor and drawing sounds by hand as uses.\n\nUnder the hood it skips the short-time Fourier transform most spectrographs use. Instead the signal goes through a bank of overlapping logarithmic-scale Hann-window filters. The magnitude of the analytic signal in each band becomes an envelope, and each envelope is one horizontal line of the image, with amplitude mapped linearly to brightness. Synthesis runs this backwards: each line is upsampled to the output sample rate and used to modulate either a sine wave at the band's centre frequency or filtered noise.\n\nThe idea underneath is that sound and image can be the same data. Once a sound is an array of envelopes, a paintbrush, a blur or a crop becomes an audio effect. The author frames it as open-ended: \"Who knows what else, there's a lot of room for experimentation\".\n\nThe project is old. The homepage says it is \"now superseded by Photosounder\", a graphical program that uses most of the same techniques. The command-line tool still shows the idea in its barest form.",
+  "install": "brew install arss\n# depends on fftw, which brew installs for you",
+  "try_this": [
+   {
+    "cmd": "arss --help",
+    "what_happens": "Prints the usage text, so you can see the options for analysing a sound into an image and synthesising an image back into sound."
+   }
+  ],
+  "whats_unique": "It uses a filter bank with envelope detection instead of the usual STFT, closer to how analogue spectrographs worked. The same tool analyses and resynthesises, so you can paint a spectrogram and hear it.",
+  "caveats": "The homepage says the site has been in hiatus since February 2009, the last release mentioned is 0.2.3 from 2008, and the page offers no install guide or documentation beyond one gcc line.",
+  "commitment": "quick",
+  "category": "quick-weird-payoffs",
+  "tags": [
+   "quick",
+   "audio",
+   "spectrogram",
+   "image",
+   "resynthesis"
+  ],
+  "links": [
+   {
+    "label": "ARSS homepage (Michel Rouzic)",
+    "url": "https://arss.sourceforge.net/"
+   }
+  ]
+ }
+}

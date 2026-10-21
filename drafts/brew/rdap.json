@@ -1,0 +1,161 @@
+{
+ "name": "rdap",
+ "desc": "Command-line client for the Registration Data Access Protocol",
+ "homepage": "https://www.openrdap.org",
+ "installs_365d": 746,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "A client for RDAP, the modern successor to WHOIS, a protocol door most people never open.",
+ "brief": {
+  "what_it_is": "OpenRDAP is a command line client for the Registration Data Access Protocol (RDAP), written in Go. You give it a domain, IP address, AS number, entity tag, or a few other query types, and it looks up the registration record over HTTP. Output can be text, raw JSON, or WHOIS-style text for domain queries. It finds the right RDAP server automatically from IANA bootstrap data, and you can name a server yourself with -s.",
+  "why_it_exists": "RDAP is presented as a replacement for WHOIS, returning domain and IP registration data in JSON over HTTP instead of the older plain-text WHOIS protocol. The homepage calls it a command line client for that protocol and says the same site also hosts the Go library and a public RDAP service at rdap.net.",
+  "how_it_works": "The client detects the query type from the input (domain, ip, asn), finds the authoritative RDAP server through bootstrap data from data.iana.org or a custom URL, and sends the query over HTTP. It can cache the bootstrap files on disk. Results come back as RDAP JSON, which it renders as text, raw JSON, or WHOIS style.",
+  "commands_seen": [
+   {
+    "cmd": "go install github.com/openrdap/rdap/cmd/rdap@master",
+    "context": "Installs the rdap binary into the Go bin directory (README says $GOPATH/go/bin)."
+   },
+   {
+    "cmd": "~/go/bin/rdap google.com",
+    "context": "Example first run after installing, looking up a domain with default output."
+   },
+   {
+    "cmd": "rdap -v example.com",
+    "context": "Domain lookup; -v selects verbose output. The README lists this as the usage for a .com domain."
+   },
+   {
+    "cmd": "rdap -v 192.0.2.0",
+    "context": "IPv4 address lookup."
+   },
+   {
+    "cmd": "rdap -v 2001:db8::",
+    "context": "IPv6 address lookup."
+   },
+   {
+    "cmd": "rdap -v AS15169",
+    "context": "Autonomous System number lookup."
+   },
+   {
+    "cmd": "rdap -v OPS4-RIPE",
+    "context": "Entity lookup by object tag."
+   },
+   {
+    "cmd": "rdap -v -t nameserver -s https://rdap.verisign.com/com/v1 ns1.google.com",
+    "context": "Nameserver query sent to an explicitly named server with -s and -t nameserver. The README says the server must be given with -s for advanced query types."
+   },
+   {
+    "cmd": "rdap -v -t help -s https://rdap.verisign.com/com/v1",
+    "context": "Asks the server for its help information using the help query type."
+   },
+   {
+    "cmd": "rdap --json AS15169",
+    "context": "Shown in the README example output section as the way to get raw RDAP JSON for an AS number."
+   }
+  ],
+  "install_notes": "Requires Go 1.20 or later; the README points to golang.org for the compiler. Installation is via go install, not Homebrew. The bootstrap cache is optional and stored under $XDG_CACHE_HOME/openrdap, falling back to ~/.cache/openrdap. X.509 client authentication is supported, but the README gives no setup steps for it. Advanced query types need a server URL passed with -s, since not all servers support every type.",
+  "standout": "Automatic server discovery through IANA bootstrap data means a plain rdap example.com works without knowing which registry runs the zone. It also covers the full set of RDAP query types, including searches, from one small binary with WHOIS-style output for people who want the old format.",
+  "status": "unknown. The README and homepage show no release version, date, or last-commit information. The GitHub README still links a Travis CI badge at travis-ci.org, which suggests the CI setup may be old, but that is not evidence of current activity.",
+  "caveats": "Needs a Go toolchain to install; no prebuilt binary or Homebrew note appears in what I read. Search queries such as abc*.com are not yet bootstrapped, so they need -s. The homepage lists support for the future ICANN layered access specification as planned, not done. Some servers do not support all query types. Search wildcards are only partly covered by automatic detection.",
+  "quotes": [
+   "OpenRDAP is a command line RDAP client implementation in Go.",
+   "RDAP is a replacement for WHOIS, which provides domain name & IP address registration information in JSON format over HTTP.",
+   "Small & fast command line RDAP client."
+  ],
+  "links": [
+   {
+    "label": "OpenRDAP homepage",
+    "url": "https://www.openrdap.org"
+   },
+   {
+    "label": "Live demo",
+    "url": "https://www.openrdap.org/demo"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/openrdap/rdap"
+   },
+   {
+    "label": "Manual and docs",
+    "url": "https://www.openrdap.org/docs"
+   },
+   {
+    "label": "Go package docs (godoc)",
+    "url": "https://godoc.org/github.com/openrdap/rdap"
+   }
+  ],
+  "fetch_log": [
+   "https://www.openrdap.org: worked; homepage text read, includes feature list and rdap.net API quick reference.",
+   "https://github.com/openrdap/rdap: worked; README read in full, including install steps, usage tables, and example output.",
+   "https://www.openrdap.org/docs: not fetched; README points to it for the full manual. Left out to stay within the fetch limit, since the README already covers usage."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A small client opens the underexplored RDAP protocol, revealing how domain and IP registration data is served and discovered across authoritative registries."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "rdap",
+  "tldr": "A small Go client for RDAP, the JSON-over-HTTP successor to WHOIS, that finds the right registry server for a domain, IP or AS number on its own.",
+  "deeper_look": "OpenRDAP is a command line client for the Registration Data Access Protocol. You hand it a domain, an IP address, an AS number or an entity tag, and it fetches the registration record over HTTP. Output can be text, raw JSON, or WHOIS-style text for domain queries.\n\nRDAP exists as a replacement for WHOIS. In the project's words, it \"provides domain name & IP address registration information in JSON format over HTTP.\" WHOIS is a plain-text protocol with no fixed format, so every registry words its answers differently. RDAP gives structured data that programs can read.\n\nThe interesting part is how the client knows who to ask. It detects the query type from your input, then looks up the authoritative server in bootstrap data published by IANA. That means `rdap example.com` works without you knowing which registry runs the zone. You can cache the bootstrap files on disk, or name a server yourself with `-s`.\n\nThe same project also offers a Go library and a public RDAP service at rdap.net. Using the tool is a quick way to see how the internet's registration data is split between registries, and how a lookup gets routed.",
+  "install": "Homebrew lists a formula named rdap, but the project's own README installs with Go instead. It requires Go 1.20 or later:\n\ngo install github.com/openrdap/rdap/cmd/rdap@master\n\nThe binary lands in your Go bin directory (the README says $GOPATH/go/bin, for example ~/go/bin/rdap).",
+  "try_this": [
+   {
+    "cmd": "~/go/bin/rdap google.com",
+    "what_happens": "Looks up a domain with default output, with the registry server found automatically through IANA bootstrap data."
+   },
+   {
+    "cmd": "rdap --json AS15169",
+    "what_happens": "Fetches the record for an autonomous system number and prints the raw RDAP JSON."
+   },
+   {
+    "cmd": "rdap -v -t nameserver -s https://rdap.verisign.com/com/v1 ns1.google.com",
+    "what_happens": "Queries a nameserver on an explicitly named server, as the README requires for advanced query types."
+   }
+  ],
+  "whats_unique": "Automatic server discovery through IANA bootstrap data means you never need to know which registry to ask. One small binary covers the RDAP query types and can still print WHOIS-style text.",
+  "caveats": "Maintenance status is unclear from the README and homepage, search queries like abc*.com need an explicit -s server, and not every server supports every query type.",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "network",
+   "protocol",
+   "rdap",
+   "whois",
+   "go",
+   "dns"
+  ],
+  "links": [
+   {
+    "label": "OpenRDAP homepage",
+    "url": "https://www.openrdap.org"
+   },
+   {
+    "label": "Live demo",
+    "url": "https://www.openrdap.org/demo"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/openrdap/rdap"
+   },
+   {
+    "label": "Manual and docs",
+    "url": "https://www.openrdap.org/docs"
+   },
+   {
+    "label": "Go package docs (godoc)",
+    "url": "https://godoc.org/github.com/openrdap/rdap"
+   }
+  ]
+ }
+}

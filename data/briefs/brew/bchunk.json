@@ -1,0 +1,56 @@
+{
+ "name": "bchunk",
+ "desc": "Convert CD images from .bin/.cue to .iso/.cdr",
+ "homepage": "http://he.fi/bchunk/",
+ "installs_365d": 2570,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering"
+ ],
+ "why": "Splits raw CD bin and cue images into ISO tracks, a quiet look at how optical disc data is actually laid out.",
+ "brief": {
+  "what_it_is": "bchunk is a command-line converter for CD images. It takes a raw CD image in the .bin/.cue format (sometimes .raw/.cue), which is common for CD/VCD images distributed online, and splits it into separate track files. Data tracks come out as .iso files that hold an ISO file system, and audio tracks come out as .cdr files in native CD audio format. Since version 1.1.0 it can also write audio tracks as WAV.",
+  "why_it_exists": "The bin/cue format is used by popular non-Unix CD-writing software but is not supported by most other CD burning programs, so bchunk exists to make those images usable on Unix and Linux. The page describes it as a Unix/C rewrite of Bob Marietta's BinChunker, written with his help and access to his Pascal/Delphi source.",
+  "how_it_works": "The page gives little internal detail. It describes the output: .iso tracks can be mounted through a loop device on Linux or written to CD-R with cdrecord, and .cdr audio tracks can be written with cdrecord -audio or converted to WAV or other formats with sox. The tips section notes that a byte-order mismatch can make audio sound like loud noise, and that the -s option on bchunk swaps byte order.",
+  "commands_seen": [
+   {
+    "cmd": "bchunk sicktracks8.pcm sicktracks8.txt tracks",
+    "context": "Splits a raw PCM audio file into numbered track files using the CUE sheet (sicktracks8.txt), with output names starting with 'tracks'. This is the tip for preparing an MP3 mix for audio CD."
+   },
+   {
+    "cmd": "cdrecord -v -dao -audio tracks??.cdr",
+    "context": "Burns the .cdr track files to an audio CD in disc-at-once mode using cdrecord. Named as the burning step in the MP3 tip."
+   },
+   {
+    "cmd": "$ mpg123 -sv sicktracks8.mp3 > sicktracks8.pcm",
+    "context": "Decodes an MP3 to raw PCM on stdout, redirected to a file, as the first step before bchunk. The page's own example shows the leading $ prompt."
+   },
+   {
+    "cmd": "apt-get install bchunk",
+    "context": "Installs bchunk on Debian GNU/Linux, where it is packaged and maintained."
+   }
+  ],
+  "install_notes": "The page offers a GPL source tarball (bchunk-1.2.2.tar.gz) to compile, and says to read the README first. It requires an ANSI C compiler and a somewhat POSIX.1-compliant environment. Packages exist for Debian (apt-get), OpenBSD, FreeBSD and NetBSD, and there is an RPM. No accounts or special hardware are mentioned.",
+  "standout": "It is a small C tool that does one job: it reads the sector layout of an optical disc image and separates data and audio tracks. The page's tips show the full path from an MP3 mix with a CUE sheet to a playable audio CD, which makes the disc layout visible in plain terms.",
+  "status": "Quiet. The latest release is 1.2.2, dated 14 Nov 2017, and it was a security update fixing CVE-2017-15953, CVE-2017-15954 and CVE-2017-15955. The download files are dated 2017-11-17. The page itself was last modified 06-May-2019. The README points to development on GitHub, and the Debian package is maintained.",
+  "caveats": "Ships as C source with a Unix/POSIX focus, and the page's own test list is mostly old Linux, Solaris, IRIX and Mac OS X systems. The 1.1.0 release notes say it was not extensively tested. Byte-order problems can produce noisy audio, so the -s flag or cdrecord's -swab may be needed. The page's license note says GPL v2 or later. The page itself warns: 'Satisfaction not guaranteed. If it breaks, you get to keep both pieces.' Nothing in the fetched material mentions macOS packaging through Homebrew.",
+  "quotes": [
+   "binchunker converts a CD image in a \".bin / .cue\" format (sometimes \".raw / .cue\") to a set of .iso and .cdr tracks.",
+   "Download the (GPL'ed) source code below, read the README file, compile, and serve cold with a meal. Satisfaction not guaranteed. If it breaks, you get to keep both pieces.",
+   "The .iso track contains an ISO file system, which can be mounted through a loop device on Linux systems, or written on a CD-R using cdrecord."
+  ],
+  "links": [
+   {
+    "label": "bchunk homepage (v1.2.2)",
+    "url": "http://he.fi/bchunk/"
+   }
+  ],
+  "fetch_log": [
+   "http://he.fi/bchunk/ - fetched successfully; the page contains the README-style description, the download list, the tips section and the license."
+  ]
+ }
+}

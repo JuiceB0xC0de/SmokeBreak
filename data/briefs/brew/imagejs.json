@@ -1,0 +1,77 @@
+{
+ "name": "imagejs",
+ "desc": "Tool to hide JavaScript inside valid image files",
+ "homepage": "https://github.com/jklmnn/imagejs",
+ "installs_365d": 17,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "visual"
+ ],
+ "why": "Hides JavaScript inside valid image files, a clever polyglot trick that opens a door into file format ambiguity.",
+ "brief": {
+  "what_it_is": "imagejs is a small C command-line tool that packages a JavaScript file into a valid image file, so the output is still a working picture. You give it an output format and a .js file, and it writes an image named after the input plus the format extension (for example code.js.bmp). The README lists bmp, gif, webp, pnm and pgf as output options, and says it can also embed code into an existing gif, bmp or webp file with -i. The bmp output with -l can be viewed as a line of pixels. The README's opening line says only gif and bmp are supported, which conflicts with the later list of formats.",
+  "why_it_exists": "The README frames it as a proof of concept for turning image uploads into a code-execution vector. Its background section says an attacker who can't run a script tag on a site, but can upload a profile picture, could carry script in that image. The idea came from Ajin Abraham's 2014 post on GIFs serving JavaScript, and the author ported it to C and added bitmap support.",
+  "how_it_works": "The README does not describe the internal mechanism. It says the tool writes the JavaScript into the image file while keeping the file a valid image in the chosen format. For gif, bmp and webp it can embed the code into an existing image with -i. With -l, bmp output stores the code as a line of pixels that can be opened and viewed.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/jklmnn/imagejs.git",
+    "context": "Build step: clones the repository."
+   },
+   {
+    "cmd": "cd imagejs",
+    "context": "Build step: enters the cloned source directory."
+   },
+   {
+    "cmd": "mkdir build",
+    "context": "Build step: creates an out-of-tree build directory."
+   },
+   {
+    "cmd": "cd build",
+    "context": "Build step: enters the build directory."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Build step: configures the project from the parent directory."
+   },
+   {
+    "cmd": "make",
+    "context": "Build step: compiles; the README then runs ./imagejs from the build directory."
+   },
+   {
+    "cmd": "$ ./imagejs bmp code.js -l",
+    "context": "Example: writes code.js.bmp, a bitmap that can be viewed, with the code laid out as a line of pixels."
+   },
+   {
+    "cmd": "$ ./imagejs gif code.js -i giffile.gif",
+    "context": "Example: embeds code.js into the existing gif giffile.gif."
+   }
+  ],
+  "install_notes": "Beyond brew install, the README describes a source build. On Debian and Ubuntu you need build-essential and cmake; other systems are left to their own documentation. Build with git clone, then mkdir build, cmake .., and make, and run ./imagejs from the build directory. No accounts, runtimes or configuration are mentioned. I did not check the Homebrew formula itself.",
+  "standout": "It is a deliberately small polyglot-style demonstration: one file that is a valid picture and also carries executable JavaScript. The bmp pixel-line view with -l makes the hidden code visible in a way most polyglot write-ups do not.",
+  "status": "unknown. The README is a short proof of concept and I saw no release date, last-commit date, or maintenance note in what I fetched. The Homebrew description is the only other signal.",
+  "caveats": "The README calls it a proof of concept that may contain bugs, is only tested with valid inputs, and says not to pass untrusted data to it. The license terms are not stated in the README, and the README's all-caps no-warranty disclaimer is standard. Format support is inconsistent: the opening line says gif and bmp only, while the usage section lists five outputs. The -l pixel view works only for bmp. webp embedding is marked beta. The build needs cmake and a C toolchain, with only Debian and Ubuntu packages named. The README's stated purpose is to help attackers exploit XSS upload filters, so it should be presented as a security demonstration.",
+  "quotes": [
+   "Small tool to package javascript into a valid image file.",
+   "This program is just a proof of concept example. It may contain bugs and it is only tested with valid inputs. Do NOT pass untrusted data to this program.",
+   "A file like this is able to extend XSS vulnerabilities."
+  ],
+  "links": [
+   {
+    "label": "imagejs GitHub repository (homepage)",
+    "url": "https://github.com/jklmnn/imagejs"
+   },
+   {
+    "label": "Ajin Abraham, When GIFs serve JavaScript (the idea's origin, cited in the README; not fetched)",
+    "url": "http://iamajin.blogspot.in/2014/11/when-gifs-serve-javascript.html"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/jklmnn/imagejs: fetched OK; README returned. It was complete enough that I did not follow further links."
+  ]
+ }
+}

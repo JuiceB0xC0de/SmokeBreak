@@ -1,0 +1,78 @@
+{
+ "name": "woof-doom",
+ "desc": "Woof! is a continuation of the Boom/MBF bloodline of Doom source ports",
+ "homepage": "https://fabiangreffrath.github.io/woof/",
+ "installs_365d": 158,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "games",
+ "tags": [
+  "afternoon",
+  "game",
+  "ancient"
+ ],
+ "why": "A modern Doom source port in the Boom/MBF lineage, an excellent and historically rich way to play classic engine variants.",
+ "brief": {
+  "what_it_is": "Woof! is a Doom source port, meaning a re-implementation of the Doom engine that runs the original game data (WAD files) on modern systems. It is based on WinMBF, the Windows port of Lee Killough's MBF engine, and is maintained by Fabian Greffrath. It loads Doom IWADs and PWADs and runs them with modern rendering and input: uncapped frame rate with frame interpolation, widescreen, adjustable FOV, modern gamepad support, and 3D or PC-speaker audio. Its default compatibility level is MBF21, with Vanilla, Boom and MBF also selectable. Output is the game window and audio on screen. The Homebrew formula also installs a woof-setup executable, though the pages I read do not describe it.",
+  "why_it_exists": "The homepage says MBF was limited to MS-DOS and that WinMBF was the only way to run it elsewhere. Greffrath wrote that the code only compiled and ran on 32-bit systems and still used outdated SDL-1 libraries, and that this frustration led to the project. The stated goal is to 'fast-forward MBF.EXE from DOS to 21st century and remove all the stumbling blocks on the way.'",
+  "how_it_works": "It is a C codebase built with CMake on SDL3 and SDL3_net, with optional libraries for audio (openal-soft, libsndfile, fluidsynth, libxmp) and image and JSON support (libspng, yyjson). Music can come from native MIDI, FluidSynth with a bundled soundfont, or a built-in OPL3 emulator. The source also includes a NanoBSP node builder for maps that lack nodes. The README does not describe the internals beyond this.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/Microsoft/vcpkg.git",
+    "context": "First step of the recommended build: fetch the vcpkg package manager (all platforms)."
+   },
+   {
+    "cmd": "./bootstrap-vcpkg.sh",
+    "context": "Bootstraps vcpkg on Unix/macOS. On Windows the README gives .\\bootstrap-vcpkg.bat instead."
+   },
+   {
+    "cmd": "git clone https://github.com/fabiangreffrath/woof.git",
+    "context": "Clones the Woof! source repository."
+   },
+   {
+    "cmd": "cmake -B build -DCMAKE_TOOLCHAIN_FILE=\"[path to vcpkg]/scripts/buildsystems/vcpkg.cmake\"",
+    "context": "Configures the build with the vcpkg toolchain file. vcpkg builds all dependencies during this step."
+   },
+   {
+    "cmd": "cmake --build build",
+    "context": "Compiles the project. The executable then appears in build/src."
+   },
+   {
+    "cmd": "cmake -B build",
+    "context": "Configures the build without vcpkg, for Linux or Windows with MSYS2 where the libraries come from the system or MSYS2 packages."
+   }
+  ],
+  "install_notes": "The README offers two routes. The recommended one is vcpkg on any platform, which builds dependencies automatically. The other is for Linux, or Windows via MSYS2, where you install CMake (3.15 or newer), SDL3 (3.4.0 or newer), SDL3_net, openal-soft (1.22 or newer, needed for PC speaker emulation) and optional libraries from your package manager, preferring the -dev packages. Then clone, run cmake -B build, and cmake --build build. Prebuilt Windows binaries (MSVC, Windows 7 and newer) and Linux AppImages are on the GitHub Releases page. No accounts or first-run configuration are mentioned. Game data is not included in the install text I read, so you will need your own Doom WAD.",
+  "standout": "It targets the MBF lineage, which many Doom ports derive from, and it keeps MBF's behaviour as the default while modernising the engine. It also adopts newer mod formats early: MBF21, UMAPINFO, UDMF, DEHEXTRA and DSDHacked. Its feature list includes gamepad gyro, flick stick, and frame interpolation with uncapped frame rate, which are rare in this family of ports. It ships with a bundled soundfont (TimGM6mb.sf2) and an OPL3 emulator.",
+  "status": "Unknown. The README shows GitHub badges for release, last commit and build status, but their values did not come through in the text I fetched. The README links to an in-progress Changelog, and the copyright notices run to 2026, which suggests active work. I did not verify a release date or last commit date.",
+  "caveats": "Build from source needs many optional libraries, and vcpkg takes a long time on first build. The README says the code now uses SDL3 (3.4.0 or newer), so older distro packages may be too old. Woof! is 'less strict regarding its faithfulness' to the original MBF, so some demos may not play back exactly, and NanoBSP-built nodes are explicitly not demo compatible. The README calls this a continuation of MBF and does not describe a separate port of WinMBF's Windows code. Licensing is mixed: the main code is GPL-2.0+, some files are GPL-3.0+, and some bundled assets have CC-BY or CC BY-SA terms, so check the notices if you redistribute. The Homebrew formula gave no caveats. The woof-setup executable is not described in the pages I read.",
+  "quotes": [
+   "Woof! is a continuation of Lee Killough's Doom source port MBF targeted at modern systems.",
+   "In summary, this project's goal is to fast-forward MBF.EXE from DOS to 21st century and remove all the stumbling blocks on the way.",
+   "If you turn the Doom logo upside down it reads \"Wood\" - which would be a pretty stupid name for a source port."
+  ],
+  "links": [
+   {
+    "label": "Homepage (project docs)",
+    "url": "https://fabiangreffrath.github.io/woof/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/fabiangreffrath/woof"
+   },
+   {
+    "label": "Getting Started wiki",
+    "url": "https://github.com/fabiangreffrath/woof/wiki/Getting-Started"
+   },
+   {
+    "label": "Command Line Parameters wiki",
+    "url": "https://github.com/fabiangreffrath/woof/wiki/Command-Line-Parameters"
+   }
+  ],
+  "fetch_log": [
+   "https://fabiangreffrath.github.io/woof/ - worked; project homepage with synopsis, key features, build instructions and legal notices",
+   "https://github.com/fabiangreffrath/woof - worked; README with the same content plus badges and links, but badge values were not rendered as text"
+  ]
+ }
+}

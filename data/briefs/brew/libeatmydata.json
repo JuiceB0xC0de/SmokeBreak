@@ -1,0 +1,82 @@
+{
+ "name": "libeatmydata",
+ "desc": "LD_PRELOAD library and wrapper to transparently disable fsync and related calls",
+ "homepage": "https://www.flamingspork.com/projects/libeatmydata/",
+ "installs_365d": 17,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "library",
+  "reverse-engineering"
+ ],
+ "why": "An LD_PRELOAD trick that quietly lies about fsync, a delightful look at how programs assume durability.",
+ "brief": {
+  "what_it_is": "libeatmydata is a small LD_PRELOAD shared library, plus an eatmydata wrapper script, that transparently turns off fsync and related calls such as open(O_SYNC) for whatever program you run under it. You run a program through the wrapper (eatmydata foo), and that program's flushes to disk become no-ops. The result is faster writes for software that insists on durable storage, at the cost of no longer being crash-safe. It takes a normal command and its data as input and outputs the same program's behavior, minus the durability guarantees.",
+  "why_it_exists": "The author built it to speed up database test runs and similar workloads where safe, synchronous disk writes dominate the runtime. The homepage's framing is that it makes software that writes data safely to disk much quicker while making that software no longer crash safe, and it warns: \"DO NOT use libeatmydata on software where you care about what it stores.\"",
+  "how_it_works": "It is an LD_PRELOAD library, so it is loaded ahead of the C library and intercepts the fsync-family system calls for the process it wraps, letting them return without actually flushing. The eatmydata wrapper script sets this up so you do not have to set LD_PRELOAD by hand. The homepage does not go into further internals.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/stewartsmith/libeatmydata.git",
+    "context": "Fetches the source from the GitHub repository (alternative to extracting the source tarball)."
+   },
+   {
+    "cmd": "cd libeatmydata",
+    "context": "Enters the source directory before building."
+   },
+   {
+    "cmd": "autoreconf -i",
+    "context": "Generates the configure script; the homepage says this is only needed when building from git."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Standard autotools configuration step for the source build."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the library and wrapper."
+   },
+   {
+    "cmd": "make check",
+    "context": "Runs the project's test suite before installing."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs libeatmydata system-wide from the source build."
+   },
+   {
+    "cmd": "eatmydata foo",
+    "context": "Usage pattern: run the program foo through the eatmydata wrapper so its fsync calls are disabled."
+   },
+   {
+    "cmd": "mysql-test-run --do-test=innodb",
+    "context": "The MySQL test-suite command used for the benchmark table on the homepage, run with and without libeatmydata."
+   }
+  ],
+  "install_notes": "Distro packages are named eatmydata, and the author publishes Fedora RPMs (built for fc33, for x86_64 and ppc64le) plus a source tarball (libeatmydata-131.tar.gz) with a GPG signature. Building from source needs autotools: run autoreconf -i if you cloned git, then ./configure, make, make check, and sudo make install. No accounts, hardware, or special runtime are mentioned. Once installed, you just prefix the command you want to run with eatmydata.",
+  "standout": "Rather than changing the software being run, it lies to the program at the system-call level, so any program that calls fsync can be sped up without modification. The homepage's benchmark shows a MySQL InnoDB test run going from about 3m36s to 2m10s, and the author says that saves about a third of the total runtime.",
+  "status": "Unknown for certain. The homepage points to a GitHub repo and a source tarball numbered 131, with Fedora RPMs for 129 built on fc33 (an older Fedora release), so the packaged binaries look dated. The homepage notes the project moved from Bazaar to git and from Launchpad to GitHub. No release date or last commit date appears on the homepage, and I did not check the GitHub repo.",
+  "caveats": "Not crash-safe, by design. Data written under it can be lost or corrupted if the machine crashes or loses power, so it is only for throwaway data, test runs, or disposable databases. The author says he uses it mainly on Linux; others have reported it working on macOS, OpenSolaris, Solaris and Debian GNU/kFreeBSD, with patches welcome for other platforms. The homepage does not state a license. The benchmark numbers come from one MySQL test run and are not a general performance claim.",
+  "quotes": [
+   "libeatmydata is a small LD_PRELOAD library designed to (transparently) disable fsync (and friends, like open(O_SYNC)).",
+   "DO NOT use libeatmydata on software where you care about what it stores.",
+   "It's called libEAT-MY-DATA for a reason.",
+   "This saves us about a third of the total runtime!"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (author's site)",
+    "url": "https://www.flamingspork.com/projects/libeatmydata/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/stewartsmith/libeatmydata"
+   }
+  ],
+  "fetch_log": [
+   "https://www.flamingspork.com/projects/libeatmydata/ - fetched OK; the page has full install, usage, platform and benchmark sections, so I did not follow further links."
+  ]
+ }
+}

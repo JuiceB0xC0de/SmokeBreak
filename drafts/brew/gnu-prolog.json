@@ -1,0 +1,109 @@
+{
+ "name": "gnu-prolog",
+ "desc": "Prolog compiler with constraint solving",
+ "homepage": "http://www.gprolog.org/",
+ "installs_365d": 390,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language",
+  "library"
+ ],
+ "why": "A real Prolog compiler with finite-domain constraint solving is an old-school logic language worth a long afternoon of puzzles.",
+ "brief": {
+  "what_it_is": "GNU Prolog is a free Prolog compiler with a finite-domain (FD) constraint solver, developed by Daniel Diaz. It takes Prolog and constraint programs and compiles them to stand-alone native binaries, similar to how gcc turns C source into an executable. It also ships an interactive top-level interpreter with a debugger, and the gprolog, gplc and related tools are its command-line front ends. The homepage describes the Prolog part as ISO-conformant with many extensions such as global variables, DCGs, sockets and OS interface.",
+  "why_it_exists": "The homepage frames it as a way to combine the power of constraint programming with the declarativity of logic programming, in a free, native-code system. It was inspired by the author's earlier systems wamcc (Prolog to C via the WAM, slowed by gcc compile times) and clp(FD) (a single-primitive FD constraint design), and development began in January 1996 under the name Calypso.",
+  "how_it_works": "The compiler is based on the Warren Abstract Machine. A Prolog program is first compiled to a WAM file, then translated to a machine-independent low-level language called mini-assembly, then to the target machine's assembly, and finally to a native object and executable. Unused built-in predicates are excluded at link time, which keeps executables small. The FD solver defines all high-level constraints in terms of a single low-level primitive, which the homepage says makes constraints compilable and lets users define their own.",
+  "commands_seen": [
+   {
+    "cmd": "gprolog --version",
+    "context": "From the Reporting Bugs section: the homepage asks bug reporters to run this to report the GNU Prolog version."
+   },
+   {
+    "cmd": "uname -a",
+    "context": "From the Reporting Bugs section: suggested Unix command for reporting the machine type in a bug report. It is a general shell command, not a GNU Prolog one."
+   }
+  ],
+  "install_notes": "The homepage offers a source tarball (gprolog-1.5.0.tar.gz) and mentions a configure step, since bug reports should include the operands given to configure and its output. Binary options are a Mac OS X installer package made with MacPorts (installs to /opt/local/ and /opt/local/bin), and Windows 32-bit and 64-bit auto-install setups built with MSVC++ or MinGW. Windows builds are also described in src/WINDOWS and src/WINDOWS-OLD inside the source tree. The page does not mention Homebrew specifically, so the brew formula details are not confirmed here. Notepad++ users can import a UDL file for syntax highlighting.",
+  "standout": "Native-code output for a Prolog system, with the FD solver built on one primitive that users can extend, plus a claimed performance comparable to commercial solvers. Its compiler design avoids gcc's compile-time cost by generating assembly directly.",
+  "status": "Appears maintained but the homepage shows no release date. It lists gprolog-1.5.0 as the current stable version and has a copyright line of 1999-2021. The page also mentions a GIT repository on GitHub and separate unstable and old-version directories. Last release date and last commit are unknown from this page alone.",
+  "caveats": "Platform support is broad but varies: Linux, BSDs, Solaris, macOS and Windows (Cygwin, MinGW, MinGW64, MSVC++) on x86, plus ARM, PowerPC, SPARC, alpha and MIPS entries that may be older. The homepage does not give a licence name, only that it is free software. The homepage's own macOS binary was built on Big Sur, so newer macOS may depend on a source build. Windows builds have separate instructions in the source tree. The manual is available in many formats, but I did not open it.",
+  "quotes": [
+   "GNU Prolog is a free Prolog compiler with constraint solving over finite domains developed by Daniel Diaz.",
+   "GNU Prolog accepts Prolog+constraint programs and produces native binaries (like gcc does from a C source).",
+   "The key feature of the GNU Prolog solver is the use of a single (low-level) primitive to define all (high-level) FD constraints."
+  ],
+  "links": [
+   {
+    "label": "GNU Prolog homepage",
+    "url": "http://www.gprolog.org/"
+   },
+   {
+    "label": "Users mailing list archive and subscription",
+    "url": "http://mail.gnu.org/mailman/listinfo/users-prolog"
+   },
+   {
+    "label": "Bug reports mailing list",
+    "url": "http://mail.gnu.org/mailman/listinfo/bug-prolog"
+   }
+  ],
+  "fetch_log": [
+   "http://www.gprolog.org/ - fetched OK; the page is the project homepage, not a GitHub README. Its content covers features, platforms, manual, download and contributions. I did not follow the manual or download links, so install details are limited to what the homepage says."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "GNU Prolog pairs logic programming with finite-domain constraint solving and compiles programs to native binaries, making it a rewarding way into declarative problem-solving."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "GNU Prolog",
+  "tldr": "A Prolog compiler with a finite-domain constraint solver that turns logic programs into stand-alone native executables, the way gcc turns C into binaries.",
+  "deeper_look": "GNU Prolog is a free Prolog system written by Daniel Diaz. You can use it two ways: as an interactive top-level with a debugger by running `gprolog`, or as a compiler with `gplc`, which turns Prolog and constraint programs into native binaries. The homepage describes the language side as ISO-conformant, with extensions such as global variables, DCGs, sockets and an OS interface.\n\nThe constraint solver works over finite domains. Instead of writing a search loop, you state that variables take values from a range and describe how they must relate, and the system finds assignments that satisfy it. Puzzles like scheduling, sudoku and the like become declarations rather than algorithms. The homepage says the solver defines all its high-level constraints in terms of a single low-level primitive, which makes constraints compilable and lets users define their own.\n\nUnder the hood it is built on the Warren Abstract Machine. A program is compiled to a WAM file, then to a machine-independent mini-assembly, then to the target machine's assembly, and finally to a native executable. The author's earlier system, wamcc, went through C and was slowed by gcc compile times, so this design generates assembly directly. Development began in January 1996 under the name Calypso. Unused built-in predicates are dropped at link time, which keeps executables small.\n\nThe other executables (`pl2wam`, `wam2ma`, `ma2asm`, `fd2c`, `hexgplc`) are the stages of that pipeline, which makes it a readable tour of how a logic language becomes machine code.",
+  "install": "brew install gnu-prolog",
+  "try_this": [
+   {
+    "cmd": "gprolog --version",
+    "what_happens": "Prints the installed GNU Prolog version, the same check the homepage asks for in bug reports."
+   },
+   {
+    "cmd": "gprolog",
+    "what_happens": "Starts the interactive top-level, where you can enter queries and use the debugger."
+   },
+   {
+    "cmd": "gplc --help",
+    "what_happens": "Shows the options of the compiler that builds native executables from Prolog source."
+   }
+  ],
+  "whats_unique": "It compiles Prolog and constraint programs to native binaries without going through C, and its finite-domain solver is built on one primitive that users can extend.",
+  "caveats": "The homepage shows no release date; it lists 1.5.0 as the current stable version, with a copyright line of 1999-2021.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "prolog",
+   "logic-programming",
+   "constraints",
+   "compiler"
+  ],
+  "links": [
+   {
+    "label": "GNU Prolog homepage",
+    "url": "http://www.gprolog.org/"
+   },
+   {
+    "label": "Users mailing list archive and subscription",
+    "url": "http://mail.gnu.org/mailman/listinfo/users-prolog"
+   },
+   {
+    "label": "Bug reports mailing list",
+    "url": "http://mail.gnu.org/mailman/listinfo/bug-prolog"
+   }
+  ]
+ }
+}

@@ -1,0 +1,127 @@
+{
+ "name": "ddcutil",
+ "desc": "Control monitor settings using DDC/CI and USB",
+ "homepage": "https://www.ddcutil.com",
+ "installs_365d": 504,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "protocol"
+ ],
+ "why": "Talks DDC/CI to monitors over I2C, a hidden channel that lets you drive brightness and inputs from software on hardware you own.",
+ "brief": {
+  "what_it_is": "ddcutil is a Linux command-line program for querying and changing monitor settings such as brightness, color levels, and input source. It talks to the monitor's Virtual Control Panel over I2C using DDC/CI, or over USB for monitors that offer that interface (the README cites Eizo ColorEdge and Apple Cinema). It builds both a command-line executable called ddcutil and a shared library called libddcutil, and the command-line tool does not depend on the library. A separate GUI, ddcui, is built on Qt and is described on the same site.",
+  "why_it_exists": "The project was inspired by color profile management: calibration is relative to the monitor's current color settings, such as red gain, so ddcutil can save those settings at calibration time and restore them when the calibration is applied.",
+  "how_it_works": "Most monitors other than laptop panels expose a Virtual Control Panel that implements the Monitor Control Command Set (MCCS). ddcutil sends DDC/CI commands to that panel over an I2C bus, normally exposed by the video driver as /dev/i2c-n devices. For monitors that provide a USB interface to the VCP, it uses the USB Monitor Control Class Specification instead.",
+  "commands_seen": [
+   {
+    "cmd": "$ ddcutil --help",
+    "context": "Shows online help once ddcutil is installed; the README pairs it with the man page."
+   },
+   {
+    "cmd": "$ man 1 ddcutil",
+    "context": "Opens the ddcutil man page for the command-line tool."
+   },
+   {
+    "cmd": "ddcutil environment",
+    "context": "Quoted inline in the README, not in a code block: probes the I2C environment and may help diagnose a build that succeeds but fails at run time."
+   },
+   {
+    "cmd": "$ sudo ddcutil interrogate",
+    "context": "The README asks users to run this, save the output to a file, and attach it when posting configuration questions to the issue tracker."
+   }
+  ],
+  "install_notes": "The README points to a Post-Installation Checklist that covers loading the i2c-dev driver, and to Installation and Configuration docs for building from source. The site lists prebuilt packages for some distributions and separate packaging-status pages. Laptop displays are not supported. ddcutil can be built inside a virtual machine but will not run there, because virtual video drivers do not implement I2C; it works only if a real GPU is passed through with its native driver. Nvidia's proprietary driver may need special settings. The homepage's own installation notes were not fetched beyond these pointers.",
+  "standout": "It uses DDC/CI, a long-standing control channel built into most external monitors, to change settings from software with no vendor app. It also supports USB-connected monitor controls, and its shared library is maintained for use by KDE PowerDevil.",
+  "status": "Maintained, as far as the homepage shows. Its announcements list ddcutil 3.0.1 dated 13 Sep 2026 (bug fixes and shared library changes) and 2.2.7 dated 12 May 2026, with credited GitHub testers and an active issue tracker. The fetched README did not show a last-commit date, so I could not check recency beyond those announcements.",
+  "caveats": "Linux only. No laptop display support. Does not run inside a VM without GPU passthrough. Nvidia's proprietary driver may need special configuration. Table-type VCP features are implemented but untested, according to the site. Licensed GPLv2. The source is on GitHub. Technical questions go to the GitHub issue tracker, and the README asks users to attach sudo ddcutil interrogate output.",
+  "quotes": [
+   "ddcutil is a Linux program for querying and changing monitor settings, such as brightness, color levels, and input connector.",
+   "Typically, ddcutil communicates with the monitor's VCP over an I2C bus, as per the Display Data Channel/Command Interface Standard (DDC/CI).",
+   "Generally speaking, any setting that can be changed by pressing buttons on the monitor can be modified by ddcutil."
+  ],
+  "links": [
+   {
+    "label": "Project homepage and documentation",
+    "url": "https://www.ddcutil.com"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/rockowitz/ddcutil"
+   },
+   {
+    "label": "Post-Installation Checklist",
+    "url": "https://www.ddcutil.com/config_steps"
+   },
+   {
+    "label": "FAQ",
+    "url": "https://www.ddcutil.com/faq"
+   }
+  ],
+  "fetch_log": [
+   "https://www.ddcutil.com: worked. Returned the documentation index with announcements and topic list, not the full docs.",
+   "https://github.com/rockowitz/ddcutil: worked. Returned the README, which was the main source for this brief."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "ddcutil exposes the underused DDC/CI channel in everyday monitors, turning built-in hardware controls into a useful, surprising software interface."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "ddcutil",
+  "tldr": "A Linux command-line tool that changes your external monitor's brightness, colour levels and input source over DDC/CI, the same settings the buttons on the bezel control.",
+  "deeper_look": "Most external monitors carry a small control interface called the Virtual Control Panel, which implements the Monitor Control Command Set (MCCS). ddcutil sends commands to it over an I2C bus that the video driver exposes as /dev/i2c-n devices. A few monitors offer the same controls over USB instead, and ddcutil handles those through the USB Monitor Control Class Specification. Its own summary: \"Generally speaking, any setting that can be changed by pressing buttons on the monitor can be modified by ddcutil.\"\n\nThe project grew out of colour profile management. Calibration is relative to the monitor's current settings, such as red gain, so ddcutil can save those settings when a calibration is made and restore them when the profile is applied.\n\nThe door it opens is that your monitor is a small networked-style device with its own command protocol, running behind the cable you already have. Once you see that, brightness scripts, input switching and calibration become ordinary programming. It builds a command-line tool and a shared library, libddcutil, which KDE PowerDevil uses. A separate Qt GUI, ddcui, is described on the same site.",
+  "install": "brew install ddcutil\n\nNeeds Linux, an external monitor that supports DDC/CI, and the i2c-dev driver loaded; see the Post-Installation Checklist on the project site.",
+  "try_this": [
+   {
+    "cmd": "ddcutil --help",
+    "what_happens": "Prints the online help listing the commands and options."
+   },
+   {
+    "cmd": "ddcutil environment",
+    "what_happens": "Probes the I2C environment, which helps diagnose a build that succeeds but fails at run time."
+   },
+   {
+    "cmd": "sudo ddcutil interrogate",
+    "what_happens": "Collects a detailed report on your system and monitors, the output the project asks you to attach to issue reports."
+   }
+  ],
+  "whats_unique": "It uses DDC/CI, a control channel already built into most external monitors, so no vendor app is needed. It also covers USB-connected monitor controls, and its library is maintained for use by KDE PowerDevil.",
+  "caveats": "Linux only, laptop panels are not supported, it will not run in a VM without GPU passthrough, and Nvidia's proprietary driver may need special settings.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "protocol",
+   "i2c",
+   "monitors",
+   "linux"
+  ],
+  "links": [
+   {
+    "label": "Project homepage and documentation",
+    "url": "https://www.ddcutil.com"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/rockowitz/ddcutil"
+   },
+   {
+    "label": "Post-Installation Checklist",
+    "url": "https://www.ddcutil.com/config_steps"
+   },
+   {
+    "label": "FAQ",
+    "url": "https://www.ddcutil.com/faq"
+   }
+  ]
+ }
+}

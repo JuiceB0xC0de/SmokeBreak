@@ -1,0 +1,115 @@
+{
+ "name": "ptunnel",
+ "desc": "Tunnel over ICMP",
+ "homepage": "https://www.cs.uit.no/~daniels/PingTunnel/",
+ "installs_365d": 47,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol",
+  "afternoon"
+ ],
+ "why": "Tunnels TCP through ICMP echo packets, a genuine door into how ping traffic can be abused and inspected.",
+ "brief": {
+  "what_it_is": "Ptunnel is a small command-line program that tunnels TCP connections through ICMP echo request and reply packets, the ones ordinary ping uses. You run a proxy on a publicly reachable machine and a client on your own machine. The client listens on a local TCP port and forwards each connection, via pings, to a destination you name, so for example an ssh session to a remote host can reach that host through the proxy. Input is TCP traffic on the client's local port; output is the same TCP stream arriving at the destination, with the proxy converting between ping packets and TCP data.",
+  "why_it_exists": "The author wrote it for the case of an open wireless network that lets you ping anywhere but blocks outgoing TCP and UDP, so you cannot check mail. In the author's words, 'For those times when everything else is blocked.'",
+  "how_it_works": "The client sends ICMP echo requests (type 8) and the proxy answers with echo replies (type 0), with ptunnel's own packet format carried in the payload, including a magic-number flag to tell its packets apart from normal pings. Each packet carries sequence and acknowledgement numbers modelled on TCP, and the sender resends the first unacknowledged packet after 1.5 seconds without an ack. Optional password authentication uses an MD5 challenge-response, and a random ICMP identifier separates multiple concurrent tunnels.",
+  "commands_seen": [
+   {
+    "cmd": "make",
+    "context": "Compiling from source is just running make, with no configure step. The author says there is no ./configure, make, make install, just make. On Windows the target is make ptunnel.exe."
+   },
+   {
+    "cmd": "sudo ./ptunnel",
+    "context": "Starts the proxy on the remote machine. Root is needed for raw sockets."
+   },
+   {
+    "cmd": "./ptunnel -p <proxy address> -lp <listen port> -da <destination address> -dp <destination port> [-c <network device>] [-v <verbosity>] [-f <logfile>] [-u] [-x password]",
+    "context": "Client usage line from the README. -p is the proxy host, -lp the local listen port, -da and -dp the destination; -c enables packet capture on a device, -v sets verbosity from -1 to 5, -f writes a log file, -u tries unprivileged mode, and -x sets a password."
+   },
+   {
+    "cmd": "Proxy: ./ptunnel [-c <network device>] [-v <verbosity>] [-f <logfile>] [-u] [-x password]",
+    "context": "Proxy usage line from the README, with the client-only options left out."
+   },
+   {
+    "cmd": "sudo ./ptunnel -p proxy.pingtunnel.com -lp 8000 -da login.domain.com -dp 22",
+    "context": "Example from the README that tunnels ssh: the client listens on local port 8000 and forwards to login.domain.com port 22 via the proxy."
+   },
+   {
+    "cmd": "ssh -p 8000 localhost",
+    "context": "After the tunnel is up, this connects ssh through the local listen port to the remote login host."
+   },
+   {
+    "cmd": "apt-get install ptunnel",
+    "context": "Debian install after adding the unofficial Debian repository lines from the README and running apt-get update."
+   }
+  ],
+  "install_notes": "Needs root on both ends, preferably, because raw sockets are used. On a POSIX system you need libpcap and its headers (a dev package on Ubuntu) if you want packet capture. On Windows you need mingw and WinPcap to build. Build is plain make. The README lists Debian packages from a third-party repository, RPMs, Solaris packages, an iPhone build for jailbroken devices, and a Windows binary from another site. Note that the README's Debian repository and some download links point to old third-party hosts and may be dead.",
+  "standout": "It is a tiny, single-purpose tunnel that uses only the ICMP echo mechanism, so it can work where only ping is allowed. The protocol is documented in unusual depth on the homepage, with the packet format, state codes, sliding window, and MD5 challenge-response all spelled out.",
+  "status": "quiet. The homepage says 'Last updated: 5. September 2011' and the current version is 0.72, released the same day. I did not check a source repository, so I cannot say whether there have been commits since. The brew formula still exists, so it has been packaged.",
+  "caveats": "Requires root for normal operation. The brew caveat and the README both say the -u unprivileged mode is not recommended, and on Linux raw sockets still need root either way. Packet capture via libpcap is sometimes needed on Mac OS X and it cuts bandwidth noticeably. The README gives measured maximums of about 150 kb/s down and 50 kb/s up for one tunnel. There is no congestion control, the window is a fixed 64 packets that needs a recompile to change, and ICMP identifier collisions between instances are not detected. Passwords can show up in ps or top output. Gateways that filter ICMP break it, and the author says nothing can be done about that. Source-IP spoofing is listed as experimental. The license is BSD. The homepage was last edited in 2011 and the author says 'I don't use Windows', so Windows support is not maintained by him.",
+  "quotes": [
+   "For those times when everything else is blocked.",
+   "Ptunnel is not a feature-rich tool by any means, but it does what it advertises.",
+   "Compiling the sources simply consists of running make. No ./configure, make, make install, just make."
+  ],
+  "links": [
+   {
+    "label": "Ptunnel homepage (README and docs)",
+    "url": "https://www.cs.uit.no/~daniels/PingTunnel/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.cs.uit.no/~daniels/PingTunnel/ - fetched successfully; this page contains the full README-style documentation, so no further links were followed."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A compact, documented example of building a reliable TCP tunnel over ping packets, revealing how ICMP can carry more than diagnostics."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "ptunnel",
+  "tldr": "Carries TCP connections inside ICMP echo packets, so an ssh session can ride on ordinary pings when a network blocks everything else.",
+  "deeper_look": "Ptunnel is a small program that tunnels TCP through ICMP echo requests and replies, the packets ordinary ping uses. You run a proxy on a machine that can be reached from the internet, and a client on your own machine. The client listens on a local TCP port and forwards each connection, wrapped in pings, to a destination you name. The proxy unwraps the data and opens the real TCP connection.\n\nThe author wrote it for one situation: an open wireless network that lets you ping anywhere but blocks outgoing TCP and UDP, so you cannot check mail. In the author's words, \"For those times when everything else is blocked.\"\n\nThe interesting part is the protocol, which the homepage documents in unusual depth. The client sends echo requests (type 8) and the proxy answers with echo replies (type 0). Ptunnel's own packet format sits in the payload, with a magic number to tell its packets from real pings. Packets carry sequence and acknowledgement numbers modelled on TCP, and the first unacknowledged packet is resent after 1.5 seconds. Optional password authentication uses an MD5 challenge-response, and a random ICMP identifier keeps concurrent tunnels apart.\n\nIt is effectively a miniature reliable transport built on a protocol that was never meant to carry data. Reading how it does that is a good way into how ICMP works, why firewalls treat it specially, and what ping traffic can hide.",
+  "install": "brew install ptunnel\n# Needs root for raw sockets (run with sudo). You also need a second, publicly reachable machine to run the proxy end.",
+  "try_this": [
+   {
+    "cmd": "ptunnel --help",
+    "what_happens": "Prints the usage summary for proxy and client modes."
+   },
+   {
+    "cmd": "sudo ./ptunnel",
+    "what_happens": "Starts the proxy on the remote machine; root is needed for raw sockets."
+   },
+   {
+    "cmd": "sudo ./ptunnel -p proxy.pingtunnel.com -lp 8000 -da login.domain.com -dp 22",
+    "what_happens": "Starts the client listening on local port 8000, forwarding to login.domain.com port 22 through the proxy. Then run `ssh -p 8000 localhost` to connect."
+   }
+  ],
+  "whats_unique": "It uses only the ICMP echo mechanism, so it can work where nothing but ping is allowed. The homepage spells out the whole protocol: packet format, state codes, sliding window and the MD5 handshake.",
+  "caveats": "Last updated in 2011 (version 0.72), needs root, and has no congestion control; the README measures about 150 kb/s down and 50 kb/s up, and any gateway that filters ICMP breaks it.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "network",
+   "icmp",
+   "protocol",
+   "tunnel",
+   "ping"
+  ],
+  "links": [
+   {
+    "label": "Ptunnel homepage (README and docs)",
+    "url": "https://www.cs.uit.no/~daniels/PingTunnel/"
+   }
+  ]
+ }
+}

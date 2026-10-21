@@ -1,0 +1,91 @@
+{
+ "name": "heimdal",
+ "desc": "Free Kerberos 5 implementation",
+ "homepage": "https://github.com/heimdal/heimdal",
+ "installs_365d": 1173,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "days-off",
+  "protocol",
+  "network"
+ ],
+ "why": "Alternative Kerberos 5 implementation; a real door into how authentication tickets actually work, though heavy to explore.",
+ "brief": {
+  "what_it_is": "Heimdal is a free implementation of Kerberos 5, the network authentication protocol that issues tickets so users and services can prove who they are. The README also lists ASN.1/DER and PKIX as areas it implements. The repository is C source built with GNU Autoconf and Automake. The brew formula installs a set of command-line tools, including kinit, klist, kdestroy, kadmin, kpasswd, ktutil, kgetcred, kswitch, hxtool, gsstool and krb5-config. The README does not describe what these tools take in or produce, and says only that man pages exist for most commands.",
+  "why_it_exists": "The README gives no stated motivation. It describes Heimdal as an implementation of ASN.1/DER, PKIX and Kerberos, and the GitHub topics add gssapi, krb5-kdc and pki-library.",
+  "how_it_works": "",
+  "commands_seen": [
+   {
+    "cmd": "sh autogen.sh",
+    "context": "Generates the configure script when building from a git checkout (the wiki marks this step as needed only for git builds)."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Runs the Autoconf configure step for the host, in the top-level directory."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the distribution after configure finishes."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the built files; the default prefix is /usr/heimdal."
+   },
+   {
+    "cmd": "./configure --prefix=/some/other/place",
+    "context": "Changes the install location from the default /usr/heimdal."
+   },
+   {
+    "cmd": "./configure --without-berkeley-db",
+    "context": "Uses NDBM instead of Berkeley DB for the database backend, which the wiki says is the preferred option."
+   },
+   {
+    "cmd": "./configure --disable-otp",
+    "context": "Turns off one-time password support, which some applications build with by default."
+   },
+   {
+    "cmd": "./configure --with-openldap",
+    "context": "Builds with support for storing the Kerberos database in LDAP; requires OpenLDAP."
+   },
+   {
+    "cmd": "./configure --disable-mmap",
+    "context": "Stops use of the mmap system call; the wiki says to try this only if the default fails."
+   }
+  ],
+  "install_notes": "Requirements from the wiki: a C compiler in loose ANSI C mode (gcc or clang), lex or flex, awk, yacc or bison, a socket library, Berkeley DB or a compatible replacement for building the server side, Perl with JSON.pm, and Python. Build with sh autogen.sh if from git, then ./configure, make and make install. Optional features include readline (falls back to editline), hesiod, IPv6 and OpenLDAP. The wiki also has a long cross-compilation section for NetBSD evbarm that uses a git URL at git://svn.h5l.org/heimdal.git. Nothing in the fetched pages mentions accounts, first-run setup or a Kerberos realm configuration step.",
+  "standout": "Heimdal is one of the two main free Kerberos 5 implementations, and this entry's point is that it is an alternative to MIT Kerberos. Its brew formula bundles many tools, including kf, otp and string2key, which the README does not explain. Pulling them apart is a way to see how tickets, keytabs and the credential cache fit together.",
+  "status": "unknown. The fetched pages show CI badges for Linux, macOS and Windows, about 31,212 commits, 371 stars and 204 forks. No release date or last-commit date appears in the text I fetched, so I cannot confirm recent activity.",
+  "caveats": "The README is thin and points to the wiki and project site for details. The fetched heimdal.software URL returned the same GitHub repository page rather than a separate project site. Server-side builds need Berkeley DB or an equivalent. Cross-compiling is involved and the wiki example is for NetBSD. The brew description calls it an alternative Kerberos 5 implementation, and the wiki's git URL may be out of date. The licence is in a LICENSE file that I did not open, so I cannot say which licence applies.",
+  "quotes": [
+   "Heimdal is an implementation of: ASN.1/DER, PKIX, and Kerberos.",
+   "There are man pages for most of the commands.",
+   "Bug reports and bugs are appreciated."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/heimdal/heimdal"
+   },
+   {
+    "label": "Project site",
+    "url": "https://heimdal.software/heimdal/"
+   },
+   {
+    "label": "Building and installing wiki",
+    "url": "https://github.com/heimdal/heimdal/wiki/Building-and-installing"
+   },
+   {
+    "label": "Issue tracker",
+    "url": "https://www.heimdal.software/heimdal/issues"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/heimdal/heimdal: worked, README returned (CI badges, overview, mailing lists, links to project site and wiki).",
+   "https://heimdal.software/heimdal/: loaded, but returned the GitHub repository page with the same README, so no separate project content was found.",
+   "https://github.com/heimdal/heimdal/wiki/Building-and-installing: worked, build requirements, configure options and cross-compile notes."
+  ]
+ }
+}

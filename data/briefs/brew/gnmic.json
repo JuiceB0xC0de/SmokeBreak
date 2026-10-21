@@ -1,0 +1,94 @@
+{
+ "name": "gnmic",
+ "desc": "GNMI CLI client and collector",
+ "homepage": "https://gnmic.openconfig.net",
+ "installs_365d": 445,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "afternoon"
+ ],
+ "why": "A gNMI client for streaming telemetry from network gear, a door into the OpenConfig protocol routers speak.",
+ "brief": {
+  "what_it_is": "gnmic is an open-source gNMI command-line client written in Go, maintained under the OpenConfig project. You point it at a network device's gRPC gNMI endpoint and it can run Capabilities, Get, Set and Subscribe RPCs against that device. It can also run as a collector that takes gNMI telemetry streams from many targets, processes them, and writes them to outputs such as Prometheus, OpenTelemetry, InfluxDB, Kafka, NATS and ClickHouse. The homepage says it is open source under Apache 2.0.",
+  "why_it_exists": "The homepage pitches it as streaming telemetry that works: start with one command to query or change a device, then grow into a telemetry pipeline. The README describes it as a gNMI CLI client with full support for Capabilities, Get, Set and Subscribe plus collector capabilities.",
+  "how_it_works": "Each gNMI RPC has its own subcommand (capabilities, get, set, subscribe, with sub as a short form), and the RPC options are set through local and global flags. Targets can be given directly with -a or loaded at runtime from files, Docker, Consul or HTTP sources. In collector mode, updates pass through event processors that filter, enrich, convert and transform them before export. Prompt mode loads YANG modules so flags that take XPATH values get auto-suggestions. Configuration can come from flags, environment variables or a config file.",
+  "commands_seen": [
+   {
+    "cmd": "bash -c \"$(curl -sL https://get-gnmic.openconfig.net)\"",
+    "context": "Install script from the homepage and README; installs the gnmic binary."
+   },
+   {
+    "cmd": "gnmic -a 10.1.0.11:57400 -u admin -p admin \\\n  --insecure capabilities",
+    "context": "Homepage example: lists the models, encodings and gNMI version the device supports. Uses a lab device with TLS disabled."
+   },
+   {
+    "cmd": "gnmic -a 10.1.0.11:57400 -u admin -p admin \\\n  --insecure get --path /state/system/platform",
+    "context": "Homepage example: reads a snapshot of device state at a gNMI path."
+   },
+   {
+    "cmd": "gnmic -a 10.1.0.11:57400 -u admin -p admin \\\n  --insecure set \\\n  --update-path /configure/system/name \\\n  --update-value gnmic_demo",
+    "context": "Homepage example: applies a configuration update to the device. Writes to a live device, so it needs a path the device supports."
+   },
+   {
+    "cmd": "gnmic -a 10.1.0.11:57400 -u admin -p admin \\\n  --insecure subscribe \\\n  --path '/state/port[port-id=1/1/c1/1]/statistics' \\\n  --sample-interval 10s",
+    "context": "Homepage example: streams port statistics from the device every 10 seconds."
+   },
+   {
+    "cmd": "gnmic -a 10.1.0.11:57400 -u admin -p admin --insecure \\\n      sub --path \"/state/port[port-id=1/1/c1/1]/statistics/in-packets\"",
+    "context": "README quick-start subscribe request, using the short sub form of the subscribe command and a single leaf path."
+   },
+   {
+    "cmd": "gnmic --file release/models \\\n      --dir third_party \\\n      --exclude ietf-interfaces \\\n      prompt",
+    "context": "README prompt mode example: loads OpenConfig YANG modules from a cloned openconfig/public repo, then starts the interactive prompt for path suggestions."
+   },
+   {
+    "cmd": "sh scripts/go.sh version",
+    "context": "Development build: runs the repo's Go wrapper to report the Go toolchain version. Repo-only, not user install."
+   },
+   {
+    "cmd": "make build",
+    "context": "Development build: builds gnmic from a source checkout with the selected Go toolchain."
+   },
+   {
+    "cmd": "make serve-docs",
+    "context": "Documentation development: starts a live-reloading local preview of the docs site at 127.0.0.1:8000."
+   }
+  ],
+  "install_notes": "The homepage and README both use the one-line curl installer (bash -c \"$(curl -sL https://get-gnmic.openconfig.net)\"). The README also says statically linked pre-built binaries for major OS and architectures are published on the GitHub releases page. Platforms: Linux, macOS, Windows via WSL, containers, and a Kubernetes operator. Nothing in the pages mentions an account, license key or runtime needed to run the binary. Source builds need Go 1.21+ and the repo's make tooling. Your device must expose gNMI, and the examples assume user admin with a password and TLS turned off via --insecure. Real deployments need TLS configuration, which has its own docs page. Brew is the package manager the writer already knows about; the pages I read did not mention brew.",
+  "standout": "Prompt mode reads YANG models and turns the CLI into a path browser with auto-suggestions for XPATH flags. The project also sells itself on a 'collect once, send anywhere' pipeline: one gNMI stream feeding several outputs at once, plus a Kubernetes operator and clustering to spread targets across collectors. Its prototext output shows the raw gNMI messages going over the wire.",
+  "status": "maintained. The GitHub page links to releases, a changelog and a CI build badge, and the docs site is versioned with a pinned toolchain in versions.env. I did not see a release date or last-commit date in the pages I read, so this is an inference, not a dated check.",
+  "caveats": "The dial-out telemetry listener is documented only for Nokia SR OS. Windows is supported only through WSL. Examples disable TLS, which is fine for a lab but not production. Source builds need Go 1.21+ and make. Prompt mode needs YANG model files cloned separately from openconfig/public. Platform and vendor support beyond these examples is not stated in what I read.",
+  "quotes": [
+   "Streaming telemetry that works.",
+   "gnmic (_pronoun.: gee\u00b7en\u00b7em\u00b7eye\u00b7see_) is a gNMI CLI client that provides full support for Capabilities, Get, Set and Subscribe RPCs with collector capabilities.",
+   "In this mode the flags that take XPATH values will get auto-suggestions based on the provided YANG modules. In other words - voodoo magic :exploding_head:"
+  ],
+  "links": [
+   {
+    "label": "Homepage and documentation",
+    "url": "https://gnmic.openconfig.net"
+   },
+   {
+    "label": "GitHub repository (openconfig/gnmic)",
+    "url": "https://github.com/openconfig/gnmic"
+   },
+   {
+    "label": "Install options",
+    "url": "https://gnmic.openconfig.net/install/"
+   },
+   {
+    "label": "Prompt mode (YANG path suggestions)",
+    "url": "https://gnmic.openconfig.net/user_guide/prompt_suggestions/"
+   }
+  ],
+  "fetch_log": [
+   "https://gnmic.openconfig.net: worked, returned the homepage text (marketing copy, quick examples, links).",
+   "https://github.com/openconfig/gnmic: worked, returned the README (features, quick start, prompt mode, dev notes)."
+  ]
+ }
+}

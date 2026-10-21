@@ -1,0 +1,67 @@
+{
+ "name": "libsidplayfp",
+ "desc": "Library to play Commodore 64 music",
+ "homepage": "https://github.com/libsidplayfp/libsidplayfp",
+ "installs_365d": 1308,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "quick",
+  "audio",
+  "library",
+  "ancient",
+  "reverse-engineering"
+ ],
+ "why": "Plays Commodore 64 SID chip music by emulating the hardware, a lovely door into retro sound synthesis.",
+ "brief": {
+  "what_it_is": "libsidplayfp is a C library for playing Commodore 64 music. It integrates SID chip emulation into a cycle-based C64 emulator environment, so SID music files are played by emulating the machine's audio hardware rather than by replaying recorded audio. The README describes it as a library, not a standalone player, and the Homebrew entry lists no executables. Its inputs are C64 music files; the README's known-limitations list covers PSID files, and the output is emulated SID audio.",
+  "why_it_exists": "The README says the project is 'constantly aiming to improve emulation of the C64 system for audio playback', so the goal is accurate C64 audio playback through emulation.",
+  "how_it_works": "The library runs a cycle-based emulator environment around the SID chip emulation engine, so the music code runs against an emulated C64. The README mentions 6502 code, which the build compiles with the xa cross-assembler. For full-quality SID emulation it relies on the separate libresidfp project.",
+  "commands_seen": [
+   {
+    "cmd": "./configure && make",
+    "context": "Standard autotools build of the libraries from a release tarball."
+   },
+   {
+    "cmd": "autoreconf -vfi",
+    "context": "Bootstraps the package when building from bare sources (a clone), before configure; needs the xa cross-assembler."
+   },
+   {
+    "cmd": "make doc",
+    "context": "Builds the API documentation with doxygen, if doxygen is installed and detected by configure."
+   },
+   {
+    "cmd": "make check",
+    "context": "Runs the unit test suite; only available if configured with --enable-tests."
+   }
+  ],
+  "install_notes": "Clone with submodules: the README says the git repository contains submodules and to clone with --recurse-submodules. Building from bare sources needs autoreconf -vfi, which needs the xa cross-assembler (packaged as xa65 on many distributions, or from floodgap.com). Full-quality SID emulation needs libresidfp. Optional configure flags: --enable-lto, --enable-debug[=no/yes], --enable-testsuite=PATH_TO_TESTSUITE (VICE's PRG-format test suite, for regression tests only), --enable-tests, --with-exsid (needs libexsid or libftdi1/libftd2xx), --with-usbsid (needs libusb). Doxygen is optional. No runtime or account setup is mentioned.",
+  "standout": "It is a library that emulates the SID chip inside a full cycle-based C64 environment, rather than a player that decodes tunes, and it can drive hardware SID devices such as exSID and USBSID through optional build flags. The README also credits a 6502 cross-assembler in the build, which is an unusual dependency for a music library.",
+  "status": "Likely maintained, but unconfirmed. The README gives no release or commit dates. Its copyright notice runs to 2026, which suggests recent work, but I did not check the commit history or releases page.",
+  "caveats": "Licensed under GPL v2 or later. Known limitation: MUS data embedded in PSID files is not supported. Full-quality emulation needs the separate libresidfp library. Building from a clone needs the xa cross-assembler and autoreconf. The testsuite option may break normal execution, so the README says it is for regression tests only. A 3rd-party component, hashlib 1.1.2 (MIT), is bundled. The README does not describe a command-line player.",
+  "quotes": [
+   "libsidplayfp is a C64 music player library which integrates the SID chip emulation engine into a cycle-based emulator environment, constantly aiming to improve emulation of the C64 system for audio playback.",
+   "This package uses autotools, so the usual `./configure && make` is enough to build the libraries.",
+   "Known bugs/limitations: * mus data embedded in psid file is not supported"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/libsidplayfp/libsidplayfp"
+   },
+   {
+    "label": "API documentation",
+    "url": "https://libsidplayfp.github.io/libsidplayfp/"
+   },
+   {
+    "label": "libresidfp (full-quality SID emulation dependency)",
+    "url": "https://github.com/libsidplayfp/libresidfp"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/libsidplayfp/libsidplayfp \u2014 fetched OK, README returned; the README is substantive and points to the API docs, which I did not fetch."
+  ]
+ }
+}

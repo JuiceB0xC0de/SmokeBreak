@@ -1,0 +1,81 @@
+{
+ "name": "dcraw",
+ "desc": "Digital camera RAW photo decoding software",
+ "homepage": "https://dechifro.org/dcraw/",
+ "installs_365d": 855,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "visual",
+  "reverse-engineering"
+ ],
+ "why": "Decodes proprietary camera RAW formats, a fascinating look at undocumented file formats reverse engineered across many cameras.",
+ "brief": {
+  "what_it_is": "dcraw is a single-file command-line program, written in ANSI C, that decodes raw sensor data from digital cameras. It takes proprietary camera raw files (the page names CRW, CR2, MRW, NEF, RAF and others) and writes decoded image pixels, with an option for TIFF output that includes metadata. It can also extract embedded thumbnails and display camera metadata. The author says the source is about 10,500 lines and uses only standard C libraries.",
+  "why_it_exists": "The author's stated mission is to \"Write and maintain an ANSI C program that decodes any raw image from any digital camera on any computer running any operating system.\" He wrote it because camera vendors' raw decoders were Windows and Mac only and closed source, which left other operating systems and programmers without a way to read the files.",
+  "how_it_works": "The page says dcraw reads each manufacturer's undocumented raw format, reverse-engineered from cameras, and decodes the sensor data. It then reconstructs color from the single color per pixel of the sensor using a choice of interpolation methods (Bilinear, VNG, PPG, AHD); Foveon X3 sensors get a different treatment. Auto-exposure stretches the output so that one percent of pixels come out white by default.",
+  "commands_seen": [
+   {
+    "cmd": "gcc -o dcraw -O4 dcraw.c -lm -ljasper -ljpeg -llcms2",
+    "context": "Build command with optional external libraries (JasPer, libjpeg, lcms2) for JPEG/JPEG 2000 and color management support."
+   },
+   {
+    "cmd": "gcc -o dcraw -O4 dcraw.c -lm -DNODEPS",
+    "context": "Build command that avoids all external library dependencies."
+   },
+   {
+    "cmd": "dcraw -i -v",
+    "context": "Quick metadata read; the FAQ says it is much faster than ExifTool but gives less information."
+   },
+   {
+    "cmd": "dcraw -c crw_0001.crw | pnmtofits > crw_0001.fits",
+    "context": "Pipes dcraw's stdout through Netpbm's pnmtofits to produce FITS output, since dcraw itself does not write FITS."
+   },
+   {
+    "cmd": "dcraw -c crw_0001.crw | cjpeg > crw_0001.jpeg",
+    "context": "Pipes dcraw's output through cjpeg to produce a JPEG file."
+   },
+   {
+    "cmd": "dcraw -a",
+    "context": "First thing to try if output shows repeating patterns; the FAQ says to try this before -f."
+   },
+   {
+    "cmd": "dcraw -f",
+    "context": "Four-color RGB interpolation option, for when patterns persist after dcraw -a."
+   },
+   {
+    "cmd": "dcraw -T",
+    "context": "Writes TIFF output with metadata (the FAQ says this is available in versions 8.25 and later)."
+   },
+   {
+    "cmd": "dcraw -W",
+    "context": "Disables the automatic brightening, so very dark or underexposed shots stay dark."
+   },
+   {
+    "cmd": "gimptool --install rawphoto.c",
+    "context": "Installs the author's basic GIMP 1.2/2.0 plugin for loading raw files, after dcraw is installed."
+   }
+  ],
+  "install_notes": "Installed through Homebrew as the formula dcraw. Building from source needs a C compiler and gcc, with optional libraries JasPer, libjpeg and lcms2, or the -DNODEPS flag to skip them. For Windows the page points to prebuilt EXE files from Sergio Namias, or to building with DJGPP or the Win32 API. Multilingual builds use an install script in a tarball from the author's directory. No accounts, hardware or first-run configuration are mentioned.",
+  "standout": "Its decades-long reverse engineering of undocumented camera formats, with a 'dcraw.c' file that the author calls documentation the camera makers refused to provide, makes it a reference that many commercial raw converters have reused. Its refusal to become a library, in favor of a single standalone C program that others wrap, is a deliberate and unusual design choice.",
+  "status": "unknown. The page shows no release date, changelog, or last-updated stamp. The news items date from 2003 to 2006, but the supported camera list includes bodies from around 2017 and the author describes dcraw as something he will \"maintain\", which suggests ongoing work. The brew description and the scout notes are the only other sources.",
+  "caveats": "Licence is a permissive 'free for all uses' rather than a named open-source licence, and the author asks for credit. Output looks dark unless you use 8-bit mode or read the FAQ. Vista's 32MB memory limit on old DOS-API builds can cause 'Out of memory' errors. Only camera raw formats are covered, not scanner files (NEF from scanners is not supported). The author also sells a paid $800 test suite. The homepage is written in a fairly dated style and the camera list has notes such as 'hack' and 'DIAG RAW' for some models that need camera-side changes first.",
+  "quotes": [
+   "So here is my mission: Write and maintain an ANSI C program that decodes any raw image from any digital camera on any computer running any operating system.",
+   "It's small (about 10,500 lines), portable (standard C libraries only), free (both \"gratis\" and \"libre\"), and when used skillfully, produces better quality output than the tools provided by the camera vendor.",
+   "Dcraw is not perfect, so if it cannot do something, that does not mean that the task is impossible."
+  ],
+  "links": [
+   {
+    "label": "dcraw homepage (author Dechifro)",
+    "url": "https://dechifro.org/dcraw/"
+   }
+  ],
+  "fetch_log": [
+   "https://dechifro.org/dcraw/ - fetched OK; full page text returned including the README-style description, FAQ and supported camera list. No further links were followed."
+  ]
+ }
+}

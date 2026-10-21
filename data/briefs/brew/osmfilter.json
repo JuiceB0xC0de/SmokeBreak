@@ -1,0 +1,82 @@
+{
+ "name": "osmfilter",
+ "desc": "Command-line tool to filter OpenStreetMap files for specific tags",
+ "homepage": "https://wiki.openstreetmap.org/wiki/Osmfilter",
+ "installs_365d": 80,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "math"
+ ],
+ "why": "A quirky, fast filter that reads OpenStreetMap's binary PBF format and slices the world by tag, a door into map data internals.",
+ "brief": {
+  "what_it_is": "osmfilter is a command-line tool for filtering OpenStreetMap data files by tag. It reads .osm or .o5m files; the wiki says other formats such as PBF should first be converted to .o5m with osmconvert. It writes filtered .osm or .o5m output to a file or stdout. Filters can keep or drop whole nodes, ways and relations by tag expression, and by default keep the nodes, ways or members that kept objects depend on. It can also filter or modify individual tags and print tag statistics.",
+  "why_it_exists": "The wiki gives no separate motivation; it describes the tool as a way to filter OpenStreetMap data files for specific tags. It recommends o5m input for fast processing.",
+  "how_it_works": "Object filters decide for each node, way or relation whether it stays, using expressions with =, !=, <, >, <=, >=, wildcards, and and/or. Unless --ignore-dependencies is set, objects used by a kept object (nodes of a kept way, members of a kept relation) are kept too. Tag filters never remove whole objects; they keep, drop or rewrite individual tags.",
+  "commands_seen": [
+   {
+    "cmd": "./osmfilter norway.osm --keep=\"highway=primary =secondary waterway=river\" >streets.osm",
+    "context": "Keeps primary and secondary roads and rivers from a Norway extract and writes them to streets.osm."
+   },
+   {
+    "cmd": "./osmfilter europe.o5m --keep= --keep-relations=\"route=bus\" --out-o5m >bus_lines.o5m",
+    "context": "Drops all ways and nodes not needed by bus route relations, writing o5m output."
+   },
+   {
+    "cmd": "./osmfilter europe.o5m --keep=\"highway=\" --drop=\"access=no\" -o=good_ways.osm",
+    "context": "Keeps all highways, then drops those tagged access=no."
+   },
+   {
+    "cmd": "./osmfilter a.o5m --keep-tags=\"all amenity=restaurant =fast_food\" -o=food.osm",
+    "context": "Keeps all tags on restaurant and fast_food objects, which the wiki presents as a tags-level filter; the wiki warns this can strip essential tags."
+   },
+   {
+    "cmd": "./osmfilter bremen.o5m --out-count",
+    "context": "Prints tag keys sorted by how often they occur in the file."
+   },
+   {
+    "cmd": "./osmfilter bremen.o5m --out-key=railway",
+    "context": "Lists the values used with the railway key and how often each occurs."
+   },
+   {
+    "cmd": "./osmfilter europe.o5m --parameter-file=my_parameters >line_1.o5m",
+    "context": "Reads the filter options from a parameter file instead of a long command line."
+   },
+   {
+    "cmd": "./osmconvert file.pbf -o=file.o5m",
+    "context": "Converts a PBF file to o5m, the format the wiki recommends for osmfilter input."
+   },
+   {
+    "cmd": "apt install osmctools",
+    "context": "Debian install route; the osmctools package includes osmfilter."
+   }
+  ],
+  "install_notes": "Homebrew: brew install osmfilter. Debian: apt install osmctools. Other routes listed on the wiki: a prebuilt binary for Linux 32-bit, a prebuilt Windows binary, and a build-from-source one-liner: wget -O - http://m.m.i24.cc/osmfilter.c |cc -x c - -O3 -o osmfilter. No accounts or runtime needed beyond a C compiler for the source build. For large planet files the wiki benchmarks used 16GB RAM and a 7200rpm disk or SSD.",
+  "standout": "A single small C program that filters planet-scale OSM data with dependency-aware keep rules: keeping ways automatically keeps their nodes, and keeping relations keeps their members. It also has built-in tag statistics (--out-count, --out-key) so you can explore a file's tags before writing a filter.",
+  "status": "unknown. The wiki page shows no last-edited date, only a revision id (oldid 3037595). Benchmarks use a 2012-era planet file. The Homebrew formula and Debian package are listed as available, but I did not check their release dates.",
+  "caveats": "The wiki lists .osm and .o5m as the supported formats, not PBF directly; PBF needs osmconvert first. Downloads are Linux 32-bit and Windows binaries, plus source. The wiki gives no license beyond 'There is no warranty, to the extent permitted by law.' The wiki warns that --drop-version can make other programs refuse the data, and that --keep-tags can remove essential tags such as type=. The wiki's category list says C++, but the source link is osmfilter.c. The brew metadata lists osmconvert and osmupdate as executables; I did not check their docs.",
+  "quotes": [
+   "osmfilter is a command line tool used to filter OpenStreetMap data files for specific tags.",
+   "To allow fast data processing, it is recommended to use .o5m format at least for input.",
+   "Use this option with care. It can eventually filter out essential tags.",
+   "Be aware of the fact that most programs will deny working with your data after you have deleted the version numbers."
+  ],
+  "links": [
+   {
+    "label": "Osmfilter wiki page (homepage)",
+    "url": "https://wiki.openstreetmap.org/wiki/Osmfilter"
+   },
+   {
+    "label": "Source code (osmfilter.c, as linked from the wiki)",
+    "url": "http://m.m.i24.cc/osmfilter.c"
+   }
+  ],
+  "fetch_log": [
+   "https://wiki.openstreetmap.org/wiki/Osmfilter \u2014 fetched OK; OpenStreetMap wiki page with the full description, examples and benchmarks. Not a GitHub repo, so no README. Did not follow further links."
+  ]
+ }
+}

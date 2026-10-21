@@ -1,0 +1,81 @@
+{
+ "name": "bingrep",
+ "desc": "Greps through binaries from various OSs and architectures",
+ "homepage": "https://github.com/m4b/bingrep",
+ "installs_365d": 294,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "visual"
+ ],
+ "why": "Colour-maps the structure of binaries across OSes and architectures, a visual way to see how executables are laid out.",
+ "brief": {
+  "what_it_is": "bingrep is a command-line tool that takes a binary executable or object file and prints its internal structure as colour-coded output. It accepts ELF (32/64-bit, plus arm, x86, openrisc), Mach-O (32/64-bit, arm, x86), Unix and BSD archives, and PE files (debug only). Other formats parse and colour, but relocations may not display correctly. The output is a set of coloured tables showing addresses, offsets, and sizes of things like symbols, program headers, and section headers. It can also dump the parsed structure in debug form, demangle symbols, and print a hextable or file offset ranges.",
+  "why_it_exists": "The author needed to quickly see the load address, offset, or size of a symbol, program header, section header, export, or import, and found objdump and nm too slow for that. He wanted the values colourised so he could spot them and move on. The name is admittedly poor: he uploaded it as a personal tool, named the executable bg, and then had to rename it because that clashed with the Unix bg command.",
+  "how_it_works": "The README does not describe the internals in detail. It says the actual loading and parsing is done by the goblin library (github.com/m4b/goblin), and bingrep is the front end that renders the parsed result as coloured tables. Search is listed as in progress and currently only works for ELF targets.",
+  "commands_seen": [
+   {
+    "cmd": "bingrep /bin/ls",
+    "context": "Basic example: colour-maps the structure of the given binary."
+   },
+   {
+    "cmd": "bingrep -d /bin/ls",
+    "context": "Dumps the internal debug representation of the parsed binary."
+   },
+   {
+    "cmd": "bingrep -D /bin/ls",
+    "context": "Demangles symbols in the output. The long form is --demangle."
+   },
+   {
+    "cmd": "bingrep --search \"string\"",
+    "context": "Experimental search for a string. Only works for ELF targets. The short form is -s \"string\"."
+   },
+   {
+    "cmd": "cargo install bingrep",
+    "context": "Installs the published crate from crates.io via cargo."
+   },
+   {
+    "cmd": "cargo build --release",
+    "context": "Builds the binary from a source checkout; the result is at target/release/bingrep."
+   },
+   {
+    "cmd": "cargo build --profile product",
+    "context": "Packager build using the product profile, which uses LTO with one codegen unit."
+   },
+   {
+    "cmd": "strip target/product/bingrep",
+    "context": "Strips the product-profile binary to slim it further before packaging."
+   }
+  ],
+  "install_notes": "Install with cargo install bingrep, or build from source with cargo build --release and copy the binary wherever you like. Building needs rustc 1.74 or newer; the README says the project was tested with stable rustc 1.74.0 and suggests installing Rust through rustup rather than a distro package if the distro's rustc is older. No accounts, hardware, or runtime configuration are mentioned. The Homebrew formula's caveats were empty.",
+  "standout": "Most binary tools such as objdump, readelf, and nm produce plain text. bingrep is aimed at a quick visual scan, with colour applied to addresses, offsets, and sizes so the numbers stand out. It also covers ELF, Mach-O, PE, and archives in one tool.",
+  "status": "unknown. The README has a CI badge and a crates.io version badge, and it describes search as still being added with an open issue (#13) for design feedback. The README gives no release date or last-commit date, and I did not fetch the commit history or crates.io page, so I cannot say whether it is maintained, quiet, or abandoned.",
+  "caveats": "Building needs rustc 1.74 or newer. Support varies by format: relocations are not shown properly for formats outside the listed backends, PE is debug only, and search works only for ELF. The hextable is marked WIP. The README's own FAQ says the name is bad and asks for better suggestions. The Homebrew caveats field was empty.",
+  "quotes": [
+   "Greps through binaries from various OSs and architectures, and colors them.",
+   "For some of my projects or workflows I need to very quickly see the load address, offset, or size of a symbol/program header/section header/export/import.",
+   "I got tired of using objdump/nm/X because really, I just needed to colorize addresses, sizes etc., so I can quickly identify them and move on."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/m4b/bingrep"
+   },
+   {
+    "label": "crates.io package",
+    "url": "https://crates.io/crates/bingrep"
+   },
+   {
+    "label": "goblin, the parsing backend",
+    "url": "https://github.com/m4b/goblin"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/m4b/bingrep (homepage, README returned, worked)"
+  ]
+ }
+}

@@ -1,0 +1,145 @@
+{
+ "name": "magic-wormhole.rs",
+ "desc": "Rust implementation of Magic Wormhole, with new features and enhancements",
+ "homepage": "https://github.com/magic-wormhole/magic-wormhole.rs",
+ "installs_365d": 523,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "quick",
+  "library"
+ ],
+ "why": "Peer-to-peer file transfer via PAKE is a neat protocol door, though this is one of several implementations.",
+ "brief": {
+  "what_it_is": "magic-wormhole.rs is a Rust port of the Python Magic Wormhole client. It provides a command-line tool named wormhole-rs and a Rust library. The CLI sends a file or folder from one computer to another: the sending machine generates and displays a wormhole code, and the receiving machine types that code in. The README also lists a send-many subcommand for sending a file to several recipients and an experimental forward subcommand for forwarding ports between machines. The tool takes a local path and produces the transferred file or folder on the other machine.",
+  "why_it_exists": "The README's tagline is \"Get things from one computer to another, safely.\" It presents the project as a Rust port of the Python version, extended with features the README says the other implementations lack.",
+  "how_it_works": "The README does not explain the cryptography. It says the two endpoints are identified by identical \"wormhole codes\", and that the sending machine generates and displays the code, which is then typed into the receiving machine. It also says the library can make direct connections across NATs and firewalls. For protocol details the README points to the separate magic-wormhole-protocols specification.",
+  "commands_seen": [
+   {
+    "cmd": "cargo run -- --help",
+    "context": "From the main README: a way to try the CLI from a source checkout and see its help."
+   },
+   {
+    "cmd": "cargo doc --open",
+    "context": "From the main README: builds and opens the library documentation for use in your own application. The README says there are no hosted docs."
+   },
+   {
+    "cmd": "cargo binstall magic-wormhole-cli",
+    "context": "From cli/README.md: installs the prebuilt CLI binary using cargo binstall."
+   },
+   {
+    "cmd": "cargo install --locked magic-wormhole-cli",
+    "context": "From cli/README.md: builds and installs the CLI from crates.io with cargo."
+   },
+   {
+    "cmd": "wormhole-rs [OPTIONS] <COMMAND>",
+    "context": "From cli/README.md usage synopsis. Subcommands are send (alias tx), receive (alias rx), send-many, and forward; options are -v/--verbose, -h/--help, and -V/--version."
+   },
+   {
+    "cmd": "wormhole send <PATH>",
+    "context": "From cli/README.md: the README's stated way to send files. Note it says \"wormhole\", not \"wormhole-rs\", which is the installed executable name."
+   },
+   {
+    "cmd": "wormhole receive <CODE>",
+    "context": "From cli/README.md: the README's stated way to receive, using the code shown by the sender."
+   }
+  ],
+  "install_notes": "Install with Homebrew, or use cargo binstall magic-wormhole-cli for a prebuilt binary, or cargo install --locked magic-wormhole-cli from crates.io. Prebuilt binaries and source are on GitHub Releases. Building from source requires a Rust toolchain with cargo. No accounts, hardware, or first-run configuration appear in the README.",
+  "standout": "Compared with the Python original, the README claims direct connections across NATs and firewalls, automatic copying of the wormhole code to the clipboard, fuzzy code completion, and experimental multi-recipient sending and port forwarding. The library is also meant for embedding, with GUI clients such as Warp and a Flutter Android client listed as users.",
+  "status": "Probably maintained, but the evidence is limited. The repository shows a Rust CI build badge, a codecov badge, a deps.rs badge, and a crates.io package named magic-wormhole-cli. I did not see a last-release date, a last-commit date, or a note about maintenance status in the README, so I cannot confirm recency.",
+  "caveats": "The README lists missing features relative to the Python version: text message sending, folder sending (folders are sent as a tar ball that the recipient must unpack manually), and Tor support. The CLI README does say the tool can send \"short pieces of text\", which conflicts with the main README. The port-forwarding and send-many features are marked experimental. The license is EUPL v1.2 or later, and the README says to contact the owners for use in proprietary software. The CLI README names the binary wormhole-rs but shows examples using wormhole, so readers may need to adjust. Library docs are only available by building them locally.",
+  "quotes": [
+   "Get things from one computer to another, safely.",
+   "This is a Rust port of the Python version at <https://github.com/magic-wormhole/magic-wormhole>.",
+   "Can do direct connections across the internet (NATs) and firewalls",
+   "The two endpoints are identified by using identical \"wormhole codes\""
+  ],
+  "links": [
+   {
+    "label": "Project homepage (Magic Wormhole)",
+    "url": "http://magic-wormhole.io/"
+   },
+   {
+    "label": "CLI README (usage and install)",
+    "url": "https://github.com/magic-wormhole/magic-wormhole.rs/blob/main/cli/README.md"
+   },
+   {
+    "label": "Protocol specification",
+    "url": "https://github.com/magic-wormhole/magic-wormhole-protocols"
+   },
+   {
+    "label": "Original Python implementation",
+    "url": "https://github.com/magic-wormhole/magic-wormhole"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/magic-wormhole/magic-wormhole.rs (homepage, README returned, worked)",
+   "https://github.com/magic-wormhole/magic-wormhole.rs/blob/main/cli/README.md (linked from README, worked; returned the page with much surrounding page markup, but the usage text was readable)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A secure, code-based rendezvous protocol that can connect across NATs makes this more than another file-transfer CLI, with experimental port forwarding adding a twist."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "magic-wormhole.rs",
+  "tldr": "Send a file between two computers by reading a short code aloud; the Rust take on Magic Wormhole, with direct connections through NATs and firewalls.",
+  "deeper_look": "magic-wormhole.rs is a Rust port of the Python Magic Wormhole client. It installs one command, `wormhole-rs`, and also ships as a Rust library. The sender points it at a file or folder, and it prints a wormhole code. The receiver types that code on their own machine, and the file arrives. No accounts, no setup, no server address to share.\n\nThe idea underneath is that the code is the whole shared secret. The README says the two endpoints are identified by identical \"wormhole codes\", and that is all the pair needs to find each other. The README does not explain the cryptography. It points to a separate protocol specification (magic-wormhole-protocols) for the details, and that spec is the real rabbit hole: how two strangers can agree on a secure channel from a short, human-speakable code.\n\nThis port adds things the README says other implementations lack: direct connections across NATs and firewalls, automatic copying of the code to the clipboard, fuzzy code completion, and experimental `send-many` (one file, several recipients) and `forward` (port forwarding) subcommands. The library is meant for embedding, and the README lists GUI clients such as Warp and a Flutter Android client as users.\n\nThe tool is a way to see a protocol in motion. Send something between two machines, then read the spec to see what just happened.",
+  "install": "brew install magic-wormhole.rs\n# alternatives: cargo binstall magic-wormhole-cli, or cargo install --locked magic-wormhole-cli",
+  "try_this": [
+   {
+    "cmd": "wormhole-rs --help",
+    "what_happens": "Lists the subcommands: send (alias tx), receive (alias rx), send-many, and forward."
+   },
+   {
+    "cmd": "wormhole-rs send <PATH>",
+    "what_happens": "Prints a wormhole code for the file or folder at PATH and waits for the receiver. The CLI README writes this as `wormhole send`, but the installed binary is `wormhole-rs`."
+   },
+   {
+    "cmd": "wormhole-rs receive <CODE>",
+    "what_happens": "On the other machine, takes the code shown by the sender and receives the file."
+   }
+  ],
+  "whats_unique": "It is one of several Magic Wormhole implementations, but the README claims direct connections through NATs and firewalls, clipboard copy of the code, fuzzy code completion, and a library built for embedding in other apps.",
+  "caveats": "Per the README, folders are sent as a tarball you unpack by hand, Tor is unsupported, and send-many and forward are experimental; I could not confirm a recent release date.",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "network",
+   "protocol",
+   "file-transfer",
+   "rust",
+   "pake"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (Magic Wormhole)",
+    "url": "http://magic-wormhole.io/"
+   },
+   {
+    "label": "magic-wormhole.rs on GitHub",
+    "url": "https://github.com/magic-wormhole/magic-wormhole.rs"
+   },
+   {
+    "label": "CLI README (usage and install)",
+    "url": "https://github.com/magic-wormhole/magic-wormhole.rs/blob/main/cli/README.md"
+   },
+   {
+    "label": "Protocol specification",
+    "url": "https://github.com/magic-wormhole/magic-wormhole-protocols"
+   },
+   {
+    "label": "Original Python implementation",
+    "url": "https://github.com/magic-wormhole/magic-wormhole"
+   }
+  ]
+ }
+}

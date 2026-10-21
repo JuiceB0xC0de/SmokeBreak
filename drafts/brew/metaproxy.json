@@ -1,0 +1,100 @@
+{
+ "name": "metaproxy",
+ "desc": "Z39.50 proxy and router utilizing Yaz toolkit",
+ "homepage": "https://www.indexdata.com/resources/software/metaproxy/",
+ "installs_365d": 166,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "afternoon"
+ ],
+ "why": "A Z39.50 proxy and router, a door into a library-world search protocol almost nobody outside libraries has met.",
+ "brief": {
+  "what_it_is": "Metaproxy is server software, with no user interface, that sits in front of several Z39.50, SRU, SRW, and Solr back-end search servers and presents them as one searchable endpoint. It takes incoming Z39.50 or SRU/SRW requests from a client, runs them through a configurable chain of filters (for example query rewriting, load balancing, caching, filtering, and routing to a virtual database), and returns a single merged result set. Its configuration is an XML file that defines the routes requests take. The package installs two executables: metaproxy, the server, and metaproxy-config, a script that reports on the installation. The homepage calls it a 'metasearch server in-a-box.'",
+  "why_it_exists": "The homepage says it exists to integrate multiple back-end databases, within one organization or across several, into what looks to the user like a single searchable resource. The manual describes it as a universal router, proxy and encapsulated metasearcher for information retrieval protocols.",
+  "how_it_works": "Metaproxy is configured by an XML file that defines routes that request packets take through the proxy, with each step on a route being an instance of a filter. Filter types cover operations such as accepting Z39.50 packets, logging, query transformation, and multiplexing, and new filter types can be added as loadable modules through a filter API. The manual's filter list includes sru_z3950 (SRU requests translated to Z39.50), z3950_client (Z39.50 back-end client), virt_db and multi (virtual databases and multi-database search), load_balance, and cql_rpn (CQL to RPN query conversion).",
+  "commands_seen": [],
+  "install_notes": "The manual's installation chapters cover building from source (libxml2 and libxslt, optional USEMARC ON, YAZ and YAZ++, Boost, then Metaproxy itself), Debian and RPM-based Linux packages, and Windows (separate steps for Boost, libxslt, YAZ, YAZ++, and Metaproxy). Behaviour is set up through an XML config file, and the manual has a section on config syntax checking. The homepage also describes Index Data's hosted MasterKey Connect service as an option for remote resources that are not directly accessible. The brew formula is not covered by the pages I read.",
+  "standout": "Metaproxy is a router rather than a search front end: it has no UI, and everything is wired together as a chain of filters in an XML file, so one endpoint can fan out to many Z39.50 and SRU back ends. Most people outside libraries have never encountered Z39.50 at all, so it is an unusual entry point into that world.",
+  "status": "Maintained, with moderate confidence. The GitHub README and the user's guide are both current: the manual is for version 1.22.4 and carries copyright dates through 2026, and the README links to a changelog and discussions. I did not see an exact last-release or last-commit date.",
+  "caveats": "There is no user interface; it is server software that has to be connected to an existing standards-based client. The Windows install is a multi-step manual build of several dependencies. The manual describes the HTTP server as limited. The homepage is licensed GPL, and the manual covers GPL version 2. The README points to the online docs for most information, so I did not find any sample command lines to quote. The GitHub link was not given as a URL on the homepage; I used https://github.com/indexdata/metaproxy, which the homepage's 'GitHub' label appears to point to.",
+  "quotes": [
+   "Metaproxy is server software and does not have a user interface.",
+   "We like to call it a \"metasearch server in-a-box.\"",
+   "Metaproxy is a universal router, proxy and encapsulated metasearcher for information retrieval protocols."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.indexdata.com/resources/software/metaproxy/"
+   },
+   {
+    "label": "User's Guide and Reference",
+    "url": "https://www.indexdata.com/metaproxy/doc/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/indexdata/metaproxy"
+   }
+  ],
+  "fetch_log": [
+   "https://www.indexdata.com/resources/software/metaproxy/ - worked (homepage; description, licence GPL, links to docs and GitHub)",
+   "https://github.com/indexdata/metaproxy - worked (README: short, points to the doc directory and online docs)",
+   "https://www.indexdata.com/metaproxy/doc/ - worked (User's Guide for 1.22.4; contains the filter list, config description, and install chapters, but no command-line examples)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Its filter-chain router offers an unusual hands-on doorway into Z39.50 and library search protocols, combining disparate databases behind one endpoint."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Metaproxy",
+  "tldr": "A router for Z39.50 and SRU library search protocols that fans one query out to many back-end databases and merges the results.",
+  "deeper_look": "Metaproxy is server software with no user interface. It sits in front of several Z39.50, SRU, SRW and Solr search servers and presents them to a client as one searchable endpoint. A request comes in, passes through a chain of filters, and a single merged result set goes back. The homepage calls it a \"metasearch server in-a-box.\"\n\nEverything is wired together in an XML configuration file. The file defines routes that request packets take, and each step on a route is an instance of a filter. The manual lists filters such as sru_z3950 (SRU requests translated to Z39.50), z3950_client (a Z39.50 back-end client), virt_db and multi (virtual databases and multi-database search), load_balance, and cql_rpn (CQL to RPN query conversion). New filter types can be added as loadable modules through a filter API.\n\nIt exists to join multiple back-end databases, within one organization or across several, into what looks to the user like one resource. The manual describes it as \"a universal router, proxy and encapsulated metasearcher for information retrieval protocols.\"\n\nThe door here is Z39.50, a library-world search protocol that most developers have never met. Reading a Metaproxy config shows how a federated search system is put together as a pipeline of small, swappable stages. It is built on the YAZ toolkit, which is where you would go next to talk to these servers directly.",
+  "install": "brew install metaproxy\n\nInstalls two executables: metaproxy (the server) and metaproxy-config (a script that reports on the installation). Depends on boost, yaz and yazpp. You write an XML config file, and you need a Z39.50 or SRU client, plus back-end servers, to see anything happen.",
+  "try_this": [
+   {
+    "cmd": "metaproxy --help",
+    "what_happens": "Prints the server's command-line options, including how to point it at an XML config file."
+   },
+   {
+    "cmd": "metaproxy-config --help",
+    "what_happens": "Shows what the installation-reporting script can tell you about your build."
+   }
+  ],
+  "whats_unique": "It is a router, not a search front end: no UI, just a chain of filters in XML that can fan one endpoint out to many Z39.50 and SRU back ends. Few people outside libraries have met the protocols it speaks.",
+  "caveats": "It has no user interface and needs an existing standards-based client and back-end servers to be useful, and the brief found no sample command lines, so expect to learn from the manual.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "network",
+   "protocol",
+   "z39.50",
+   "sru",
+   "libraries",
+   "proxy",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.indexdata.com/resources/software/metaproxy/"
+   },
+   {
+    "label": "User's Guide and Reference",
+    "url": "https://www.indexdata.com/metaproxy/doc/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/indexdata/metaproxy"
+   }
+  ]
+ }
+}

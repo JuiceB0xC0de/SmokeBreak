@@ -1,0 +1,141 @@
+{
+ "name": "arping",
+ "desc": "Utility to check whether MAC addresses are already taken on a LAN",
+ "homepage": "https://github.com/ThomasHabets/arping",
+ "installs_365d": 4393,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "A door into ARP: asking the LAN who has an address and seeing duplicate MACs answer back.",
+ "brief": {
+  "what_it_is": "Arping is a command-line ARP utility, written in C, that checks whether an IPv4 address on the local network segment is in use and reports which MAC address answers for it. It sends ARP who-has requests to the LAN and prints the is-at replies it gets back. The README also describes a second mode that goes the other way: pinging a raw MAC address with a broadcast ICMP echo, sent in an Ethernet frame addressed only to that MAC, to learn which IP it uses. The Homebrew description says it checks whether MAC addresses are taken, but the README's main framing is IP-to-MAC probing.",
+  "why_it_exists": "Thomas Habets wrote it because plain ping fails when a host blocks ICMP, or when you are on a non-routable net, and ARP cache entries are a more reliable signal. He also gives a catch-22 use case: someone with a block of real IANA addresses cannot ping an address before taking it, and cannot pick a free one without knowing which are taken.",
+  "how_it_works": "For an IP target, arping broadcasts an ARP 'who-has' request and waits for an 'is-at' reply, which the README shows with tcpdump captures. For a MAC target, it sends an ICMP echo request to a broadcast IP (255.255.255.255 or an address given with -T) inside an Ethernet frame addressed to the target MAC, and the target's echo reply reveals its IP. The README notes that many OSes do not answer broadcast pings the expected way, so -T may need tuning, and it suggests a brute-force loop over -T addresses.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/ThomasHabets/arping.git",
+    "context": "Clones the source repository."
+   },
+   {
+    "cmd": "make check",
+    "context": "Run before opening a PR, per the Contributing section."
+   },
+   {
+    "cmd": "sudo ./tests/run",
+    "context": "Second test step to run before a PR, per the Contributing section."
+   },
+   {
+    "cmd": "# arping -T 192.168.0.255 00:01:02:03:04:05",
+    "context": "FAQ example: ping a MAC by restricting the broadcast target to a subnet broadcast address with -T, for a box on 192.168.0.0/24."
+   },
+   {
+    "cmd": "./arping -b -B",
+    "context": "FAQ suggestion for pinging broadcast addresses, which the README calls the 'perverted' way to use the -b and -B switches."
+   },
+   {
+    "cmd": "sudo setcap cap_net_raw+ep  /usr/local/sbin/arping",
+    "context": "On Linux, grants only CAP_NET_RAW to the binary so it need not run as root or be setuid."
+   },
+   {
+    "cmd": "nice -n -15 arping 1.2.3.4",
+    "context": "Raises scheduling priority to reduce timing noise in round-trip measurements."
+   },
+   {
+    "cmd": "schedtool -R -p 1 -e arping 1.2.3.4",
+    "context": "Alternative way to raise priority for more accurate round-trip timing."
+   },
+   {
+    "cmd": "tcpdump -vven 'arp or icmp'",
+    "context": "The capture command the author used to produce the packet traces shown in the Technical section."
+   },
+   {
+    "cmd": "for d in $(seq 0 255); do",
+    "context": "Start of the README's brute-force loop that tries each -T address to find which one a host answers on; the loop runs sudo arping -q -c 1 -T $a.$b.$c.$d 0:60:93:34:91:99 each pass."
+   }
+  ],
+  "install_notes": "Requires libnet 1.1 or newer and libpcap; the README points to github.com/libnet/libnet and tcpdump.org, or the distro packages. Build uses ./configure, and the README refers to an INSTALL file for details. Sending raw packets normally needs root. The author suggests either running it as root or granting CAP_NET_RAW on Linux (libnet 1.1.5+), and he advises against making it setuid. For MAC pings on Linux, /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts must be 0 on the target. The Windows .exe linked from the FAQ was not built by the author.",
+  "standout": "It explains ARP-level probing clearly with real tcpdump traces and a candid FAQ. The MAC-ping trick, which sends an ICMP broadcast inside a unicast frame to a chosen MAC, reveals an IP for a host that may ignore ICMP otherwise. The author is open about its limits, down to the libnet quirks and timing accuracy.",
+  "status": "unknown. The README has no release date and I did not check the releases or commit history. It mentions a 2.09 tarball, tests on IRIX and OpenBSD sparc64 dated 2009, and a mailing list. The Homebrew formula name and description are present, but I have no recent-activity evidence either way.",
+  "caveats": "Round-trip times are imprecise, sometimes off by milliseconds, because the program only sees packets once the kernel hands them over. Pinging a raw MAC depends on the target answering broadcast ICMP, which many systems do not do. Arping 1.x (libnet 1.0) is gone from the current tarball; you need 2.08 for it. It does not answer for localhost or your own MAC. The author tests on Debian, Ubuntu on ARM, and OpenBSD, and says other platforms should work but are not regularly tested. Licence is GPLv2. The author says the MAC-scan brute force may be added someday, but 'don't hold your breath'.",
+  "quotes": [
+   "Arping is a util to find out if a specific IP address on the LAN is 'taken' and what MAC address owns it.",
+   "Sure, you *could* just use 'ping' to find out if it's taken and even if the computer blocks ping (and everything else) you still get an entry in your ARP cache.",
+   "Arping tries to drop all possible privileges as early as possible, but this is a network debugging tool, which generates low-level network packets that ordinary users have absolutely no business generating."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub README)",
+    "url": "https://github.com/ThomasHabets/arping"
+   },
+   {
+    "label": "Author's SynScan page",
+    "url": "http://www.habets.pp.se/synscan/"
+   },
+   {
+    "label": "Mailing list (synscan group)",
+    "url": "https://groups.google.com/g/synscan"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/ThomasHabets/arping (homepage, GitHub README): worked, full README returned. No further fetches; the README was complete and did not need following."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A focused way to inspect ARP on your LAN, with the genuinely surprising trick of sending broadcast ICMP inside a frame addressed to one MAC."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "arping",
+  "tldr": "Asks the local network who owns an IP address by sending ARP requests, and can also ping a raw MAC address to find out which IP it uses.",
+  "deeper_look": "Arping is a small C command-line tool that sends ARP \"who-has\" requests to your LAN and prints the \"is-at\" replies. Give it an IPv4 address and it tells you whether the address is taken and which MAC address answers for it. Plain ping can fail when a host blocks ICMP. ARP sits below that, so a machine that drops everything else still answers, and still leaves an entry in your ARP cache.\n\nThomas Habets wrote it for cases where ping is unreliable or unavailable. One example in the README is a catch-22: you hold a block of real addresses, you cannot ping an address before taking it, and you cannot choose a free one without knowing which are used. Asking at the link layer gets around that.\n\nThe second mode runs the other way. Given a MAC address, arping sends an ICMP echo to a broadcast IP inside an Ethernet frame addressed only to that MAC. If the target replies, the reply reveals its IP. Many systems ignore broadcast pings, so the README shows how to adjust the target with `-T` and even sketches a brute-force loop over candidate addresses.\n\nThe README is a good way into ARP itself. It includes real tcpdump traces of the request and reply, so you can see the protocol that every machine on your network uses constantly and rarely shows you.",
+  "install": "brew install arping\n# Sending raw packets normally needs root, so run it with sudo. Depends on libnet (and libpcap), which Homebrew pulls in.",
+  "try_this": [
+   {
+    "cmd": "arping --help",
+    "what_happens": "Lists the options, including the -T broadcast target and the -b and -B switches the README mentions."
+   },
+   {
+    "cmd": "sudo arping -T 192.168.0.255 00:01:02:03:04:05",
+    "what_happens": "Pings a MAC address by sending an ICMP echo to the subnet broadcast address inside a frame addressed to that MAC (adjust the address and MAC for your network)."
+   },
+   {
+    "cmd": "tcpdump -vven 'arp or icmp'",
+    "what_happens": "Captures the ARP and ICMP packets in a second terminal, the same way the author produced the traces in the README, so you can watch the requests and replies."
+   }
+  ],
+  "whats_unique": "It pairs a plain ARP probe with a trick that most tools skip: pinging a MAC address directly to learn its IP. The README also explains the protocol with real packet traces and is candid about the limits.",
+  "caveats": "Round-trip times can be off by milliseconds, pinging a MAC only works if the target answers broadcast ICMP (many systems do not), and I could not confirm how recently it has been maintained.",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "network",
+   "arp",
+   "protocol",
+   "root-needed"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub README)",
+    "url": "https://github.com/ThomasHabets/arping"
+   },
+   {
+    "label": "Author's SynScan page",
+    "url": "http://www.habets.pp.se/synscan/"
+   },
+   {
+    "label": "Mailing list (synscan group)",
+    "url": "https://groups.google.com/g/synscan"
+   }
+  ]
+ }
+}

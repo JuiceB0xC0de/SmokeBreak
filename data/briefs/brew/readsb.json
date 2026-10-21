@@ -1,0 +1,99 @@
+{
+ "name": "readsb",
+ "desc": "ADS-B decoder swiss knife",
+ "homepage": "https://github.com/wiedehopf/readsb",
+ "installs_365d": 532,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "radio",
+  "network",
+  "science"
+ ],
+ "why": "An ADS-B decoder that turns a cheap SDR into a live map of aircraft overhead, a satisfying way to listen to the sky.",
+ "brief": {
+  "what_it_is": "readsb is a Mode-S, ADS-B and TIS receiver/decoder written in C, forked from Mictronics readsb (itself from dump1090-fa). It takes radio samples from an SDR (rtl-sdr is the main path, with Beast serial, GNS HULC and raw sample files also listed in the help) or Beast, SBS or raw messages over the network. It outputs a live terminal table of aircraft (--interactive), periodic aircraft.json files, and TCP feeds in Beast, SBS, raw, JSON, VRS and ASTERIX formats, plus an optional HTTP API and recorded flight traces and heatmaps. The README says one of its main uses is as the backend for global aircraft maps.",
+  "why_it_exists": "The README frames it as a continually developed decoder that serves as the backend for tar1090-style global maps and aggregators, with the credits tracing a lineage from antirez's original dump1090 through several forks. The author warns it is still under development.",
+  "how_it_works": "The README does not explain the decoding internals in detail. It describes an autogain algorithm for rtl-sdr that is optimized for ADS-B and enabled with --gain=auto, a position-speed check that marks positions as reliable or jumping (explained under --debug=S), and a BeastReduce output that forwards Beast messages only when data has not been forwarded within an interval (default 125 ms in the README text, 0.250 s in the help text). Position data is sent to web maps and aggregators through the output ports and JSON files.",
+  "commands_seen": [
+   {
+    "cmd": "--net-connector 192.168.2.22,30004,beast_out",
+    "context": "README push-server example: readsb connects as a TCP client and sends Beast data out to the listening server at that address and port."
+   },
+   {
+    "cmd": "--net-connector=feed.airplanes.live,30004,beast_reduce_plus_out,uuid=0033062d-e17e-4389-91a9-79ebb967fb4c",
+    "context": "Example of sending BeastReduce-plus data to an aggregator; the uuid is optional."
+   },
+   {
+    "cmd": "make RTLSDR=yes",
+    "context": "Manual build with rtl-sdr support, which adds a dependency on librtlsdr. Plain make builds with no specific library support."
+   },
+   {
+    "cmd": "make AIRCRAFT_HASH_BITS=11 RTLSDR=yes OPTIMIZE=\"-O3 -march=native\"",
+    "context": "Suggested build to save CPU cycles, from the README's build section."
+   },
+   {
+    "cmd": "dpkg-buildpackage -b -ui -uc -us --build-profiles=rtlsdr",
+    "context": "Debian package build with rtl-sdr support, run after cloning the repo and installing the build dependencies."
+   },
+   {
+    "cmd": "--gain=auto-verbose,0,34,36,243",
+    "context": "Autogain with log messages for gain changes; the listed numbers are the README's stated defaults for lowest gain and the noise and loud thresholds."
+   },
+   {
+    "cmd": "--write-globe-history /var/globe_history --heatmap 30",
+    "context": "Adds recorded traces and a heatmap every 30 seconds. The README warns this writes thousands of files a day."
+   },
+   {
+    "cmd": "./readsb --quiet --net --device-type rtlsdr --gain auto",
+    "context": "README's basic quick-start run on macOS: networking on, rtl-sdr device, automatic gain."
+   },
+   {
+    "cmd": "--interactive",
+    "context": "Adds a console table of planes for a quick test; the README suggests adding it with the quick-start command."
+   },
+   {
+    "cmd": "--net-kinetic-port=10001",
+    "context": "Enables the Kinetic SBS-3/BaseStation binary output on that TCP port so BaseStation-style clients can connect directly."
+   },
+   {
+    "cmd": "python3 -m http.server 8081",
+    "context": "Simple way to serve the tar1090 html directory on macOS for the web map, run from ~/tar1090/html."
+   }
+  ],
+  "install_notes": "Homebrew has a formula (brew install readsb) per the README's macOS section, and the README says it should be largely compatible with Intel and ARM Macs. The author recommends an automatic install script from adsb-scripts for Raspbian-style receivers. Manual builds need git, build-essential, librtlsdr, libusb, ncurses and zlib, and Debian packaging needs debhelper, pkg-config, fakeroot, help2man and libzstd-dev. Optional SDR backends (SoapySDR, HackRF, BladeRF, AD9361, libiio) are only needed for the with_sdrs profile. Configuration is done by editing /etc/default/readsb on Debian-style systems. Saving traces needs /var/globe_history to be writable by the readsb user, and the README suggests downloading tar1090-db's aircraft.csv.gz and passing --db-file. A web interface, tar1090, is a separate install and the README says the install script won't work on macOS. Running without an SDR is possible with --net-only and a --net-connector to another feed.",
+  "standout": "It is the decoder behind several public global aircraft maps and aggregators, and it ships an aggregator-oriented BeastReduce output that cuts bandwidth while keeping messages relevant to MLAT. It also emulates the binary protocol of a Kinetic Avionics SBS-3 receiver, which lets BaseStation-style software connect to it directly.",
+  "status": "Actively developed as far as the README shows: it says it is 'continually under development' and documents recent features such as the Kinetic output. The README does not show a release date, and I did not check the repository's commit history or releases page, so the exact last-commit date is unknown.",
+  "caveats": "The README carries a no-warranty notice and says to 'expect bugs, segfaults and all the good stuff'. It is a detached fork, and the --help text is marked as possibly out of date. The trace and globe-history format is 'subject to change', and recording writes significant data to disk. The macOS install script does not work, and tar1090 must be installed and served separately. Licensing is only pointed to as a LICENSE file, and the README does not name the license. Building with SDR support needs extra libraries, and the README says the default -O2 build is very close to -Ofast or -O3. The README describes rtl-sdr as the main SDR path, so other hardware needs its own build flags.",
+  "quotes": [
+   "It's continually under development, expect bugs, segfaults and all the good stuff :)",
+   "One of this forks main uses is to be the backend of a global map.",
+   "If configuring this stuff seems complicated, consider just using the sdr-enthusiasts ultrafeeder container."
+  ],
+  "links": [
+   {
+    "label": "readsb GitHub repository (homepage)",
+    "url": "https://github.com/wiedehopf/readsb"
+   },
+   {
+    "label": "tar1090 web interface",
+    "url": "https://github.com/wiedehopf/tar1090"
+   },
+   {
+    "label": "Automatic installation for readsb (adsb-scripts wiki)",
+    "url": "https://github.com/wiedehopf/adsb-scripts/wiki/Automatic-installation-for-readsb"
+   },
+   {
+    "label": "Homebrew formula for readsb",
+    "url": "https://formulae.brew.sh/formula/readsb"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/wiedehopf/readsb: fetched OK, README returned in full including build, configuration, macOS, Kinetic output and --help sections. No other pages were fetched."
+  ]
+ }
+}

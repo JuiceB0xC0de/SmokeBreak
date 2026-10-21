@@ -1,0 +1,135 @@
+{
+ "name": "redka",
+ "desc": "Redis re-implemented with SQLite",
+ "homepage": "https://github.com/nalgeon/redka",
+ "installs_365d": 75,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "library",
+  "language"
+ ],
+ "why": "Redis protocol reimplemented on SQLite is a strange, appealing database twist worth a look.",
+ "brief": {
+  "what_it_is": "Redka is an open-source Go project that reimplements the core parts of Redis on top of a relational database, keeping compatibility with the Redis API and wire protocol (RESP). It takes Redis-style commands from clients, such as strings, lists, sets, hashes, and sorted sets, and stores the data in SQLite or PostgreSQL. It can run as a standalone Redis-compatible server or be imported as a Go module for in-process use. The README also notes SQL views for analysis and reporting.",
+  "why_it_exists": "The README pitches it for three cases: an embedded key-value store for Go apps that already use SQLite, a lightweight stand-in for Redis test containers in local development and integration tests, and Redis-like data structures for teams that want everything in PostgreSQL with the same tools and transactions.",
+  "how_it_works": "Redka maps Redis data types onto a relational schema in SQLite or PostgreSQL, so data lives in ordinary tables and can exceed RAM. The server speaks the RESP wire protocol, and the README credits the Redcon RESP server library. The README does not go deeper into the schema; it points to docs/persistence.md.",
+  "commands_seen": [
+   {
+    "cmd": "curl -L -O \"https://github.com/nalgeon/redka/releases/latest/download/redka_linux_amd64.zip\"",
+    "context": "Downloads the prebuilt Linux x86 standalone binary zip from the latest GitHub release."
+   },
+   {
+    "cmd": "unzip redka_linux_amd64.zip",
+    "context": "Unpacks the downloaded zip; the single-file redka binary is inside."
+   },
+   {
+    "cmd": "chmod +x redka",
+    "context": "Marks the unpacked redka binary as executable (same step on Linux and macOS)."
+   },
+   {
+    "cmd": "xattr -d com.apple.quarantine redka",
+    "context": "On macOS, removes the quarantine flag from the unsigned binary so it can run."
+   },
+   {
+    "cmd": "docker pull nalgeon/redka",
+    "context": "Pulls the official Redka image from Docker Hub (x86 and ARM)."
+   },
+   {
+    "cmd": "git clone https://github.com/nalgeon/redka.git",
+    "context": "Clones the repository for building the standalone server from source."
+   },
+   {
+    "cmd": "cd redka",
+    "context": "Enters the cloned repository before running the build."
+   },
+   {
+    "cmd": "make setup build",
+    "context": "Builds the redka binary from source; the output lands at ./build/redka. Requires Go 1.23+ and GCC."
+   }
+  ],
+  "install_notes": "The standalone server is a single-file binary downloaded from GitHub releases. The install doc lists prebuilt packages only for Linux x86 (amd64) and macOS on Intel and Apple Silicon, so other platforms need a source build. On macOS the binary is unsigned, so you must clear the quarantine attribute with xattr before running it. Docker is an alternative (nalgeon/redka image, x86 and ARM). Building from source needs Go 1.23 or newer and GCC, since the build uses cgo. The Go module for in-process use has its own install doc (docs/install-module.md), which I did not fetch. No accounts or config files are mentioned in what I read.",
+  "standout": "It keeps the Redis API and wire protocol, so existing Redis clients can talk to it, while the data lives in an ordinary SQLite or PostgreSQL database that you can query with SQL. The README highlights SQL views for introspection and ACID transactions, which Redis itself does not offer in the same way.",
+  "status": "Maintenance mode according to the README: it is described as stable for testing and non-critical production, and 'no new features are planned.' The README names one main maintainer, a one-man project. I could not see a last release date or last commit date in the pages I fetched, so recency beyond that is unknown.",
+  "caveats": "The README says it is in maintenance mode with no new features planned, so expect bug fixes at most. It explicitly says it is not about raw performance and can only reach tens of thousands of operations per second. It is documented as ready for non-critical production only. Only five core Redis data types plus key, server, and transaction commands are listed, so the command coverage is partial. The prebuilt standalone binary covers Linux x86 and macOS only, and the macOS builds are unsigned. Building from source needs GCC. The scout note calls it 'Redis protocol reimplemented on SQLite', but the README also offers PostgreSQL as a backend.",
+  "quotes": [
+   "Redka reimplements the core parts of Redis with SQL, while remaining compatible with Redis API.",
+   "Redka is stable and ready to use for testing and non-critical production scenarios. It's currently in maintenance mode, and no new features are planned.",
+   "Redka is not about raw performance. You can't beat a specialized data store like Redis with a general-purpose relational backend like SQLite."
+  ],
+  "links": [
+   {
+    "label": "Homepage / README (GitHub)",
+    "url": "https://github.com/nalgeon/redka"
+   },
+   {
+    "label": "Install standalone server docs",
+    "url": "https://github.com/nalgeon/redka/blob/master/docs/install-standalone.md"
+   },
+   {
+    "label": "Performance benchmarks",
+    "url": "https://github.com/nalgeon/redka/blob/master/docs/performance.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/nalgeon/redka (homepage, README returned; worked)",
+   "https://github.com/nalgeon/redka/blob/master/docs/install-standalone.md (worked; GitHub page with heavy page chrome, install text readable)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A Redis-compatible server backed by queryable SQLite or PostgreSQL makes familiar Redis data structures inspectable through SQL\u2014a genuinely curious database twist."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Redka",
+  "tldr": "Redis reimplemented on top of SQLite or PostgreSQL, speaking the Redis wire protocol so existing clients work while your data sits in ordinary SQL tables.",
+  "deeper_look": "Redka is a Go project that reimplements the core of Redis: strings, lists, sets, hashes and sorted sets, plus key, server and transaction commands. It speaks RESP, the Redis wire protocol, so a normal Redis client can connect to it. Behind that, the data goes into SQLite or PostgreSQL instead of a custom in-memory store.\n\nThe interesting part is the mapping. Redis data types become a relational schema, so the data lives in ordinary tables, can grow past RAM, and can be inspected with SQL. The README mentions SQL views for analysis and reporting, and ACID transactions. It points to docs/persistence.md for the schema details.\n\nThe README pitches three uses: an embedded key-value store for Go apps that already use SQLite, a light stand-in for Redis test containers in local development and integration tests, and Redis-style data structures for teams that want everything in PostgreSQL. It runs as a standalone server or as an in-process Go module.\n\nIt is upfront about the trade. In its own words: \"Redka is not about raw performance. You can't beat a specialized data store like Redis with a general-purpose relational backend like SQLite.\"",
+  "install": "brew install redka\n# Alternatives: Docker image `nalgeon/redka` (x86 and ARM), or a source build (needs Go 1.23+ and GCC).",
+  "try_this": [
+   {
+    "cmd": "redka --help",
+    "what_happens": "Lists the server's options, so you can see how to start it and point it at a SQLite file."
+   },
+   {
+    "cmd": "docker pull nalgeon/redka",
+    "what_happens": "Pulls the official image if you would rather run the server in a container."
+   },
+   {
+    "cmd": "git clone https://github.com/nalgeon/redka.git",
+    "what_happens": "Fetches the source so you can read the schema and build the server yourself with `make setup build`."
+   }
+  ],
+  "whats_unique": "It keeps the Redis API and wire protocol, so existing clients connect unchanged, while the data stays in a plain SQL database you can query directly.",
+  "caveats": "The README says it is in maintenance mode with no new features planned, covers only part of Redis's commands, tops out at tens of thousands of operations per second, and is rated for non-critical production only.",
+  "commitment": "quick",
+  "category": "languages-and-oddities",
+  "tags": [
+   "quick",
+   "database",
+   "redis",
+   "sqlite",
+   "go",
+   "postgresql"
+  ],
+  "links": [
+   {
+    "label": "Homepage / README (GitHub)",
+    "url": "https://github.com/nalgeon/redka"
+   },
+   {
+    "label": "Install standalone server docs",
+    "url": "https://github.com/nalgeon/redka/blob/master/docs/install-standalone.md"
+   },
+   {
+    "label": "Performance benchmarks",
+    "url": "https://github.com/nalgeon/redka/blob/master/docs/performance.md"
+   }
+  ]
+ }
+}

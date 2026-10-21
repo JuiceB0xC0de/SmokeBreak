@@ -1,0 +1,48 @@
+{
+ "name": "sqldiff",
+ "desc": "Displays the differences between SQLite databases",
+ "homepage": "https://www.sqlite.org/sqldiff.html",
+ "installs_365d": 1876,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "library"
+ ],
+ "why": "Compares SQLite database contents row by row; a neat look at database file structure, though modest in scope.",
+ "brief": {
+  "what_it_is": "sqldiff is a command-line utility that compares two SQLite database files and reports how their contents differ. You give it two database files, and by default it writes an SQL script to standard output that would turn the first (source) database into the second (destination). Switches change the output: --changeset writes a binary changeset file instead, --summary prints only per-table counts of changed rows, and --schema or --table limit the comparison.",
+  "why_it_exists": "The homepage gives no explicit motivation. It describes a tool for showing content differences between SQLite databases, and its tagline is \"Small. Fast. Reliable. Choose any three.\"",
+  "how_it_works": "sqldiff pairs rows in the source and destination that are logically the same: same table name and same rowid, or same PRIMARY KEY for WITHOUT ROWID tables. Differences in paired rows are emitted as UPDATE statements, unpaired source rows as DELETE, and unpaired destination rows as INSERT. The --primarykey flag forces pairing on the schema-declared PRIMARY KEY even for tables that have a rowid.",
+  "commands_seen": [
+   {
+    "cmd": "sqldiff [options] database1.sqlite database2.sqlite",
+    "context": "Basic usage from the Usage section; writes an SQL script transforming database1 (source) into database2 (destination) to standard output."
+   },
+   {
+    "cmd": "sqldiff --changeset CHANGESET_OUT --table NilChangeset db1.sdb db2.sdb",
+    "context": "Limitations example showing a table with no explicit primary key; it produces an empty CHANGESET_OUT file with no error."
+   }
+  ],
+  "install_notes": "",
+  "standout": "Pairing rows by rowid or PRIMARY KEY and emitting INSERT, UPDATE and DELETE statements gives a plain SQL script you can read and apply, rather than a schema-migration tool. The page is also the official SQLite documentation for the tool, not a separate project site. The scout note calls it a look at database file structure, but the page describes row-by-row content comparison, not file-level structure.",
+  "status": "unknown",
+  "caveats": "The page footer says it was last updated 2023-01-06; I saw no release history, changelog, or repository activity, so maintenance status is unclear. The tool does not diff TRIGGERs or VIEWs. It skips rowid tables where the rowid is inaccessible and tables with no explicit primary key when generating changesets. It is not designed for schema migrations and is forgiving about column definitions. --primarykey can miss differences in rows whose PRIMARY KEY columns are NULL. Shadow tables of FTS3, FTS5 and rtree virtual tables are compared by default, which can corrupt a virtual table if the script is run on a database that differs from the source; --vtab avoids this. The --lib option needs a shared library or DLL to load. The page names the binary sqldiff.exe throughout.",
+  "quotes": [
+   "Small. Fast. Reliable. Choose any three.",
+   "The sqldiff.exe binary is a command-line utility program that displays content differences between SQLite databases.",
+   "The usual output is an SQL script that will transform database1.sqlite (the \"source\" database) into database2.sqlite (the \"destination\" database)."
+  ],
+  "links": [
+   {
+    "label": "sqldiff documentation (homepage)",
+    "url": "https://www.sqlite.org/sqldiff.html"
+   }
+  ],
+  "fetch_log": [
+   "https://www.sqlite.org/sqldiff.html: fetched OK. This is the full documentation page (usage, how it works, limitations), so no further fetches were needed."
+  ]
+ }
+}

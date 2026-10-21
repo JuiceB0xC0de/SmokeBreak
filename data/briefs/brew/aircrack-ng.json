@@ -1,0 +1,91 @@
+{
+ "name": "aircrack-ng",
+ "desc": "Next-generation aircrack with lots of new features",
+ "homepage": "https://aircrack-ng.org/",
+ "installs_365d": 9108,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "network",
+  "needs-hardware",
+  "protocol"
+ ],
+ "why": "Wi-Fi security suite that needs a monitor-mode adapter; a real door into 802.11 frames, though well known in security circles.",
+ "brief": {
+  "what_it_is": "Aircrack-ng is a suite of command-line tools for assessing WiFi network security. Its tools capture 802.11 frames from a wireless card in monitor mode and export them to text files for other tools. They can also inject packets to run replay and deauthentication attacks and to set up fake access points. Its cracking tools target WEP and WPA/WPA2 PSK. The homepage lists 1.7 as the current release.",
+  "why_it_exists": "The README frames it as a complete suite for assessing WiFi security across four areas: Monitoring, Attacking, Testing, and Cracking. It also says the command-line design exists to allow heavy scripting, and that many GUIs have been built on top of it.",
+  "how_it_works": "The tools work at the level of the wireless card. Monitoring tools capture packets, and Attacking tools inject frames via packet injection to perform replay, deauthentication, and fake-AP attacks. Testing tools check whether a card and its driver can capture and inject. Cracking tools recover WEP and WPA PSK keys from captured traffic.",
+  "commands_seen": [
+   {
+    "cmd": "brew install autoconf automake libtool openssl shtool pkg-config hwloc pcre2 sqlite3 libpcap cmocka",
+    "context": "README macOS build dependencies, installed with Homebrew (Xcode and Xcode command line tools also required)."
+   },
+   {
+    "cmd": "./configure --with-experimental",
+    "context": "Configures a source build with the experimental tools (tkiptun-ng, easside-ng, buddy-ng, airventriloquist, wesside-ng) enabled."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles the project after configure (use gmake on BSD or Solaris)."
+   },
+   {
+    "cmd": "make check",
+    "context": "Runs the unit test suite."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the built tools."
+   },
+   {
+    "cmd": "autoreconf -i",
+    "context": "Pre-configure step needed when building a developer version checked out from source control."
+   },
+   {
+    "cmd": "make integration",
+    "context": "Runs integration tests; the README says this requires root."
+   },
+   {
+    "cmd": "sudo docker run --rm -it aircrackng/git",
+    "context": "Runs the Docker image built from the latest git commit, from DockerHub."
+   },
+   {
+    "cmd": "man aircrack-ng",
+    "context": "Opens the manpage for aircrack-ng; the README says every tool has its own manpage."
+   },
+   {
+    "cmd": "airmon-ng check kill",
+    "context": "From the homepage: run before putting the card in monitor mode to fix injection or channel -1 errors by killing network managers."
+   }
+  ],
+  "install_notes": "Available in most Linux distribution repositories, though sometimes out of date. Building from source needs autotools, OpenSSL or libgcrypt, libnl, and pkg-config, plus per-distro packages listed in the README. Airmon-ng on Linux needs ethtool, usbutils, and often pciutils. Tools such as besside-ng, tkiptun-ng, and wesside-ng need libpcap. Windows requires Cygwin or MSYS2 and a 'monitor' driver for the card. The Homebrew caveat says to run `airodump-ng-oui-update` to install or update the Airodump-ng OUI file. Hardware needs a wireless card that supports monitor mode and packet injection. Optional features include PCRE2 for --essid-regex, SQLite for airolib-ng, and gpsd for GPS logging. Docker images are published for each release and for every git commit.",
+  "standout": "It is a set of many small, single-purpose command-line tools rather than one program, and each has its own manpage. The README also publishes a Docker image for every git commit, and it lists a long set of experimental tools that need a build flag.",
+  "status": "maintained. The homepage's latest news is the 1.7 release on 10 May 2022, and the footer reads Copyright 2009-2023. The GitHub README shows many CI badges across platforms, and it says the project moved from its forum to GitHub Discussions in December 2022. I could not see commit dates or a last-commit timestamp, so the evidence is not fully current.",
+  "caveats": "Monitor-mode and injection depend on the specific wireless card and driver; the homepage warns that network managers may need to be stopped first. Windows needs Cygwin or MSYS2 plus a special monitor driver, and standard drivers do not capture data. Some tools need extra build flags or libpcap, and the experimental set is only built with --with-experimental. Cracking covers WEP and WPA/WPA2 PSK only, per the README. This is an offensive security toolkit, so it should only be used on networks you own or are authorized to test. The README says Homebrew OpenSSL may need --with-openssl pointing at a custom path. The tests were not run.",
+  "quotes": [
+   "Aircrack-ng is a complete suite of tools to assess WiFi network security.",
+   "All tools are command line which allows for heavy scripting. A lot of GUIs have taken advantage of this feature.",
+   "Every tool has its own manpage. For aircrack-ng, `man aircrack-ng`"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://aircrack-ng.org/"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/aircrack-ng/aircrack-ng"
+   },
+   {
+    "label": "Docker Hub: aircrackng/git",
+    "url": "https://hub.docker.com/r/aircrackng/git"
+   }
+  ],
+  "fetch_log": [
+   "https://aircrack-ng.org/ - worked; returned the homepage with description, download, news, and docs navigation.",
+   "https://github.com/aircrack-ng/aircrack-ng - worked; returned the README with build, install, Docker, and Windows instructions."
+  ]
+ }
+}

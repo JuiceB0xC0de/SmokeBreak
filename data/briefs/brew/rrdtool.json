@@ -1,0 +1,67 @@
+{
+ "name": "rrdtool",
+ "desc": "Round Robin Database",
+ "homepage": "https://oss.oetiker.ch/rrdtool/",
+ "installs_365d": 2145,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "ancient"
+ ],
+ "why": "A round-robin time-series database with a fixed-size circular store; an old-school idea that still quietly underpins monitoring graphs.",
+ "brief": {
+  "what_it_is": "RRDtool is a data logging and graphing system for time series data, which the homepage calls \"the OpenSource industry standard\" for this job. It stores values in round robin databases: files created at a fixed size and pre-filled with UNKNOWN data, whose archives wrap around as new data arrives. Timestamped values go in through rrdupdate or rrdtool create and related commands, and the tool can give back fetched data, XML dumps, and graphs. The homepage says it can be called from shell scripts and from perl, python, ruby, lua or tcl applications.",
+  "why_it_exists": "The homepage presents it as a high-performance system for logging and graphing time series data that can be embedded in ordinary scripts and applications. The fixed-size design is my inference from the docs rather than the author's stated reason: files are created at their final full size, so storage stays bounded.",
+  "how_it_works": "Each RRD defines one or more data sources (DS) at create time, each with a type such as GAUGE, COUNTER, DERIVE or ABSOLUTE, plus a heartbeat and optional min and max. Updates arriving at arbitrary times are folded into primary data points on each step interval, and round robin archives (RRA) consolidate those with AVERAGE, MIN, MAX or LAST into a fixed number of rows that wrap around. Counter-type sources are stored as per-second rates, not running totals.",
+  "commands_seen": [
+   {
+    "cmd": "rrdtool create filename [--start|-b start time] [--step|-s step] [--template|-t template-file] [--source|-r source-file] [--no-overwrite|-O] [--daemon|-d address] [DS:ds-name[=mapped-ds-name[[source-index]]]:DST:dst arguments] [RRA:CF:cf arguments]",
+    "context": "Synopsis for creating a new RRD file, from the rrdcreate doc page."
+   },
+   {
+    "cmd": "rrdtool create temperature.rrd --step 300 \\",
+    "context": "Doc example: sets up an RRD that accepts one temperature value every 300 seconds, followed by a DS line and four RRA lines."
+   },
+   {
+    "cmd": "rrdtool create --daemon unix:/var/run/rrdcached.sock /var/lib/rrd/foo.rrd I<other options>",
+    "context": "Creates a file through a running rrdcached daemon over a Unix socket instead of writing directly. The I<> is literal text left in the doc."
+   },
+   {
+    "cmd": "rrdtool create power.rrd \\",
+    "context": "Doc example opening line for a file collecting power values once per second, with the scaled-duration form (--step 1s, RRA durations like 10d) shown in the same section."
+   }
+  ],
+  "install_notes": "The homepage says RRDtool is downloadable from the site, compiles on a number of Linux and Unix platforms, and also builds on Microsoft Windows. It describes an rrdbuild documentation page with build instructions, which I did not fetch. Nothing I read mentions accounts, runtimes or first-run configuration. The executables list includes rrdcached, a data caching daemon, and rrdcgi, which builds web pages from RRD graph templates.",
+  "standout": "The fixed-size circular store means the file never grows, and the rrdcreate doc is unusually frank about trade-offs, such as COUNTER versus DERIVE and how a counter reset can be mistaken for a wrap. It also ships built-in Holt-Winters forecasting and failure flagging (HWPREDICT, FAILURES) and COMPUTE data sources that act like virtual columns.",
+  "status": "unknown. The homepage news pointer is dated 02/20/2017, the docs index 10/24/2012, and the rrdcreate page 02/04/2019. I did not check a release page or repository, so I cannot say whether it is actively maintained.",
+  "caveats": "The homepage is mostly navigation and boilerplate, so the substance came from the docs pages. I did not reach a GitHub README or confirm the version the docs describe. Prefilling from source files is best-effort with no guarantee of correctness. Holt-Winters features need a matched set of RRAs to work. New RRD files get mode 0644 regardless of umask. The homepage's download text claims Windows support, which I did not verify.",
+  "quotes": [
+   "RRDtool is the OpenSource industry standard, high performance data logging and graphing system for time series data.",
+   "RRDtool can be easily integrated in shell scripts, perl, python, ruby, lua or tcl applications.",
+   "RRDtool stores rates in amount/second for COUNTER, DERIVE, DCOUNTER, DDERIVE and ABSOLUTE data."
+  ],
+  "links": [
+   {
+    "label": "RRDtool homepage",
+    "url": "https://oss.oetiker.ch/rrdtool/"
+   },
+   {
+    "label": "rrdcreate documentation",
+    "url": "https://oss.oetiker.ch/rrdtool/doc/rrdcreate.en.html"
+   },
+   {
+    "label": "Documentation index",
+    "url": "https://oss.oetiker.ch/rrdtool/doc/index.en.html"
+   }
+  ],
+  "fetch_log": [
+   "https://oss.oetiker.ch/rrdtool/ - worked; homepage text, mostly navigation plus a short description and download note",
+   "https://oss.oetiker.ch/rrdtool/doc/index.en.html - worked; list of man-page-style docs for each executable, no commands",
+   "https://oss.oetiker.ch/rrdtool/doc/rrdcreate.en.html - worked; full rrdcreate reference with the command examples used above"
+  ]
+ }
+}

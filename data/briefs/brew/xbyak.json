@@ -1,0 +1,95 @@
+{
+ "name": "xbyak",
+ "desc": "C++ JIT assembler for x86 (IA32), x64 (AMD64, x86-64)",
+ "homepage": "https://github.com/herumi/xbyak",
+ "installs_365d": 729,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "library",
+  "reverse-engineering"
+ ],
+ "why": "A C++ JIT assembler for x86 hints at generating machine code at runtime, though it is mainly a library.",
+ "brief": {
+  "what_it_is": "Xbyak is a C++ header-only library for generating x86 and x64 machine code at runtime. You write C++ calls that look like assembly mnemonics, such as mov(eax, x) or ret(), and it emits the encoded instructions into a memory buffer. You then call getCode() to get a function pointer and invoke the generated code. The input is C++ calls naming instructions and operands, and the output is executable machine code in memory. The README calls it a JIT assembler, and it is a library rather than a standalone tool.",
+  "why_it_exists": "The README describes it as a JIT assembler for x86/x64 that supports the latest instruction set extensions, such as AVX10.2 and ACE, using mnemonics. The name comes from the Japanese word kaibyaku, meaning 'the beginning of the world' or 'creation'.",
+  "how_it_works": "You subclass Xbyak::CodeGenerator (or pass an instance to a function) and call instruction methods in C++ that mirror MASM/NASM syntax, with parentheses for operands. Labels, jumps, and memory addressing are supported through Label objects and ptr[...] expressions. Calling getCode<T>() returns a callable pointer to the generated code. Memory is set to Read/Write/Exec by default, and you can opt into Read/Exec with DontSetProtectRWE and setProtectModeRE().",
+  "commands_seen": [
+   {
+    "cmd": "mov(eax, x);",
+    "context": "Usage example: a CodeGenerator subclass emits mov eax, x followed by ret() to return a value."
+   },
+   {
+    "cmd": "int (*f)() = c.getCode<int (*)()>();",
+    "context": "Obtains a callable function pointer from the generated code, then the example invokes f()."
+   },
+   {
+    "cmd": "vaddps(xmm1, xmm2, xmm3);",
+    "context": "AVX syntax example: xmm1 <- xmm2 + xmm3."
+   },
+   {
+    "cmd": "vaddpd zmm2{k5}{z}, zmm4, zmm2 --> vaddpd(zmm2 | k5 | T_z, zmm4, zmm2);",
+    "context": "AVX-512 example showing the NASM-style form on the left and the Xbyak C++ form on the right for opmask and zeroing."
+   },
+   {
+    "cmd": "setDefaultEncoding(VexEncoding);",
+    "context": "Changes the default encoding for AVX-VNNI/AVX512-VNNI-style instructions from EVEX to VEX."
+   },
+   {
+    "cmd": "add(r20, r21);",
+    "context": "APX example using 64-bit extended registers r16 to r31."
+   },
+   {
+    "cmd": "jmp(word[rax], T_FAR);",
+    "context": "Far jump through a 16:16 memory operand in 32-bit mode, shown in the far jump section."
+   },
+   {
+    "cmd": "make install",
+    "context": "From the install doc, the Linux install step that copies the headers into /usr/local/include/xbyak."
+   },
+   {
+    "cmd": "git clone https://github.com/Microsoft/vcpkg.git",
+    "context": "Start of the vcpkg install route described in the install doc."
+   },
+   {
+    "cmd": "./vcpkg install xbyak",
+    "context": "Installs the xbyak port through vcpkg after vcpkg has been bootstrapped and integrated."
+   }
+  ],
+  "install_notes": "Copy xbyak.h, xbyak_mnemonic.h and xbyak_util.h into your compile include path. On Linux, make install copies them into /usr/local/include/xbyak. Alternatively, install through vcpkg by cloning Microsoft/vcpkg, running ./bootstrap-vcpkg.sh, ./vcpkg integrate install, then ./vcpkg install xbyak. No accounts, hardware, or runtimes are needed beyond a C++ compiler. The README mentions -fno-operator-names for gcc/clang if you want to use and() or or() as names. Brew installs the headers only, and the brew entry lists no executables.",
+  "standout": "It is a header-only JIT assembler that writes instructions as ordinary C++ method calls with MASM-like syntax, and it covers very recent extensions such as APX, AVX10.2, AMX, and ACE. It also has an optional StackFrame helper for automatic register save and restore, and forks exist for AArch64 and RISC-V.",
+  "status": "Maintained, by inference. The README's header shows version 7.43 and the News list covers recent additions such as ACE 1.15, AVX10.2, and APX support. I could not see a release date or last-commit date in the fetched pages, so I cannot confirm the recency of the last commit.",
+  "caveats": "Supported OS is Windows, Linux, and macOS on Intel CPUs only. The README notes that and(), or(), and similar names clash with C++ operators unless you use and_() or -fno-operator-names. Some APX and AVX10.2 features need the defaults set carefully, since encodings are selected by setDefaultEncoding functions. Omitted-destination forms such as vaddps(xmm2, xmm3) are deprecated and only work with XBYAK_ENABLE_OMITTED_OPERAND. The disp32 address check changed, and XBYAK_OLD_DISP_CHECK is slated for removal. Generated code runs from memory that is writable and executable by default unless you opt out. The README mentions a few APX instructions are not yet supported. Licence is BSD-3-Clause.",
+  "quotes": [
+   "Xbyak is a C++ header-only library that enables dynamic assembly of x86/x64 instructions using mnemonics.",
+   "A JIT assembler for x86/x64 architectures supporting the latest instruction set extensions such as AVX10.2 and ACE",
+   "Inherit the Xbyak::CodeGenerator class and define a class method."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/herumi/xbyak"
+   },
+   {
+    "label": "Usage guide (doc/usage.md)",
+    "url": "https://github.com/herumi/xbyak/blob/master/doc/usage.md"
+   },
+   {
+    "label": "Install guide (doc/install.md)",
+    "url": "https://github.com/herumi/xbyak/blob/master/doc/install.md"
+   },
+   {
+    "label": "Xbyak_aarch64 derived project",
+    "url": "https://github.com/fujitsu/xbyak_aarch64/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/herumi/xbyak (homepage, README returned, worked)",
+   "https://github.com/herumi/xbyak/blob/master/doc/usage.md (linked from README Usage, worked)",
+   "https://github.com/herumi/xbyak/blob/master/doc/install.md (linked from README Install, worked)"
+  ]
+ }
+}

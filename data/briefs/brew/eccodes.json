@@ -1,0 +1,87 @@
+{
+ "name": "eccodes",
+ "desc": "Decode and encode messages in the GRIB 1/2 and BUFR 3/4 formats",
+ "homepage": "https://confluence.ecmwf.int/display/ECC",
+ "installs_365d": 3011,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "science",
+  "afternoon",
+  "library"
+ ],
+ "why": "Decodes GRIB and BUFR weather message formats, a door into how forecast data is actually packed.",
+ "brief": {
+  "what_it_is": "ecCodes is a package from ECMWF that provides an API and a set of command-line tools for decoding and encoding weather messages in WMO GRIB edition 1 and 2, BUFR edition 3 and 4, and (decode only) the GTS abbreviated header. The command-line tools give quick access to messages, and C, Fortran 90 and Python interfaces expose the main functionality. It reads and writes binary meteorological message files, and the tools print or change their contents using a key/value model. The executables include grib_ls, grib_dump, grib_get, grib_set, grib_copy, grib_to_netcdf, the matching bufr_ and gts_ tools, and codes_info and codes_count.",
+  "why_it_exists": "The README presents ecCodes as the successor to GRIB-API, offering a simple key/value way to access data from several formats. It is now the primary GRIB encoding and decoding package at ECMWF, and GRIB-API is no longer maintained as of December 2018.",
+  "how_it_works": "Messages are accessed through key/value functions, so a caller asks for a named key such as a field attribute and gets its value, or sets one. The grib_ functions are kept, and a new codes_ family with the same interface and behaviour works across all supported formats. The command-line tools were built to mirror the old GRIB-API tools' options and behaviour, with bufr_dump as the main difference because it emits JSON.",
+  "commands_seen": [
+   {
+    "cmd": "tar -xzf eccodes-x.y.z-Source.tar.gz",
+    "context": "Unpacks the source distribution downloaded from the Releases page."
+   },
+   {
+    "cmd": "mkdir build",
+    "context": "Creates a separate build directory, as the README asks for an out-of-tree build."
+   },
+   {
+    "cmd": "cd build",
+    "context": "Moves into the build directory before running cmake."
+   },
+   {
+    "cmd": "cmake ../eccodes-x.y.z-Source -DCMAKE_INSTALL_PREFIX=/path/to/where/you/install/eccodes",
+    "context": "Configures the build, pointing at the source tree and an install location; the README recommends a clean directory."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles ecCodes."
+   },
+   {
+    "cmd": "ctest",
+    "context": "Runs the test suite before installing."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs ecCodes into the prefix given to cmake."
+   },
+   {
+    "cmd": "pip3 install eccodes",
+    "context": "Installs the Python 3 bindings from PyPI, as an alternative to building them."
+   }
+  ],
+  "install_notes": "Build from the source tarball with cmake and make, then run ctest and make install. Install into a clean directory, since the README says this is strongly recommended. The Python bindings come separately from PyPI with pip3 install eccodes. Other platform guidance is on the Confluence installation page, which I could not load (HTTP 404). Conda-forge also packages it, per the README badges.",
+  "standout": "The tools share GRIB-API's options and behaviour, so existing scripts can carry over. bufr_dump emits JSON, which is handy for web applications, and it reads the packed binary formats that forecast centres exchange, not just a viewer for them.",
+  "status": "Maintained. The GitHub README badges the project as Graduated under ECMWF's software maturity guidelines. The Confluence news lists ecCodes 2.50.0 released Oct 14, 2026, after 2.49.0 (Sept 23, 2026) and 2.48.0 (Jul 15, 2026), so releases are regular.",
+  "caveats": "The GTS format is decode-only. The GRIB-API Fortran 77 interface is no longer available. Building from source needs cmake and a C toolchain, and the README points to the Confluence pages for the full installation guide. Licensed under Apache 2.0. The GRIB-API migration is advised for existing users.",
+  "quotes": [
+   "ecCodes is now the primary GRIB encoding/decoding package used at ECMWF.",
+   "A significant difference compared with GRIB-API tools is that bufr_dump produces output in JSON format suitable for many web based applications.",
+   "It is designed to provide the user with a simple set of functions to access data from several formats with a key/value approach."
+  ],
+  "links": [
+   {
+    "label": "ecCodes homepage (Confluence)",
+    "url": "https://confluence.ecmwf.int/display/ECC"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/ecmwf/eccodes"
+   },
+   {
+    "label": "Releases (source tarballs)",
+    "url": "https://confluence.ecmwf.int/display/ECC/Releases"
+   },
+   {
+    "label": "ECMWF Support Portal",
+    "url": "https://support.ecmwf.int"
+   }
+  ],
+  "fetch_log": [
+   "https://confluence.ecmwf.int/display/ECC: worked, returned the ecCodes home page text (Confluence wrapper with the overview, news and quick links)",
+   "https://confluence.ecmwf.int/display/ECC/Installation: failed, HTTP 404",
+   "https://github.com/ecmwf/eccodes: worked, returned the README with installation steps, the Python install, and the license"
+  ]
+ }
+}

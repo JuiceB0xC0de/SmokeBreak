@@ -1,0 +1,75 @@
+{
+ "name": "pcsc-lite",
+ "desc": "Middleware to access a smart card using SCard API",
+ "homepage": "https://pcsclite.apdu.fr/",
+ "installs_365d": 7415,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "protocol",
+  "afternoon"
+ ],
+ "why": "Middleware for smart card readers, a door into APDU and smartcard protocols most developers never touch.",
+ "brief": {
+  "what_it_is": "pcsc-lite is a middleware library and daemon that gives applications access to smart card readers through the PC/SC API (SCard API). Client programs call the standard SCard functions, and the pcscd daemon talks to the physical reader and its driver, typically via USB. Its executables include pcscd, the daemon, and pcsc-spy, a debugging tool that spies on API calls. The project site describes it as 'Middleware to access a smart card using SCard API (PC/SC).' Input is smart card reader hardware with cards inserted, and output is card responses to APDU commands, returned to the calling application.",
+  "why_it_exists": "The homepage frames it as a free, portable implementation of the PC/SC standard for smart card access. The project was started by David Corcoran in 1999, and Ludovic Rousseau has been the main author since 2001.",
+  "how_it_works": "The site does not describe the internal architecture in detail. It mentions a card movement notification mechanism, card auto power on and off, and pcscd auto start through systemd. Its debug section describes an API spy built on the LIBPCSCLITE_DELEGATE mechanism. The homepage also notes that PC/SC clients and the server can run on two different hosts.",
+  "commands_seen": [
+   {
+    "cmd": "meson setup builddir",
+    "context": "Build step from the source directory: configures the build in a directory named builddir."
+   },
+   {
+    "cmd": "cd builddir",
+    "context": "Build step: enter the build directory created by meson setup."
+   },
+   {
+    "cmd": "meson compile",
+    "context": "Build step: compiles pcsc-lite inside builddir."
+   },
+   {
+    "cmd": "sudo LIBCCID_ifdLogLevel=0x000F pcscd --foreground --debug --apdu --color | tee -i log.txt",
+    "context": "Support-log recipe: kill any running pcscd, then run it in the foreground with debug, APDU and color output, with the CCID driver log level set high, and save the output to log.txt for bug reports. The site warns that the PIN may appear in the log."
+   },
+   {
+    "cmd": "/usr/sbin/pcscd --version",
+    "context": "Support info: the site asks bug reporters to include the output of this command."
+   }
+  ],
+  "install_notes": "The site's build instructions use meson, with the commands listed above. Dependencies to install first: flex, meson, and libudev or libusb. libsystemd and polkit are optional. Packages are also available as pcscd, libpcsclite1 and libpcsclite-dev, plus packages in many other distributions. The site says you should not need to build it on macOS, because Apple reimplemented PC/SC on top of CryptoTokenKit. Source downloads and the git repository are on Debian salsa and GitHub.",
+  "standout": "It is the reference open-source PC/SC implementation on Linux and the base for much smart card tooling. The site includes a built-in API spy (pcsc-spy) and a documented debug mode that logs APDU traffic in full. That gives an unusual view into smartcard conversations, which most developers never see.",
+  "status": "Probably maintained, but the evidence is thin. The GitHub README (LudovicRousseau/PCSC) is a short stub that links to the project site. The site's license text covers copyright through 2024, and it documents a meson build. I did not find a release date or last-commit date in the pages I could read, so I cannot confirm the release cadence.",
+  "caveats": "The GitHub repository at LudovicRousseau/pcsc-lite returned 404. The working repository is LudovicRousseau/PCSC. Support is by mailing list (pcsclite-muscle), not a bug tracker in the pages I read. The site says it is not tested by the author on the BSDs, and that HP-UX may have worked long ago. Solaris ships its own fork. The main code is under a BSD-like license, but some source files use other licenses, so the COPYING file must be checked. The debug log can include the PIN.",
+  "quotes": [
+   "Middleware to access a smart card using SCard API (PC/SC).",
+   "You should not need to build pcsc-lite on macOS.",
+   "pcsc-lite may have worked on HP-UX a long time ago."
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://pcsclite.apdu.fr/"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/LudovicRousseau/PCSC"
+   },
+   {
+    "label": "PC/SC Lite API (WinSCard) docs",
+    "url": "https://pcsclite.apdu.fr/"
+   },
+   {
+    "label": "Ludovic Rousseau blog about PC/SC and smart cards",
+    "url": "https://pcsclite.apdu.fr/"
+   }
+  ],
+  "fetch_log": [
+   "https://pcsclite.apdu.fr/ - worked, project homepage read in full",
+   "https://github.com/LudovicRousseau/pcsc-lite - failed, HTTP 404",
+   "https://github.com/LudovicRousseau/PCSC - worked, README is a short stub linking to the homepage"
+  ]
+ }
+}

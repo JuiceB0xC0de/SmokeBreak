@@ -1,0 +1,132 @@
+{
+ "name": "gammaray",
+ "desc": "Examine and manipulate Qt application internals at runtime",
+ "homepage": "https://www.kdab.com/software-technologies/developer-tools/gammaray/",
+ "installs_365d": 376,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "gui",
+  "afternoon",
+  "reverse-engineering"
+ ],
+ "why": "Inspecting and modifying a running Qt application's internals is a real window into live program structure, though it is a dev tool.",
+ "brief": {
+  "what_it_is": "GammaRay is an introspection tool for running Qt applications, written by KDAB and released under GPL-2.0-or-later. It uses Qt's QObject introspection mechanism to let you browse the object tree, view and edit properties, invoke slots, and watch signal/slot connections while the program runs. It works on a local workstation or remotely on an embedded target, and you can attach it to an application that is already running. Its output is an interactive view of the application's internals, including specialised views for Qt Quick scene graphs, model/view proxy chains, state machines, and QGraphicsView scenes.",
+  "why_it_exists": "The README says it augments the instruction-level debugger so developers can work 'at a much higher level, with the same concepts as the frameworks you use', which matters most for complex Qt frameworks such as model/view, state machines and scene graphs. The homepage adds that a debugger does not understand these internal structures, while GammaRay can present them in a meaningful way.",
+  "how_it_works": "GammaRay exploits Qt's QObject introspection mechanism, so it runs alongside the target application rather than replacing the debugger. The README and INSTALL.md say it relies on Qt private headers, and on Android a probe is built into the app and reached over a forwarded socket on port 11732 by a GammaRay GUI.",
+  "commands_seen": [
+   {
+    "cmd": "mkdir build && cd build/",
+    "context": "Create and enter a build directory before configuring the source build (INSTALL.md)."
+   },
+   {
+    "cmd": "cmake -G Ninja -DCMAKE_INSTALL_PREFIX=/path/where/to/install ..",
+    "context": "Configure a build with the Ninja generator and a chosen install prefix (INSTALL.md)."
+   },
+   {
+    "cmd": "cmake --build .",
+    "context": "Compile GammaRay in the configured build directory (INSTALL.md)."
+   },
+   {
+    "cmd": "cmake --build . --target install",
+    "context": "Install the built GammaRay to the configured prefix (INSTALL.md)."
+   },
+   {
+    "cmd": "cmake -DCMAKE_PREFIX_PATH=$HOME/Qt/6.6.0/gcc_64 ..",
+    "context": "Example of pointing CMake at a specific Qt installation instead of the system Qt (INSTALL.md)."
+   },
+   {
+    "cmd": "adb forward tcp:11732 localfilesystem:/data/data/YOUR_ANDROID_PACKAGE_NAME(e.g. com.kdab.example)/files/+gammaray_socket",
+    "context": "Forwards the GammaRay socket from an Android device to localhost so the desktop GUI can connect (INSTALL.md, Android section)."
+   },
+   {
+    "cmd": "adb forward --remove tcp:11732",
+    "context": "Removes the single adb port forward set up for GammaRay (INSTALL.md)."
+   },
+   {
+    "cmd": "adb forward --remove-all",
+    "context": "Removes all adb port forwards, as an alternative cleanup step (INSTALL.md)."
+   },
+   {
+    "cmd": "cmake -DCMAKE_DISABLE_FIND_PACKAGE_VTK=True",
+    "context": "Example of telling CMake to ignore an optional dependency (VTK) (INSTALL.md)."
+   }
+  ],
+  "install_notes": "The README gives no brew-specific steps. Building from source needs CMake 3.16.0 or newer, a C++17 compiler, and Qt 6.5 or newer; GammaRay v3.2.0 was the last release to support older Qt. You need Qt's private headers, which distros ship in separate packages (for example qt6-qtbase-private-devel on Fedora/RedHat, qt6-base-private-dev and qt6-declarative-private-dev on Debian/Ubuntu). The build uses CMake, Ninja is optional, and the system Qt is used by default unless CMAKE_PREFIX_PATH points elsewhere. Optional FOSS dependencies add features; the State Machine Viewer needs KDStateMachineEditor (-DGAMMARAY_WITH_KDSME=True), which bundles graphviz and may need Python. Android use requires adding a GammaRay probe to the app's .pro file and forwarding the socket with adb. Cross-compiling is covered in the project wiki.",
+  "standout": "Most debuggers show raw memory and stack frames, but GammaRay understands Qt's own framework objects and can show a QStateMachine's live state and trace its transitions, or browse a QAbstractProxyModel chain stage by stage. It can also change properties in running code, and it works remotely on embedded targets.",
+  "status": "Maintained according to the README, which says GammaRay is 'supported and maintained by' KDAB. The README also says v3.2.0 was the last release supporting Qt below 6.5, which shows it is still following current Qt. I could not find a last release date or last commit date in the pages I fetched, so the exact recency is unknown.",
+  "caveats": "Requires Qt 6.5 or newer for current releases, and the README warns that it 'heavily relies on Qt private headers' that The Qt Company can change between releases, so builds can break after Qt updates. Some features in the README list refer to older Qt technology, such as QtQuick1, QScriptEngine and QWebPage/QWebInspector; the README does not say whether these still work with Qt 6, so check before relying on them. Licensing is GPL-2.0-or-later, and commercial terms need a separate license from KDAB. External contributions need a KDAB copyright assignment or CLA. The brew caveats field was empty.",
+  "quotes": [
+   "Leveraging the QObject introspection mechanism it allows you to observe and manipulate your application at runtime.",
+   "Augmenting your instruction-level debugger, GammaRay allows you to work on a much higher level, with the same concepts as the frameworks you use.",
+   "GammaRay is supported and maintained by Klar\u00e4lvdalens Datakonsult AB (KDAB)."
+  ],
+  "links": [
+   {
+    "label": "KDAB homepage for GammaRay",
+    "url": "https://www.kdab.com/software-technologies/developer-tools/gammaray/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/KDAB/GammaRay"
+   },
+   {
+    "label": "INSTALL.md (build instructions)",
+    "url": "https://github.com/KDAB/GammaRay/blob/master/INSTALL.md"
+   }
+  ],
+  "fetch_log": [
+   "https://www.kdab.com/software-technologies/developer-tools/gammaray/ - worked; marketing page with feature summary and links to the GitHub repo and the User Manual (the manual URL was not visible in the returned text, so I did not fetch it).",
+   "https://github.com/KDAB/GammaRay - worked; returned the README, which links to INSTALL.md.",
+   "https://github.com/KDAB/GammaRay/blob/master/INSTALL.md - worked; returned the rendered installation notes, which contained the build commands and Android instructions."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "GammaRay exposes and lets you manipulate a running Qt app\u2019s live framework structures\u2014signals, state machines, and model chains\u2014in ways ordinary debuggers don\u2019t."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "GammaRay",
+  "tldr": "A runtime inspector for Qt applications that lets you browse live objects, edit properties, and watch signals and state machines while the program runs.",
+  "deeper_look": "GammaRay attaches to a running Qt application, or launches one, and shows its internals as Qt sees them. You can walk the QObject tree, read and change properties, invoke slots, and watch signal/slot connections. It also has specialised views for Qt Quick scene graphs, model/view proxy chains, state machines, and QGraphicsView scenes. It works on a local workstation or remotely against an embedded target.\n\nIt exists because an instruction-level debugger does not understand framework concepts. The README says GammaRay lets you work at \"a much higher level, with the same concepts as the frameworks you use\". A debugger shows stack frames and memory. GammaRay shows a QStateMachine's live state, or a chain of proxy models stage by stage.\n\nThe idea underneath is that a framework with built-in introspection can be examined from outside without being rewritten. Qt's QObject introspection mechanism describes the objects, their properties, and their connections at runtime, and GammaRay builds a tool on top of that. It runs alongside your debugger rather than replacing it. If you have ever wondered what a GUI program is doing behind its windows, this gives you a way to look.",
+  "install": "brew install gammaray\n\nThe formula pulls in Qt modules and graphviz as dependencies, so expect a large download. You need a Qt application to inspect.",
+  "try_this": [
+   {
+    "cmd": "gammaray --help",
+    "what_happens": "Lists the launcher's options, including how to start a program under inspection or attach to a running one."
+   }
+  ],
+  "whats_unique": "Most debuggers show raw memory and stack frames. GammaRay understands Qt's own framework objects and can change properties in running code, including on remote embedded targets.",
+  "caveats": "It relies heavily on Qt private headers, which can change between Qt releases, and the README does not say whether views for older Qt technology such as QtQuick1 and QScriptEngine still work with Qt 6.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "qt",
+   "gui",
+   "debugging",
+   "introspection",
+   "reverse-engineering"
+  ],
+  "links": [
+   {
+    "label": "KDAB homepage for GammaRay",
+    "url": "https://www.kdab.com/software-technologies/developer-tools/gammaray/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/KDAB/GammaRay"
+   },
+   {
+    "label": "INSTALL.md (build instructions)",
+    "url": "https://github.com/KDAB/GammaRay/blob/master/INSTALL.md"
+   }
+  ]
+ }
+}

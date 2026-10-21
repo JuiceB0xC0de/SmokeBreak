@@ -1,0 +1,149 @@
+{
+ "name": "ipmitool",
+ "desc": "Utility for IPMI control with kernel driver or LAN interface",
+ "homepage": "https://codeberg.org/IPMITool/ipmitool",
+ "installs_365d": 3347,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "protocol",
+  "network",
+  "hardware",
+  "ipmi"
+ ],
+ "why": "A door into IPMI, the out-of-band management backdoor hiding in almost every server, though the tool itself is plain plumbing.",
+ "brief": {
+  "what_it_is": "ipmitool is a command-line utility for talking to the BMC (baseboard management controller), the separate service processor in IPMI-capable hardware. It sends IPMI request messages and parses the responses. It can read sensor data and print sensor values, display the System Event Log, print FRU inventory, read and set LAN configuration, and control remote chassis power. It reaches the BMC through the local system interface on Linux or over the network via IPMI-over-LAN (lan and lanplus interfaces). The package also ships ipmievd, a daemon that listens for BMC events and logs them to syslog.",
+  "why_it_exists": "Written by Duncan Laurie, who began it while between projects at Sun Microsystems: remote chassis power control was the first goal, and it grew into a general tool. The README says it is for system administrators who like the simplicity and scriptability of command-line utilities, and for people debugging or developing their own BMC implementations. It is explicitly not meant as enterprise management software.",
+  "how_it_works": "ipmitool builds IPMI requests (netfn, command, and payload) and sends them over an interface: the Linux OpenIPMI kernel driver through /dev/ipmi0, or RMCP/RMCP+ packets over UDP port 623 for LAN access. The README also documents IPMB bridging, where the driver encapsulates a request with the send message command (0x34) and retrieves the reply with get message (0x33), tracking request and response pairs. Commands can be run one at a time, in an interactive shell, or from a script file with exec.",
+  "commands_seen": [
+   {
+    "cmd": "ipmitool raw 6 4",
+    "context": "Sends raw command 4 (selftest) in netfn 6 (application) over the default KCS interface; the README shows the reply as 55 00."
+   },
+   {
+    "cmd": "ipmitool mc selftest",
+    "context": "Human-readable form of the same selftest; the README shows output 'Selftest: passed'."
+   },
+   {
+    "cmd": "ipmitool -m 0x94 -t 0x9a raw 6 4",
+    "context": "Bridged variant of the raw selftest, with -m setting the local IPMB address and -t the target address."
+   },
+   {
+    "cmd": "ipmitool -H <ip> -U <user> -P <password> -B 0 -T 0x8a -m 0x94 -t 0x7a -b 7 mc selftest",
+    "context": "Dual-bridged selftest over LAN to a remote controller behind a second bridge level; the README says this works, while fru print under the same setup fails on payload size."
+   },
+   {
+    "cmd": "ipmitool -I open shell",
+    "context": "Starts the interactive ipmitool shell over the Linux OpenIPMI interface, where commands such as chassis status can be typed one by one."
+   },
+   {
+    "cmd": "ipmitool -I open exec lansetup.scr",
+    "context": "Runs a list of ipmitool commands from a file in sequence; the example script sets a static LAN IP, netmask and default gateway on channel 7."
+   },
+   {
+    "cmd": "ipmitool -I lan exec getstatus.scr",
+    "context": "Runs a script that uses set hostname, set password and chassis status over the LAN interface."
+   },
+   {
+    "cmd": "ipmievd",
+    "context": "Run as root with no arguments, the event daemon daemonizes, polls the OpenIPMI device for BMC events, and logs them to syslog under LOG_LOCAL4."
+   },
+   {
+    "cmd": "ipmitool -I lan -H lx50 -P admin event 1",
+    "context": "Sends a test Temperature Upper Critical Going High event to the BMC over LAN, for testing that ipmievd picks it up."
+   },
+   {
+    "cmd": "ipmitool -I open shell",
+    "context": "Interactive shell mode, shown in the README with chassis status and user list 7 typed at the ipmitool> prompt."
+   },
+   {
+    "cmd": "chassis help",
+    "context": "Pattern from the README for getting help on a specific command, such as chassis, by running it with the help argument."
+   }
+  ],
+  "install_notes": "Beyond brew install: you need IPMI hardware (a BMC) and, for the local interface on Linux, the OpenIPMI kernel modules ipmi_msghandler and ipmi_devintf, plus ipmi_si or the older per-type driver modules, with the device node /dev/ipmi0 pointing at the driver's dynamically assigned major number (check /proc/devices for 'ipmidev'). The package includes the sample scripts ipmi.init (boot-time device setup) and bmclanconf (LAN configuration over the system interface). IPMIv2.0 LAN access (lanplus) needs an OpenSSL library with the required encryption functions. The build is autotools-based (configure.ac, Makefile.am, and a bootstrap script that the README mentions adding Mac support to). The README does not walk through a source build, so I did not read INSTALL.",
+  "standout": "The README documents IPMB bridging and dual-bridged commands in unusual depth, with concrete addresses and channel numbers, and it is candid about where the tool fails (for example, fru print cannot pass through two levels of encapsulation). Its design is plain, scriptable, and openly modest: it is a probe and control tool rather than a fleet manager.",
+  "status": "maintained. The Codeberg repo shows 2,186 commits, 9 branches and 28 tags, with the latest commit on master dated 2026-03-30 (a fru fix that resolves issue #81). It has 12 open issues and 10 open pull requests, and CI runs on Codeberg via .woodpecker.yml. The README says the project moved from GitHub (2018 to 2023) and SourceForge (up to 2018). Latest release date was not checked.",
+  "caveats": "The README says the serial interface is not supported. Originally it supported Solaris, macOS, Windows and FreeBSD, but as of 2025 the maintainers no longer check changes against those systems, and CI only builds on Ubuntu Noble, Ubuntu Plucky, Ubuntu Questing, and Fedora 39, 41 and 42. The IPMI-over-LAN feature can be 'dangerous' to enable on some buggy BMCs, and shared management NICs that intercept port 623 carry extra security risk. Some commands fail under double bridging because of payload size. You need actual IPMI hardware to do anything useful. The README states a BSD license in the background section. Warnings about default passwords appear only implicitly in the examples (admin).",
+  "quotes": [
+   "ipmitool is a utility for managing and configuring devices that support the Intelligent Platform Management Interface.",
+   "It is intended to be used by system administrators who like the simplicity and scriptability of command-line utilities, as well as those debugging or developing their own BMC implementations.",
+   "ipmitool was not written to provide large-scale (aka Enterprise) management application functionality."
+  ],
+  "links": [
+   {
+    "label": "IPMItool homepage (Codeberg)",
+    "url": "https://codeberg.org/IPMITool/ipmitool"
+   },
+   {
+    "label": "IPMItool manpage (ipmitool.1.in)",
+    "url": "https://codeberg.org/IPMITool/ipmitool/src/branch/master/doc/ipmitool.1.in"
+   },
+   {
+    "label": "Intelligent Platform Management Interface specification (Intel)",
+    "url": "https://www.intel.com/content/www/us/en/servers/ipmi/ipmi-home.html"
+   }
+  ],
+  "fetch_log": [
+   "https://codeberg.org/IPMITool/ipmitool: fetched and worked. The page is JavaScript-heavy, but the README text was included in the response, so I did not follow further links."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A scriptable window into the hidden BMC layer lets you inspect sensors and control server power independently of the host, while exposing the IPMI protocol itself."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "ipmitool",
+  "tldr": "A command-line client for the BMC, the tiny second computer inside most servers that can power-cycle the machine and read its sensors even when the OS is down.",
+  "deeper_look": "Most servers contain a second, smaller computer called the baseboard management controller, or BMC. It runs on standby power, has its own network path, and answers to a protocol called IPMI. ipmitool is a plain command-line client for it. It reads sensors, prints the System Event Log and FRU inventory, changes LAN settings, and controls chassis power. It reaches the BMC through the Linux OpenIPMI driver at /dev/ipmi0, or over the network using RMCP/RMCP+ packets on UDP port 623.\n\nIt began with Duncan Laurie at Sun Microsystems, with remote power control as the first goal. It grew into a general tool for administrators who like scriptable command-line utilities, and for people debugging or building their own BMC firmware. The README is clear about its limits: \"ipmitool was not written to provide large-scale (aka Enterprise) management application functionality.\"\n\nThe idea underneath is that IPMI is just requests made of a network function, a command number and a payload. `ipmitool raw 6 4` sends command 4 in netfn 6, the self-test, and the BMC replies with bytes. `ipmitool mc selftest` is the same call with a readable answer. The README goes further than most into IPMB bridging, where requests hop through other controllers by address and channel, and it says plainly where that breaks.\n\nThe package also ships ipmievd, a daemon that listens for BMC events and writes them to syslog.",
+  "install": "brew install ipmitool\n# Needs real IPMI hardware (a BMC) to do anything useful.\n# For the local interface on Linux: kernel modules ipmi_msghandler, ipmi_devintf and ipmi_si, plus /dev/ipmi0.\n# LAN access (lanplus) needs OpenSSL, which brew pulls in.",
+  "try_this": [
+   {
+    "cmd": "ipmitool --help",
+    "what_happens": "Lists the interfaces and top-level command groups such as chassis, mc, sensor, sel and fru."
+   },
+   {
+    "cmd": "ipmitool -I open shell",
+    "what_happens": "Opens an interactive ipmitool> prompt over the local OpenIPMI driver, where you can type commands like chassis status one at a time."
+   },
+   {
+    "cmd": "ipmitool raw 6 4",
+    "what_happens": "Sends the raw self-test command to the BMC. The README shows the reply as 55 00, which `ipmitool mc selftest` renders as 'Selftest: passed'."
+   }
+  ],
+  "whats_unique": "It exposes IPMI at both levels: friendly subcommands and raw netfn/command bytes. Its README documents IPMB bridging with real addresses and admits where it fails.",
+  "caveats": "You need actual IPMI hardware for anything useful. Serial is unsupported, CI only builds on Ubuntu and Fedora, and enabling IPMI-over-LAN can be risky on buggy BMCs or shared NICs.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "ipmi",
+   "protocol",
+   "network",
+   "hardware",
+   "bmc",
+   "servers"
+  ],
+  "links": [
+   {
+    "label": "IPMItool homepage (Codeberg)",
+    "url": "https://codeberg.org/IPMITool/ipmitool"
+   },
+   {
+    "label": "IPMItool manpage (ipmitool.1.in)",
+    "url": "https://codeberg.org/IPMITool/ipmitool/src/branch/master/doc/ipmitool.1.in"
+   },
+   {
+    "label": "Intelligent Platform Management Interface specification (Intel)",
+    "url": "https://www.intel.com/content/www/us/en/servers/ipmi/ipmi-home.html"
+   }
+  ]
+ }
+}

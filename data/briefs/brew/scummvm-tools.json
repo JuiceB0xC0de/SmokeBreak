@@ -1,0 +1,95 @@
+{
+ "name": "scummvm-tools",
+ "desc": "Collection of tools for ScummVM",
+ "homepage": "https://www.scummvm.org/",
+ "installs_365d": 327,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "reverse-engineering",
+  "afternoon",
+  "game",
+  "library"
+ ],
+ "why": "A toolkit for extracting and converting resources from classic adventure game data files, a good door into old game formats.",
+ "brief": {
+  "what_it_is": "scummvm-tools is a collection of utilities that work with ScummVM and the original data files of classic adventure games. The extraction and compression tools can run from the command line or from a GUI wizard, and the rest are command-line only. Inputs are original game data files, such as archives, disk images, and scripts. Outputs are extracted resources, recompressed audio (MP3, Vorbis, or FLAC), rebuilt data packs, or decompiled and disassembled scripts. The main entry point is scummvm-tools-cli, which auto-detects the right tool from the input file. The package installs about 44 executables, but the README documents only some of them; names such as grim_*, saga_unpack, and msn_convert_mod are not described there.",
+  "why_it_exists": "The README says the tools are 'a collection of various tools that may be useful to use in conjunction with ScummVM.' They help people turn original game files into formats ScummVM can read, and let them inspect or convert the game scripts.",
+  "how_it_works": "scummvm-tools-cli takes an input file, detects which tool to use, and writes output by default to an out/ directory next to the input. Extraction and compression are selected with the extract or compress modes, or by naming a tool with --tool. Audio format flags (--mp3, --flac, --vorbis) and tool-specific options are passed before the input file. The script tools, such as decine, degob, and descumm, are standalone decompilers or disassemblers that take a script file and a version or type flag.",
+  "commands_seen": [
+   {
+    "cmd": "scummvm-tools-cli [audio params] [params] [-o output] [extract|compress] <inputfile>",
+    "context": "General syntax from the README. Auto-detects the tool from the input file; extract or compress is a hint."
+   },
+   {
+    "cmd": "scummvm-tools-cli --tool <tool name> [audio params] [params] [-o output] <inputfile>",
+    "context": "Runs a named tool directly instead of relying on auto-detection."
+   },
+   {
+    "cmd": "scummvm-tools-cli --list",
+    "context": "Lists the supported tools."
+   },
+   {
+    "cmd": "./scummvm-tools-cli --tool extract_agos <infile 1> ... <infile n>",
+    "context": "Extracts packed files from the Amiga and AtariST versions of Elvira 1/2, Waxworks and Simon the Sorcerer 1."
+   },
+   {
+    "cmd": "./scummvm-tools-cli --tool extract_kyra -x [-o outputdir] <infile>",
+    "context": "Unpacks Kyrandia .PAK files; -x extracts all files from the Hand of Fate installer package."
+   },
+   {
+    "cmd": "./scummvm-tools-cli --tool extract_mm_c64 [-o outputdir] <disk1.d64> <disk2.d64>",
+    "context": "Extracts data files from the Commodore 64 version of Maniac Mansion."
+   },
+   {
+    "cmd": "./scummvm-tools-cli --tool compress_agos --vorbis -q 7 SIMON2.WAV",
+    "context": "Compresses Simon the Sorcerer voc/wav files to Vorbis at quality 7."
+   },
+   {
+    "cmd": "./scummvm-tools-cli --mp3 MONSTER.SOU",
+    "context": "Example of compress_scumm_sou with the MP3 flag, producing a .so3 file."
+   },
+   {
+    "cmd": "./scummvm-tools-cli --tool compress_sword2 [params] <file>",
+    "context": "Compresses Broken Sword 2 music and speech .clu files to .cl3, .clg, or .clf."
+   },
+   {
+    "cmd": "decine [type] [version] [filename]",
+    "context": "Decompiles Delphine Cinematique scripts. Type is -prc or -rel; version is -v1 (Future Wars) or -v2 (Operation Stealth)."
+   },
+   {
+    "cmd": "degob <version> <file.tot> [<file.ext>] [<commun.ext>]",
+    "context": "Decompiles TOT scripts from Coktel Vision games. Version names include Gob1, Gob2, Gob3, Woodruff, and others."
+   }
+  ],
+  "install_notes": "The README gives no Homebrew-specific steps. Extraction usually needs the original game data files, and some tools need particular inputs such as Maniac Mansion disk images or a Loom CD dump. The shell scripts need external programs: extract_loom_tg16.sh uses cdrdao, bchunk, and optionally flac, and convert_dxa.sh uses FFmpeg. The Loom TG16 extraction also needs a CD dump, described on the wiki. Run scummvm-tools-cli --help <tool name> for each tool's options.",
+  "standout": "One binary covers many unrelated games, from Sierra and LucasArts to Coktel Vision, Westwood, and Delphine, and can auto-detect the tool for a given file. It is also a practical way to see how the games stored their data before ScummVM played them.",
+  "status": "unknown for the tools module. The README's 'Last updated' line still reads the unexpanded SVN keyword '$Date$', and it gives no release date. The main ScummVM site is very active, with release 2026.4.0 announced in October 2026, but that does not show whether this tools repository is still being maintained.",
+  "caveats": "The README warns that the tools are 'not always in-sync with the latest STABLE version of ScummVM', so a tool's output may not match the ScummVM version you run. Some compression output needs a ScummVM build with zlib, Ogg, or MP3 support. Some tools have version gaps: compress_gob's output is for Gobliiins, compress_sci does not handle SCI32 games, compress_sword1 does not handle the PSX version, and extract_mm_nes does not handle the Japanese version. The GUI wizard is only for extraction and compression. The homepage fetch returned ScummVM's main site, not material about these tools.",
+  "quotes": [
+   "This is a collection of various tools that may be useful to use in conjunction with ScummVM.",
+   "The extraction and compression tools can either be run from the command line or using the GUI wizard. All other tools are only available in command line.",
+   "Please note that this module is not always in-sync with the latest STABLE version of ScummVM."
+  ],
+  "links": [
+   {
+    "label": "ScummVM homepage",
+    "url": "https://www.scummvm.org/"
+   },
+   {
+    "label": "ScummVM Tools wiki page",
+    "url": "https://wiki.scummvm.org/index.php?title=ScummVM_Tools"
+   },
+   {
+    "label": "scummvm-tools GitHub repository (README)",
+    "url": "https://github.com/scummvm/scummvm-tools"
+   }
+  ],
+  "fetch_log": [
+   "https://www.scummvm.org/ - worked, but it is the main ScummVM site (news and game list), not documentation for these tools; no tool details found there",
+   "https://github.com/scummvm/scummvm-tools - worked, returned the README, which contains the tool documentation used for this brief"
+  ]
+ }
+}

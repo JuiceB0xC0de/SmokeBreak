@@ -1,0 +1,93 @@
+{
+ "name": "dbus",
+ "desc": "Message bus system, providing inter-application communication",
+ "homepage": "https://wiki.freedesktop.org/www/Software/dbus",
+ "installs_365d": 521341,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "protocol",
+  "network"
+ ],
+ "why": "The message bus underneath many desktops is a protocol door most people never look through, though the formulae is commonly known.",
+ "brief": {
+  "what_it_is": "D-Bus is a message bus system that lets applications send messages to one another on the same computer. It runs as a bus daemon (dbus-daemon) with a system instance for events such as new hardware or printer queue changes, and a per-login-session instance for general user-application IPC. Applications connect to the daemon and exchange messages through it, though two applications can also talk directly over a one-to-one framework. The reference implementation includes dbus-daemon and the libdbus library.",
+  "why_it_exists": "The homepage says D-Bus is a simple way for applications to talk to one another, and that it also coordinates process lifecycle so that a single-instance application or daemon is simple and reliable to write, and so that services can be launched on demand when needed.",
+  "how_it_works": "Applications connect to a message bus daemon, either the system bus or a per-session bus, and exchange messages through it. The reference library libdbus has no required dependencies, and the reference bus daemon's only required dependency is the expat XML parser. Higher-level bindings for Qt, GLib, Java, C#, Python and others wrap libdbus and add their own dependencies.",
+  "commands_seen": [],
+  "install_notes": "The fetched homepage and project page contained no command lines. The Homebrew formula's caveats, which were not from the README or docs, give these steps. To start the session bus now and at login: brew services start dbus. To start the system bus, run sudo cp -f $(brew --prefix dbus)/org.freedesktop.dbus-system.plist /Library/LaunchDaemons and then sudo launchctl bootstrap system /Library/LaunchDaemons/org.freedesktop.dbus-system.plist. To restart an already running system daemon: sudo launchctl kickstart -k system/org.freedesktop.dbus-system. The system-bus steps need root and are a manual install on macOS.",
+  "standout": "The bus is also a process-lifecycle tool: it enforces single-instance applications and launches services on demand when something calls them. The reference daemon needs only expat, and the protocol has been declared stable.",
+  "status": "Maintained. The wiki page was last edited Feb 27 2025. The wiki says the current stable branch is 1.16.x and is recommended, the legacy 1.14.x branch gets security fixes until mid 2026, and a 1.17.x development branch is in progress. The GitLab project page loaded but showed no README text or release dates.",
+  "caveats": "The low-level libdbus is not designed for application authors; the wiki recommends higher-level bindings or reimplementations instead. Remote communication is only unencrypted TCP/IP, intended for use behind a firewall with shared NFS home directories. The 1.17.x development branch has no security support. The wiki says the Windows port is mostly finished and supports Vista, 8, 10 and server variants with MSVC, mingw or Cygwin. The GitLab page shows spam restrictions on new accounts. The brew-only system bus setup requires sudo and launchctl.",
+  "quotes": [
+   "D-Bus is a message bus system, a simple way for applications to talk to one another.",
+   "it makes it simple and reliable to code a \"single instance\" application or daemon, and to launch applications and daemons on demand when their services are needed.",
+   "Get on D-Bus today!"
+  ],
+  "links": [
+   {
+    "label": "Homepage (D-Bus wiki)",
+    "url": "https://wiki.freedesktop.org/www/Software/dbus"
+   },
+   {
+    "label": "Reference implementation source (GitLab)",
+    "url": "https://gitlab.freedesktop.org/dbus/dbus"
+   }
+  ],
+  "fetch_log": [
+   "https://wiki.freedesktop.org/www/Software/dbus: loaded, full wiki text (what it is, docs, download, bindings).",
+   "https://gitlab.freedesktop.org/dbus/dbus: loaded, but only project metadata and a spam notice; README body not present in the returned text."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "D-Bus is a widely used but often invisible IPC protocol, and its service activation and process-lifecycle features make the plumbing worth exploring."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "D-Bus",
+  "tldr": "The message bus that lets desktop programs on one machine talk to each other, with tools to watch and poke it from a shell.",
+  "deeper_look": "D-Bus is a message bus. A daemon, `dbus-daemon`, runs in the background, and applications connect to it to send each other messages. There are normally two instances: a system bus for things like new hardware or printer queue changes, and a per-login session bus for ordinary application-to-application talk. Two applications can also skip the daemon and talk directly over a one-to-one connection.\n\nThe homepage describes it as \"a simple way for applications to talk to one another.\" It also takes on process lifecycle. Because the bus knows which names are claimed, it can make a single-instance application or daemon simple and reliable to write, and it can launch a service on demand when something first calls it.\n\nThe idea underneath is that a desktop is a crowd of cooperating processes, and they need a shared directory and a shared way to call each other. Once you see the bus, a lot of Linux desktop behaviour starts to make sense. The reference implementation is small: libdbus has no required dependencies, and the daemon needs only the expat XML parser. The installed tools, such as `dbus-monitor` and `dbus-send`, let you observe and send messages yourself.\n\nOn macOS via Homebrew, the session bus is easy to start. The system bus is a manual, root-level setup.",
+  "install": "brew install dbus\n# start the session bus now and at login:\nbrew services start dbus\n# optional system bus (needs root, manual on macOS):\nsudo cp -f $(brew --prefix dbus)/org.freedesktop.dbus-system.plist /Library/LaunchDaemons\nsudo launchctl bootstrap system /Library/LaunchDaemons/org.freedesktop.dbus-system.plist",
+  "try_this": [
+   {
+    "cmd": "dbus-monitor --help",
+    "what_happens": "Shows the options for the tool that watches messages passing over a bus."
+   },
+   {
+    "cmd": "dbus-send --help",
+    "what_happens": "Shows how to craft and send a message to a service on the bus."
+   },
+   {
+    "cmd": "dbus-daemon --help",
+    "what_happens": "Shows how the bus daemon itself is configured and started."
+   }
+  ],
+  "whats_unique": "It is the reference implementation of the bus most Linux desktops are built on, and it also handles single-instance enforcement and on-demand service launch. The reference daemon needs only expat.",
+  "caveats": "The low-level libdbus is not meant for application authors, the wiki points to higher-level bindings, and on macOS the system bus needs sudo and launchctl by hand.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "ipc",
+   "protocol",
+   "daemon",
+   "desktop"
+  ],
+  "links": [
+   {
+    "label": "Homepage (D-Bus wiki)",
+    "url": "https://wiki.freedesktop.org/www/Software/dbus"
+   },
+   {
+    "label": "Reference implementation source (GitLab)",
+    "url": "https://gitlab.freedesktop.org/dbus/dbus"
+   }
+  ]
+ }
+}

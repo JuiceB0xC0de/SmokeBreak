@@ -1,0 +1,95 @@
+{
+ "name": "airspy",
+ "desc": "Driver and tools for a software-defined radio",
+ "homepage": "https://airspy.com/",
+ "installs_365d": 411,
+ "deprecated": true,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "afternoon",
+  "network"
+ ],
+ "why": "Driver and tools for an SDR, a real door into radio, though deprecated and hardware-dependent.",
+ "brief": {
+  "what_it_is": "Airspy host software: a C driver library and command-line tools for Airspy software-defined radio receivers, which are USB hardware sold separately (the homepage lists HF+, R2, Mini and SpyVerter R2 products). The Homebrew formula installs eight executables: airspy_gpio, airspy_gpiodir, airspy_info, airspy_lib_version, airspy_r820t, airspy_rx, airspy_si5351c and airspy_spiflash. The README does not document what each tool takes in or puts out, so any description beyond names is inference. The names suggest that airspy_rx streams received radio samples from the device to a file or stdout, and that airspy_info reports device details, but I could not confirm this from the pages read. The repo describes itself as 'A tiny and efficient software defined radio' and supports Linux, Windows and FreeBSD.",
+  "why_it_exists": "The README frames it as host software 'for AirSpy, a project to produce a low cost, open source software radio platform.' The homepage describes the hardware as combining 'Software Architecture, DSP and RF techniques' to be 'a serious alternative to both cost sensitive and high end receivers.'",
+  "how_it_works": "The README does not explain the internals. It says the code is 'based on HackRF project' and that the build uses CMake with libusb, so the tools talk to the receiver over USB. The homepage says the radios integrate with the SDR# application for acquisition, analysis and demodulation.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt-get install build-essential cmake libusb-1.0-0-dev pkg-config",
+    "context": "Linux (Debian/Ubuntu/Raspbian) prerequisites: compiler, CMake, libusb headers and pkg-config."
+   },
+   {
+    "cmd": "wget https://github.com/airspy/airspyone_host/archive/master.zip",
+    "context": "Downloads the master branch source archive for the Linux build."
+   },
+   {
+    "cmd": "unzip master.zip",
+    "context": "Unpacks the source archive."
+   },
+   {
+    "cmd": "cd airspyone_host-master",
+    "context": "Enters the unpacked source directory."
+   },
+   {
+    "cmd": "mkdir build",
+    "context": "Creates an out-of-tree build directory."
+   },
+   {
+    "cmd": "cd build",
+    "context": "Changes into the build directory."
+   },
+   {
+    "cmd": "cmake ../ -DINSTALL_UDEV_RULES=ON",
+    "context": "Configures the build and asks it to install udev rules so the USB device is accessible without root."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles the host library and tools."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the built files system-wide."
+   },
+   {
+    "cmd": "sudo ldconfig",
+    "context": "Refreshes the shared library cache after install."
+   },
+   {
+    "cmd": "usermod -a -G plugdev <user>",
+    "context": "FreeBSD step (run as root): adds a user to the plugdev group so they can access the device."
+   }
+  ],
+  "install_notes": "Hardware: an Airspy receiver plugged in over USB is needed to do anything useful with these tools. Linux: needs build-essential, cmake, libusb-1.0 dev files and pkg-config; the CMake flag -DINSTALL_UDEV_RULES=ON installs udev rules, then sudo ldconfig. FreeBSD: pkg install git cmake, then cmake .. -DLIBUSB_LIBRARIES=/usr/lib/libusb.so, make, make install, and add the user to the plugdev group. Windows: either Visual Studio 2013 or later with a libusb 1.0.20 download and pthreads-w32 2.9.1 extracted into the source tree, or MSYS2 mingw64 with pacman packages for gcc, make, pkgconf and libusb, built via CMake with MinGW Makefiles. Windows versions older than Vista need a driver installed, or Zadig can swap in WinUSB for the AirSpy USB device. No account or licence key is mentioned in the README.",
+  "standout": "Ordinary SDR tooling is usually bundled with a single app, but this repo is a plain C library plus a small set of named command-line tools, and the homepage pitches the hardware as a cheap alternative to high-end receivers. The README is also unusually candid about one Windows trap: Ctrl-C in airspy_rx does not stop cleanly under Cygwin or MinGW shells and can corrupt the output file.",
+  "status": "unknown. The README gives no release date, version number or recent commit. The two GitHub pages I fetched returned only the README, with no commit or release metadata. The scout notes call the project deprecated, but I could not confirm that from these pages. The homepage is current (copyright 2026 and a live product line), but that describes the vendor, not this repository's upkeep.",
+  "caveats": "Needs Airspy hardware to be of any use. Builds are fiddly: Windows requires either Visual Studio 2013 or an MSYS2 environment, and the README pulls libusb and pthreads from external URLs, one of which is an old ftp:// link. Tools must be run from a native Windows command shell, not Cygwin or MinGW, or airspy_rx may not stop cleanly and may corrupt its file. The README has no usage documentation for any of the eight tools. The FreeBSD clone command uses backslashes in the URL. The README does not state a licence, though it says the code is based on the HackRF project. The scout note says deprecated, which I could not verify from the pages.",
+  "quotes": [
+   "A tiny and efficient software defined radio.",
+   "This repository contains host software (Linux/Windows) for AirSpy, a project to produce a low cost, open source software radio platform.",
+   "There is a whole world below 30 MHz."
+  ],
+  "links": [
+   {
+    "label": "Airspy homepage",
+    "url": "https://airspy.com/"
+   },
+   {
+    "label": "airspyone_host repository (README read)",
+    "url": "https://github.com/airspy/airspyone_host"
+   },
+   {
+    "label": "airspy/host repository (same README)",
+    "url": "https://github.com/airspy/host"
+   }
+  ],
+  "fetch_log": [
+   "https://airspy.com/ worked; marketing page with product lines and a company description, no software docs",
+   "https://github.com/airspy/host worked; returned README for the host software, build instructions only",
+   "https://github.com/airspy/airspyone_host worked; returned the same README as airspy/host, no release or commit info"
+  ]
+ }
+}

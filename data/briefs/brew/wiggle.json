@@ -1,0 +1,69 @@
+{
+ "name": "wiggle",
+ "desc": "Program for applying patches with conflicting changes",
+ "homepage": "https://github.com/neilbrown/wiggle",
+ "installs_365d": 66,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "library"
+ ],
+ "why": "Patch application that tolerates conflicting context is clever diff-matching work, though it is still a fairly niche utility.",
+ "brief": {
+  "what_it_is": "Wiggle is a command-line C program that applies patches whose context no longer matches the target file exactly, the cases where GNU patch would reject a hunk. It can also do word-wise diffs and three-way merges. Its inputs are one, two, or three files (use - for stdin), which can be patch files, merge output, or whole files. Output is the patched or merged text, with unresolvable conflicts marked, or a diff-style report. The help text describes four functions: merge (the default), diff, extract, and browse.",
+  "why_it_exists": "The author describes it as a tool to 'apply patches that patch rejects', and the repository's own description is 'apply rejected patches and perform word-wise diffs'. The problem is a patch whose surrounding lines have drifted, so a line-based tool gives up on the hunk.",
+  "how_it_works": "The README I could read is mostly the top-of-file comment and help text, which does not describe the algorithm. The help text says merge compares three files word by word and reports unresolvable conflicts as whole-line differences. The --lines option switches to line-wise comparison. The source has files named bestmatch.c, merge2.c, and patch_depends.c, which suggest a best-match search over candidate positions, but I did not read them, so treat that as a guess.",
+  "commands_seen": [
+   {
+    "cmd": "wiggle --diff --help",
+    "context": "Help text example showing that a function must be selected before asking for its detailed help."
+   },
+   {
+    "cmd": "Usage: wiggle --diff|--extract|--merge|--browse --lines|--words [--replace] files...",
+    "context": "The program's top-level usage line, taken from the source's Usage string."
+   },
+   {
+    "cmd": "wiggle --extract -[123] [--patch]  merge-or-patch",
+    "context": "Help synopsis for extract, which pulls one branch out of a patch or merge file."
+   },
+   {
+    "cmd": "wiggle --diff [-wl] [-p12] [-R]  file-or-patch [file-or-patch]",
+    "context": "Help synopsis for diff, which reports word-wise or line-wise differences in a diff -u style."
+   },
+   {
+    "cmd": "wiggle --merge [-wl] [--replace]  file-or-merge [file-or-patch [file]]",
+    "context": "Help synopsis for merge, the default function, which applies a patch to a file with word-level wiggling."
+   },
+   {
+    "cmd": "wiggle --browse [-R] [--strip=n] [-p] [files]",
+    "context": "Help synopsis for the interactive browse mode for stepping through a set of patches."
+   }
+  ],
+  "install_notes": "Nothing beyond the brew install was in the pages I read. The repository has an INSTALL file and a Makefile, so building from source is the expected route. I did not open INSTALL.",
+  "standout": "Most patch tools match whole lines. Wiggle matches word by word, so it can apply a hunk whose context has changed slightly and still produce a three-way merge with word-level conflict markers. It also has a diff mode that shows word-level changes.",
+  "status": "Maintained, though slowly. The latest tarball on the author's site is wiggle-1.3.tar.gz, dated 2024-02-01. The repository shows 329 commits and 111 stars. The source header says version 1.3, dated 2020-10-03. I did not find a last-commit date on the page.",
+  "caveats": "Licensed GPL-2.0 (the source header says GPL-2+). It is a niche utility. The browse mode's help text says it 'will eventually allow limited editing', so editing is not finished. The brew description calls it a fairly niche tool. I did not check platform support or build requirements.",
+  "quotes": [
+   "apply rejected patches and perform word-wise diffs",
+   "Wiggle - apply patches that 'patch' rejects.",
+   "Wiggle provides four distinct but related functions: merge, diff, extract, and browse."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/neilbrown/wiggle"
+   },
+   {
+    "label": "Author's project page and tarball index",
+    "url": "https://neil.brown.name/wiggle/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/neilbrown/wiggle: worked. The page returned the repository view with the top-of-file comment and help text from wiggle.c, but not a rendered README.",
+   "https://neil.brown.name/wiggle/: worked. Directory listing of release tarballs from 0.2 to 1.3."
+  ]
+ }
+}

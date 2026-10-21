@@ -1,0 +1,91 @@
+{
+ "name": "hidapitester",
+ "desc": "Command-line tool to exercise USB HID devices via HIDAPI",
+ "homepage": "https://github.com/todbot/hidapitester",
+ "installs_365d": 65,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "quick",
+  "protocol"
+ ],
+ "why": "Lets you send raw reports to any USB HID device from the shell, opening up the strange world of HID descriptors.",
+ "brief": {
+  "what_it_is": "hidapitester is a command-line program for poking at USB HID devices through the HIDAPI library. You give it a list of ordered arguments: filters to find a device (vendor/product ID, usage page, usage, serial), then actions such as opening it, sending Output or Feature reports, reading Input reports, or fetching the report descriptor. Output goes to the terminal as device listings and hex dumps of the report bytes. The README says the goal is to exercise every API call in hidapi from the shell. Prebuilt binaries are published for macOS, Linux (x86_64 and Raspberry Pi), and Windows 64-bit.",
+  "why_it_exists": "The README frames it as a simple, low-dependency tool for testing every API call in hidapi, with default builds fully static and needing no system-installed hidapi. The scout note adds that it lets you send raw reports to any USB HID device from the shell.",
+  "how_it_works": "The program parses its arguments left to right as a sequence of commands and runs them in order, so filters set up the next --open and reads and writes follow it. Report bytes are passed as comma-separated lists, and the first byte is the report ID when report IDs are used. Buffer length is set separately with --length, and reads block for a configurable --timeout in milliseconds, or loop forever with the -forever variants.",
+  "commands_seen": [
+   {
+    "cmd": "brew install hidapitester",
+    "context": "Homebrew install, which the README gives for macOS or Linux users with Homebrew set up."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds hidapitester with the included Makefile after cloning both the hidapi and hidapitester repos side by side."
+   },
+   {
+    "cmd": "HIDAPI_DIR=../hidapi-libusb-test make clean",
+    "context": "Clean-builds against a hidapi copy in a different directory by setting the HIDAPI_DIR Makefile variable."
+   },
+   {
+    "cmd": "cmake -S . -B build -DCMAKE_BUILD_TYPE=Release",
+    "context": "Configures a CMake build in the build directory; CMake fetches hidapi main branch from GitHub."
+   },
+   {
+    "cmd": "sudo apt install libudev1 libudev-dev pkg-config",
+    "context": "Linux build prerequisites listed in the README."
+   },
+   {
+    "cmd": "hidapitester --vidpid 16C0 --usagePage FFAB --open",
+    "context": "Opens a device by vendor ID plus usage page; --open takes whichever of VID, PID, usagePage, and usage are given."
+   },
+   {
+    "cmd": "hidapitester --vidpid 046D:B378 --nonexclusive --open --read-input",
+    "context": "macOS example opening a device in shared mode so a keyboard or mouse keeps working, then reading one Input report."
+   },
+   {
+    "cmd": "hidapitester [...] --length 16 --send-output 3,42",
+    "context": "Sends a 16-byte Output report on reportId 3 with only the first data byte set to 42."
+   },
+   {
+    "cmd": "hidapitester --vidpid 0x27b8/0x1ed --open --length 9 --send-feature 1,99,0,255,0  --read-feature 1 --close",
+    "context": "Example from a blink(1) that sends a Feature report and reads one back to get version info, with sample output shown in the README."
+   },
+   {
+    "cmd": "sudo xcode-select --install",
+    "context": "Installs Xcode Command-line Tools, the macOS build prerequisite."
+   }
+  ],
+  "install_notes": "Homebrew works on macOS and Linux. Building from source needs a C toolchain and hidapi: the Makefile expects a hidapi checkout next to it, or HIDAPI_DIR set; CMake fetches hidapi itself. Mac needs Xcode Command-line Tools. Windows needs MSYS2 and a build inside a MinGW/MSYS2 window. Linux needs udev and pkg-config (libudev-dev on Debian/Ubuntu). No accounts or runtimes are mentioned. Running against real hardware needs the device connected, and on macOS, exclusive open needs root for keyboards unless --nonexclusive is used. Test firmware sketches for Arduino-style boards are in the repo under test_hardware.",
+  "standout": "It is a thin, scriptable window onto HIDAPI itself, with report descriptors, Feature and Output reports, and hex dumps all reachable from the shell. The README includes a test-hardware section with ready-made firmware sketches (RP2040, Teensy, Pro Micro) that send and echo raw HID reports, so you can test both ends of the link.",
+  "status": "maintained. The latest release is v0.7, dated 26 Sep in the fetched releases page (year not shown in the text I received), and it notes that brew install hidapitester now works. Earlier releases run from 0.1 through v0.6 (05 May), with v0.5 and v0.6 adding features such as --get-report-descriptor, --width, and --read-input-report-forever. The README has CI badges for Linux, macOS, Windows, and Raspberry Pi.",
+  "caveats": "On macOS, hidapi opens devices exclusively by default, which needs root for keyboards and stops a mouse moving the cursor, so --nonexclusive is needed for that. On FreeBSD (libusb backend) and NetBSD, --nonexclusive only prints a warning and the device is still opened exclusively. Building needs extra steps on each platform, and the Windows route goes through MSYS2. The README describes the hardware test target for hidtest_tinyusb as primarily RP2040, with ESP32-S2/S3 and SAMD51/21 reported to work. The make test-hw hardware tests are described in the release notes as not quite finished. The README's own example for reading a report with a report ID is slightly inconsistent about buffer length, so check the --length rule carefully. No license was visible in the text I fetched.",
+  "quotes": [
+   "Simple command-line program to exercise HIDAPI",
+   "The goal of the `hidapitester` program is to provide a simple, low-dependency command-line tool to test out every API call in hidapi.",
+   "Default builds are fully-static with no requirements on a system-installed `hidapi`.",
+   "On macOS, hidapi opens devices exclusively by default. This needs root for keyboards and stops a mouse from moving the cursor while it's open."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repo)",
+    "url": "https://github.com/todbot/hidapitester"
+   },
+   {
+    "label": "Releases and prebuilt binaries",
+    "url": "https://github.com/todbot/hidapitester/releases"
+   },
+   {
+    "label": "hidapi library",
+    "url": "https://github.com/libusb/hidapi"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/todbot/hidapitester: worked, README returned in full, including usage, examples, and compiling sections.",
+   "https://github.com/todbot/hidapitester/releases: loaded, but the text was mostly page chrome; release notes for v0.7, v0.6, v0.5, 0.3, 0.2, and 0.1 were readable and used for status."
+  ]
+ }
+}

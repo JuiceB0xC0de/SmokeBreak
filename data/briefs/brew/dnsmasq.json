@@ -1,0 +1,57 @@
+{
+ "name": "dnsmasq",
+ "desc": "Lightweight DNS forwarder and DHCP server",
+ "homepage": "https://thekelleys.org.uk/dnsmasq/doc.html",
+ "installs_365d": 29461,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "A DNS and DHCP server running in countless routers; a door into DHCP and DNS that nobody looks at, though it's well known.",
+ "brief": {
+  "what_it_is": "Dnsmasq is a small network services daemon for small networks. It runs a local DNS server that forwards queries to upstream recursive resolvers and caches common record types. It also runs a DHCP server (DHCPv4, DHCPv6, BOOTP and PXE), IPv6 router advertisement, and a read-only TFTP server for netboot. Names come in from /etc/hosts, from DHCP leases, or from configuration, and answers go out to LAN clients.",
+  "why_it_exists": "The page says it provides network infrastructure for small networks and is designed to be lightweight with a small footprint, suitable for resource-constrained routers and firewalls. It has also been widely used for smartphone tethering, portable hotspots, and virtual networking in virtualisation frameworks.",
+  "how_it_works": "The homepage describes components rather than internals: a DNS subsystem that forwards all query types and caches A, AAAA, CNAME and PTR records (plus DNSKEY and DS when DNSSEC is enabled), a DHCP subsystem with static and dynamic leases, and a router advertisement subsystem that can run alone or alongside DHCPv6. Machines that get leases have their names added to DNS automatically. Features can be left out at compile time to shrink the binary. The page does not explain the internals in more detail.",
+  "commands_seen": [
+   {
+    "cmd": "git clone git://thekelleys.org.uk/dnsmasq.git",
+    "context": "Clones the dnsmasq git repository over the git protocol. The repo holds the full release history of version 2 and development history from 2.60."
+   },
+   {
+    "cmd": "git clone http://thekelleys.org.uk/git/dnsmasq.git",
+    "context": "Same repository cloned over plain HTTP, given as the alternative to the git:// form."
+   }
+  ],
+  "install_notes": "The homepage has no install instructions beyond the source tarball and git repo. The tarball includes the documentation, source and manpage, and there is a CHANGELOG and FAQ. The brew caveats from the formula say that on current macOS, /etc/resolver/<domain> overrides fail when the nameserver is 127.0.0.1 and dnsmasq listens on a non-53 port. The suggested fix is to bind dnsmasq to a non-localhost address such as a loopback alias like 10.0.0.1 on port 53. Those caveats come from the Homebrew formula, not from the homepage.",
+  "standout": "Unlike most DNS forwarders, one small daemon covers DNS, DHCPv4/v6, PXE with netboot menus, TFTP and router advertisements, and it can auto-register DHCP hostnames into DNS. Compile-time feature removal keeps it small enough for embedded routers, which is why it sits inside so many consumer devices.",
+  "status": "Maintained, as far as the homepage shows. The page says the author, Simon Kelley, now works on dnsmasq as his main activity, with no employer funding it. The page shows no release date or changelog entry, so I could not check the last release or commit date. The brew formula is present and the git repo is linked.",
+  "caveats": "The mailing list is the first stop for queries and bug reports, and the author has no paid support arrangement; donations are requested. macOS users hit the resolver override issue described above. Licensing is GPL, version 2 or version 3 at the user's option. I fetched only the homepage and did not follow the manpage or FAQ, so option-level detail is missing from this brief.",
+  "quotes": [
+   "Dnsmasq provides network infrastructure for small networks: DNS, DHCP, router advertisement and network boot.",
+   "For extra compactness, unused features may be omitted at compile time.",
+   "For most of its life, dnsmasq has been a spare-time project."
+  ],
+  "links": [
+   {
+    "label": "Homepage and documentation",
+    "url": "https://thekelleys.org.uk/dnsmasq/doc.html"
+   },
+   {
+    "label": "Mailing list (first stop for queries and bug reports)",
+    "url": "http://lists.thekelleys.org.uk/mailman/listinfo/dnsmasq-discuss"
+   },
+   {
+    "label": "Mailing list archive, searchable",
+    "url": "https://www.mail-archive.com/dnsmasq-discuss@lists.thekelleys.org.uk/"
+   }
+  ],
+  "fetch_log": [
+   "https://thekelleys.org.uk/dnsmasq/doc.html: fetched OK, plain-text page with features, download, licence, contact and donation sections. No release date shown. No further fetches made, since the page was substantive and the only commands on it are the two git clone lines."
+  ]
+ }
+}

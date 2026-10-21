@@ -1,0 +1,85 @@
+{
+ "name": "socket_vmnet",
+ "desc": "Daemon to provide vmnet.framework support for rootless QEMU",
+ "homepage": "https://github.com/lima-vm/socket_vmnet",
+ "installs_365d": 3182,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "afternoon",
+  "protocol"
+ ],
+ "why": "A daemon exposing macOS vmnet networking to unprivileged QEMU, a sneaky door into how virtual networking works.",
+ "brief": {
+  "what_it_is": "socket_vmnet is a macOS daemon that exposes Apple's vmnet.framework networking to QEMU, so QEMU can run without root. The daemon runs as root and listens on a Unix socket (default /var/run/socket_vmnet, or ${HOMEBREW_PREFIX}/var/run/socket_vmnet under Homebrew). QEMU is started through the companion socket_vmnet_client, which connects to that socket and passes the connection to QEMU as fd 3, giving the guest a virtio NIC on a vmnet network. The guest gets its IP from macOS's DHCP server and can reach the internet and the host. It was forked from vde_vmnet v0.6.0 but does not depend on VDE. Lima has built-in support for it.",
+  "why_it_exists": "QEMU has had built-in vmnet support since 7.1, but that requires the entire QEMU process to run as root. The README says socket_vmnet exists so QEMU does not have to run as root; only the networking piece needs root.",
+  "how_it_works": "socket_vmnet, running as root, talks to vmnet.framework and serves networking over a Unix socket. socket_vmnet_client connects to that socket and hands the connection to the QEMU process it launches, which uses it through -netdev socket,fd=3. Gateway and DHCP range are set with flags such as --vmnet-gateway, and with --vmnet-dhcp-end you can carve out static addresses from the subnet.",
+  "commands_seen": [
+   {
+    "cmd": "brew install socket_vmnet",
+    "context": "Installs socket_vmnet from Homebrew; binaries land in ${HOMEBREW_PREFIX}/opt/socket_vmnet/bin/."
+   },
+   {
+    "cmd": "sudo make install.bin",
+    "context": "Source install; puts binaries under PREFIX=/opt/socket_vmnet by default (bin/socket_vmnet and bin/socket_vmnet_client)."
+   },
+   {
+    "cmd": "sudo /opt/socket_vmnet/bin/socket_vmnet --vmnet-gateway=192.168.105.1 /var/run/socket_vmnet",
+    "context": "Starts the daemon by hand with gateway 192.168.105.1 and socket path /var/run/socket_vmnet."
+   },
+   {
+    "cmd": "sudo ${HOMEBREW_PREFIX}/bin/brew services start socket_vmnet",
+    "context": "Installs and starts the launchd service under Homebrew (the sudo is required, per the README comment)."
+   },
+   {
+    "cmd": "${HOMEBREW_PREFIX}/opt/socket_vmnet/bin/socket_vmnet_client ${HOMEBREW_PREFIX}/var/run/socket_vmnet qemu-system-x86_64 -device virtio-net-pci,netdev=net0 -netdev socket,id=net0,fd=3 -m 4096 -accel hvf -cdrom ubuntu-22.04-desktop-amd64.iso",
+    "context": "Launches QEMU through socket_vmnet_client so it gets networking without running as root. The README shows this across several lines with backslash continuations; they are joined here with spaces."
+   },
+   {
+    "cmd": "limactl sudoers | sudo tee /etc/sudoers.d/lima",
+    "context": "Lima setup step: writes sudoers rules so Lima can use socket_vmnet (Lima v0.12.0 or later)."
+   },
+   {
+    "cmd": "limactl start --name=default template://vmnet",
+    "context": "Starts a Lima VM using the built-in vmnet template, which uses socket_vmnet."
+   },
+   {
+    "cmd": "sudo /opt/socket_vmnet/bin/socket_vmnet --vmnet-mode=host --vmnet-network-identifier=$(uuidgen)",
+    "context": "Creates a host-mode network with DHCP disabled; the README says this only works in host mode with a network identifier."
+   },
+   {
+    "cmd": "sudo port install socket_vmnet",
+    "context": "MacPorts install; binaries go to /opt/local/bin."
+   }
+  ],
+  "install_notes": "Requires macOS 10.15 or later. The daemon needs root in most cases. Options: a binary tarball from GitHub releases (the README shows an optional gh attestation verify step and installs to /opt/socket_vmnet), a source build with make install.bin or make install (the latter also installs launchd), Homebrew, or MacPorts. A launchd plist is optional and not needed for Lima. Default launchd settings: socket /var/run/socket_vmnet, logs in /var/log/socket_vmnet/, gateway 192.168.105.1. The README recommends a PREFIX that only root can write, and says /usr/local is not appropriate. The repo includes an etc_sudoers.d/socket_vmnet file for running sudo socket_vmnet with a reduced set of args. Bridged mode uses a separate launchd plist, edited with sed for your Homebrew prefix and bridged interface (en0 in the example). For static IPs or DHCP reservations, the README asks you to edit /etc/bootptab and restart bootpd.",
+  "standout": "It keeps only the privileged networking piece as root and leaves QEMU unprivileged, and it is forked from vde_vmnet with the VDE dependency removed. The README also documents a Tart shim that bridges Tart's Virtualization.framework VMs onto the same daemon, restoring VM-to-VM connectivity that macOS Sequoia/Tahoe blocks.",
+  "status": "unknown. The README shows no release date, last-commit date, or maintenance note. It does reference recent items (Lima v0.12.0 integration and Sequoia/Tahoe kernel behavior), which suggests active development, but that is an inference, not a stated status. The fetch did not include the releases or commits page.",
+  "caveats": "Needs root to run; SETUID is possible but the README discourages it because it lets non-root users write arbitrary files. Signing with com.apple.vm.networking would avoid root, but that entitlement is restricted to virtualization developers and requires contacting Apple. The Homebrew binary can be replaced by any user in the admin group, per a README warning. macOS only (10.15+). The README says you cannot yet configure socket_vmnet's own MAC address. Disabling DHCP only works in --vmnet-mode=host with --vmnet-network-identifier. An IP-not-assigned problem is addressed with socketfilterfw commands for bootpd. Tart connectivity depends on a third-party shim (tannevaled/socket-vmnet-shim). The brew caveat says: you should be certain that you trust any software you grant root privileges.",
+  "quotes": [
+   "`socket_vmnet` does not require QEMU to run as the root user.",
+   "(But `socket_vmnet` itself has to run as the root, in most cases.)",
+   "Typically, the `socket_vmnet` binary in the `${HOMEBREW_PREFIX}` can be replaced by any user in the `admin` group."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage, README)",
+    "url": "https://github.com/lima-vm/socket_vmnet"
+   },
+   {
+    "label": "Lima network docs (vmnet / socket_vmnet usage)",
+    "url": "https://github.com/lima-vm/lima/blob/master/docs/network.md"
+   },
+   {
+    "label": "Apple vmnet.framework documentation",
+    "url": "https://developer.apple.com/documentation/vmnet"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/lima-vm/socket_vmnet: fetched OK; README returned in full, including install, usage, FAQs, and troubleshooting. No further fetches were needed."
+  ]
+ }
+}

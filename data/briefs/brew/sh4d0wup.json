@@ -1,0 +1,77 @@
+{
+ "name": "sh4d0wup",
+ "desc": "Signing-key abuse and update exploitation framework",
+ "homepage": "https://github.com/kpcyrd/sh4d0wup",
+ "installs_365d": 82,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "security",
+  "network"
+ ],
+ "why": "A framework for abusing signed update mechanisms is a real door into how software updates get attacked, though it is security-tooling focused.",
+ "brief": {
+  "what_it_is": "sh4d0wup is a command-line framework, written in Rust, that runs a malicious HTTP/HTTPS update server acting as a reverse proxy in front of a legitimate update server. It takes a 'plot' (a YAML file, or a prebuilt tar.zst archive made from one) that describes request routing, how artifacts are patched or generated, and which signing key to sign them with. It outputs a server that serves tampered but validly signed artifacts to matching clients. It can also infect ELF binaries, pacman, deb and OCI image packages directly, and generate or use signing keys, including hardware keys.",
+  "why_it_exists": "The README frames it around 'shadow updates': updates that officially don't exist but carry valid signatures and would be accepted by clients as genuine, which could happen if a signing key is compromised or a release engineer with legitimate access goes rogue. The tool is for demonstrating and testing that threat against signed update mechanisms.",
+  "how_it_works": "A plot defines routes, and each route can have selectors that match only when, for example, the User-Agent matches a pattern or the client connects from a specific IP address. The bait subcommand serves the matching artifacts, which are patched with the infect subcommands and signed with the configured key. For development and testing, mock signing keys and certificates can be generated and marked as trusted. A plot can be compiled ahead of time with build so downloads and artifact patching don't slow startup.",
+  "commands_seen": [
+   {
+    "cmd": "docker run -it --rm ghcr.io/kpcyrd/sh4d0wup:edge -h",
+    "context": "Runs the published container image and prints the top-level usage, which lists the subcommands bait, front, infect, tamper, keygen, sign, hsm, build, check, req and completions."
+   },
+   {
+    "cmd": "sh4d0wup build ./contrib/plot-hello-world.yaml -o ./plot.tar.zst",
+    "context": "Compiles a plot ahead of time into a reusable archive so that downloads, artifact patching and signing happen before the server starts."
+   },
+   {
+    "cmd": "sh4d0wup bait -B 0.0.0.0:1337 ./plot.tar.zst",
+    "context": "Starts the malicious update server on 0.0.0.0 port 1337 from a compiled plot; the README says YAML plots also work but start more slowly."
+   },
+   {
+    "cmd": "sh4d0wup infect elf /usr/bin/sh4d0wup -c id a.out",
+    "context": "Generates a patched ELF binary (a.out) that runs the command id before its normal behaviour; the README notes it spawns a C compiler to build the injected code."
+   },
+   {
+    "cmd": "sh4d0wup infect pacman --set 'pkgver=0.2.0-2' /var/cache/pacman/pkg/sh4d0wup-0.2.0-1-x86_64.pkg.tar.zst -c id sh4d0wup-0.2.0-2-x86_64.pkg.tar.zst",
+    "context": "Patches a pacman package to bump its version and run id on install, adding an install hook when the package has none."
+   },
+   {
+    "cmd": "sh4d0wup infect deb /var/cache/apt/archives/apt_2.2.4_amd64.deb -c id ./apt_2.2.4-1_amd64.deb --set Version=2.2.4-1",
+    "context": "Patches a Debian package's control data to set a new version and run id, producing an installable .deb."
+   },
+   {
+    "cmd": "sh4d0wup infect oci alpine-edge.tar infected.tar -c id -t infected:latest",
+    "context": "Adds a patched filesystem layer to a saved Docker/OCI image so that it runs id, and tags the result infected:latest."
+   },
+   {
+    "cmd": "git cat-file commit HEAD | ssh lots-o-time nice sh4d0wup tamper git-commit --stdin --collision-prefix 7777 --strip-header | git hash-object -w -t commit --stdin",
+    "context": "Pipes the latest commit to a remote machine, where sh4d0wup brute-forces a tweaked commit whose hash starts with the given prefix, then writes that commit back into the local repository."
+   }
+  ],
+  "install_notes": "The README says a prebuilt binary is in the Arch Linux [extra] repository. To build from source on Debian/Ubuntu (tested on Ubuntu 22.04), install curl, git, build-essential, clang, pkg-config, libssl-dev, libzstd-dev, libpcsclite-dev and liblzma-dev with apt-get, install Rust via rustup, clone the repo, run cargo build --release, then copy target/release/sh4d0wup to /usr/bin. A container image is published at ghcr.io/kpcyrd/sh4d0wup. The hsm subcommand interacts with hardware signing keys, which implies the PC/SC library (libpcsclite) dependency.",
+  "standout": "It targets the update pipeline itself: a reverse proxy that passes everything through unmodified until a selector matches, then serves infected artifacts that carry valid signatures. Its plot format covers several real package ecosystems (Arch, Debian, rustup, curl|sh, OCI images) and includes a git commit collision-prefix brute-forcer.",
+  "status": "unknown. The README has no release dates or changelog. The example output is dated December 2022, and the repo is described as having an Arch Linux [extra] package, but I did not check commit history or releases, so I can't confirm current activity.",
+  "caveats": "This is offensive security tooling. The README describes it as a malicious update server and demonstrates injecting commands into real packages, so any entry should frame it for defensive and research use. The README does not state a license in the text I read. Building from source needs several system libraries and a Rust toolchain. Examples are from 2022 and may not match the current CLI. The hsm and tamper commands are only described in the usage list, with no examples. The docs-only fetch was skipped because the README was complete.",
+  "quotes": [
+   "Have you ever wondered if the update you downloaded is the same one everybody else gets or did you get a different one that was made _just for you_?",
+   "Shadow updates are updates that officially don't exist but carry valid signatures and would get accepted by clients as genuine.",
+   "sh4d0wup is a malicious http/https update server that acts as a reverse proxy in front of a legitimate server and can infect + sign various artifact formats."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/kpcyrd/sh4d0wup"
+   },
+   {
+    "label": "Container image (ghcr.io)",
+    "url": "https://ghcr.io/kpcyrd/sh4d0wup"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/kpcyrd/sh4d0wup: fetched OK, README returned (the full usage text, shadow-update explanation, build steps, plot and infect examples)."
+  ]
+ }
+}

@@ -1,0 +1,66 @@
+{
+ "name": "sysdig",
+ "desc": "System-level exploration and troubleshooting tool",
+ "homepage": "https://sysdig.com/",
+ "installs_365d": 1337,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "protocol"
+ ],
+ "why": "Captures and inspects live system calls, a genuine window into how running programs behave, though now a bit commercial.",
+ "brief": {
+  "what_it_is": "Sysdig is an open-source Linux system visibility tool with native container support. It installs into the Linux kernel, captures system calls and other OS events from a machine, and can save that activity to trace files for later analysis. Two command-line programs ship with it: sysdig, the general tool, and csysdig, a curses-based interactive UI. The README describes it as strace + tcpdump + htop + iftop + lsof + ...awesome sauce. The homepage at sysdig.com is a commercial cloud security marketing page for the Sysdig Secure platform, not documentation for this tool; the open-source project lives at github.com/draios/sysdig.",
+  "why_it_exists": "The README says system-level monitoring and troubleshooting still means SSH-ing into machines and using many dated tools with inconsistent interfaces, and that many of those tools break down in containerized environments. Sysdig aims to unite that toolkit into one consistent interface, with deep inspection of containers without instrumenting the containers themselves.",
+  "how_it_works": "Sysdig instruments physical and virtual machines at the OS level by installing into the Linux kernel and capturing system calls and other OS events. It can write these captures to trace files, similar to how tcpdump and Wireshark handle network traffic, so problems can be analysed later. The README says the trace files store rich system state so captured activity can be put into full context.",
+  "commands_seen": [
+   {
+    "cmd": "~$ sysdig",
+    "context": "README's shorthand for launching the main sysdig system visibility tool."
+   },
+   {
+    "cmd": "~$ csysdig",
+    "context": "README's shorthand for launching csysdig, the curses-based interactive UI for sysdig."
+   },
+   {
+    "cmd": "sudo docker run --rm -i -t --privileged --net=host -v /var/run/docker.sock:/host/var/run/docker.sock -v /dev:/host/dev -v /proc:/host/proc:ro -v /boot:/host/boot:ro -v /src:/src -v /lib/modules:/host/lib/modules:ro -v /usr:/host/usr:ro -v /etc:/host/etc:ro docker.io/sysdig/sysdig",
+    "context": "Runs sysdig in a privileged container with host mounts for /proc, /dev, /boot, /lib/modules, /usr and /etc, plus the Docker socket. README says to then run sysdig or csysdig from the container shell. Written across several lines in the README; joined here."
+   }
+  ],
+  "install_notes": "The README's Getting Started offers two routes: the Docker image docker.io/sysdig/sysdig (run with --privileged and host mounts, as shown in commands_seen), or a deb or rpm package from the latest GitHub release. Installing via the brew formula is not covered in the README. The README does not state kernel version requirements, kernel module or eBPF setup, or root and permission needs beyond the privileged container run. The wiki page 'How-to-Install-Sysdig-for-Linux' is the linked install guide, which I did not fetch.",
+  "standout": "It treats the whole Linux toolkit as one interface and claims deep container inspection without modifying the containers. Its record-to-trace-file approach, similar to tcpdump for system calls, lets you analyse system activity after the fact with full system state attached.",
+  "status": "unknown. The README has a CI build badge and a 'latest SemVer' release badge pointing at GitHub releases, and it links to an active wiki, mailing list and Slack. I could not see a last-release or last-commit date from the fetched content, so I cannot confirm activity.",
+  "caveats": "The homepage is a commercial cloud and AI security marketing site that promotes paid Sysdig Secure products. The README says the open-source project is supported by Sysdig Inc and points to the commercial Sysdig Monitor product for a fully supported version, so the scout's 'a bit commercial' note holds up. The README is licensed under Apache 2.0 for the userspace programs and supporting code. Contributions require a DCO sign-off. Running the container needs --privileged and access to host kernel and system directories, which is a security trade-off. The README does not list platform support beyond Linux.",
+  "quotes": [
+   "Sysdig is a simple tool for deep system visibility, with native support for containers.",
+   "Think about sysdig as strace + tcpdump + htop + iftop + lsof + ...awesome sauce.",
+   "Sysdig unites your Linux toolkit into a single, consistent, easy-to-use interface."
+  ],
+  "links": [
+   {
+    "label": "Homepage (commercial Sysdig product site)",
+    "url": "https://sysdig.com/"
+   },
+   {
+    "label": "GitHub repository (open-source sysdig, README)",
+    "url": "https://github.com/draios/sysdig"
+   },
+   {
+    "label": "Project wiki (full documentation)",
+    "url": "https://github.com/draios/sysdig/wiki"
+   },
+   {
+    "label": "Video introduction to csysdig",
+    "url": "https://www.youtube.com/watch?v=UJ4wVrbP-Q8"
+   }
+  ],
+  "fetch_log": [
+   "https://sysdig.com/ - worked, but it is the commercial marketing homepage and contains no usage docs for the open-source CLI tool",
+   "https://github.com/draios/sysdig - worked, returned the README, which was sufficient for the brief; wiki and linked install guide not fetched"
+  ]
+ }
+}

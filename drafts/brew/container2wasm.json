@@ -1,0 +1,145 @@
+{
+ "name": "container2wasm",
+ "desc": "Container to WASM converter",
+ "homepage": "https://ktock.github.io/container2wasm-demo/",
+ "installs_365d": 61,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "language",
+  "visual"
+ ],
+ "why": "Converting a whole Linux container into a WebAssembly module that runs in a browser is a striking transform worth watching execute.",
+ "brief": {
+  "what_it_is": "container2wasm is a command-line converter, invoked as c2w, that takes a Linux container image (for example ubuntu:22.04) and writes out a single WebAssembly module, out.wasm by default. The module bundles the container together with a Linux kernel and an emulated CPU, so the container can run under a WASI runtime such as wasmtime or in a web browser. The README says x86_64 or riscv64 containers are recommended, and other architectures work but run slower because of extra emulation. The companion c2w-net command runs the user-space network stack that gives the converted image networking.",
+  "why_it_exists": "The README's Motivation section says that although more programming languages support WASM, existing programs are hard to run there, often requiring re-implementation and re-compilation. It calls the tool 'a PoC converter' that tries to solve this by enabling running unmodified containers on WASM.",
+  "how_it_works": "The README describes the output as a WASM image that runs the container and the Linux kernel on an emulated CPU. Bochs emulates x86_64 and TinyEMU emulates RISC-V, both compiled to WASM, with QEMU (QEMU Wasm) used for the --to-js browser path. Linux starts the container with runc, and BuildKit runs the conversion steps defined in a Dockerfile. Host directories reach the guest through WASI filesystem calls and virtio-9p, and networking uses sock_* calls under WASI or the browser Fetch API or WebSocket on the web.",
+  "commands_seen": [
+   {
+    "cmd": "c2w ubuntu:22.04 out.wasm",
+    "context": "Converts the ubuntu:22.04 image to a WASI image named out.wasm."
+   },
+   {
+    "cmd": "c2w --target-arch=riscv64 riscv64/ubuntu:22.04 out.wasm",
+    "context": "Converts a riscv64 image; the README's NOTE1 says to use --target-arch for architectures other than amd64."
+   },
+   {
+    "cmd": "wasmtime out.wasm uname -a",
+    "context": "Runs the converted image under the wasmtime runtime and prints the guest kernel info."
+   },
+   {
+    "cmd": "wasmtime --mapdir /mnt/share::/tmp/share out.wasm cat /mnt/share/from-host",
+    "context": "Maps a host directory into the container so the guest can read host files."
+   },
+   {
+    "cmd": "c2w --to-js alpine:3.20 /tmp/out-js/htdocs/",
+    "context": "Uses emscripten and QEMU Wasm to produce a WASM plus JS bundle for running in the browser."
+   },
+   {
+    "cmd": "c2w-net --listen-ws localhost:8888",
+    "context": "Starts the network stack listening on a WebSocket so a browser-run container can use host networking."
+   },
+   {
+    "cmd": "c2w-net --invoke -p localhost:8000:80 /tmp/out/httpd.wasm --net=socket",
+    "context": "Runs the image through wasmtime with networking and forwards host port 8000 to guest port 80."
+   },
+   {
+    "cmd": "wasmtime -- /app/out.wasm --entrypoint=echo hello",
+    "context": "Overrides the container's entrypoint at run time, here changing it to echo with the argument hello."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the binaries from source; the README says Go 1.19+ is needed."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the built binaries after make."
+   }
+  ],
+  "install_notes": "The README lists Docker 18.09+ with DOCKER_BUILDKIT=1, and Docker Buildx v0.8+ as recommended. Release tarballs are on the GitHub releases page; extract the binary and put it on PATH. Building from source needs Go 1.19+ and runs make then sudo make install. The output binary also contains c2w-net. The browser examples need an Apache httpd Docker container, and networking examples need extra downloads such as c2w-net-proxy.wasm from release v0.5.0.",
+  "standout": "It runs whole unmodified Linux containers, including a full kernel, inside a WASM sandbox by emulating a CPU, instead of asking the program to be recompiled for WASM. The README's similar-projects list notes that other tools either run containers on WASM runtimes without running containers themselves, or emulate Linux in WASM without WASI support.",
+  "status": "Unknown from the pages read. The README calls the software 'experimental' and its status table lists WASI runtimes as supported or WIP. It points to a v0.5.0 release for downloads and links to a live demo. I saw no last-release date or last-commit date, so I could not judge whether it is actively maintained.",
+  "caveats": "The README says 'This is an experimental software' and describes the work as a PoC. Non-x86_64 and non-riscv64 containers run through extra QEMU emulation and are slow. The demo and networking features depend on the browser: the README says networking was tested only on Chrome and the websocket delegate mode only on Linux. Stdin is unsupported on wasmer and wasmedge, and networking on wamr and wasmer is WIP. The converter needs Docker with BuildKit, and the conversion itself is run through a Dockerfile. Licensing is Apache 2.0 for the tool, but the generated WASM bundles third-party software under LGPL (Bochs), GPL (Linux, GRUB, BusyBox, QEMU) and other licenses, and the README notes that the generated images include them.",
+  "quotes": [
+   "container2wasm is a container-to-wasm image converter that enables to run the container on WASM.",
+   "This is a PoC converter tries to solve it by enabling running unmodified containers on WASM.",
+   "This is an experimental software."
+  ],
+  "links": [
+   {
+    "label": "Live browser demo (Debian, Python, Vim on x86_64 and RISC-V)",
+    "url": "https://ktock.github.io/container2wasm-demo/"
+   },
+   {
+    "label": "Source repository and README",
+    "url": "https://github.com/ktock/container2wasm"
+   },
+   {
+    "label": "Release binaries",
+    "url": "https://github.com/ktock/container2wasm/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://ktock.github.io/container2wasm-demo/ : loaded (demo page listing x86_64 and RISC-V examples; no tool description beyond the examples; it points to the container2wasm repo for docs)",
+   "https://github.com/ktock/container2wasm : loaded (README returned by the tool; used as the main source)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It turns unmodified Linux containers into runnable WebAssembly by bundling a kernel and emulated CPU\u2014a striking, unusual way to bring existing software into WASM."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "container2wasm",
+  "tldr": "Converts a Linux container image into a single WebAssembly module that boots a real kernel on an emulated CPU, running under wasmtime or in a browser tab.",
+  "deeper_look": "`c2w` takes a container image such as `ubuntu:22.04` and writes one `.wasm` file, `out.wasm` by default. That file contains the container, a Linux kernel, and an emulated CPU. Bochs emulates x86_64 and TinyEMU emulates RISC-V, both compiled to WASM. For the browser path, QEMU Wasm is used instead. Linux boots inside the emulator and starts the container with runc. A WASI runtime such as wasmtime can then run it like any other module.\n\nThe README's motivation is that more languages can target WASM, but existing programs are hard to run there. They usually need re-implementation and re-compilation. This tool skips that step: instead of porting the program, it emulates a machine that already runs it. The README calls it \"a PoC converter\" that enables \"running unmodified containers on WASM.\"\n\nThe idea underneath is that a WASM sandbox is just another place to put a computer. Once a CPU emulator compiles to WASM, anything that runs on that CPU comes along. Host directories reach the guest through WASI filesystem calls and virtio-9p. Networking goes through a user-space stack, `c2w-net`, which uses `sock_*` calls under WASI and the Fetch API or WebSocket in a browser.\n\nThe live demo page shows the result: Debian, Python and Vim running in a browser tab, on both x86_64 and RISC-V.",
+  "install": "brew install container2wasm\n# Docker 18.09+ with BuildKit (DOCKER_BUILDKIT=1) is required for conversion; Buildx v0.8+ is recommended.\n# You also need a WASI runtime such as wasmtime to run the output, or a browser for the --to-js path.",
+  "try_this": [
+   {
+    "cmd": "c2w ubuntu:22.04 out.wasm",
+    "what_happens": "Converts the Ubuntu image into a WASI module named out.wasm."
+   },
+   {
+    "cmd": "wasmtime out.wasm uname -a",
+    "what_happens": "Runs the converted image under wasmtime and prints the guest kernel info."
+   },
+   {
+    "cmd": "c2w --to-js alpine:3.20 /tmp/out-js/htdocs/",
+    "what_happens": "Builds a WASM plus JS bundle, using emscripten and QEMU Wasm, that can be served to a browser."
+   }
+  ],
+  "whats_unique": "It runs whole unmodified Linux containers, kernel included, inside a WASM sandbox by emulating a CPU. Per the README, similar tools either run containers on WASM runtimes without running the containers themselves, or emulate Linux in WASM without WASI support.",
+  "caveats": "The README calls it experimental and a PoC. Containers for architectures other than x86_64 and riscv64 run slowly under extra emulation. Networking was tested only on Chrome, and support varies across WASI runtimes. The generated images also bundle GPL and LGPL software.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "wasm",
+   "containers",
+   "emulation",
+   "docker",
+   "browser",
+   "experimental"
+  ],
+  "links": [
+   {
+    "label": "Live browser demo (Debian, Python, Vim on x86_64 and RISC-V)",
+    "url": "https://ktock.github.io/container2wasm-demo/"
+   },
+   {
+    "label": "Source repository and README",
+    "url": "https://github.com/ktock/container2wasm"
+   },
+   {
+    "label": "Release binaries",
+    "url": "https://github.com/ktock/container2wasm/releases"
+   }
+  ]
+ }
+}

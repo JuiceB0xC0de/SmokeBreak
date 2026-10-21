@@ -1,0 +1,90 @@
+{
+ "name": "alive2",
+ "desc": "Automatic verification of LLVM optimizations",
+ "homepage": "https://github.com/AliveToolkit/alive2",
+ "installs_365d": 331,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "science",
+  "math",
+  "afternoon",
+  "reverse-engineering"
+ ],
+ "why": "Uses SMT solving to prove or disprove that LLVM optimizations are correct, a door into formal verification of compilers.",
+ "brief": {
+  "what_it_is": "Alive2 is a set of libraries and tools for analysing and verifying LLVM code and transformations. It takes LLVM IR, either a source and a target IR file or a single file with functions named src and tgt, or an unoptimized IR file that it runs through an -O2-like pipeline without interprocedural passes. It then uses an SMT solver to check whether the transformation refines the original, reporting 'Transformation seems to be correct!' or a counterexample with concrete input values. It also ships clang and opt plugins, drop-in compiler wrappers (alivecc, alive++), and an LLVM IR interpreter (alive-exec).",
+  "why_it_exists": "The README frames it as automatic verification of LLVM optimizations, citing its PLDI 2021 paper as the technical introduction. The sponsor section says it is meant to make LLVM less buggy, and a list of LLVM bugs it has found is kept in BugList.md.",
+  "how_it_works": "Alive2 has its own IR, a symbolic executor, an LLVM-to-Alive2-IR converter, and a refinement check (the optimization verifier) built on an SMT abstraction layer, with Z3 as the prerequisite solver. For translation validation it converts the before and after IR and checks refinement, so an optimizer run is validated after the fact instead of proving the optimizer correct as a whole. The README says it is UB-precise and that undef inputs can be excluded with -disable-undef-input.",
+  "commands_seen": [
+   {
+    "cmd": "git clone git@github.com:AliveToolkit/alive2.git",
+    "context": "Clones the repository before building."
+   },
+   {
+    "cmd": "cmake -GNinja -DCMAKE_BUILD_TYPE=Release ..",
+    "context": "Configures the standalone build (run inside the build directory), producing the alive tools without translation validation."
+   },
+   {
+    "cmd": "ninja",
+    "context": "Builds the configured project."
+   },
+   {
+    "cmd": "cmake -GNinja -DCMAKE_PREFIX_PATH=~/llvm/build -DBUILD_TV=1 -DCMAKE_BUILD_TYPE=Release ..",
+    "context": "Configures Alive2 against a locally built LLVM with translation validation enabled (BUILD_TV=1)."
+   },
+   {
+    "cmd": "~/alive2/build/alive-tv src.ll tgt.ll",
+    "context": "Checks whether the target function refines the source function; the README example proves that removing nsw from an add is correct."
+   },
+   {
+    "cmd": "~/alive2/build/alive-tv foo.ll",
+    "context": "Runs the built-in -O2-like pipeline on one unoptimized IR file and validates the result; the README uses it to show an LLVM 10.x release branch optimizer bug as a counterexample."
+   },
+   {
+    "cmd": "~/alive2/build/alivecc -O3 -c ~/llvm/clang/test/C/C99/n505.c",
+    "context": "Compiles a C file with the alivecc drop-in for clang, validating every IR-level transformation."
+   },
+   {
+    "cmd": "~/alive2/build/alive++ -O3 -c ~/llvm/clang/test/Analysis/aggrinit-cfg-output.cpp",
+    "context": "The C++ equivalent of alivecc, using alive++ as a drop-in for clang++."
+   },
+   {
+    "cmd": "~/llvm/build/bin/llvm-lit -s -Dopt=~/alive2/build/opt-alive.sh ~/llvm/llvm/test/Transforms",
+    "context": "Runs translation validation over LLVM's IR-level unit tests via lit, using the Alive2 opt wrapper."
+   },
+   {
+    "cmd": "grep -Fr \"(unsound)\" ~/alive2/build/logs/",
+    "context": "Finds unsoundness reports in a local run's logs."
+   }
+  ],
+  "install_notes": "Prerequisites: recent cmake, gcc or clang, re2c, and Z3; LLVM is optional and hiredis is optional for caching. Standalone build needs only cmake, Ninja and Z3 (use -DZ3_INCLUDE_DIR and -DZ3_LIBRARIES if CMake finds the wrong Z3). Translation validation for opt and clang needs an LLVM build with RTTI and exceptions on (-DLLVM_ENABLE_RTTI=ON), built from LLVM main, and Alive2 must be pointed at it via CMAKE_PREFIX_PATH. The README also suggests clang as the compiler when the default is gcc. Caching needs a Redis server on localhost that Alive2 uses alone. No account is needed. Not needed: you can try alive-tv in a browser at https://alive2.llvm.org/ce/ without building.",
+  "standout": "It checks whether a specific optimizer transformation preserves meaning, and returns a concrete counterexample when it does not, instead of a proof of the compiler as a whole. It also runs as a drop-in clang/clang++ wrapper, so an entire build can be checked pass by pass.",
+  "status": "unknown. The README has no release version or date and I could not see a last-commit date from the README alone. It does describe current activity: it is aimed at LLVM top of tree, the maintainers run the LLVM unit-test validation daily, and it is supported by several sponsors.",
+  "caveats": "Does not support interprocedural transformations and may produce spurious counterexamples on them. Translation validation tracks LLVM top of tree closely, so older LLVM sources may require reverting to an older Alive2 commit. Builds on macOS can hit linker issues (chained fixups, flat namespace), and the README suggests setting CMAKE_OSX_DEPLOYMENT_TARGET to 11.0 or less. alive-exec is described as highly experimental: the function cannot take inputs, use memory, depend on undefined behaviour, or loop too many times. The opt wrapper's timeout is not supported on macOS. The README's example path for the alive binary reads ~/alive/build in one place, which looks like a typo for ~/alive2/build. The README does not state a licence.",
+  "quotes": [
+   "Alive2 consists of several libraries and tools for analysis and verification of LLVM code and transformations.",
+   "Alive2 does not support inter-procedural transformations. Alive2 may produce spurious counterexamples if run with such passes.",
+   "Please keep in mind that you do not have to compile Alive2 in order to try out alive-tv; it is available online."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/AliveToolkit/alive2"
+   },
+   {
+    "label": "Online alive-tv (Compiler Explorer)",
+    "url": "https://alive2.llvm.org/ce/"
+   },
+   {
+    "label": "PLDI 2021 paper: technical introduction",
+    "url": "https://web.ist.utl.pt/nuno.lopes/pubs/alive2-pldi21.pdf"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/AliveToolkit/alive2: fetched OK, README returned (no additional pages fetched; README was complete enough)."
+  ]
+ }
+}

@@ -1,0 +1,57 @@
+{
+ "name": "precice",
+ "desc": "Coupling library for partitioned multi-physics simulations",
+ "homepage": "https://precice.org/",
+ "installs_365d": 443,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "science",
+  "simulation",
+  "library",
+  "afternoon"
+ ],
+ "why": "A coupling library that lets separate physics solvers run together, a real multi-physics simulation you can run at home.",
+ "brief": {
+  "what_it_is": "preCICE is an open-source coupling library and ecosystem for partitioned multi-physics and multi-scale simulations, including surface and volume coupling. It does not solve physics itself. It takes existing solver programs, each simulating one part of a coupled problem, and connects them so they exchange data during a run. It handles transient coupling, communication, time interpolation, and data mapping between the solvers' meshes. Programs call its API (C++, C, Fortran, Python, Matlab, and others) or load an adapter for a ready-made solver such as OpenFOAM, CalculiX, FEniCS, deal.II, or Nutils. The Homebrew package installs the library plus the command-line tools listed below.",
+  "why_it_exists": "The homepage frames the problem as partitioned coupling: it lets separate, existing solvers that each cover a subpart of the physics run together, which keeps time-to-solution reasonable for complex coupled problems without rewriting each code. The README says preCICE stands for Precise Code Interaction Coupling Environment, and that it is an academic project developed at TU Munich and the University of Stuttgart.",
+  "how_it_works": "Each solver is a separate program that links the preCICE library, or uses an adapter, and calls it to read and write coupling data at each time step. The homepage describes a pure peer-to-peer design, so solvers communicate directly rather than through a central server. The library handles quasi-Newton acceleration of strong coupling, radial-basis-function data mapping between non-matching meshes, and time interpolation. The coupling scheme (for example serial-explicit) is defined in a preCICE XML configuration file.",
+  "commands_seen": [
+   {
+    "cmd": "precice-version",
+    "context": "Docs say to run this in a terminal to check the preCICE installation; it is one of the built-in tools installed with the package (the Homebrew executables list also includes precice-config-doc, precice-config-validate, precice-profiling, and precice-tools, which I did not see documented in the pages I read)."
+   }
+  ],
+  "install_notes": "The core library is required, and bindings for Python, Fortran, Matlab, Julia, and Rust are installed separately. On Linux, binary packages exist for Ubuntu and an AUR package for Arch and Manjaro. On macOS the docs recommend Homebrew, with a Linux container as an alternative when a solver does not run natively on macOS. On Windows the docs recommend MSYS2, or Ubuntu under WSL 1 or 2. Spack is recommended for building multiple compiler, MPI, or dependency variants. Building from source is recommended for hacking on preCICE, and a demo virtual machine with preCICE and most adapters preinstalled is offered for experimenting. The Homebrew caveats field was empty.",
+  "standout": "The approach is partitioned rather than monolithic: it couples programs that already exist, including unmodified solvers through adapters, instead of requiring a single new multi-physics code. It also ships a fairly full ecosystem around the library (adapters, bindings, tools, a distribution that pins compatible versions, and a literature guide), and the homepage says it has been used across academia and industry.",
+  "status": "Maintained. The homepage lists latest release v3.4.1 and a call for contributions to a preCICE Workshop 2027. The GitHub repository shows 984 stars, 302 forks, 5,725 commits on the develop branch, and an active docs page marked 'Updated 13 Oct 26'. I did not see the date of the latest commit or release on the pages I read.",
+  "caveats": "Coupling a program running on Windows with one running on Linux is described as at least complicated. Under WSL, the Windows firewall prompts on every coupled run, and GUI apps such as ParaView are awkward under WSL 1. Installing from source is easy only if all dependencies come from system packages; otherwise the docs push you to Spack. The license is LGPL-3.0, and the homepage notes that other components use compatible free licenses. The homepage also offers paid support tiers with priority access to developers, which is a business layer on top of the free project. The README is short and mostly points to the external docs site, so I did not see command-line usage beyond precice-version.",
+  "quotes": [
+   "The coupling library for partitioned multi-physics simulations.",
+   "Partitioned means that preCICE couples existing programs/solvers capable of simulating a subpart of the complete physics involved in a simulation.",
+   "preCICE stands for Precise Code Interaction Coupling Environment. Its main component is a library that can be used by simulation programs to be coupled together in a partitioned way, enabling multi-physics simulations, such as fluid-structure interaction."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://precice.org/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/precice/precice"
+   },
+   {
+    "label": "Installation docs",
+    "url": "https://precice.org/docs/installation/overview/"
+   }
+  ],
+  "fetch_log": [
+   "https://precice.org/ (worked; marketing homepage, no commands)",
+   "https://github.com/precice/precice (worked; README, LGPL-3.0, stars, commits, no shell commands)",
+   "https://precice.org/installation-overview.html (returned a pointer to the docs URL rather than the page)",
+   "https://precice.org/docs/installation/overview/ (worked; installation overview, source of precice-version and install guidance)"
+  ]
+ }
+}

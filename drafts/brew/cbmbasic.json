@@ -1,0 +1,138 @@
+{
+ "name": "cbmbasic",
+ "desc": "Commodore BASIC V2 as a scripting language",
+ "homepage": "https://github.com/mist64/cbmbasic",
+ "installs_365d": 104,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "ancient",
+  "quick"
+ ],
+ "why": "Commodore BASIC V2 running as a scripting language, a strange and delightful old-school environment.",
+ "brief": {
+  "what_it_is": "cbmbasic is a native C implementation of Commodore BASIC V2, the Microsoft-derived BASIC from the Commodore 64, which the README calls 100% compatible. It runs in interactive mode when started with no arguments, or it runs an ASCII BASIC program passed as a command-line parameter. With a hashbang line and the executable bit set, a BASIC file can run directly as a Unix script. Input is BASIC source text, and output is whatever the program prints to the terminal.",
+  "why_it_exists": "The README frames it as a way to use Commodore BASIC as a practical scripting language on modern systems, and it presents the project as a fun, retro-flavored environment. The scout note calls it a strange and delightful old-school environment.",
+  "how_it_works": "The BASIC interpreter core lives in cbmbasic.c and is written to be platform, endianness and bitness independent. It does not emulate 6502 code; the README says all code is completely native and claims about 1000x the speed of a 1 MHz 6502 on a 1 GHz CPU. All I/O goes through runtime.c, and calls the core cannot handle are routed through kernal_dispatch() in runtime.c, which uses a switch statement to call C functions that stand in for Commodore KERNAL routines such as CHRIN and CHROUT.",
+  "commands_seen": [
+   {
+    "cmd": "$ ls -l hello.bas",
+    "context": "Shows the example script hello.bas as executable (-rwxr-xr-x) before running it."
+   },
+   {
+    "cmd": "$ cat hello.bas",
+    "context": "Prints the example file, whose first line is the hashbang #!/usr/bin/env cbmbasic followed by PRINT\"HELLO WORLD!\"."
+   },
+   {
+    "cmd": "#!/usr/bin/env cbmbasic",
+    "context": "First line of a BASIC file that lets the file run as a Unix script through cbmbasic."
+   },
+   {
+    "cmd": "PRINT\"HELLO WORLD!\"",
+    "context": "The one BASIC statement in the README example; prints HELLO WORLD!."
+   },
+   {
+    "cmd": "$ ./hello.bas",
+    "context": "Runs the executable BASIC script directly; output is HELLO WORLD!."
+   },
+   {
+    "cmd": "SYS 1",
+    "context": "Turns on the plugin system that adds extra statements and functions."
+   },
+   {
+    "cmd": "SYS 0",
+    "context": "Turns the plugin system back off."
+   },
+   {
+    "cmd": "LOCATE *y*, *x*",
+    "context": "New statement added by the extensions to set the cursor position."
+   },
+   {
+    "cmd": "SYSTEM *string*",
+    "context": "New statement that runs a command-line command from inside BASIC."
+   },
+   {
+    "cmd": "WAIT *port*, *mask*",
+    "context": "The extended WAIT statement; the README says it implements a Bill Gates easter egg."
+   }
+  ],
+  "install_notes": "The README gives no install steps beyond running the binary (the brew formula exposes the cbmbasic executable). Windows users should also install the Microsoft Visual C++ 2005 SP1 Redistributable Package (x86). The README does not describe a build procedure, configuration, or accounts.",
+  "standout": "Instead of emulating a 6502, it reimplements the BASIC V2 interpreter in portable native C, and it treats the Commodore KERNAL as a thin I/O boundary that can be replaced by editing runtime.c. The WAIT easter egg and the SYS-enabled plugin hooks are small touches that make it feel like a toy with real ambition.",
+  "status": "unknown. The README has no release date, version number, or changelog. The compatibility list covers Mac OS X 10.4/10.5, Debian Etch, and Windows NT with GCC 3.3/4.0/4.1 and Visual Studio 2005/2008, which points to a mid-2000s codebase. The README does not say whether it is still developed, and I did not check the commit history.",
+  "caveats": "The README says runtime.c does not implement all KERNAL functions yet, so some BASIC statements that depend on them (LOAD, SAVE, OPEN, SETTIM are named as examples) may be incomplete. The plugin system is off until SYS 1 is run. Tested platforms are old, and the README says other systems should work without naming any. Windows needs the VC++ 2005 SP1 x86 redistributable. The license is vague: 'Feel free to use this project for any purpose... See source for license details,' so the exact terms need checking in the source. The Windows redistributable link in the README is wrapped in stray quote marks, so it may not work as written.",
+  "quotes": [
+   "This source does not emulate 6502 code; all code is completely native.",
+   "You can also use cbmbasic as a UNIX scripting language by adding a hashbang line to your BASIC program and making it executable.",
+   "Feel free to use this project for any purpose, give credit if you like, and send back improvements to the authors, if you like, so that others can benefit from it."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/mist64/cbmbasic"
+   },
+   {
+    "label": "Bill Gates easter egg reference (pagetable.com)",
+    "url": "http://www.pagetable.com/?p=43"
+   },
+   {
+    "label": "Michael Steil contact",
+    "url": "mailto:mist@c64.org"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/mist64/cbmbasic: fetched OK, README returned. It was complete enough that I did not follow further links."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A native Commodore BASIC V2 interpreter that runs executable BASIC files as Unix scripts is a genuinely odd bridge between retro computing and modern shells."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "cbmbasic",
+  "tldr": "Commodore 64 BASIC V2 reimplemented in native C, so you can type line numbers at a prompt or run BASIC files as Unix scripts.",
+  "deeper_look": "cbmbasic is an interpreter for Commodore BASIC V2, the Microsoft-derived dialect that greeted every Commodore 64 owner. Start it with no arguments and you get the interactive prompt. Pass it a plain-text BASIC file and it runs the program. Put `#!/usr/bin/env cbmbasic` on the first line, set the executable bit, and the file runs like any other Unix script.\n\nIt does not emulate a 6502. The interpreter core in `cbmbasic.c` is native C, written to be independent of platform, endianness and bitness. The README says this makes it about 1000x the speed of a 1 MHz 6502 on a 1 GHz CPU, and calls it 100% compatible with the original.\n\nThe underlying idea is the boundary between a language and its machine. On the C64, BASIC talked to the outside world through KERNAL routines such as CHRIN and CHROUT. Here, all I/O goes through `runtime.c`, and anything the core cannot handle is routed through `kernal_dispatch()`, a switch statement that calls C functions standing in for those routines. Replace that one file and the same interpreter can live somewhere else entirely.\n\nThere is also an optional extension layer. `SYS 1` turns on a plugin system that adds statements like `LOCATE` and `SYSTEM`, and `SYS 0` turns it off. The extended `WAIT` implements a Bill Gates easter egg, which the README links to.",
+  "install": "brew install cbmbasic",
+  "try_this": [
+   {
+    "cmd": "cbmbasic",
+    "what_happens": "Starts the interactive Commodore BASIC V2 prompt, where you can type line-numbered programs."
+   },
+   {
+    "cmd": "cat hello.bas",
+    "what_happens": "Shows the README's example script: a `#!/usr/bin/env cbmbasic` line followed by `PRINT\"HELLO WORLD!\"`."
+   },
+   {
+    "cmd": "./hello.bas",
+    "what_happens": "With the executable bit set, runs the BASIC file directly as a Unix script and prints HELLO WORLD!."
+   }
+  ],
+  "whats_unique": "Rather than emulating a 6502 and a ROM, it reimplements the BASIC interpreter in portable C and treats the KERNAL as a thin, swappable I/O layer. That is what lets a BASIC file serve as a shell script.",
+  "caveats": "The codebase looks mid-2000s (the README lists Mac OS X 10.4/10.5, Debian Etch, GCC 3.3 to 4.1) and its maintenance status is unclear; runtime.c does not implement every KERNAL function, so LOAD, SAVE, OPEN and SETTIM may be incomplete.",
+  "commitment": "quick",
+  "category": "languages-and-oddities",
+  "tags": [
+   "quick",
+   "language",
+   "basic",
+   "retro",
+   "commodore",
+   "scripting"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/mist64/cbmbasic"
+   },
+   {
+    "label": "Bill Gates easter egg reference (pagetable.com)",
+    "url": "http://www.pagetable.com/?p=43"
+   }
+  ]
+ }
+}

@@ -1,0 +1,95 @@
+{
+ "name": "ghostscript",
+ "desc": "Interpreter for PostScript and PDF",
+ "homepage": "https://www.ghostscript.com/",
+ "installs_365d": 272678,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "language",
+  "visual"
+ ],
+ "why": "A PostScript and PDF interpreter; the language itself is fascinating, but the tool is widely known.",
+ "brief": {
+  "what_it_is": "Ghostscript is an open-source interpreter for the PostScript language and PDF files, distributed as the command-line program gs and as a library. It takes PostScript, PDF, and (via sibling tools) PCL, XPS, and image files as input and renders them to raster images such as PNG, JPEG, and TIFF, or converts them to PDF, PostScript, text, or other output devices. The homepage describes it as a PostScript interpreter layer plus a graphics library. The GitHub README describes the repository as GhostPDL, the umbrella source tree for the whole family.",
+  "why_it_exists": "The README frames GhostPDL as a unified package of interpreters and a shared graphics library for rendering, converting, and manipulating documents across every major page description language and many image formats. The homepage pitches it at SaaS document pipelines, print production, and PDF compression.",
+  "how_it_works": "Each interpreter (Ghostscript for PostScript and PDF, GhostPCL, GhostXPS) sits on one shared graphics library and can be built separately or together. When run as GhostPDL, it detects the input language from file signatures and heuristics, with no flag needed for mixed job streams. Output goes through a chosen device, selected with -sDEVICE=, such as png16m for raster or pdfwrite for PDF.",
+  "commands_seen": [
+   {
+    "cmd": "brew install ghostscript",
+    "context": "Homebrew install route listed in the README's pre-built binaries section."
+   },
+   {
+    "cmd": "gs --version",
+    "context": "Verify the installation; on Windows the README uses gswin64c --version instead."
+   },
+   {
+    "cmd": "gs -dBATCH -dNOPAUSE -sDEVICE=png16m -r300 -sOutputFile=page_%03d.png input.pdf",
+    "context": "Quick start: render a PDF to one 300 DPI PNG per page, numbered files."
+   },
+   {
+    "cmd": "gs -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=output.pdf input.ps",
+    "context": "Quick start: convert a PostScript file to PDF with the pdfwrite device."
+   },
+   {
+    "cmd": "ps2pdf input.ps output.pdf",
+    "context": "The README's convenience wrapper for the PostScript-to-PDF conversion above."
+   },
+   {
+    "cmd": "gs -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 -dPDFSETTINGS=/ebook -sOutputFile=compressed.pdf input.pdf",
+    "context": "Compress or optimise a PDF; /ebook targets 150 dpi. Other presets in the README are /screen, /printer, /prepress, and /default."
+   },
+   {
+    "cmd": "gs -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sPDFPassword=secret -sOutputFile=unlocked.pdf input.pdf",
+    "context": "Convert a password-protected PDF, supplying the password with -sPDFPassword. The value secret is a placeholder."
+   },
+   {
+    "cmd": "gxps -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=output.pdf input.xps",
+    "context": "Convert an XPS file to PDF using the GhostXPS interpreter."
+   },
+   {
+    "cmd": "gpcl6 -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=output.pdf input.pcl",
+    "context": "Convert a PCL file to PDF using the GhostPCL interpreter."
+   },
+   {
+    "cmd": "gs -h",
+    "context": "Get help and list the available output devices."
+   }
+  ],
+  "install_notes": "No account or runtime is needed for pre-built binaries. Packages exist for apt (sudo apt-get install ghostscript), MacPorts (sudo port install ghostscript), and Homebrew. Windows installers come from https://github.com/ArtifexSoftware/ghostpdl-downloads/releases and include 32-bit and 64-bit command-line executables. Building from a git checkout needs ./autogen.sh, then ./configure, make, and optionally sudo make install. The build needs a C compiler (GCC, Clang, or MSVC 2015+), and autoconf for git checkouts. FreeType, libjpeg, zlib, and libpng are bundled or system-provided. libtiff and OpenJPEG are optional. The PCL/XL fonts in pcl/urwfonts/ are needed for GhostPCL to work.",
+  "standout": "One binary covers PostScript, PDF, PCL, and XPS, and it detects the input language itself, so mixed job streams work without flags. The same engine is exposed as an embeddable gsapi library with Python, Java, and C# bindings. The README's own quick-start examples are plain one-liners, so the command-line surface is usable without reading the manual.",
+  "status": "Appears maintained, though I saw no release date or commit date. The Homebrew caveat says temporary compatibility symlinks will be removed in the 10.07.0 release, which points to active development. The homepage claims daily regression testing. The README mentions new releases such as 9.53, 9.55, and the C-based PDF interpreter as default since 9.55.",
+  "caveats": "Dual licensed: GNU AGPL v3 for open-source use, where any network-served application must release its source, or a commercial licence from Artifex for proprietary use. The PCL/XL fonts are under the AFPL, which prohibits commercial use, and the README notes they are not free software. Unless compiled with GS_THREADSAFE, only one Ghostscript instance may be active at a time. Windows executables have different names, such as gswin64c. The Homebrew formula is built --without-versioned-path, and the temporary backwards-compatibility symlinks are slated for removal in 10.07.0. The homepage is sales-oriented and promotes the commercial Ghostscript Office product and MuPDF. Several homepage claims, such as the 3 MB size and 30 years of evolution, are marketing copy I did not verify.",
+  "quotes": [
+   "Ghostscript is an interpreter for the PostScript\u00ae language and PDF files.",
+   "GhostPDL contains the complete Artifex document processing suite: a unified package of interpreters and a shared graphics library for rendering, converting, and manipulating documents across every major page description language and many image formats.",
+   "Threading note: Unless compiled with GS_THREADSAFE, only one Ghostscript instance may be active at a time."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.ghostscript.com/"
+   },
+   {
+    "label": "Command-line reference (docs)",
+    "url": "https://ghostscript.readthedocs.io/en/latest/Use.html"
+   },
+   {
+    "label": "Source repository (GitHub, README read)",
+    "url": "https://github.com/ArtifexSoftware/ghostpdl"
+   },
+   {
+    "label": "Binary downloads",
+    "url": "https://ghostscript.com/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://www.ghostscript.com/ - worked; marketing page with product blurbs and download links, no command examples.",
+   "https://github.com/ArtifexSoftware/ghostpdl - worked; returned the GhostPDL README with install instructions, quick start, and examples. This is the source of the commands and license notes.",
+   "https://ghostscript.readthedocs.io/en/latest/Use.html - not fetched; limit of fetches reached, and the README's quick-start examples were sufficient."
+  ]
+ }
+}

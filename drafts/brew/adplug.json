@@ -1,0 +1,111 @@
+{
+ "name": "adplug",
+ "desc": "Free, hardware independent AdLib sound player library",
+ "homepage": "https://adplug.github.io",
+ "installs_365d": 141,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "library",
+  "audio",
+  "ancient",
+  "reverse-engineering"
+ ],
+ "why": "Library that emulates dozens of obscure AdLib music formats; a close call, interesting history but mostly a backend.",
+ "brief": {
+  "what_it_is": "AdPlug is a free, cross-platform library, mainly in C++ and released under the LGPL, that plays music written for AdLib-era sound boards (OPL2, and Sound Blaster OPL2/OPL3) directly from its original file format. It takes a music file in one of dozens of supported formats, such as IMF, CMF, RAD, S3M, and ROL, and produces audio by running it through an OPL emulator or real OPL hardware. The homepage describes AdPlug as only the backend, with frontends built on top of it: AdPlay/UNIX, AdPlay/DOS, and plugins for Winamp and XMMS. The executable 'adplugdb' is listed in the Homebrew metadata but I did not see it described in the README or homepage.",
+  "why_it_exists": "The author frames it as a free, hardware independent player for AdLib music, so the old sound data can be heard without an OPL chip. Each format gets its own replayer 'in order to achieve the best possible replay quality', according to the homepage.",
+  "how_it_works": "AdPlug has a separate replayer for each supported format, which reads the original song data and drives an OPL2/OPL3 chip model. The README says it can use an emulator or real hardware, and the emulator is WoodyOPL, an LGPL OPL emulator from the DOSBox team. The library depends on libbinio for file I/O.",
+  "commands_seen": [
+   {
+    "cmd": "autoreconf --install",
+    "context": "Run first on a Linux or OSX git checkout to generate the build files and the configure script; requires recent autoconf, automake and libtool."
+   },
+   {
+    "cmd": "make check",
+    "context": "Runs the test suite; when a format's output changes, the new *.test file is renamed to *.ref to become the reference data."
+   },
+   {
+    "cmd": "--enable-debug",
+    "context": "Option passed to the 'configure' script to turn on debug logging (defines the DEBUG macro); disabled by default."
+   }
+  ],
+  "install_notes": "Requires libbinio version 1.4 or later (libbinio 1.5 is listed on the homepage) and is available from http://adplug.github.io/libbinio/. Linux and OSX git checkouts need autoreconf before configure. Windows git checkouts need src\\version.h.in copied to src\\version.h with @VERSION@ replaced by a version number, and a Visual Studio 2015 solution is in contrib\\vs2015\\vs2015.sln. No hardware, accounts, or runtime configuration are mentioned. The README says the library builds as a dynamic and/or static library and autodetects which one the host OS supports.",
+  "standout": "It covers a large, obscure set of AdLib-era music formats, many with their own dedicated replayer, and the project has been fuzzed and has had security fixes for buffer overflows in several formats. Its history also includes a licensing switch from MAME's OPL emulator to WoodyOPL to keep the library LGPL-clean.",
+  "status": "Maintained, with recent releases: AdPlug core 2.4 on 2025-04-06 and AdPlay/UNIX 1.9 on 2025-12-21. The homepage was last modified on 2026-09-03 and the GitHub README copyright runs to 2025. I did not check commit dates.",
+  "caveats": "The main caveat is that it is a backend library, so most users will get it through a frontend. The README warns that the optional MAME-based OPL emulator patch in the mame branch carries a MAME license that restricts commercial redistribution. The homepage marks some formats as 'preliminary', including MKJ and VGM, which the author does not consider final. The README tests only MS-DOS (DJGPP) and x86_64 Linux and macOS. Windows builds are rougher, requiring a manual version.h step or Visual Studio. The adplugdb executable named in the Homebrew metadata was not described in any page I read.",
+  "quotes": [
+   "AdPlug is a free, cross-platform, hardware independent AdLib sound player library, mainly written in C++ and released under the LGPL.",
+   "AdPlug itself is just the backend to many different audio player frontends, which are also being developed here.",
+   "No OPL chip is required for playback.",
+   "Players marked as 'preliminary' aren't considered final by the author and may contain many replay issues, but are included for testing purposes anyway."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://adplug.github.io"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/adplug/adplug"
+   },
+   {
+    "label": "libbinio",
+    "url": "http://adplug.github.io/libbinio/"
+   }
+  ],
+  "fetch_log": [
+   "https://adplug.github.io - worked; homepage text with release news and the full list of supported formats",
+   "https://github.com/adplug/adplug - worked; repository README with platforms, prerequisites, build notes, and the emulator licensing section"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It makes a forgotten musical ecosystem tangible: dozens of obscure AdLib formats can be heard through software OPL emulation, not just read about."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "AdPlug",
+  "tldr": "A library that plays music from AdLib-era DOS games in dozens of original file formats, with no OPL sound chip required.",
+  "deeper_look": "AdPlug reads music in the formats written for AdLib and Sound Blaster cards, such as IMF, CMF, RAD, S3M and ROL. It then produces audio by driving a software model of the Yamaha OPL2/OPL3 chip. It can also drive real OPL hardware if you have it. Each format gets its own replayer, \"in order to achieve the best possible replay quality\", according to the homepage.\n\nThe idea underneath is that these files are not recordings. They are instructions for a particular FM synthesis chip: which registers to set, when, and to what. Playing them faithfully means reproducing the chip and the quirks of each composer's tools. Every format in the list is a small piece of reverse engineering, and the library is a catalogue of how different DOS-era tools stored music.\n\nThe project describes itself as \"just the backend to many different audio player frontends\". Those include AdPlay/UNIX, AdPlay/DOS, and plugins for Winamp and XMMS. The emulator is WoodyOPL, an LGPL emulator from the DOSBox team. It replaced a MAME-derived one to keep the library cleanly LGPL.\n\nThe Homebrew formula installs one executable, `adplugdb`. The sources read for this entry do not describe it, so the library is the real subject here.",
+  "install": "brew install adplug\n# also pulls in libbinio. No hardware or account needed.",
+  "try_this": [
+   {
+    "cmd": "adplugdb --help",
+    "what_happens": "Prints the usage text for the one executable Homebrew installs. The project's pages do not document it, so this is the way to find out what it does."
+   }
+  ],
+  "whats_unique": "It covers a large, obscure set of AdLib-era formats, many with a dedicated replayer, and plays them with no OPL chip. The project has also been fuzzed and patched for buffer overflows in several format loaders.",
+  "caveats": "It is a backend library, so you mostly hear music through a frontend such as AdPlay/UNIX, and the `adplugdb` tool is undocumented in the pages read; some formats like MKJ and VGM are marked preliminary.",
+  "commitment": "afternoon",
+  "category": "sound-and-live-coding",
+  "tags": [
+   "afternoon",
+   "library",
+   "audio",
+   "adlib",
+   "opl",
+   "retro",
+   "file-formats",
+   "reverse-engineering"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://adplug.github.io"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/adplug/adplug"
+   },
+   {
+    "label": "libbinio",
+    "url": "http://adplug.github.io/libbinio/"
+   }
+  ]
+ }
+}

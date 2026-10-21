@@ -1,0 +1,92 @@
+{
+ "name": "ficy",
+ "desc": "Icecast/Shoutcast stream grabber suite",
+ "homepage": "https://www.thregr.org/wavexx/software/fIcy/",
+ "installs_365d": 25,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "audio",
+  "afternoon",
+  "tui"
+ ],
+ "why": "Grabs Icecast and Shoutcast streams, opening a door into internet radio's old streaming protocols and metadata.",
+ "brief": {
+  "what_it_is": "fIcy is a small command-line grabber for Icecast and Shoutcast internet radio streams, written for shell use. You give it a stream URL (or server, port and path), and it splits the incoming ICY stream into separate files, one per track, named from the song title if you ask. It can save to disk, write to stdout for a media player, or do both. The package also includes fResync, which re-aligns MPEG frame headers in dumped or broken files, and fPls, which reads a playlist and retries failed streams.",
+  "why_it_exists": "The page says fIcy's goal is to automatically rip a stream into user customisable files, and that it is 'ideal for batch/unattended recording of radio programs and stream debugging.'",
+  "how_it_works": "fIcy reads the ICY stream and uses the in-stream metadata to detect song-title changes, then writes each track to its own file (with -E numbering or -m title naming). Titles can be rewritten by piping them through an external coprocessor, sed by default, before they are used for filenames or matching. fPls wraps fIcy and handles retries, timeouts and loops over a playlist.",
+  "commands_seen": [
+   {
+    "cmd": "mkdir files",
+    "context": "Creates the output directory before ripping in the first example."
+   },
+   {
+    "cmd": "fPls -L-1 http://netradio.invalid/listen.pls -s .mp3 -o files/ -cmrdt",
+    "context": "Rips a station from a playlist until stopped, with .mp3 suffix, output into files/, and title-based naming and display."
+   },
+   {
+    "cmd": "fPls http://example.com:8080/listen.pls -t | mpg123 -",
+    "context": "Plays a playlist stream in mpg123 while showing titles, with fPls handling reconnections."
+   },
+   {
+    "cmd": "fIcy -s .mp3 -o ./ -md 123.123.123.123 8080 /path/to/stream",
+    "context": "Connects directly to a stream by server, port and path, saving .mp3 files with title-based names and no stdout dump."
+   },
+   {
+    "cmd": "mkfifo fifo",
+    "context": "Creates a named pipe so a player can be restarted while the rip continues."
+   },
+   {
+    "cmd": "fIcy -p ... > fifo",
+    "context": "Sends fIcy output into the fifo; the -p flag keeps the rip alive when the player stops reading. The ellipsis is a placeholder in the source."
+   },
+   {
+    "cmd": "fPls -M 30m http://example.com/listen.pls -o program.mp3 -x XYZ",
+    "context": "Example from the page for recording a program between 16:30 and 17:00 by scheduling it with at; keeps only tracks whose title matches XYZ, with a 30-minute cumulative cap."
+   },
+   {
+    "cmd": "fResync file.mp3",
+    "context": "Cleans up a ripped or damaged MP3 file by re-aligning its frame headers."
+   },
+   {
+    "cmd": "cat 1.mp3 2.mp3 3.mp3 > temp.mp3 && xmpgedit temp.mp3",
+    "context": "Joins split parts of one song and opens them in mpgedit for frame-accurate cutting; the page warns not to run fResync on these files first."
+   },
+   {
+    "cmd": "make CXX=eg++ PREFIX=/usr install",
+    "context": "Build and install command the page gives for systems needing a different compiler, such as OpenBSD."
+   }
+  ],
+  "install_notes": "The Makefile is simple and should work on any system with gcc and GNU make. g++ version 3 or later is required when using gcc. DESTDIR and PREFIX are honoured for relocated installs. fPls needs fIcy already on PATH, or a full path given with -P. Documentation is generated with rst2html. The page does not mention Homebrew or any account, hardware or runtime beyond the compiler.",
+  "standout": "fIcy hands title rewriting to an external sed process, so banners such as '(radiobanner)' can be stripped or artist and title can be swapped before the filename is chosen. The -q option appends finished filenames to a file so external tools can be triggered or the parts rejoined. It is an old-school Unix tool that treats the stream as a pipeline.",
+  "status": "quiet. The homepage lists fIcy 1.0.21 as the latest release, dated 2017-08-10, with earlier releases in 2017, 2015, 2011 and 2009. Copyright runs to 2018 and the page links to a GitLab repository, but I saw no newer release or recent-activity note on the page.",
+  "caveats": "Licence is GNU LGPLv2+ with no warranty. The page includes a legal warning that saving copyrighted streams without consent is illegal. Output files may lack audio framing and headers, so players may output some initial noise; fResync is the suggested fix. Only Basic HTTP authentication is supported. The -M flag means different things in fIcy and fPls. Filters must output exactly one line per input line. fIcy only works with ICY-compatible streams.",
+  "quotes": [
+   "Its goal is to automatically rip a stream into user customisable files.",
+   "fIcy, among other uses, is ideal for batch/unattended recording of radio programs and stream debugging.",
+   "fResync, a fast MPEG-resyncing utility,",
+   "saving streams containing copyrighted material without explicit consent is ILLEGAL."
+  ],
+  "links": [
+   {
+    "label": "fIcy homepage",
+    "url": "https://www.thregr.org/wavexx/software/fIcy/"
+   },
+   {
+    "label": "Source repository on GitLab",
+    "url": "https://gitlab.com/wavexx/fIcy"
+   },
+   {
+    "label": "ficy-users mailing list archive",
+    "url": "https://www.mail-archive.com/ficy-users@thregr.org/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.thregr.org/wavexx/software/fIcy/ : fetched OK, full page text returned. This is the author's project page, not a GitHub repo, so no README was returned. The page holds the full usage and option docs, so I did not follow further links."
+  ]
+ }
+}

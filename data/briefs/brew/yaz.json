@@ -1,0 +1,76 @@
+{
+ "name": "yaz",
+ "desc": "Toolkit for Z39.50/SRW/SRU clients/servers",
+ "homepage": "https://www.indexdata.com/resources/software/yaz/",
+ "installs_365d": 789,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "protocol",
+  "network",
+  "library"
+ ],
+ "why": "Z39.50 and SRU are old library-catalogue protocols nobody looks at, and yaz opens that door, though the toolkit itself is plumbing.",
+ "brief": {
+  "what_it_is": "YAZ is a programmers' toolkit, written in C, for building Z39.50, SRW and SRU clients and servers. Per the README and the user's guide, it supports Z39.50-2003 (version 3) and SRU 1.1 through 2.0 in both client and server roles, and the Solr webservice in the client role through the ZOOM API. It is a library plus a set of command-line tools (yaz-client, yaz-ztest, zoomsh, yaz-marcdump, yaz-iconv, yaz-url and others) that work with protocol traffic and library records. Developers feed it queries and get back search results, records and scan output. The docs describe it as a compact toolkit covering the protocol layer and higher-level client and server tools. Note that the brew metadata lists the executables but I did not verify them against the docs beyond the guide's reference index.",
+  "why_it_exists": "The homepage presents YAZ as the way to build Z39.50/SRW/SRU clients and servers without writing the protocol from scratch, and says it has been the leading toolkit for these since its first release in 1995. It says that most library software vendors use it for protocol support, and that many others use it for interoperability testing and data conversion.",
+  "how_it_works": "The README says the primary output of the source is the YAZ library, which provides support functions for implementing the server or client role of Z39.50 and SRU. The user's guide says the ZOOM API is the recommended high-level route for writing clients, and that YAZ can also be used directly from C. Language bindings are separate projects: YAZ++ for C++, PHP/YAZ for PHP, SimpleServer for Perl servers, NET::Z3950 for Perl clients, and yaz4j for Java clients (client only at the moment). The homepage also mentions a hosted commercial service called MasterKey Connect, which wraps resources that lack Z39.50 access with SRU or Z39.50 connectors.",
+  "commands_seen": [
+   {
+    "cmd": "$ git clone --recursive https://github.com/indexdata/yaz.git",
+    "context": "README: clone the source from GitHub with submodules, which is described as the more complicated route compared with the release tarball."
+   },
+   {
+    "cmd": "$ cd yaz",
+    "context": "README: change into the cloned source directory before building."
+   },
+   {
+    "cmd": "$ ./buildconf.sh",
+    "context": "README: run the script that creates configure and the Makefile templates; needed only for a Git checkout."
+   },
+   {
+    "cmd": "$ ./configure",
+    "context": "README: standard autotools configure step after buildconf.sh."
+   },
+   {
+    "cmd": "$ make",
+    "context": "README: compile the library and tools. The README notes that a C compiler, make, xsltproc, tcl and docbook XML are needed."
+   },
+   {
+    "cmd": "$ make check",
+    "context": "README: run the test suite after the build."
+   }
+  ],
+  "install_notes": "The README recommends building from the official source tarball, which is published at ftp.indexdata.com/pub/yaz/, instead of a Git clone. A Git build needs the submodules fetched, autoconf, automake and libtool, and a C compiler (gcc or clang), make, xsltproc, tcl and docbook XML. For Debian-based systems the README points to the Build-Depends list in debian/control, and for RPM-based systems to BuildRequires in yaz.spec. Windows builds are covered in the user's guide, which describes compiling from source and installing dependencies with vcpkg. Prebuilt packages are linked from the homepage for Red Hat, Ubuntu, Debian, and Windows (32-bit and 64-bit). I did not see macOS Homebrew-specific notes beyond the brew formula metadata I was given.",
+  "standout": "It is the long-running reference implementation for a protocol most people never see, and it has become plumbing inside many library systems. It also ships a whole set of small command-line tools, so you can poke at Z39.50 and SRU servers from a shell with no programming. The ZOOM API route means the same client code can be reused across toolkits.",
+  "status": "Active as far as I can tell. The README copyright runs to 1995-2026, the user's guide is for version 5.38.1 and is copyrighted 1995-2026, and the homepage links to a Changelog on GitHub. I did not check the latest release date or last commit date, so I can't be more precise.",
+  "caveats": "It is a developer toolkit, not an end-user application: there is no GUI, and the command-line tools are for testing and debugging. Building from Git is fiddly and needs several extra tools. The language bindings are separate projects, and the homepage says yaz4j is client-only. The homepage pushes Index Data's hosted MasterKey Connect service and consultancy, which are commercial offerings separate from the open-source toolkit. The homepage gives the licence as Revised BSD. I did not read the LICENSE file myself.",
+  "quotes": [
+   "YAZ is a programmers\u2019 toolkit supporting the development of Z39.50/SRW/SRU clients and servers.",
+   "The primary output of the source here is the YAZ library, which contains support functions for implementing the server or client role of Z39.50 and SRU.",
+   "It's easiest to compile this software by using the source tar provided for official releases."
+  ],
+  "links": [
+   {
+    "label": "YAZ homepage (Index Data)",
+    "url": "https://www.indexdata.com/resources/software/yaz/"
+   },
+   {
+    "label": "YAZ User's Guide and Reference (version 5.38.1)",
+    "url": "https://www.indexdata.com/yaz/doc"
+   },
+   {
+    "label": "YAZ source on GitHub",
+    "url": "https://github.com/indexdata/yaz"
+   }
+  ],
+  "fetch_log": [
+   "https://www.indexdata.com/resources/software/yaz/ - worked; marketing homepage with description, licence, language bindings and download links, but no commands",
+   "https://github.com/indexdata/yaz - worked; README with build steps, documentation pointers and help links",
+   "https://www.indexdata.com/yaz/doc - worked; User's Guide table of contents and reference list for version 5.38.1; only the table of contents was returned, so the tool commands were not read in detail"
+  ]
+ }
+}

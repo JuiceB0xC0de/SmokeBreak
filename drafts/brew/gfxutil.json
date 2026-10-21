@@ -1,0 +1,114 @@
+{
+ "name": "gfxutil",
+ "desc": "Device Properties conversion tool",
+ "homepage": "https://github.com/acidanthera/gfxutil",
+ "installs_365d": 230,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "ancient"
+ ],
+ "why": "Converting macOS device property trees to and from binary forms opens a look at how firmware describes hardware to the OS.",
+ "brief": {
+  "what_it_is": "gfxutil is a command-line tool for working with Device Properties, the property data that Apple Mac firmware passes to the OS to describe hardware. Per the README it converts device property trees between their text form and their binary form, so you can read a binary blob or produce one. The README does not spell out the input and output formats in detail; it points to external forum posts for usage examples. It is built from source with Xcode and needs the edk2 tree alongside it.",
+  "why_it_exists": "The README says it is a tool to work with Device Properties commonly found in Apple Mac firmwares, written by mcmatrix, with usage examples and changelogs kept on the netkas forum. The README gives no further framing.",
+  "how_it_works": "The README does not explain the mechanism. It says the build needs edk2 files, which are cloned from the acidanthera/audk repository into a directory named edk2 before running xcodebuild. The scout note's description of converting property trees to and from binary forms is consistent with the repo's stated purpose but is not spelled out in the README I read.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/acidanthera/audk edk2",
+    "context": "Clones the edk2 dependency tree into a folder named edk2, which the build needs."
+   },
+   {
+    "cmd": "git clone https://github.com/acidanthera/gfxutil gfxutil",
+    "context": "Clones the gfxutil source repository."
+   },
+   {
+    "cmd": "cd gfxutil",
+    "context": "Changes into the cloned gfxutil directory."
+   },
+   {
+    "cmd": "xcodebuild",
+    "context": "Builds the project from the gfxutil directory, per the README's compilation example."
+   },
+   {
+    "cmd": "-h",
+    "context": "The README says to use the -h flag for help. This is a flag, not a full command line; it is presumably run as gfxutil -h."
+   }
+  ],
+  "install_notes": "Not available via brew install in the README; the README describes building from source. Clone acidanthera/audk as a folder named edk2 next to gfxutil, then cd into gfxutil and run xcodebuild. The build depends on Xcode tooling on macOS. The README does not mention hardware or accounts. Homebrew is the install path given by the package listing (executable: gfxutil).",
+  "standout": "It is a small, focused utility for a niche firmware format, and its build pulls in the edk2 tree from Acidanthera rather than a standard package. The README asks that results be kept free for the community.",
+  "status": "unknown. The README has a build status badge pointing at GitHub Actions on master, which suggests CI is set up, but I did not see a release date, last commit date, or release notes on the page I fetched. The original usage and changelog forum is unreachable from my fetch, which may mean it is gone.",
+  "caveats": "The original forum with usage examples and changelogs failed to load (URLError), so the documentation I could read is minimal. The build requires cloning a separate edk2 tree and using xcodebuild, which means Xcode. The README does not state a license; it only says the result should be kept free for the community. Built binaries may not match what the Homebrew formula ships, which I did not check.",
+  "quotes": [
+   "A tool to work with Device Properties commonly found in Apple Mac firmwares by mcmatrix.",
+   "You are free to use it and whatever you do please keep the result free for community.",
+   "Use -h flag for help."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/acidanthera/gfxutil"
+   },
+   {
+    "label": "edk2 dependency (acidanthera/audk)",
+    "url": "https://github.com/acidanthera/audk"
+   },
+   {
+    "label": "Usage examples and changelogs (netkas forum, unreachable)",
+    "url": "http://forum.netkas.org/index.php?topic=64.0"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/acidanthera/gfxutil \u2014 OK, README returned",
+   "http://forum.netkas.org/index.php?topic=64.0 \u2014 FAILED, URLError; usage examples and changelog not read"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It turns opaque Apple firmware device-property blobs into readable trees, offering a focused way to inspect how hardware is described to the OS."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "gfxutil",
+  "tldr": "A small macOS tool that converts Apple firmware Device Properties between text and binary form, a peek at how firmware describes hardware to the OS.",
+  "deeper_look": "gfxutil works with Device Properties, the property data that Apple Mac firmware hands to the operating system to describe the hardware inside the machine. Per the README, it is \"a tool to work with Device Properties commonly found in Apple Mac firmwares by mcmatrix.\" It converts property trees between a text form and a binary form, so you can read a binary blob or produce one.\n\nThe idea underneath is that hardware does not simply announce itself. Firmware builds a tree of named properties for each device, and the OS reads that tree to learn what it is running on. A tool that moves that tree between readable and binary form lets you see the handoff directly.\n\nThe README is thin. It does not spell out the input and output formats, and it points to forum posts for usage examples and changelogs. Those pages were unreachable when the brief was written, so expect to learn mostly from `gfxutil -h` and by experimenting. The build depends on the edk2 firmware development tree, which the README has you clone from acidanthera/audk.",
+  "install": "brew install gfxutil\n# macOS only. The README itself describes building from source with Xcode:\n# git clone https://github.com/acidanthera/audk edk2\n# git clone https://github.com/acidanthera/gfxutil gfxutil\n# cd gfxutil && xcodebuild",
+  "try_this": [
+   {
+    "cmd": "gfxutil -h",
+    "what_happens": "Prints the help text. The README points here for usage, so this is the quickest way to see the supported options."
+   }
+  ],
+  "whats_unique": "It is a small, focused utility for one niche firmware format, and its source build pulls in the edk2 firmware tree rather than ordinary packages.",
+  "caveats": "Documentation is minimal and the original usage forum appears unreachable; the brief could not confirm the project's maintenance status, and the README states no formal license.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "reverse-engineering",
+   "firmware",
+   "macos",
+   "device-properties"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/acidanthera/gfxutil"
+   },
+   {
+    "label": "edk2 dependency (acidanthera/audk)",
+    "url": "https://github.com/acidanthera/audk"
+   },
+   {
+    "label": "Usage examples and changelogs (netkas forum, may be gone)",
+    "url": "http://forum.netkas.org/index.php?topic=64.0"
+   }
+  ]
+ }
+}

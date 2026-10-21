@@ -1,0 +1,69 @@
+{
+ "name": "simg2img",
+ "desc": "Tool to convert Android sparse images to raw images and back",
+ "homepage": "https://github.com/anestisb/android-simg2img",
+ "installs_365d": 1155,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "protocol"
+ ],
+ "why": "Converts Android sparse image format to raw and back, a practical door into how firmware and system images are packed.",
+ "brief": {
+  "what_it_is": "A standalone command-line port of AOSP libsparse that converts Android sparse image files into raw disk images. You give it a sparse .img file and an output path, and it writes a raw image, which the README shows as an ext4 filesystem that `file` can identify. The Homebrew formula also installs img2simg, simg2simg and append2simg, which the README does not document, so the converse direction (raw back to sparse) is only implied by the formula description.",
+  "why_it_exists": "The README says image tools are not part of the Android SDK, and this port exists so people can get at these images without building the full AOSP toolchain (\"aims to avoid complex building chains\").",
+  "how_it_works": "The README does not explain the internals. It describes the tool as a port of AOSP libsparse, which handles the sparse container format, and shows that the output is a raw filesystem image by running `file` on input and output before and after conversion.",
+  "commands_seen": [
+   {
+    "cmd": "make",
+    "context": "Builds the simg2img binary from the source tree on the Linux path."
+   },
+   {
+    "cmd": "simg2img /path/to/Android/images/system.img /output/path/system.raw.img",
+    "context": "Converts an Android sparse system.img into a raw image at the given output path."
+   },
+   {
+    "cmd": "file /path/to/Android/images/system.img",
+    "context": "Shows that the input is an Android sparse image (version 1.0, 262144 4096-byte output blocks, 1620 input chunks in the README's example)."
+   },
+   {
+    "cmd": "file /output/path/system.raw.img",
+    "context": "Shows the converted output is a Linux ext4 filesystem image with a UUID, used to verify the conversion."
+   },
+   {
+    "cmd": "CFLAGS=-DUSE_MINGW LDFLAGS=-lasprintf mingw32-make",
+    "context": "Builds simg2img on Windows under MinGW, after installing MinGW, zlib and libasprintf."
+   },
+   {
+    "cmd": "sudo apt-get install libz-dev",
+    "context": "Installs the zlib headers on Ubuntu if zlib.h is missing."
+   },
+   {
+    "cmd": "sudo dnf install libz-devel",
+    "context": "Installs the zlib headers on Fedora if zlib.h is missing."
+   }
+  ],
+  "install_notes": "Beyond brew install, the README covers building from source. On Linux you need zlib development headers (zlib.h) and the README gives apt and dnf commands for them. On Windows you need MinGW with mingw32-libz and mingw32-libasprintf, then the special CFLAGS/LDFLAGS build command. No accounts, runtimes or first-run configuration are mentioned.",
+  "standout": "It is a small, dependency-light port of libsparse, and the README's usage example checks the result with the standard `file` command, so you can confirm you got a real ext4 image without mounting anything.",
+  "status": "unknown. The README has no release dates, changelog, or version notes, and I did not fetch the commit history or releases page, so I cannot say when it was last touched. The Homebrew formula's presence suggests it is still packaged.",
+  "caveats": "The README documents only sparse-to-raw conversion with simg2img. It says nothing about img2simg, simg2simg or append2simg, even though the formula installs them, and the scout description's 'and back' is not confirmed by the README text. Windows builds need MinGW plus extra libraries and a non-standard make invocation. The README has no license text, no tests, and no mention of supported libsparse versions.",
+  "quotes": [
+   "Tool to convert Android sparse images to raw images.",
+   "Since image tools are not part of Android SDK, this standalone port of AOSP libsparse aims to avoid complex building chains.",
+   "If you want to build simg2img on Windows you'll need to install MinGW"
+  ],
+  "links": [
+   {
+    "label": "Homepage / repository (README)",
+    "url": "https://github.com/anestisb/android-simg2img"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/anestisb/android-simg2img \u2014 fetched, worked, README returned (no further links followed; README was sufficient)"
+  ]
+ }
+}

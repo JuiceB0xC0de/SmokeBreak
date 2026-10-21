@@ -1,0 +1,82 @@
+{
+ "name": "swtpm",
+ "desc": "Software TPM Emulator based on libtpms",
+ "homepage": "https://github.com/stefanberger/swtpm",
+ "installs_365d": 4842,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "protocol",
+  "simulation"
+ ],
+ "why": "A software TPM emulator is a door into the trusted platform module protocol and how hardware roots of trust get faked for testing.",
+ "brief": {
+  "what_it_is": "SWTPM is a software TPM emulator. It wraps libtpms, which implements TPM 1.2 and TPM 2 in software, and exposes it through socket interfaces (TCP/IP and Unix) and, on Linux, the CUSE interface, which creates native /dev/vtpm* devices. The package also ships tools for working with the emulated TPM: swtpm_setup, swtpm_cert, swtpm_localca, swtpm_ioctl, and swtpm_bios. Per the README, these create certificates for a TPM and simulate manufacturing a TPM by generating its EK and platform certificates. The README points to per-tool READMEs under src/ for details, which I did not fetch.",
+  "why_it_exists": "The goal, per the wiki, is a TPM emulator (TPM 1.2 and TPM 2) that can be integrated into virtualized environments such as virtual machines and containers. It has been integrated into QEMU and, as a prototype, into RunC.",
+  "how_it_works": "swtpm is a process that serves TPM commands to clients over sockets or CUSE, with libtpms doing the TPM emulation underneath. Persistent TPM state is written to files, protected by file ownership and permissions, and can optionally be encrypted with a user-supplied secret. The wiki also describes a confidential-computing migration model in which the TPM state is moved between hosts via firmware-held keys.",
+  "commands_seen": [
+   {
+    "cmd": "./autogen.sh --with-openssl --prefix=/usr",
+    "context": "Wiki's generic Linux build: configure the source tree with OpenSSL and install under /usr. (From the wiki, not the README.)"
+   },
+   {
+    "cmd": "make -j4",
+    "context": "Wiki's build step after configure; the wiki warns to choose the -j value based on CPU count."
+   },
+   {
+    "cmd": "make -j4 check",
+    "context": "Runs the test suite. The wiki says tests on Raspberry Pi 2 only pass with -j1, otherwise timeouts may occur."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the built binaries to the configured prefix."
+   },
+   {
+    "cmd": "mk-build-deps -i",
+    "context": "Wiki's Debian/Ubuntu deb-package path: installs build dependencies from the packaging control file, with a manual apt-get fallback if it fails."
+   },
+   {
+    "cmd": "dpkg-buildpackage -us -uc -j$(nproc)",
+    "context": "Wiki's command to build an unsigned Debian package once libtpms and its dev packages are installed."
+   },
+   {
+    "cmd": "PKG_CONFIG_PATH=/usr/lib/pkgconfig/ CFLAGS=\"-m32\" ./autogen.sh --with-openssl --prefix=/usr --libdir=/lib",
+    "context": "Wiki's recipe for a 32-bit test build on x86_64; requires libtpms also built for 32-bit."
+   },
+   {
+    "cmd": "./autogen.sh --prefix=/usr --libdir=/usr/lib64 --with-openssl --with-tss-user=root --with-tss-group=tss",
+    "context": "Wiki's openSUSE Tumbleweed configure line; the wiki says tcsd needs files owned root/tss, so swtpm is configured to match."
+   },
+   {
+    "cmd": "./autogen.sh --with-openssl --prefix=/usr --without-cuse --with-tss-user=root --with-tss-group=wheel",
+    "context": "Wiki's OpenBSD configure line; disables CUSE, which is Linux-only."
+   }
+  ],
+  "install_notes": "Requires libtpms as a separate library (dev package on distros, or built from source), plus OpenSSL or GnuTLS, libtasn1, json-glib, and expect, socat, and python3-twisted for tests. Build is autotools (./autogen.sh, then configure/make). The wiki gives per-distro package lists for Fedora/RHEL, Ubuntu/Debian, Cygwin, OpenBSD, macOS (via Homebrew plus manual paths), openSUSE, and Alpine. Creating a tss user and group is needed on some platforms, and the wiki says to use root/root on Alpine for simplicity. No Homebrew-specific first-run steps were in the pages I read.",
+  "standout": "The emulator is designed to plug into virtualization stacks, so a VM can get a vTPM without hardware. The toolset also simulates TPM manufacturing (EK and platform certificates), which is unusual for an open-source emulator.",
+  "status": "unknown. The README gives no release date and says releases come at irregular intervals, with stable-x.y.z branches for bug fixes. The wiki page I read was last edited Oct 9, 2023 per its footer, but that is the wiki, not a repo commit date. I did not check the GitHub releases or commit history.",
+  "caveats": "The README says that as a software TPM its security is weaker than a hardware TPM: a root user or anyone with gdb access to the running process can potentially reach secrets, and state files can be read by whoever can access them. Platform support is uneven: CUSE is Linux-only, and the wiki says RHEL 6 cannot build swtpm_cert, so EK and platform certificates cannot be created there. The macOS wiki section says the author is not familiar with the platform. The README also points to the wiki for most usage information, and the README itself is thin.",
+  "quotes": [
+   "The SWTPM package provides TPM emulators with different front-end interfaces to libtpms.",
+   "The goal of the swtpm project is to provide a TPM emulator (TPM 1.2 & TPM 2) that can be integrated into virtualized environments, such as virtual machines and containers.",
+   "Since the swtpm is fully implemented in software its security is not as strong as that of a hardware TPM."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/stefanberger/swtpm"
+   },
+   {
+    "label": "Project wiki",
+    "url": "https://github.com/stefanberger/swtpm/wiki"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/stefanberger/swtpm: worked, returned README (thin; points to wiki and per-tool READMEs under src/)",
+   "https://github.com/stefanberger/swtpm/wiki: worked, returned wiki Home page with install recipes and security model; the wiki sidebar and other pages were not followed"
+  ]
+ }
+}

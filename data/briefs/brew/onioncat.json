@@ -1,0 +1,77 @@
+{
+ "name": "onioncat",
+ "desc": "VPN-adapter that provides location privacy using Tor or I2P",
+ "homepage": "https://github.com/rahra/onioncat",
+ "installs_365d": 51,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "Turning Tor or I2P into a VPN adapter with IPv6-derived addresses is a clever door into how overlay networks route traffic.",
+ "brief": {
+  "what_it_is": "OnionCat (command ocat) is a userland program that creates a transparent IPv6 layer on top of Tor's hidden services or I2P's tunnels. It opens a TUN device and assigns it an IPv6 address derived from the local .onion or I2P identifier. Packets the kernel sends to that device are carried over Tor or I2P to other OnionCat instances, and any IP-based protocol can pass through, with TCP and UDP the main use. The source README is actually the ocat(1) man page, dated 2023-10-25.",
+  "why_it_exists": "The README frames it as a peer-to-peer VPN between hidden services: 'You can think of it as a peer-to-peer VPN between hidden services.' Its stated goal is location-hidden transport of IP traffic over Tor or I2P.",
+  "how_it_works": "ocat opens a TUN device and gives it an IPv6 address whose prefix is fd87:d87e:eb43:: in Tor mode and fd60:db4d:ddb5:: in I2P (GarliCat) mode. The address comes from the onion_id or i2p_id, so the hidden-service name determines the IPv6 address. Kernel packets for that address are relayed through the local Tor SOCKS proxy (default 127.0.0.1:9050) to the peer's hidden service port. Because Tor v3 addresses are too long for IPv6, v3 peers need manual entries in a hosts file, with the -H option set on the client side.",
+  "commands_seen": [
+   {
+    "cmd": "ocat -i onion_id",
+    "context": "Synopsis form 1: converts an onion_id to an IPv6 address and exits."
+   },
+   {
+    "cmd": "ocat -o IPv6_address",
+    "context": "Synopsis form 2: converts an IPv6 address back to an onion_id and exits."
+   },
+   {
+    "cmd": "ocat [OPTION] onion_id",
+    "context": "Synopsis form 3: the normal way to run ocat with your own .onion hostname and options."
+   },
+   {
+    "cmd": "ocat -R [OPTION]",
+    "context": "Synopsis form 4: generates a random local onion_id instead of using a configured hidden service. The man page says outgoing use only, and it warns that you usually should not use it."
+   },
+   {
+    "cmd": "ocat -I [OPTION] i2p_id",
+    "context": "Synopsis form 5: runs in GarliCat (I2P) mode with an I2P identifier."
+   },
+   {
+    "cmd": "ip address add $OCAT_ADDRESS/$OCAT_PREFIXLEN dev $OCAT_IFNAME",
+    "context": "From the example ifup script run via -e: assigns the IPv6 address and prefix length to the new tunnel interface."
+   },
+   {
+    "cmd": "ip link set $OCAT_IFNAME up",
+    "context": "From the same example ifup script: brings the tunnel interface up."
+   }
+  ],
+  "install_notes": "The README mentions no install steps beyond the ./configure options. Two build-time items appear: --enable-debug turns on debug output, and the man page cites packaged source releases on abenteuerland.at. Running needs a Tor (or I2P) instance with a configured hidden service whose hostname is supplied to ocat. The TUN device setup needs root, and ocat drops to a 'tor' user (or uid 65534) afterward. An optional -e ifup script runs as root at startup to configure the interface.",
+  "standout": "It maps a Tor hidden-service name directly to an IPv6 address, so ordinary IP tools and sockets work over the onion network without per-app proxying. The README also includes a diagnostic trick: pinging fd87:d87e:eb43::dead:beef tests the kernel-to-ocat link, and pinging fd87:d87e:eb43::feed:beef tests the Tor side.",
+  "status": "The README is a man page dated 2023-10-25 with copyright 2008-2023, which suggests active work through late 2023. I did not check the commit history or release tags, so I cannot confirm recent activity. Treat it as maintained but unverified.",
+  "caveats": "The README says plainly that OnionCat does not implement encryption: 'OnionCat does not implement any encryption technique! It is a plain tunneling through TCP sessions.' Tor v3 hidden-service addresses are too long to map to IPv6, so v3 peers need manually maintained hosts entries, and the man page says it 'does not work out of the box any more.' The -R random-id mode cannot receive incoming connections unless the remote side is bidirectional. The local controller on 127.0.0.1:8066 is unauthenticated and not thread-safe, and the README says it should not be used in production. The direct (-5 direct) mode is marked experimental and skips hostname validation. Debug output needs a build with --enable-debug. The license is GPLv3.",
+  "quotes": [
+   "OnionCat creates a transparent IPv6 layer on top of Tor's hidden services or I2P's tunnels.",
+   "You can think of it as a peer-to-peer VPN between hidden services.",
+   "OnionCat does not implement any encryption technique! It is a plain tunneling through TCP sessions."
+  ],
+  "links": [
+   {
+    "label": "Homepage / source README",
+    "url": "https://github.com/rahra/onioncat"
+   },
+   {
+    "label": "Intro to OnionCat4 and HSv3 (linked from README, not fetched)",
+    "url": "https://github.com/rahra/onioncat/blob/master/doc/INTRO_TO_ONIONCAT4.txt"
+   },
+   {
+    "label": "Docs folder (linked from README, not fetched)",
+    "url": "https://github.com/rahra/onioncat/tree/master/doc"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/rahra/onioncat: worked. Returned the README, which is the ocat(1) man page. No other pages fetched; the README was complete enough to write from."
+  ]
+ }
+}

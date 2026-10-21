@@ -1,0 +1,66 @@
+{
+ "name": "john-jumbo",
+ "desc": "Enhanced version of john, a UNIX password cracker",
+ "homepage": "https://www.openwall.com/john/",
+ "installs_365d": 8075,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "afternoon",
+  "reverse-engineering"
+ ],
+ "why": "The enhanced John the Ripper gives a hands-on look at hashing formats and cracking internals, a strong door into security thinking.",
+ "brief": {
+  "what_it_is": "John the Ripper jumbo is the community-enhanced build of John the Ripper, a password security auditing and password recovery tool. You give it password hash files or encrypted files, and it tries guesses across several cracking modes (wordlist, rules, and others) to recover the plaintext. Beyond the core crypt(3) types, jumbo supports hundreds of hash and cipher formats, including Windows NTLM, macOS and web-app hashes, SSH and GnuPG private keys, ZIP, RAR and 7z archives, PDFs, Office documents, and disk images. Cracked passwords print to the terminal and are saved to a potfile, and larger encrypted files are first converted with a bundled *2john helper whose output is fed into jumbo.",
+  "why_it_exists": "The README says its primary purpose is to detect weak Unix passwords, and the homepage describes it as a free, open source password security auditing and recovery tool. The jumbo fork exists because the core project accepts few new formats, and jumbo collects contributed hash and cipher support from developers and the user community.",
+  "how_it_works": "Several cracking modes are combined in one program, and the README says you can define a custom mode with a built-in compiler that supports a subset of C. Hashes already cracked are recorded in john.pot so later runs skip them, and session state is saved to john.rec every 10 minutes, so an interrupted run can be resumed with --restore. For formats that are whole files, a *2john helper extracts the hash first.",
+  "commands_seen": [
+   {
+    "cmd": "john passwd",
+    "context": "Basic run against a copy of a Unix password file, using the default order of cracking modes."
+   },
+   {
+    "cmd": "john --wordlist=password.lst --rules passwd",
+    "context": "Restricts cracking to wordlist mode while allowing word-mangling rules."
+   },
+   {
+    "cmd": "john --show passwd",
+    "context": "Prints passwords already cracked for that file, from the potfile."
+   },
+   {
+    "cmd": "john --restore",
+    "context": "Continues a cracking session that was interrupted and saved its state."
+   }
+  ],
+  "install_notes": "The homepage recommends building from the GitHub development source (git or tar.gz/zip) over the 1.9.0-jumbo-1 tarballs, which it labels out of date with known issues. The homepage also offers 1.9.0-jumbo-1 Windows binaries (32-bit and 64-bit, 7z or zip). Build steps are in the INSTALL document and in the archive for jumbo, and the GitHub README points to doc/INSTALL. For OpenMP parallelism on Linux, the Makefile's OMPFLAGS line must be uncommented at compile time. Binary distributions may ship alternate executables such as john-omp for multiple cores. Packages exist in Debian, Fedora, Gentoo, FreeBSD, NetBSD and OpenBSD. Verify downloads with the project GnuPG key. The brew formula is the simplest path, and nothing beyond that was needed to read the README.",
+  "standout": "It is a deep, practical reference for hashing formats: the README lists how each family of stored secret is handled, and the built-in mini-compiler lets users write new cracking modes. Because it is a dense open-source toolkit with decades of format work, it works well as a hands-on way to see how weak hashes differ from modern ones.",
+  "status": "Maintained. The GitHub README carries CI and commit-activity badges and a commits-since-1.9.0-Jumbo-1 counter, and the homepage lists 1.9.0-jumbo-1 and a 1.9.0 core release with a development snapshot recommended. No exact last-commit or release date was visible in the pages I read, so recency is inferred from the badges and release listings.",
+  "caveats": "The README warns that jumbo contributions have low quality requirements, that bugs are to be expected, and that code is not necessarily mature. The homepage calls the 1.9.0-jumbo-1 source tarballs out of date with known issues. Building from source takes effort, and the OpenMP build needs a manual Makefile edit. OpenVMS support needs a contributed patch. The tool is for authorized auditing and recovery; the README frames its purpose as detecting weak passwords. Licensed under GPL v2 or later.",
+  "quotes": [
+   "It is easy for new code to be added to jumbo, and the quality requirements are low",
+   "Its primary purpose is to detect weak Unix passwords.",
+   "This means that you get a lot of functionality that is not necessarily mature, which in turn means that bugs in this code are to be expected."
+  ],
+  "links": [
+   {
+    "label": "Homepage (Openwall)",
+    "url": "https://www.openwall.com/john/"
+   },
+   {
+    "label": "GitHub repository (bleeding-jumbo development)",
+    "url": "https://github.com/openwall/john"
+   },
+   {
+    "label": "Johnny, the official GUI (wiki)",
+    "url": "https://openwall.info/wiki/john/johnny"
+   }
+  ],
+  "fetch_log": [
+   "https://www.openwall.com/john/ - fetched OK (homepage, lists releases, downloads and contributed builds)",
+   "https://github.com/openwall/john - fetched OK (README, which links to the doc/ files; I did not follow those)"
+  ]
+ }
+}

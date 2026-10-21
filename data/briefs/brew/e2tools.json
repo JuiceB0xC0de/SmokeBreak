@@ -1,0 +1,81 @@
+{
+ "name": "e2tools",
+ "desc": "Utilities to read, write, and manipulate files in ext2/3/4 filesystems",
+ "homepage": "https://e2tools.github.io/",
+ "installs_365d": 450,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering"
+ ],
+ "why": "Lets you pull files out of ext2/3/4 images without mounting, a small door into filesystem internals worth a look.",
+ "brief": {
+  "what_it_is": "e2tools is a set of GPL-licensed command-line utilities for reading, writing, and manipulating files inside ext2, ext3, and ext4 filesystems. It takes a filesystem given as an unmounted partition or a regular image file, addressed in the form filesystem:directory_path, and works on it directly. The commands are e2cp, e2mv, e2rm, e2mkdir, e2ln, e2ls, and e2tail, and they copy, move, delete, create, link, list, and tail files inside that filesystem. Output goes to the terminal or to the destination inside the image.",
+  "why_it_exists": "The author wrote it to copy files into a Linux filesystem from a machine that had no ext2 support. The README also presents it as a way to work on disk images or floppies without mounting them or having root access.",
+  "how_it_works": "The tools access the filesystem directly through the ext2fs library from e2fsprogs, not through the kernel driver or FUSE. The README says they use the same codebase as e2fsprogs, so they handle any filesystem block size regardless of the kernel PAGE_SIZE. Multi-file commands assume that later paths are on the same filesystem as the first one until another filesystem: prefix appears.",
+  "commands_seen": [
+   {
+    "cmd": "dd if=/dev/null of=test.img bs=1 count=1 seek=16M",
+    "context": "Creates a 16MB sparse image file to hold a filesystem (from the quickstart in the GitHub README)."
+   },
+   {
+    "cmd": "mkfs.ext2 -F test.img",
+    "context": "Formats the image file as an ext2 filesystem. This is a standard e2fsprogs command, not an e2tools one."
+   },
+   {
+    "cmd": "e2mkdir test.img:/foo",
+    "context": "Creates directory foo in the root directory of the filesystem image."
+   },
+   {
+    "cmd": "e2ls -l test.img:",
+    "context": "Lists the root directory of the filesystem image in long format."
+   },
+   {
+    "cmd": "e2cp README.md test.img:/foo",
+    "context": "Copies README.md from the host into the foo directory inside the image."
+   },
+   {
+    "cmd": "e2ls -l test.img:/foo",
+    "context": "Lists the contents of foo inside the image."
+   },
+   {
+    "cmd": "e2rm test.img:/foo/README.md",
+    "context": "Removes the file again from inside the image."
+   },
+   {
+    "cmd": "/tmp/boot.img:/tmp/file1 /tmp/file2 /tmp/file3 /tmp/boot2.img:/tmp/file4",
+    "context": "Illustrates multi-file syntax: files 1 to 3 are on /tmp/boot.img and file 4 is on /tmp/boot2.img."
+   }
+  ],
+  "install_notes": "Requires e2fsprogs and gcc. The homepage says e2fsprogs 1.26 or later, while the GitHub README says e2fsprogs-1.27 or later, so the two pages disagree. The README warns that e2fsprogs will not compile with some proprietary compilers. The homepage offers a tarball, e2tools-0.1.0.tar.gz, and a git clone of https://github.com/e2tools/e2tools.git. No accounts, hardware, or runtime configuration are mentioned. Brew installs the executables e2cp, e2ln, e2ls, e2mkdir, e2mv, e2rm, e2tail, and e2tools.",
+  "standout": "It reads and writes ext filesystems without mounting them and without root, which the README contrasts with the Linux kernel driver (needs loop and mount privileges, and a block size no larger than PAGE_SIZE) and with fuse2fs (needs mount privileges). It fits well for scripting image builds and inspecting disk images.",
+  "status": "Quiet, not abandoned. The homepage lists the most recent release as e2tools-0.1.0 from 2020-02-07, with a separate 0.0.16 release from the original author for bug fixes. The GitHub README still carries a Travis CI badge that points to travis-ci.org. The README does not state a maintenance policy. I did not see a commit date, so the status rests on the release date and the homepage's To Do list.",
+  "caveats": "The homepage says it was tested on Linux, SCO OpenServer 5, and AIX 4.3, but 'not extensively'. The To Do list says htree and extended attribute support need work and testing, there is no automated test suite, mknod and test are not implemented, and user docs are thin. The README is short and the quickstart is the main usage guide. The two pages give different minimum e2fsprogs versions. The project is GPL-licensed.",
+  "quotes": [
+   "These utilities access a filesystem directly using the ext2fs library.",
+   "they can also be used on a Linux machine to read/write to disk images or floppies without having to mount them or have root access.",
+   "e2tools. Uses the same codebase from e2fsprogs, and thus handles any filesystem block size independent of the kernel PAGE_SIZE. Does not require mounting privileges."
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://e2tools.github.io/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/e2tools/e2tools"
+   },
+   {
+    "label": "Packaging status across distributions (Repology)",
+    "url": "https://repology.org/project/e2tools/versions"
+   }
+  ],
+  "fetch_log": [
+   "https://e2tools.github.io/ : worked, returned homepage text with introduction, status, to-do, requirements, and download sections.",
+   "https://github.com/e2tools/e2tools : worked, returned the README with quickstart commands and alternatives section."
+  ]
+ }
+}

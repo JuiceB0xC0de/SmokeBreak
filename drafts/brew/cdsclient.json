@@ -1,0 +1,135 @@
+{
+ "name": "cdsclient",
+ "desc": "Tools for querying CDS databases for astronomical data",
+ "homepage": "https://cdsarc.cds.unistra.fr/doc/cdsclient.html",
+ "installs_365d": 25,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "science",
+  "astronomy",
+  "afternoon",
+  "network"
+ ],
+ "why": "Queries CDS astronomical catalogues from the terminal, a real door into professional astronomy data.",
+ "brief": {
+  "what_it_is": "cdsclient is a package of C and shell programs for Unix and Linux that query astronomical databases hosted at CDS (Strasbourg) or its mirrors over the network. You give it sky positions or catalogue names and it returns matching rows in formats such as ASCII, HTML, TSV, XML, VOTable or FITS. Its generic tools are vizquery, which queries VizieR over HTTP, and find_cats, which batch-matches a list of positions against large surveys. The package also has many per-survey commands, such as findgsc, findpmm, find2mass and findwise, plus tools for finding catalogues and looking up bibcodes in SIMBAD.",
+  "why_it_exists": "The README says specific programs are faster than the generic vizquery because they connect straight to very large surveys (107 or more rows) instead of making general database queries. Its own description is 'a set of C and shell routines which can be built on Unix stations or PCs running Linux, which once compiled allow to query some databases located at CDS or on mirrors over the network.'",
+  "how_it_works": "Each program is a client that talks to a CDS server, mainly over port 1660, with vizquery using HTTP on port 80. A position list is supplied on stdin or as a file, and the program returns the matches within a radius, for example 5 arcminutes. The README says the CDSCLIENT environment variable can switch to port 80 or to an alternative server when port 1660 is blocked.",
+  "commands_seen": [
+   {
+    "cmd": "./configure",
+    "context": "Configures the package for your system from the unpacked cdsclient-V.vv directory."
+   },
+   {
+    "cmd": "./configure --prefix=$HOME",
+    "context": "Configures installation into a prefix such as your home directory, so no root privilege is needed; executables go to ~/bin."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles the package."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs executables, libraries and manpages to the configured prefix (default /usr/local)."
+   },
+   {
+    "cmd": "findgsc -help",
+    "context": "Lists the basic options for a query program; the README says most programs support -help."
+   },
+   {
+    "cmd": "findgsc - -r 5 < mycenters",
+    "context": "Finds GSC stars within 5 arcminutes of each centre listed in the file mycenters, read from stdin."
+   },
+   {
+    "cmd": "findpmm - -r 3 -sr < mycenters",
+    "context": "Finds USNO-A2.0 stars within 3 arcminutes of each centre in mycenters, sorted by distance from each centre."
+   },
+   {
+    "cmd": "find_cats my_file -r 0.5 GSC1.2 UCAC2: -r 0.3 2MASS: -lmJ 6,11",
+    "context": "Batch-queries the positions in my_file against GSC1.2, UCAC2 and 2MASS, with per-catalogue radius and magnitude arguments; the README example is split across lines and is joined here."
+   },
+   {
+    "cmd": "simbib 1990 white dwarf X-ray",
+    "context": "Retrieves SIMBAD bibliographic references from 1990 onward matching the words white, dwarf and X-ray."
+   },
+   {
+    "cmd": "catcat VIII/59/ReadMe",
+    "context": "Displays the ReadMe description file for catalogue VIII/59."
+   }
+  ],
+  "install_notes": "Download cdsclient.tar.gz from http://cdsarc.cds.unistra.fr/ftp/pub/sw/cdsclient.tar.gz or ftp://cdsarc.cds.unistra.fr/pub/sw/, then unpack with tar xvfz (or gzip -cd piped to tar on older systems). Run ./configure, make and make install from the cdsclient-V.vv directory. No accounts or API keys are mentioned. Network access is needed: port 1660 by default, or port 80 via CDSCLIENT=http. Proxies are set with the standard http_proxy variable.",
+  "standout": "It is a command-line door into professional astronomy archives. Pipe a file of coordinates through findgsc or findpmm and get back survey matches, with no web forms or scripting against an API. The bibliography tools also link SIMBAD references into LaTeX.",
+  "status": "The homepage is a documentation page dated 'Version 30-Dec-2009', and its program list runs to about March 2015 (URAT1). I found no release or commit history on the page, so the project looks quiet or static rather than actively developed. Treat that as an inference from the page dates, not a confirmed maintenance status.",
+  "caveats": "The README says the package is for Unix stations or Linux PCs, and it does not mention macOS or Windows. Build needs a C toolchain and the usual configure and make steps. Many surveys are historical (UCAC1, USNO-A1, GSC 1.1, DENIS older versions), and the page does not say which are still served. Program names in the doc do not always match the executables list (for example findgps6 in the doc versus findugps6 in the list, and findlas9 versus findulas9). Querying depends on CDS servers being reachable, and the README lists fallback servers in case the main one is down. The README asks for batch center files of about 40 MB or less. No licence is stated on the page. The Homebrew formula has no caveats.",
+  "quotes": [
+   "The cdsclient package is a set of C and shell routines which can be built on Unix stations or PCs running Linux, which once compiled allow to query some databases located at CDS or on mirrors over the network.",
+   "Specific programs like find2mass or finducac3 are connecting directly to one of the very large surveys available from CDS (a very large survey has 107 or more rows).",
+   "Using a specific program is faster than the generic vizquery program which has to locate and transport the data via data-base queries"
+  ],
+  "links": [
+   {
+    "label": "cdsclient documentation (homepage)",
+    "url": "https://cdsarc.cds.unistra.fr/doc/cdsclient.html"
+   },
+   {
+    "label": "cdsclient source tarball",
+    "url": "http://cdsarc.cds.unistra.fr/ftp/pub/sw/cdsclient.tar.gz"
+   }
+  ],
+  "fetch_log": [
+   "https://cdsarc.cds.unistra.fr/doc/cdsclient.html: fetched OK. This is the full documentation page, not a GitHub README, and it was enough to write the brief, so no further links were followed."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It turns coordinate lists into cross-matches against professional sky surveys and SIMBAD, a hands-on doorway into astronomical data rather than generic plumbing."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "cdsclient",
+  "tldr": "Command-line clients for the CDS astronomy archives in Strasbourg: pipe in sky coordinates, get back stars and sources from professional surveys.",
+  "deeper_look": "cdsclient is a package of C and shell programs that query astronomical databases hosted at CDS (Strasbourg) or its mirrors. You give it sky positions or catalogue names, and it returns matching rows as ASCII, HTML, TSV, XML, VOTable or FITS. The generic tool is `vizquery`, which asks VizieR over HTTP. `find_cats` batch-matches a list of positions against several surveys at once.\n\nMost of the executables are per-survey commands: `findgsc`, `findpmm`, `find2mass`, `findwise`, `finducac3` and dozens more. The README says these exist because they connect straight to one very large survey (107 or more rows) and so run faster than the generic `vizquery`, which \"has to locate and transport the data via data-base queries\". You feed a file of centres on stdin, set a radius in arcminutes, and get back the objects inside it.\n\nThe idea underneath is that professional sky surveys are public, and a catalogue of hundreds of millions of stars can be treated like a Unix filter. Coordinates go in, rows come out, with no web form or API script in between. A few tools also cover bibliography: `simbib` searches SIMBAD references, and `catcat` prints a catalogue's ReadMe so you can learn what the columns mean.\n\nThe package is old. The documentation page is dated 2009 and its program list runs to about 2015, so some of the surveys may no longer be served. The clients still show how astronomers query these archives.",
+  "install": "brew install cdsclient\n# Needs network access to CDS servers: port 1660 by default. If it is blocked, set CDSCLIENT=http to use port 80. No account or API key is mentioned.",
+  "try_this": [
+   {
+    "cmd": "findgsc -help",
+    "what_happens": "Lists the basic options for the Guide Star Catalog query program. The README says most programs in the package accept -help."
+   },
+   {
+    "cmd": "findgsc - -r 5 < mycenters",
+    "what_happens": "Reads sky positions from the file mycenters and prints GSC stars within 5 arcminutes of each one."
+   },
+   {
+    "cmd": "simbib 1990 white dwarf X-ray",
+    "what_happens": "Retrieves SIMBAD bibliographic references from 1990 onward that match white, dwarf and X-ray."
+   }
+  ],
+  "whats_unique": "It is a Unix-filter front door to professional astronomy archives, with one small command per survey. Coordinates go in on stdin and matches come out, with no web forms.",
+  "caveats": "The documentation is dated 2009 with a program list to about 2015, many surveys are historical and may no longer be served, and the README mentions only Unix and Linux.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "astronomy",
+   "science",
+   "catalogues",
+   "network",
+   "cli",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "cdsclient documentation (homepage)",
+    "url": "https://cdsarc.cds.unistra.fr/doc/cdsclient.html"
+   },
+   {
+    "label": "cdsclient source tarball",
+    "url": "http://cdsarc.cds.unistra.fr/ftp/pub/sw/cdsclient.tar.gz"
+   }
+  ]
+ }
+}

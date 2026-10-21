@@ -1,0 +1,83 @@
+{
+ "name": "rqlite",
+ "desc": "Lightweight, distributed relational database built on SQLite",
+ "homepage": "https://www.rqlite.io/",
+ "installs_365d": 1913,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "A distributed SQLite with a Raft-replicated HTTP interface, an unusual database with a twist worth a look.",
+ "brief": {
+  "what_it_is": "rqlite is an open-source, fault-tolerant, distributed relational database built on SQLite. You run the rqlited server binary on one or more machines, and it exposes SQLite behind an HTTP and JSON API. You send SQL statements over HTTP (for example CREATE TABLE or INSERT via POST to /db/execute, and SELECT via GET to /db/query) and get JSON results back. Nodes replicate the data among themselves, so the database stays up if one node fails. The project also ships a CLI, a built-in web console, and client libraries.",
+  "why_it_exists": "The README pitches it as a SQLite that is highly available and easy to operate, aimed at resilient cloud services and reliable edge applications. It says to think of etcd, but with relational modeling available.",
+  "how_it_works": "Nodes form a cluster and keep their SQLite databases in sync through replication. The README does not name the consensus protocol, but the homepage describes a Raft cluster and a Raft state view in the console. Clients talk to the cluster over plain HTTP with JSON, so no driver is needed. Read consistency and write durability can be tuned per application, and clusters can form automatically through Kubernetes, Docker Compose, Consul, etcd, or DNS.",
+  "commands_seen": [
+   {
+    "cmd": "curl -fsSL https://rqlite.io/install.sh | sh",
+    "context": "Install script shown on the homepage as the Quick start one-liner for Linux and macOS."
+   },
+   {
+    "cmd": "brew install rqlite",
+    "context": "Homepage lists this for macOS; the text says macOS via brew install rqlite."
+   },
+   {
+    "cmd": "docker run -p 4001:4001 rqlite/rqlite",
+    "context": "README quick start step 1: runs a single rqlite node in Docker and maps HTTP port 4001."
+   },
+   {
+    "cmd": "rqlited -node-id 1 data/",
+    "context": "Homepage: starts the first node with node ID 1 and a data directory called data/."
+   },
+   {
+    "cmd": "rqlited -node-id 2 -http-addr localhost:4003 -raft-addr localhost:4004 -join localhost:4002 data2/",
+    "context": "Homepage: starts a second node that joins the cluster through localhost:4002. The homepage shows this as one line split with a backslash; a third node uses the same pattern on ports 4005 and 4006."
+   },
+   {
+    "cmd": "curl -XPOST 'localhost:4001/db/execute?pretty' -H 'Content-Type: application/json' -d '[\"CREATE TABLE foo (id INTEGER NOT NULL PRIMARY KEY, name TEXT)\", \"INSERT INTO foo(id, name) VALUES(1, \\\"fiona\\\")\"]'",
+    "context": "README quick start step 2: creates a table and inserts one row in a single request, with a JSON array of SQL statements. The README shows this across several lines."
+   },
+   {
+    "cmd": "curl -G 'localhost:4001/db/query?pretty' --data-urlencode 'q=SELECT * FROM foo'",
+    "context": "README quick start step 3: runs a SELECT over HTTP and returns JSON."
+   }
+  ],
+  "install_notes": "Install with the curl one-liner, brew install rqlite on macOS, or docker run rqlite/rqlite. The homepage also lists Windows, Docker, and Kubernetes. The README calls it a single binary with no external dependencies. Starting a node needs only a node ID and a data directory. A cluster is made by starting further nodes with -join pointing at an existing node's address, and the homepage says to run it on three machines for fault tolerance. Automatic backups to S3, MinIO, or Google Cloud and TLS security are configured through the docs, which I did not read.",
+  "standout": "It turns SQLite into a replicated service you can reach with curl, with no driver and no separate database server to deploy. The README compares it to etcd but with relational modeling, and it adds Change Data Capture and loadable SQLite extensions such as vector search.",
+  "status": "Unknown from what I fetched. The GitHub page returned the README, which has active-looking CI, release, and Docker Hub badges plus office hours and a Slack. I saw no release date or last-commit date, so I cannot confirm recent activity.",
+  "caveats": "I did not see a license in either the homepage or the README, so check the repository before assuming terms. The homepage's Windows support is mentioned only in passing. Clustering needs at least three nodes to survive a failure, and tuning read consistency or durability adds configuration choices. The homepage testimonials are vendor quotes from customers and were not independently checked. The docs were not fetched.",
+  "quotes": [
+   "The fault-tolerant relational database built on SQLite.",
+   "rock-solid, fault-tolerant, distributed relational database built on SQLite",
+   "think etcd, but with relational modeling available",
+   "No extra services to install or manage. Run the binary on three machines, and rqlite forms the cluster for you."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.rqlite.io/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/rqlite/rqlite"
+   },
+   {
+    "label": "Quick start docs",
+    "url": "https://rqlite.io/docs/quick-start/"
+   },
+   {
+    "label": "HTTP API docs",
+    "url": "https://rqlite.io/docs/api/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.rqlite.io/ - worked, homepage text retrieved",
+   "https://github.com/rqlite/rqlite - worked, README returned"
+  ]
+ }
+}

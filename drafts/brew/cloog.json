@@ -1,0 +1,132 @@
+{
+ "name": "cloog",
+ "desc": "Generate code for scanning Z-polyhedra",
+ "homepage": "https://github.com/periscop/cloog",
+ "installs_365d": 262,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "math",
+  "library",
+  "compiler"
+ ],
+ "why": "Generating code that scans Z-polyhedra touches real polyhedral compilation math, a close call as a library.",
+ "brief": {
+  "what_it_is": "CLooG (the Chunky Loop Generator) is a command-line tool and C library that generates loop code for scanning the integer points of one or more parametrized polyhedra, or a union of them. Its input is the affine inequalities that define the polyhedra plus an optional context stating known properties of the parameters, read from a file given on the command line. Its output is pseudo scanning code, and the README says many options help make that code close to compileable. Every function it uses to generate code is also callable from the library.",
+  "why_it_exists": "The README says CLooG is designed to avoid control overhead and produce very efficient scanning code. It was built as a standalone piece of the wider Chunky project, which is an automatic loop optimizer for data locality.",
+  "how_it_works": "The README gives only a sketch: you describe the polyhedra as affine inequalities plus a context, and CLooG emits nested for-loops with min/max bounds that visit each integer point exactly once. Its own example shows a 2D polygon with parameters n and m turning into nested loops with j bounded by min(m,-i+n+2). The README does not describe the internal algorithm, and it notes that the backend can be PolyLib or isl.",
+  "commands_seen": [
+   {
+    "cmd": "./get_submodules.sh",
+    "context": "Fetches submodules when building from the git repository; the README says this is only needed for the isl backend."
+   },
+   {
+    "cmd": "./autogen.sh",
+    "context": "Creates the configure script when building from git."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Detects system settings and writes the Makefile; options such as --prefix, --with-isl and --with-bits are described in the README."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles the cloog program and library."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the binaries and library, by default under /usr/local."
+   },
+   {
+    "cmd": "make distclean",
+    "context": "Removes files that configure created so the tree can be rebuilt for another machine."
+   },
+   {
+    "cmd": "cloog",
+    "context": "Runs CLooG, optionally followed by the name of an input file."
+   },
+   {
+    "cmd": "cloog -h",
+    "context": "Prints brief help (the README also lists --help)."
+   },
+   {
+    "cmd": "cloog -v",
+    "context": "Prints the version line; the README asks for its output in bug reports."
+   }
+  ],
+  "install_notes": "A source build is needed; no Homebrew-specific steps are documented. Building from a git checkout requires ./get_submodules.sh and ./autogen.sh first. By default configure uses the isl bundled with CLooG. The option --with-isl can instead point to a system or build isl, and --with-isl-prefix and --with-isl-builddir supply locations. The PolyLib backend needs PolyLib, found in standard locations or via --with-polylib-prefix, and it also uses GMP, configured with --with-gmp-prefix. With PolyLib, integer width is set by --with-bits=32, 64 (the default) or gmp. There is no account, hardware or runtime requirement beyond a C toolchain.",
+  "standout": "CLooG is the classic code generator for polyhedral loop nests. Its own example shows the transformation clearly: a polyhedron plus context goes in and nested loops with min/max bounds come out.",
+  "status": "Probably maintained. The releases page lists cloog-0.21.1 as Latest, dated 26 Jun, followed by cloog-0.21.0 on 15 Jun, both by the account harenome. The year is not shown in what I read, so I cannot say how recent they are. The README itself is an old document with a 2002 origin and points to a postscript doc in ./doc, which I did not fetch.",
+  "caveats": "The README is dated and partly stale: it mentions a PostScript manual and PolyLib backend options, and it does not describe a Homebrew build. It is LGPL. Its FAQ says it should compile wherever PolyLib is available and that it has not been proven bug free. Writing a standalone scanner is nontrivial, and the README says contributions must be C89 with 80-column lines. The input format is only shown by example, and the README points to test/readme.cloog for the real syntax, which I did not read.",
+  "quotes": [
+   "CLooG is a software which generates loops for scanning Z-polyhedra.",
+   "CLooG is designed to avoid control overhead and to produce a very efficient code.",
+   "Pronounce 'CLooG' as 'klug', which means 'sly' in german :-)."
+  ],
+  "links": [
+   {
+    "label": "Homepage / repository",
+    "url": "https://github.com/periscop/cloog"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/periscop/cloog/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/periscop/cloog (homepage, README returned; worked)",
+   "https://github.com/periscop/cloog/releases (worked; used for the latest release dates and tags, though the page contained a lot of page-chrome noise)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "CLooG turns affine integer geometry into executable loop nests, making a deep compiler-math idea tangible through a distinctive input-to-code transformation."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "CLooG",
+  "tldr": "CLooG takes a polyhedron described as affine inequalities and prints the nested for-loops that visit every integer point inside it exactly once.",
+  "deeper_look": "CLooG, the Chunky Loop Generator, is a command-line tool and C library that generates loop code for scanning the integer points of one or more parametrized polyhedra, or a union of them. You give it affine inequalities that define the shapes, plus an optional context stating what is known about the parameters, in a file. It prints pseudo scanning code, and the README says several options help make that code close to compileable.\n\nThe README's own example is a 2D polygon with parameters n and m. The output is nested loops where the inner bound is something like min(m,-i+n+2). That one line shows the idea: a geometric description of which iterations exist becomes loop bounds, with no wasted checks inside the loop body.\n\nIt was built as a standalone piece of the Chunky project, an automatic loop optimizer for data locality. The wider idea is polyhedral compilation: treat loop iterations as integer points in a shape, transform the shape (skew it, tile it, reorder it), then turn it back into code. CLooG is the last step of that pipeline. The README says it is designed to avoid control overhead and produce very efficient code, and every function the program uses is also callable from the library. It can use either PolyLib or isl as its backend.",
+  "install": "brew install cloog\n# pulls in gmp and isl; no hardware or account needed",
+  "try_this": [
+   {
+    "cmd": "cloog -h",
+    "what_happens": "Prints brief help listing the options."
+   },
+   {
+    "cmd": "cloog -v",
+    "what_happens": "Prints the version line, which the README asks for in bug reports."
+   },
+   {
+    "cmd": "cloog",
+    "what_happens": "Runs CLooG; give it an input file name to generate loops from a polyhedron description. The README points to test/readme.cloog in the source for the real input syntax."
+   }
+  ],
+  "whats_unique": "It is the classic code generator for polyhedral loop nests: a shape and a context go in, and loops with min/max bounds come out.",
+  "caveats": "The README is old, dating from 2002, and partly stale, with PostScript manual references and PolyLib options; the input format is only shown by example in the source's test files.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "math",
+   "compiler",
+   "polyhedral",
+   "library",
+   "loops"
+  ],
+  "links": [
+   {
+    "label": "Homepage / repository",
+    "url": "https://github.com/periscop/cloog"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/periscop/cloog/releases"
+   }
+  ]
+ }
+}

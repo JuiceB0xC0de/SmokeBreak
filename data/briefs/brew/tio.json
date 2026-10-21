@@ -1,0 +1,100 @@
+{
+ "name": "tio",
+ "desc": "Simple TTY terminal I/O application",
+ "homepage": "https://tio.github.io",
+ "installs_365d": 2805,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "quick",
+  "tui",
+  "needs-hardware",
+  "afternoon"
+ ],
+ "why": "A minimal serial terminal that is a gateway to poking at physical devices, though it is fairly plain on its own.",
+ "brief": {
+  "what_it_is": "tio is a command-line serial terminal for Linux, macOS, and Windows (via MSYS2). You give it a TTY device path, a profile name from a config file, or a topology ID, and it opens an interactive session with the device, with reconnect and auto-connect handling. Input can come from the keyboard, a pipe, or a shell command, and output can go to the screen, a log file, a hex dump, or a UNIX or network socket. The README also describes Lua scripting for expect/send style automation and for toggling modem lines such as DTR and RTS.",
+  "why_it_exists": "The README says the aim is \"To make a simpler serial device tool for working with serial TTY devices with less focus on classic terminal/modem features and more focus on the needs of embedded developers and hackers.\" It was originally created as an alternative to screen for connecting to serial devices alongside tmux.",
+  "how_it_works": "Devices can be named by path, by stable /dev/serial/by-id path, or by a topology ID (TID) that stays the same while a USB serial adapter stays in the same port. Options can be set on the command line or in a config file with named profiles, and a profile can be selected by name or pattern. Key commands use a prefix key, ctrl-t, followed by a letter, and ctrl-t ? lists them. Lua scripts run through tio.expect, tio.write, tio.set and related functions.",
+  "commands_seen": [
+   {
+    "cmd": "tio --help",
+    "context": "Prints the full usage text, including all command-line options and a note that ctrl-t ? lists key commands in session."
+   },
+   {
+    "cmd": "$ tio /dev/ttyUSB0",
+    "context": "Typical use: connect to a serial device with default settings (115200 8n1). The README says this is the common case."
+   },
+   {
+    "cmd": "$ tio --list",
+    "context": "Lists serial devices with their TID, uptime, driver and description, plus by-id and by-path links and configuration profiles."
+   },
+   {
+    "cmd": "$ tio bCC2",
+    "context": "Connects by topology ID, which the README recommends when no by-id path is available."
+   },
+   {
+    "cmd": "$ tio --auto-connect new",
+    "context": "Automatically connects to the first serial device that appears."
+   },
+   {
+    "cmd": "$ tio --log /dev/ttyUSB0",
+    "context": "Connects and logs the session to a file with an automatically generated name."
+   },
+   {
+    "cmd": "$ tio --socket inet:4242 /dev/ttyUSB0",
+    "context": "Redirects the device I/O to an IPv4 network socket on port 4242, useful for scripting or TTY sharing."
+   },
+   {
+    "cmd": "$ echo \"*IDN?\" | tio /dev/ttyACM0 --script \"tio.expect('\\r\\n', 1000)\" --mute",
+    "context": "Pipes a query into the device, waits up to 1 second for a line reply through a Lua expect, and prints only the response. The README shows the reply as KORAD KD3305P V4.2 SN:32475045."
+   },
+   {
+    "cmd": "$ tio --map INLCRNL,ODELBS /dev/ttyUSB0",
+    "context": "Maps NL to CR-NL on input from the device and DEL to BS on output to the device."
+   },
+   {
+    "cmd": "$ brew install tio",
+    "context": "Installs tio with Homebrew on macOS or Linux."
+   },
+   {
+    "cmd": "sudo usermod -a -G dialout <username>",
+    "context": "Known-issues fix for permission errors opening a serial device on Linux: adds your user to the dialout group. Needs a re-login to take effect."
+   },
+   {
+    "cmd": "meson setup build",
+    "context": "First step of building from source. Followed by meson compile -C build and meson install -C build. Glib and Lua development libraries must be installed first."
+   }
+  ],
+  "install_notes": "Beyond brew, the README lists a distribution package for Linux, snap install tio --classic for Linux, and pacman -S tio under MSYS2 for Windows. Snap needs classic confinement, which the README says is required by the snapcraft framework (see issue #187). Building from source needs glib and lua dev libraries; the README's example is sudo apt install libglib2.0-dev liblua5.2-dev, then the meson steps, with meson_options.txt for build options. On Linux, serial permission errors are fixed by joining the dialout group. Config file is looked up in $XDG_CONFIG_HOME/tio/config, then $HOME/.config/tio/config, then $HOME/.tioconfig.",
+  "standout": "Connecting by topology ID, which survives re-enumeration of USB serial adapters, combined with automatic reconnect, makes it a sturdier daily driver than screen. Lua scripting can pulse DTR/RTS to reset or put a microcontroller into boot mode, and the expect/send scripting plus socket and pipe support let it sit inside automated test flows.",
+  "status": "Probably maintained, but I could not confirm it. The README has live CI badges for Ubuntu, macOS, CodeQL and CodeFactor, lists a release badge, and names the maintainer, Martin Lund. I did not see a release date or last-commit date in the pages I read.",
+  "caveats": "The README does not describe native Windows support; the only Windows route it shows is MSYS2. Snap installs require classic confinement. Building from source requires glib and Lua development headers, and the README says the meson steps may differ by system. Linux users may hit serial permission errors until they join dialout. The README's quick-start line says tio connects with \"115200 8n1\" defaults, so other settings must be passed explicitly. The homepage itself is a short blurb that points to GitHub, so the README is the real source. License is GPLv2+.",
+  "quotes": [
+   "A simple serial device tool which features a straightforward command-line and configuration file interface to easily connect to serial TTY devices for basic I/O operations.",
+   "To make a simpler serial device tool for working with serial TTY devices with less focus on classic terminal/modem features and more focus on the needs of embedded developers and hackers.",
+   "In session you can press ctrl-t ? to list available key commands."
+  ],
+  "links": [
+   {
+    "label": "tio homepage",
+    "url": "https://tio.github.io"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/tio/tio"
+   },
+   {
+    "label": "Man page (text)",
+    "url": "https://raw.githubusercontent.com/tio/tio/master/man/tio.1.txt"
+   }
+  ],
+  "fetch_log": [
+   "https://tio.github.io: fetched, worked, but thin: a short description and a link saying to visit GitHub for details.",
+   "https://github.com/tio/tio: fetched, worked, returned the full README covering features, usage, examples, Lua API, install and known issues.",
+   "https://raw.githubusercontent.com/tio/tio/master/man/tio.1.txt: linked from the README but not fetched; it was not needed for the brief."
+  ]
+ }
+}

@@ -1,0 +1,93 @@
+{
+ "name": "jellyfish",
+ "desc": "Fast, memory-efficient counting of DNA k-mers",
+ "homepage": "https://github.com/gmarcais/Jellyfish",
+ "installs_365d": 109,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "library"
+ ],
+ "why": "Counts DNA k-mers at scale; real bioinformatics you can run on sequence data at home.",
+ "brief": {
+  "what_it_is": "Jellyfish is a command-line program for counting k-mers, which are substrings of length k, in DNA sequence. It reads FASTA and multi-FASTA files of DNA sequences and writes its counts in a binary format. You can turn that binary output into human-readable text with \"jellyfish dump\", or look up specific k-mers with \"jellyfish query\". The README says it is a C/C++ tool built from source with make and g++.",
+  "why_it_exists": "The README frames k-mer counting as a central step in many DNA sequence analyses and says Jellyfish is meant to do it fast and with little memory. It claims an order of magnitude less memory and an order of magnitude faster than other k-mer counting packages.",
+  "how_it_works": "The README says Jellyfish uses an efficient encoding of a hash table and exploits the \"compare-and-swap\" CPU instruction to increase parallelism. The authors' citation describes it as a fast, lock-free approach to parallel k-mer counting. The README does not go into further detail.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt install jellyfish",
+    "context": "Installs the packaged Jellyfish on Debian and Ubuntu, after running sudo apt update."
+   },
+   {
+    "cmd": "pkg install Jellyfish",
+    "context": "Installs the binary package on FreeBSD."
+   },
+   {
+    "cmd": "cd /usr/ports/biology/jellyfish",
+    "context": "FreeBSD ports directory to change into before building from the ports tree."
+   },
+   {
+    "cmd": "./configure --prefix=$HOME",
+    "context": "Source build configured to install into your home directory, per the README's install-from-source section."
+   },
+   {
+    "cmd": "make -j 4",
+    "context": "Compiles the source in parallel with four jobs. Used after configure in both the tarball and git-tree builds."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the compiled program into the configured prefix."
+   },
+   {
+    "cmd": "autoreconf -i",
+    "context": "Regenerates the build system; only needed when compiling from the git tree rather than a release tarball."
+   },
+   {
+    "cmd": "sudo ldconfig",
+    "context": "Refreshes the system library cache after installing into a system directory such as /usr/local."
+   },
+   {
+    "cmd": "./configure --enable-ruby-binding --enable-python-binding --enable-perl-binding",
+    "context": "Configures the optional Ruby, Python and Perl bindings (requires SWIG 3 when building from git)."
+   },
+   {
+    "cmd": "export PYTHONPATH=$HOME/lib/python2.7/site-packages",
+    "context": "Example of pointing Python at the binding when installed under a home prefix; the README notes you may need to adjust the Python version in the path."
+   }
+  ],
+  "install_notes": "Debian and Ubuntu: apt install jellyfish. Arch: available from the AUR. FreeBSD: pkg install Jellyfish or build from the ports tree. Windows: the README suggests WSL with a Linux distribution that carries Jellyfish, or Cygwin with a source build. Source build needs make and g++ 4.4 or higher. Building from the git tree also needs autoconf, automake, libtool, gettext, pkg-config and yaggo. Installing into system directories needs sudo and then sudo ldconfig. Language bindings (Ruby, Python, Perl) need SWIG 3 from git and the target language's development files. The README says the bindings are easier to compile from the release tarball.",
+  "standout": "The speed and memory claims rest on a hash table encoding and compare-and-swap parallelism, which is a lock-free approach rather than the usual locking. It is an established, citable piece of bioinformatics software with a peer-reviewed paper behind it.",
+  "status": "unknown. The README has a CI workflow badge, and it links to release downloads and packages on apt, AUR and FreeBSD ports, which suggests ongoing packaging. The fetched README gives no release date or last commit date, so I could not confirm recent activity.",
+  "caveats": "No native Windows build; Windows users need Cygwin or WSL. Building from git requires yaggo and several autotools packages. Python, Ruby and Perl bindings need SWIG 3 and extra setup, and the README's Python path example is for python2.7. The README points to doc/Readme.md for usage, which I did not fetch, so I have no flag-level detail beyond dump and query. The README does not state a license in the text I read.",
+  "quotes": [
+   "Jellyfish is a tool for fast, memory-efficient counting of k-mers in DNA.",
+   "Jellyfish can count k-mers using an order of magnitude less memory and an order of magnitude faster than other k-mer counting packages",
+   "If you use Jellyfish in your research, please cite:"
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repository",
+    "url": "https://github.com/gmarcais/Jellyfish"
+   },
+   {
+    "label": "Documentation (doc directory)",
+    "url": "https://github.com/gmarcais/Jellyfish/tree/master/doc"
+   },
+   {
+    "label": "Citation paper (Bioinformatics 2011)",
+    "url": "http://bioinformatics.oxfordjournals.org/cgi/content/abstract/27/6/764"
+   },
+   {
+    "label": "Release downloads",
+    "url": "https://github.com/gmarcais/Jellyfish/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/gmarcais/Jellyfish (homepage, GitHub README): fetched OK, README returned in full. Did not follow the doc/ link; the README covered install and purpose adequately."
+  ]
+ }
+}

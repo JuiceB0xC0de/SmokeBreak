@@ -1,0 +1,145 @@
+{
+ "name": "jaguar",
+ "desc": "Live reloading for your ESP32",
+ "homepage": "https://toitlang.org/",
+ "installs_365d": 352,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "language",
+  "library"
+ ],
+ "why": "Live reloading on ESP32 via the Toit language is a neat workflow, though it leans toward toolchain plumbing.",
+ "brief": {
+  "what_it_is": "Jaguar is a live-reloading workflow for ESP32 boards programmed in Toit. The host side is a command-line tool called jag, and a small Toit application that jag installs on the ESP32. You point jag at a Toit source file, it compiles the program and sends it to the device over WiFi, and the device stops the old version, installs the new one in flash, and restarts it from main. The README says the cycle takes under two seconds, with no reflashing over serial and no reboot. The device-side piece also runs an HTTP server and can keep named containers running at boot.",
+  "why_it_exists": "The README's framing is that flashing over serial, rebooting the device, and waiting for it to rejoin the network makes embedded iteration slow, and Jaguar removes those steps so you can 'iterate quickly and learn fast'.",
+  "how_it_works": "Jaguar runs a small HTTP server on the ESP32 that listens for incoming requests. Each request carries a compiled Toit program, which is relocated and installed in flash on the device. Before installing, Jaguar stops any old version of the program and frees its resources, then the new version starts again from main.",
+  "commands_seen": [
+   {
+    "cmd": "brew install jaguar",
+    "context": "Homebrew install on macOS for the jag binary."
+   },
+   {
+    "cmd": "jag setup",
+    "context": "Lets jag download and configure the Toit SDK and flashing tools."
+   },
+   {
+    "cmd": "jag flash",
+    "context": "Puts the Jaguar application onto a serially connected ESP32; prompts for serial port and WiFi credentials unless --uart-only is used."
+   },
+   {
+    "cmd": "jag config wifi set --wifi-ssid SSID --wifi-password PASSWORD",
+    "context": "Stores WiFi credentials in Jaguar's config file so flashing does not prompt for them."
+   },
+   {
+    "cmd": "jag monitor",
+    "context": "Shows serial output from the device after flashing."
+   },
+   {
+    "cmd": "jag scan",
+    "context": "Finds ESP32s announcing themselves over UDP broadcast on the same local network."
+   },
+   {
+    "cmd": "jag run hello.toit",
+    "context": "Runs a Toit program on the device over WiFi."
+   },
+   {
+    "cmd": "jag watch hello.toit",
+    "context": "Keeps watching the file and its dependencies on disk and live-reloads them when they change."
+   },
+   {
+    "cmd": "jag container install print-service service.toit",
+    "context": "Installs or updates a named container that runs automatically when the system boots."
+   },
+   {
+    "cmd": "jag firmware update",
+    "context": "Updates the system software and the Jaguar application over WiFi; this uninstalls all containers and stops running applications."
+   }
+  ],
+  "install_notes": "On macOS, Windows (winget install --id=Toit.Jaguar -e), Arch (AUR jaguar-bin), and Debian/Ubuntu (.deb from GitHub releases) there are packages, and precompiled archives or a macOS dmg are also offered. Linux archive installs need the embedded jag binary placed on PATH by hand. Hardware: an ESP32 connected by serial cable for the first flash, then WiFi. On Linux you need access to /dev/ttyUSB0, usually via the uucp or dialout group (sudo usermod -aG dialout $USER, then log out and back in). Go users can run go install github.com/toitlang/jaguar/cmd/jag@latest with Go 1.16+. Building from source needs the Toit repo checkout (JAG_TOIT_REPO_PATH), ESP-IDF sourced from the patched copy inside Toit's third_party directory, then make. The Toit VS Code extension finds the SDK automatically if jag is on PATH.",
+  "standout": "The device runs a tiny HTTP-served Toit program that accepts new compiled programs over WiFi and swaps them in place, so there is no reflash in the loop. Its per-run options are also useful: -D jag.wifi=false lets an app take over the WiFi radio for something like a soft access point, and a UART proxy can carry Jaguar commands over the serial cable.",
+  "status": "unknown for jag itself: the README and the fetched pages show no release date or last-commit date for jag. The Toit homepage lists a language release, v2.0.0-alpha.199, dated September 14, 2026, which suggests active upstream development, but that is a different repo.",
+  "caveats": "The Toit homepage does not mention jag at all, so the link from the brew formula is the only path to it. Flashing needs serial access, and Linux users often hit a permissions error on /dev/ttyUSB0. WiFi is shared: an app that uses the radio conflicts with Jaguar unless you use -D jag.wifi=false, which by default gets a 10 second timeout. A firmware update wipes all containers and stops running apps, so they must be reinstalled. --uart-only turns off the WiFi endpoint entirely. Building from source needs a patched ESP-IDF and a full Toit checkout. Licence not seen in the README; I did not fetch the LICENSE file. The brew formula description and scout notes lean toward 'toolchain plumbing'.",
+  "quotes": [
+   "Develop, update, and restart your code in less than two seconds via WiFi.",
+   "No need to flash over serial, reboot your device, or wait for it to reconnect to your network.",
+   "Jaguar runs a small HTTP server that listens for incoming requests."
+  ],
+  "links": [
+   {
+    "label": "Toit language homepage",
+    "url": "https://toitlang.org/"
+   },
+   {
+    "label": "Jaguar GitHub repository and README",
+    "url": "https://github.com/toitlang/jaguar"
+   },
+   {
+    "label": "Two-minute demonstration video",
+    "url": "https://youtu.be/cU7zr6_YBbQ"
+   }
+  ],
+  "fetch_log": [
+   "https://toitlang.org/ - worked; returned the Toit language landing page, which does not describe jag and has no jag-specific info.",
+   "https://github.com/toitlang/jaguar - worked; returned the README, which covers installation, usage, options, and building from source. Not fetched: LICENSE, releases, commit history."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Jaguar\u2019s tiny ESP32 HTTP server swaps compiled Toit programs over WiFi without reflashing or rebooting\u2014a distinctive way to explore embedded deployment and live code replacement."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Jaguar",
+  "tldr": "Jaguar pushes Toit programs to an ESP32 over WiFi and restarts them in under two seconds, with no reflashing or rebooting.",
+  "deeper_look": "Jaguar is a live-reloading workflow for ESP32 boards programmed in Toit. The host side is a command-line tool, `jag`. The device side is a small Toit application that `jag` flashes onto the board once, over a serial cable. After that, everything happens over WiFi.\n\nYou point `jag` at a Toit source file. It compiles the program and sends it to the board. The device runs a small HTTP server that listens for requests, and each request carries a compiled program. Jaguar stops the old version, frees its resources, installs the new one in flash, and starts it again from main. The README claims this takes under two seconds. In its words: \"No need to flash over serial, reboot your device, or wait for it to reconnect to your network.\"\n\nThe idea underneath is that the usual embedded loop of edit, flash, reboot, rejoin the network is mostly overhead, and a runtime that can swap programs in place removes it. This makes microcontroller work feel closer to editing a script. Jaguar can also keep named containers installed so they run at boot, which turns a scratch experiment into something that stays on the device.",
+  "install": "brew install jaguar\njag setup\n\nNeeds an ESP32 board and a serial cable for the first flash (`jag flash`), then WiFi. On Linux you usually need serial port access, e.g. `sudo usermod -aG dialout $USER`, then log out and back in. Packages also exist for Windows (winget), Arch (AUR) and Debian/Ubuntu (.deb).",
+  "try_this": [
+   {
+    "cmd": "jag flash",
+    "what_happens": "Puts the Jaguar application on a serially connected ESP32, prompting for the serial port and WiFi credentials."
+   },
+   {
+    "cmd": "jag scan",
+    "what_happens": "Finds ESP32s on the local network that announce themselves over UDP broadcast."
+   },
+   {
+    "cmd": "jag watch hello.toit",
+    "what_happens": "Watches the file and its dependencies, and live-reloads the program on the device whenever you save a change."
+   }
+  ],
+  "whats_unique": "The device runs a tiny HTTP-served Toit program that accepts new compiled programs and swaps them in place, so there is no reflash in the loop. Per-run options such as `-D jag.wifi=false` let an app take over the WiFi radio itself.",
+  "caveats": "It needs an ESP32 and a serial cable for the first flash, it only runs Toit rather than C or Arduino code, and the brief found no release or commit dates for jag itself.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "esp32",
+   "toit",
+   "wifi",
+   "live-reload",
+   "embedded"
+  ],
+  "links": [
+   {
+    "label": "Toit language homepage",
+    "url": "https://toitlang.org/"
+   },
+   {
+    "label": "Jaguar GitHub repository and README",
+    "url": "https://github.com/toitlang/jaguar"
+   },
+   {
+    "label": "Two-minute demonstration video",
+    "url": "https://youtu.be/cU7zr6_YBbQ"
+   }
+  ]
+ }
+}

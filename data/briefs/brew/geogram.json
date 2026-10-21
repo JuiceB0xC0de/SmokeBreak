@@ -1,0 +1,101 @@
+{
+ "name": "geogram",
+ "desc": "Programming library of geometric algorithms",
+ "homepage": "https://github.com/BrunoLevy/geogram/wiki",
+ "installs_365d": 99,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "math",
+  "library",
+  "afternoon",
+  "visual"
+ ],
+ "why": "Geometric algorithms library with Voronoi and meshing work behind it, a door into computational geometry worth a look.",
+ "brief": {
+  "what_it_is": "Geogram is a C++ programming library of geometric algorithms, aimed at developers building geometry tools. Its README lists geometry-processing features (surface reconstruction, remeshing, parameterization and texturing, intersections and boolean operations, constructive solid geometry) and lower-level pieces (exact predicates, 2D and 3D Delaunay triangulations, a mesh data structure, geometric search structures, spectral mesh processing, and a linear solver on CPU and GPU). Inputs are point sets, meshes, and geometric primitives supplied by calling code. The brew formula also installs a set of executables: geobox, geocod, geodump, geoshade, vorpalite, vorpaview, and several geogram_demo_* programs. The wiki identifies vorpaview as a mesh viewer; I did not read what the other executables do.",
+  "why_it_exists": "The wiki says geogram began as Bruno Levy's post-doc work around Y2K and carries forward the main results of the former ALICE Inria project (2004-2018), described as more than 30 research articles whose results are maintained and reproducible, some used in industrial products. Its stated aim is to be a reusable, reproducible home for geometry-processing research code.",
+  "how_it_works": "The library is organised as a set of C++ modules: low-level exact predicates and Delaunay/Voronoi code, mesh and geometric-search data structures, and higher-level processing algorithms built on them. The wiki's Emscripten page explains how it is compiled to WebAssembly for in-browser demos. I did not find a single-paragraph architecture description in the pages I read.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt-get install cmake build-essential libx11-dev libxcb1-dev libxau-dev libxdmcp-dev",
+    "context": "Debian prerequisites for building on Linux (from the wiki's compiling_Linux page)."
+   },
+   {
+    "cmd": "git clone --recurse-submodules https://github.com/BrunoLevy/geogram.git",
+    "context": "Clones the repository with its submodules for the x86 Linux build."
+   },
+   {
+    "cmd": "cd geogram",
+    "context": "Enters the cloned source directory."
+   },
+   {
+    "cmd": "./configure.sh",
+    "context": "Generates the build directory for the default x86 Linux64 gcc dynamic build."
+   },
+   {
+    "cmd": "cd build/Linux64-gcc-dynamic-Release",
+    "context": "Moves into the generated Release build directory."
+   },
+   {
+    "cmd": "make -j 8",
+    "context": "Builds the geogram library and demo programs; demos land in the bin/ subdirectory."
+   },
+   {
+    "cmd": "./configure.sh Linux64-nonx86-gcc-dynamic",
+    "context": "Configure step for non-x86 Linux (e.g. RISC-V) using gcc."
+   },
+   {
+    "cmd": "./configure.sh Linux64-nonx86-clang-dynamic",
+    "context": "Configure step for non-x86 Linux (e.g. RISC-V) using clang."
+   },
+   {
+    "cmd": "git submodule update --recursive --remote",
+    "context": "Updates the submodules to their latest versions."
+   },
+   {
+    "cmd": "git clone https://github.com/BrunoLevy/exploragram.git",
+    "context": "Run inside geogram/src/lib to add the optional exploragram library; reconfigure and make afterwards."
+   }
+  ],
+  "install_notes": "Homebrew is the easy path, but building from source is the documented route. On Linux you need CMake, g++ or clang, and X11 development libraries; on Debian the wiki gives an apt-get line and an extra list (libxi-dev, libxcursor-dev, libxinerama-dev, libxrandr-dev, libtbb-dev) that a contributor asked for. Clone with --recurse-submodules, then run ./configure.sh and make from the generated build directory. The wiki also has separate compile pages for Windows, OS/X, Android, MinGW/plain Makefile, and Emscripten. No accounts or licence keys are needed that I saw.",
+  "standout": "Unusually, the library's history is part of its pitch: the wiki says it carries research code from more than 30 SIGGRAPH, TOG, SGP and Eurographics papers and that the results are kept reproducible, and it won the Symposium on Geometry Processing Software Award in 2023. It also runs in the browser through Emscripten and has GLUP, a small 3D graphics layer for demos.",
+  "status": "Maintained, as far as I can tell. The wiki Home page showed a last edit on Aug 13, 2026 with 47 revisions, and the compiling_Linux page showed an edit on Sep 12, 2026. The README carries CI, nightly, and Emscripten build badges. I did not see a release date or repo commit date, so the evidence is the recent wiki edits and CI badges.",
+  "caveats": "The README names no licence in its text, but its badge reads BSD-3-Clause. Building needs git submodules and several X11 and TBB development packages on Linux. The optional exploragram library must be cloned by hand. The brew formula has no caveats. The wiki and README are the main docs, and the wiki is large, so I only read the homepage, the README, and one compile page. The 'door into computational geometry' framing in the scout notes is the scout's wording, not the project's.",
+  "quotes": [
+   "Geogram is a programming library with geometric algorithms.",
+   "Geogram is the result of a sustained development effort that started in Y2K (Bruno's post-doc in Stanford).",
+   "Geogram received the Symposium on Geometry Processing Software Award in 2023.",
+   "GLUP: 3D Graphics without the headache"
+  ],
+  "links": [
+   {
+    "label": "Wiki home (brew homepage)",
+    "url": "https://github.com/BrunoLevy/geogram/wiki"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/BrunoLevy/geogram"
+   },
+   {
+    "label": "Linux compile guide",
+    "url": "https://github.com/BrunoLevy/geogram/wiki/compiling_Linux"
+   },
+   {
+    "label": "Programmer's reference manual",
+    "url": "https://brunolevy.github.io/geogram/"
+   },
+   {
+    "label": "In-browser demos (Emscripten)",
+    "url": "https://github.com/BrunoLevy/geogram/wiki/compiling_Emscripten#examples"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/BrunoLevy/geogram/wiki (worked; returned the wiki Home page with the doc index, no build commands)",
+   "https://github.com/BrunoLevy/geogram (worked; returned the README with feature list, links, and language bindings, no build commands)",
+   "https://github.com/BrunoLevy/geogram/wiki/compiling_Linux (worked; URL was guessed from the wiki naming pattern, returned the Linux build guide with commands)"
+  ]
+ }
+}

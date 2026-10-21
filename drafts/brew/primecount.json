@@ -1,0 +1,142 @@
+{
+ "name": "primecount",
+ "desc": "Fast prime counting function program and C/C++ library",
+ "homepage": "https://github.com/kimwalisch/primecount",
+ "installs_365d": 621,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "quick",
+  "math",
+  "library"
+ ],
+ "why": "Fast prime counting via combinatorial algorithms, real number theory software you can run to count primes far beyond brute force.",
+ "brief": {
+  "what_it_is": "primecount is a command-line program and C/C++ library that counts the primes up to x, for x up to 10^31. You give it a number, such as 1e14, and it prints pi(x), the count of primes less than or equal to x. It can also compute the nth prime (--nth-prime), approximate pi(x) with Riemann R or Li functions, and evaluate phi(x, a). It is built on the combinatorial prime counting algorithms, parallelized with OpenMP.",
+  "why_it_exists": "The README frames it as a program built on highly optimized implementations of the combinatorial prime counting algorithms, so you can count primes far beyond what brute-force sieving can reach. It also says it contains the first open source implementations of the Deleglise-Rivat algorithm and Xavier Gourdon's algorithm.",
+  "how_it_works": "It implements Legendre, Meissel, Lehmer, Lagarias-Miller-Odlyzko, Deleglise-Rivat and Gourdon formulas, which reduce pi(x) to a sum of phi function values and correction terms (P2, S1, S2, and others) evaluated over a small sieve bound. The default is Gourdon's algorithm. Its nth-prime method estimates the nth prime with the inverse Li or inverse R function, counts primes up to that guess, then runs a segmented sieve forward to the exact answer. A custom load balancer is shared across implementations and, per the README, scales to hundreds of CPU cores.",
+  "commands_seen": [
+   {
+    "cmd": "primecount 1e14",
+    "context": "Counts the primes less than or equal to 10^14."
+   },
+   {
+    "cmd": "primecount 1e20 --status",
+    "context": "Counts primes up to 10^20 and prints progress and status information during the computation."
+   },
+   {
+    "cmd": "primecount 2**32 --meissel",
+    "context": "Counts primes up to 2^32 using Meissel's algorithm instead of the default Gourdon."
+   },
+   {
+    "cmd": "primecount 1e14 --nth-prime --threads=4 --time",
+    "context": "Finds the 10^14th prime using 4 threads and prints the elapsed time in seconds."
+   },
+   {
+    "cmd": "brew install primecount",
+    "context": "Installs the primecount command-line program on macOS through Homebrew."
+   },
+   {
+    "cmd": "sudo apt install primecount",
+    "context": "Installs the primecount package on Debian and Ubuntu."
+   },
+   {
+    "cmd": "cmake .",
+    "context": "Configures a source build from the repository root."
+   },
+   {
+    "cmd": "cmake --build . --parallel",
+    "context": "Compiles primecount in parallel after configuration."
+   },
+   {
+    "cmd": "sudo cmake --install .",
+    "context": "Installs the built primecount and libprimecount to the system."
+   },
+   {
+    "cmd": "sudo ldconfig",
+    "context": "Refreshes the shared library cache after a source install on Linux."
+   }
+  ],
+  "install_notes": "Beyond brew install primecount, the README lists winget install primecount on Windows, pacman, apt, dnf, zypper and pkg install on Arch, Debian/Ubuntu, Fedora, openSUSE and FreeBSD. For development against libprimecount, install libprimecount-dev or libprimecount-devel. To build from source you need a C++ compiler and CMake; the README recommends GCC or Clang because they support both OpenMP and 128-bit integers. Detailed build instructions are in doc/BUILD.md. No accounts or hardware requirements are mentioned.",
+  "standout": "It claims the first open source implementations of Deleglise-Rivat and Gourdon's algorithm, and a novel shared load balancer that scales to hundreds of cores. Its hard special leaves use a linear counter array with POPCNT in place of a binary indexed tree, which the author says is more cache efficient. Bindings exist for Python, Julia, Rust, Haskell, Lua and Common Lisp.",
+  "status": "Appears maintained, but the README gives no release date or commit date, so this is not confirmed. Evidence: CI and benchmark workflow badges, benchmarks run on a 2025 AMD EPYC Zen5 CPU, a sponsors section where the author says donations motivate continued maintenance, and packages across many distributions.",
+  "caveats": "Maximum input is 10^31. The benchmark table covers x from 10^10 to 10^22; Legendre, Meissel and LMO show NaN from 10^19 upward, so those results are not reported. The README says Gourdon's advantage over Deleglise-Rivat should not be read as solely the algorithm's advantage, since the Gourdon implementation includes newer improvements. Building from source needs CMake and ideally GCC or Clang for OpenMP and 128-bit integers. The bindings section of the README says 'primesieve natively supports C and C++', which appears to be a copy-paste error for primecount. The brew caveats field was empty.",
+  "quotes": [
+   "primecount is a command-line program and C/C++ library that counts the number of primes \u2264 x (maximum 10^31) using highly optimized implementations of the combinatorial prime counting algorithms.",
+   "primecount contains the first ever open source implementations of the Deleglise-Rivat algorithm and Xavier Gourdon's algorithm (that works).",
+   "primecount has already been used to compute several prime counting function world records!"
+  ],
+  "links": [
+   {
+    "label": "primecount homepage (GitHub)",
+    "url": "https://github.com/kimwalisch/primecount"
+   },
+   {
+    "label": "C and C++ API documentation",
+    "url": "https://github.com/kimwalisch/primecount/blob/master/doc/libprimecount.md"
+   },
+   {
+    "label": "World records",
+    "url": "https://github.com/kimwalisch/primecount/blob/master/doc/Records.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/kimwalisch/primecount (homepage, GitHub README): fetched successfully. The README is detailed and covers installation, usage, algorithms and the APIs, so I did not follow further links."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It makes deep prime-counting algorithms tangible in a runnable tool, counting primes far beyond brute-force sieving and exposing several distinct methods to compare."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "primecount",
+  "tldr": "Counts the primes up to 10^31 without listing them, using the combinatorial algorithms behind prime counting world records.",
+  "deeper_look": "primecount takes a number like `1e14` and prints pi(x), the count of primes less than or equal to it. Sieving every number up to x would take far too long at that size. primecount never enumerates the primes. It reduces the count to a sum of phi function values plus a few correction terms, evaluated over a much smaller sieve bound.\n\nIt implements the lineage of these formulas: Legendre, Meissel, Lehmer, Lagarias-Miller-Odlyzko, Deleglise-Rivat and Gourdon. Gourdon's is the default, and flags such as `--meissel` let you run the older ones on the same input. The README says it holds the first open source implementations of Deleglise-Rivat and of Xavier Gourdon's algorithm, in its words \"(that works)\". It is parallelized with OpenMP and uses a custom load balancer that the README says scales to hundreds of cores.\n\nIt also does related things. `--nth-prime` finds the nth prime by estimating it with the inverse Li or inverse Riemann R function, counting primes up to that guess, then running a segmented sieve forward to the exact answer. It can approximate pi(x) with Riemann R or Li, and evaluate phi(x, a). It is also a C/C++ library, with bindings for Python, Julia, Rust, Haskell, Lua and Common Lisp.\n\nThe door here is analytic number theory. Counting primes without finding them is a real research problem, and the project says it has been used to compute several prime counting world records.",
+  "install": "brew install primecount\n# depends on primesieve and libomp, which brew pulls in. No account or hardware needed.",
+  "try_this": [
+   {
+    "cmd": "primecount 1e14",
+    "what_happens": "Prints the number of primes up to 10^14."
+   },
+   {
+    "cmd": "primecount 2**32 --meissel",
+    "what_happens": "Counts primes up to 2^32 using Meissel's older algorithm instead of the default Gourdon."
+   },
+   {
+    "cmd": "primecount 1e14 --nth-prime --threads=4 --time",
+    "what_happens": "Finds the 10^14th prime on 4 threads and prints the elapsed seconds."
+   }
+  ],
+  "whats_unique": "It packages the full lineage of combinatorial prime counting algorithms in one tool, including open source Deleglise-Rivat and Gourdon implementations, and lets you switch between them on the same input.",
+  "caveats": "Maximum input is 10^31, and very large inputs like 1e20 are a serious computation. The README gives no release or commit date, though CI, 2025 benchmarks and distro packages suggest it is maintained.",
+  "commitment": "quick",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "quick",
+   "math",
+   "number-theory",
+   "primes",
+   "library",
+   "openmp"
+  ],
+  "links": [
+   {
+    "label": "primecount homepage (GitHub)",
+    "url": "https://github.com/kimwalisch/primecount"
+   },
+   {
+    "label": "C and C++ API documentation",
+    "url": "https://github.com/kimwalisch/primecount/blob/master/doc/libprimecount.md"
+   },
+   {
+    "label": "World records",
+    "url": "https://github.com/kimwalisch/primecount/blob/master/doc/Records.md"
+   }
+  ]
+ }
+}

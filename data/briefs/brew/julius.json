@@ -1,0 +1,82 @@
+{
+ "name": "julius",
+ "desc": "Two-pass large vocabulary continuous speech recognition engine",
+ "homepage": "https://github.com/julius-speech/julius",
+ "installs_365d": 48,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "audio",
+  "science",
+  "ancient"
+ ],
+ "why": "A classic open speech recognition engine; worth poking at to see how decoding actually works, though it's old and niche.",
+ "brief": {
+  "what_it_is": "Julius is an open-source large vocabulary continuous speech recognition (LVCSR) decoder, written for speech researchers and developers. It takes live microphone or network audio, or a list of audio files, and needs a language model (word N-gram in ARPA format, or a rule-based grammar) plus an acoustic model (HTK ASCII HMM definitions, or a DNN-HMM). It outputs recognized word sequences and can also produce N-best lists, word graphs, confusion networks, forced alignments and confidence scores. It runs as a command-line program, a server, or a library with a simple API, and the README says it is mainly for Linux and other Unix, with Windows, Mac and Android also supported.",
+  "why_it_exists": "The README says Julius has been developed as research software for Japanese LVCSR since 1997, continued through the IPA Japanese dictation toolkit project, the Continuous Speech Recognition Consortium (CSRC) and the Interactive Speech Technology Consortium (ISTC). Its stated goal is a high-performance, small-footprint decoder that runs in real time on everything from micro-computers to cloud servers.",
+  "how_it_works": "The README describes a 2-pass tree-trellis search built on word N-gram and context-dependent HMMs. It uses a tree-organized lexicon, 1-best or word-pair context approximation, rank and score pruning, N-gram factoring, cross-word context handling, enveloped beam search, and Gaussian pruning and selection. The search is kept independent of model structure, so shared-state triphones, tied-mixture models and DNN front ends can be swapped in.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt-get install build-essential zlib1g-dev libsdl2-dev libasound2-dev",
+    "context": "Installs build tools and the SDL2 and ALSA development packages on Debian/Ubuntu before building from source."
+   },
+   {
+    "cmd": "git clone https://github.com/julius-speech/julius.git",
+    "context": "Clones the Julius source repository."
+   },
+   {
+    "cmd": "./configure --enable-words-int",
+    "context": "Configures the build from source, enabling the --enable-words-int option, as the README's quick-run section does."
+   },
+   {
+    "cmd": "make -j4",
+    "context": "Compiles Julius using four parallel jobs."
+   },
+   {
+    "cmd": "../julius/julius/julius -C julius.jconf -dnnconf dnn.jconf",
+    "context": "Runs the freshly built binary on the bundled English DNN model's config to recognize the included mozilla.wav via test.dbl."
+   },
+   {
+    "cmd": "../julius/julius/julius -C mic.jconf -dnnconf dnn.jconf",
+    "context": "Runs Julius on live microphone input using a hand-written mic.jconf config in place of julius.jconf."
+   },
+   {
+    "cmd": "julius --help",
+    "context": "Prints the full list of options, which the README also says are documented in doc/Options.md and Sample.jconf."
+   }
+  ],
+  "install_notes": "Building from source is the path the README shows: install build-essential, zlib, SDL2 and ALSA dev packages, clone, then ./configure --enable-words-int and make. The README points to INSTALL.txt for other platforms, which I did not fetch. Models are not bundled with the source. For the English quick run you download ENVR-v5.4.Dnn.Bin.zip from SourceForge (JuliusModel page), then hand-edit dnn.jconf to match the current Julius version: change -cmnstatic to -cvnstatic and add state_prior_log10nize false. For Japanese, the separate dictation-kit repo supplies executables, a 60k-word LM and GMM/DNN acoustic models. Microphone use needs a jconf file that sets -input mic.",
+  "standout": "Julius is built to be model-agnostic: it reads standard HTK acoustic models and ARPA language models, and one process can run dictation, grammar-based and isolated-word recognition at the same time. The README also claims a memory footprint under 32 MB for the work area, which is unusually small for LVCSR.",
+  "status": "quiet. The README names release 4.6 (2 September 2020) as the latest, and its copyright runs to 2020. It has no abandonment notice, but I did not see a last-commit date, so I cannot say whether it is actively maintained. The docs are mid-migration to markdown ('work in progress').",
+  "caveats": "Getting a working recognizer means fetching separate models and editing configs by hand; the DNN quick run requires manual config changes. Some DNN models need a modified fork (palles77/julius) mentioned in the README. Documentation is partly migrated, and older material refers to Julius 3.x and 4.x. The README calls Julius 'Japanese first', and most of its pretrained models are Japanese or English. The license is BSD-3-Clause with a request to cite the Julius papers or the Zenodo DOI. The brew executables list includes tools such as mkgshmm, mkss and mkfa that the README does not describe; I did not verify them.",
+  "quotes": [
+   "\"Julius\" is a high-performance, small-footprint large vocabulary continuous speech recognition (LVCSR) decoder software for speech-related researchers and developers.",
+   "Since Julius itself is a language-independent decoding program, you can make a recognizer of a language if given an appropriate language model and acoustic model for the target language.",
+   "when you publish or present results by using this software, we would highly appreciate if you mention the use of \"Large Vocabulary Continuous Speech Recognition Engine Julius\""
+  ],
+  "links": [
+   {
+    "label": "Homepage / repository",
+    "url": "https://github.com/julius-speech/julius"
+   },
+   {
+    "label": "Options documentation (doc/Options.md)",
+    "url": "https://github.com/julius-speech/julius/blob/master/doc/Options.md"
+   },
+   {
+    "label": "Japanese dictation kit",
+    "url": "https://github.com/julius-speech/dictation-kit"
+   },
+   {
+    "label": "Software DOI (Zenodo)",
+    "url": "https://doi.org/10.5281/zenodo.2530396"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/julius-speech/julius (homepage, fetched OK, README returned in full; no further fetches made because the README was not thin)"
+  ]
+ }
+}

@@ -1,0 +1,58 @@
+{
+ "name": "proxytunnel",
+ "desc": "Create TCP tunnels through HTTPS proxies",
+ "homepage": "https://github.com/proxytunnel/proxytunnel",
+ "installs_365d": 313,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "quick"
+ ],
+ "why": "Tunnels TCP through HTTPS proxies via CONNECT, a neat door into how proxies carry arbitrary traffic.",
+ "brief": {
+  "what_it_is": "proxytunnel is a command-line program that connects stdin and stdout to a server on the Internet by sending the traffic through an HTTPS proxy using the HTTP CONNECT method. It takes a destination host and port, plus optional proxy host, port, and credentials, and passes the bytes through as a tunnel. The README is written around using it as an SSH ProxyCommand, so SSH traffic travels through a corporate or other HTTP proxy. It also runs as an inetd service or a standalone daemon, and it supports SSL encryption, NTLM authentication, and chaining through a second proxy. The README says the version is 1.12.1.",
+  "why_it_exists": "The author wrote it to reach his home machine over SSH from behind a proxy that only allowed HTTPS-style outbound traffic. The README says: \"I originally wrote this program to be used as an extension to SSH, to be able to SSH to my box at home.\"",
+  "how_it_works": "The client connects to the HTTP proxy and sends a CONNECT request for the destination host:port, optionally with Proxy-Authorization credentials, and then relays stdin and stdout over the resulting connection. With -e or -E, the connection to the proxy or to the destination is wrapped in SSL, which helps when a proxy inspects protocol and rejects non-HTTPS traffic. The README says that in that case you need stunnel4 or a server that understands SSL on the other end.",
+  "commands_seen": [
+   {
+    "cmd": "$ ./proxytunnel --help",
+    "context": "Prints the built-in option list (version 1.12.1 is shown in the output)."
+   },
+   {
+    "cmd": "ProxyCommand /path/to/proxytunnel -E -p proxy:8080 -P username -d mybox.athome.nl:443",
+    "context": "Example line for ~/.ssh/config under a Host entry. It sends SSH through the proxy with SSL to the proxy, prompts for the password, and targets port 443 on the home box."
+   },
+   {
+    "cmd": "ssh foobar",
+    "context": "Final step once the ProxyCommand is set up; the README says \"execute an 'ssh foobar' and you're in business!\""
+   }
+  ],
+  "install_notes": "The README links to INSTALL.md for build instructions, which I did not fetch. Credentials can be given with -P on the command line (the password is then prompted for), with the PROXYPASS or PROXYUSER environment variables, with the HTTP_PROXY variable (format http://host:port/), or with a passfile (-F) containing proxy_user, proxy_passwd, remproxy_user, and remproxy_passwd. The server side needs sshd listening on 443 or 563 through an extra Port line in sshd_config, or a firewall redirect, because most HTTPS proxies allow only those ports. The README also mentions an Nginx, Apache, or Caddy setup, described in a linked blog post.",
+  "standout": "It reuses the ordinary HTTPS proxy CONNECT method as a generic byte pipe, so any TCP service, SSH being the main example, can get through a proxy that was built only for web traffic. The README is also a personal, first-person document from the original author, with a practical, hands-on tone.",
+  "status": "Status is unclear from the README alone. The version shown is 1.12.1, the copyright line says 2001-2024, and the README has no release date or commit date. The Travis CI badge points to travis-ci.org, which suggests older CI setup, and the README carries a 'maintainers wanted' badge, which suggests the project is looking for maintainers. I did not check the commit history, so this is not confirmed.",
+  "caveats": "Many corporate proxies filter traffic, so plain CONNECT tunnels may fail without -e or -E and extra server-side setup. The README warns that most HTTPS proxies only allow ports 443 and 563, so SSH has to be moved onto one of those. Self-signed certificates need -z, which turns off certificate verification. NTLM support needs -N, and the domain may need -t if autodetection fails. Build steps are in a separate INSTALL.md that I did not read, and the man page at docs/proxytunnel.1.adoc was not fetched either. The README does not state a license.",
+  "quotes": [
+   "This is proxytunnel, a program that connects stdin and stdout to an origin server somewhere in the Internet through an industry standard HTTPS proxy.",
+   "I originally wrote this program to be used as an extension to SSH, to be able to SSH to my box at home.",
+   "Most HTTPS proxies do not allow access to ports other than 443 (HTTPS) and 563 (SNEWS), so some hacking is necessary to start the SSH daemon on the required port.",
+   "Share and Enjoy!"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/proxytunnel/proxytunnel"
+   },
+   {
+    "label": "Tunneling corporate firewalls for developers (blog, HTTPS tunneling chapter)",
+    "url": "https://blog.frost.kiwi/tunneling-corporate-firewalls/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/proxytunnel/proxytunnel: fetched OK, README returned (the README links to INSTALL.md and docs/proxytunnel.1.adoc, which were not fetched)"
+  ]
+ }
+}

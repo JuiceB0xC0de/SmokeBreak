@@ -1,0 +1,85 @@
+{
+ "name": "netlistsvg",
+ "desc": "Draws an SVG schematic from a yosys JSON netlist",
+ "homepage": "https://github.com/nturley/netlistsvg",
+ "installs_365d": 254,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "visual",
+  "quick",
+  "reverse-engineering"
+ ],
+ "why": "Feed it a synthesised Yosys netlist and watch a digital circuit redraw itself as a schematic.",
+ "brief": {
+  "what_it_is": "netlistsvg is a command-line tool and JavaScript library that draws an SVG schematic from a Yosys JSON netlist. It takes a JSON file (produced by Yosys's write_json command, or written by hand in JSON5) and outputs an SVG, by default out.svg. It uses elkjs for automatic layout, and a skin SVG file supplies the cell icons and layout settings. The README's example shows a digital counter netlist redrawn as a schematic and an analog resistor-divider example.",
+  "why_it_exists": "The README describes it as a way to draw an SVG schematic from a yosys JSON netlist. It does not give a longer motivation beyond that.",
+  "how_it_works": "The tool reads one module from the Yosys JSON (the first module, or the one marked top) and matches each cell type against aliases in a skin SVG file, which supplies the icon and port positions for each cell. Layout is computed by elkjs, a port of the Eclipse ELK layered (Sugiyama-style) algorithm, similar to dot in Graphviz. Cell types with no match get a generic box, and layout settings can be overridden in the skin's s:layoutEngine element.",
+  "commands_seen": [
+   {
+    "cmd": "npm install -g netlistsvg",
+    "context": "Installs the latest released version from npm, which is the main install route."
+   },
+   {
+    "cmd": "netlistsvg input_json_file [-o output_svg_file] [--skin skin_file]",
+    "context": "Basic usage: renders a Yosys JSON file to SVG. Output defaults to out.svg; --skin selects a custom skin file."
+   },
+   {
+    "cmd": "git clone https://github.com/nturley/netlistsvg",
+    "context": "First step of the from-source install."
+   },
+   {
+    "cmd": "sudo npm install -g . ",
+    "context": "From inside the cloned repo, installs netlistsvg globally from source. Run after npm install for dependencies."
+   },
+   {
+    "cmd": "npm test",
+    "context": "Compiles, lints and runs self-tests for development work on the TypeScript source in lib/."
+   },
+   {
+    "cmd": "npm run build-module",
+    "context": "Builds the web bundle (netlistsvg.bundle.js)."
+   },
+   {
+    "cmd": "yosys -p \"prep -top my_top_module; write_json output.json\" input.v",
+    "context": "Generates a Yosys JSON netlist from Verilog, keeping the top module with inner modules shown as boxes."
+   },
+   {
+    "cmd": "yosys -p \"prep -top my_top_module -flatten; write_json output.json\" input.v",
+    "context": "Same, but with -flatten so the output is low-level logic cells only."
+   },
+   {
+    "cmd": "yosys -p \"prep -top my_top_module; aigmap; write_json output.json\" input.v",
+    "context": "Maps to AND and NOT cells (an and-inverter graph) before writing the JSON."
+   }
+  ],
+  "install_notes": "Requires Node.js. Install from npm with npm install -g netlistsvg, or from source by cloning the repo, running npm install, then sudo npm install -g . . Yosys is needed only to generate input JSON from Verilog; the README points to the prep and write_json commands. For the web version, elkjs must be loaded as a global ELK before netlistsvg.bundle.js, and the README gives script tags and an ObservableHQ snippet. The brew metadata lists a second executable, netlistsvg-dumplayout, which the README does not mention.",
+  "standout": "The skin is a plain SVG file in which components are tagged with s: attributes for aliases, ports and sizes, so you can restyle or replace the icons without touching code. Layout is delegated to ELK, and the tool accepts any Yosys JSON, so the drawing follows the synthesised netlist rather than the original HDL.",
+  "status": "Not clear from the README alone. It links Travis CI and AppVeyor build badges and an npm version badge, and it says 'We are getting close to the 1.0 release.' I did not see a release date or last-commit date, so I could not confirm recent activity.",
+  "caveats": "The README says it should work on Linux, OSX and Windows, but running the build scripts and web demo is easiest on Linux or OSX. The skin file format is not yet fixed and is described as unspecified until 1.0. The README says node and edge layout properties are not configurable yet. It renders only one module from the JSON. Port directions are needed for cells not defined in the skin. Global install from source needs sudo.",
+  "quotes": [
+   "draws an SVG schematic from a yosys JSON netlist.",
+   "We are getting close to the 1.0 release. At that point, the skin file format will be considered specified and breaking changes will only happen on major version bumps.",
+   "Any properties specified here will get passed along to the layout engine. Node and edge properties aren't configurable (yet)."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/nturley/netlistsvg"
+   },
+   {
+    "label": "Online demo",
+    "url": "https://nturley.github.io/netlistsvg"
+   },
+   {
+    "label": "Yosys write_json command docs",
+    "url": "https://yosyshq.readthedocs.io/projects/yosys/en/latest/cmd/write_json.html"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/nturley/netlistsvg: fetched OK, returned README text (includes install, usage, skin, input format and Yosys examples)."
+  ]
+ }
+}

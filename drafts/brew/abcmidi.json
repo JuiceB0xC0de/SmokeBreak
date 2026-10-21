@@ -1,0 +1,134 @@
+{
+ "name": "abcmidi",
+ "desc": "Converts abc music notation files to MIDI files",
+ "homepage": "https://ifdo.ca/~seymour/runabc/",
+ "installs_365d": 867,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "quick",
+  "audio"
+ ],
+ "why": "Turns ABC text notation into MIDI, a small but genuine text-to-music transform.",
+ "brief": {
+  "what_it_is": "abcMIDI is a package of C command-line programs for working with abc music notation, a plain-text format for tunes. Its headline program, abc2midi, takes an abc text file and writes a MIDI file. The package also includes abc2abc, which transposes and rewrites abc files, midi2abc, which goes the other way from MIDI to abc, and mftext, which prints a MIDI file as readable text. Other members are abcmatch, which finds common elements across a collection of tunes, midicopy, which copies parts of a MIDI file into a new one, midistats, and yaps, an older PostScript renderer.",
+  "why_it_exists": "The README presents abcMIDI as the maintained continuation of James Allwright's 1990s tools for abc notation, with Seymour Shlien taking over maintenance. The homepage frames the programs as the engines behind graphical front-ends such as runabc and EasyAbc.",
+  "how_it_works": "",
+  "commands_seen": [
+   {
+    "cmd": "./configure",
+    "context": "Legacy autoconf build, run first from the source tree."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles the programs after configure in the legacy autoconf build."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the built binaries system-wide in the legacy autoconf build."
+   },
+   {
+    "cmd": "cmake --preset default",
+    "context": "Configures the modern CMake build using the default Release preset; debug and sanitize presets also exist."
+   },
+   {
+    "cmd": "cmake --build --preset default",
+    "context": "Builds the CMake configuration created by the default preset."
+   },
+   {
+    "cmd": "cmake --install build/default",
+    "context": "Installs the CMake build output from the default build directory."
+   },
+   {
+    "cmd": "ctest --preset debug",
+    "context": "Runs the full test suite (smoke and golden-file tests) using the debug preset."
+   },
+   {
+    "cmd": "ctest --preset debug -L golden",
+    "context": "Runs only the golden-file tests, which compare program output against checked-in references."
+   }
+  ],
+  "install_notes": "Source build needs a C toolchain. Two build systems are documented: legacy autoconf (./configure, make, sudo make install) and CMake with default, debug, and sanitize presets. The CMake build also generates compile_commands.json for editors. The homepage separately offers a Windows zip, abcmidi_win32_mingw64.zip, of executables built with cosmocc. Executables for other platforms are not offered there, so other systems generally need to compile from source. No Homebrew-specific steps appear in what I read.",
+  "standout": "The programs are decades old, yet the repository now has a CMake build with sanitizer presets and a golden-file test suite covering all eight programs, with binary MIDI output piped through mftext so it can be diffed as text. The Windows binaries are built with cosmocc, a portable toolchain intended to run across several operating systems.",
+  "status": "maintained. The homepage was last updated October 16 2026, with abc2midi 5.06 dated October 04 2026 and a list of 2026 updates, including a June 2026 fix for msys2/ucrt64 compilation. The GitHub README describes a current CMake build and test suite. I did not check the GitHub commit history directly.",
+  "caveats": "The README says the programs are C code that was originally run from DOS-style command windows. The homepage says Windows and Linux executables are provided, while other systems will probably need to compile from source. The README notes that yaps has been superseded by abcm2ps and abc2svg. runabc and EasyAbc are separate Tcl/Tk and Python GUIs that need their own installs, and a PostScript viewer and MIDI player are also needed for the GUI workflow. I did not find a license statement in the pages I read.",
+  "quotes": [
+   "abcMIDI is a package of programs written in C for handling abc music notation files.",
+   "The software was created by James Allwright in the early 1990 and presently maintained by Seymour Shlien.",
+   "Yaps has been superceded by Jef Moine abcm2ps and abc2svg programs."
+  ],
+  "links": [
+   {
+    "label": "Homepage (runabc and abcMIDI downloads)",
+    "url": "https://ifdo.ca/~seymour/runabc/"
+   },
+   {
+    "label": "GitHub repository README",
+    "url": "https://github.com/sshlien/abcmidi"
+   },
+   {
+    "label": "abc2midi guide",
+    "url": "https://abcmidi.sourceforge.io"
+   }
+  ],
+  "fetch_log": [
+   "https://ifdo.ca/~seymour/runabc/ - fetched, worked; homepage with download list and project history, but no command lines",
+   "https://github.com/sshlien/abcmidi - fetched, worked; README returned with build, test, and maintainer instructions"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "abcMIDI turns traditional tune notation into MIDI and back, offering a compact doorway into a genuinely unusual way to represent music as text."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "abcMIDI",
+  "tldr": "Turns tunes written as plain text in abc notation into MIDI files, and back again, with a small kit of tools for transposing and inspecting them.",
+  "deeper_look": "abc notation is a way of writing a tune as lines of ordinary text: letters for notes, a few symbols for length and key, a header for title and meter. abcMIDI is a package of C programs for working with those files. The headline tool, abc2midi, reads an abc file and writes a MIDI file you can play in any MIDI player.\n\nThe rest of the package works around that. abc2abc transposes and rewrites abc files. midi2abc goes the other direction, from MIDI back to abc. mftext prints a MIDI file as readable text. abcmatch finds common elements across a collection of tunes, midicopy copies parts of a MIDI file into a new one, and midistats reports on a MIDI file. yaps is an older PostScript renderer; the README says it has been superseded by abcm2ps and abc2svg.\n\nThe software was created by James Allwright in the early 1990s and is now maintained by Seymour Shlien. The homepage frames these programs as the engines behind graphical front-ends such as runabc and EasyAbc. The idea underneath is music as text: once a tune is a text file, you can diff it, search it, transpose it with a script, and keep a collection of them like source code.\n\nThe code is decades old, but the repository now has a CMake build with sanitizer presets and golden-file tests. Binary MIDI output is piped through mftext so it can be compared as text.",
+  "install": "brew install abcmidi\n# You will also want a MIDI player to hear the output; the package does not include one.",
+  "try_this": [
+   {
+    "cmd": "abc2midi --help",
+    "what_happens": "Prints the usage text for the abc-to-MIDI converter, the main program in the package."
+   },
+   {
+    "cmd": "mftext --help",
+    "what_happens": "Shows how to print a MIDI file as readable text, useful for seeing what abc2midi actually wrote."
+   },
+   {
+    "cmd": "abc2abc --help",
+    "what_happens": "Lists the options for transposing and rewriting abc files."
+   }
+  ],
+  "whats_unique": "It is one of the long-running original toolsets for abc notation, with converters in both directions plus text dumping of MIDI, so a tune can round-trip between text and MIDI.",
+  "caveats": "The tools are command-line only; a MIDI player is needed to hear anything, and the GUIs runabc and EasyAbc are separate installs.",
+  "commitment": "quick",
+  "category": "sound-and-live-coding",
+  "tags": [
+   "quick",
+   "audio",
+   "midi",
+   "abc-notation",
+   "music",
+   "text-to-music"
+  ],
+  "links": [
+   {
+    "label": "Homepage (runabc and abcMIDI downloads)",
+    "url": "https://ifdo.ca/~seymour/runabc/"
+   },
+   {
+    "label": "GitHub repository README",
+    "url": "https://github.com/sshlien/abcmidi"
+   },
+   {
+    "label": "abc2midi guide",
+    "url": "https://abcmidi.sourceforge.io"
+   }
+  ]
+ }
+}

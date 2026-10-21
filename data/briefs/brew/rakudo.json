@@ -1,0 +1,77 @@
+{
+ "name": "rakudo",
+ "desc": "Mature, production-ready implementation of the Raku language",
+ "homepage": "https://rakudo.org",
+ "installs_365d": 1021,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language"
+ ],
+ "why": "The main Raku implementation, a rich and idiosyncratic language with unusual ideas about grammars and laziness.",
+ "brief": {
+  "what_it_is": "Rakudo is the reference compiler for the Raku programming language, the most mature implementation according to its homepage. It compiles Raku source and runs it on one of three backends: MoarVM, the JVM, or JavaScript, with each backend supporting a somewhat different feature set. The executables installed are raku, rakudo, perl6 and debug or valgrind/gdb/lldb wrapper variants of each. The repository contains only the compiler itself, with no modules or documentation; the README points to Rakudo Star for a full distribution.",
+  "why_it_exists": "The homepage describes Rakudo as the most mature, production-ready implementation of the Raku language. The name is Japanese: Rakuda-do (\u99f1\u99dd\u9053, 'Way of the Camel'), with a pun on rakudo (\u697d\u571f, 'paradise').",
+  "how_it_works": "Rakudo is written in NQP and built with a Perl Configure.pl script that can fetch and build MoarVM and NQP for you. Its backends are MoarVM, the JVM, and JavaScript, and multiple backends can be built into one prefix, with each installed under its own name such as rakudo-m or rakudo-j. Installing with make install puts everything in a local prefix, so no administrator privileges are needed.",
+  "commands_seen": [
+   {
+    "cmd": "perl Configure.pl --gen-moar --gen-nqp --backends=moar",
+    "context": "Builds and installs MoarVM and NQP automatically, then configures Rakudo for the MoarVM backend. Taken from the README's MoarVM section."
+   },
+   {
+    "cmd": "perl Configure.pl --gen-moar --moar-option='--compiler=clang' --gen-nqp --backends=moar",
+    "context": "Same MoarVM build, but passes --compiler=clang through to MoarVM's own Configure.pl. Continuation lines in the README were joined here."
+   },
+   {
+    "cmd": "perl Configure.pl --gen-nqp --backends=jvm",
+    "context": "Configures Rakudo for the JVM backend and fetches NQP. The README says JDK 1.9 or higher must be installed first."
+   },
+   {
+    "cmd": "perl Configure.pl --backends=moar,jvm --gen-moar --relocatable",
+    "context": "Builds two backends into one prefix; the first listed gets the plain rakudo name as a symlink."
+   },
+   {
+    "cmd": "make spectest",
+    "context": "Runs the full Roast official Raku test suite against your build. The README warns it takes a LONG time."
+   },
+   {
+    "cmd": "make t/spec/S03-operators/comparison.t",
+    "context": "Runs a single spectest file. The README says a single test must be run through make."
+   },
+   {
+    "cmd": "zef install Linenoise",
+    "context": "Installs the Linenoise module, which the README recommends for history and tab completion in the rakudo executable."
+   }
+  ],
+  "install_notes": "Requires perl to run Configure.pl, then make and make install. The install is local by default and needs no admin rights. The JVM backend needs JDK 1.9 or newer; the README notes OutOfMemoryError during builds and suggests raising heap via JAVA_OPTS or the nqp-j launcher. Roast, the spectest suite, is installed as t/spec and can be cloned manually. For line editing, install Linenoise with zef, or wrap the binary with rlwrap. For a complete distribution with modules and docs, use Rakudo Star. INSTALL.md and CAVEATS.md hold platform detail that I did not fetch.",
+  "standout": "Rakudo ships debugger and profiler wrappers as separate executables, including gdb, lldb, and valgrind variants for each backend, which is unusual for a language compiler. The scout note mentions grammars and laziness as its distinctive features, but the README I read does not cover them, so that claim is unverified here.",
+  "status": "Appears maintained. The README copyright runs to 2008-2026, there is a live Azure build-status badge, and the project links to current raku.org resources. I did not see a release date or last-commit date, so the exact recency is unknown.",
+  "caveats": "Only the bare compiler is included, so modules and docs need Rakudo Star or zef. Each backend supports a different feature set. The JVM backend needs JDK 1.9+ and can hit heap errors during build. Full spectest runs take a long time. Platform-specific notes are in CAVEATS.md, which I did not read. The scout note's claims about grammars and laziness are not supported by the README I read.",
+  "quotes": [
+   "The most mature, production-ready implementation of the Raku language.",
+   "Rakudo is currently the primary implementation of the Raku language.",
+   "Programming should be `-Ofun`."
+  ],
+  "links": [
+   {
+    "label": "Rakudo homepage",
+    "url": "https://rakudo.org"
+   },
+   {
+    "label": "Rakudo GitHub repository and README",
+    "url": "https://github.com/rakudo/rakudo"
+   },
+   {
+    "label": "Rakudo Star distribution downloads",
+    "url": "http://rakudo.org/downloads/star"
+   }
+  ],
+  "fetch_log": [
+   "https://rakudo.org: fetched OK, but it returned only the title, a short name note, and a Download button with no body text or docs links.",
+   "https://github.com/rakudo/rakudo: fetched OK, returned the repository README. INSTALL.md, CAVEATS.md and docs/ChangeLog were referenced but not fetched."
+  ]
+ }
+}

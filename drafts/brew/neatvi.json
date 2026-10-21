@@ -1,0 +1,106 @@
+{
+ "name": "neatvi",
+ "desc": "Clone of ex/vi for editing bidirectional utf-8 text",
+ "homepage": "https://repo.or.cz/neatvi.git",
+ "installs_365d": 32,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "tui",
+  "quick",
+  "language"
+ ],
+ "why": "A tiny vi clone aimed at bidirectional text, an unusual editor niche worth a look.",
+ "brief": {
+  "what_it_is": "Neatvi is a small ex/vi clone, a vi-style modal text editor with ex command line, written in C. Its stated purpose is editing bidirectional UTF-8 text, meaning files that mix right-to-left scripts such as Farsi or Arabic with left-to-right text. You give it files on the command line and it edits them in the terminal and writes them back out. The repository description calls it 'A small ex/vi editor', and the Homebrew description calls it a clone of ex/vi for editing bidirectional utf-8 text.",
+  "why_it_exists": "The author, Ali Gholami Rudi, writes it to edit bidirectional utf-8 files, as his 2015 news item says: 'I am writing Neatvi, a vi/ex editor for editing bidirectional utf-8 files.' The README gives the same framing in one line: 'Neatvi is a small ex/vi clone for editing bidirectional utf-8 text.'",
+  "how_it_works": "",
+  "commands_seen": [
+   {
+    "cmd": "git ls-files >ls",
+    "context": "From the author's news page, not the README: a workflow where you write the git file list to a file named ls."
+   },
+   {
+    "cmd": "vi ls",
+    "context": "From the same news page: after the git ls-files step, opening the file ls in the editor. Since May 2023 Neatvi's gf normal-mode command can open the file whose path is under the cursor, so the list works as a file explorer."
+   }
+  ],
+  "install_notes": "The README and repository summary show no build or install steps. The source is a git repo at https://repo.or.cz/neatvi.git (also git://repo.or.cz/neatvi.git), with tar.gz and zip snapshots and downloadable bundles on the repo page. Repo tags mark the language as C. I did not find build instructions, dependencies, or first-run configuration in what I read. Brew's executable is neatvi.",
+  "standout": "Most vi clones treat text as left-to-right. Neatvi's reason to exist is bidi utf-8 editing, and its changelog shows that focus: commits on right-to-left handling such as adding a Persian letter to the CR2L table in conf.h and fixing how heh is handled with yeh above. Recent additions include tag commands (:tag, :tnext, :tprev, :pop), normal-mode gf, extended registers, ex command history, and an LSP client for finding references and jumping to definitions.",
+  "status": "Maintained. The repo summary shows a last change on Mon, 28 Sep 2026, and the master head is 3 weeks old. Commits from September 2026 on the shortlog include an LSP fix and a README wording change. The most recent tag, 20, is 8 weeks old. The author's site (dev.rudi.ir) lists an August 2026 Neatvi LSP client update.",
+  "caveats": "The README I could read is one line, so I found no install, usage, or key-binding documentation in the repo itself. Full documentation was not reachable from the links I tried. The homepage field in the metadata (http://litcave.rudi.ir/) now only redirects to dev.rudi.ir. The dev.rudi.ir/neatvi.html page returned 404. Licence was not visible in what I read. The author's own page says Neatvi is 'a vi/ex editor for editing bidirectional utf-8 files' and gives no platform list beyond the terminal context.",
+  "quotes": [
+   "Neatvi is a small ex/vi clone for editing bidirectional utf-8 text.",
+   "I am writing Neatvi, a vi/ex editor for editing bidirectional utf-8 files.",
+   "Now one can execute \"git ls-files >ls\" and then \"vi ls\" to use Neatvi as a file explorer."
+  ],
+  "links": [
+   {
+    "label": "Repository (homepage, git summary and README)",
+    "url": "https://repo.or.cz/neatvi.git"
+   },
+   {
+    "label": "Author's project page (LITCAVE, news and Neatvi notes)",
+    "url": "https://dev.rudi.ir/"
+   }
+  ],
+  "fetch_log": [
+   "https://repo.or.cz/neatvi.git: worked. Repo summary page; the README field is the one-line description, and the shortlog and tags were visible.",
+   "http://litcave.rudi.ir/: worked. Returned only 'This page has been moved to http://dev.rudi.ir/'.",
+   "http://dev.rudi.ir/neatvi.html: failed with HTTP 404.",
+   "http://dev.rudi.ir/: worked. Author's LITCAVE index with news items about Neatvi."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Its focused handling of mixed right-to-left and left-to-right UTF-8 text makes a familiar editor category unexpectedly interesting, though documentation is sparse."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "neatvi",
+  "tldr": "A small vi/ex clone written in C, built to edit text that mixes right-to-left scripts like Farsi or Arabic with left-to-right text.",
+  "deeper_look": "Neatvi is a modal editor with an ex command line, in the vi tradition. You pass it files on the command line, edit them in the terminal, and write them back. Its stated purpose is editing bidirectional UTF-8 text: files where right-to-left scripts such as Farsi or Arabic sit alongside left-to-right text.\n\nThe author, Ali Gholami Rudi, announced it in 2015: \"I am writing Neatvi, a vi/ex editor for editing bidirectional utf-8 files.\" Most vi clones assume text runs left to right. Here the changelog shows the bidi focus, with commits on right-to-left handling such as adding a Persian letter to the CR2L table in conf.h.\n\nThe idea underneath is that a terminal editor has to decide how to order characters on screen, move the cursor through mixed-direction lines, and keep that consistent with what is stored in the file. A small codebase that takes this on directly is a good way to see how much a plain-text assumption hides.\n\nIt has also grown beyond that: tag commands (:tag, :tnext, :tprev, :pop), a gf command that opens the file under the cursor, extended registers, ex command history, and an LSP client for finding references and jumping to definitions. The author's news page suggests a trick: run git ls-files >ls, open ls in the editor, and use gf as a file explorer.",
+  "install": "brew install neatvi",
+  "try_this": [
+   {
+    "cmd": "neatvi --help",
+    "what_happens": "Prints whatever usage the binary offers; the repo README is one line, so this is a reasonable first look."
+   },
+   {
+    "cmd": "git ls-files >ls",
+    "what_happens": "Writes the repository's file list into a file named ls, the first step of the author's file-explorer workflow."
+   },
+   {
+    "cmd": "vi ls",
+    "what_happens": "Opens that list in the editor (the author's page writes vi; run it with neatvi). With gf, you can open the file whose path is under the cursor."
+   }
+  ],
+  "whats_unique": "Most vi clones treat text as left-to-right. Neatvi exists specifically for bidirectional UTF-8 editing, and its commit history shows that focus.",
+  "caveats": "The README is a single line and the author's neatvi page returns 404, so there is no easy usage or key-binding documentation to find online; expect to rely on vi knowledge.",
+  "commitment": "quick",
+  "category": "languages-and-oddities",
+  "tags": [
+   "quick",
+   "editor",
+   "vi",
+   "tui",
+   "utf-8",
+   "bidi",
+   "c"
+  ],
+  "links": [
+   {
+    "label": "Repository (homepage, git summary and README)",
+    "url": "https://repo.or.cz/neatvi.git"
+   },
+   {
+    "label": "Author's project page (LITCAVE, news and Neatvi notes)",
+    "url": "https://dev.rudi.ir/"
+   }
+  ]
+ }
+}

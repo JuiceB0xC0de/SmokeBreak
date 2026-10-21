@@ -1,0 +1,124 @@
+{
+ "name": "pear",
+ "desc": "Peer-to-peer application runtime",
+ "homepage": "https://docs.pears.com",
+ "installs_365d": 49,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "library",
+  "afternoon"
+ ],
+ "why": "Peer-to-peer runtime built on Hypercore, a distributed-systems door worth a look even if it is more platform than curiosity.",
+ "brief": {
+  "what_it_is": "Pear is an installable peer-to-peer application runtime, plus development and deployment tooling, from Holepunch. You install the pear CLI, then build, share, and run desktop, terminal, or mobile apps that talk directly to other peers without servers. Its own description is 'Build, share, and extend unstoppable, zero-infrastructure P2P apps for mobile, desktop, and terminal.' Apps are developed and released through the CLI (pear stage, pear build, pear touch, pear --menu), and peers receive updates over the air. It runs on Bare, a separate zero-core JavaScript runtime that can also be used on its own. The README's own framing is that the page is a docs landing page, so this entry is drawn from the docs rather than a source repository.",
+  "why_it_exists": "The docs frame it as a way to build the 'Internet of Peers' with apps that need no server infrastructure. The stated goal is apps that are 'unstoppable' and 'zero-infrastructure', with applications loaded remotely from peers and shared by anyone.",
+  "how_it_works": "Pear loads applications from peers rather than from a central host, and its desktop architecture combines Electron, Bare worker processes, storage, and over-the-air updates. Networking is built from P2P modules named in the docs: HyperDHT for dialing peers by key, Hyperswarm for topic discovery, Hypercore, Hyperbee, Hyperdrive for storage and replication, and Autobase for shared rooms. The getting-started tutorial describes a chat app whose peers discover each other through the DHT and stream messages directly.",
+  "commands_seen": [
+   {
+    "cmd": "curl https://install.pears.com/pear.sh | sh",
+    "context": "Installs the pear CLI on macOS or Linux from the homepage and getting-started page."
+   },
+   {
+    "cmd": "irm https://install.pears.com/pear.ps1 | iex",
+    "context": "Installs the pear CLI on Windows using PowerShell, per the getting-started page."
+   },
+   {
+    "cmd": "npx pear",
+    "context": "Alternative install path listed on getting-started for running pear through npm."
+   },
+   {
+    "cmd": "docker run -it --rm tetherto/pear",
+    "context": "Runs Pear inside an Ubuntu container with pear and pear-install ready, for trying the tutorial without a local install."
+   },
+   {
+    "cmd": "pear --menu",
+    "context": "Opens an interactive, filterable list of CLI commands with a form for flags (listed as Pear 3.2.0+)."
+   }
+  ],
+  "install_notes": "Follow the PATH instructions the installer prints, then run pear. The npm-global install is an alternative, described on Install & upgrade. The tutorial expects Node.js v22.17 or newer and npm v10.9 or newer, a POSIX-style terminal (macOS, Linux, or Windows with WSL), and an editor. The pear CLI is only needed for the shipping and updating parts of the tutorial. Templates are cloned from GitHub (holepunchto/hello-pear-electron, plus hello-pear-bare and hello-pear-react-native). Release and multisig steps involve a stage, provision, and multisig flow, which the docs describe as a separate pipeline.",
+  "standout": "Apps are distributed peer to peer and updated over the air, and the release process includes multisig signing with a 'pear://' upgrade link. Bare is also usable on its own as an embeddable JavaScript runtime, which sets it apart from a plain desktop framework.",
+  "status": "Appears actively maintained. The docs were recently updated, and they reference Pear 3.2.0 and a current getting-started path, plus a Tether-published Docker image. The fetched pages show no release date or commit history, so exact recency is unknown.",
+  "caveats": "Windows support goes through the irm installer or WSL for the tutorial. The tutorial assumes Node 22.17 or newer. Shipping requires the pear CLI and a multisig release flow, which adds setup weight. The docs describe Pear as a platform, not a lightweight tool, so expect a learning curve. I did not find licensing details in the pages I read. Some related pages were not fetched, including the Bare runtime and the release pipeline reference.",
+  "quotes": [
+   "Pear loads applications remotely from peers and lets anyone create and share applications with peers.",
+   "Build, share, and extend unstoppable, zero-infrastructure P2P apps for mobile, desktop, and terminal.",
+   "Welcome to the Internet of Peers."
+  ],
+  "links": [
+   {
+    "label": "Pear docs homepage",
+    "url": "https://docs.pears.com"
+   },
+   {
+    "label": "Getting started",
+    "url": "https://docs.pears.com/getting-started"
+   },
+   {
+    "label": "hello-pear-electron template (GitHub)",
+    "url": "https://github.com/holepunchto/hello-pear-electron"
+   }
+  ],
+  "fetch_log": [
+   "https://docs.pears.com: worked, returned the docs landing page (the homepage is a docs site, not a repo README)",
+   "https://docs.pears.com/getting-started: worked, linked from the homepage's Getting Started entry"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Pear makes app delivery itself peer-to-peer, so exploring it opens a concrete, unusual door into serverless distribution and the Hypercore ecosystem."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Pear",
+  "tldr": "A runtime for building and running apps that load directly from other peers, with no servers, using the Hypercore family of P2P modules.",
+  "deeper_look": "Pear is an application runtime and toolchain from Holepunch. You install the `pear` CLI, then build, stage, and share desktop, terminal, or mobile apps that find each other and talk directly. Its own pitch: \"Build, share, and extend unstoppable, zero-infrastructure P2P apps for mobile, desktop, and terminal.\"\n\nThe unusual part is where apps come from. Per the docs, \"Pear loads applications remotely from peers and lets anyone create and share applications with peers.\" There is no central host. Updates travel over the air from peer to peer, and releases can be signed with multisig and shared through a `pear://` link.\n\nUnderneath is a stack of small P2P modules the docs name: HyperDHT for dialing a peer by key, Hyperswarm for finding peers by topic, Hypercore, Hyperbee and Hyperdrive for replicated storage, and Autobase for shared rooms. The getting-started tutorial builds a chat app in which peers discover each other through the DHT and stream messages directly. That tutorial is the real door: it shows how much of an app you can build without a server in the middle.\n\nThe runtime itself runs on Bare, a separate minimal JavaScript runtime that can also be used on its own. The desktop architecture combines Electron, Bare worker processes, storage, and over-the-air updates.",
+  "install": "brew install pear\n# Needs Node.js (installed as a brew dependency). The tutorial expects Node 22.17+ and npm 10.9+, plus a POSIX-style terminal (macOS, Linux, or Windows via WSL).\n# Alternatives from the docs: curl https://install.pears.com/pear.sh | sh, or docker run -it --rm tetherto/pear",
+  "try_this": [
+   {
+    "cmd": "pear --menu",
+    "what_happens": "Opens an interactive, filterable list of CLI commands with a form for flags (Pear 3.2.0+)."
+   },
+   {
+    "cmd": "docker run -it --rm tetherto/pear",
+    "what_happens": "Starts an Ubuntu container with pear ready, so you can follow the tutorial without a local install."
+   },
+   {
+    "cmd": "pear --help",
+    "what_happens": "Lists the CLI commands, including the stage, build, and touch steps used for developing and releasing apps."
+   }
+  ],
+  "whats_unique": "Apps are distributed and updated peer to peer, with multisig-signed releases and a pear:// link. Its Bare runtime can also be used on its own as an embeddable JavaScript runtime.",
+  "caveats": "It is a platform rather than a small tool, so expect a learning curve, and shipping an app involves a multisig release flow with extra setup.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "p2p",
+   "dht",
+   "hypercore",
+   "javascript",
+   "networking"
+  ],
+  "links": [
+   {
+    "label": "Pear docs homepage",
+    "url": "https://docs.pears.com"
+   },
+   {
+    "label": "Getting started",
+    "url": "https://docs.pears.com/getting-started"
+   },
+   {
+    "label": "hello-pear-electron template (GitHub)",
+    "url": "https://github.com/holepunchto/hello-pear-electron"
+   }
+  ]
+ }
+}

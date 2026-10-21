@@ -1,0 +1,99 @@
+{
+ "name": "esbmc",
+ "desc": "Efficient SMT-based context-bounded model checker for C, C++, and Python",
+ "homepage": "https://esbmc.github.io/",
+ "installs_365d": 311,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "math",
+  "afternoon",
+  "library"
+ ],
+ "why": "SMT-based bounded model checker that hunts bugs in C and Python by reasoning about all execution paths.",
+ "brief": {
+  "what_it_is": "ESBMC is an open-source bounded model checker that takes source code (C, C++, CUDA, CHERI-C, Kotlin/Java, Python, Rust, Solidity, and PLC ladder diagrams) and encodes it into SMT formulas solved by an SMT solver such as Bitwuzla, Z3, or Boolector. It explores a finite prefix of program execution with all possible inputs, and reports either VERIFICATION SUCCESSFUL, VERIFICATION FAILED with a concrete counterexample trace, or a budget-exhausted result. Users pass a source file and flags such as --incremental-bmc, --k-induction, or --multi-property; the input is the program plus optional assertions, and the output is the verdict and a counterexample trace (optionally as GraphML witnesses).",
+  "why_it_exists": "The README frames it as a mature, permissively licensed tool that 'automatically detects or proves the absence of runtime errors' and checks user-defined assertions in single- and multi-threaded programs. The homepage pitches it as 'push-button' verification that needs no pre- or postconditions. It is a fork of CBMC v2.9 (2008) that the homepage says has diverged substantially.",
+  "how_it_works": "Programs are compiled through a language frontend (Clang for C/C++, CPython's parser via ast and ast2json for Python, Soot/Jimple for Java/Kotlin) and turned into GOTO form. Loops are unwound to a bound, with unwinding assertions inserted for soundness, and the resulting verification conditions are encoded as SMT and sent to a solver. For concurrency, ESBMC explores thread interleavings explicitly under a context bound, using a lazy depth-first search by default or encoding all interleavings into one formula. Unbounded proofs come from k-induction (base case, forward condition, inductive step) or incremental BMC.",
+  "commands_seen": [
+   {
+    "cmd": "sudo add-apt-repository ppa:esbmc/esbmc",
+    "context": "Adds the official ESBMC PPA on Ubuntu, the README's recommended route for general users (Ubuntu 22.04 and 24.04)."
+   },
+   {
+    "cmd": "sudo apt install esbmc",
+    "context": "Installs ESBMC from the PPA after running sudo apt update."
+   },
+   {
+    "cmd": "brew install esbmc",
+    "context": "Homebrew install on macOS and Linux; the README says it bundles Z3 and Bitwuzla."
+   },
+   {
+    "cmd": "$esbmc file.c --incremental-bmc",
+    "context": "Runs the C program file.c with the incremental BMC strategy, which iteratively unwinds loops and can prove correctness once all loops fully unwind (the README's example output shows a NULL-pointer dereference counterexample)."
+   },
+   {
+    "cmd": "esbmc main.py",
+    "context": "Verifies a type-annotated Python file; the README's example finds a division-by-zero counterexample in div1 via the random module."
+   },
+   {
+    "cmd": "esbmc file.c --floatbv --k-induction",
+    "context": "Verifies a floating-point C program with floating-point bit-vector semantics and the k-induction proof rule; the example succeeds at k = 2."
+   },
+   {
+    "cmd": "esbmc file.c --context-bound 2",
+    "context": "Verifies a pthread program, limiting context switches per thread to 2; the README's mutex-counter example reports VERIFICATION SUCCESSFUL."
+   },
+   {
+    "cmd": "esbmc file.c --multi-property",
+    "context": "Keeps running after the first counterexample so every property of the bound gets a verdict, instead of stopping at the first violation."
+   },
+   {
+    "cmd": "esbmc file.c --all-witnesses",
+    "context": "Enumerates distinct concrete input vectors that violate the same property, up to a --max-witnesses cap."
+   },
+   {
+    "cmd": "esbmc main.c -I /usr/local/include",
+    "context": "Compiles a harness that includes the esbmc.h intrinsics header (ESBMC_assume, ESBMC_assert, and similar) from the install include path."
+   },
+   {
+    "cmd": "esbmc main.c --witness-output main.graphml",
+    "context": "Writes the counterexample in GraphML witness format for visualisation or validation."
+   },
+   {
+    "cmd": "esbmc file.c --restrict-check",
+    "context": "Opt-in check that restrict-qualified pointer parameters do not alias within a shared object (off by default)."
+   }
+  ],
+  "install_notes": "The homepage offers downloads for Linux (x86_64 and ARMv8), Windows, and macOS. FreeBSD has no prebuilt binary and needs the build guide. Ubuntu users can use the PPA (22.04 and 24.04). Homebrew installs bundled Z3 and Bitwuzla. The GitHub releases page has Ubuntu and Windows binaries. Users need math.h installed (build-essential usually provides it). Harnesses that include esbmc.h need -I pointing to the installed include directory, and the header errors out under any compiler other than ESBMC. The optional --bitwuzllob and --neurosym backends need a special build flag (-DENABLE_BITWUZLLOB=On or -DENABLE_NEUROSYM=On) plus external programs (Mallob, or NeuroSym with Python, PyTorch, and Z3) at runtime. Building from source is documented at esbmc.github.io/docs/development/building.",
+  "standout": "It is bounded but aims for proofs, combining incremental BMC, k-induction with a forward condition, and an interval-analysis domain in one run. It is also one of the few BMC tools to cover Python, Solidity, and Kotlin/Java alongside C/C++, and the homepage claims it is the first BMC-based Python verifier. Its --all-witnesses mode enumerates every failing input vector, not just one counterexample.",
+  "status": "Maintained, based on recent activity. The homepage has news items dated late September 2026 and mentions around 80 pull requests landed in early August 2026. The README lists a current release and a Homebrew package, but I did not see an explicit last-release date or last-commit date in the pages I read.",
+  "caveats": "Bounded by default: bug-finding within the bound is complete, but unbounded proofs depend on k-induction converging, and counterexamples can be spurious if models are abstracted. Verification needs a bound on loops; the --no-unwinding-assertions option can assume away paths past the bound. The Python frontend's README example uses type annotations. Some options (--bitwuzllob, --neurosym) need a special build and external programs, and incremental strategies are rejected for them. FreeBSD has no downloadable builds. The homepage has an ARM64 limitations link. The homepage also has an explicit 'ESBMC is a fork of CBMC v2.9' framing and a claim of being 'the first' for Python, which are the authors' own claims and not independently checked. Licensing is Apache 2.0 according to the README, with a COPYING file for third-party code.",
+  "quotes": [
+   "ESBMC is a mature, permissively licensed open-source SMT-based context-bounded model checker for single and multi-threaded C, C++, CUDA, CHERI, Kotlin, Python, Rust, and Solidity programs.",
+   "It automatically detects or proves the absence of runtime errors (e.g., bounds checks, pointer safety, overflow) and verifies user-defined assertions without requiring pre- or postconditions.",
+   "ESBMC is push-button: one invocation produces VERIFICATION SUCCESSFUL, VERIFICATION FAILED (with a concrete counterexample trace) or a budget-exhausted result."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://esbmc.github.io/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/esbmc/esbmc"
+   },
+   {
+    "label": "Usage docs",
+    "url": "https://esbmc.github.io/docs/usage/"
+   }
+  ],
+  "fetch_log": [
+   "https://esbmc.github.io/ \u2014 worked; a docs-site homepage that did not contain the README, so it was used for the summary and feature claims",
+   "https://github.com/esbmc/esbmc \u2014 worked; full README returned, used for install commands, features, and examples",
+   "https://esbmc.github.io/docs/usage/ \u2014 worked; used for the strategy table, witness, multi-property, and SMT backend details"
+  ]
+ }
+}

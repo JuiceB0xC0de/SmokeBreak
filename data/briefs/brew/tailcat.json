@@ -1,0 +1,97 @@
+{
+ "name": "tailcat",
+ "desc": "Netcat-like tool over Tailscale's data plane, without its control plane",
+ "homepage": "https://github.com/tailscale/tailcat",
+ "installs_365d": 682,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "Netcat-style pipes over Tailscale's WireGuard data plane, minus the control plane, is a revealing look at how the overlay actually moves packets.",
+ "brief": {
+  "what_it_is": "Tailcat is a netcat-style command-line tool and Go library that pipes data between two machines over an encrypted Tailscale-style tunnel, without needing a Tailscale account or the Tailscale control plane. One side runs a server (listener) that prints a short tailcat address, and the other side passes that address to the client. Data in and out is ordinary stdin/stdout, TCP port forwarding, SOCKS5, SSH, SFTP, file drop boxes, or a throughput test, depending on the service chosen. Traffic is WireGuard-encrypted end to end, bootstrapped through a DERP relay, and upgraded to a direct UDP path when NAT traversal succeeds.",
+  "why_it_exists": "The README frames it as Tailscale's data plane without its control plane: point-to-point WireGuard tunnels between two machines, with connection metadata exchanged out of band however you like. It also describes itself as \"Tailscale without Tailscale, by Tailscale\".",
+  "how_it_works": "The server generates a WireGuard keypair (and by default a pre-shared key) and encodes them, plus DERP region info, into a tailcat address (a \"tc\" prefix followed by base64 CBOR). The client parses that address, connects to the same DERP relay, and sends a \"Meow\" discovery message; the server adds it as a WireGuard peer, and the WireGuard handshake runs over DERP at first while magicsock hole-punches toward a direct UDP path. The userspace stack uses WireGuard, magicsock, and gVisor netstack, so no TUN device, routes, DNS changes, or root access are needed.",
+  "commands_seen": [
+   {
+    "cmd": "tailcat",
+    "context": "Starts a server (listener). It prints a selected bootstrap relay region and a line like '\ud83d\udc08 Server listening with new address: tc...', then waits for a client."
+   },
+   {
+    "cmd": "echo hello | tailcat tcomFwWCCcjS5nKNqAod034nWoJZW0LZqDhhC8U_dKdnDRYQ8uNGFpGQEu",
+    "context": "Client side: pipes stdin into the tailcat address given as the argument; the server's stdout receives 'hello'."
+   },
+   {
+    "cmd": "tailcat serve 8080,8443",
+    "context": "Serves local TCP ports 8080 and 8443 through the tunnel (the README also lists 'tailcat serve all')."
+   },
+   {
+    "cmd": "tailcat forward tcXXXXXXXXX 18080:8080 3306",
+    "context": "Client side: makes the server's port 8080 appear on local port 18080 and the server's port 3306 on local port 3306."
+   },
+   {
+    "cmd": "tailcat serve --ssh-authorized-keys=~/.ssh/authorized_keys ssh",
+    "context": "Runs an SSH server that accepts keys from a local authorized_keys file (other sources, including user@github, can be comma-separated)."
+   },
+   {
+    "cmd": "tailcat serve no-auth-ssh",
+    "context": "Runs an SSH server with no client authentication, so the tailcat address itself is the credential. The README warns strongly against sharing it publicly."
+   },
+   {
+    "cmd": "tailcat recv ~/inbox",
+    "context": "Runs a write-only drop box that receives files into ~/inbox; senders share the printed tailcat address."
+   },
+   {
+    "cmd": "tailcat cp report.pdf tcXXXXXXXXX:",
+    "context": "Sender side: copies a file to the drop box by running the system scp with the connection routed through tailcat."
+   },
+   {
+    "cmd": "tailcat perf tcXXXXXXXXX",
+    "context": "Client side: runs an iperf-like throughput and latency test against a server started with 'tailcat serve perf'. It refuses to run through a shared DERP relay unless --via-derp is given."
+   },
+   {
+    "cmd": "tailcat ping --until-direct <tc-addr>",
+    "context": "Pings the server and keeps trying until a direct (non-DERP) path works, exiting non-zero if none does."
+   },
+   {
+    "cmd": "tailcat genkey --key=default --region=nyc",
+    "context": "Generates a saved key named 'default' pinned to the nyc region, so the server address stays stable across restarts."
+   }
+  ],
+  "install_notes": "Prebuilt static binaries are listed for Linux and Windows, .deb and .rpm packages, Homebrew (macOS), Scoop (Windows), Snap, a container image, Nix (Linux and macOS), AUR (Arch), and conda-forge (Linux, macOS, Windows). FreeBSD and OpenBSD are only covered by building from source with the Go toolchain, as is the js/wasm browser build. The README points to INSTALL.md for details, which I did not fetch. No Tailscale account, root or admin access, or configuration is needed. By default it uses Tailscale's free rate-limited DERP relays via the derpmap at https://tailcat.dev/derpmap.json, and you can run your own derper with a hostname and TLS certificate.",
+  "standout": "It reuses Tailscale's WireGuard, magicsock, and gVisor netstack as a userspace library, so you get NAT traversal and encryption without a TUN device or root, and the address itself carries a WireGuard pre-shared key. The README also has a neat safety feature: 'tailcat ssh' probes DNS-named destinations as a stranger would and refuses to connect if the SSH server accepts that login.",
+  "status": "unknown. The README gives no version number, release date, or last commit date. The History section says it was open-sourced in August 2026 at the TailscaleUp conference, and it describes recent work (a refactor into a regular Go module client, and open issues such as #4 and #7). The README also says there are no API or CLI stability promises, so it is clearly actively developed but not a stable release.",
+  "caveats": "No API, CLI, or wire-format stability promises. The public DERP relays have no uptime SLA or throughput targets and may be revoked at any time. The web demo is experimental and browser traffic goes over DERP only, with no direct connections until WebRTC support lands (issue #4). no-auth-ssh makes the address a full shell credential, so it must not be published in DNS. Addresses published in DNS TXT records need --allow or --ssh-authorized-keys. Compression is not used for transfers. The perf command refuses to run through Tailscale's shared relays. Installation is uneven: no macOS static binary, and FreeBSD and OpenBSD require building from source. The README does not give a license, and I did not check one.",
+  "quotes": [
+   "\"Tailscale without Tailscale, by Tailscale\"",
+   "You don't need a Tailscale account, root/admin access on the machine (it doesn't alter your machine's routing tables, DNS, etc.). It's just a userspace library and CLI tool.",
+   "Who needs port forwarding or port knocking?"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README (homepage)",
+    "url": "https://github.com/tailscale/tailcat"
+   },
+   {
+    "label": "Go reference (pkg.go.dev)",
+    "url": "https://pkg.go.dev/github.com/tailscale/tailcat"
+   },
+   {
+    "label": "Experimental in-browser web demo",
+    "url": "https://tailscale.github.io/tailcat/"
+   },
+   {
+    "label": "Default DERP map",
+    "url": "https://tailcat.dev/derpmap.json"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/tailscale/tailcat (homepage, GitHub repo): fetched successfully; README returned. Its linked INSTALL.md, SECURITY.md, and docs were not fetched; the brief is based on the README alone."
+  ]
+ }
+}

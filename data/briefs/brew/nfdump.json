@@ -1,0 +1,89 @@
+{
+ "name": "nfdump",
+ "desc": "Tools to collect and process netflow data on the command-line",
+ "homepage": "https://github.com/phaag/nfdump",
+ "installs_365d": 253,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "Netflow collection and analysis opens a door into how routers report traffic, though the tooling is conventional.",
+ "brief": {
+  "what_it_is": "nfdump is a command-line suite for collecting, storing, filtering and analysing network flow records. The collectors nfcapd and sfcapd receive NetFlow (v1, v5/v7, v9, IPFIX) or sFlow streams from routers and other exporters and write them to nfdump binary files on disk, rotated about every 5 minutes. The nfdump tool then reads those files, applies a tcpdump-like filter, aggregates or lists the flows, and prints text, CSV, JSON or a user-defined format. Companion tools add geolocation (geolookup), Tor exit-node lookup (torlookup), anonymisation (nfanon), expiry and replay. An optional nfpcapd can turn live interface or pcap traffic into flow records.",
+  "why_it_exists": "The README frames it as a tool to collect and analyse NetFlow, IPFIX and sFlow data from network devices, with a focus on efficiency, flexibility and extensibility. It also states a design choice: all collected data is stored to disk before analysis, which separates collection from processing.",
+  "how_it_works": "Exporters send flow records over UDP to an nfcapd or sfcapd process, which writes them into time-stamped files (nfcapd.YYYYMMDDhhmm) in a per-source directory. nfdump then reads one file or several concatenated files, filters them with an expression syntax similar to tcpdump's, and aggregates or lists the results. Enrichment with geo, AS or Tor data happens at analysis time using databases built by updateGeoDB.sh and updateTorDB.sh.",
+  "commands_seen": [
+   {
+    "cmd": "./autogen.sh",
+    "context": "First step of a source build; generates the configure script (autotools 2.71 required)."
+   },
+   {
+    "cmd": "./configure --enable-native --enable-lto",
+    "context": "Local-system build option. Enables -march=native and link-time optimisation; the README says these are not for portable binaries."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the tools after configure."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the built binaries and man pages system-wide."
+   },
+   {
+    "cmd": "./nfdump -r old-flowfile -y -w new-flowfile",
+    "context": "Converts a legacy nfdump 1.6.x flow file to the new format."
+   },
+   {
+    "cmd": "nfcapd -D -S 2 -w /flow_base_dir/router1 -p 23456",
+    "context": "Starts a NetFlow collector as a daemon, rotating every 5 minutes, writing to the router1 directory, listening on UDP port 23456."
+   },
+   {
+    "cmd": "nfdump -r /flow_base_dir/router1/nfcapd.202501011200",
+    "context": "Reads one collected flow file and prints its records."
+   },
+   {
+    "cmd": "nfdump -r flowfile 'src ip 192.0.2.1 and dst port 443' -A srcip,dstip",
+    "context": "Filters flows by source IP and destination port, then aggregates by source and destination IP."
+   },
+   {
+    "cmd": "nfcapd -z=lz4 ...",
+    "context": "Compresses collected data on the fly with LZ4; the README recommends LZ4 for real-time use and bzip2 for archiving."
+   },
+   {
+    "cmd": "nfcapd -D -S 2 -B 1024000 -w /flow_base_dir/router1 -p 23456",
+    "context": "Collector setup from the multi-source section; adds a -B buffer size option, and the README recommends one collector per source on busy networks."
+   }
+  ],
+  "install_notes": "Beyond brew install: a source build needs GNU autotools 2.71 (autoconf 2.71 per the README). Default configure builds nfcapd, sfcapd, nfdump, nfanon, nfexpire, nfreplay, geolookup and torlookup. Optional builds need flags: --enable-nfpcapd, --enable-ja4, --enable-jnat, --enable-readpcap, --enable-ftconv, --enable-nfprofile. Compression libraries ZSTD and bzip2 are auto-detected if present, and LZO and LZ4 are embedded. Older Linux may need libbsd and libbsd-dev. The README gives distro-specific steps for CentOS 7.x (devtoolset-8 via scl) and Ubuntu 18.04 (clang-10). There is a Docker option in extra/docker/README.md. Geo and Tor lookups need databases fetched with updateGeoDB.sh and updateTorDB.sh before use. Running as root is not needed unless binding to ports below 1024.",
+  "standout": "The most distinctive part is the design split: collection writes time-rotated binary files and analysis happens later, with a tcpdump-style filter language aimed at flow records. Unusual extras include CryptoPAn-based IP anonymisation in nfanon, Tor exit-node enrichment, and NSEL/NAT event logging support. On the surface it is a conventional collector-plus-query setup, as the scout notes suggest.",
+  "status": "The README says it is actively maintained and calls 1.7.x (codename unicorn) the current release series. It also has a tester call for the 1.8.x beta branch, described as nearing release. I did not see a release date or last-commit date on the page, so recency is only as current as the README's own claims.",
+  "caveats": "The README is Linux and BSD oriented; it says nothing about macOS, and the Ubuntu and CentOS steps are for old releases. nfprofile and nftrack are legacy binaries for NfSen and may move to a separate archive. Legacy 1.6.x files can only be read by nfdump itself, and old files may lack fields. NetFlow v5 and v7 use 32-bit counters, so busy routers can overflow them unless the flow-cache timeout is lowered. nfcapd has no built-in access control, so host firewalling is needed. The brew caveats field was empty.",
+  "quotes": [
+   "nfdump is a powerful suite of tools for collecting, processing, and analyzing NetFlow, IPFIX, and sFlow data from network devices.",
+   "Tester wanted: nfdump 1.8.x is nearing release.",
+   "nfcapd has no built-in access control; rely on host-level security to filter IP addresses."
+  ],
+  "links": [
+   {
+    "label": "GitHub homepage and README",
+    "url": "https://github.com/phaag/nfdump"
+   },
+   {
+    "label": "Filter syntax cheatsheet (gist)",
+    "url": "https://gist.github.com/phaag/06369bed7f39f97e1de51b1b0f5bc29a#file-cheatsheet-md"
+   },
+   {
+    "label": "Beta 1.8.x branch",
+    "url": "https://github.com/phaag/nfdump/tree/1.8.x"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/phaag/nfdump: fetched OK, README returned. Linked docs (man pages, filter cheatsheet gist) were not fetched; the README was complete enough, so I stopped at one fetch."
+  ]
+ }
+}

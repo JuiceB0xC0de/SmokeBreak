@@ -1,0 +1,149 @@
+{
+ "name": "cddlib",
+ "desc": "Double description method for general polyhedral cones",
+ "homepage": "https://www.inf.ethz.ch/personal/fukudak/cdd_home/",
+ "installs_365d": 700,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "math",
+  "afternoon",
+  "library"
+ ],
+ "why": "Double description method for polyhedra is real computational geometry you can run, with a clear door into convex polytope math.",
+ "brief": {
+  "what_it_is": "cddlib is a C library implementing the Double Description Method of Motzkin et al. It takes a polyhedron given as a system of linear inequalities (b - A\u00b7x \u2265 0, with A an m\u00d7d real matrix) and produces all its vertices (extreme points) and extreme rays. It also runs the reverse conversion, from a vertex/ray representation back to inequalities (convex hull), and can solve linear programs that maximize or minimize a linear function over the polyhedron. The brew formula also ships a set of command-line executables (such as lcdd, scdd, cddexec, adjacency, and fourier, plus _gmp variants), but the README I read does not document them.",
+  "why_it_exists": "The README presents cddlib as a practical C implementation of the Double Description Method for general convex polyhedra, usable both as a library in user C code and for moving between inequality and generator representations. The homepage describes it as the maintained C-library successor to the older standalone cdd and cddplus codes.",
+  "how_it_works": "The double description method maintains two descriptions of the same polyhedron, the list of inequalities and the list of generators (vertices and rays), and converts between them by adding one constraint at a time. cddlib can build an H-representation of a V-polyhedron that is not full-dimensional, and a V-representation of an H-polyhedron that has no extreme points. Arithmetic is either floating point (with a tolerance constant dd_almostzero = 1.0E-6 in cdd.h that decides what counts as zero) or exact rational via GMP when built with -DGMPRATIONAL.",
+  "commands_seen": [
+   {
+    "cmd": "tar zxf cddlib-*.tar.gz",
+    "context": "Unpack the most recent release tarball from the GitHub Releases page."
+   },
+   {
+    "cmd": "cd cddlib-*",
+    "context": "Enter the unpacked source directory."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Configure the build from a release tarball; if it fails, the README says to check that autoconf-archive is installed."
+   },
+   {
+    "cmd": "make",
+    "context": "Compile the library after configuring."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Install cddlib to /usr/local."
+   },
+   {
+    "cmd": "gcc -I/usr/local/include -L/usr/local/lib YOUR_CODE.c -lcdd",
+    "context": "Link your own C program against the floating-point cddlib library."
+   },
+   {
+    "cmd": "gcc -I/usr/local/include -L/usr/local/lib -DGMPRATIONAL YOUR_CODE.c -lcddgmp -lgmp",
+    "context": "Link against the exact rational (GMP) version of the library."
+   },
+   {
+    "cmd": "git clone https://github.com/cddlib/cddlib.git",
+    "context": "Get the source repository for a build from git instead of a release tarball."
+   },
+   {
+    "cmd": "./bootstrap",
+    "context": "Generate the configure script when building from the git repository."
+   }
+  ],
+  "install_notes": "Building from source requires gmp and autoconf-archive, which the README says are packaged by all major distributions. Use the release tarball path (tar, ./configure, make, sudo make install) or the git path (clone, ./bootstrap, ./configure, make). Installing to /usr/local needs sudo. Linking your own code needs -I and -L flags pointing at /usr/local, and the GMP build needs -DGMPRATIONAL plus -lcddgmp -lgmp. The README describes no hardware or account requirements.",
+  "standout": "The README is candid about floating-point danger and gives a concrete debugging method: rewrite inputs as exact rationals (for example 1/3 instead of 0.3333333), recompute with the GMP build to see the correct answer, and tune dd_almostzero or scale columns when speed matters. It also covers the less common case of building a polyhedron representation from inputs that are not full-dimensional or have no vertices.",
+  "status": "Unknown from the pages I read in detail. The homepage was last updated October 21, 2022 and says cddlib is the only one of the cdd family still being updated, with the newest manual for cddlib-0.94m, which is not included in that package. The README gives no release date or last-commit date, and I did not check the GitHub commit history or releases page.",
+  "caveats": "Floating-point results can be wrong for sensitive inputs, as the README itself warns. The documentation is described as incomplete, and the manual is hosted on an old ETH FTP link. Building needs gmp and autoconf-archive, and ./configure can fail if the latter is missing. The standalone cdd and cddplus packages are older, and the cddplus package needs an old g++ or a patch. The README does not state the license beyond calling cddlib free software, and I did not check the license file. The homepage says the cddlib package is available only from GitHub.",
+  "quotes": [
+   "The C-library cddlib is a C implementation of the *Double Description Method* of Motzkin et al. for generating all vertices (i.e. extreme points) and extreme rays of a general convex polyhedron in R<sup>d</sup>",
+   "When some strange behavior is observed, it is always wise to create a rational approximation of the input (for example, one can replace 0.3333333 with 1/3) and to compute it with cddlib compiled with GMP Rational to see what a correct behavior should be.",
+   "The most powerful support for free software development is user's appreciation."
+  ],
+  "links": [
+   {
+    "label": "cdd, cddplus and cddlib homepage (Komei Fukuda)",
+    "url": "https://www.inf.ethz.ch/personal/fukudak/cdd_home/"
+   },
+   {
+    "label": "cddlib GitHub repository and README",
+    "url": "https://github.com/cddlib/cddlib"
+   },
+   {
+    "label": "cddlib manual (ETH FTP, incomplete)",
+    "url": "ftp://ftp.math.ethz.ch/users/fukudak/cdd/cddlibman/cddlibman.html"
+   },
+   {
+    "label": "cddlib releases page",
+    "url": "https://github.com/cddlib/cddlib/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://www.inf.ethz.ch/personal/fukudak/cdd_home/ - worked; homepage text with links to the manual, the GitHub-only cddlib package, and the Polyhedral Computation FAQ.",
+   "https://github.com/cddlib/cddlib - worked; README returned with the full build and usage text.",
+   "ftp://ftp.math.ethz.ch/users/fukudak/cdd/cddlibman/cddlibman.html - not fetched; listed from the README link only.",
+   "https://github.com/cddlib/cddlib/releases - not fetched; listed from the README link only."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A working implementation of the double-description method turns between polyhedral inequalities and vertices or rays, opening a hands-on door into computational geometry."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "cddlib",
+  "tldr": "A C library and set of command-line tools that convert convex polyhedra between inequalities and corner points, with exact rational arithmetic available.",
+  "deeper_look": "cddlib implements the Double Description Method of Motzkin et al. Give it a polyhedron as a system of linear inequalities (b - A\u00b7x \u2265 0) and it lists every vertex and extreme ray. Give it vertices and rays and it runs the other way, returning the inequalities, which is the convex hull problem. It also solves linear programs over the polyhedron.\n\nThe idea underneath is that a polyhedron has two equally valid descriptions: the half-spaces that bound it, or the corners and directions that span it. The method keeps both lists in step and adds one constraint at a time, updating the generators as it goes. Moving between the two views is a basic operation in computational geometry, optimisation and combinatorics.\n\nThe library comes from Komei Fukuda's cdd family. The homepage calls it the only one still being updated, and the older cdd and cddplus programs are its predecessors. Arithmetic is either floating point, with a tolerance (dd_almostzero = 1.0E-6) that decides what counts as zero, or exact rational through GMP. The brew formula also installs command-line programs such as lcdd, scdd, cddexec, adjacency and fourier, each with a _gmp twin. The README does not document them, so expect to learn them from the manual or by experiment.\n\nThe README is candid about floating-point danger. Its advice: \"When some strange behavior is observed, it is always wise to create a rational approximation of the input (for example, one can replace 0.3333333 with 1/3) and to compute it with cddlib compiled with GMP Rational to see what a correct behavior should be.\"",
+  "install": "brew install cddlib\n# depends on gmp, which brew pulls in. The _gmp executables use exact rational arithmetic.",
+  "try_this": [
+   {
+    "cmd": "lcdd --help",
+    "what_happens": "Prints usage for lcdd, one of the command-line converters between inequality and vertex representations."
+   },
+   {
+    "cmd": "scdd --help",
+    "what_happens": "Prints usage for scdd, the other representation-conversion program."
+   },
+   {
+    "cmd": "cddexec --help",
+    "what_happens": "Prints usage for cddexec, the general-purpose cdd driver."
+   }
+  ],
+  "whats_unique": "It treats floating-point failure as something to debug: rerun the same input in exact rational arithmetic and compare. It also handles awkward cases such as polyhedra that are not full-dimensional or have no vertices.",
+  "caveats": "Floating-point results can be wrong on sensitive inputs, the documentation is incomplete, and the manual sits on an old ETH FTP link.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "math",
+   "geometry",
+   "polyhedra",
+   "linear-programming",
+   "library",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "cdd, cddplus and cddlib homepage (Komei Fukuda)",
+    "url": "https://www.inf.ethz.ch/personal/fukudak/cdd_home/"
+   },
+   {
+    "label": "cddlib GitHub repository and README",
+    "url": "https://github.com/cddlib/cddlib"
+   },
+   {
+    "label": "cddlib manual (ETH FTP, incomplete)",
+    "url": "ftp://ftp.math.ethz.ch/users/fukudak/cdd/cddlibman/cddlibman.html"
+   },
+   {
+    "label": "cddlib releases page",
+    "url": "https://github.com/cddlib/cddlib/releases"
+   }
+  ]
+ }
+}

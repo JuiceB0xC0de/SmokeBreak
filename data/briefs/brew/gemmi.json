@@ -1,0 +1,95 @@
+{
+ "name": "gemmi",
+ "desc": "Macromolecular crystallography library and utilities",
+ "homepage": "https://project-gemmi.github.io/",
+ "installs_365d": 65,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "science",
+  "library",
+  "afternoon"
+ ],
+ "why": "Macromolecular crystallography tools let you read real protein structure files, a close call on whether utilities go far enough.",
+ "brief": {
+  "what_it_is": "GEMMI is a C++ library for macromolecular crystallography, shipped with a command-line program also named gemmi that bundles many small subcommands. It reads and writes coordinate files (PDB, mmCIF, mmJSON), CIF/STAR files, reflection data (MTZ and SF-mmCIF, plus XDS_ASCII), CCP4/MRC density maps, and restraint or monomer-library CIF files. Output is usually a converted or modified file, a text report, or a histogram in the terminal. The project also has Python bindings, partial WebAssembly bindings, and an online viewer and stats pages.",
+  "why_it_exists": "The README says GEMMI can help if you work with macromolecular models, refinement restraints, crystallographic reflections, density maps, crystallographic symmetries, or just CIF/STAR files, where the C in CIF stands for Crystallographic. It is an open-source project of CCP4 and Global Phasing Ltd, which the README describes as two major providers of software for macromolecular crystallography.",
+  "how_it_works": "The command-line program is a set of small subcommands (for example validate, grep, convert, set, mtz, map, sfcalc), each run as gemmi followed by the subcommand name. The grep subcommand parses CIF syntax rather than doing plain text matching, so it prints values from both name-value pairs and loops. The docs say the whole compressed PDB mmCIF archive can be searched in roughly 10 to 30 minutes on an average computer, and that output pipes into standard Unix tools such as sort, awk, and uniq.",
+  "commands_seen": [
+   {
+    "cmd": "gemmi -h",
+    "context": "Prints the top-level usage and the list of subcommands (align, blobs, cif2json, convert, grep, validate, and others)."
+   },
+   {
+    "cmd": "gemmi validate file1.cif file2.cif",
+    "context": "Checks CIF 1.1 syntax of the listed files."
+   },
+   {
+    "cmd": "gemmi validate -d mmcif_pdbx_v50.dic -d extension.dic file.mmcif",
+    "context": "Checks an mmCIF file against DDL dictionaries passed with -d."
+   },
+   {
+    "cmd": "gemmi grep _refine.ls_R_factor_R_free 5fyi.cif.gz",
+    "context": "Prints the value of one tag from a CIF file; output lines look like the block name and value, e.g. 5FYI:0.2358."
+   },
+   {
+    "cmd": "gemmi grep -b _software.name 5fyi.cif.gz",
+    "context": "Prints the values of a tag with -b, which suppresses the block name."
+   },
+   {
+    "cmd": "find $PDB_DIR/structures/divided/mmCIF/ -name '*.cif.gz' | parallel gemmi grep _exptl.method",
+    "context": "Hint from the docs on running gemmi over many files in parallel with GNU parallel."
+   },
+   {
+    "cmd": "gemmi diff deposit.cif output.cif",
+    "context": "Shows a diff-style comparison of categories and tags between two CIF files. The docs use the name gemmi diff here, but the subcommand listed in the usage text is cifdiff."
+   },
+   {
+    "cmd": "gemmi tags components.cif.gz",
+    "context": "Lists the tags in a CIF file with block and value counts."
+   },
+   {
+    "cmd": "gemmi map -h",
+    "context": "Prints usage for the map subcommand, which summarizes a CCP4 map, plots a histogram, and can write masks or re-gridded maps."
+   },
+   {
+    "cmd": "gemmi mask -h",
+    "context": "Prints usage for the mask subcommand, which builds a CCP4-format bulk-solvent mask from a coordinate file."
+   }
+  ],
+  "install_notes": "Beyond brew install, I found nothing in the README about required accounts, runtimes, or first-run configuration. The README says the C++ library is currently C++14, and the Python bindings and Fortran 2003+ interface (still in progress) are separate pieces. The installation page of the docs (gemmi.readthedocs.io, Installation section) exists but I did not fetch it, so build and dependency details are unverified. The program docs mention $CLIBD_MON and $PDB_DIR environment variables for some features.",
+  "standout": "It treats CIF syntax as the core, so the command-line tools work on real archive-scale data (the whole PDB mmCIF archive) and the grep subcommand avoids the failures of plain Unix grep on looped tags. It pairs a C++ library with a CLI, Python bindings, and browser builds, and its subcommands reach from file conversion to crystallographic calculations such as sfcalc, sf2map, and mask.",
+  "status": "Maintained, as far as I can tell. The docs are at version 0.7.6-dev, the README carries a CI badge and a copyright line running through 2025, and the project has a JOSS paper. I did not check a last-commit date or latest release date, so this rests on those signals rather than dated evidence.",
+  "caveats": "The homepage URL only returned a redirect page with no content, so I took the project description from the GitHub README and docs instead. The README gives no install commands. The docs page I read was cut off at 40000 characters, so I did not see the full subcommand list or per-command details past the cif2mtz section. The docs call one command gemmi diff while the usage text lists cifdiff, so exact names may need checking against gemmi -h. The license is MPLv2, or at your option LGPLv3. The scout note's 'close call on whether utilities go far enough' is not something I could judge from these pages; the subcommand list is broad.",
+  "quotes": [
+   "The library comes with a command-line program which is also named gemmi; running a program is easier than calling a library function.",
+   "Gemmi-grep parses the CIF syntax and prints values from both name-value pairs and loops.",
+   "Searching the whole compressed mmCIF archive from the PDB (35GB of gzipped files) should take on an average computer between 10 and 30 minutes, depending where the searched tag is located."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (redirects to GitHub)",
+    "url": "https://project-gemmi.github.io/"
+   },
+   {
+    "label": "Documentation: gemmi program page",
+    "url": "https://gemmi.readthedocs.io/en/latest/program.html"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/project-gemmi/gemmi"
+   },
+   {
+    "label": "JOSS paper (citation)",
+    "url": "https://doi.org/10.21105/joss.04200"
+   }
+  ],
+  "fetch_log": [
+   "https://project-gemmi.github.io/ : worked but returned only a 'Redirecting\u2026' page with no project content",
+   "https://github.com/project-gemmi/gemmi : worked; returned the README (CI badges, feature list, docs and citation links, license)",
+   "https://gemmi.readthedocs.io/en/latest/program.html : worked; returned the gemmi program docs with subcommand list and examples, truncated at 40000 characters"
+  ]
+ }
+}

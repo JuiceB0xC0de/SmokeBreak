@@ -1,0 +1,99 @@
+{
+ "name": "vvdec",
+ "desc": "Fraunhofer Versatile Video Decoder",
+ "homepage": "https://www.hhi.fraunhofer.de/en/departments/vca/technologies-and-solutions/h266-vvc.html",
+ "installs_365d": 163,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "library",
+  "science"
+ ],
+ "why": "Fraunhofer's H.266/VVC decoder is a fascinating look at a modern video codec, though it is mostly a library.",
+ "brief": {
+  "what_it_is": "VVdeC is Fraunhofer HHI's software decoder for H.266/VVC (Versatile Video Coding), written as a C library with a sample command-line app, vvdecapp. It takes raw VVC bitstreams (NAL units) and outputs decoded frames. The app writes raw YUV or YUV4MPEG2 (y4m) files: yuv420p10le for 10-bit input and yuv420p for 8-bit. It can also write to stdout for piping. The README describes it as a fast decoder that supports all features of the VVC Main10 profile. The homepage says it is resource efficient, multithreaded, and capable of live decoding up to 4Kp60.",
+  "why_it_exists": "The README gives no separate motivation. The homepage presents it as Fraunhofer HHI's open-source reference-quality decoder for the new VVC standard, which it says achieves about 50% bit-rate reduction over H.265/HEVC at the same subjective quality. The paired encoder, VVenC, is listed alongside it.",
+  "how_it_works": "The decoder is passed one NAL unit at a time in an access unit, through vvdec_decode(). It returns VVDEC_TRY_AGAIN when it needs more data, or VVDEC_OK with a decoded frame. Remaining frames are drained with vvdec_flush() until VVDEC_EOF. Decoding runs on a thread pool sized by --threads, with 0 meaning single-threaded in the main thread and -1 meaning one thread per core.",
+  "commands_seen": [
+   {
+    "cmd": "mkdir build",
+    "context": "Creates a build directory for the CMake build."
+   },
+   {
+    "cmd": "cd build",
+    "context": "Enters the build directory before generating the project."
+   },
+   {
+    "cmd": "cmake .. <build options>",
+    "context": "Generates the CMake project; the README says build options are described in the Wiki."
+   },
+   {
+    "cmd": "cmake --build .",
+    "context": "Builds the project after generation. Multi-config generators also take --config Release."
+   },
+   {
+    "cmd": "make install-release <options>",
+    "context": "Convenience Makefile target that builds and installs the release configuration; add enable-bitstream-download=1 to fetch conformance bitstreams for testing."
+   },
+   {
+    "cmd": "vvdecapp --help",
+    "context": "Prints the full list of decoder options."
+   },
+   {
+    "cmd": "vvdecapp -b str.266 -o raw_yuv.yuv",
+    "context": "Decodes the raw VVC file str.266 into a raw YUV file."
+   },
+   {
+    "cmd": "vvdecapp -b str.266 -o raw_yuv.y4m",
+    "context": "Decodes the same file into a YUV4MPEG2 (y4m) file, selected by the .y4m extension."
+   },
+   {
+    "cmd": "vvdecapp -b str.266 --y4m -o - | vvencapp -i - -o newstr.266 --y4m",
+    "context": "Pipes decoded output into the VVenC encoder's app (vvencapp) to re-encode; vvencapp is not part of this project."
+   },
+   {
+    "cmd": "emcmake cmake -B build/wasm",
+    "context": "Configures a WebAssembly build with Emscripten, which must be installed and on PATH."
+   },
+   {
+    "cmd": "cmake --build build/wasm",
+    "context": "Builds the WebAssembly target, producing vvdecapp.wasm, vvdeapp.worker.js and vvdecapp.js for browser use."
+   }
+  ],
+  "install_notes": "Requires CMake. The GNU Make wrapper is optional. Build options are documented on the Wiki Build page, which I did not fetch. For WebAssembly you need the Emscripten SDK installed, activated and on PATH. Conformance bitstreams are not downloaded unless you pass enable-bitstream-download=1. Homebrew is not mentioned in the README, so the brew formula's packaging is outside what I read.",
+  "standout": "It is a software decoder that aims to decode VVC live, including 4K at 60 fps, and it compiles to WebAssembly so it can run in a browser. The README also cites the ICIP 2020 paper on the live-decoder design.",
+  "status": "Unknown from the pages I read. The README's copyright runs to 2026, and it mentions version v0.1.2.0 as a fix. The usage wiki page was last edited 10 Oct 2024. I did not check release tags or the last commit date.",
+  "caveats": "The README claims full support only for the VVC Main10 profile. Platform support is partial: the table marks Win32, macOS x86_64 and armv7 on Windows as not tested or not working, and Safari WASM as not working. The wiki's usage page labels the standalone vvdecapp app as deprecated, though the README still lists it as the main way to run the decoder. The README leaves licensing to LICENSE.txt, which I did not read. The wiki's single-threaded note says --threads 1 can still use more than one core. The homepage is a German-language institute page that links out to GitHub, and it carries no install or usage instructions of its own.",
+  "quotes": [
+   "VVdeC, the Fraunhofer Versatile Video Decoder, is a fast software H.266/VVC decoder implementation supporting all features of the VVC Main10 profile.",
+   "Fraunhofer HHI has developed a resource efficient, multithreaded VVC software decoder that enables live decoding up to 4Kp60 ultra high resolution video.",
+   "The application can be used to decompress raw VVC bitstreams into y4m or raw YUV files."
+  ],
+  "links": [
+   {
+    "label": "Homepage (Fraunhofer HHI H.266/VVC page)",
+    "url": "https://www.hhi.fraunhofer.de/en/departments/vca/technologies-and-solutions/h266-vvc.html"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/fraunhoferhhi/vvdec"
+   },
+   {
+    "label": "Wiki: How to use VVdeC",
+    "url": "https://github.com/fraunhoferhhi/vvdec/wiki/How-to-use-VVdeC"
+   },
+   {
+    "label": "ICIP 2020 paper: Towards A Live Software Decoder Implementation For The Upcoming VVC Codec",
+    "url": "https://doi.org/10.1109/ICIP40778.2020.9191199"
+   }
+  ],
+  "fetch_log": [
+   "https://www.hhi.fraunhofer.de/en/departments/vca/technologies-and-solutions/h266-vvc.html: worked, but it is a marketing page with no install or usage details; it links to GitHub for source.",
+   "https://github.com/fraunhoferhhi/vvdec: worked, README returned.",
+   "https://github.com/fraunhoferhhi/vvdec/wiki/How-to-use-VVdeC: worked, usage and library documentation returned."
+  ]
+ }
+}

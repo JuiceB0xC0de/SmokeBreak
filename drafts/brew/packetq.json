@@ -1,0 +1,135 @@
+{
+ "name": "packetq",
+ "desc": "SQL-like frontend to PCAP files",
+ "homepage": "https://www.dns-oarc.net/tools/packetq",
+ "installs_365d": 35,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "Lets you query PCAP captures with SQL-like syntax, turning packet traces into a database you can interrogate.",
+ "brief": {
+  "what_it_is": "PacketQ is a command-line tool, written in C++, that runs SQL-style queries directly against PCAP and DNSTAP capture files. It takes capture files as input and outputs results as JSON by default, or as formatted/compact CSV or XML. The homepage also says it includes a very simple web server for inspecting PCAP files remotely. It was formerly called DNS2db and was renamed in 2011 when it was rebuilt to handle protocols beyond DNS.",
+  "why_it_exists": "The homepage describes it as a way to run SQL queries directly on PCAP files, and the Codeberg description calls it a tool that provides a basic SQL frontend to PCAP files. The renaming note says it was rebuilt to decode protocols other than DNS.",
+  "how_it_works": "The README describes native decoding of PCAP files, including gzipped ones, with in-memory sorting. Protocol decoding is extensible, with built-in support for ICMP and DNS. Queries can be cached by pre-processing PCAPs into static JSON files, and sampling is available for large, uniform captures. The README does not explain the internal query engine in more detail.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://codeberg.org/DNS-OARC/PacketQ.git",
+    "context": "Clones the source repository from Codeberg (shown on the homepage and in the README)."
+   },
+   {
+    "cmd": "./autogen.sh",
+    "context": "Generates the configure script when building from the repository checkout."
+   },
+   {
+    "cmd": "./configure [options]",
+    "context": "Configures the build; the README leaves the options unspecified."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles PacketQ."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the built packetq binary."
+   },
+   {
+    "cmd": "tar zxvf packetq-version.tar.gz",
+    "context": "Unpacks the release source tarball when building from a tarball instead of the repository."
+   },
+   {
+    "cmd": "apt-get install -y zlib1g-dev libmaxminddb-dev libdnswire-dev",
+    "context": "Installs the dependencies on Debian/Ubuntu: zlib, MaxMindDB and dnswire development packages."
+   },
+   {
+    "cmd": "yum install -y zlib-devel libmaxminddb-devel",
+    "context": "Installs the dependencies on CentOS with EPEL/PowerTools enabled. The README says dnswire must be obtained separately from DNS-OARC's packages page."
+   },
+   {
+    "cmd": "packetq -s \"select * from dns limit 10\" sample.pcap",
+    "context": "The README's usage example. Retrieves the first 10 packets containing DNS information from sample.pcap."
+   }
+  ],
+  "install_notes": "Requires a C++ toolchain plus autoconf, automake, libtool and pkgconfig when building from source. Required libraries are zlib and dnswire (version 0.5.1 or later). MaxMindDB is optional and is needed only for the CC() and ASN() functions. DNS-OARC publishes Debian, Ubuntu and RPM packages (CentOS, Fedora, RHEL, SLE, openSUSE) at dev.dns-oarc.net/packages. The homepage's brew-side name and executable are both packetq; the README does not mention Homebrew.",
+  "standout": "It treats a PCAP file as a queryable table, so you can run SQL (grouping, sorting, counting, and most common SQL functions) against capture traces without loading them into a database first. It is also DNS-focused, with a built-in DNS resolver function and DNSTAP input.",
+  "status": "Maintained. The homepage lists 1.8.0 as released October 14, 2026, and the Codeberg repository's latest commit is dated 2026-10-20 (\"Configure, extern C\"). Codeberg shows 353 commits, 26 tags and 14 releases, with 9 open issues. Jerry Lundstr\u00f6m is named as maintainer since 2017.",
+  "caveats": "Building from source needs several toolchain pieces and a dnswire library that is not in the standard repositories on every distribution; the README points to DNS-OARC's package page for it. The homepage calls the web server 'very simplistic.' The README's features list is short on specifics for queries beyond the one usage example. The homepage's release list shows some dates that look unusual, so verify version dates against the changelog if you quote them. Licensed under GPL v3.",
+  "quotes": [
+   "packetq is a command line tool to run SQL queries directly on PCAP/DNSTAP files, the results can be outputted as JSON (default), formatted/compact CSV or XML.",
+   "Super-fast native decoding of PCAP-files (even gzipped) and dirt-quick in-memory sorting algorithms.",
+   "PacketQ was previously known as DNS2db but was renamed in 2011 when it was rebuilt and could handle protocols other than DNS among other things."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (DNS-OARC)",
+    "url": "https://www.dns-oarc.net/tools/packetq"
+   },
+   {
+    "label": "Source repository (Codeberg)",
+    "url": "https://codeberg.org/DNS-OARC/PacketQ"
+   },
+   {
+    "label": "Demo video",
+    "url": "http://www.youtube.com/watch?v=70wJmWZE9tY"
+   }
+  ],
+  "fetch_log": [
+   "https://www.dns-oarc.net/tools/packetq: fetched OK. Homepage text, release list, and a git clone command. It links to docs (README, FAQ, functions, fields) and to the packages page, which I did not fetch.",
+   "https://codeberg.org/DNS-OARC/PacketQ: fetched OK. Returned the repository page and the README.md text; I used the README contents. The FAQ, FUNCTIONS.md and FIELDS.md docs were not fetched."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Querying packet captures with SQL turns network traces into something you can group and investigate like data, without first importing them into a database."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "PacketQ",
+  "tldr": "Run SQL queries straight against PCAP files, so a packet capture becomes a table you can group, sort and count without a database.",
+  "deeper_look": "PacketQ is a C++ command-line tool from DNS-OARC that treats a PCAP or DNSTAP capture as a queryable table. You hand it a capture file and a SQL-style query, and it prints the results as JSON by default, or as formatted or compact CSV or XML. Gzipped captures work too. The homepage also mentions a very simple web server for inspecting PCAP files remotely.\n\nThe idea underneath it is that a packet trace is already structured data. It is usually read through tools that show one packet at a time. Asking questions like which names were queried most, or how many responses were sent, is a different way of looking at the same bytes. PacketQ lets you ask in SQL, which most developers already know, and sorts the results in memory.\n\nIt began life as DNS2db and was renamed in 2011 when it was rebuilt to handle protocols other than DNS. Built-in decoding covers ICMP and DNS, and the decoding is extensible. The project describes DNS as its focus, with a built-in DNS resolver function and DNSTAP input. For large, uniform captures there is sampling, and queries can be cached by pre-processing PCAPs into static JSON files.\n\nThe brief's sources do not document the query engine beyond this, so the FIELDS and FUNCTIONS docs on the project site are the place to learn which columns and functions exist.",
+  "install": "brew install packetq\n# You need a PCAP file to query. The optional MaxMindDB support is only for the CC() and ASN() functions.",
+  "try_this": [
+   {
+    "cmd": "packetq -s \"select * from dns limit 10\" sample.pcap",
+    "what_happens": "Returns the first 10 packets that carry DNS information from sample.pcap, as JSON."
+   },
+   {
+    "cmd": "packetq --help",
+    "what_happens": "Lists the available options, including the output format choices."
+   }
+  ],
+  "whats_unique": "It queries capture files directly with SQL, with no import step into a database. Its decoding is DNS-focused and it reads DNSTAP as well as PCAP.",
+  "caveats": "You need your own capture file to get anything interesting, and the README gives only one usage example, so expect to read the field and function docs.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "network",
+   "protocol",
+   "dns",
+   "pcap",
+   "sql"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (DNS-OARC)",
+    "url": "https://www.dns-oarc.net/tools/packetq"
+   },
+   {
+    "label": "Source repository (Codeberg)",
+    "url": "https://codeberg.org/DNS-OARC/PacketQ"
+   },
+   {
+    "label": "Demo video",
+    "url": "http://www.youtube.com/watch?v=70wJmWZE9tY"
+   }
+  ]
+ }
+}

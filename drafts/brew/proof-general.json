@@ -1,0 +1,135 @@
+{
+ "name": "proof-general",
+ "desc": "Emacs-based generic interface for theorem provers",
+ "homepage": "https://proofgeneral.github.io",
+ "installs_365d": 56,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language",
+  "math"
+ ],
+ "why": "An Emacs front end for theorem provers opens a door into formal proof and interactive mathematics.",
+ "brief": {
+  "what_it_is": "Proof General is a generic Emacs front end for interactive proof assistants (interactive theorem provers). You open a proof file in Emacs and it loads a matching major mode for the prover: the README lists Coq (.v), EasyCrypt (.ec), qrhl-tool (.qrhl) and PhoX (.phx). The standard master branch is described as REPL-based, so the editor drives the prover and shows its responses alongside your proof script. It is distributed as an Emacs package on MELPA and NonGNU ELPA, or can be built from a git clone.",
+  "why_it_exists": "The README frames it as a way to provide 'a powerful, generic environment for using interactive proof assistants', built on the extensible, customizable editor Emacs, so one interface can serve several provers.",
+  "how_it_works": "It is a set of Emacs Lisp modes that associate file extensions with each supported prover and connect the editor buffer to that prover's process. The README does not describe the internals beyond this. Proof General is developed at the LFCS in the University of Edinburgh, mainly by David Aspinall, and is licensed under GPL v3 or later.",
+  "commands_seen": [
+   {
+    "cmd": "M-x package-refresh-contents RET",
+    "context": "Emacs step, after adding MELPA, to refresh the package list before installing."
+   },
+   {
+    "cmd": "M-x package-install RET proof-general RET",
+    "context": "Installs and byte-compiles proof-general from MELPA."
+   },
+   {
+    "cmd": "M-x proof-upgrade-elpa-packages RET",
+    "context": "Homepage shortcut for upgrading the ELPA-installed Proof General; the README also gives M-x p-u-e-p RET as a shorter alias."
+   },
+   {
+    "cmd": "git clone https://github.com/ProofGeneral/PG ~/.emacs.d/lisp/PG",
+    "context": "Manual install: clones the repository into the Emacs lisp directory."
+   },
+   {
+    "cmd": "make",
+    "context": "Run inside ~/.emacs.d/lisp/PG to byte-compile the sources for the manual install."
+   },
+   {
+    "cmd": "(load \"~/.emacs.d/lisp/PG/generic/proof-site\")",
+    "context": "Line to add to your .emacs so that .v files open in Proof General's Coq mode."
+   },
+   {
+    "cmd": "make clean; make EMACS=/Applications/Emacs.app/Contents/MacOS/Emacs",
+    "context": "README's macOS workaround when the Makefile picks up the wrong emacs and Proof General reports a version mismatch."
+   },
+   {
+    "cmd": "git pull",
+    "context": "Manual update: run in ~/.emacs.d/lisp/PG after make clean, followed by make."
+   }
+  ],
+  "install_notes": "Requires GNU Emacs 25.2 or later. Recommended route is MELPA or NonGNU ELPA (enabled by default from Emacs 28); add MELPA to package-archives in .emacs, then install with M-x package-install. The manual route clones the repo and runs make, and the Makefile needs the same emacs as your usual one. Homebrew's caveat says HTML docs are installed under $HOMEBREW_PREFIX/share/doc/proof-general, and the formula also ships an executable named coqtags, which the README does not mention. Prover binaries such as Coq, EasyCrypt, PhoX or qrhl-tool are not installed by this package; the README links to each prover's own site.",
+  "standout": "It is one editor front end that targets several proof assistants through a common interface, rather than one tool per prover. The project has been around long enough to have dropped many provers over time (Twelf, Isabelle, LEGO, HOL98 and others), so its current list is short and specific.",
+  "status": "Maintained, with the caveat that the exact date of the latest release or commit was not visible to me. Evidence: the README reports version 4.6-git, shows active CI, MELPA and NonGNU ELPA badges, and says the master branch is the standard stable version. The separate async branch is described as unmaintained, and several old prover instances are described as removed or obsolete.",
+  "caveats": "Needs Emacs 25.2 or later; the README gives a workaround for Emacs 26.1 TLS errors during MELPA refresh. Manual builds can fail with a version mismatch if the Makefile uses the wrong Emacs, and on macOS the README suggests pointing make at the Emacs.app binary. Supported provers are Coq, EasyCrypt, PhoX and qrhl-tool; Shell is listed as experimental, and Demoisa as obsolete. The async Coq branch is unmaintained. If you switch from an old manual install to MELPA, you must remove the old loader line or package. Licensed GPL v3 or later.",
+  "quotes": [
+   "A generic Emacs interface for proof assistants.",
+   "Proof General is a generic interface for proof assistants (also known as interactive theorem provers), based on the extensible, customizable text editor Emacs.",
+   "The aim of the Proof General project is to provide a powerful, generic environment for using interactive proof assistants."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://proofgeneral.github.io"
+   },
+   {
+    "label": "Proof General user manual",
+    "url": "https://proofgeneral.github.io/doc/master/userman/"
+   },
+   {
+    "label": "GitHub repository (README source)",
+    "url": "https://github.com/ProofGeneral/PG"
+   }
+  ],
+  "fetch_log": [
+   "https://proofgeneral.github.io: worked, homepage text returned with the installation instructions and description.",
+   "https://github.com/ProofGeneral/PG: worked, README returned; used for version, branch, supported-prover and install details. Not fetched: the INSTALL, FAQ.md and coq/README files it links to."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Proof General makes interactive theorem proving approachable through a live editor\u2013prover loop, exposing proof state as you build formal arguments rather than merely editing code."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Proof General",
+  "tldr": "An Emacs front end for interactive theorem provers like Coq: you write a proof in one buffer and the prover checks it step by step.",
+  "deeper_look": "Proof General is a set of Emacs Lisp modes that sit between your editor and a proof assistant. Open a file with a matching extension, such as `.v` for Coq, `.ec` for EasyCrypt, `.qrhl` for qrhl-tool or `.phx` for PhoX, and the right mode loads. The editor drives the prover's process and shows its responses next to your proof script.\n\nA proof assistant is a program that checks mathematical arguments one step at a time. You state a theorem, then give tactics that reduce it to smaller goals until none remain. The prover rejects any step that does not hold. Proof General lets you advance and retract through that script from the editor. The project's own description: \"a generic interface for proof assistants (also known as interactive theorem provers), based on the extensible, customizable text editor Emacs.\"\n\nThe idea is one interface for many provers, so the editing habits carry over. It was developed at the LFCS in the University of Edinburgh, mainly by David Aspinall. It is old enough to have dropped several provers over the years, including Twelf, Isabelle, LEGO and HOL98, so the current list is short. The Homebrew formula also installs a `coqtags` executable, which the README does not mention.",
+  "install": "brew install proof-general\n# Requires Emacs 25.2 or later (brew installs emacs as a dependency).\n# Proof General does not install a prover. You need Coq, EasyCrypt, PhoX or qrhl-tool separately.\n# Docs: $HOMEBREW_PREFIX/share/doc/proof-general\n# The README's recommended route is MELPA or NonGNU ELPA: M-x package-install RET proof-general RET",
+  "try_this": [
+   {
+    "cmd": "coqtags --help",
+    "what_happens": "Shows usage for the one executable the formula puts on your PATH."
+   },
+   {
+    "cmd": "M-x package-install RET proof-general RET",
+    "what_happens": "Inside Emacs, installs and byte-compiles Proof General from MELPA, the README's recommended route."
+   },
+   {
+    "cmd": "(load \"~/.emacs.d/lisp/PG/generic/proof-site\")",
+    "what_happens": "Added to your .emacs after a manual clone and make, so .v files open in Proof General's Coq mode."
+   }
+  ],
+  "whats_unique": "One editor interface serves several proof assistants rather than one tool per prover. It has been around long enough to have outlived many of the provers it once supported.",
+  "caveats": "It installs only the interface, so you need a prover such as Coq installed separately, and manual builds can fail with a version mismatch if make picks up the wrong Emacs.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "emacs",
+   "theorem-proving",
+   "coq",
+   "math",
+   "formal-methods"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://proofgeneral.github.io"
+   },
+   {
+    "label": "Proof General user manual",
+    "url": "https://proofgeneral.github.io/doc/master/userman/"
+   },
+   {
+    "label": "GitHub repository (README source)",
+    "url": "https://github.com/ProofGeneral/PG"
+   }
+  ]
+ }
+}

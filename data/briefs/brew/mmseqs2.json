@@ -1,0 +1,89 @@
+{
+ "name": "mmseqs2",
+ "desc": "Software suite for very fast sequence search and clustering",
+ "homepage": "https://mmseqs.com/",
+ "installs_365d": 2534,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "library"
+ ],
+ "why": "Real bioinformatics sequence search and clustering at scale, a genuine science tool you can run on your own data.",
+ "brief": {
+  "what_it_is": "MMseqs2 is a free, open-source C++ software suite for searching and clustering very large protein and nucleotide sequence sets. You give it FASTA/FASTQ files, or its own database format, and it returns search hits (alignments in a tab-separated format by default), sequence clusters, or taxonomic labels. It runs on multiple cores and across servers, and the README says it is available for Linux and macOS, with Windows only as a beta via cygwin. The README also describes a GPU-accelerated search path and prebuilt workflows that download public reference databases such as UniProt/Swiss-Prot, UniRef, NR, NT and Pfam.",
+  "why_it_exists": "The README frames it as a fast, sensitive alternative to BLAST and PSI-BLAST for massive data sets: \"MMseqs2 can run 10000 times faster than BLAST. At 100 times its speed it achieves almost the same sensitivity.\" The stated goal is searching and clustering \"huge\" sequence collections, where classic tools are too slow.",
+  "how_it_works": "The README does not explain the algorithm in detail. It describes easy-cluster (a cascaded clustering algorithm), easy-linclust (runtime that scales linearly with input size, recommended for huge data), and search modes including iterative profile searches like PSI-BLAST, translated searches, and ungapped prefilter searches. Memory use is stated as about 1 byte per residue for clustering and per target residue for search, and the software splits the target database into parts that fit in available RAM.",
+  "commands_seen": [
+   {
+    "cmd": "mmseqs easy-cluster examples/DB.fasta clusterRes tmp --min-seq-id 0.5 -c 0.8 --cov-mode 1",
+    "context": "Clusters the entries of a FASTA file with the default cascaded algorithm, using 50% minimum sequence identity and 80% coverage."
+   },
+   {
+    "cmd": "mmseqs easy-linclust examples/DB.fasta clusterRes tmp",
+    "context": "Clusters a FASTA file with the linear-time mode the README recommends for huge datasets."
+   },
+   {
+    "cmd": "mmseqs easy-search examples/QUERY.fasta examples/DB.fasta alnRes.m8 tmp",
+    "context": "Searches query sequences directly against a FASTA target file in one step, writing results to alnRes.m8."
+   },
+   {
+    "cmd": "mmseqs createdb examples/DB.fasta targetDB",
+    "context": "Converts a FASTA file into MMseqs2's internal database format, as a first step before precomputing an index."
+   },
+   {
+    "cmd": "mmseqs createindex targetDB tmp",
+    "context": "Precomputes the index for a target database so repeated searches against it have less overhead."
+   },
+   {
+    "cmd": "mmseqs easy-search examples/QUERY.fasta targetDB_padded alnRes.m8 tmp --gpu 1",
+    "context": "Runs the search on a GPU against a padded database made with makepaddedseqdb; requires a supported NVIDIA GPU."
+   },
+   {
+    "cmd": "mmseqs databases UniProtKB/Swiss-Prot swissprot tmp",
+    "context": "Downloads and sets up the Swiss-Prot reference protein database through the databases workflow."
+   },
+   {
+    "cmd": "mmseqs easy-taxonomy examples/QUERY.fasta targetDB alnRes tmp",
+    "context": "Assigns taxonomic labels to query sequences by searching a database that has taxonomy information and computing the lowest common ancestor of the hits."
+   },
+   {
+    "cmd": "RUNNER=\"mpirun -pernode -np 42\" mmseqs search queryDB targetDB resultDB tmp",
+    "context": "Runs a search across multiple servers by passing an MPI launcher through the RUNNER environment variable; needs an MPI build and shared storage."
+   },
+   {
+    "cmd": "wget https://mmseqs.com/latest/mmseqs-linux-avx2.tar.gz; tar xvfz mmseqs-linux-avx2.tar.gz; export PATH=$(pwd)/mmseqs/bin/:$PATH",
+    "context": "Installs the static AVX2 Linux binary by downloading, unpacking, and adding it to PATH; the README calls this the fastest option."
+   }
+  ],
+  "install_notes": "Install with brew install mmseqs2, conda (conda install -c conda-forge -c bioconda mmseqs2), Docker (docker pull ghcr.io/soedinglab/mmseqs2), or a static binary from mmseqs.com/latest, or build from source with CMake. Source builds take -DMMSEQS_INT64_IDS=1 for 64-bit IDs, and -DHAVE_MPI=1 for MPI; the precompiled static binary has no MPI. The 64-bit AVX2 build needs about twice the memory even for small databases. The CPU must be 64-bit AMD or Intel, and the README recommends at least SSE4.1 (AVX2 is faster, SSE2 is for very old systems); ARM64 and POWER8+ PPC64LE are also mentioned. GPU search needs an NVIDIA Ampere-or-newer GPU for full speed (Turing works at reduced speed) with the GPU binary requiring glibc >= 2.29 and driver >= 525.60.13; ROCm support is in preview and only via Docker tag master-rocm7. Optional bash completion is set up by sourcing util/bash-completion.sh from your .bash_profile. No accounts or licences to accept are mentioned.",
+  "standout": "Speed and sensitivity claims are the headline: the README says it is around 10000 times faster than BLAST and matches PSI-BLAST-level profile sensitivity at over 400 times the speed. The suite also includes a linear-time clustering mode and a one-command database downloader for public references.",
+  "status": "Appears maintained. The GitHub page I fetched shows about 6,851 commits, 2.2k stars, a Releases section, and a README that mentions a 2025 Nature Methods GPU paper and a master-rocm7 Docker tag. I did not see a last-release or last-commit date, so I can't confirm the exact recency of activity.",
+  "caveats": "The speed numbers are the authors' own claims, and I did not verify them. Windows support is beta via cygwin only. Clustering and search need about 1 byte of RAM per residue (per target residue for search), so large databases can be demanding; --compress reduces this. The 64-bit build needs about twice the memory. The precompiled and bioconda GPU builds do not run on Volta or Pascal GPUs, and ROCm is not in the bioconda or precompiled builds. The README notes that easy-search reports a different identity by default than numIdentical/alnLen unless you use --alignment-mode 3 or -a. MPI requires a source build and shared filesystem. The README also says the tool outputs search results in its own format unless you customise --format-output.",
+  "quotes": [
+   "MMseqs2 (Many-against-Many sequence searching) is a software suite to search and cluster huge protein and nucleotide sequence sets.",
+   "MMseqs2 can run 10000 times faster than BLAST. At 100 times its speed it achieves almost the same sensitivity.",
+   "It can perform profile searches with the same sensitivity as PSI-BLAST at over 400 times its speed."
+  ],
+  "links": [
+   {
+    "label": "Homepage (renders GitHub README)",
+    "url": "https://mmseqs.com/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/soedinglab/MMseqs2"
+   },
+   {
+    "label": "Nature Biotechnology 2017 paper (MMseqs2 search)",
+    "url": "https://doi.org/10.1038/nbt.3988"
+   }
+  ],
+  "fetch_log": [
+   "https://mmseqs.com/ (worked; returned the GitHub repository page for soedinglab/MMseqs2, including the full README. I did not follow further links, since the README covered the needed detail.)"
+  ]
+ }
+}

@@ -1,0 +1,90 @@
+{
+ "name": "far2l-tty",
+ "desc": "Unix TTY port of FAR Manager v2 (with NetRocks support)",
+ "homepage": "https://github.com/elfmz/far2l",
+ "installs_365d": 371,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "tui",
+  "ancient",
+  "afternoon"
+ ],
+ "why": "A Unix port of the legendary FAR Manager dual-pane file manager, an old-school environment with a devoted following and a strange lineage.",
+ "brief": {
+  "what_it_is": "far2l is a Linux fork of FAR Manager v2, the dual-pane file manager originally for Windows, ported to run in Unix terminals. It takes keyboard input and file-system and remote-server actions from the user and draws two file panels, an editor, and a viewer in the terminal. It is extended by plugins, including NetRocks for SFTP, SCP, FTP, FTPS, SMB, NFS, WebDAV, AWS S3, and a shell protocol, plus archive handling, an image viewer, a hex editor, a calculator, and Python scripting. The README describes it as a BETA with a use-at-your-own-risk warning, and it also runs on macOS and BSD. The Homebrew formula far2l-tty, which the scout note names, is the compact terminal-only build of this project.",
+  "why_it_exists": "The README presents far2l as a Unix continuation of FAR Manager v2 for people who want the Far Manager keyboard-driven workflow outside Windows. The README does not state a broader motive beyond that.",
+  "how_it_works": "far2l runs in one of several UI backends that the README lists: plain TTY, TTY|X and TTY|Xi (terminal with X11 for clipboard and modifier state), and GUI via wxWidgets or SDL. When a backend or library is missing it automatically falls back in the order GUI, TTY|Xi, TTY|X, TTY. Keyboard and clipboard handling depend on the terminal: many terminals need OSC 52 enabled, and far2l's own terminal extensions (TTY|F backend) are supported by some PuTTY forks. Optional protocols and plugins are compiled in through CMake options, each of which pulls in its own libraries.",
+  "commands_seen": [
+   {
+    "cmd": "brew install far2l-tty",
+    "context": "Installs the roughly 25MB compact TTY-only build from the official Homebrew formula; the README says it has no Python plugin support and no SMB in NetRocks."
+   },
+   {
+    "cmd": "brew install far2l-tty --build-from-source",
+    "context": "Builds the same compact TTY-only version from source instead of using the prebuilt binary."
+   },
+   {
+    "cmd": "brew install Vladekk/far2l/far2l-tty-full",
+    "context": "Installs the full TTY-only build from an unofficial third-party tap; the README says it supports Python plugins and all NetRocks protocols, and advises checking the formula first."
+   },
+   {
+    "cmd": "far2l --tty --nodetect=x",
+    "context": "Forces the plain TTY backend with no X11 detection, which the README recommends for Wayland when you want OSC 52 clipboard."
+   },
+   {
+    "cmd": "far2l --tty",
+    "context": "Forces terminal mode with the TTY|X and TTY|Xi backends allowed."
+   },
+   {
+    "cmd": "far2l --notty",
+    "context": "Forces the GUI backend and disables terminal mode."
+   },
+   {
+    "cmd": "apt install --no-install-recommends far2l",
+    "context": "Debian and Ubuntu command for the plain TTY backend without X11 or NetRocks dependencies (Debian 2.6.5~ds-3 or Ubuntu 25.10 and later)."
+   },
+   {
+    "cmd": "cmake -DUSEWX=yes -DCMAKE_BUILD_TYPE=Release ..",
+    "context": "Configures a source build from the _build directory with the wxWidgets GUI backend enabled; the README says to pass -DUSEWX=no for a console-only build."
+   },
+   {
+    "cmd": "cmake --build . -j$(nproc --all)",
+    "context": "Compiles far2l after configuration, using all CPU cores."
+   },
+   {
+    "cmd": "sudo cmake --install .",
+    "context": "Installs the built far2l system-wide from the _build directory; the README calls this the better option versus running from the build tree."
+   }
+  ],
+  "install_notes": "Homebrew itself must be installed first, using the curl-based install script in the README. The compact brew formula is TTY-only and omits Python and SMB. The full build needs the third-party Vladekk tap. Building from source needs cmake 3.5 or newer, pkg-config, g++, and git. Optional libraries (libssh, libssl, libsmbclient, libnfs, libneon, libxml2, libuchardet, libarchive, python3-dev, and others) enable the matching NetRocks protocols and plugins. On first use, clipboard access requires enabling OSC 52 in far2l under Options, Interface settings, and in the terminal emulator. For full keyboard support, the README recommends a terminal such as kitty, Alacritty, WezTerm, Ghostty, or foot, or a PuTTY fork that carries far2l's TTY extensions. In GNOME, KDE, and similar desktops, some Alt and Ctrl shortcuts must be released globally or handled via the sticky-controls option.",
+  "standout": "The same program degrades gracefully across terminal, X11-assisted terminal, and desktop GUI modes, and it can run in a remote SSH session while still getting extended keys and clipboard from a cooperating terminal. Its plugin list pulls remote filesystems such as SFTP, SMB, NFS, WebDAV, and S3 into a text-mode dual-pane file manager.",
+  "status": "The README has no release or commit date, so the exact date is unknown. It does show recent activity: it cites far2l 2.6.4 and 2.6.5 packages, a Debian and Ubuntu 25.10 timeline, a Homebrew deprecation deadline of 2026-09-01, and a changelog and releases page. The README also says the project is in BETA. I fetched only the README and did not check the Homebrew formula, releases page, or commit history, so 'maintained' is an inference from the README, not a verified fact.",
+  "caveats": "The README calls the project BETA and says to use it at your own risk. License is GNU GPLv2. Plain TTY mode has restricted keyboard combinations unless the terminal supports advanced keyboard protocols. Clipboard access needs OSC 52, X11, or a far2l-aware PuTTY fork, and under Wayland the README says TTY X and Xi modes misbehave. The compact brew formula lacks Python plugins and SMB. The macOS GUI cask is deprecated and may be removed by 2026-09-01 because of Apple signing costs. Packages in the official Debian and Ubuntu repositories may be outdated. The README says only English, Russian, Ukrainian, and Belarusian interface translations are valid. Some plugins, including MTP and FARFTP, are optional and off by default. The README also says BSD is not regularly tested.",
+  "quotes": [
+   "Linux fork of FAR Manager v2 (http://farmanager.com/)",
+   "BETA VERSION. Use at your own risk!",
+   "Works also on macOS and BSD (but latter is not regularly tested)",
+   "Far2l uses keyboard shortcuts in the tradition of the Far Manager for Windows"
+  ],
+  "links": [
+   {
+    "label": "far2l GitHub homepage and README",
+    "url": "https://github.com/elfmz/far2l"
+   },
+   {
+    "label": "Homebrew formula far2l-tty (compact TTY build)",
+    "url": "https://formulae.brew.sh/formula/far2l-tty"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/elfmz/far2l/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/elfmz/far2l: fetched OK, README returned in full (it was not thin, so no further fetches were made)"
+  ]
+ }
+}

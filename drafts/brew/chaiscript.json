@@ -1,0 +1,123 @@
+{
+ "name": "chaiscript",
+ "desc": "Easy to use embedded scripting language for C++",
+ "homepage": "https://chaiscript.com/",
+ "installs_365d": 27,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language",
+  "library"
+ ],
+ "why": "Embedded scripting language for C++ with an unusual niche and a small, obscure following worth a look.",
+ "brief": {
+  "what_it_is": "ChaiScript is an embedded scripting language for C++, modelled loosely on ECMAScript/JavaScript but with changes to make it easier to use from C++. A host C++ application creates a ChaiScript engine, registers its own functions with it, and then runs script source either a line at a time with eval(string) or a file at a time with eval_file(fname). Values can be passed back to C++ with a typed call such as chai.eval<double>(...). The library is header-only, so there is no separate build step to link against.",
+  "why_it_exists": "The README says ChaiScript is 'one of the only embedded scripting language designed from the ground up to directly target C++ and take advantage of modern C++ development techniques, working with the developer how they would expect it to work.'",
+  "how_it_works": "You include <chaiscript/chaiscript.hpp>, instantiate chaiscript::ChaiScript, and expose C++ functions with chai.add(chaiscript::fun(&my_function), \"my_function_name\"). The README says the engine keeps type safety between the C++ application and user scripts, and supports callbacks, overloaded functions, class methods and STL containers. By default the standard library loads from a loadable module, with an option to compile it into your code instead.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/Microsoft/vcpkg.git",
+    "context": "Fetches the vcpkg package manager, one of the two documented ways to install ChaiScript."
+   },
+   {
+    "cmd": "./bootstrap-vcpkg.sh",
+    "context": "Bootstraps vcpkg after cloning it."
+   },
+   {
+    "cmd": "./vcpkg integrate install",
+    "context": "Integrates vcpkg with the user's build tooling."
+   },
+   {
+    "cmd": "vcpkg install chaiscript",
+    "context": "Installs the ChaiScript port via vcpkg."
+   },
+   {
+    "cmd": "chai.add(chaiscript::fun(&my_function), \"my_function_name\");",
+    "context": "Registers a C++ function so scripts can call it under the given name."
+   }
+  ],
+  "install_notes": "The README documents vcpkg as the install route (git clone vcpkg, bootstrap, integrate, install chaiscript). Because it is header-only, you add the ChaiScript include directory to your header search path and include <chaiscript/chaiscript.hpp>. It needs a C++ compiler with C++17 support per the README. The homepage's own claims are different (see caveats). Nothing in the README covers the 'chai' executable that Homebrew lists, and I did not see a standalone interpreter command documented.",
+  "standout": "It is header-only with no preprocessor or external tools, and it is typed against the host C++ program rather than bridged through a C API. Its niche is embedding a scripting language directly into C++ code, which most embedded scripting options do not target this closely.",
+  "status": "Appears maintained but not clearly active from what I read. The GitHub README shows Travis, AppVeyor and codecov badges, and the homepage claims 'stable releases since 2009' and that 'No bugfix or feature is made without a corresponding unit test.' I did not find a last-release date or last-commit date in the pages I fetched, so recency is unknown.",
+  "caveats": "Requirements conflict between sources: the homepage says 'just your C++14 compliant compiler' and lists tested platforms as MSVC2013, clang++ and g++, while the README says it requires C++17 and has been tested with gcc 7 and clang 6 (libcxx). The README's CI badges point to Travis and AppVeyor, which may be stale. The README copyright notice covers 2009-2017 and the badge links look dated. The homepage gave no commands or runnable examples beyond a code snippet. Licensed under BSD, per the README and homepage.",
+  "quotes": [
+   "ChaiScript is one of the only embedded scripting language designed from the ground up to directly target C++",
+   "It uses a header-only approach, which makes it easy to integrate with existing projects.",
+   "There are no external tools required, no preprocessor, no libraries, just your C++14 compliant compiler."
+  ],
+  "links": [
+   {
+    "label": "ChaiScript homepage",
+    "url": "https://chaiscript.com/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/ChaiScript/ChaiScript"
+   },
+   {
+    "label": "Formal EBNF grammar",
+    "url": "https://github.com/ChaiScript/ChaiScript/blob/master/grammar/chaiscript.ebnf"
+   }
+  ],
+  "fetch_log": [
+   "https://chaiscript.com/ - worked, returned homepage text with feature list, but no commands or install instructions",
+   "https://github.com/ChaiScript/ChaiScript - worked, returned README with usage, vcpkg install steps and a C++ example"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "ChaiScript\u2019s type-aware bridge lets scripts call native C++ functions and objects directly, making embedded-language interop worth exploring despite stale-looking documentation."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "ChaiScript",
+  "tldr": "A header-only scripting language you embed inside a C++ program, so scripts can call your C++ functions and hand typed values back.",
+  "deeper_look": "ChaiScript is a scripting language modelled loosely on ECMAScript, built to live inside a C++ application. The host program creates a `chaiscript::ChaiScript` engine, registers its own functions with it, and then runs script source with `eval(string)` for a line at a time or `eval_file(fname)` for a whole file. Results can come back as real C++ types, for example `chai.eval<double>(...)`.\n\nThe README describes it as 'one of the only embedded scripting language designed from the ground up to directly target C++'. Instead of bridging through a C API, it is typed against the host program. It keeps type safety between C++ and scripts, and supports callbacks, overloaded functions, class methods and STL containers.\n\nThe library is header-only. You include `<chaiscript/chaiscript.hpp>` and there is no separate library to build or link. The standard library loads from a loadable module by default, or can be compiled into your code.\n\nThe idea underneath is a useful one: let a compiled program expose a small, safe surface and let someone else drive it with a script, without recompiling. Reading how ChaiScript maps C++ functions and types into a dynamic language is a good way into how embedding works. The project also publishes a formal EBNF grammar, which makes it a small, readable example of a language definition.",
+  "install": "brew install chaiscript\n\nHomebrew lists a `chai` executable, but the README does not document a standalone interpreter. The documented route is vcpkg: `git clone https://github.com/Microsoft/vcpkg.git`, `./bootstrap-vcpkg.sh`, `./vcpkg integrate install`, `vcpkg install chaiscript`. You need a C++ compiler; the README says C++17.",
+  "try_this": [
+   {
+    "cmd": "chai --help",
+    "what_happens": "Shows what the installed interpreter accepts. The README does not document this executable, so treat it as exploration."
+   },
+   {
+    "cmd": "chai.add(chaiscript::fun(&my_function), \"my_function_name\");",
+    "what_happens": "In your C++ code, registers a C++ function so scripts can call it as my_function_name."
+   },
+   {
+    "cmd": "vcpkg install chaiscript",
+    "what_happens": "Installs ChaiScript through vcpkg, the README's documented route, so you can include the headers in a project."
+   }
+  ],
+  "whats_unique": "It is header-only, needs no preprocessor or external tools, and is typed directly against the host C++ program rather than going through a C API.",
+  "caveats": "The homepage says C++14 while the README says C++17, the CI badges point to Travis and AppVeyor, and the copyright notice stops at 2017, so how actively it is maintained is unclear.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "language",
+   "library",
+   "c++",
+   "embedded",
+   "scripting"
+  ],
+  "links": [
+   {
+    "label": "ChaiScript homepage",
+    "url": "https://chaiscript.com/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/ChaiScript/ChaiScript"
+   },
+   {
+    "label": "Formal EBNF grammar",
+    "url": "https://github.com/ChaiScript/ChaiScript/blob/master/grammar/chaiscript.ebnf"
+   }
+  ]
+ }
+}

@@ -1,0 +1,80 @@
+{
+ "name": "libsigrokdecode",
+ "desc": "Drivers for logic analyzers and other supported devices",
+ "homepage": "https://sigrok.org/",
+ "installs_365d": 676,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "protocol",
+  "reverse-engineering",
+  "library"
+ ],
+ "why": "Protocol decoders for logic analyser captures, turning raw wiggling pins into I2C, SPI and UART conversations.",
+ "brief": {
+  "what_it_is": "libsigrokdecode is a shared library written in C that provides the basic API for running sigrok protocol decoders. The protocol decoders themselves are written in Python and are shipped as part of the library. It is part of the sigrok signal analysis suite, which the README describes as a portable, cross-platform, Free/Libre/Open-Source suite for devices such as logic analyzers, oscilloscopes, and multimeters. The README does not say in detail what goes in and what comes out, and it does not name I2C, SPI, or UART; those examples come from the scout notes, not the README.",
+  "why_it_exists": "The README frames the wider sigrok project as aiming at a portable, cross-platform, Free/Libre/Open-Source signal analysis software suite that supports various device types. This library supplies the decoding layer for that suite.",
+  "how_it_works": "The C shared library provides the API that runs the decoders, and the decoders are Python code loaded into it. The README says the decoders are an integral part of the library, not external plugins or programs called via fork/exec, because they share data structures and make function calls to the rest of the codebase.",
+  "commands_seen": [
+   {
+    "cmd": "git clone git://sigrok.org/libsigrokdecode",
+    "context": "Fetches the libsigrokdecode source code when building from git."
+   },
+   {
+    "cmd": "cd libsigrokdecode",
+    "context": "Enters the cloned source directory."
+   },
+   {
+    "cmd": "./autogen.sh",
+    "context": "Generates the configure script; the README says this is only needed when building from git."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Configures the build for the local system."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds libsigrokdecode from source."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs libsigrokdecode after a build."
+   }
+  ],
+  "install_notes": "Requirements from the README: gcc (>= 4.0) or clang, make, pkg-config (>= 0.22), libglib (>= 2.34), and Python (>= 3.2). Building from git also needs git, autoconf (>= 2.63), automake (>= 1.11), and libtool. The check library (>= 0.9.4) is optional, for unit tests, and doxygen and graphviz are optional, for C API docs. The README points to the sigrok wiki for OS-specific build instructions, and to an INSTALL file in the source tree. No accounts, hardware, or first-run configuration are mentioned.",
+  "standout": "The protocol decoders are Python code that is compiled into the C library's license and distribution rather than loaded as separate plugins. The README spells out why: they share data structures and call each other's functions, so the authors treat them as part of the library. The sigrok project itself is broader, covering several device classes beyond logic analyzers.",
+  "status": "The README says libsigrokdecode is in a usable state and has had official tarball releases. It also says the API can change from release to release, and that git snapshots carry no stability guarantees. I did not see a release date or last commit date in the fetched text, so recency is unknown. The homepage was unreachable, so I could not check its news or release page.",
+  "caveats": "The homepage https://sigrok.org/ returned a URLError, so I could not read it; the brief relies on the GitHub README. The API may change between releases, and git snapshots have no stability guarantees, so packagers should use only tarballs. The library and its decoders are licensed GPLv3 or later as a whole. Building from git needs several autotools packages. The README does not mention platforms beyond the build tools listed. The protocol examples (I2C, SPI, UART) come from the scout notes, not the README.",
+  "quotes": [
+   "The protocol decoders themselves are written in Python.",
+   "libsigrokdecode is in a usable state and has had official tarball releases.",
+   "Distro packagers should only use released tarballs (no git snapshots)."
+  ],
+  "links": [
+   {
+    "label": "sigrok homepage (unreachable during this fetch)",
+    "url": "https://sigrok.org/"
+   },
+   {
+    "label": "libsigrokdecode wiki page cited in README",
+    "url": "http://sigrok.org/wiki/Libsigrokdecode"
+   },
+   {
+    "label": "sigrok building wiki page for OS-specific instructions",
+    "url": "http://sigrok.org/wiki/Building"
+   },
+   {
+    "label": "GitHub repository (README source)",
+    "url": "https://github.com/sigrokproject/libsigrokdecode"
+   }
+  ],
+  "fetch_log": [
+   "https://sigrok.org/ - failed (URLError); homepage unreachable, so no content was read from it.",
+   "https://github.com/sigrokproject/libsigrokdecode - worked; returned the README, which was used as the main source."
+  ]
+ }
+}

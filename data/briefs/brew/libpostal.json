@@ -1,0 +1,90 @@
+{
+ "name": "libpostal",
+ "desc": "Library for parsing/normalizing street addresses around the world",
+ "homepage": "https://github.com/openvenues/libpostal",
+ "installs_365d": 908,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "library",
+  "science"
+ ],
+ "why": "Statistical street-address parsing trained on OpenStreetMap data is a clever library, though still a library at heart.",
+ "brief": {
+  "what_it_is": "libpostal is a C library that parses and normalizes street addresses from around the world. It takes a free-form address string and returns labeled components such as house_number, road, city, and postcode, or it returns a set of normalized expansions of the address (for example, abbreviations spelled out and numbers written as digits) for search indexing and comparison. Bindings exist for Python, Ruby, Go, Java, PHP, and NodeJS. The README says it is not a geocoder: it does not turn addresses into lat/lon.",
+  "why_it_exists": "The README says it was created inside the OpenVenues project to dedupe venues drawn from millions of Common Crawl-derived places, where conventional abbreviations (Road/Rd, California/CA, New York City/NYC) defeat simple string and MinHash matching. It also says the goal is to 'understand location-based strings in every language, everywhere.'",
+  "how_it_works": "The address parser is a Conditional Random Field trained on about a billion synthetic and real addresses built from OpenStreetMap, OpenAddresses, and GeoPlanet, using OpenCage address-format templates, with random abbreviations and dropped components added for robustness. A separate language classifier (multinomial logistic regression trained with FTRL-Proximal) detects which language(s) an address uses so the right abbreviation dictionaries apply. Expansion works from per-language dictionaries, and transliteration uses CLDR transforms without requiring ICU.",
+  "commands_seen": [
+   {
+    "cmd": "brew install libpostal",
+    "context": "Homebrew install line, one of the macOS options (MacPorts uses port install libpostal)."
+   },
+   {
+    "cmd": "sudo apt-get install -y curl build-essential autoconf automake libtool pkg-config",
+    "context": "Ubuntu/Debian prerequisites before building the C library from source."
+   },
+   {
+    "cmd": "./bootstrap.sh",
+    "context": "Source-build step run after cloning the repo and before configure."
+   },
+   {
+    "cmd": "./configure --datadir=[...some dir with a few GB of space...] MODEL=senzing",
+    "context": "Configure line for the alternative Senzing data model; the default model omits MODEL=senzing."
+   },
+   {
+    "cmd": "make -j4",
+    "context": "Compiles the library from source; the README also shows make -j8 in the Senzing variant."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the built library system-wide after make."
+   },
+   {
+    "cmd": "pkg-config --cflags --libs libpostal",
+    "context": "Prints the compiler and linker flags needed to link a C program against libpostal."
+   },
+   {
+    "cmd": "./libpostal \"Quatre vingt douze Ave des Champs-\u00c9lys\u00e9es\"",
+    "context": "Run from src/ after building; expands one address on the command line."
+   },
+   {
+    "cmd": "cat some_file | ./libpostal --json",
+    "context": "Feeds one address per line on stdin to the expand CLI and requests JSON output."
+   },
+   {
+    "cmd": "./address_parser",
+    "context": "Starts the interactive shell from src/ where you type addresses and see parses."
+   }
+  ],
+  "install_notes": "On Mac, Homebrew or MacPorts installs the library, but the README's command-line examples (./libpostal, ./address_parser) assume a source build under src/. Source builds need autoconf, automake, libtool, and pkg-config, plus curl. You must pass --datadir pointing at a directory with a few GB free, because the model and dictionary data are downloaded on first make (from S3). Apple ARM Macs need --disable-sse2 on configure. The Senzing alternative model (MODEL=senzing) is about 2.2GB versus 1.8GB for the default, is documented in the Senzing/libpostal-data repo, and is built with a different configure line. Windows requires MSys2 and MinGW, with pacman packages installed, and produces libpostal-1.dll. Running make check runs the test suite. After installing, the README suggests running sudo ldconfig on Linux. Data can be refreshed with libpostal_data download all $YOUR_DATA_DIR/libpostal.",
+  "standout": "The parser is trained entirely on open data (OSM, OpenAddresses, GeoPlanet) and the authors publish the full training pipeline and roughly 100GB of training TSVs on archive.org, so the model is reproducible rather than a black box. The normalization side covers 60+ languages through plain dictionary files you can extend without writing C.",
+  "status": "Unknown to some degree. The README is substantive and reads as current, with a link to a Senzing data repo, and the releases page lists v1.1 as the latest release with a date of 09 May (the year did not appear in the fetched text). The newest release shown in the fetched text is v1.1, followed by v1.0.0 on 07 Apr and then v0.3.4 on 09 Feb. I did not check the last commit date, so I cannot say for certain whether it is actively maintained.",
+  "caveats": "Not a geocoder and does not verify addresses or extract them from free text (both listed as non-goals). Installation is heavy: a multi-GB data download, and the default install does not include the CLI binaries the README describes. Windows support requires MSys2/MinGW. Apple ARM needs a configure flag. Some scripts (Hebrew, Arabic, Thai) are transliterated without vowels, so transliteration matches may be poor. The README's accuracy figure of 99.45% refers to held-out full-parse accuracy on its own test data. The Senzing model is a separate build option with its own data source and support channel.",
+  "quotes": [
+   "libpostal is a C library for parsing/normalizing street addresses around the world using statistical NLP and open data.",
+   "Though libpostal is not itself a full geocoder, it can be used as a preprocessing step to make any geocoding application smarter, simpler, and more consistent internationally.",
+   "Libpostal is a bit different because it's trained on open data that's available to everyone, so we've released the entire training pipeline"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README (homepage)",
+    "url": "https://github.com/openvenues/libpostal"
+   },
+   {
+    "label": "Releases page",
+    "url": "https://github.com/openvenues/libpostal/releases"
+   },
+   {
+    "label": "pypostal (Python binding)",
+    "url": "https://github.com/openvenues/pypostal"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/openvenues/libpostal (homepage, README returned; long text truncated at 40000 characters near the end)",
+   "https://github.com/openvenues/libpostal/releases (worked; the extracted text is noisy HTML, but it shows the release list and notes for v1.1, v1.0.0, and earlier)"
+  ]
+ }
+}

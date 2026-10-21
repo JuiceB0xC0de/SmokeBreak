@@ -1,0 +1,53 @@
+{
+ "name": "pari-galdata",
+ "desc": "Galois resolvents data for PARI/GP",
+ "homepage": "https://pari.math.u-bordeaux.fr/packages.html",
+ "installs_365d": 59,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "days-off",
+  "math",
+  "library"
+ ],
+ "why": "Galois resolvent data for PARI/GP opens a real number theory rabbit hole, though it is only a data package.",
+ "brief": {
+  "what_it_is": "pari-galdata is an optional data package for PARI/GP, the computer algebra system for number theory. It is a tarball, galdata.tgz (52 KB), that the PARI group distributes separately from the main install. Once installed, it supplies the lookup data that the polgalois function uses to compute Galois groups of polynomials in degrees 8 through 11. You don't run it directly; it is read by GP when you call polgalois on a suitable polynomial. The homepage does not use the word 'resolvents', so that wording comes from the brew description and not from the PARI page.",
+  "why_it_exists": "The packages page says these optional packages 'use up a nonnegligible amount of disk space and will be useless for most users, hence they are distributed separately and maintained independently.'",
+  "how_it_works": "The package is a data archive that is not compiled. You extract it into the PARI source tree before building, or into the 'data' folder of an existing installation, so that polgalois can find its tables at runtime. The page's own test is to run polgalois(x^8-2) and see whether it fails, which tells you whether the package is present.",
+  "commands_seen": [
+   {
+    "cmd": "polgalois(x^8-2)",
+    "context": "Listed as a test that fails if the galdata package is missing; the page annotates it as '/* package: galdata */'."
+   },
+   {
+    "cmd": "make install-data",
+    "context": "From the source-install procedure: installs only the packages extracted in the toplevel pari directory, so you can test before a full install."
+   },
+   {
+    "cmd": "default(datadir)",
+    "context": "Typed inside the gp interpreter to find the architecture-independent data directory where an existing installation expects its package folders."
+   }
+  ],
+  "install_notes": "Requires PARI/GP 2.2.7 or later. Three routes are given. (A) Windows daily binary: extract the archive into the same folder as gp.exe, which creates a 'data' subfolder. (B) Source build: extract into the toplevel pari directory before ./Configure, then make install (optionally make install-data and make test-all first). (C) Existing installation, which is the only route for the Windows self-extracting binary: run default(datadir) in gp, extract the archive anywhere, move the resulting folder (galdata) into the datadir, and delete the empty 'data' folder. Checksums (sha256 and md5) and a PGP signature file are published alongside the download. There is no Homebrew-specific detail on the page.",
+  "standout": "It is a very small piece of data, about 52 KB, whose whole purpose is to let one function handle degree 8 to 11 Galois groups. The packaging model is a deliberate choice: the PARI group keeps large data out of the core install and offers a way to test whether it is present.",
+  "status": "quiet. The galdata.tgz release is dated Apr 11 2008, and the page itself was last modified 2024-10-13. The page says of all these packages, 'They are rarely upgraded so most of them will only be downloaded once.' The packages are still listed and linked from the official PARI site, but there is no sign of recent work on this one.",
+  "caveats": "It is only useful alongside PARI/GP and only for the polgalois use case it documents; the page gives no wider scope. The data is from 2008, and the page does not say whether it has been checked against later PARI/GP versions beyond the stated minimum of 2.2.7. Installation has several routes that depend on how PARI was built or installed. The page does not describe a Homebrew formula; the brew description was consulted only for the name and one-line description.",
+  "quotes": [
+   "These packages use up a nonnegligible amount of disk space and will be useless for most users, hence they are distributed separately and maintained independently.",
+   "They are rarely upgraded so most of them will only be downloaded once.",
+   "Needed by polgalois to compute Galois group in degrees 8 through 11."
+  ],
+  "links": [
+   {
+    "label": "PARI/GP optional packages page (homepage)",
+    "url": "https://pari.math.u-bordeaux.fr/packages.html"
+   }
+  ],
+  "fetch_log": [
+   "https://pari.math.u-bordeaux.fr/packages.html: loaded. This is the PARI/GP packages page, which lists galdata.tgz and gives install instructions. No separate README or docs page was followed, because the page had the needed information and no other link specific to galdata was given."
+  ]
+ }
+}

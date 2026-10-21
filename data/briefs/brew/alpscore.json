@@ -1,0 +1,88 @@
+{
+ "name": "alpscore",
+ "desc": "Applications and libraries for physics simulations",
+ "homepage": "https://alpscore.org",
+ "installs_365d": 306,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "simulation",
+  "library"
+ ],
+ "why": "Physics simulation applications for quantum many-body models; real science you can run, though it leans toward a research library.",
+ "brief": {
+  "what_it_is": "ALPSCore is a C++ library collection for numerical physics simulations, mainly of condensed matter systems with strongly correlated electrons. Its README describes it as providing generic algorithms and utilities for physics problems, and the homepage calls it a set of tested, standardized components. It takes C++ code that links against it, via CMake's find_package(ALPSCore), and provides reusable building blocks such as accumulators, parameters, and HDF5 I/O for simulation programs. It does not ship standalone command-line applications: the brew entry lists no executables, and the install docs only build and test the libraries. The older ALPS application codes live at alps.comp-phys.com, per the homepage.",
+  "why_it_exists": "The homepage says the libraries aim to provide well tested, robust, standardized components for numerical simulations so that physics codes need not be rewritten, and the README says the project is meant to increase software reuse in the physics community.",
+  "how_it_works": "ALPSCore is built with CMake (3.16 or newer) and needs a C++14 compiler, HDF5, Boost headers, and Eigen 3.3.4 or later. Downstream projects use find_package(ALPSCore) and link against ALPSCore_LIBRARIES, optionally naming components such as accumulators and params. All ALPSCore libraries and the projects that link them must use the same C++ standard for ABI compatibility.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/ALPSCore/ALPSCore.git",
+    "context": "Gets the source from GitHub; the release tarballs are the other option."
+   },
+   {
+    "cmd": "cmake .. -DALPS_INSTALL_EIGEN=yes -DCMAKE_INSTALL_PREFIX=/where/to/install/ALPSCore",
+    "context": "The INSTALL.md 'simplest build' configure step, run from a build directory; it downloads and co-installs Eigen3."
+   },
+   {
+    "cmd": "cmake .. -DEIGEN3_INCLUDE_DIR=/path/to/Eigen3/headers -DCMAKE_INSTALL_PREFIX=/where/to/install/ALPSCore",
+    "context": "Alternative configure step when Eigen3 is already installed and its headers are passed in."
+   },
+   {
+    "cmd": "make -j$(nproc)",
+    "context": "Parallel build on Linux; macOS uses make -j$(sysctl -n hw.logicalcpu)."
+   },
+   {
+    "cmd": "make test",
+    "context": "Runs the test suite. Note that some MPI tests can segfault at exit with OpenMPI 5.x on macOS even though the assertions pass."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs ALPSCore into the CMAKE_INSTALL_PREFIX directory."
+   },
+   {
+    "cmd": "cmake .. -DBoost_ROOT=/path/to/boost ...",
+    "context": "Troubleshooting step for when CMake cannot find Boost (BoostConfig.cmake, Boost 1.70 or newer)."
+   },
+   {
+    "cmd": "cmake .. -DCMAKE_CXX_COMPILER=mpic++ -DCMAKE_C_COMPILER=mpicc ...",
+    "context": "Suggested when the MPI compiler does not match the C++ compiler and link or runtime failures appear."
+   },
+   {
+    "cmd": "env ALPSCore_DIR=/where/to/install/ALPSCore cmake /path/to/the/tutorials/mc/ising_mc",
+    "context": "Configures the Ising Monte Carlo tutorial project against an installed ALPSCore."
+   }
+  ],
+  "install_notes": "Packaged installs exist for MacOS via MacPorts (sudo port install alpscore, which may not be available in every MacPorts version; the README says to fall back to source if it fails). Debian and Gentoo packages are mentioned. Source build needs CMake 3.16 or newer, HDF5 1.10.2 or newer (1.14.x is fine), Boost 1.70 or newer, and Eigen 3.3.4 or newer, which the build can download. The tests need a C++17 compiler, since the bundled GoogleTest requires it; otherwise configure with -DTesting=OFF. ALPSCore builds as C++14 by default, and -DALPS_CXX_STD=c++17 (or c++20) selects another standard. HDF5 is found through the HDF5_ROOT environment variable. HPC systems with environment modules often need Boost_DIR or EIGEN3_INCLUDE_DIR set by hand. MPI is optional.",
+  "standout": "Unlike most physics codes, this is a reusable library layer rather than a single application: it aims at algorithms and utilities that other simulation codes can share, and it documents its build against Boost, Eigen, and HDF5 at length. Its Simons Foundation funding ties it to the Many Electron Problem collaboration.",
+  "status": "unknown. I did not see a release date or a last-commit date. The GitHub README has a CI/CD badge for the master branch, and the homepage links to GitHub, issues, and a wiki, so it looks active but I could not confirm recency.",
+  "caveats": "It is a library, not a turnkey application, so there is no executable to try from the command line. The brew entry has no executables and no caveats. Building needs Boost, HDF5, Eigen, and CMake, and ABI consistency means every linked project must use the same C++ standard. Tests need a C++17 compiler. The homepage points the legacy ALPS application codes to a separate site (alps.comp-phys.com) that I did not visit. I did not see a licence name in the fetched text; the README only points to LICENSE.TXT.",
+  "quotes": [
+   "The ALPSCore project, based on the ALPS (Algorithms and Libraries for Physics Simulations) project, provides generic algorithms and utilities for physics problems. It strives to increase software reuse in the physics community.",
+   "The ALPS Core libraries aim to provide a set of well tested, robust, and standardized components for numerical simulations of condensed matter systems, in particular systems with strongly correlated electrons.",
+   "The libraries are open source and available for everyone to use in their own numerical simulations."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://alpscore.org"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/ALPSCore/ALPSCore"
+   },
+   {
+    "label": "INSTALL.md",
+    "url": "https://github.com/ALPSCore/ALPSCore/blob/master/INSTALL.md"
+   }
+  ],
+  "fetch_log": [
+   "https://alpscore.org: worked. Homepage text; it is thin and mostly navigation, with links to GitHub, Issues, Wiki, Doxygen, and Install/Overview/Tutorials pages that I did not fetch.",
+   "https://github.com/ALPSCore/ALPSCore: worked. Returned the README, which is short and mostly links to INSTALL.md, COPYRIGHT.TXT, LICENSE.TXT, and ACKNOWLEDGE.TXT. I did not fetch the others.",
+   "https://github.com/ALPSCore/ALPSCore/blob/master/INSTALL.md: worked. Returned the full install guide, with GitHub page chrome around it. This was the source for the commands and install notes."
+  ]
+ }
+}

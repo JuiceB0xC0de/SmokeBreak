@@ -1,0 +1,56 @@
+{
+ "name": "since",
+ "desc": "Stateful tail: show changes to files since last check",
+ "homepage": "http://welz.org.za/projects/since",
+ "installs_365d": 20,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "tui"
+ ],
+ "why": "A stateful tail that shows only what changed since the last check, a small but neat twist on a familiar tool.",
+ "brief": {
+  "what_it_is": "since is a Unix command-line utility, similar to tail, that prints only the lines appended to a file since the last time it was run. You give it one or more files (the example uses /var/log/*), and it writes the new lines to stdout under a header per file, such as '==> /var/log/user.log <=='. A file with no new content is shown as '[nothing new]'. The page does not describe its exact output format beyond this example.",
+  "why_it_exists": "The author built it to monitor growing log files: to find an error, you trigger it and then see what was appended to the logs since the previous check, instead of rereading the whole log or scanning tail output. The page says it is useful for locating an error message.",
+  "how_it_works": "The homepage does not explain the mechanism. From the example, the first run over a set of files (with output discarded) records a per-file position, and a later run prints only what was added after that point. How that state is stored (for example, a file in the home directory) is not stated on the page.",
+  "commands_seen": [
+   {
+    "cmd": "since /var/log/* >& /dev/null",
+    "context": "Initial run that records the current state of the /var/log files, with output discarded so the baseline is silent."
+   },
+   {
+    "cmd": "logger \"hello world\"",
+    "context": "Writes a test message to the system log, standing in for the error you want to find."
+   },
+   {
+    "cmd": "since /var/log/*",
+    "context": "Second run; prints only the lines appended since the first run, here the 'hello world' line in /var/log/user.log, and reports '[nothing new]' for files with no changes."
+   },
+   {
+    "cmd": "alias dosince='since /var/log/{syslog,kern.log,apache/error.log}'",
+    "context": "Example shell alias, to be added to ~/.bashrc, that runs since over a chosen list of important logs."
+   }
+  ],
+  "install_notes": "The homepage offers source tarballs: a 'Rewrite with more features' version and an 'Old and stable' version, both as tar.gz. It also lists Debian and FreeBSD distributions as sources of packages. The page gives no build steps, dependencies, or configuration beyond the optional ~/.bashrc alias.",
+  "standout": "It applies the stateful, only-what's-new idea of tail -f to ordinary log triage, so you can run a command, trigger something, and then see only the diff. The page also notes that Karl Vogel has a Perl implementation of similar functionality.",
+  "status": "unknown. The homepage shows no release date or commit history. It does list two downloadable versions, one called a rewrite with more features and one 'old and stable', and packages in Debian and FreeBSD, which suggests it has been around for some time, but the page does not say whether it is actively maintained. The example output is dated May 5 with no year.",
+  "caveats": "The homepage is a short project page, not a full README, so there is no documented option list, state-file location, or platform list. The example assumes a syslog-style system with /var/log/messages and user.log. The page says since is released under the GNU General Public License. The scout note mentions brew, but the page does not mention Homebrew.",
+  "quotes": [
+   "since is a unix utility similar to tail. Unlike tail, since only shows the lines appended since the last time.",
+   "It is useful to monitor growing log files",
+   "since can be useful in a shell alias (add to ~/.bashrc) to monitor important log files"
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "http://welz.org.za/projects/since"
+   }
+  ],
+  "fetch_log": [
+   "http://welz.org.za/projects/since - fetched OK; page text returned (project description, example, license, download and distribution links). Download link targets were not included in the returned text, so I did not follow them."
+  ]
+ }
+}

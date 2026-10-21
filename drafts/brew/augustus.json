@@ -1,0 +1,150 @@
+{
+ "name": "augustus",
+ "desc": "Predict genes in eukaryotic genomic sequences",
+ "homepage": "https://bioinf.uni-greifswald.de/augustus/",
+ "installs_365d": 194,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "science",
+  "afternoon",
+  "reverse-engineering"
+ ],
+ "why": "Real eukaryotic gene prediction you can run at home on a genome, a genuine bioinformatics rabbit hole.",
+ "brief": {
+  "what_it_is": "AUGUSTUS is a program that predicts genes and their structures (exons, introns, and alternative transcripts) in eukaryotic genomic sequences. It takes a genome sequence and can optionally take extrinsic evidence such as EST or mRNA alignments, protein alignments, and RNA-Seq reads, and it reports predicted gene models. It ships with species-specific parameter sets for many animals, plants, fungi, and some protists and bacteria, and includes a training program and optimization script so you can retrain it for a new species. It can be run on the web server, on a larger-input web service, or locally from source or packages.",
+  "why_it_exists": "The homepage frames it as a gene predictor for eukaryotic genomes that can be run locally, with an open-source build so users can compile it for their own platform. The README describes it as a program 'to find genes and their structures in one or more genomes.'",
+  "how_it_works": "The README gives little internal detail. The homepage says AUGUSTUS can be used ab initio and also has a flexible mechanism for folding in extrinsic information such as EST and protein alignments, and that it can report alternative genes with probabilities for transcripts, exons, and introns. Its training program estimates parameters from a set of known genes, and an optimization script tunes meta parameters such as splice window sizes.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt install augustus augustus-data augustus-doc",
+    "context": "Installs the packaged AUGUSTUS, its data, and docs on Ubuntu 18.04, Debian 9 or later."
+   },
+   {
+    "cmd": "git clone https://github.com/Gaius-Augustus/Augustus.git",
+    "context": "Fetches the source code from GitHub before building or building a Docker or Singularity image."
+   },
+   {
+    "cmd": "make augustus",
+    "context": "Compiles the main augustus binary from source; the README says bin/augustus should then print a usage message."
+   },
+   {
+    "cmd": "make auxprogs",
+    "context": "Builds the auxiliary utilities after the main compile."
+   },
+   {
+    "cmd": "export PATH=~/augustus/bin:~/augustus/scripts:$PATH",
+    "context": "Local, non-root install: adds the executable and script directories to PATH."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Global installation for users with root privileges."
+   },
+   {
+    "cmd": "export AUGUSTUS_CONFIG_PATH=/my_path_to_AUGUSTUS/augustus/config/",
+    "context": "Points augustus and etraining at the config directory holding configuration and parameter files; the README suggests adding it to a startup script like ~/.bashrc."
+   },
+   {
+    "cmd": "docker build -t augustus .",
+    "context": "Builds a Docker image from the repository's Dockerfile."
+   },
+   {
+    "cmd": "singularity build augustus.sif Singularity.def",
+    "context": "Builds a Singularity image from the repository's definition file."
+   },
+   {
+    "cmd": "--AUGUSTUS_CONFIG_PATH=/my_path_to_AUGUSTUS/augustus/config/",
+    "context": "Command-line alternative to the environment variable for pointing at the config directory when running augustus."
+   }
+  ],
+  "install_notes": "Easiest route is the Debian/Ubuntu package (apt install augustus augustus-data augustus-doc). Otherwise clone the GitHub repo and run make augustus, then make auxprogs for utilities. You can install into a user directory and add bin and scripts to PATH, or install globally with sudo make install. Docker and Singularity build recipes are included. Windows users are pointed to WSL and the Linux instructions. If the config directory cannot be found, set AUGUSTUS_CONFIG_PATH, which the programs check first, falling back to ../config relative to the executable. Ubuntu 21.04 and Debian 11 onward support comparative gene prediction; older packages were single-genome only. The web server needs no install, and the homepage notes that the MediGRID option requires a registration by email for first-time users.",
+  "standout": "It is a long-running, widely used ab initio gene finder with a retrainable model and a flexible way to add evidence from cDNA, EST, RNA-Seq, and protein alignments, which lets it predict UTRs and alternative transcripts. The homepage says it is often the most accurate ab initio program for species it has been trained on.",
+  "status": "Unknown for last release or commit date; the README gives no date. Signs of active upkeep: source hosted on GitHub with a 'Build and test' CI badge, an issue tracker the README asks users to use, and current packaging in Debian and Ubuntu. The homepage's news items are dated 2009 and 2012, so that page is older than the code.",
+  "caveats": "Source is under the Artistic License (the README says so for src, scripts, and auxprogs). The README does not name a license for the data sets. Building from source is needed for the auxiliary programs, and the Ubuntu/Debian package covered only single-genome use until recently. Windows requires WSL. UTR prediction is trained only for a listed set of species (e.g., human, C. elegans, maize, honeybee, tomato). The web server is meant for smaller inputs; larger files need the separate web service or a local install. The homepage's species list is a training-set list, not a list of everything it can handle.",
+  "quotes": [
+   "AUGUSTUS is a program to find genes and their structures in one or more genomes.",
+   "It is open source so you can compile it for your computing platform.",
+   "AUGUSTUS is retrainable. It comes with a training program that estimates the parameters given a training set of known genes."
+  ],
+  "links": [
+   {
+    "label": "Homepage (Greifswald bioinformatics group)",
+    "url": "https://bioinf.uni-greifswald.de/augustus/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/Gaius-Augustus/Augustus"
+   },
+   {
+    "label": "Running AUGUSTUS guide (docs/RUNNING-AUGUSTUS.md)",
+    "url": "https://github.com/Gaius-Augustus/Augustus/blob/master/docs/RUNNING-AUGUSTUS.md"
+   },
+   {
+    "label": "Web server (WebAUGUSTUS)",
+    "url": "http://bioinf.uni-greifswald.de/webaugustus/"
+   }
+  ],
+  "fetch_log": [
+   "https://bioinf.uni-greifswald.de/augustus/ - worked; web page with description, species list, and links, but no shell commands",
+   "https://github.com/Gaius-Augustus/Augustus - worked; README returned with installation steps and commands; did not follow docs/RUNNING-AUGUSTUS.md, which the README links but I did not fetch"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "AUGUSTUS turns genomic sequence and alignment evidence into probabilistic gene models, with species-specific retraining\u2014a distinctive way into computational genomics."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Augustus",
+  "tldr": "A gene finder that reads raw eukaryotic genome sequence and predicts where genes, exons, introns and alternative transcripts sit, and can be retrained for a new species.",
+  "deeper_look": "AUGUSTUS takes a genome sequence and reports predicted gene models: where each gene starts and ends, how its exons and introns are laid out, and in some cases alternative transcripts with probabilities attached. The README describes it as a program \"to find genes and their structures in one or more genomes.\"\n\nIt can work ab initio, from the DNA sequence alone. It can also fold in extrinsic evidence such as EST or mRNA alignments, protein alignments and RNA-Seq reads. That evidence is what lets it predict UTRs and alternative transcripts. The homepage says it is often the most accurate ab initio program for species it has been trained on.\n\nThe idea underneath is that a genome is a long string with no labels, and gene structure has to be inferred statistically. The model is trained from a set of known genes. AUGUSTUS ships with parameter sets for many animals, plants, fungi and some protists and bacteria. It also includes a training program, etraining, and an optimization script that tunes meta parameters such as splice window sizes. So you can teach it a new species rather than only running what it came with.\n\nThe extra executables in the formula (bam2hints, bam2wig, filterBam, joingenes and others) are the plumbing for turning evidence files into hints and merging predictions. Most of the learning is in how the pieces fit together, and the brief does not cover that detail.",
+  "install": "brew install augustus\n\nThe homebrew formula pulls in bamtools, boost and htslib. Set AUGUSTUS_CONFIG_PATH to the directory holding the config and species parameter files if the programs cannot find it. The programs check that variable first, then fall back to ../config relative to the executable. You also need a genome sequence file to run it on. The web server needs no install.",
+  "try_this": [
+   {
+    "cmd": "augustus --help",
+    "what_happens": "Prints the usage message, including the options for choosing a species parameter set and supplying extrinsic hints."
+   },
+   {
+    "cmd": "etraining --help",
+    "what_happens": "Shows the training program's options, which estimate model parameters from a set of known genes."
+   },
+   {
+    "cmd": "export AUGUSTUS_CONFIG_PATH=/my_path_to_AUGUSTUS/augustus/config/",
+    "what_happens": "Points augustus and etraining at the directory with the species parameter files, which they need before they can predict anything."
+   }
+  ],
+  "whats_unique": "It is retrainable, with a training program included, and it has a flexible way to mix in cDNA, EST, RNA-Seq and protein evidence. It is a long-used research gene finder you can run on your own machine, not only a web service.",
+  "caveats": "The homepage news items are dated 2009 and 2012, though the GitHub repo has CI and Debian and Ubuntu packages; UTR prediction is trained only for a short list of species, and you need real genome data to see anything useful.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "science",
+   "bioinformatics",
+   "genomics",
+   "gene-prediction",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "Homepage (Greifswald bioinformatics group)",
+    "url": "https://bioinf.uni-greifswald.de/augustus/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/Gaius-Augustus/Augustus"
+   },
+   {
+    "label": "Running AUGUSTUS guide (docs/RUNNING-AUGUSTUS.md)",
+    "url": "https://github.com/Gaius-Augustus/Augustus/blob/master/docs/RUNNING-AUGUSTUS.md"
+   },
+   {
+    "label": "Web server (WebAUGUSTUS)",
+    "url": "http://bioinf.uni-greifswald.de/webaugustus/"
+   }
+  ]
+ }
+}

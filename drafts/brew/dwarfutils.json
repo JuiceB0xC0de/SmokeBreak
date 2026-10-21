@@ -1,0 +1,143 @@
+{
+ "name": "dwarfutils",
+ "desc": "Dump and produce DWARF debug information in ELF objects",
+ "homepage": "https://www.prevanders.net/dwarf.html",
+ "installs_365d": 31511,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "library"
+ ],
+ "why": "Dumping and producing DWARF debug info lets you see how compilers describe programs, a real window into binaries.",
+ "brief": {
+  "what_it_is": "libdwarf is a C library, and dwarfdump is the command-line tool built alongside it, for reading DWARF debugging information out of object files. dwarfdump takes an object file and prints its DWARF data in readable form, covering DWARF2, DWARF3, DWARF4, and some DWARF5. The README says libdwarf reads files from disk and does not read running programs or shared objects. The Homebrew formula is named dwarfutils and provides the dwarfdump executable. The homepage says the old producer interfaces for creating DWARF were removed, and no replacement producer API is described in what I read, so the 'produce' part of the formula description is doubtful.",
+  "why_it_exists": "The homepage frames the project for programmers working on compilers and debuggers, and anyone reading or writing DWARF, and traces it to SGI's IRIX toolchain before it was open-sourced. The README's stated goal is portable, ABI-independent access to DWARF2 through DWARF5 data that detects corruption and avoids crashes or leaks however corrupted the input is.",
+  "how_it_works": "The README does not explain internals beyond the stated goal. For DWARF held in memory rather than in a file, a caller uses dwarf_object_init_b() with three access structs, and a worked example is at src/bin/dwarfexample/jitreader.c. Testing is the other described mechanism: about twenty thousand regression checks compare the last good dwarfdump against the latest build, and fuzzing has driven many fixes.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/davea42/libdwarf-code",
+    "context": "Gets the current source from GitHub into a libdwarf-code directory (homepage)."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Autotools configure step, run from the base of the source tree (homepage)."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds libdwarf and dwarfdump after configure (homepage)."
+   },
+   {
+    "cmd": "make check",
+    "context": "Runs the test suite in the GNU configure/autotools route (GitHub README)."
+   },
+   {
+    "cmd": "meson /tmp/libdwarf-0.4.2",
+    "context": "Meson setup pointing at the source directory; the path is an example from the README and the build directory is set up by this call (GitHub README)."
+   },
+   {
+    "cmd": "ninja",
+    "context": "Builds the project after meson setup (GitHub README)."
+   },
+   {
+    "cmd": "ninja install",
+    "context": "Installs the built libdwarf and dwarfdump (GitHub README)."
+   },
+   {
+    "cmd": "ninja test",
+    "context": "Runs the test suite in the meson route (GitHub README)."
+   },
+   {
+    "cmd": "sh scripts/allsimplebuilds.sh",
+    "context": "Checks for cmake, meson, and ninja and runs only the builds that could work in that environment (GitHub README)."
+   },
+   {
+    "cmd": "sh scripts/run-all-tests.sh >& /tmp/results",
+    "context": "Runs the full test script, including release builds and regression tests; the homepage says this takes about 35 minutes on a modern host and expects a PASS message at the end (homepage)."
+   }
+  ],
+  "install_notes": "Homebrew installs it as dwarfutils. Building from source needs a C compiler conforming to the 1989 C standard or later, with long long support. The README says no library other than libc is needed to build or use libdwarf or dwarfdump. zlib and libzstd are optional, but needed to read compressed sections; on Ubuntu the packages are zlib1g-dev and libzstd-dev, and on FreeBSD they come from pkg. The README says libelf is not required as of version 0.8.0. Autotools-from-git builds also need autoconf, automake, libtool, and pkg-config. The author recommends meson over cmake and configure. On FreeBSD, python3 must be on PATH. On Windows the README recommends msys2 or cygwin.",
+  "standout": "The project publishes its own hardening record: a public vulnerability list, Coverity scans with a claimed zero-defect status, and regression testing on a big-endian s390 machine provided by IBM. It came out of SGI's IRIX developer tools and was open-sourced in 1994 for libdwarf and 1999 for dwarfdump.",
+  "status": "maintained. The README, updated 19 September 2026, lists version 2.3.3 released 22 September 2026, with 2.3.2 on 7 July 2026, 2.3.1 on 4 March 2026, and 2.3.0 on 1 February 2026. The homepage has a matching release table. I did not see a commit date. These dates are as the pages state them.",
+  "caveats": "The README gives only build commands. It has no dwarfdump usage example, and the flags I saw (--print-debug-names, --print-debug-addr, --print-machine-arch) appear only in prose and release notes, so I did not record them as commands. The full regression suite is long, about 35 minutes on a modern host, and the author says most people do not need it. Most distributions are GPL-2.0 or LGPL-2.1, with some files under 2-clause BSD. The regression tests expect a known-good dwarfdump in the distribution, which may not run on every platform. The README does not compare dwarfdump with readelf or objdump. The homepage was cut at 40000 characters, so most of its release history was not read. The homepage also asks for donations and mentions an unrelated libdwarf-addr2line copyright question, which I left out.",
+  "quotes": [
+   "dwarfdump (written in C) lets you dump out, in readable form, the DWARF2, DWARF3, DWARF4, and some DWARF5 data from an object file.",
+   "Libdwarf reads files from disk, it does not read running programs or running shared objects.",
+   "No libraries other than libc are needed to build or use libdwarf or dwarfdump."
+  ],
+  "links": [
+   {
+    "label": "homepage",
+    "url": "https://www.prevanders.net/dwarf.html"
+   },
+   {
+    "label": "GitHub repository (libdwarf-code, README)",
+    "url": "https://github.com/davea42/libdwarf-code"
+   },
+   {
+    "label": "libdwarf API documentation (HTML)",
+    "url": "https://www.prevanders.net/libdwarfdoc/index.html"
+   },
+   {
+    "label": "libdwarf.pdf",
+    "url": "https://www.prevanders.net/libdwarf.pdf"
+   }
+  ],
+  "fetch_log": [
+   "https://www.prevanders.net/dwarf.html: worked; the page is long and the output was cut at 40000 characters, so the release history was only partly read",
+   "https://github.com/davea42/libdwarf-code: worked; the README was returned"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Dwarfdump opens a useful window into how compilers encode types, scopes, and source locations in binaries\u2014debugging metadata most developers rarely inspect."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "dwarfutils",
+  "tldr": "dwarfdump prints the DWARF debug information inside compiled object files, showing how a compiler describes your program's types, functions and line numbers.",
+  "deeper_look": "dwarfdump is the command-line tool that ships with libdwarf, a C library for reading DWARF debugging data. Point it at an object file and it prints the DWARF in readable form. It covers DWARF2, DWARF3, DWARF4 and some DWARF5. The Homebrew formula is called dwarfutils and installs the `dwarfdump` executable.\n\nDWARF is the format compilers use to tell debuggers what the machine code means: which source line produced which instruction, what a struct looks like, where a variable lives. Reading it directly is a way to see what a debugger sees, and to see what your compiler recorded about your code.\n\nThe code comes from SGI's IRIX developer tools. libdwarf was open-sourced in 1994 and dwarfdump in 1999. The README states the goal as portable, ABI-independent access to the data that detects corruption and avoids crashes or leaks however corrupted the input is. The project backs this with roughly twenty thousand regression checks, fuzzing, Coverity scans, and a public vulnerability list.\n\nThe formula description mentions producing DWARF, but the homepage says the old producer interfaces were removed. Treat this as a reader and dumper. Also note that libdwarf reads files on disk, not running programs or running shared objects.",
+  "install": "brew install dwarfutils",
+  "try_this": [
+   {
+    "cmd": "dwarfdump --help",
+    "what_happens": "Lists the options for choosing which DWARF sections and details to print."
+   }
+  ],
+  "whats_unique": "It is the reference-style DWARF reader descended from SGI's IRIX toolchain, built to survive corrupted input, with a public record of its testing and vulnerabilities.",
+  "caveats": "The README gives build instructions but no dwarfdump usage examples, so expect to learn the options from --help and the documentation.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "dwarf",
+   "debug-info",
+   "reverse-engineering",
+   "elf",
+   "compilers"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.prevanders.net/dwarf.html"
+   },
+   {
+    "label": "GitHub repository (libdwarf-code)",
+    "url": "https://github.com/davea42/libdwarf-code"
+   },
+   {
+    "label": "libdwarf API documentation",
+    "url": "https://www.prevanders.net/libdwarfdoc/index.html"
+   },
+   {
+    "label": "libdwarf.pdf",
+    "url": "https://www.prevanders.net/libdwarf.pdf"
+   }
+  ]
+ }
+}

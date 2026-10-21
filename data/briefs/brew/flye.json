@@ -1,0 +1,90 @@
+{
+ "name": "flye",
+ "desc": "De novo assembler for single molecule sequencing reads using repeat graphs",
+ "homepage": "https://github.com/mikolmogorov/Flye",
+ "installs_365d": 217,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science"
+ ],
+ "why": "A real genome assembler using repeat graphs for long reads, a genuine science tool you can run at home with sample data.",
+ "brief": {
+  "what_it_is": "Flye is a de novo genome assembler for single-molecule long reads from PacBio (CLR, HiFi, corrected) and Oxford Nanopore (regular, HQ, corrected). You give it raw base-called reads in FASTA or FASTQ format, optionally gzipped, and it returns a directory containing assembly.fasta (contigs, plus scaffolds if enabled), assembly_graph.gfa or .gv (the final repeat graph), and assembly_info.txt (per-contig length, coverage, circularity, repeat status and graph path). The README describes it as a complete pipeline that takes raw reads and outputs polished contigs, with a special metagenome mode (--meta). It is a command-line tool written in C++ with a Python driver.",
+  "why_it_exists": "The README frames it as an assembler for long, error-prone single-molecule reads that works from small bacterial projects up to mammalian-scale genomes. Its core idea is that repeat graphs, built from approximate sequence matches, tolerate the higher noise of these reads better than de Bruijn graphs, which need exact k-mer matches.",
+  "how_it_works": "Flye counts k-mers and keeps only the solid ones, then extends contigs by chaining overlapping reads and aligns reads back to these draft contigs with minimap2 to call a consensus. It builds a repeat graph from those contigs, collapses repeats longer than the minimum overlap, and resolves them using read information and graph structure; unbranching paths become the output contigs. A final polishing stage realigns all reads and applies a maximum-likelihood correction to each alignment bubble.",
+  "commands_seen": [
+   {
+    "cmd": "conda install flye",
+    "context": "Install route from the INSTALL doc, via Bioconda."
+   },
+   {
+    "cmd": "git clone https://github.com/fenderglass/Flye",
+    "context": "First step of the source build: clone the repository (INSTALL doc)."
+   },
+   {
+    "cmd": "make",
+    "context": "Build from the cloned repo so Flye can run locally as python bin/flye, with no system install."
+   },
+   {
+    "cmd": "python setup.py install",
+    "context": "Install from source into the system Python; add --user or --prefix if needed."
+   },
+   {
+    "cmd": "python flye/tests/test_toy.py",
+    "context": "Optional test run from the INSTALL doc to confirm the installation works."
+   },
+   {
+    "cmd": "wget https://zenodo.org/record/1172816/files/E.coli_PacBio_40x.fasta",
+    "context": "Download the E. coli PacBio 40x sample read set from Zenodo."
+   },
+   {
+    "cmd": "flye --pacbio-raw E.coli_PacBio_40x.fasta --out-dir out_pacbio --threads 4",
+    "context": "Assemble the PacBio E. coli sample into out_pacbio using 4 threads; threads is optional."
+   },
+   {
+    "cmd": "wget https://zenodo.org/record/1172816/files/Loman_E.coli_MAP006-1_2D_50x.fasta",
+    "context": "Download the Loman lab E. coli Oxford Nanopore 50x sample read set from Zenodo."
+   },
+   {
+    "cmd": "flye --nano-raw Loman_E.coli_MAP006-1_2D_50x.fasta --out-dir out_nano --threads 4",
+    "context": "Assemble the Nanopore E. coli sample into out_nano using 4 threads."
+   }
+  ],
+  "install_notes": "Install with conda install flye (Bioconda), or fetch a release from GitHub. Building from source needs Python 2.7 or 3.5+ with setuptools, a C++ compiler with C++11 support, GNU make, git, and core OS development headers such as zlib. The README says Python 2 was dropped in 2.9.5. Platforms are Linux and macOS. No accounts, GPUs or special hardware are needed. If the ARM build fails, the INSTALL doc points to an issue about modifying minimap2 compile parameters. No configuration or first-run setup is described beyond the optional test script. The sample E. coli datasets are downloaded from Zenodo, and a bacterial run is practical on a laptop-class machine; the benchmark table lists about 2 GB RAM and 2 CPU hours for E. coli at 50x PacBio. Human-scale runs need hundreds of GB of RAM and thousands of CPU hours.",
+  "standout": "It uses a repeat graph rather than a de Bruijn graph, so it works directly on noisy raw reads without prior error correction, and it reports each unique graph edge as a contig. The Zenodo sample datasets and the README's benchmark table make it easy to run a real bacterial assembly at home. The repo is also a Pevzner-lab project with peer-reviewed papers behind it (Nature Biotechnology 2019 and Nature Methods 2020 for metaFlye).",
+  "status": "Maintained, judging from the README. The latest listed release is 2.9.6 on 2 May 2025, and the README has a dated changelog going back to 2021. I could not see commit history or issue activity from the pages I fetched.",
+  "caveats": "Flye produces collapsed haploid assemblies of diploid genomes, which is stated as a current limitation; the README points to HapDup for phased haplotypes and strainy for heterozygous bacteria or metagenomes. Mixing read types in one run is not supported. The --subassemblies and --trestle modes are deprecated and slated for removal. The --plasmids option is unused and kept only for backward compatibility. Flye is designed mainly for uncorrected reads, and CLR input is assumed to be properly split subreads, so badly converted FASTQ may need pbclip. Only Linux and macOS are supported. The scout note's claim that this runs at home on sample data holds for bacterial-scale genomes; large genomes need large RAM and long runs. The README was not checked for licence beyond the BSD line.",
+  "quotes": [
+   "Flye is a de novo assembler for single-molecule sequencing reads, such as those produced by PacBio and Oxford Nanopore Technologies.",
+   "The package represents a complete pipeline: it takes raw PacBio / ONT reads as input and outputs polished contigs.",
+   "Repeat graphs are built using approximate sequence matches, and can tolerate the higher noise of SMS reads."
+  ],
+  "links": [
+   {
+    "label": "Flye repository (homepage, README)",
+    "url": "https://github.com/mikolmogorov/Flye"
+   },
+   {
+    "label": "Usage manual (docs/USAGE.md)",
+    "url": "https://github.com/mikolmogorov/Flye/blob/flye/docs/USAGE.md"
+   },
+   {
+    "label": "Installation instructions (docs/INSTALL.md)",
+    "url": "https://github.com/mikolmogorov/Flye/blob/flye/docs/INSTALL.md"
+   },
+   {
+    "label": "Assembly of Long Error-Prone Reads Using Repeat Graphs, Nature Biotechnology 2019",
+    "url": "https://doi.org/10.1038/s41587-019-0072-8"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/mikolmogorov/Flye: worked, README returned (version 2.9.6).",
+   "https://github.com/mikolmogorov/Flye/blob/flye/docs/USAGE.md: worked, full manual returned with usage, examples, parameters and algorithm notes.",
+   "https://github.com/mikolmogorov/Flye/blob/flye/docs/INSTALL.md: worked, installation notes returned."
+  ]
+ }
+}

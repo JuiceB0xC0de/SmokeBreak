@@ -1,0 +1,144 @@
+{
+ "name": "xorriso",
+ "desc": "ISO9660+RR manipulation tool",
+ "homepage": "https://www.gnu.org/software/xorriso/",
+ "installs_365d": 7018,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "library"
+ ],
+ "why": "Manipulating ISO9660 images in place, including bootable hybrid structure, is a satisfying look inside a file format most people never open.",
+ "brief": {
+  "what_it_is": "xorriso is a command-line tool for reading, creating and changing ISO 9660 disc images with Rock Ridge extensions. It can copy files from a normal POSIX filesystem into an image, edit an existing image session by session (add, rename, delete, change permissions), and copy files back out of an image. It writes the result either to optical media (CD, DVD, BD) or to ordinary files and block devices. It is also the engine behind the mkisofs- and cdrecord-style emulation commands (xorrisofs, xorrecord) and has a Tcl/Tk GUI frontend, xorriso-tcltk.",
+  "why_it_exists": "The homepage describes xorriso as an ISO 9660 + Rock Ridge manipulator that keeps the management information of an existing image and writes changes as new sessions, so an image can be updated incrementally rather than rebuilt. It is a GNU project, and it is part of the libburnia family of libraries (libburn, libisofs, libisoburn).",
+  "how_it_works": "xorriso loads the directory tree of an existing ISO image (or starts an empty one), applies a list of text commands to that in-memory model, and then writes the result as a new image or as an add-on session. It is driven entirely by text commands given as arguments, in batch files, or on standard input in dialog mode, and it can be given a frontend process that reads its state and sends commands. Multi-session behaviour on overwritable media is emulated. Bootable structures (El Torito, MBR, EFI System Partition) are added with -boot_image.",
+  "commands_seen": [
+   {
+    "cmd": "# xorriso -devices",
+    "context": "Lists optical drives and their addresses, as shown in the homepage's 'Get an overview of drives' example."
+   },
+   {
+    "cmd": "$ xorriso -indev /dev/sr0 -du / -- -toc 2>&1 | less",
+    "context": "Shows info about the drive and the loaded media, with the table of contents piped to less."
+   },
+   {
+    "cmd": "$ xorriso -outdev /dev/sr0 -blank as_needed -eject all",
+    "context": "Blanks re-usable media if needed, then ejects the disc."
+   },
+   {
+    "cmd": "$ xorriso -dev /dev/sr0 -add /home/me/sounds /home/me/pictures",
+    "context": "Writes two directory trees into a new or existing ISO 9660 image on the drive."
+   },
+   {
+    "cmd": "$ xorriso -outdev /dev/sr0 -toc",
+    "context": "Lists the sessions on the media (index, sbsector, size, volume id) before mounting an older one."
+   },
+   {
+    "cmd": "# xorriso -osirrox on -mount /dev/sr0 volid '*_2008_08_14_*' /mnt",
+    "context": "As superuser, mounts the session whose volume id matches the pattern to /mnt; the page says to unmount later with umount /mnt."
+   },
+   {
+    "cmd": "$ xorriso -dev stdio:/dev/sdb ...other.options...",
+    "context": "Targets a USB stick. The stdio: prefix is required for device files below /dev/ that are not MMC burners, as a safety default."
+   },
+   {
+    "cmd": "$ export MKISOFS=\"xorrisofs\"",
+    "context": "Tells growisofs to use xorrisofs (mkisofs emulation) as its image builder."
+   },
+   {
+    "cmd": "$ growisofs -Z /dev/dvd /some/files",
+    "context": "Example of growisofs driving xorrisofs to write a first session to a DVD."
+   },
+   {
+    "cmd": "$ man xorriso",
+    "context": "Opens the detailed manual page."
+   }
+  ],
+  "install_notes": "The homepage gives a source tarball, xorriso-1.5.8.pl02.tar.gz (about 2.9 MB, listed as released 22 May 2026), with a detached GPG signature from Thomas Schmitt (fingerprint 44BC 9FD0 D688 EB00 7C4D D029 E9CB DFC0 ABC0 A854). Optional libraries add features: libreadline (nicer dialog), libacl (ACLs), zlib (zisofs, gzip, Jigdo), libbz2, and Tcl/Tk >= 8.4 with BWidget for xorriso-tcltk. Optional libjte (jigit-1.22) must be installed before libisofs and libisoburn are built if you want Jigdo. A 1.5.9 development tarball and git builds from libburnia are also listed. Hardware: any CD/DVD/BD recorder made in roughly the last twenty years. Linux 2.4 needs ide-scsi for PATA drives, but 2.6+ does not. Ordinary users need read-write permission on the /dev/srN node (on Solaris, read permission plus the basic,sys_devices privileges). Running as superuser avoids most of these problems.",
+  "standout": "It treats an optical disc as a sequence of sessions and edits an existing image in place, including its bootable structure, instead of rebuilding it from scratch. The same engine is exposed as a text command language, a mkisofs/cdrecord emulator, and a GUI frontend, which is an unusual combination for a disc tool.",
+  "status": "Maintained. The homepage shows the 1.5.8.pl02 stable tarball released 22 May 2026, a 1.5.9 development snapshot with change notes, and a copyright range running to 2026. The site lists a support mailing list and a maintainer who responds to bug reports. No commit history was checked.",
+  "caveats": "The page says it has been tested only on GNU/Linux, FreeBSD, Solaris and NetBSD; other systems need the maintainer's help. Without direct drive access, optical media writing is less reliable on CD-R, DVD-R, DVD+R and BD-R (DVD-RAM, DVD+RW and BD-RE are said to work better). xorriso does not write audio CDs and does not produce UDF filesystems for official video DVD or BD. Building from git needs autotools >= 1.7 and a chain of libburnia libraries that are development versions and not safe to ship dynamically linked. Writing to /dev/ paths requires the stdio: prefix, and a wrong target can overwrite a hard disk. The licence is GPL version 3 or later. Brew caveats were empty.",
+  "quotes": [
+   "xorriso copies file objects from POSIX compliant filesystems into Rock Ridge enhanced ISO 9660 filesystems and allows session-wise manipulation of such filesystems.",
+   "xorriso itself is entirely controlled by text commands.",
+   "Note that xorriso does not write audio CDs and that it does not produce UDF filesystems which are specified for official video DVD or BD.",
+   "Be cautious not to overwrite your hard disk instead of your USB stick:"
+  ],
+  "links": [
+   {
+    "label": "GNU xorriso homepage",
+    "url": "https://www.gnu.org/software/xorriso/"
+   },
+   {
+    "label": "libisoburn git (libburnia), where xorriso's source lives",
+    "url": "https://dev.lovelyhq.com/libburnia/libisoburn.git"
+   },
+   {
+    "label": "Source tarball mirror path on GNU FTP (xorriso/xorriso-1.5.8.pl02.tar.gz)",
+    "url": "https://ftp.gnu.org/gnu/xorriso/xorriso-1.5.8.pl02.tar.gz"
+   }
+  ],
+  "fetch_log": [
+   "https://www.gnu.org/software/xorriso/ - fetched OK; the page is a full project page with purpose, requirements, examples, and release notes, so I did not follow further links.",
+   "Not fetched: the libisoburn git repository, the man page, and the README-tcltk file. The homepage had enough detail for this brief."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "xorriso is an obscure, capable way to inspect and edit ISO images session by session, including their boot structures, opening up a little-seen file format."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "xorriso",
+  "tldr": "A text-command tool for reading, building and editing ISO 9660 disc images, including bootable ones, session by session.",
+  "deeper_look": "xorriso loads the directory tree of an existing ISO image, or starts an empty one. It applies a list of text commands to that in-memory model: add files, rename, delete, change permissions. Then it writes the result as a new image or as an extra session. It can also copy files back out of an image. The target can be a CD, DVD or BD, or just an ordinary file.\n\nThe idea underneath is that an optical disc is a sequence of sessions, each carrying its own management information. xorriso keeps the old information and appends changes as a new session, so an image can be updated incrementally instead of rebuilt. On overwritable media it emulates multi-session behaviour. Older sessions can still be listed and mounted.\n\nIt is a GNU project and part of the libburnia family (libburn, libisofs, libisoburn). The same engine appears in several forms: a command language driven by arguments, batch files or a dialog on standard input; `xorrisofs` and `xorrecord`, which emulate mkisofs and cdrecord; and a Tcl/Tk frontend, `xorriso-tcltk`. Bootable structures (El Torito, MBR, EFI System Partition) are added with `-boot_image`, which is a way into how a bootable ISO is laid out.\n\nAs the project puts it: \"xorriso itself is entirely controlled by text commands.\"",
+  "install": "brew install xorriso\nNo optical drive is needed to work with image files. Writing to real discs needs a CD/DVD/BD recorder and read-write access to the /dev/srN node, or superuser.",
+  "try_this": [
+   {
+    "cmd": "man xorriso",
+    "what_happens": "Opens the detailed manual, which documents the whole command language."
+   },
+   {
+    "cmd": "xorriso -devices",
+    "what_happens": "Lists optical drives and their addresses (the homepage runs this as superuser)."
+   },
+   {
+    "cmd": "xorrisofs --help",
+    "what_happens": "Shows the mkisofs-style options for building an image."
+   }
+  ],
+  "whats_unique": "It edits an existing image in place, bootable structure included, and appends changes as new sessions rather than rebuilding. One engine is exposed as a command language, mkisofs and cdrecord emulators, and a GUI.",
+  "caveats": "It does not write audio CDs or the UDF filesystems used for official video DVD/BD, and a wrong device target under /dev can overwrite a hard disk, which is why the stdio: prefix is required.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "iso9660",
+   "disc-images",
+   "file-formats",
+   "boot",
+   "gnu"
+  ],
+  "links": [
+   {
+    "label": "GNU xorriso homepage",
+    "url": "https://www.gnu.org/software/xorriso/"
+   },
+   {
+    "label": "libisoburn git (libburnia), where xorriso's source lives",
+    "url": "https://dev.lovelyhq.com/libburnia/libisoburn.git"
+   },
+   {
+    "label": "Source tarball on GNU FTP",
+    "url": "https://ftp.gnu.org/gnu/xorriso/xorriso-1.5.8.pl02.tar.gz"
+   }
+  ]
+ }
+}

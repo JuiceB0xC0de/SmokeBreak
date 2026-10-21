@@ -1,0 +1,89 @@
+{
+ "name": "sequin",
+ "desc": "Human-readable ANSI sequences",
+ "homepage": "https://github.com/charmbracelet/sequin",
+ "installs_365d": 78,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "tui"
+ ],
+ "why": "Turns raw ANSI escape sequences into human-readable text, a small window into how terminals actually talk.",
+ "brief": {
+  "what_it_is": "Sequin is a small command-line filter from Charm that takes raw text containing ANSI/VT escape sequences on stdin and prints a human-readable description of each sequence, so you can see what the escape codes are doing. It can also run a program for you in a fake TTY with `sequin -- <command>`, and its `-r`/`--raw` flag highlights sequences inline in the original text instead of describing them. The README describes it as \"Human-readable ANSI sequences.\"",
+  "why_it_exists": "The README says it is a utility for debugging CLIs and TUIs, for describing escape sequences you don't understand, and for exploring what TUIs do under the hood. It also mentions inspecting golden files from Bubble Tea's teatest.",
+  "how_it_works": "Sequin relies on the `ansi` package from Charm's `x` project (github.com/charmbracelet/x/ansi). While it walks through the input string, it pretty-prints what each sequence is and what it does. The FAQ also notes that some background-colour queries (OSC 10/11) go through to the terminal, so multiplexer version and config matter for those.",
+  "commands_seen": [
+   {
+    "cmd": "printf \"\\x1b[38;5;4mCiao, \\x1b[1;7mBaby.\\x1b[0m\\n\" | sequin",
+    "context": "Send a printf string containing SGR sequences into sequin to get an explanation of each one (README 'Describing escape sequences')."
+   },
+   {
+    "cmd": "ls -1 --color=always | sequin",
+    "context": "Pipe coloured ls output into sequin to see the sequences a normal program emits."
+   },
+   {
+    "cmd": "git -c status.color=always status -sb | sequin",
+    "context": "Pipe coloured git status output through sequin to inspect its ANSI codes."
+   },
+   {
+    "cmd": "cat ./testdata/MyCuteApp.golden | sequin",
+    "context": "Inspect a golden file of TUI output, such as ones generated with teatest."
+   },
+   {
+    "cmd": "sequin -- ls -1 go.*",
+    "context": "Have sequin execute a command directly in a fake TTY instead of reading piped input."
+   },
+   {
+    "cmd": "git -c status.color=always status -sb | sequin -r && echo",
+    "context": "Use the -r/--raw flag to highlight escape sequences inline in the raw text."
+   },
+   {
+    "cmd": "brew install sequin",
+    "context": "Homebrew install on macOS or Linux, as listed in the README."
+   },
+   {
+    "cmd": "go install github.com/charmbracelet/sequin@latest",
+    "context": "Install from source with the Go toolchain."
+   },
+   {
+    "cmd": "sequin completion bash -h",
+    "context": "Generate shell completions when built from source; zsh, fish and powershell variants are shown the same way."
+   },
+   {
+    "cmd": "yay -S sequin-bin",
+    "context": "Arch Linux install from the AUR, as listed in the README."
+   }
+  ],
+  "install_notes": "brew install sequin works on macOS and Linux. The README also lists AUR (yay -S sequin-bin), Nix (nix-shell -p sequin, and nur.repos.charmbracelet.sequin via NUR), a Debian/Ubuntu apt repo at repo.charm.sh (needs adding a signing key and sources.list entry), a Fedora/RHEL yum repo, and go install. Prebuilt binaries cover Linux, macOS, Windows, FreeBSD, OpenBSD and NetBSD, and Debian and RPM packages are on the releases page. Packaged installs ship shell completions for Bash, ZSH, Fish and PowerShell; from-source builds generate them with `sequin completion <shell> -h`. No accounts or runtime config are needed beyond a terminal and, for some multiplexer setups, TERM and COLORTERM settings.",
+  "standout": "Rather than just stripping escape codes, it names each sequence and explains its effect, which makes it a learning tool as well as a debugger. The `sequin -- <cmd>` fake-TTY mode and the `-r` inline-highlight mode mean you can inspect a program's real output without having to set up a terminal.",
+  "status": "quiet. The latest release is v0.3.1, dated 27 Jan 2025, with v0.3.0 on 9 Dec 2024 and v0.2.0 and earlier in Nov 2024. I did not check commit history or open issues, and the README has no maintenance note. Activity looks slower after January 2025, but the project was still being released at that point.",
+  "caveats": "The README says it is not finished: common sequences are implemented, but APC sequences are not supported yet. Many programs emit plain text when piped, so you may need to force colour (the README mentions CLICOLOR_FORCE=1 or a program's own ANSI flags). Inside tmux or GNU screen, background-colour queries only work with tmux 3.4 or later or screen 4.99.0 or later, plus the right default-terminal and COLORTERM settings. The FAQ also says `defbce on` is needed in screenrc to avoid background-colour differences. The project is MIT licensed.",
+  "quotes": [
+   "Sequin is a small utility that can help you debug your CLIs and TUIs.",
+   "Just use `printf` to send some sequences to `sequin` for an explanation.",
+   "No! Common sequences are implemented, but there is still plenty of work to do."
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repository",
+    "url": "https://github.com/charmbracelet/sequin"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/charmbracelet/sequin/releases"
+   },
+   {
+    "label": "ansi package docs (pkg.go.dev)",
+    "url": "https://pkg.go.dev/github.com/charmbracelet/x/ansi"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/charmbracelet/sequin: worked, README fetched in full",
+   "https://github.com/charmbracelet/sequin/releases: worked, but the page text is noisy; release dates and changelogs were readable"
+  ]
+ }
+}

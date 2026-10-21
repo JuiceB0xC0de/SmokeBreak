@@ -1,0 +1,91 @@
+{
+ "name": "bittwist",
+ "desc": "Libcap-based Ethernet packet generator",
+ "homepage": "https://bittwist.sourceforge.io",
+ "installs_365d": 39,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "A raw Ethernet packet generator opens a door into link-layer frames, though it is a niche and fairly dry tool.",
+ "brief": {
+  "what_it_is": "Bit-Twist is a libpcap-based Ethernet packet generator and packet editor. It takes tcpdump-style .pcap trace files, or templates for Ethernet, VLAN, ARP, IPv4, IPv6, ICMPv4, ICMPv6, TCP and UDP headers, and sends the resulting frames onto a live network. Its companion trace file editor, bittwiste, changes fields in existing capture files. It runs on Windows, Linux, BSD and macOS, and the homepage says it can send at line rate up to 10 Gbps.",
+  "why_it_exists": "The author says it is meant to complement tcpdump: captured traffic can be regenerated onto a live network, and the traffic can be edited first. The homepage lists use cases such as simulating traffic and testing firewalls, IDS/IPS, routers, switches and load balancers, and troubleshooting network issues.",
+  "how_it_works": "Packets are read from a .pcap file or built from header templates, then edited field by field, with checksums corrected automatically unless disabled. Transmission is paced by a built-in token bucket that can target a set interval, a packets-per-second rate, or a line rate from 1 Mbps to 10 Gbps, and it can loop over multiple trace files indefinitely. The homepage describes the speed claims as the author's own; I did not verify them.",
+  "commands_seen": [],
+  "install_notes": "Windows requires Npcap to be installed first. The Linux tarball includes prebuilt executables for x86_64 and aarch64, and the BSD and macOS tarballs are also provided. Each download is documented in a README.md inside the package, which I did not read. The Homebrew formula installs two executables, bittwist and bittwiste. The homepage gives SHA256 checksums for each download.",
+  "standout": "Unlike a plain replay tool, it pairs a fast pcap sender with a full trace editor that can rewrite most header fields, add random values to addresses, ports and sequence numbers, set QoS bits, append a payload pasted from Wireshark, and resize packets. It also has templates, so no existing capture is needed to craft packets.",
+  "status": "maintained, by the homepage's own evidence: the latest release is Bit-Twist 4.7, dated November 1, 2024, the copyright runs to 2024, and the maintainer is named. I did not check a commit log or the SourceForge release list.",
+  "caveats": "I could not reach the Documentation page. Both /documentation.html and /documentation/ returned 404, so I have no command syntax beyond the man page names bittwist.1 and bittwiste.1. The README was not fetched because the homepage does not link to it directly. Windows needs Npcap. Real line-rate throughput depends on the NIC. The code is GPL-2.0-or-later, and the author mentions commercial licensing by email. Bug reports go to the author, and the homepage points to a BUGS section in the man pages. The homepage describes the tool as a niche, fairly dry utility in the scout notes, and nothing I read contradicts that.",
+  "quotes": [
+   "Bit-Twist is a simple yet powerful libpcap-based Ethernet packet generator and packet editor.",
+   "Bit-Twist is designed for exceptional speed, allowing you to edit 10 million packets in under 3 seconds and send them over a live network at throughput levels that match your NIC's maximum line rate, up to 10 Gbps.",
+   "Send multiple trace files indefinitely with set interval, packets per second, or line rate between 1 Mbps to 10 Gbps using built-in token bucket algorithm."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://bittwist.sourceforge.io"
+   },
+   {
+    "label": "SourceForge project page",
+    "url": "https://sourceforge.net/projects/bittwist/"
+   }
+  ],
+  "fetch_log": [
+   "https://bittwist.sourceforge.io - OK, homepage text read",
+   "https://bittwist.sourceforge.io/documentation.html - FAILED, HTTP 404",
+   "https://bittwist.sourceforge.io/documentation/ - FAILED, HTTP 404"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It makes link-layer traffic tangible: craft or rewrite Ethernet and higher-layer packets, then replay them to see how real network equipment responds."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "bittwist",
+  "tldr": "A libpcap packet generator and capture editor that rewrites header fields in .pcap files and replays them onto a live network at a set rate.",
+  "deeper_look": "Bit-Twist is two tools. `bittwist` sends Ethernet frames onto a live network, either replayed from a tcpdump-style .pcap file or built from templates for Ethernet, VLAN, ARP, IPv4, IPv6, ICMPv4, ICMPv6, TCP and UDP headers. `bittwiste` is the companion editor. It changes fields in an existing capture file before you send it.\n\nThe author describes it as a complement to tcpdump. You capture traffic, edit it, and play it back. The homepage lists uses such as simulating traffic and testing firewalls, IDS/IPS, routers, switches and load balancers. The editor can rewrite most header fields, add random values to addresses, ports and sequence numbers, set QoS bits, resize packets, and append a payload pasted from Wireshark. Checksums are fixed automatically unless you turn that off.\n\nSending is paced by a built-in token bucket. You can aim for a fixed interval, a packets-per-second rate, or a line rate between 1 Mbps and 10 Gbps, and it can loop over several trace files indefinitely. The speed claims are the author's own and were not verified here.\n\nThe idea underneath is that a packet is just a structured pile of bytes, and the link layer is not magic. Once you can build and edit frames by hand, you can see what a switch, a firewall or an ARP table does with something slightly wrong. It is a niche, fairly dry tool, but it is a direct way in.",
+  "install": "brew install bittwist\n# Windows needs Npcap installed first. Sending on a live interface usually needs root privileges.",
+  "try_this": [
+   {
+    "cmd": "bittwist --help",
+    "what_happens": "Prints the options for the packet sender, including how to pick an interface and a send rate."
+   },
+   {
+    "cmd": "bittwiste --help",
+    "what_happens": "Prints the options for the trace file editor and the header types it can rewrite."
+   }
+  ],
+  "whats_unique": "Most replay tools only send. This one pairs a fast pcap sender with an editor that can rewrite headers, and its templates let you craft packets without any existing capture.",
+  "caveats": "The documentation pages returned 404 when the brief was written, so syntax beyond --help is only in the man pages, and real line-rate throughput depends on your NIC.",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "network",
+   "protocol",
+   "pcap",
+   "ethernet",
+   "packets"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://bittwist.sourceforge.io"
+   },
+   {
+    "label": "SourceForge project page",
+    "url": "https://sourceforge.net/projects/bittwist/"
+   }
+  ]
+ }
+}

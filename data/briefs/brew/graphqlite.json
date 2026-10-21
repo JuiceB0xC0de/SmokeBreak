@@ -1,0 +1,98 @@
+{
+ "name": "graphqlite",
+ "desc": "SQLite graph database extension",
+ "homepage": "https://colliery-io.github.io/graphqlite/",
+ "installs_365d": 508,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "library",
+  "language"
+ ],
+ "why": "A graph database bolted onto SQLite; an unusual database twist worth a look for the Cypher-style queries.",
+ "brief": {
+  "what_it_is": "GraphQLite is a SQLite extension that adds graph database capabilities using the Cypher query language. You load it into an ordinary SQLite connection and then create nodes, traverse relationships, run graph algorithms, and write graph patterns, all in a single .db file alongside your other data. Input is Cypher text (via a cypher() SQL function, the Python Graph class, or the Rust crate). Output is query rows, returned as JSON through SQL in the raw SQL interface.",
+  "why_it_exists": "The homepage pitches it as a way to get graph capabilities without a separate database server, network configuration, or migration scripts: your graph lives in a single .db file next to the rest of your application data.",
+  "how_it_works": "It is a SQLite loadable extension, and Cypher queries are passed through the cypher() SQL function. Properties are stored in an EAV model with separate tables for text, integer, real, boolean, and JSON values. Graph algorithms such as pageRank are exposed as Cypher functions or Python methods. The README does not go deeper on internals; the homepage lists architecture and query dispatch as explanation pages I did not follow.",
+  "commands_seen": [
+   {
+    "cmd": "brew install graphqlite",
+    "context": "Homebrew install on macOS/Linux, the first of three install routes listed in the README."
+   },
+   {
+    "cmd": "pip install graphqlite",
+    "context": "Python binding install, listed in the README alongside the Homebrew and Cargo routes."
+   },
+   {
+    "cmd": "cargo add graphqlite",
+    "context": "Rust crate install, listed in the README."
+   },
+   {
+    "cmd": ".load build/graphqlite",
+    "context": "Homepage SQL example: loads the extension into the sqlite3 CLI from a local build directory, so this path assumes building from source rather than using the brew install."
+   },
+   {
+    "cmd": "SELECT cypher('CREATE (a:Person {name: \"Alice\", age: 30})');",
+    "context": "Homepage SQL example: creates a node through the cypher() function in SQLite."
+   },
+   {
+    "cmd": "SELECT cypher('MATCH (a:Person)-[:KNOWS]->(b) RETURN a.name, b.name');",
+    "context": "Homepage SQL example: runs a Cypher pattern match through cypher() and returns the results."
+   },
+   {
+    "cmd": "SELECT cypher('RETURN pageRank(0.85, 20)');",
+    "context": "Homepage SQL example: calls the built-in PageRank algorithm with damping 0.85 and 20 iterations; the result is unpacked with json_each."
+   },
+   {
+    "cmd": "sqlite3 < examples/sql/01_getting_started.sql",
+    "context": "README examples section: runs the SQL getting-started tutorial file through the sqlite3 CLI."
+   },
+   {
+    "cmd": "cd examples/llm-graphrag",
+    "context": "README examples section: moves into the GraphRAG example directory."
+   },
+   {
+    "cmd": "uv sync && uv run python ingest.py",
+    "context": "README GraphRAG example: installs dependencies with uv and runs the ingest script, which loads the HotpotQA dataset into the graph."
+   },
+   {
+    "cmd": "uv run python rag.py \"Were Scott Derrickson and Ed Wood of the same nationality?\"",
+    "context": "README GraphRAG example: runs a question against the ingested graph."
+   },
+   {
+    "cmd": "angreal test tck",
+    "context": "README: runs the openCypher Technology Compatibility Kit conformance suite against the build."
+   }
+  ],
+  "install_notes": "Homebrew's caveats say the SQLite extension is installed at $HOMEBREW_PREFIX/opt/graphqlite/lib/sqlite. To load it in the sqlite3 CLI, run .load $HOMEBREW_PREFIX/opt/graphqlite/lib/sqlite/graphqlite. Python users can pip install graphqlite, and Rust users can cargo add graphqlite. The project claims zero dependencies beyond SQLite, with no server, daemon, or Docker. Building from source is implied by the .load build/graphqlite example, but the build steps were not in the pages I read.",
+  "standout": "It runs openCypher inside SQLite as a single file with no server, and the README reports 98.5% of 3,880 openCypher TCK scenarios passing. Most embedded graph options are not measured against a conformance suite like this. It also ships 15+ graph algorithms (PageRank, Louvain, Dijkstra, A*, WCC/SCC, and more) callable from the same query surface.",
+  "status": "Appears active, but I found no release date or last-commit date. The homepage version selector lists v0.12.0 as latest, with v0.11.0, v0.10.0, and older below it. The docs' Version and License section says 'Current version: 0.4.4', which conflicts with the selector. The README has a current TCK table, so it has been updated recently, though I cannot give a date.",
+  "caveats": "The version numbers disagree: the homepage selector says v0.12.0 is latest, but the body says 'Current version: 0.4.4'. The two pages also show different Python APIs: the homepage uses g.connection.cypher(...) and the README uses g.query(...). The README admits remaining TCK gaps in DST-aware timezone arithmetic, nested existential subqueries, and multi-row MERGE. The homepage Python example calls g.pagerank() and reads a 'user_id' field. The brew caveats point to a lib/sqlite path, while the homepage's own example loads from a build directory, so the install path for each route is not yet clear. The license is MIT.",
+  "quotes": [
+   "Load it into any SQLite connection and immediately start creating nodes, traversing relationships, running graph algorithms, and expressing complex graph patterns",
+   "Your graph lives in a single .db file alongside the rest of your application data.",
+   "GraphQLite is validated against the official openCypher Technology Compatibility Kit (TCK) \u2014 the canonical conformance suite for the Cypher query language."
+  ],
+  "links": [
+   {
+    "label": "Homepage and full documentation",
+    "url": "https://colliery-io.github.io/graphqlite/"
+   },
+   {
+    "label": "Source code and issue tracker",
+    "url": "https://github.com/colliery-io/graphqlite"
+   },
+   {
+    "label": "Conformance coverage matrix (in repo)",
+    "url": "https://github.com/colliery-io/graphqlite/blob/main/docs/testing/semantic-coverage-matrix.md"
+   }
+  ],
+  "fetch_log": [
+   "https://colliery-io.github.io/graphqlite/ \u2014 worked; homepage text with quick examples, feature table, and version/license section.",
+   "https://github.com/colliery-io/graphqlite \u2014 worked; README returned with installation, openCypher TCK table, examples, and license."
+  ]
+ }
+}

@@ -1,0 +1,90 @@
+{
+ "name": "cjdns",
+ "desc": "Advanced mesh routing system with cryptographic addressing",
+ "homepage": "https://github.com/cjdelisle/cjdns/",
+ "installs_365d": 161,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol",
+  "library"
+ ],
+ "why": "Cryptographically addressed IPv6 mesh routing is a door into overlay networking and addressing ideas few developers have examined.",
+ "brief": {
+  "what_it_is": "Cjdns is an open-source networking daemon that builds an encrypted IPv6 mesh network. Each node's IPv6 address is derived from public-key cryptography, so addresses are allocated without a central authority. Routing runs over a distributed hash table, and the node peers with others over UDP, using DNS seeders by default or manually configured peers. You feed it a generated config file, and it brings up a local IPv6 host that can reach other cjdns nodes.",
+  "why_it_exists": "The README says cjdns provides near-zero-configuration networking and avoids many of the security and scalability problems that plague existing networks. The project goals are in doc/projectGoals.md, which the README links but I did not open.",
+  "how_it_works": "Node addresses come from public-key cryptography, and routing uses a distributed hash table, per the README's one-line description. Peers connect over UDP interfaces (UDPInterface with connectTo) and are discovered through dnsSeeds unless you comment that section out for a clandestine node. A local admin API listens on udp://localhost:11234, which cjdnstool and the Python and Perl libraries talk to.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt-get install nodejs git build-essential",
+    "context": "Debian-based install of build dependencies (Node, git, C toolchain) before building from source."
+   },
+   {
+    "cmd": "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh",
+    "context": "Installs Rust via rustup, a required build dependency."
+   },
+   {
+    "cmd": "brew install node git make",
+    "context": "macOS build dependencies via Homebrew, per the README's macOS section."
+   },
+   {
+    "cmd": "git clone https://github.com/cjdelisle/cjdns.git cjdns",
+    "context": "Clones the source repository before building."
+   },
+   {
+    "cmd": "./do",
+    "context": "Build step; the README says to look for 'Build completed successfully, type ./cjdroute to begin setup.'"
+   },
+   {
+    "cmd": "LANG=C cat /dev/net/tun",
+    "context": "Checks that the TUN device exists; 'File descriptor in bad state' means it is fine."
+   },
+   {
+    "cmd": "./cjdroute --genconf | sudo tee -a /etc/cjdroute.conf",
+    "context": "Generates a new configuration file and appends it to /etc/cjdroute.conf."
+   },
+   {
+    "cmd": "sudo ./cjdroute < /etc/cjdroute.conf",
+    "context": "Starts cjdns as root, reading config from stdin."
+   },
+   {
+    "cmd": "sudo killall cjdroute",
+    "context": "Stops cjdns."
+   },
+   {
+    "cmd": "./cjdnstool",
+    "context": "Admin API client for interacting with the running node."
+   }
+  ],
+  "install_notes": "Option 1 is a prebuilt binary via cjdns.sh, but only for Linux on amd64. Option 2 builds from source and requires Rust, NodeJS (used for building the C code), a GCC or Clang compiler, make, and git. The build is started with ./do. Before first run, /dev/net/tun must exist and be accessible; the README gives mknod steps if it is missing. On a VPS, 'Permission denied' on that device suggests OpenVZ, and the README says to ask the provider to enable TUN/TAP. Generate a config with --genconf and protect it, since the README warns that a lost file loses your identity and a compromised file lets others impersonate you. Start as root by default; doc/non-root-user.md covers running as a non-root user. macOS users skip the TUN check.",
+  "standout": "The addressing is cryptographic, so node addresses are derived from keys rather than assigned, and the project claims near-zero configuration on top of that. It is also a rare mesh design that is an IPv6 overlay running on ordinary UDP peering rather than radio hardware. The README's own testimonials are anecdotal and there is no benchmark data, so treat performance claims cautiously.",
+  "status": "Unknown from what I read. The README carries a CII Best Practices badge, a tip4commit badge, and an active IRC channel link, but I saw no release date, last commit date, or deprecation note on the page. The repository was fetched once and the GitHub page did not show dates.",
+  "caveats": "Building needs Rust, Node, a C compiler, and make, which is a heavier toolchain than most daemons. Binary install via cjdns.sh is limited to Linux amd64. Running requires a TUN device, which some VPS providers, notably OpenVZ-based ones, do not allow. Default DNS seeding reveals to seed operators that you run cjdns unless you comment out dnsSeeds. The daemon runs as root by default. Bug reports do not go in this repo, they go to github.com/hyperboria/bugs. Security issues are reported on IRC, and the README says the default method is full disclosure. The README's testimonials are informal and unquantified.",
+  "quotes": [
+   "Cjdns implements an encrypted IPv6 network using public-key cryptography for address allocation and a distributed hash table for routing.",
+   "This provides near-zero-configuration networking, and prevents many of the security and scalability issues that plague existing networks.",
+   "Protect your conf file!"
+  ],
+  "links": [
+   {
+    "label": "Homepage / README",
+    "url": "https://github.com/cjdelisle/cjdns/"
+   },
+   {
+    "label": "Cjdns Whitepaper",
+    "url": "https://github.com/cjdelisle/cjdns/blob/master/doc/Whitepaper.md"
+   },
+   {
+    "label": "Project Goals",
+    "url": "https://github.com/cjdelisle/cjdns/blob/master/doc/projectGoals.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/cjdelisle/cjdns/ - worked, README returned in full. I did not follow the linked Whitepaper, admin-api, or peering docs, so the mechanism notes rest on the README's one-line summary."
+  ]
+ }
+}

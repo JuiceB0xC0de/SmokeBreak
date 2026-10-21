@@ -1,0 +1,130 @@
+{
+ "name": "smlnj",
+ "desc": "Compiler and programming system for Standard ML",
+ "homepage": "https://www.smlnj.org/",
+ "installs_365d": 918,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "afternoon",
+  "ancient"
+ ],
+ "why": "Standard ML's long-running compiler; an old-school functional language with a serious pedigree.",
+ "brief": {
+  "what_it_is": "Standard ML of New Jersey (SML/NJ) is a compiler for the Standard ML '97 programming language, shipped with associated libraries, tools, and documentation. You give it Standard ML source code and it produces compiled programs, and you can also use its interactive top level (the `sml` command). The distribution also includes companion tools: asdlgen, heap2exec, ml-antlr, ml-build, ml-burg, ml-makedepend, ml-ulex, ml-yacc, and sml. The homepage says it is free, open source software.",
+  "why_it_exists": "The homepage describes SML/NJ simply as a compiler and toolset for Standard ML '97. The README gives no broader motivation beyond that.",
+  "how_it_works": "The README does not explain the internals in detail. It does say the code generator moved from MLRISC to LLVM in the 2021 release, and that the development repository includes a customized LLVM library as a git submodule. Building from source goes through a build.sh script, and the system bootstraps itself from pre-compiled boot files.",
+  "commands_seen": [
+   {
+    "cmd": "brew install smlnj",
+    "context": "Installs SML/NJ via Homebrew; dependencies are installed automatically. This is the simplest route."
+   },
+   {
+    "cmd": "git clone --depth 1 --branch v$VERSION --recurse-submodules https://github.com/smlnj/smlnj.git",
+    "context": "Source build step 2: clones one commit of the development repo at a chosen version tag, including the LLVM submodule. VERSION is set beforehand, for example VERSION=2026.2."
+   },
+   {
+    "cmd": "./build.sh",
+    "context": "Source build step 3: run inside the smlnj directory to build and install. Afterwards bin/sml is the interactive system. Use build.sh -h to list options."
+   },
+   {
+    "cmd": "cd system",
+    "context": "Recompiling step 1: switch to the system directory before running cmb-make."
+   },
+   {
+    "cmd": "./cmb-make ../bin/sml",
+    "context": "Recompiling step 1: recompiles the system with cmb-make. The path argument is optional; if omitted, the sml on PATH is used."
+   },
+   {
+    "cmd": "./makeml",
+    "context": "Recompiling step 2: bootstraps the system."
+   },
+   {
+    "cmd": "./installml -clean -boot",
+    "context": "Recompiling step 3: installs the system. -boot is optional and replaces the boot files in the root directory with newly generated ones."
+   }
+  ],
+  "install_notes": "Homebrew (brew install smlnj) is the easiest route on macOS and Linux. The homepage also offers signed macOS .pkg installers (smlnj-amd64-110.99.9.pkg for 64-bit, smlnj-x86-110.99.9.pkg for 32-bit) that install to /usr/local/smlnj; on macOS 10.15 Catalina you must right-click the package and choose Open. Building the development version from source needs a C++17 compiler (clang or gcc), CMake 3.23 or later, and GNU autoconf 2.71 or later; the macOS installers avoid these. As of 2025.1, build.sh downloads pre-compiled boot files if they are missing. config/targets can be edited to add or remove components. The README gives no account or licence requirements beyond that.",
+  "standout": "It is a working compiler for a language with a long academic history, and it ships its own parser and lexer generators (ml-yacc, ml-ulex) plus a compilation manager, so it is more than a bare compiler. The project also runs two tracks: a stable 110.99.x legacy line and a 20xx.x development line.",
+  "status": "Maintained. The homepage lists development releases as recently as 2026.3 (dated 2026-10-19) and 2026.2 (2026-08-14), plus legacy bug-fix releases through 110.99.9 (2025-11-04). The GitHub migration happened in 2022, and a PLDI 2026 paper on a new closure converter is linked from the news. The README says the development version is not considered stable and recommends the legacy version for production.",
+  "caveats": "The README says the development repository is under active development and not stable; it recommends the legacy version (github.com/smlnj/legacy, currently 110.99.9) for production. The development version supports only AMD64 and Arm64 on Linux or macOS, so the README lists no Windows build for it. The homepage says there is no Windows MSI for 110.99.9 yet. Source builds need C++17, CMake 3.23+, and autoconf 2.71+. The 32-bit installers were refreshed in April 2025 to fix a 32-bit-specific issue. The homepage lists some documentation links without URLs in the scraped text, so I could not verify them.",
+  "quotes": [
+   "This is the main development repository for SML/NJ and is under active development, it is not considered stable.",
+   "For most uses, we recommend the legacy version (e.g., 110.99.9). The development version is still evolving, but it can be used for day-to-day work.",
+   "SML/NJ is free, open source software."
+  ],
+  "links": [
+   {
+    "label": "SML/NJ homepage",
+    "url": "https://www.smlnj.org/"
+   },
+   {
+    "label": "Development repository (GitHub)",
+    "url": "https://github.com/smlnj/smlnj"
+   },
+   {
+    "label": "Legacy 110.99.x repository (GitHub)",
+    "url": "https://github.com/smlnj/legacy"
+   }
+  ],
+  "fetch_log": [
+   "https://www.smlnj.org/ \u2014 worked; homepage text with news, downloads, and documentation list (doc links had no URLs in the scraped text)",
+   "https://github.com/smlnj/smlnj \u2014 worked; returned the README for the development repository, used for install and build commands"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "SML/NJ gives developers a hands-on route into an unusual, influential language with type inference, pattern matching, and higher-order modules\u2014not just another compiler."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "SML/NJ",
+  "tldr": "A maintained compiler and interactive REPL for Standard ML, a statically typed functional language with a long academic history, plus its own parser and lexer generators.",
+  "deeper_look": "Standard ML of New Jersey is a compiler for Standard ML '97. You can type expressions into its interactive top level, started with `sml`, or compile whole programs. The homepage describes it as free, open source software, and the brief gives no further statement of motive.\n\nThe distribution is more than a bare compiler. It includes ml-yacc and ml-ulex (parser and lexer generators), ml-antlr, ml-burg, a compilation manager driven through ml-build, ml-makedepend for dependencies, asdlgen, and heap2exec for turning a saved heap image into an executable. That makes it a small, self-contained environment for writing language tools in a language designed for exactly that.\n\nThe project is old but alive. The README says the code generator moved from MLRISC to LLVM in the 2021 release, and the homepage lists development releases as recent as 2026.3 and a PLDI 2026 paper on a new closure converter. It runs two tracks: a stable legacy 110.99.x line and a 20xx.x development line. The README recommends the legacy version for production and says the development line can still be used day to day.\n\nThe larger idea is the ML family itself: algebraic data types, pattern matching, type inference, and a module system. Many later languages borrowed from it. SML/NJ is one of the places to see those ideas in their original form.",
+  "install": "brew install smlnj",
+  "try_this": [
+   {
+    "cmd": "sml",
+    "what_happens": "Starts the interactive top level, where you can type Standard ML expressions and see inferred types."
+   },
+   {
+    "cmd": "ml-yacc --help",
+    "what_happens": "Shows usage for the bundled parser generator."
+   },
+   {
+    "cmd": "ml-build --help",
+    "what_happens": "Shows usage for the tool that builds a heap image from a project using the compilation manager."
+   }
+  ],
+  "whats_unique": "It is a long-running Standard ML compiler that ships its own lexer and parser generators and a compilation manager, and it is still actively developed on two release tracks.",
+  "caveats": "The development line is described by its README as not stable and supports only AMD64 and Arm64 on Linux or macOS; the legacy 110.99.9 line is recommended for production.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "language",
+   "functional",
+   "compiler",
+   "ml",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "SML/NJ homepage",
+    "url": "https://www.smlnj.org/"
+   },
+   {
+    "label": "Development repository (GitHub)",
+    "url": "https://github.com/smlnj/smlnj"
+   },
+   {
+    "label": "Legacy 110.99.x repository (GitHub)",
+    "url": "https://github.com/smlnj/legacy"
+   }
+  ]
+ }
+}

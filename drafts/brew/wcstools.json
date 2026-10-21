@@ -1,0 +1,108 @@
+{
+ "name": "wcstools",
+ "desc": "Tools for using World Coordinate Systems (WCS) in astronomical images",
+ "homepage": "http://tdc-www.harvard.edu/wcstools/",
+ "installs_365d": 51,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "library",
+  "ancient"
+ ],
+ "why": "Old astronomy tools for world coordinate systems in FITS images, a real science workflow you can run at home.",
+ "brief": {
+  "what_it_is": "WCSTools is a set of command-line C programs and a utility library for reading and setting the world coordinate system (WCS) stored in the header of an astronomical image. It works on FITS and IRAF .imh files. Given an image, its tools convert between pixel positions and sky coordinates (sky2xy, xy2sky), match image stars to reference catalogs and fit a WCS to the image (imwcs, immatch), and do header and pixel manipulation (gethead, sethead, getpix, imrot, imsmooth and so on). The README lists about 55 programs, and the executables list in the brief has 50 entries.",
+  "why_it_exists": "The homepage says astronomers need to relate positions on an image to positions on the real sky, to identify catalogued objects, tell others where to find them, and compute motions of planets, satellites, asteroids, or comets. The software grew out of the impending standardization of WCS keywords in FITS, discussed at the 1994 ADASS conference. The author says the subroutines came first, then the utilities that use them, then the programs for catalog search and WCS fitting.",
+  "how_it_works": "The WCS lives in standard keywords in the image header, which relate pixel position to sky position. The library reads those keywords and does the projection math, using WCSLIB by Mark Calabretta plus the SAO WCSTools library. Catalog programs such as imcat, scat and imstar read reference catalogs from CD-ROM or online files, or local Starbase, ASCII, or SAO TDC binary files, with paths set by environment variables. imwcs matches detected stars to catalog stars and fits a new WCS into the header.",
+  "commands_seen": [
+   {
+    "cmd": "make all",
+    "context": "Builds the entire WCSTools package from the source tree, per the README's installation instruction."
+   }
+  ],
+  "install_notes": "The README says to build with make all. The homepage says the code is portable C and needs only a C compiler. A full source tarball (wcstools-3.9.7.tar.gz) and a smaller subset for WCS conversion only (wcssubs-3.9.7.tar.gz) are offered. Catalog-based tools need reference catalogs, either CD-ROM or online copies of USNO, GSC, 2MASS, Tycho-2 and similar, and the catalog location is set through environment variables. The package can also be installed as an IRAF package. At CfA-managed systems, a prebuilt bin directory is available to add to the search path. Full installation directions are in the README and on the documentation site.",
+  "standout": "The WCS fitting and projection code is the same library used by SAOimage, SAOtng, ds9 and skycat, so the header conversions match what those image viewers do. It is also a long-lived, single-author toolkit, with the package described in ADASS papers from 1996 to 2018.",
+  "status": "Maintained at a low level, leaning quiet. The current version is 3.9.7, dated April 26, 2022, and the homepage says it was last updated 26 April 2022 by Jessica Mink. A 2018 ADASS paper by Mink is cited on the homepage. I did not find a later release or commit, and I did not check a repository commit log, so the date is the only evidence.",
+  "caveats": "No license was visible in the pages I read, so check the tarball before reuse. Catalog access needs catalog files that you must obtain yourself, and the online catalog access depends on network services that may have changed since 2022. The homepage's brew-listed executables differ from the README list: the README includes httpget, filedir, fixhead and isdate, which are not in the brief's executables list, and the brief's list includes wcstools, which is not in the README's program list. Several program names are unusual, like getdate or char2sp, and the older docs predate most modern tooling, so expect the interface style and documentation to be dated. Nothing on the pages shows a warning about build failures.",
+  "quotes": [
+   "Astronomers often need to relate positions on an image of the sky to positions on the real sky to identify catalogued objects in images",
+   "This software is all written in very portable C, so it should compile and run on any computer with a C compiler.",
+   "The subroutines to translate between sky and image coordinates came first, then the utilities to use them, and then the programs to search catalogs and fit a world coordinate systems to images."
+  ],
+  "links": [
+   {
+    "label": "WCSTools homepage",
+    "url": "http://tdc-www.harvard.edu/wcstools/"
+   },
+   {
+    "label": "WCSTools README (installation and program list)",
+    "url": "http://tdc-www.harvard.edu/software/wcstools/wcstools.readme.html"
+   },
+   {
+    "label": "WCSTools publications (ADASS papers)",
+    "url": "http://tdc-www.harvard.edu/software/wcstools/publications/"
+   }
+  ],
+  "fetch_log": [
+   "http://tdc-www.harvard.edu/wcstools/ - fetched OK (homepage, project overview, version 3.9.7, last updated 26 April 2022)",
+   "http://tdc-www.harvard.edu/software/wcstools/wcstools.readme.html - fetched OK (README with install step, version notes, and program descriptions)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It turns image pixels into sky coordinates and can fit a WCS by matching stars to catalogs\u2014a substantial, hands-on astronomy workflow rather than generic image tooling."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "WCSTools",
+  "tldr": "Fifty-odd small command-line programs that turn pixel positions in astronomical images into sky coordinates, and back, by reading the WCS stored in FITS headers.",
+  "deeper_look": "WCSTools is a set of C programs and a library for working with the world coordinate system stored in the header of an astronomical image. It reads FITS and IRAF .imh files. Given an image, `xy2sky` and `sky2xy` convert between pixel positions and positions on the sky. `gethead` and `sethead` read and edit header keywords, and other tools handle pixel work such as rotating, smoothing, resizing and stacking.\n\nThe larger programs deal with catalogs. `imcat`, `scat` and `imstar` read reference star catalogs, and `imwcs` matches stars it finds in an image against catalog stars and fits a new WCS into the header. The catalog files must be obtained separately, and their location is set through environment variables.\n\nThe idea underneath is that an image of the sky is only useful once you can say where on the sky each pixel points. The homepage puts it this way: \"Astronomers often need to relate positions on an image of the sky to positions on the real sky to identify catalogued objects in images\". A few header keywords describe that projection, and the library does the math.\n\nThe project grew out of the move to standardize WCS keywords in FITS, discussed at the 1994 ADASS conference. In the author's words, the subroutines came first, then the utilities, then the catalog and fitting programs. It is the work of one author, Jessica Mink, and has been described in ADASS papers from 1996 to 2018. The documentation and interface style are correspondingly old.",
+  "install": "brew install wcstools\n# Catalog-based tools (imcat, scat, imstar, imwcs) also need reference catalogs such as USNO, GSC, 2MASS or Tycho-2, with their location set through environment variables. You need your own FITS images to try the rest.",
+  "try_this": [
+   {
+    "cmd": "imhead --help",
+    "what_happens": "Prints usage for the tool that lists an image's header, a first look at the keywords that hold the WCS."
+   },
+   {
+    "cmd": "xy2sky --help",
+    "what_happens": "Shows how to convert a pixel position in an image to sky coordinates."
+   },
+   {
+    "cmd": "imwcs --help",
+    "what_happens": "Shows the options for matching stars in an image to a catalog and fitting a WCS into the header."
+   }
+  ],
+  "whats_unique": "The projection and fitting code is the same library used by SAOimage, SAOtng, ds9 and skycat, so header conversions match what those viewers do. It is a long-lived toolkit from a single author, split into many small Unix-style programs.",
+  "caveats": "Maintained at a low level, with the latest release, 3.9.7, from April 2022; catalog tools need catalog files you must obtain yourself, and online catalog services may have changed since then.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "astronomy",
+   "fits",
+   "science",
+   "c",
+   "ancient"
+  ],
+  "links": [
+   {
+    "label": "WCSTools homepage",
+    "url": "http://tdc-www.harvard.edu/wcstools/"
+   },
+   {
+    "label": "WCSTools README (installation and program list)",
+    "url": "http://tdc-www.harvard.edu/software/wcstools/wcstools.readme.html"
+   },
+   {
+    "label": "WCSTools publications (ADASS papers)",
+    "url": "http://tdc-www.harvard.edu/software/wcstools/publications/"
+   }
+  ]
+ }
+}

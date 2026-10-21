@@ -1,0 +1,79 @@
+{
+ "name": "dnstop",
+ "desc": "Console tool to analyze DNS traffic",
+ "homepage": "http://dns.measurement-factory.com/tools/dnstop/index.html",
+ "installs_365d": 159,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "tui",
+  "network",
+  "protocol"
+ ],
+ "why": "Live console view of DNS traffic on the wire; a readable door into DNS that most people never watch.",
+ "brief": {
+  "what_it_is": "dnstop is a console tool that analyzes DNS traffic. It is a libpcap application, similar to tcpdump, that reads packets either from a live capture device or from a tcpdump savefile. It displays live tables of DNS traffic: source IP addresses, destination IP addresses, query types, response codes, opcodes, and top, second, and third level domains. It supports both IPv4 and IPv6.",
+  "why_it_exists": "The page frames it as a way to \"Stay on Top of Your DNS Traffic\" and to help find especially undesirable DNS queries, using filters for unknown or invalid TLDs, queries whose name is already an IP address, PTR queries for RFC1918 address space, and responses with code REFUSED.",
+  "how_it_works": "It captures packets with libpcap, as tcpdump does, and decodes them as DNS. It aggregates what it sees into the ranked tables listed above and can restrict the display to the filtered query classes. Input is either the live capture device or a saved tcpdump capture file.",
+  "commands_seen": [],
+  "install_notes": "The homepage shows no install steps, commands, or configuration. Live capture needs access to the capture device, which typically means running with elevated privileges, but the page does not say so. The executable is named dnstop.",
+  "standout": "It is a live, ranked-table view of DNS traffic on the wire, which most people never watch. It also ships built-in filters aimed at spotting bad or suspicious DNS (invalid TLDs, IP-as-name queries, RFC1918 reverse lookups, REFUSED responses).",
+  "status": "Unknown. The homepage is a single page with a 2020 copyright line and no release number, changelog, or last-updated date. The scout note and brew description are the only other sources, and neither gives a date.",
+  "caveats": "Homepage is the only source and is thin: no README, docs, screenshots, or demo were linked from it. It is hosted on a measurement-factory.com page rather than a code repository, so licensing and source availability could not be checked from what was fetched. Its output is text tables, not a graphical interface. The brew caveats field is empty.",
+  "quotes": [
+   "dnstop is a libpcap application (like tcpdump) that displays various tables of DNS traffic on your network.",
+   "Stay on Top of Your DNS Traffic",
+   "To help find especially undesirable DNS queries, dnstop provides a number of filters.",
+   "dnstop can either read packets from the live capture device, or from a tcpdump savefile."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "http://dns.measurement-factory.com/tools/dnstop/index.html"
+   }
+  ],
+  "fetch_log": [
+   "http://dns.measurement-factory.com/tools/dnstop/index.html - fetched OK; homepage text only, no linked docs or repository found, so no further fetches made"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "dnstop turns raw DNS packets into live ranked views and suspicious-query filters, making an otherwise invisible protocol easy to explore."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "dnstop",
+  "tldr": "A tcpdump-style console tool that turns DNS packets into live ranked tables of who is asking for what, and which queries look wrong.",
+  "deeper_look": "dnstop is a libpcap application, like tcpdump, that listens to DNS traffic and shows it as tables. Instead of a scrolling stream of packets, it counts and ranks: source addresses, destination addresses, query types, response codes, opcodes, and top, second, and third level domains. It handles both IPv4 and IPv6.\n\nThe page describes it as a way to \"Stay on Top of Your DNS Traffic\". To that end it ships filters for queries that are probably unwanted: unknown or invalid TLDs, queries whose name is already an IP address, PTR queries for RFC1918 address space, and responses with code REFUSED. Each of these is a small lesson in how DNS gets misused, misconfigured, or leaked from private networks.\n\nIt reads from a live capture device or from a saved tcpdump file, so you can watch your own network or study a capture after the fact. The underlying idea is that DNS runs under almost everything you do and almost nobody looks at it. Watching the ranked tables for a few minutes shows how chatty a normal machine is, and what a resolver is really asked.",
+  "install": "brew install dnstop\n# Live capture usually needs elevated privileges (e.g. sudo); the homepage does not say so explicitly.",
+  "try_this": [
+   {
+    "cmd": "dnstop --help",
+    "what_happens": "Prints the usage text so you can see the options for choosing a capture device or a savefile."
+   }
+  ],
+  "whats_unique": "It gives a live, ranked-table view of DNS on the wire, with built-in filters aimed at spotting bad or suspicious queries such as invalid TLDs and RFC1918 reverse lookups.",
+  "caveats": "The homepage is the only source and is thin, with no docs, screenshots, or release date, so the project's maintenance status is unknown.",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "tui",
+   "network",
+   "protocol",
+   "dns",
+   "pcap"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "http://dns.measurement-factory.com/tools/dnstop/index.html"
+   }
+  ]
+ }
+}

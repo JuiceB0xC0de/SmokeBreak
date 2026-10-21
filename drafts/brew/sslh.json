@@ -1,0 +1,119 @@
+{
+ "name": "sslh",
+ "desc": "Forward connections based on first data packet sent by client",
+ "homepage": "https://www.rutschle.net/tech/sslh.shtml",
+ "installs_365d": 153,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "quick"
+ ],
+ "why": "Multiplexes HTTPS, SSH and others on one port by sniffing the first packet, a clean door into how protocols identify themselves.",
+ "brief": {
+  "what_it_is": "sslh is a network daemon that accepts TCP connections on one or more listening ports and forwards each connection to a backend service. It decides where to send a connection by testing the first data packet the client sends. It recognises HTTP, TLS/SSL (including SNI and ALPN), SSH, WireGuard, OpenVPN, tinc, XMPP and SOCKS5, and any other protocol that a regular expression can match. The input is client traffic on the listening port, and the output is that same traffic relayed to the matching backend, such as sshd, nginx or OpenVPN.",
+  "why_it_exists": "The README's typical use case is serving several services on port 443, for example SSH from inside a corporate firewall that almost never blocks 443, while still serving HTTPS on that port. It calls itself 'a protocol demultiplexer, or a switchboard'.",
+  "how_it_works": "sslh reads the first packet from each new client and runs protocol probes against it. Based on which probe matches, it opens a connection to the configured backend and relays traffic. With the SNI and ALPN probe it can front a virtual host farm behind one IP address. The README also covers transparent proxying, so backends see the real client IP, and proxyprotocol support for HAProxy-style client-address headers. The daemon has fork-based, select-based and libev-based models.",
+  "commands_seen": [
+   {
+    "cmd": "docker run --cap-add CAP_NET_RAW --cap-add CAP_NET_BIND_SERVICE --rm -it ghcr.io/yrutschle/sslh:latest --foreground --listen=0.0.0.0:443 --ssh=hostname:22 --tls=hostname:443",
+    "context": "README Docker example run from the ghcr.io image. The README splits this across lines with backslash continuations; they are joined here. It listens on 443 and routes SSH and TLS to hostname:22 and hostname:443."
+   },
+   {
+    "cmd": "command: --foreground --listen=0.0.0.0:443 --tls=nginx:443 --openvpn=openvpn:1194",
+    "context": "docker-compose service argument string (the command: value). It runs sslh in the foreground, listens on 443, and sends TLS to an nginx service and OpenVPN to an openvpn service."
+   },
+   {
+    "cmd": "command: --transparent --foreground --listen=0.0.0.0:443 --tls=localhost:8443 --openvpn=localhost:1194",
+    "context": "docker-compose transparent mode 1 and 2 argument string. The --transparent flag makes backends see the original client IP, and the backends are reached on localhost."
+   }
+  ],
+  "install_notes": "The README points to doc/INSTALL.md for installation, so there is no detailed install text in the README itself. The Docker route needs the CAP_NET_RAW and CAP_NET_BIND_SERVICE capabilities. Transparent mode needs NET_ADMIN, NET_RAW and NET_BIND_SERVICE, plus the net.ipv4.conf.default.route_localnet and net.ipv4.conf.all.route_localnet sysctls set to 1 (or host networking with those sysctls set manually). Configuration is described in doc/config.md. The Docker image is ghcr.io/yrutschle/sslh:latest. Transparent proxying also needs either extra virtual network interfaces, iptables packet marking (doc/tproxy.md, described as highly environment-specific), or podman (doc/podman.md). The README recommends trying proxyprotocol first.",
+  "standout": "Unlike a plain port multiplexer, sslh sniffs the first packet to identify the protocol, so one public port can serve HTTPS, SSH and VPN traffic at once. The README also says it has been through an external security review by openSUSE that found two CVEs.",
+  "status": "Probably maintained, but the evidence is thin. The README cites an openSUSE security review dated 2025-06-13 and points to a mailing list for announcements and feature requests. I did not see a release date or last-commit date in the fetched text, so this is not confirmed.",
+  "caveats": "The homepage at rutschle.net is only a redirect stub ('This URL is obsolete'), so the GitHub README was used as the real content. Transparent proxying is hard to set up. The README warns that the iptables/tproxy route 'is highly dependent on your network environment' and has no generic approach. The README also says that securing an install means configuring connection limits, and that the openSUSE review found denial-of-service problems. The README does not state a license, and I did not check the install guide or the docs.",
+  "quotes": [
+   "`sslh` accepts connections on specified ports, and forwards them further based on tests performed on the first data packet sent by the remote client.",
+   "A typical use case is to allow serving several services on port 443 (e.g. to connect to SSH from inside a corporate firewall, which almost never block port 443) while still serving HTTPS on that port.",
+   "Hence `sslh` acts as a protocol demultiplexer, or a switchboard."
+  ],
+  "links": [
+   {
+    "label": "Homepage (redirects to GitHub)",
+    "url": "https://www.rutschle.net/tech/sslh.shtml"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/yrutschle/sslh"
+   },
+   {
+    "label": "openSUSE security review (2025)",
+    "url": "https://security.opensuse.org/2025/06/13/sslh-denial-of-service-vulnerabilities.html"
+   },
+   {
+    "label": "Mailing list",
+    "url": "https://lists.rutschle.net/mailman/listinfo/sslh"
+   }
+  ],
+  "fetch_log": [
+   "https://www.rutschle.net/tech/sslh.shtml: loaded, but only a redirect stub saying 'This URL is obsolete, you should be soon redirected to the actual sslh page.' No README content.",
+   "https://github.com/yrutschle/sslh: loaded, full README returned. Used as the main source. Install guide, config guide and other doc/ files linked from the README were not fetched."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A small protocol demultiplexer that lets SSH, HTTPS, and VPN traffic share one port is an unusual, hands-on glimpse into how protocols reveal themselves."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "sslh",
+  "tldr": "A daemon that listens on one port, such as 443, sniffs each client's first packet, and routes SSH, HTTPS or VPN traffic to the right backend.",
+  "deeper_look": "sslh accepts TCP connections on one or more ports and reads the first data packet each client sends. It runs probes against that packet to decide what protocol is being spoken, then opens a connection to the matching backend and relays the traffic. It recognises HTTP, TLS (including SNI and ALPN), SSH, WireGuard, OpenVPN, tinc, XMPP and SOCKS5, plus anything a regular expression can match.\n\nThe README's typical use case is port 443. A corporate firewall that almost never blocks 443 can still let you reach SSH, as long as something on that port can tell SSH from HTTPS. The project calls itself \"a protocol demultiplexer, or a switchboard.\"\n\nThe idea underneath is that most protocols announce themselves in their first few bytes, before any real conversation starts. A TLS ClientHello looks nothing like an SSH banner, and a server can tell them apart without being told. With the SNI and ALPN probe, one IP address can front a whole farm of virtual hosts.\n\nThere is also a transparent mode, so backends see the real client IP, and proxyprotocol support for passing client addresses along in HAProxy style. The daemon has fork-based, select-based and libev-based models.",
+  "install": "brew install sslh\n# Docker alternative: ghcr.io/yrutschle/sslh:latest (needs CAP_NET_RAW and CAP_NET_BIND_SERVICE)\n# Binding to port 443 needs privileges, and you need real backends such as sshd and a web server to route to.",
+  "try_this": [
+   {
+    "cmd": "sslh --help",
+    "what_happens": "Lists the command-line options, including the listen address and the per-protocol backend flags."
+   },
+   {
+    "cmd": "docker run --cap-add CAP_NET_RAW --cap-add CAP_NET_BIND_SERVICE --rm -it ghcr.io/yrutschle/sslh:latest --foreground --listen=0.0.0.0:443 --ssh=hostname:22 --tls=hostname:443",
+    "what_happens": "Listens on 443 and sends SSH connections to hostname:22 and TLS connections to hostname:443."
+   }
+  ],
+  "whats_unique": "Unlike a plain port forwarder, it identifies the protocol from the first packet, so one public port can serve HTTPS, SSH and VPN traffic at once.",
+  "caveats": "Transparent proxying is hard to set up and, per the README, depends heavily on your network; an openSUSE security review in 2025 found denial-of-service issues, so connection limits matter.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "network",
+   "protocol",
+   "proxy",
+   "tls",
+   "ssh"
+  ],
+  "links": [
+   {
+    "label": "Homepage (redirects to GitHub)",
+    "url": "https://www.rutschle.net/tech/sslh.shtml"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/yrutschle/sslh"
+   },
+   {
+    "label": "openSUSE security review (2025)",
+    "url": "https://security.opensuse.org/2025/06/13/sslh-denial-of-service-vulnerabilities.html"
+   },
+   {
+    "label": "Mailing list",
+    "url": "https://lists.rutschle.net/mailman/listinfo/sslh"
+   }
+  ]
+ }
+}

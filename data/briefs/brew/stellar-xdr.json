@@ -1,0 +1,79 @@
+{
+ "name": "stellar-xdr",
+ "desc": "Stellar command-line tool for encoding/decoding XDR for the Stellar network",
+ "homepage": "https://developers.stellar.org",
+ "installs_365d": 95,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "protocol",
+  "quick",
+  "library"
+ ],
+ "why": "XDR encoding and decoding for the Stellar network is a window into a binary serialization format, though niche.",
+ "brief": {
+  "what_it_is": "stellar-xdr is a command-line tool, with a matching Rust library, for working with XDR, the binary serialization format used by the Stellar network. Per the README, the CLI's decode subcommand takes base64 or framed binary XDR on stdin or from a file, given a named type such as TransactionEnvelope, ScSpecEntry, or BucketEntry, and prints it out, for example as formatted JSON. The README documents decode only, so encode is not covered in what I read. The brew formula description is 'Stellar command-line tool for encoding/decoding XDR for the Stellar network'. The homepage I fetched is the general Stellar developer docs portal and does not describe this tool.",
+  "why_it_exists": "The stellar-xdr README says stellar-core leans heavily on the XDR format for peer-to-peer messages and consensus, for hashing ledger entries and transactions, and for storing history. A tool that decodes these structures lets people inspect that data directly. The rs-stellar-xdr README calls itself a 'Library and CLI containing types and functionality for working with Stellar XDR.'",
+  "how_it_works": "The XDR type definitions are kept in the stellar/stellar-xdr repo on the main branch, with #ifdef preprocessor gates for features. A CI workflow runs 'stellar-xdr xfile preprocess' on each push to main to generate the curr branch (no features enabled) and the next branch (all features enabled). The rs-stellar-xdr library's types are generated from those definitions with xdrgen. The CLI is built with the cli feature and selects a protocol channel with a '+next' prefix, as in the second example.",
+  "commands_seen": [
+   {
+    "cmd": "stellar-xdr xfile preprocess",
+    "context": "Named in the stellar-xdr README as the step CI uses to evaluate #ifdef directives when generating the curr and next branches. The README does not document its options."
+   },
+   {
+    "cmd": "cargo install --locked stellar-xdr --version ... --features cli",
+    "context": "Install command for the CLI from the rs-stellar-xdr README. The version is left as a placeholder in the README."
+   },
+   {
+    "cmd": "stellar-xdr decode --type TransactionEnvelope << -",
+    "context": "README example that parses a base64 TransactionEnvelope piped in on stdin. The AAAAA... line is a placeholder for the actual data."
+   },
+   {
+    "cmd": "stellar-xdr +next decode --type ScSpecEntry --input stream-base64 --output json-formatted << -",
+    "context": "README example that parses a stream of base64 ScSpecEntry values, the contract spec entries, from a contract, using the next channel and printing formatted JSON."
+   },
+   {
+    "cmd": "stellar-xdr decode --type BucketEntry --input stream-framed --output json-formatted bucket.xdr",
+    "context": "README example that parses a framed stream of BucketEntry values from a bucket file on disk and prints formatted JSON."
+   },
+   {
+    "cmd": "cargo watch -s \"TARGETS=web ./wasm-pack.sh\"",
+    "context": "Developer loop from the rs-stellar-xdr README for rebuilding the WebAssembly/npm package when files change. This is for the library's wasm build, not the CLI."
+   }
+  ],
+  "install_notes": "The brew formula is named stellar-xdr. The README's own install path is 'cargo install --locked stellar-xdr --version ... --features cli', so you need a Rust toolchain. The version is left as a placeholder, so you must pick one yourself. No accounts or network configuration are mentioned. The library can be used from Cargo with feature flags such as curr, next, std, base64, serde and arbitrary. The wasm build uses wasm-pack and yalc.",
+  "standout": "The XDR definitions are a shared, feature-gated source, with separate curr and next branches generated from one main branch by CI. This lets the same definitions serve current protocol decoding and in-development protocol decoding. The CLI also takes a channel prefix ('+next') to pick which set of types to decode against.",
+  "status": "unknown. The README and the other pages I read have no release dates, last-commit dates, or deprecation notice, so I could not confirm activity. The README describes a live CI workflow and a multi-channel process, which suggests the project is in active use, but that is an inference, not a dated fact.",
+  "caveats": "The homepage is the general Stellar docs site, so the tool's own documentation is thin in what I read. The stellar-xdr README covers the definitions and the contribution process more than the CLI. The CLI section gives only decode examples, and the encode direction is not shown. The first examples use '-' as the file argument and '<<' heredoc-style input, which I did not test. Build requires a Rust toolchain and the cli feature. The cargo install line has a version placeholder. The next-channel example needs a build with the next channel, and I did not verify how the brew build handles that.",
+  "quotes": [
+   "The source of truth for all XDR definitions. All changes should be made to this branch.",
+   "Library and CLI containing types and functionality for working with Stellar XDR.",
+   "XDR is used for 3 related but different tasks in stellar-core"
+  ],
+  "links": [
+   {
+    "label": "Stellar developer docs (homepage)",
+    "url": "https://developers.stellar.org"
+   },
+   {
+    "label": "rs-stellar-xdr: library and CLI source",
+    "url": "https://github.com/stellar/rs-stellar-xdr"
+   },
+   {
+    "label": "stellar-xdr: XDR definitions repo",
+    "url": "https://github.com/stellar/stellar-xdr"
+   },
+   {
+    "label": "RFC 4506: XDR standard",
+    "url": "https://datatracker.ietf.org/doc/html/rfc4506.html"
+   }
+  ],
+  "fetch_log": [
+   "https://developers.stellar.org: worked, but it is the general Stellar developer docs portal and does not describe stellar-xdr",
+   "https://github.com/stellar/stellar-xdr: worked, README returned; covers XDR definitions and branches, and mentions the xfile preprocess command",
+   "https://github.com/stellar/rs-stellar-xdr: worked, README returned; covers the Rust library and the CLI with decode examples and install command"
+  ]
+ }
+}

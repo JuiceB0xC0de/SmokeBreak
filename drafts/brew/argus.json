@@ -1,0 +1,145 @@
+{
+ "name": "argus",
+ "desc": "Audit Record Generation and Utilization System server",
+ "homepage": "https://openargus.org",
+ "installs_365d": 70,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "afternoon",
+  "protocol",
+  "library"
+ ],
+ "why": "Network audit record generation server from the Argus project, a door into flow-level network monitoring that most people never see.",
+ "brief": {
+  "what_it_is": "Argus (Audit Record Generation and Utilization System) is a network flow sensor. It reads live traffic from a network interface, or packets from a pcap capture file, and writes flow records in Argus's own binary format, which the README says covers all network activity, not just IP. The package is split in two: the argus sensor, which generates the flow data, and argus-clients, which holds the tools that read and process it, such as ra, rasum and racluster. The homepage describes the sensor as the component that generates flow data and the clients as the component that processes it. The Homebrew formula installs the sensor and its argus-* helper programs; ra and the other client tools are not in the executables list.",
+  "why_it_exists": "The README frames Argus as the original network flow monitoring technology, developed since 1984, meant to audit all network activity for operations, security analysis, performance monitoring and forensics. The homepage adds that it was modeled on the telephone network's Call Detail Record and is used for ML data sources and endpoint detection.",
+  "how_it_works": "The sensor processes packets from an interface or capture file and aggregates them into flow records using configurable flow keys (the README names a classic 5-tuple key and a Layer 2 matrix key). Records carry many metrics, including packet dynamics, jitter and throughput. Output goes to a file, which the client tools then read, filter, summarise or cluster; the README also describes a real-time mode where tools such as ratop watch flows live.",
+  "commands_seen": [
+   {
+    "cmd": "sudo argus -i eth0 -w /var/log/argus/data.argus",
+    "context": "Monitor interface eth0 live and write flow records to a file (needs root for capture)."
+   },
+   {
+    "cmd": "argus -r capture.pcap -w output.argus",
+    "context": "Read flows from a pcap file instead of a live interface and write them to an Argus file."
+   },
+   {
+    "cmd": "ra -r /var/log/argus/data.argus | head",
+    "context": "View the flow records with ra, which comes from the separate argus-clients package."
+   },
+   {
+    "cmd": "argus -i eth0 proto tcp -w tcp.flow.argus",
+    "context": "Capture on eth0 with a BPF-style filter so only TCP flows are recorded."
+   },
+   {
+    "cmd": "sudo apt-get install build-essential libpcap-dev flex bison zlib1g-dev",
+    "context": "Install build dependencies on Ubuntu/Debian before building from source."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Configure the source build (from the GitHub README's build steps)."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Install the built argus binaries after make."
+   },
+   {
+    "cmd": "./bin/argusbug",
+    "context": "Generate a bug report with system information; the README says reports not made this way may be ignored."
+   },
+   {
+    "cmd": "git clone https://github.com/openargus/argus",
+    "context": "Fetch the sensor source from GitHub (homepage instruction)."
+   },
+   {
+    "cmd": "sudo apt install argus-server",
+    "context": "Install the packaged sensor on Ubuntu from the distro repositories (homepage example)."
+   }
+  ],
+  "install_notes": "Beyond brew install: the GitHub README lists prerequisites of libpcap, flex and bison, a C compiler (gcc or clang) and zlib development libraries, then ./configure, make and sudo make install. Packages exist for RedHat, Debian, Suse and Ubuntu (argus-server and argus-clients). Live capture needs root (sudo). Configuration lives in /etc/argus.conf, with ARGUS_MONITOR_ID, ARGUS_FLOW_TYPE, ARGUS_FLOW_KEY, ARGUS_INTERFACE and ARGUS_OUTPUT as example keys. The homepage notes that clients 3.0 cannot read 5.0 data, so the sensor and clients should be matched to the same major version.",
+  "standout": "It is among the oldest flow-monitoring systems, with a flow-record model intended as a superset of NetFlow, IPFIX and flow-tools, and over 175 attributes per record. It is also unusual in covering non-IP traffic and in being described as ported to more than 20 platforms, including real-time OSes.",
+  "status": "maintained. The homepage lists a v5.0.2 release dated Feb 18, 2025, a v5.0 release in June 2024, and new projects in 2024 (Endpoint, Private Passive DNS). The GitHub README badge shows version 5.0.4. I did not see commit dates or a releases page, so the exact latest activity is unconfirmed.",
+  "caveats": "Licence conflict: the homepage says GPLv2, while the GitHub README says GPLv3, and other licences are available from QoSient, LLC. Version conflict: the homepage names v5.0.2 as the latest release, while the README badge says 5.0.4. The homepage warns that the v5.0.2 encapsulation capture feature should be enabled in argus.conf with some thought. The client tools (ra and the rest) are in a separate package and are not among the executables listed here. Some claims, such as 'proven at scale from 1G to 100G+' and the 175-attribute count, are the project's own and I did not verify them. The homepage is a marketing front page with little technical detail, so most technical content comes from the GitHub README.",
+  "quotes": [
+   "is the original network flow monitoring technology, developed since 1984",
+   "Argus is network audit technology, providing a network activity audit engine for all network traffic, not just IP.",
+   "The Argus Project is an open source project focused on proof of concept demonstrations of all aspects of large scale network awareness derived from network flow data."
+  ],
+  "links": [
+   {
+    "label": "Homepage (openargus.org)",
+    "url": "https://openargus.org"
+   },
+   {
+    "label": "Argus sensor source (GitHub README)",
+    "url": "https://github.com/openargus/argus"
+   },
+   {
+    "label": "Argus clients source (GitHub)",
+    "url": "https://github.com/openargus/clients"
+   }
+  ],
+  "fetch_log": [
+   "https://openargus.org - worked; returned the homepage as mostly HTML navigation with news items and the Getting Argus / Working with Argus text, no separate docs fetched",
+   "https://github.com/openargus/argus - worked; returned the README (Quick Start, configuration, history, support, license)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Argus turns live or captured packets\u2014including non-IP traffic\u2014into rich, auditable flow records, making an obscure network-forensics model worth exploring."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Argus",
+  "tldr": "A network flow sensor, in development since 1984, that turns live traffic or pcap files into compact flow records you can filter and summarise later.",
+  "deeper_look": "Argus reads packets from a network interface or a pcap file and aggregates them into flow records: one record per conversation, rather than one line per packet. Each record is written in Argus's own binary format and carries metrics such as packet dynamics, jitter and throughput. The README says it covers all network activity, not just IP.\n\nThe idea underneath is the audit trail. The homepage says the design was modeled on the telephone network's Call Detail Record. You do not keep every packet, you keep a durable account of who talked to whom, when, and how much. That is the basis of flow-level monitoring, used for operations, security analysis, performance monitoring and forensics. The README calls Argus \"the original network flow monitoring technology, developed since 1984\".\n\nThe sensor is only half the system. The flow keys are configurable (the README names a classic 5-tuple and a Layer 2 matrix key), and the output file is read by a separate package, argus-clients, which holds tools such as ra, rasum and racluster. There is also a real-time mode where tools like ratop watch flows live. The Homebrew formula installs the sensor and its argus-* helper scripts. The client tools are not included, so you will need to get them separately to read what the sensor writes.",
+  "install": "brew install argus\n# Live capture needs root (sudo).\n# The client tools (ra, rasum, racluster, ratop) are a separate package, argus-clients, and are not installed by this formula.\n# Match major versions: clients 3.0 cannot read 5.0 data.",
+  "try_this": [
+   {
+    "cmd": "argus -r capture.pcap -w output.argus",
+    "what_happens": "Reads an existing pcap file and writes its flows to an Argus record file, with no live capture or root needed."
+   },
+   {
+    "cmd": "sudo argus -i eth0 -w /var/log/argus/data.argus",
+    "what_happens": "Monitors interface eth0 live and writes flow records to a file."
+   },
+   {
+    "cmd": "argus -i eth0 proto tcp -w tcp.flow.argus",
+    "what_happens": "Captures on eth0 with a filter so only TCP flows are recorded."
+   }
+  ],
+  "whats_unique": "It is among the oldest flow-monitoring systems, with a record model meant as a superset of NetFlow and IPFIX, and it covers non-IP traffic too.",
+  "caveats": "The brew formula installs only the sensor, so you need the separate argus-clients package to read the records, and the homepage and README disagree on the licence (GPLv2 vs GPLv3) and the latest version.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "network",
+   "flow",
+   "netflow",
+   "pcap",
+   "monitoring",
+   "forensics"
+  ],
+  "links": [
+   {
+    "label": "Homepage (openargus.org)",
+    "url": "https://openargus.org"
+   },
+   {
+    "label": "Argus sensor source (GitHub README)",
+    "url": "https://github.com/openargus/argus"
+   },
+   {
+    "label": "Argus clients source (GitHub)",
+    "url": "https://github.com/openargus/clients"
+   }
+  ]
+ }
+}

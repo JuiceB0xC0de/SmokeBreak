@@ -1,0 +1,105 @@
+{
+ "name": "nut",
+ "desc": "Network UPS Tools: Support for various power devices",
+ "homepage": "https://networkupstools.org/",
+ "installs_365d": 3732,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "protocol",
+  "network",
+  "afternoon"
+ ],
+ "why": "Network UPS Tools speaks to a surprising zoo of power hardware over serial and USB, a close call worth a second look.",
+ "brief": {
+  "what_it_is": "Network UPS Tools (NUT) is an open-source suite of programs for monitoring and managing power hardware: uninterruptible power supplies, power distribution units, automatic transfer switches, power supply units and solar controllers. Drivers read data from the attached device over serial, USB and other media, and a network server (upsd) publishes that data under one common set of variable names. Clients such as upsc query it, and upsmon watches it and can trigger a shutdown. The brew executables list names about 90 binaries, which is consistent with this split into drivers, server, and client tools, but I took that from the metadata, not from the site.",
+  "why_it_exists": "The homepage says the primary goal is to provide support for power devices and to offer 'a common protocol and set of tools to monitor and manage such devices, and to consistently name equivalent features and data points, across a vast range of vendor-specific protocols and connection media types.'",
+  "how_it_works": "Per-device drivers (the executables list includes names such as usbhid-ups, dummy-ups and many vendor-specific ones) talk to the hardware and map its data onto NUT's standard variable names. The upsd network server serves that data to clients over TCP; the homepage's news links the IANA service registry entry for port 3493 and RFC 9271, the 'UPS management protocol' that the IETF published in 2022. The user manual's table of contents describes a layered, modular design with multiple processes, and upssched for scheduled actions.",
+  "commands_seen": [],
+  "install_notes": "The brew formula is the simplest route. The site's Download section and user manual also cover building from source (chapters 4.1 and 5.1), binary packages (4.3), and in-place upgrades. Configuration has a basic-setup chapter (6.2), a chapter on automatic shutdowns for low battery (6.3), and a securing-NUT chapter (10) that covers verifying source signatures and checksums. Hardware matters: the manual has a cable-reference appendix (G) for specific UPS models, so you need to know which driver and cable match your unit. I did not see any runtime or account requirements beyond that.",
+  "standout": "One project claims support for at least 201 manufacturers and 1441 device models under one naming scheme, far wider than most UPS tools. The IETF published its management protocol as an informational RFC (RFC 9271) in 2022, though the RFC is not formally an Internet Standard.",
+  "status": "Maintained. The homepage lists NUT v2.8.5 released Apr 07, 2026, and a jNut 1.0 release on Apr 9, 2026 (followed by jNut 1.1 on Apr 10). The footer says the site was last updated 2026-10-18, and the news shows steady releases and CI work through 2025 and 2026.",
+  "caveats": "The homepage says the APC Modbus driver (apc_modbus) needs a libmodbus build with USB support, and that the upstream libmodbus lacks it, so a fork is in use. The Windows port was merged into main in 2022, but the site says more community work is needed for some drivers and the MSI packaging. A 2026 errata note says an early Windows archive was missing DLLs, so upsmon would not start. A 2025 errata says usbhid-ups ignored instant commands without arguments, which could break default shutdown. The homepage is a long news-heavy site, so the useful docs sit in the user manual. The license is GPL, as the homepage states.",
+  "quotes": [
+   "The primary goal of the Network UPS Tools (NUT) project is to provide support for Power Devices, such as Uninterruptible Power Supplies, Power Distribution Units, Automatic Transfer Switches, Power Supply Units and Solar Controllers.",
+   "NUT provides a common protocol and set of tools to monitor and manage such devices, and to consistently name equivalent features and data points, across a vast range of vendor-specific protocols and connection media types.",
+   "As of this publication, at least 201 different manufacturers, and 1441 hardware device models are known as compatible."
+  ],
+  "links": [
+   {
+    "label": "NUT homepage",
+    "url": "https://networkupstools.org/"
+   },
+   {
+    "label": "NUT User Manual (chunked HTML)",
+    "url": "https://networkupstools.org/docs/user-manual.chunked/index.html"
+   },
+   {
+    "label": "NUT GitHub repository",
+    "url": "https://github.com/networkupstools/nut/"
+   }
+  ],
+  "fetch_log": [
+   "https://networkupstools.org/ - worked; returned the homepage text with news, the project description, and the version footer (nut v2.8.5)",
+   "https://networkupstools.org/docs/user-manual.chunked/index.html - worked; returned the table of contents only, with no command examples"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "NUT unifies a surprising range of power hardware behind one protocol, making device telemetry and shutdown control a genuinely useful peek into infrastructure."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "NUT (Network UPS Tools)",
+  "tldr": "One naming scheme and one network protocol for talking to hundreds of brands of UPS, PDU and solar controller, with drivers for serial and USB.",
+  "deeper_look": "Network UPS Tools is a suite of programs for monitoring and managing power hardware: uninterruptible power supplies, power distribution units, automatic transfer switches, power supply units and solar controllers. The ninety or so executables Homebrew installs fall into a split: per-device drivers, a network server called `upsd`, and client tools such as `upsc` and `upsmon`.\n\nThe drivers do the hard part. Each one talks to a specific family of hardware over serial, USB or another medium and maps what it finds onto NUT's standard variable names. The project describes its aim as providing \"a common protocol and set of tools to monitor and manage such devices, and to consistently name equivalent features and data points, across a vast range of vendor-specific protocols and connection media types.\" `upsd` then serves that data over TCP, and `upsmon` can watch it and trigger a shutdown when the battery runs low. `upssched` handles scheduled actions.\n\nThe idea underneath is a translation layer. Every vendor invented its own wire protocol, and NUT squeezes them into one vocabulary. The protocol is registered on port 3493 and was published by the IETF as RFC 9271, the \"UPS management protocol\", in 2022. It is an informational RFC, not an Internet Standard. Reading how a dozen incompatible protocols get flattened into one is a good way into the practical side of power, serial links and device drivers.",
+  "install": "brew install nut\n# Real use needs a UPS or other power device, plus the matching driver and cable. The manual has a cable-reference appendix for specific models.",
+  "try_this": [
+   {
+    "cmd": "upsc --help",
+    "what_happens": "Shows how to query a NUT server for the variables a device publishes."
+   },
+   {
+    "cmd": "upsd --help",
+    "what_happens": "Shows the options of the network server that publishes device data to clients."
+   },
+   {
+    "cmd": "upsdrvctl --help",
+    "what_happens": "Shows the control tool that starts and stops the drivers."
+   }
+  ],
+  "whats_unique": "It claims support for at least 201 manufacturers and 1441 device models under one naming scheme, far wider than most UPS tools. Its management protocol has an IETF RFC.",
+  "caveats": "It is only really interesting with power hardware attached, and the homepage notes errata, including a 2025 usbhid-ups bug that could break default shutdown; the Windows port still needs community work.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "ups",
+   "power",
+   "usb",
+   "serial",
+   "protocol",
+   "network"
+  ],
+  "links": [
+   {
+    "label": "NUT homepage",
+    "url": "https://networkupstools.org/"
+   },
+   {
+    "label": "NUT User Manual (chunked HTML)",
+    "url": "https://networkupstools.org/docs/user-manual.chunked/index.html"
+   },
+   {
+    "label": "NUT GitHub repository",
+    "url": "https://github.com/networkupstools/nut/"
+   }
+  ]
+ }
+}

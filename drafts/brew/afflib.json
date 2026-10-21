@@ -1,0 +1,97 @@
+{
+ "name": "afflib",
+ "desc": "Advanced Forensic Format",
+ "homepage": "https://github.com/sshock/AFFLIBv3",
+ "installs_365d": 3235,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "library"
+ ],
+ "why": "Advanced Forensic Format library opens the door to disk image forensics and how evidence containers are structured.",
+ "brief": {
+  "what_it_is": "AFFLIB is a C library and set of command-line tools for the Advanced Forensic Format (AFF), an on-disk format for storing computer forensic data and its metadata in one or more files. The tools convert disk images between raw/dd, splitraw, AFF, AFD (multiple AFF files in a directory) and AFM (an AFF file annotating a raw file). They also compare images, copy images with verification and a chain-of-custody segment, find and repair errors in AFF files, print file info and statistics, and emit XML metadata or an XML \"diskprint\" fingerprint. The executables listed for the package are affcat, affcompare, affconvert, affcopy, affcrypto, affdiskprint, affinfo, affix, affrecover, affsegment, affsign, affstats, affuse, affverify and affxml.",
+  "why_it_exists": "The README frames AFF as a way to keep forensic data, metadata, digital signatures for chain of custody and long-term integrity, and on-the-fly encryption together in one open format, so privacy-sensitive disk images can be stored or shared, for example on the Internet. It describes AFF as unencumbered by copyright or patent protection.",
+  "how_it_works": "AFF stores a disk image and its metadata in a purpose-built container file (AFFv3), with optional digital signatures and on-the-fly encryption and decryption for processing. The toolkit reads and writes that container and converts it to and from other image layouts. The README notes that AFFv4 will instead be based on ZIP64.",
+  "commands_seen": [
+   {
+    "cmd": "fls -o 63 -i afflib foo.vmdk",
+    "context": "Example from the README's Sleuth Kit section: lists files using Sleuth Kit's fls with the afflib image type, since TSK officially supports only a subset of AFFLIB's formats; -o 63 sets the partition offset."
+   }
+  ],
+  "install_notes": "The README says the source code is provided for Linux, macOS and Windows. A Windows zip is also offered with precompiled tools and their libraries, plus bulk_extractor.jar, a Java port that pulls email addresses, dates and other data out of files. The README does not describe build steps or dependencies. The brew formula's executable list is metadata from the package, not from the README.",
+  "standout": "Forensic containers usually come from closed vendors, but this one is an open format with digital signatures and encryption built in, so an image can carry its own chain-of-custody record. The diskprint feature fingerprints a disk image from XML without hashing the whole disk.",
+  "status": "Maintenance mode, per the README: 'This version is currently in maintenance mode while work on AFFv4 continues.' I saw no release or commit dates in the fetched text, so recent activity is unknown.",
+  "caveats": "The README says AFFv3 is licensed under a four-part Berkeley license, while AFFv4 uses an approved open-source license. AFF and AFFLIB are trademarks of Simson L. Garfinkel and Basis Technology, Inc. Sleuth Kit officially supports only a subset of these image formats. The README gives no build instructions, and the homepage is a fork (sshock) while the README points to the simsong repository for the download. The project is in maintenance, and development has moved to AFFv4.",
+  "quotes": [
+   "AFF is an open format unencumbered by copyright or patent protection.",
+   "This version is currently in maintenance mode while work on AFFv4 continues.",
+   "AFF allows for forensic disk images to stored encrypted and decrypted on-the-fly for processing."
+  ],
+  "links": [
+   {
+    "label": "Homepage (sshock fork)",
+    "url": "https://github.com/sshock/AFFLIBv3"
+   },
+   {
+    "label": "Download source (simsong/AFFLIBv3, linked from README)",
+    "url": "https://github.com/simsong/AFFLIBv3"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/sshock/AFFLIBv3 - worked; GitHub README returned as text"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "An obscure, purpose-built forensic image format combines disk data with metadata, signatures, encryption, and chain-of-custody records\u2014rich material to explore beyond generic file conversion."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "AFFLIB",
+  "tldr": "A C library and toolkit for the Advanced Forensic Format, an open disk-image container that carries its own metadata, signatures and encryption.",
+  "deeper_look": "AFFLIB reads and writes the Advanced Forensic Format (AFF), a file format for storing a disk image together with its metadata. The command-line tools convert images between raw/dd, split raw, AFF, AFD (a directory of AFF files) and AFM (an AFF file that annotates a raw file). They also compare images, copy them with verification, print info and statistics, and emit XML metadata.\n\nThe interesting part is what the container holds besides the bytes. AFF can carry digital signatures and a chain-of-custody segment, so an image can describe where it came from and show that it has not changed. It also supports encryption that is applied and removed on the fly while the image is processed. The README says: \"AFF allows for forensic disk images to stored encrypted and decrypted on-the-fly for processing.\" The stated aim is that privacy-sensitive images can be stored or shared, even over the Internet.\n\nThere is also a diskprint feature, which produces an XML fingerprint of a disk image without hashing the whole disk. Tools such as affuse, affcat and affinfo let you look inside a container, which makes this a practical way to see how an evidence format is laid out and how it differs from a plain dd file.\n\nThis is AFFv3, which the README says is in maintenance mode while AFFv4 is developed. The README says AFFv4 will be based on ZIP64 instead of the purpose-built container. AFF itself is described as \"an open format unencumbered by copyright or patent protection.\"",
+  "install": "brew install afflib",
+  "try_this": [
+   {
+    "cmd": "affinfo --help",
+    "what_happens": "Shows usage for the tool that prints information about an AFF file."
+   },
+   {
+    "cmd": "affconvert --help",
+    "what_happens": "Shows how to convert images between raw and AFF formats."
+   },
+   {
+    "cmd": "fls -o 63 -i afflib foo.vmdk",
+    "what_happens": "Uses Sleuth Kit's fls (a separate install) with the afflib image type to list files in an image, with a partition offset of 63. This example comes from the README."
+   }
+  ],
+  "whats_unique": "Forensic containers usually come from closed vendors. This one is open, with signatures, encryption and a chain-of-custody record built into the file.",
+  "caveats": "AFFv3 is in maintenance mode while AFFv4 is developed, and the README gives no build instructions or recent activity dates.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "forensics",
+   "disk-images",
+   "file-formats",
+   "library"
+  ],
+  "links": [
+   {
+    "label": "Homepage (sshock fork)",
+    "url": "https://github.com/sshock/AFFLIBv3"
+   },
+   {
+    "label": "Download source (simsong/AFFLIBv3, linked from README)",
+    "url": "https://github.com/simsong/AFFLIBv3"
+   }
+  ]
+ }
+}

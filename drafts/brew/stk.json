@@ -1,0 +1,91 @@
+{
+ "name": "stk",
+ "desc": "Sound Synthesis Toolkit",
+ "homepage": "https://ccrma.stanford.edu/software/stk/",
+ "installs_365d": 491,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "audio",
+  "library",
+  "afternoon",
+  "science"
+ ],
+ "why": "Stanford's Synthesis ToolKit offers physical-modelling instruments and synthesis building blocks, a real door into sound design from first principles.",
+ "brief": {
+  "what_it_is": "STK, the Synthesis ToolKit in C++, is a set of open source C++ classes for audio signal processing and algorithmic synthesis. It is a library you write programs against, not a single application. The classes cover unit generators, physical-model instruments, modal synthesis and FM patches, plus a SKINI control format and Tcl/Tk GUI scripts. Its output is audio: real-time sound and MIDI on Linux, macOS and Windows, or recorded files in SND, WAV, RAW, AIFF and MAT formats. The README says the example programs have no graphical patching front end.",
+  "why_it_exists": "Perry Cook wrote it to build the synthesis, processing and control units he wanted to teach and research with, in a portable form. He also wanted to help people who struggle to turn physical-model papers into working instruments, since stable parameter values are hard to find. The README frames it as tutorial code for teaching and a base for further research.",
+  "how_it_works": "Programs include STK C++ class headers and connect unit-generator objects together, calling their tick() functions to produce samples. Newer releases add a StkFrames class for multichannel, vectorized audio, and a Messager class that accepts control input from pipes, sockets or MIDI at the same time. Only the sockets, threads, mutexes and real-time audio and MIDI I/O code is platform-dependent.",
+  "commands_seen": [],
+  "install_notes": "The README points to INSTALL.md and to the platform READMEs in the doc directory, which I did not fetch. On Unix and MinGW you run the configure script to generate Makefiles; on Windows you use the VS2017 workspace files. Tcl/Tk 8.0 or higher is needed only for the optional GUIs. The Homebrew caveats say the headers are placed on a standard search path, so programs can write include statements such as #include \"stk/FileLoop.h\". The src, projects and rawwaves directories are copied to $HOMEBREW_PREFIX/opt/stk/share/stk. The brew formula also provides a treesed executable, which I did not see described in the README.",
+  "standout": "It is a teaching-oriented C++ toolkit that predates most modern music-DSP libraries and still has physical-modelling instruments and building blocks that can be read and modified. Its design goal is code that will still compile and run in five to ten years, with no hidden drivers and no unusual dependencies.",
+  "status": "Unclear from what I fetched. The README says the toolkit has worked continuously for nearly 20 years, copyright runs to 2023, and it has existed since 1996. It also still calls the software alpha. I did not find a release date or last commit date, so I cannot say whether it is actively maintained.",
+  "caveats": "The README says it is alpha software and that the authors do not guarantee anything works. There is no drag-and-drop GUI, and the example programs have no fancy GUI wrapper. Real-time support is limited to Linux, macOS and Windows, and Windows DirectSound latency is around 20 ms, with ASIO doing better. Some techniques are covered by patents, many administered by Stanford's Office of Technology and Licensing. The license is in a LICENSE file I did not read, and the legal section asks users to pass it on free and credit the authors in program notes.",
+  "quotes": [
+   "STK was designed to facilitate rapid development of music synthesis and audio processing software, with an emphasis on cross-platform functionality, realtime control, ease of use, and educational example code.",
+   "Despite being available in one form or another since 1996, we still consider STK to be alpha software.",
+   "If you make compositions with it, put us in the program notes."
+  ],
+  "links": [
+   {
+    "label": "STK homepage (CCRMA)",
+    "url": "https://ccrma.stanford.edu/software/stk/"
+   },
+   {
+    "label": "STK on GitHub (thestk/stk)",
+    "url": "https://github.com/thestk/stk"
+   }
+  ],
+  "fetch_log": [
+   "https://ccrma.stanford.edu/software/stk/ - fetched OK, the homepage with overview and navigation to class docs, downloads and usage pages (those subpages were not fetched)",
+   "https://github.com/thestk/stk - fetched OK, README returned; INSTALL.md and the doc directory were linked but not fetched"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A durable, teaching-oriented synthesis toolkit makes physical-model instruments and sound synthesis inspectable and buildable from first principles."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "STK (Synthesis ToolKit)",
+  "tldr": "A C++ library from Stanford's CCRMA of readable physical-model instruments and synthesis building blocks, written to teach how sound is made sample by sample.",
+  "deeper_look": "STK is a set of C++ classes for audio signal processing and algorithmic synthesis. It is a library you write programs against, not a single application. It includes unit generators, physical-model instruments, modal synthesis, FM patches, and a control format called SKINI. Output goes to real-time audio and MIDI on Linux, macOS and Windows, or to files in SND, WAV, RAW, AIFF and MAT formats.\n\nPerry Cook wrote it to have synthesis, processing and control units he could teach and research with, in a portable form. He also wanted to help people who struggle to turn physical-model papers into working instruments, since stable parameter values are hard to find. The README describes it as tutorial code and a base for further research.\n\nThe idea underneath is simple: you connect unit-generator objects together and call their tick() function to produce one sample at a time. Newer releases add a StkFrames class for multichannel audio and a Messager class that takes control input from pipes, sockets or MIDI. Reading the source of a plucked string or a blown pipe shows how a physical model turns into a few lines of delay lines and filters.\n\nThe README states the goal as code that still compiles and runs in five to ten years, with no hidden drivers or unusual dependencies. The project has existed since 1996. In its own words: \"Despite being available in one form or another since 1996, we still consider STK to be alpha software.\"",
+  "install": "brew install stk\n# Headers go on a standard path: #include \"stk/FileLoop.h\"\n# src/, projects/ and rawwaves/ are copied to $HOMEBREW_PREFIX/opt/stk/share/stk\n# Needs a C++ compiler. Tcl/Tk 8.0+ is only needed for the optional GUIs.",
+  "try_this": [
+   {
+    "cmd": "treesed --help",
+    "what_happens": "Runs the one executable the formula installs. The README does not describe it, so see what it reports."
+   },
+   {
+    "cmd": "ls $HOMEBREW_PREFIX/opt/stk/share/stk",
+    "what_happens": "Lists the copied src, projects and rawwaves directories, where the instrument source and example programs live."
+   }
+  ],
+  "whats_unique": "It is a teaching-oriented toolkit that predates most modern music-DSP libraries, with physical-modelling instruments you can read and modify. It is built to stay compilable with no unusual dependencies.",
+  "caveats": "The README calls it alpha software with no guarantees, there is no graphical patching front end, and the brief found no recent release or commit date.",
+  "commitment": "afternoon",
+  "category": "sound-and-live-coding",
+  "tags": [
+   "audio",
+   "synthesis",
+   "library",
+   "c++",
+   "physical-modelling",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "STK homepage (CCRMA)",
+    "url": "https://ccrma.stanford.edu/software/stk/"
+   },
+   {
+    "label": "STK on GitHub (thestk/stk)",
+    "url": "https://github.com/thestk/stk"
+   }
+  ]
+ }
+}

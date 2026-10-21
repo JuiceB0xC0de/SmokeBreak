@@ -1,0 +1,130 @@
+{
+ "name": "marisa",
+ "desc": "Matching Algorithm with Recursively Implemented StorAge",
+ "homepage": "https://github.com/s-yata/marisa-trie",
+ "installs_365d": 1477,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "library",
+  "afternoon",
+  "math"
+ ],
+ "why": "A compact recursive trie library with a neat data structure idea, though it is mostly a linkable library.",
+ "brief": {
+  "what_it_is": "MARISA (Matching Algorithm with Recursively Implemented StorAge) is a static, space-efficient trie data structure, implemented as the C++ library libmarisa. The package also ships command-line tools for building and querying a MARISA-based dictionary: marisa-build, marisa-lookup, marisa-reverse-lookup, marisa-common-prefix-search, marisa-predictive-search, marisa-dump and marisa-benchmark. A dictionary supports lookup (is this string a key?), reverse lookup (restore a key from its ID), common prefix search (find keys that are prefixes of a given string) and predictive search (find keys starting with a given string). The README does not spell out the exact input and output formats of each tool.",
+  "why_it_exists": "The README's stated advantage is size: libmarisa's dictionary is considerably more compact than other implementations. Its benchmark uses all English Wikipedia page titles (about 9.8 million keys, 200 MB plain) and reports 50.8 MB for marisa-trie against 376.6 MB for darts-clone and 127.7 MB for tx-trie.",
+  "how_it_works": "The README gives little mechanism detail beyond the name, which spells out Matching Algorithm with Recursively Implemented StorAge. It calls the structure a static trie, meaning the dictionary is built once from a key set and then queried. The deeper internals are in the linked docs, which I did not fetch.",
+  "commands_seen": [
+   {
+    "cmd": "$ git clone https://github.com/s-yata/marisa-trie.git",
+    "context": "Fetches the source from GitHub; the README says this is how to get the latest version."
+   },
+   {
+    "cmd": "$ cd marisa-trie",
+    "context": "Enters the cloned source directory."
+   },
+   {
+    "cmd": "$ cmake -S. -Bbuild-rel -DCMAKE_BUILD_TYPE=Release -DENABLE_NATIVE_CODE=ON -DBUILD_TESTING=OFF",
+    "context": "Configures a Release build in build-rel with native code enabled and tests turned off."
+   },
+   {
+    "cmd": "$ cmake --build build-rel",
+    "context": "Compiles libmarisa and the command-line tools."
+   },
+   {
+    "cmd": "$ sudo cmake --install build-rel",
+    "context": "Installs the library and the binaries system-wide."
+   },
+   {
+    "cmd": "$ sudo cmake --install build-rel --component Library",
+    "context": "Installs only the library, without the binaries."
+   },
+   {
+    "cmd": "$ sudo cmake --install build-rel --component Binaries",
+    "context": "Installs only the command-line tools."
+   }
+  ],
+  "install_notes": "Build from source with CMake; the README does not mention brew. Steps are git clone, cmake configure with Release, -DENABLE_NATIVE_CODE=ON and -DBUILD_TESTING=OFF, cmake --build, then sudo cmake --install. The install can be split into Library and Binaries components. No accounts, runtimes or hardware are mentioned.",
+  "standout": "Compared with double-array tries and LOUDS tries, it aims for a much smaller footprint while still supporting reverse lookup and both prefix-style searches. Its own size table is the main evidence for that trade-off.",
+  "status": "Likely maintained, but unconfirmed. The README lists latest version 0.3.1 and the project is hosted under s-yata/marisa-trie. I did not see a release date or last-commit date in the README, so I cannot say how recently it was updated.",
+  "caveats": "The structure is static, so the README gives no sign of incremental updates after building. The size comparison comes from one 2012 dataset and is self-reported by the author. The README mentions no Homebrew packaging, and the brew caveats field is empty. The license is BSD-2-Clause OR LGPL-2.1-or-later, so you choose one. The scout note calls it mostly a linkable library, and the README agrees the library is the main artifact; the CLI tools are secondary. The README's usage examples are missing, so I could not verify any tool's exact syntax.",
+  "quotes": [
+   "Matching Algorithm with Recursively Implemented StorAge (MARISA) is a static and space-efficient trie data structure.",
+   "The biggest advantage of libmarisa is that its dictionary size is considerably more compact than others.",
+   "Licensed under BSD-2-Clause OR LGPL-2.1-or-later."
+  ],
+  "links": [
+   {
+    "label": "Homepage / repository",
+    "url": "https://github.com/s-yata/marisa-trie"
+   },
+   {
+    "label": "README (English)",
+    "url": "https://www.s-yata.jp/marisa-trie/docs/readme.en.html"
+   },
+   {
+    "label": "README (Japanese)",
+    "url": "https://www.s-yata.jp/marisa-trie/docs/readme.ja.html"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/s-yata/marisa-trie: fetched OK, README returned. Its docs links were not followed, so the README is the only source."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "MARISA\u2019s unusually compact static trie makes millions of keys practical to query, with prefix search and ID-based reverse lookup offering a worthwhile data-structure rabbit hole."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "marisa",
+  "tldr": "A static trie that squeezes millions of strings into a fraction of the usual space, with command-line tools for building and querying dictionaries.",
+  "deeper_look": "MARISA, short for Matching Algorithm with Recursively Implemented StorAge, is a C++ library (libmarisa) for a static trie. You build a dictionary once from a set of keys, then query it. The package also installs seven command-line tools: `marisa-build`, `marisa-lookup`, `marisa-reverse-lookup`, `marisa-common-prefix-search`, `marisa-predictive-search`, `marisa-dump` and `marisa-benchmark`.\n\nA dictionary answers four kinds of question. Is this string a key? Which key has this ID? Which keys are prefixes of this string? Which keys start with this string? That covers the core of autocomplete, spell-check dictionaries and word segmentation, which is why tries like this show up inside search and language software.\n\nThe author's stated advantage is size. The README benchmark uses all English Wikipedia page titles, about 9.8 million keys and 200 MB as plain text. It reports 50.8 MB for marisa-trie, against 376.6 MB for darts-clone and 127.7 MB for tx-trie. In the README's words: \"The biggest advantage of libmarisa is that its dictionary size is considerably more compact than others.\"\n\nThe README says little about the mechanism beyond the name, which hints at a trie whose storage is itself built recursively. The detail is in the linked docs. That makes it a good door into succinct data structures: trading some query speed and the ability to update for a much smaller footprint.",
+  "install": "The README does not mention Homebrew, but the formula exists: `brew install marisa`\n\nTo build from source instead, you need CMake and a C++ compiler:\ngit clone https://github.com/s-yata/marisa-trie.git\ncd marisa-trie\ncmake -S. -Bbuild-rel -DCMAKE_BUILD_TYPE=Release -DENABLE_NATIVE_CODE=ON -DBUILD_TESTING=OFF\ncmake --build build-rel\nsudo cmake --install build-rel",
+  "try_this": [
+   {
+    "cmd": "marisa-build --help",
+    "what_happens": "Shows how to build a dictionary from a list of keys."
+   },
+   {
+    "cmd": "marisa-lookup --help",
+    "what_happens": "Shows how to check whether strings are keys in a built dictionary."
+   },
+   {
+    "cmd": "marisa-predictive-search --help",
+    "what_happens": "Shows how to find all keys that start with a given prefix."
+   }
+  ],
+  "whats_unique": "Compared with double-array and LOUDS tries, it aims for a much smaller footprint while still supporting reverse lookup and both prefix-style searches.",
+  "caveats": "The trie is static, so there are no incremental updates, and the size comparison is self-reported by the author on a single 2012 dataset; the library is the main artifact and the CLI tools are secondary.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "trie",
+   "data-structures",
+   "library",
+   "compression",
+   "c++"
+  ],
+  "links": [
+   {
+    "label": "Homepage / repository",
+    "url": "https://github.com/s-yata/marisa-trie"
+   },
+   {
+    "label": "README (English)",
+    "url": "https://www.s-yata.jp/marisa-trie/docs/readme.en.html"
+   },
+   {
+    "label": "README (Japanese)",
+    "url": "https://www.s-yata.jp/marisa-trie/docs/readme.ja.html"
+   }
+  ]
+ }
+}

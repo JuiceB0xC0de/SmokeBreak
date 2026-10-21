@@ -1,0 +1,154 @@
+{
+ "name": "fedify",
+ "desc": "CLI toolchain for Fedify",
+ "homepage": "https://fedify.dev/cli",
+ "installs_365d": 467,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "protocol",
+  "afternoon",
+  "network"
+ ],
+ "why": "A toolchain for ActivityPub's federated social protocol is a real door into a protocol most people never look at.",
+ "brief": {
+  "what_it_is": "fedify is a command-line toolchain from the Fedify project, used for building ActivityPub federated server apps and for debugging ActivityPub servers in general. Its main job is fedify lookup: you give it an object URL or an actor handle such as @user@example.com, and it fetches and prints the ActivityPub object, as a readable dump, compacted or expanded JSON-LD, or raw JSON. It also scaffolds new Fedify projects with fedify init, and runs fedify inbox, a temporary public ActivityPub inbox for watching what your server sends out. The sample config file also has relay and nodeinfo sections, but I did not see the commands for those in the text I read.",
+  "why_it_exists": "The README says the fedify command is a CLI toolchain for Fedify and for debugging ActivityPub-enabled federated server apps. It is primarily aimed at developers who use Fedify, but it says it works with any ActivityPub-enabled server.",
+  "how_it_works": "For lookup, the tool fetches the URL or resolves the handle over HTTP, then parses the JSON-LD and prints it in the chosen format. With -a/--authorized-fetch, it generates a one-time key pair, starts a temporary ActivityPub server to publish the public key, and signs the request. For fedify inbox, it starts an ephemeral server with a one-time actor, exposes it through a short-lived public DNS name with HTTPS, and logs incoming activities to the console.",
+  "commands_seen": [
+   {
+    "cmd": "npm install -g @fedify/cli",
+    "context": "Installs the CLI globally from npm (also available with bun install -g @fedify/cli)."
+   },
+   {
+    "cmd": "brew install fedify",
+    "context": "Homebrew install on macOS and Linux."
+   },
+   {
+    "cmd": "fedify init my-fedify-project",
+    "context": "Starts the interactive prompt to scaffold a new Fedify project in a new directory."
+   },
+   {
+    "cmd": "fedify init my-fedify-project --dry-run",
+    "context": "Previews the files and dependencies that would be created, without writing anything."
+   },
+   {
+    "cmd": "fedify lookup https://todon.eu/@hongminhee/112341925069749583",
+    "context": "Looks up a Note object by its URL and prints it."
+   },
+   {
+    "cmd": "fedify lookup @fedify-example@fedify-blog.deno.dev",
+    "context": "Looks up an actor by handle; the @ prefix is optional."
+   },
+   {
+    "cmd": "fedify lookup --authorized-fetch @tchambers@indieweb.social",
+    "context": "Fetches a protected object by signing the request with a temporary key pair and server, after a plain lookup failed."
+   },
+   {
+    "cmd": "fedify lookup --traverse https://fosstodon.org/users/hongminhee/outbox",
+    "context": "Walks an outbox collection and outputs the objects inside it instead of the collection itself."
+   },
+   {
+    "cmd": "fedify --config ./my-config.toml lookup @user@example.com",
+    "context": "Loads an extra TOML config file, which takes the highest precedence."
+   },
+   {
+    "cmd": "fedify inbox",
+    "context": "Starts an ephemeral ActivityPub inbox server on a public HTTPS address that stays up until you press ^C."
+   }
+  ],
+  "install_notes": "Several routes are documented: npm or Bun (npm install -g @fedify/cli), Homebrew (brew install fedify), Scoop on Windows (scoop install fedify), Deno (deno install -gA --unstable-fs --unstable-kv -n fedify jsr:@fedify/cli, with --unstable-temporal added on Deno versions before 2.7.0), mise (mise use -g github:fedify-dev/fedify), or a pre-built executable from the GitHub releases page placed on your PATH. There is no hardware or account requirement mentioned. Configuration is optional TOML: system-wide, ~/.config/fedify/config.toml (or $XDG_CONFIG_HOME), a project-level .fedify.toml, or a file passed with --config. Config needs Fedify 2.0.0 or later, and command-line flags override it.",
+  "standout": "Two things stand out. fedify inbox gives you a throwaway public ActivityPub actor and inbox, so you can see exactly what your server sends. The lookup command's authorized fetch tries RFC 9421 and falls back to draft-cavage HTTP Signatures (double-knocking), and it also resolves FEP-ef61 portable objects (ap:// URIs with DIDs). Most ActivityPub tooling does not do any of these.",
+  "status": "Maintained. The GitHub releases page shows Fedify 2.4.4 marked Latest, with a release date of 12 October (2026 in the page text). Patch releases for the 2.0 to 2.4 lines went out within the same few days, and the release notes describe security fixes with advisory IDs. I did not check the commit log directly.",
+  "caveats": "The homepage text I read was cut off at roughly 40,000 characters, partway through the fedify inbox section, so I did not see the rest of the inbox section, the relay section, or nodeinfo. I also could not read the GitHub repository README, which returned only a path string, so the package-level README was not checked. Authorized fetch and inbox both need a temporary server exposed to the public internet through a tunnel service (fedify.com.es, serveo.net, or pinggy.io are named). Deno installs need the --unstable flags. Release archives are large: roughly 170 to 260 MB for the desktop builds on the releases page. Licence was not visible in what I read.",
+  "quotes": [
+   "The fedify command is a CLI toolchain for Fedify and debugging ActivityPub-enabled federated server apps.",
+   "Although it is primarily designed for developers who use Fedify, it can be used with any ActivityPub-enabled server.",
+   "Although the given URIs and handle are short-lived, they are anyway publicly dereferenceable until the server is terminated."
+  ],
+  "links": [
+   {
+    "label": "Homepage (CLI docs)",
+    "url": "https://fedify.dev/cli"
+   },
+   {
+    "label": "Markdown version of the CLI docs",
+    "url": "https://fedify.dev/cli.md"
+   },
+   {
+    "label": "GitHub releases",
+    "url": "https://github.com/fedify-dev/fedify/releases"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/fedify-dev/fedify"
+   }
+  ],
+  "fetch_log": [
+   "https://fedify.dev/cli: worked, but the text was cut off at 40,000 characters partway through the fedify inbox section",
+   "https://fedify.dev/cli.md: worked, but also cut off at 40,000 characters, at the end of the -s/--separator section",
+   "https://github.com/fedify-dev/fedify: returned only the text 'packages/fedify/README.md', so no usable README content",
+   "https://github.com/fedify-dev/fedify/releases: worked; used for release dates and the Latest tag, and also cut off at 40,000 characters"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Its temporary public ActivityPub inbox and signed lookup expose the mechanics of federation, making this more than scaffolding for an obscure protocol."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "fedify",
+  "tldr": "A command-line tool that fetches and prints raw ActivityPub objects, and gives you a throwaway public inbox to watch what a federated server sends.",
+  "deeper_look": "fedify is the CLI that ships with the Fedify framework, which is for building ActivityPub servers. ActivityPub is the protocol behind Mastodon and much of the fediverse. The tool is meant for Fedify developers, but its README says it works with any ActivityPub-enabled server.\n\nThe everyday command is `fedify lookup`. Give it an object URL or an actor handle like `@user@example.com`, and it resolves the handle, fetches the object over HTTP, parses the JSON-LD and prints it. You can read it as a formatted dump, as compacted or expanded JSON-LD, or as raw JSON. With `--traverse` it walks a collection such as an outbox and prints the objects inside rather than the collection itself.\n\nSome objects refuse anonymous requests. For those, `--authorized-fetch` generates a one-time key pair, starts a temporary server to publish the public key, and signs the request. It tries RFC 9421 HTTP signatures first and falls back to the older draft-cavage style. It also resolves FEP-ef61 portable objects (`ap://` URIs with DIDs).\n\n`fedify inbox` goes the other way. It starts an ephemeral server with a one-time actor, exposes it on a short-lived public HTTPS name, and logs every activity that arrives. Point a server at it and you see what that server sends. The docs note: \"Although the given URIs and handle are short-lived, they are anyway publicly dereferenceable until the server is terminated.\" There is also `fedify init`, which scaffolds a new Fedify project.",
+  "install": "brew install fedify\n# also: npm install -g @fedify/cli (Node is a dependency of the brew formula)\n# authorized fetch and inbox need a temporary public tunnel (fedify.com.es, serveo.net or pinggy.io are named in the docs)",
+  "try_this": [
+   {
+    "cmd": "fedify lookup @fedify-example@fedify-blog.deno.dev",
+    "what_happens": "Resolves the handle and prints the actor's ActivityPub object."
+   },
+   {
+    "cmd": "fedify lookup --traverse https://fosstodon.org/users/hongminhee/outbox",
+    "what_happens": "Walks the outbox and prints the posts inside it rather than the collection wrapper."
+   },
+   {
+    "cmd": "fedify inbox",
+    "what_happens": "Starts a temporary public ActivityPub inbox and logs incoming activities until you press ^C."
+   }
+  ],
+  "whats_unique": "fedify inbox gives you a disposable public actor and inbox for watching a server's outgoing traffic. Authorized fetch tries both signature schemes and resolves FEP-ef61 portable objects, which most ActivityPub tooling does not do.",
+  "caveats": "Authorized fetch and inbox expose a temporary server to the public internet through a tunnel service, and the brief could not read the full inbox, relay or nodeinfo docs.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "activitypub",
+   "fediverse",
+   "protocol",
+   "json-ld",
+   "network",
+   "debugging"
+  ],
+  "links": [
+   {
+    "label": "Homepage (CLI docs)",
+    "url": "https://fedify.dev/cli"
+   },
+   {
+    "label": "Markdown version of the CLI docs",
+    "url": "https://fedify.dev/cli.md"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/fedify-dev/fedify"
+   },
+   {
+    "label": "GitHub releases",
+    "url": "https://github.com/fedify-dev/fedify/releases"
+   }
+  ]
+ }
+}

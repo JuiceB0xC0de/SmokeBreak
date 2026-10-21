@@ -1,0 +1,130 @@
+{
+ "name": "rpiboot",
+ "desc": "Raspberry Pi USB boot tool for Compute Modules",
+ "homepage": "https://github.com/raspberrypi/usbboot",
+ "installs_365d": 426,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "quick",
+  "needs-hardware",
+  "protocol"
+ ],
+ "why": "Uses USB to expose a Compute Module's bootloader, a neat way into how the Pi boots over USB.",
+ "brief": {
+  "what_it_is": "rpiboot is a host-side command-line tool, built from C source with make against libusb, that talks to a Raspberry Pi over USB while the device is in its ROM USB boot mode. It acts as a file server, sending boot firmware and a boot image into the device's memory. The default payload is a Linux-based mass-storage-gadget, which makes the Pi's storage appear to the host as a standard USB drive. An OS image can then be written to that drive with Raspberry Pi Imager. On Compute Module 4 and newer, it is also used to update the bootloader SPI flash EEPROM.",
+  "why_it_exists": "The README says rpiboot 'provides a file server for loading software into memory on a Raspberry Pi for provisioning.' The aim is to get at a Pi's storage or bootloader from a host computer over USB, without needing a working OS on the device.",
+  "how_it_works": "The host uses libusb to talk to the Pi, and the Pi's boot ROM is put into usbboot mode, either by a nRPIBOOT/EMMC-DISABLE jumper, a GPIO set up in OTP on Pi 4B and Pi 400, or by holding the power button on Pi 5, Pi 500 and Pi 500+. rpiboot then sends the chosen firmware or initramfs payload. The mass-storage-gadget boots a Linux initramfs that scans for SD/EMMC, NVMe and USB block devices and uses configfs to expose them as USB mass-storage devices. The legacy msd firmware instead exposes the SD/EMMC device as an emulated mass-storage device, with no console and slower writes.",
+  "commands_seen": [
+   {
+    "cmd": "sudo rpiboot -d mass-storage-gadget",
+    "context": "Boots the device with the Linux-based mass-storage-gadget payload from the named directory; this is the recommended way to launch it on Pi 5, Pi 500 and Pi 500+ after the power-button step."
+   },
+   {
+    "cmd": "sudo rpiboot -d msd",
+    "context": "Boots the device with the legacy msd firmware instead of the Linux gadget; the README says this is for Pi 4 and older devices."
+   },
+   {
+    "cmd": "sudo rpiboot -j metadata -d .",
+    "context": "Run from the recovery directory on a Compute Module 4; the -j flag writes OTP metadata JSON into the metadata directory."
+   },
+   {
+    "cmd": "git clone --recurse-submodules --shallow-submodules --depth=1 https://github.com/raspberrypi/usbboot",
+    "context": "Clones the repository with its rpi-eeprom submodule, using a shallow clone."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the rpiboot binary from the cloned usbboot directory on Linux."
+   },
+   {
+    "cmd": "sudo apt install git libusb-1.0-0-dev pkg-config build-essential",
+    "context": "Debian/Ubuntu build dependencies listed in the README."
+   },
+   {
+    "cmd": "sudo dnf install git libusb1-devel pkg-config glibc-devel g++ gcc make",
+    "context": "Fedora/RHEL build dependencies listed in the README."
+   },
+   {
+    "cmd": "brew install libusb",
+    "context": "macOS: installs libusb before building from source."
+   },
+   {
+    "cmd": "make INSTALL_PREFIX=/usr/local",
+    "context": "macOS build command; the README recommends installing to /usr/local rather than /usr/bin on macOS."
+   },
+   {
+    "cmd": "sudo ./rpi-eeprom/imager/make-pi4-rpiboot-gpio-sd 8",
+    "context": "Builds an SD card image that permanently sets GPIO 8 as nRPIBOOT on a Pi 4B or Pi 400. The README warns this change to OTP cannot be undone."
+   },
+   {
+    "cmd": "sudo apt install kpartx",
+    "context": "Installs kpartx, a Linux-only dependency needed for the Pi 4 GPIO SD-card utility."
+   }
+  ],
+  "install_notes": "Clone with --recurse-submodules because rpi-eeprom is a git submodule, and set the system date correctly so git does not fail. On Linux, install libusb-1.0 dev files and pkg-config as above, then run make. sudo is not needed if your user can write to /dev/bus/usb. On macOS, install libusb and pkg-config with Homebrew and set PKG_CONFIG_PATH if libusb.h is not found; on ARM Macs the README gives a fallback of building libusb 1.0.27 from source. Windows 11 uses Cygwin, the symlinks need core.symlinks set to true, and the rpiboot driver installer must be run once from win32\\rpiboot_setup. Homebrew also packages it as 'rpiboot'; its caveat says to run sudo rpiboot -d \"$(brew --prefix rpiboot)\"/share/rpiboot/mass-storage-gadget64. Compute Modules need a jumper fitted (EMMC-DISABLE/nRPIBOOT) before power-on. Pi 500 needs its QMK keyboard firmware updated via raspi-config to get the power-button entry.",
+  "standout": "The Pi's own boot ROM is turned into a USB mass-storage device, and the default payload is a small Linux initramfs that exposes its SD, eMMC and NVMe storage through configfs and also gives a console over UART and USB CDC-UART. The same tool also updates bootloader EEPROM and can provision secure boot.",
+  "status": "unknown for exact dates: the fetched page showed no last-commit date and no release date. The README covers current hardware (Compute Module 5, Pi 500+, Raspberry Pi OS Trixie), and the repo has 516 commits, about 1.4k stars and 313 forks, which points to active upkeep, but I could not confirm recency.",
+  "caveats": "Primarily Linux. The README says it is widely used on Linux x86, Windows 11 via Cygwin, and macOS, but other platforms are 'best-effort and/or community-maintained'. The Pi 4B and Pi 400 GPIO setup permanently modifies OTP and cannot be changed afterwards. Legacy msd firmware has no console and slower writes. The Pi 4 GPIO utility depends on kpartx and so is Linux-only. The FreeBSD section shows 'mdo' where 'sudo' is probably meant. Power must be fully removed, not shut down, before the Pi 5 USB-C connection. Licence is Apache-2.0.",
+  "quotes": [
+   "The rpiboot tool provides a file server for loading software into memory on a Raspberry Pi for provisioning.",
+   "By default, it boots the device with firmware that makes it appear to the host as a USB mass-storage device.",
+   "This option permanently modifies the OTP and cannot be changed afterwards."
+  ],
+  "links": [
+   {
+    "label": "usbboot repository (homepage and README)",
+    "url": "https://github.com/raspberrypi/usbboot"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/raspberrypi/usbboot: fetched OK, README returned in full. Troubleshooting guide and secure-boot reference were mentioned but no URLs were visible, so they were not followed."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It turns a Pi\u2019s boot ROM into a USB provisioning path, exposing how boot firmware can load a Linux gadget that presents internal storage to the host."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "rpiboot",
+  "tldr": "Turns a Raspberry Pi's boot ROM into a USB file server, so a Compute Module's storage shows up as a plain USB drive on your computer.",
+  "deeper_look": "rpiboot is a host-side tool that talks over USB to a Raspberry Pi sitting in its ROM USB boot mode. The Pi has no OS running at this point. The host acts as a file server and pushes boot firmware and a small image into the device's memory. By default, that payload makes the Pi appear as a USB mass-storage device. You can then write an OS image to it with Raspberry Pi Imager.\n\nThe README describes it as a tool that \"provides a file server for loading software into memory on a Raspberry Pi for provisioning.\" The aim is to reach a Pi's storage or bootloader from another computer without needing a working system on the device. On Compute Module 4 and newer it also updates the bootloader EEPROM.\n\nThe default payload, the mass-storage-gadget, is a small Linux initramfs. It scans for SD/eMMC, NVMe and USB block devices and exposes them through configfs as USB mass-storage devices. It also gives a console over UART and USB CDC-UART. The older msd firmware does less: it exposes only the SD/eMMC device, with no console and slower writes.\n\nThe door here is the boot chain itself. Before any operating system exists, the chip's ROM can ask a host for code over USB. How you trigger that mode depends on the board: a jumper (nRPIBOOT/EMMC-DISABLE) on Compute Modules, a GPIO set in OTP on Pi 4B and Pi 400, or holding the power button on Pi 5 and the Pi 500 models.",
+  "install": "brew install rpiboot\n# Homebrew caveat: boot a Compute Module with the default mass storage gadget:\nsudo rpiboot -d \"$(brew --prefix rpiboot)\"/share/rpiboot/mass-storage-gadget64\n# Needs a Raspberry Pi or Compute Module put into USB boot mode, and a USB cable to the host. Depends on libusb.",
+  "try_this": [
+   {
+    "cmd": "rpiboot --help",
+    "what_happens": "Lists the options the tool accepts, with no hardware attached."
+   },
+   {
+    "cmd": "sudo rpiboot -d mass-storage-gadget",
+    "what_happens": "Boots a connected Pi in USB boot mode with the Linux mass-storage-gadget, so its storage appears as a USB drive on the host."
+   },
+   {
+    "cmd": "sudo rpiboot -d msd",
+    "what_happens": "Boots the device with the legacy msd firmware instead, intended for Pi 4 and older."
+   }
+  ],
+  "whats_unique": "The Pi's own boot ROM becomes a USB drive, with a small Linux initramfs doing the work. The same tool also updates bootloader EEPROM and can provision secure boot.",
+  "caveats": "It does nothing without a Raspberry Pi in USB boot mode, it is mainly a Linux tool, and the Pi 4B/Pi 400 GPIO setup permanently modifies OTP and cannot be undone.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "usb",
+   "raspberry-pi",
+   "bootloader",
+   "protocol"
+  ],
+  "links": [
+   {
+    "label": "usbboot repository (homepage and README)",
+    "url": "https://github.com/raspberrypi/usbboot"
+   }
+  ]
+ }
+}

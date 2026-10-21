@@ -1,0 +1,126 @@
+{
+ "name": "deheader",
+ "desc": "Analyze C/C++ files for unnecessary headers",
+ "homepage": "http://www.catb.org/~esr/deheader/",
+ "installs_365d": 122,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "library"
+ ],
+ "why": "Eric Raymond's tool to find unnecessary C headers, a quirky static analysis with a clever trial-and-compile approach.",
+ "brief": {
+  "what_it_is": "deheader is a command-line tool, written by Eric S. Raymond, that analyzes C and C++ source files and reports which #include lines can be removed while the code still compiles. It takes one or more source files or a directory (it recurses, skipping dot-directories), and prints a report of removable headers, duplicate includes, and standard headers that portability may require but that are missing. With -r it also rewrites the sources to delete the unneeded includes. It exits 1 when removable includes are found, 2 when a file could not be compiled and analyzed, and 0 otherwise.",
+  "why_it_exists": "The homepage says it helps find unneeded includes, which can substantially improve compilation time on large C++ projects, and that it sometimes exposes dependencies and cohesions developers did not know about.",
+  "how_it_works": "For each foo.c, foo.cc or foo.cpp, the test is whether \"rm foo.o; make foo.o\" returns a zero status, with the build command overridable via -m. Under CMake (when a CMakeLists.txt is detected) it runs \"make clean\" instead, since foo.o is a phony target there. Inclusions inside #if/#ifdef/#else/#endif blocks are left alone, except headers guarded only by S_SPLINT_S, and each test compile works on a temporary backup of the source that is restored afterward.",
+  "commands_seen": [
+   {
+    "cmd": "deheader [-h] [-m command] [-b builddir] [-i pattern] [-q] [-r] [-v] [-x pattern] [-V] [file-or-dir]",
+    "context": "Synopsis line from the manual page, listing all options."
+   },
+   {
+    "cmd": "rm foo.o; make foo.o",
+    "context": "The per-file test the tool runs: remove the object file and rebuild it; zero exit status means the headers are not needed."
+   },
+   {
+    "cmd": "make clean",
+    "context": "What the tool runs instead of rm foo.o when a CMakeLists.txt is detected."
+   },
+   {
+    "cmd": "-m \"make CFLAGS='-Werror -Wfatal-errors' %s\"",
+    "context": "Suggested build override so that gcc stops on warnings; without this, headers that only declare prototypes look unneeded. The manual says to check with -v -v -v."
+   },
+   {
+    "cmd": "-m 'ninja -C build'",
+    "context": "Example build override for targetless builders such as meson, where %s is omitted so the command runs unchanged."
+   },
+   {
+    "cmd": "-v -v -v",
+    "context": "Verbosity level 3, which shows the make and compile commands actually emitted, used to check the -m build override."
+   }
+  ],
+  "install_notes": "Packaged for Homebrew under the names deheader and deheader-git, and also distributed as deheader-1.13.tar.gz. The docs do not give a runtime or dependency list. The -i and -x options take Python regular expressions, so a Python runtime is probably needed, but the docs do not say so explicitly. You must have a working build of your own project (make by default, or a custom command via -m) before it can run. No account or configuration is needed.",
+  "standout": "The tool does not parse C; it brute-forces the answer by deleting each include and asking the real compiler whether the build still succeeds. It works with any build system the user can describe with a command string.",
+  "status": "Maintained. Homepage and manual are dated 08 Aug 2026 with version 1.13. The Recent Changes list includes several fixes from the last cycle (exit statuses, recoverable source rewriting, option parsing, CMake detection). The manual was last updated 2026-08-08. Repository at gitlab.com/esr/deheader (not fetched).",
+  "caveats": "With -r it rewrites source files, so the docs insist on version control. Builds of your own project leave many binaries behind, and the docs recommend running make clean afterward. It can produce false positives: headers that only declare prototypes look unneeded unless warnings are fatal. Removing headers can break portability on older Unix systems, especially sockets-related headers, though an internal rule table guards some of them. The docs warn that sufficiently perverse C++ (overloads, template specializations spread across files) can change behavior silently. The docs say it may occasionally remove a header a build needs. The author's Patreon and SubscribeStar links are present, but the license name was not read (COPYING exists). The tool is built around make and CMake, so other build systems need a manual -m string.",
+  "quotes": [
+   "Find and optionally remove unneeded includes in C or C++ sourcefiles.",
+   "Don\u2019t use this option unless you have your sourcefiles safely under version control and can revert!",
+   "Simply revert the altered files and continue."
+  ],
+  "links": [
+   {
+    "label": "Homepage and resource page",
+    "url": "http://www.catb.org/~esr/deheader/"
+   },
+   {
+    "label": "Manual page (deheader.html)",
+    "url": "http://www.catb.org/~esr/deheader/deheader.html"
+   },
+   {
+    "label": "Source repository (GitLab)",
+    "url": "https://gitlab.com/esr/deheader"
+   }
+  ],
+  "fetch_log": [
+   "http://www.catb.org/~esr/deheader/ \u2014 fetched OK; resource page for deheader 1.13 with summary, recent changes and links.",
+   "http://www.catb.org/~esr/deheader/deheader.html \u2014 fetched OK; full manual page with synopsis, options, return values and bugs."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Its compiler-oracle approach\u2014remove each include and test the real build\u2014makes dependency analysis a surprisingly hands-on experiment, not just another static checker."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "deheader",
+  "tldr": "Eric Raymond's tool finds unneeded #include lines in C and C++ by deleting each one and asking your real compiler whether the build still passes.",
+  "deeper_look": "deheader takes C or C++ source files, or a directory it recurses through, and reports which #include lines can go. It also flags duplicate includes and standard headers that portability may require but that are missing. With -r it rewrites the sources to delete the unneeded includes. The exit status is 1 when removable includes are found, 2 when a file could not be compiled and analyzed, and 0 otherwise.\n\nThe homepage says the point is to find unneeded includes, which can substantially improve compilation time on large C++ projects. It also says the exercise sometimes exposes dependencies and cohesions developers did not know about.\n\nThe tool does not parse C. For each foo.c, foo.cc or foo.cpp, it removes an include, then runs the equivalent of `rm foo.o; make foo.o`. A zero exit status means that header was not needed. When it detects a CMakeLists.txt it runs `make clean` instead, since foo.o is a phony target there. Each trial works on a temporary backup of the source, restored afterward. Includes inside #if/#ifdef/#else/#endif blocks are left alone.\n\nThe idea underneath is to use the compiler as an oracle instead of reimplementing it. Because the build command is just a string you can override with -m, the approach works with any build system you can describe on a command line.",
+  "install": "brew install deheader\n# You need a working build of your own C/C++ project first (make by default, or a custom command via -m). The docs do not list a runtime, but the -i and -x options take Python regular expressions, so Python is probably needed.",
+  "try_this": [
+   {
+    "cmd": "deheader --help",
+    "what_happens": "Prints the usage line and the options: -m, -b, -i, -q, -r, -v, -x, -V."
+   },
+   {
+    "cmd": "deheader -m \"make CFLAGS='-Werror -Wfatal-errors' %s\" -v -v -v .",
+    "what_happens": "Runs the analysis over the current directory with warnings made fatal, so headers that only declare prototypes are not wrongly marked unneeded. -v -v -v prints the commands actually run so you can check the override."
+   },
+   {
+    "cmd": "deheader -m 'ninja -C build' .",
+    "what_happens": "Uses a custom build command for targetless builders such as meson; %s is omitted so the command runs unchanged."
+   }
+  ],
+  "whats_unique": "It brute-forces the answer by deleting each include and asking the real compiler whether the build survives, rather than analyzing the code itself. That makes it work with whatever build command you can write down.",
+  "caveats": "With -r it rewrites your sources, so keep them under version control; it can also give false positives, and the docs warn that perverse C++ (overloads, template specializations spread across files) can change behavior silently.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "c",
+   "c++",
+   "static-analysis",
+   "build",
+   "includes"
+  ],
+  "links": [
+   {
+    "label": "Homepage and resource page",
+    "url": "http://www.catb.org/~esr/deheader/"
+   },
+   {
+    "label": "Manual page (deheader.html)",
+    "url": "http://www.catb.org/~esr/deheader/deheader.html"
+   },
+   {
+    "label": "Source repository (GitLab)",
+    "url": "https://gitlab.com/esr/deheader"
+   }
+  ]
+ }
+}

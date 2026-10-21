@@ -1,0 +1,69 @@
+{
+ "name": "utftex",
+ "desc": "Pretty print math in monospace fonts, using a TeX-like syntax",
+ "homepage": "https://github.com/bartp5/libtexprintf",
+ "installs_365d": 606,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "tui",
+  "visual"
+ ],
+ "why": "Turns TeX-style math syntax into monospace terminal art, a transform from notation to text layout that is fun to poke at.",
+ "brief": {
+  "what_it_is": "utftex is a command-line program, built on the libtexprintf C library, that pretty-prints TeX-style math as UTF-8 text for monospace terminals. It takes a LaTeX-like math string as an argument and prints a multi-line rendering with fractions, arrays and boxes drawn in box-drawing and Unicode symbols. A companion program, utfstringinfo, reads a string (arguments or stdin) and lists each character's UTF-8 bytes, Unicode code point, and the utftex command that produces it, if any. The library exposes the same rendering through a printf-style C/C++ API, and an npm package provides a Node.js binding.",
+  "why_it_exists": "The author wants the math capabilities of Unicode to be usable in monospace text applications, and says the project was inspired by asciiTeX and its fork but supports much more TeX syntax and includes extensive Unicode tables mapping LaTeX commands to symbols.",
+  "how_it_works": "The library parses a TeX-like math syntax and lays out the result as text, using Unicode symbols for operators, Greek letters, and style variants such as mathematical italic or script, plus combining marks such as the vector arrow for \\vec. Large tables map LaTeX commands to Unicode code points. The README does not describe the parser or layout algorithm in more detail.",
+  "commands_seen": [
+   {
+    "cmd": "utftex '\\frac{\\alpha}{\\beta+x}'",
+    "context": "Basic example from the README; renders a fraction with alpha over beta+x as a three-line box. The README shows the leading shell prompt, which is omitted here."
+   },
+   {
+    "cmd": "utftex -F mathnormal '\\frac{1}{a+x}'",
+    "context": "Uses the -F flag to choose the mathnormal style, which renders the variables as Unicode mathematical italic letters."
+   },
+   {
+    "cmd": "utftex '\\vec x'",
+    "context": "Shows a combining diacritical mark: the output is x with a combining arrow above it."
+   },
+   {
+    "cmd": "utftex '\\begin{array}{|l|l|} \\hline f(t) & \\mathscr{L}[f(t)]=F(s) \\\\\\hline 1 & \\frac{1}{s} \\\\\\hline ... \\end{array}'",
+    "context": "A longer Laplace-transform table using array, hline, frac, delimiters and integral syntax. The README's example is abbreviated with an ellipsis here, and its rows are shown with line breaks in the original."
+   },
+   {
+    "cmd": "npm install libtexprintf",
+    "context": "Installs the Node.js binding that links libtexprintf into Node."
+   }
+  ],
+  "install_notes": "The README gives no build or install steps for the C library or the utftex binary beyond what the package manager provides. For the Node binding, run npm install libtexprintf, then import loadInstance and createRender from the package and call render on a LaTeX string; the README points to an npmjs directory in the repo for more detail. The main setup need is a monospace font with good Unicode coverage, since symbol alignment depends on it. The README recommends JuliaMono and, for fontconfig users, gives a fonts.conf snippet that sets a fallback monospace family.",
+  "standout": "The tool is a notation-to-text layout engine that uses the Unicode tables as its vocabulary, so a formula can be drawn with box characters and Unicode symbols in an ordinary terminal. The utfstringinfo companion works in reverse, telling you which utftex command produces each character.",
+  "status": "unknown. The README has a CI badge pointing to GitHub Actions, and it names several downstream projects, but it shows no release date, version number, or last commit date. I did not fetch the commit history or release page, so I cannot say whether it is current.",
+  "caveats": "Rendering quality depends on the monospace font. The README says misaligned tables mean the font is not monospace, and that symbols missing from the font or drawn by a variable-width fallback will misalign. Combining marks are a common failure point. utftex outputs UTF-8 and cannot change the font, so its styling is limited to Unicode characters that exist as styled letters. The README does not state the license, and I saw no platform list beyond the mention of a monospace font.",
+  "quotes": [
+   "The utftex program and underlying libtexprintf library provide tools to pretty print math in mono-space fonts, using a tex-like syntax.",
+   "Note that how the equations look depends strongly on the font you use.",
+   "Use libtexprintf/utftex to unlock the math capabilities of Unicode in mono-space text applications."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub README)",
+    "url": "https://github.com/bartp5/libtexprintf"
+   },
+   {
+    "label": "JuliaMono, the font the README recommends",
+    "url": "https://juliamono.netlify.app/"
+   },
+   {
+    "label": "monospacifier, a tool to make a monospace font from a variable-width one",
+    "url": "https://github.com/cpitclaudel/monospacifier"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/bartp5/libtexprintf: fetched OK, README returned in full; no further fetches needed"
+  ]
+ }
+}

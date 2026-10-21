@@ -1,0 +1,156 @@
+{
+ "name": "tkey-ssh-agent",
+ "desc": "SSH agent for use with the TKey security stick",
+ "homepage": "https://tillitis.se/",
+ "installs_365d": 134,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "protocol",
+  "afternoon"
+ ],
+ "why": "Routes SSH authentication through a hardware security stick with open firmware, an interesting look at how key material gets isolated.",
+ "brief": {
+  "what_it_is": "tkey-ssh-agent is an OpenSSH-compatible SSH agent that uses the Tillitis TKey, a compact USB-C security token, to make SSH signatures. It runs as a daemon that listens on a Unix socket (or a named pipe on Windows), and OpenSSH clients reach it through the SSH_AUTH_SOCK environment variable. The agent loads a signer app onto the TKey, which performs the signing, so the private key stays on the stick. The agent also prints the public key with --show-pubkey, which you can paste into ~/.ssh/authorized_keys. The README calls it the TKey SSH Agent and says it is for use with the TKey USB security token.",
+  "why_it_exists": "The README gives no separate problem statement. The homepage frames TKey as a device that provides a secure and isolated environment for specialized applications, with Authentication among its named uses, and says applications run one at a time in complete isolation. This agent is one application built on that idea.",
+  "how_it_works": "The agent auto-detects the TKey, or takes a serial port via --port. It loads the signer device app onto the TKey and derives the key pair from the signer app binary, the USS (User-Supplied Secret) and the UDS in the USB stick, so changing any of those changes the key pair. Signatures need a physical touch on the TKey by default, and the agent shows touch notifications. The README says the agent does not keep its own key material, but its own description of the mechanism is brief and it does not spell out the wire protocol.",
+  "commands_seen": [
+   {
+    "cmd": "go install github.com/tillitis/tkey-ssh-agent/cmd/tkey-ssh-agent@latest",
+    "context": "Install method suggested when no OS package exists; puts the binary in $GOBIN, but skips the version stamp and the manual page, udev rules and systemd unit."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "From a source build, installs the agent and the udev rules; the Makefile shows where files go."
+   },
+   {
+    "cmd": "sudo make reload-rules",
+    "context": "Reloads udev rules after make install so the TKey is picked up."
+   },
+   {
+    "cmd": "./tkey-ssh-agent -a ./agent.sock --port /dev/pts/1",
+    "context": "Starts the agent listening on ./agent.sock, using the given port; needed when more than one TKey is found or when running under QEMU."
+   },
+   {
+    "cmd": "SSH_AUTH_SOCK=/path/to/agent.sock ssh -F /dev/null localhost",
+    "context": "Test login to localhost through the agent; -F /dev/null ignores ~/.ssh/config."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the agent from source with Go and make; the signer binary is embedded."
+   },
+   {
+    "cmd": "make TKEY_SIGNER_APP_NO_TOUCH=yesplease",
+    "context": "Builds with the touch requirement disabled; the README says this must be set when building the signer and client apps too."
+   },
+   {
+    "cmd": "podman pull ghcr.io/tillitis/tkey-builder:4",
+    "context": "Fetches the tkey-builder container image, the project's recommended build environment, before running make podman."
+   },
+   {
+    "cmd": "make tkey-ssh-agent.exe",
+    "context": "Builds a Windows executable from source."
+   },
+   {
+    "cmd": "winget install GnuPG.Gpg4win",
+    "context": "Installs the pinentry program the Windows build uses to ask for the User-Supplied Secret when --uss is set."
+   },
+   {
+    "cmd": "$env:SSH_AUTH_SOCK = '\\\\.\\pipe\\tkey-ssh-agent'",
+    "context": "PowerShell line that points the native Windows ssh.exe at the agent's named pipe for the current session."
+   }
+  ],
+  "install_notes": "The brew caveat, which is not from the README, says to add export SSH_AUTH_SOCK=\"$HOMEBREW_PREFIX/var/run/tkey-ssh-agent.sock\" to ~/.zshrc and/or ~/.bashrc. Building from source needs Go and make; the README also documents a podman-based tkey-builder route. On Linux, udev rules (system/60-tkey.rules) give automatic TKey detection, and a systemd user unit is optional. On Windows, the agent can run as a tray app or a console app, and an MSI installer exists. Git-for-Windows users can point core.sshCommand at the system ssh.exe. A TKey device is required.",
+  "standout": "The key is derived from the signer app binary plus the device's secrets, so the SSH identity is tied to exact firmware and app versions. The README warns that changing any of them produces a new key pair. This makes the signer app's identity part of the SSH identity, which is a different trust model from a stored key file.",
+  "status": "Probably maintained, but the fetched pages show no dates. The GitHub repo has a CI badge, and docs/release_notes.md has an 'Upcoming release' section listing unreleased changes, including a BSD-2-Clause license change and a macOS change that drops the pinentry dependency. The most recent tagged release in those notes is v1.1.0. The homepage blog carries tkeyclient releases and a security advisory that is probably recent but undated in what I fetched. Commit dates and release dates were not visible.",
+  "caveats": "The README warns: 'Please use tagged releases for any real use.' Development on main can change the signer app version and so change the SSH key pair. Cross-compiling for darwin does not work because of the go.bug.st/serial dependency, so macOS builds need to be made on macOS. The project ships a pre-compiled signer binary, and a build fails if its SHA-512 digest does not match. Setting TKEY_SIGNER_APP_NO_TOUCH removes the physical touch requirement, which is a security trade-off. The homepage notes an advisory for tkeyclient v1.2.0 and earlier, and the release notes say v1.1.0 changed keys because of a vulnerability, so check that you are on a current version. The license was GPL-2.0 until Oct 22, 2024 and is BSD-2-Clause now.",
+  "quotes": [
+   "tkey-ssh-agent is an OpenSSH-compatible agent for use with the Tillitis TKey USB security token.",
+   "Please use tagged releases for any real use. Development on main might mean we change which version of the signer device app we use which would cause the SSH key pair to change!",
+   "Applications are loaded onto TKey and run one at a time in complete isolation, preventing access to the secrets of other applications."
+  ],
+  "links": [
+   {
+    "label": "Tillitis homepage",
+    "url": "https://tillitis.se/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/tillitis/tkey-ssh-agent"
+   },
+   {
+    "label": "Release notes",
+    "url": "https://github.com/tillitis/tkey-ssh-agent/blob/main/docs/release_notes.md"
+   },
+   {
+    "label": "Tillitis app page for the agent (linked from README, not fetched)",
+    "url": "https://tillitis.se/app/tkey-ssh-agent/"
+   }
+  ],
+  "fetch_log": [
+   "https://tillitis.se/ - worked, but it is the company homepage and does not describe the agent itself; it supplied the TKey isolation and measured-boot framing and the tkeyclient advisory",
+   "https://github.com/tillitis/tkey-ssh-agent - worked, returned the README",
+   "https://github.com/tillitis/tkey-ssh-agent/blob/main/docs/release_notes.md - worked, returned the release notes with version history but no dates"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It offers more than a hardware-backed SSH agent: the key identity depends on the signer app and device secrets, exposing an unusual trust model worth exploring."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "tkey-ssh-agent",
+  "tldr": "An SSH agent that signs logins on a Tillitis TKey USB stick, deriving the key from the signer app's own binary so no key file exists.",
+  "deeper_look": "tkey-ssh-agent is an OpenSSH-compatible agent that runs as a daemon on a Unix socket (a named pipe on Windows). OpenSSH finds it through `SSH_AUTH_SOCK`. When asked to sign, the agent loads a small signer app onto the TKey, a compact USB-C security token, and the stick does the signing. The agent keeps no key material of its own. `--show-pubkey` prints the public key for pasting into `~/.ssh/authorized_keys`.\n\nThe interesting part is where the key comes from. There is no key file to generate or back up. The key pair is derived from the signer app binary, an optional User-Supplied Secret (USS), and a unique secret inside the stick (the UDS). Change any of the three and you get a different key pair. By default, each signature needs a physical touch on the stick.\n\nThe underlying idea comes from the TKey itself. The Tillitis homepage describes it as providing a secure, isolated environment for specialized apps, with authentication as one named use. In its words: \"Applications are loaded onto TKey and run one at a time in complete isolation, preventing access to the secrets of other applications.\" This agent is one such application. The signer app's identity becomes part of your SSH identity, which is a different trust model from a key file on disk.",
+  "install": "brew install tkey-ssh-agent\n# then add to ~/.zshrc and/or ~/.bashrc:\nexport SSH_AUTH_SOCK=\"$HOMEBREW_PREFIX/var/run/tkey-ssh-agent.sock\"\n# requires a Tillitis TKey device; brew also pulls in pinentry-mac",
+  "try_this": [
+   {
+    "cmd": "tkey-ssh-agent --help",
+    "what_happens": "Lists the agent's options, including the socket path and serial port flags."
+   },
+   {
+    "cmd": "./tkey-ssh-agent -a ./agent.sock --port /dev/pts/1",
+    "what_happens": "Starts the agent on a local socket using a specific port, needed when several TKeys are plugged in or when running under QEMU."
+   },
+   {
+    "cmd": "SSH_AUTH_SOCK=/path/to/agent.sock ssh -F /dev/null localhost",
+    "what_happens": "Tests a login to localhost through the agent, ignoring your ssh config."
+   }
+  ],
+  "whats_unique": "The SSH key is derived from the signer app binary plus the device's secrets, so the exact app and firmware versions are part of the identity. There is no stored key file.",
+  "caveats": "Needs a TKey device; the README says to use tagged releases for real use because changes on main can change your key pair, and older versions had a vulnerability, so keep it current.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "ssh",
+   "security-key",
+   "usb",
+   "isolation"
+  ],
+  "links": [
+   {
+    "label": "Tillitis homepage",
+    "url": "https://tillitis.se/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/tillitis/tkey-ssh-agent"
+   },
+   {
+    "label": "Release notes",
+    "url": "https://github.com/tillitis/tkey-ssh-agent/blob/main/docs/release_notes.md"
+   },
+   {
+    "label": "Tillitis app page for the agent",
+    "url": "https://tillitis.se/app/tkey-ssh-agent/"
+   }
+  ]
+ }
+}

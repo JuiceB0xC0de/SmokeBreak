@@ -1,0 +1,82 @@
+{
+ "name": "luajit",
+ "desc": "Just-In-Time Compiler (JIT) for the Lua programming language",
+ "homepage": "https://luajit.org/luajit.html",
+ "installs_365d": 546848,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language",
+  "library"
+ ],
+ "why": "A famously fast JIT for Lua with a fascinating internals story, but widely used and somewhat familiar.",
+ "brief": {
+  "what_it_is": "LuaJIT is a just-in-time compiler for the Lua programming language, and it ships as a standalone interpreter/runtime. You give it Lua source or bytecode and it runs the program, compiling hot code paths to machine code while it runs. The Homebrew formula installs two executables, luajit and luajit-2.1.1791890110. The project is API-compatible with Lua 5.1, so existing Lua 5.1 embeddings can usually switch to it by relinking.",
+  "why_it_exists": "The homepage frames it as a fast, low-footprint way to run Lua, pitched at embedding in games, appliances, network and graphics apps, numerical simulations and trading platforms, and says it has been in continuous development since 2005. The page presents LuaJIT as a rewrite of the whole VM for LuaJIT 2.0 aimed at closing the performance gap between dynamic languages and offline static compilers.",
+  "how_it_works": "The homepage says the VM has a high-speed interpreter written in assembler plus a trace compiler with SSA-based optimizations and tuned code generation backends. The JIT is what turns hot traces into machine code. The install page adds that the JIT is disabled on iOS because iOS apps may not generate code at runtime, and that consoles get only the interpreter, with the FFI also disabled there.",
+  "commands_seen": [
+   {
+    "cmd": "make && sudo make install",
+    "context": "Quick build-and-install line the install page gives 'for the impatient (on POSIX systems)'."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds a native binary for the host OS using the Makefile; GNU Make is required."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs to /usr/local by default, so bin goes in /usr/local/bin; needs root."
+   },
+   {
+    "cmd": "make PREFIX=/home/myself/lj2",
+    "context": "Build with a custom prefix for module search paths; the same PREFIX must be used at install time."
+   },
+   {
+    "cmd": "MACOSX_DEPLOYMENT_TARGET=XX.YY make",
+    "context": "Required environment variable on macOS, set to a deployment target your toolchain supports."
+   },
+   {
+    "cmd": "make amalg PREFIX=/usr && make install PREFIX=/usr DESTDIR=/tmp/buildroot",
+    "context": "The page's 'tl;dr' for distribution maintainers: amalgamated single-file core build, then install into a staging tree."
+   },
+   {
+    "cmd": "mingw32-make",
+    "context": "Builds LuaJIT under MinGW from the git checkout's directory, with MinGW on the PATH."
+   },
+   {
+    "cmd": "msvcbuild",
+    "context": "Run from the src directory in a Visual Studio Command Prompt to build with MSVC."
+   },
+   {
+    "cmd": "make HOST_CC=\"gcc -m32\" CROSS=arm-linux-gnueabihf-",
+    "context": "Example cross-build for an ARM hard-float target; the page lists several similar CROSS= examples for other targets."
+   }
+  ],
+  "install_notes": "The project distributes only source code, so you build it yourself from the git repository; the install page does not describe a binary download. POSIX builds need GNU Make and a GCC or Clang toolchain (on Debian/Ubuntu, build-essential). Windows builds need either MinGW or Visual Studio/MSVC. On Windows you copy luajit.exe and lua51.dll into a folder with lua and lua\\jit subdirectories; modules load relative to the executable and there are no hardcoded absolute paths. Cross-compiling needs a toolchain for both host and target, and the page warns that the CPU or float-ABI flags must match the target. The install page does not say anything about accounts, runtimes or first-run configuration. Homebrew's formula is a separate path, and the brew caveats field was empty.",
+  "standout": "The interpreter is hand-written in assembler, and the JIT is a trace compiler with SSA optimizations, which is more unusual than a method JIT. The project also builds in a bit.* module and an FFI for calling C directly from Lua, and both are things most Lua-family runtimes do not include. The scout note calls it familiar, and that holds for the Lua world, but the trace-compiler design is less common than the name suggests.",
+  "status": "Maintained, with weak evidence. Both pages carry a copyright range running through 2026 and the homepage describes ongoing development since 2005. I did not see a release date, a latest version number or a commit date on the pages I read, so I can't confirm the most recent activity.",
+  "caveats": "The JIT is disabled on iOS (Apple's rules forbid runtime code generation) and on game consoles, which get only the interpreter; the page says this is still faster than plain Lua but much slower than the JIT. The FFI is also disabled on consoles. It targets Lua 5.1 semantics, not later Lua versions. The documentation is for LuaJIT 2.1 and the page points to per-branch doc directories for other versions. No prebuilt binaries are offered on the install page, and cross-compiling demands matching toolchains and CPU flags. The homepage's 'More...' link and the Status page were not read.",
+  "quotes": [
+   "LuaJIT is a Just-In-Time Compiler (JIT) for the Lua programming language.",
+   "LuaJIT is only distributed as source code \u2014 get it from the git repository.",
+   "Please complain to Apple, not me. Or use Android. :-p"
+  ],
+  "links": [
+   {
+    "label": "LuaJIT homepage",
+    "url": "https://luajit.org/luajit.html"
+   },
+   {
+    "label": "Installation guide",
+    "url": "https://luajit.org/install.html"
+   }
+  ],
+  "fetch_log": [
+   "https://luajit.org/luajit.html: fetched OK, a documentation site page rather than a GitHub README; it has overview text but no command lines.",
+   "https://luajit.org/install.html: fetched OK, contains the build and install commands and platform notes."
+  ]
+ }
+}

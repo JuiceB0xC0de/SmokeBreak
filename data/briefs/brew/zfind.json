@@ -1,0 +1,88 @@
+{
+ "name": "zfind",
+ "desc": "Search for files (even inside tar/zip/7z/rar) using a SQL-WHERE filter",
+ "homepage": "https://github.com/laktak/zfind",
+ "installs_365d": 88,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "tui"
+ ],
+ "why": "Searching inside tar, zip and rar archives with SQL WHERE filters is a neat twist on find.",
+ "brief": {
+  "what_it_is": "zfind is a command-line file finder written in Go. You give it a filter written in SQL WHERE-clause syntax, plus optional paths, and it prints matching files. Unlike find, it also looks inside tar, zip, 7z and rar archives, treating archive contents as searchable entries with properties such as name, size, date, ext, type and archive. Output can be a plain list, a long listing with -l, CSV with --csv or --csv-no-head, or NUL-separated with -0 for piping into xargs. The README says it does not implement find-style actions and expects you to pipe results into other commands.",
+  "why_it_exists": "The README says that if you know SQL you should not have to learn or remember any new syntax to find files. It presents the SQL-WHERE filter as the main idea and archive search as the added capability.",
+  "how_it_works": "Each filter is parsed into a WHERE-style expression over file properties (name, path, container, size, date, time, ext, ext2, type, archive) and evaluated against every entry found. Archive contents are read directly, so you can filter inside them without extracting, though the README notes that 'not archive' in a query still makes zfind open the archive. The -n or --no-archive flag turns archive support off.",
+  "commands_seen": [
+   {
+    "cmd": "zfind 'size<10k'",
+    "context": "Finds files smaller than 10KB in the current path."
+   },
+   {
+    "cmd": "zfind 'size between 1M and 1G' /some/path",
+    "context": "Finds files in a size range within /some/path."
+   },
+   {
+    "cmd": "zfind 'date<\"2010\" and archive=\"tar\"'",
+    "context": "Finds files modified before 2010 inside a tar archive."
+   },
+   {
+    "cmd": "zfind 'name like \"foo%\" and date=today'",
+    "context": "Finds files whose names start with foo and that were modified today; LIKE uses % as a wildcard."
+   },
+   {
+    "cmd": "zfind 'name rlike \"(.*-){2}\"'",
+    "context": "Finds files whose names contain two dashes, using a regular expression via RLIKE."
+   },
+   {
+    "cmd": "zfind 'ext in (\"jpg\",\"jpeg\")'",
+    "context": "Finds files with the extension .jpg or .jpeg."
+   },
+   {
+    "cmd": "zfind 'name=\"README.md\"' -l",
+    "context": "Finds all README.md files and shows them in long listing format."
+   },
+   {
+    "cmd": "zfind --csv",
+    "context": "Shows results as CSV, with a header row."
+   },
+   {
+    "cmd": "zfind --no-archive 'name like \"%.txt\"' -0 | xargs -0 -L1 echo",
+    "context": "The README's pattern for acting on results: skip archives, emit NUL-separated paths, and hand them to xargs."
+   },
+   {
+    "cmd": "brew install zfind",
+    "context": "Homebrew install on macOS and Linux."
+   }
+  ],
+  "install_notes": "Other routes: a setup script via 'curl https://laktak.github.io/zfind.sh|bash', which installs to ~/.local/bin and warns if that is not on PATH (the README advises reading the script before piping it to bash); a manual download from the GitHub releases page; an Arch Linux AUR package via 'paru -S zfind'; or building with Go, either 'go install github.com/laktak/zfind/cmd/zfind@latest' or cloning and running scripts/build. Prerelease builds are on the GitHub Actions page. The setup is a plain binary with no accounts or runtime config. The only config is the NO_COLOR environment variable to turn off colour.",
+  "standout": "Archive contents are queried as ordinary rows with the same WHERE syntax, so one query can cover loose files and files inside tar, zip, 7z and rar archives. Plain find cannot do that, and the SQL-style filter is the feature the README leads with.",
+  "status": "unknown. The README has no release dates, changelog, or last-commit information, and I did not fetch the releases or commit pages. It does mention a Codeberg mirror, a Homebrew formula, an AUR package, and pkg.go.dev docs, which suggests active packaging, but I cannot confirm recency from what I read.",
+  "caveats": "Supported archive formats are limited to tar (including gz, bz2 and xz variants), zip, 7z and rar. The README does not list platforms beyond macOS, Linux and the Go build. Searching inside archives means reading them, which costs time on large files; 'not archive' does not avoid opening them. The docs have a few quoting errors in examples, such as '\"name like \"z%\"' with a stray double quote, so copy queries from the working examples. Licence is not mentioned in the README and I did not check it. The curl-to-bash installer is the README's suggested route, and the README itself advises reviewing it first.",
+  "quotes": [
+   "zfind allows you to search for files, including inside tar, zip, 7z and rar archives.",
+   "if you know SQL, you don't have to learn or remember any new syntax just for this tool.",
+   "zfind does not implement actions like find, instead use xargs -0 to execute commands:"
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repo)",
+    "url": "https://github.com/laktak/zfind"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/laktak/zfind/releases"
+   },
+   {
+    "label": "Go package docs for filter",
+    "url": "https://pkg.go.dev/github.com/laktak/zfind/filter"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/laktak/zfind: worked, README returned in full (usage, where syntax, properties, archives, actions, config, installation, Go module). No further fetches were needed."
+  ]
+ }
+}

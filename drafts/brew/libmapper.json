@@ -1,0 +1,91 @@
+{
+ "name": "libmapper",
+ "desc": "Distributed system for media control mapping",
+ "homepage": "http://www.libmapper.org",
+ "installs_365d": 82,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "network",
+  "audio",
+  "afternoon",
+  "library"
+ ],
+ "why": "A distributed mapping system linking control signals across instruments and software, a fascinating model of live performance wiring.",
+ "brief": {
+  "what_it_is": "libmapper is an open-source, cross-platform C library for declaring data signals on a shared network and creating arbitrary connections, called mappings, between them. A mapping streams data from one or more source signals to a destination signal, over shared memory or Open Sound Control (OSC) across a network. The library handles address and datatype translation and lets you write mathematical expressions to condition, combine and transform source values. Its README gives the example of connecting a set of sensors to a synthesizer's input parameters.",
+  "why_it_exists": "It began as a tool for composers and performers to connect custom-built instruments, such as Arduino-based controllers, to sound synthesizers, and it was first written in Max/MSP before being re-implemented in C. The author wanted to change OSC mappings at runtime, including scaling, derivatives, integration, filtering and smoothing, and the project was built to avoid any master node or central device database.",
+  "how_it_works": "Devices announce their signals over a multicast UDP port that all nodes listen on, and a collision-handling protocol on that port assigns each device a unique ID. Signal data then travels directly peer-to-peer from sender to receiver over UDP or TCP, with the transport configurable at runtime. Convergent (many-to-one) mappings and signal instancing are supported, and the README says the peer-to-peer design may be redundant when many nodes subscribe to one signal.",
+  "commands_seen": [],
+  "install_notes": "Install via Homebrew, PyPI, NuGet or crates.io, or download source and binaries from libmapper.org or idmil.org. Building from source uses autogen.sh and configure.ac or CMakeLists.txt, and there is a windows_build.ps1 for Windows. The only required dependency is liblo (LGPL). Python, Java (openjdk), and C# (.NET) bindings are optional and need their own toolchains. Separate documentation in the doc folder covers building and the API tutorials, which I did not open.",
+  "standout": "Mappings are first-class and can be rewired at runtime, with a built-in expression language for signal conditioning, and there is no central broker. It is positioned as an open-source alternative to commercial tools like Osculator, and it has been built into hardware instruments such as the T-Stick and the Maplet Eurorack module.",
+  "status": "Probably maintained. The GitHub repo shows about 3,617 commits, CI workflows under .github/workflows, and a current-looking package set across several registries. I could not see a last-release date or last-commit date in the fetched pages, so I can't confirm recency more precisely.",
+  "caveats": "The library is LGPL-2.1 (the homepage says 2.1 or later). The README says commercial use is allowed only if the library stays dynamically linked, and other uses need an agreement with the authors. Data types are limited to homogeneous numeric vectors (integer, float, double), so structured data and images are not supported directly. The README says the time-based history syntax in expressions is not yet usable. Peer-to-peer delivery can duplicate traffic when many nodes subscribe to a signal. The homepage is a short plain-HTML page, so most of the detail above comes from the GitHub README.",
+  "quotes": [
+   "A library for connecting things.",
+   "This library is a system for representing input and output signals on a network and allowing arbitrary \"mappings\" to be dynamically created between them.",
+   "We specifically wanted to avoid keeping a \"master\" node which is responsible for arbitrating connections or republishing data"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "http://www.libmapper.org"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/libmapper/libmapper"
+   },
+   {
+    "label": "IDMIL software page for libmapper",
+    "url": "http://idmil.org/software/libmapper"
+   }
+  ],
+  "fetch_log": [
+   "http://www.libmapper.org - worked. Short plain-HTML summary page with the 'What is libmapper?' paragraph and no install or command details.",
+   "https://github.com/libmapper/libmapper - worked. Returned the full README (README.markdown) with history, features, limitations, license and dependencies, plus the repo sidebar showing LGPL-2.1, 95 stars, and 3,617 commits. The doc/ folder was listed but not fetched."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A decentralized live signal network with runtime-rewirable mappings and built-in expression-based signal processing is a distinctive tool for instruments and creative systems."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "libmapper",
+  "tldr": "A C library where instruments and software announce signals on a network, and mappings between them can be rewired at runtime with no central broker.",
+  "deeper_look": "libmapper lets a program declare data signals, such as a sensor reading or a synth parameter, on a shared network. Anyone can then create a mapping from one or more source signals to a destination signal. Mappings run over shared memory or Open Sound Control (OSC) across a network. The library handles address and datatype translation, and a small expression language can scale, combine, differentiate, integrate, filter or smooth values along the way.\n\nIt began as a tool for composers and performers who build their own instruments, such as Arduino-based controllers, and want to connect them to sound synthesizers. It was first written in Max/MSP and later re-implemented in C. The author wanted to change OSC mappings while a piece was running, instead of hard-coding them into patches.\n\nThe idea underneath is that the wiring between devices is data you can change, not code. In its own words, the authors \"specifically wanted to avoid keeping a 'master' node which is responsible for arbitrating connections or republishing data\". Devices announce themselves on a shared multicast UDP port, and a collision-handling protocol gives each one a unique ID. Signal data then flows directly peer-to-peer over UDP or TCP. Nothing sits in the middle holding a device database.\n\nThat model has reached hardware: the README's standout examples are the T-Stick instrument and the Maplet Eurorack module. It is also positioned as an open-source alternative to commercial tools like Osculator.",
+  "install": "brew install libmapper\n# Only liblo is required. Python, Java and C# bindings are optional and need their own toolchains. Also available via PyPI, NuGet and crates.io.",
+  "try_this": [],
+  "whats_unique": "Mappings are first-class objects that can be rewired at runtime, with a built-in expression language for signal conditioning and no central broker. Most OSC routing tools assume a hub.",
+  "caveats": "The Homebrew formula installs no executables, so this is a library you write code against. Data is limited to numeric vectors, and the README says commercial use requires keeping it dynamically linked.",
+  "commitment": "afternoon",
+  "category": "sound-and-live-coding",
+  "tags": [
+   "afternoon",
+   "osc",
+   "networking",
+   "library",
+   "instruments",
+   "c",
+   "live-performance"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "http://www.libmapper.org"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/libmapper/libmapper"
+   },
+   {
+    "label": "IDMIL software page for libmapper",
+    "url": "http://idmil.org/software/libmapper"
+   }
+  ]
+ }
+}

@@ -1,0 +1,89 @@
+{
+ "name": "vhs",
+ "desc": "Your CLI home video recorder",
+ "homepage": "https://github.com/charmbracelet/vhs",
+ "installs_365d": 7963,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "tui",
+  "visual"
+ ],
+ "why": "Scripts terminal sessions into GIF recordings from a tape file; clever, but mostly a recording tool.",
+ "brief": {
+  "what_it_is": "VHS is a command-line tool that scripts a terminal session and records it. You write a plain-text .tape file listing commands such as Type, Enter, Sleep, Wait and Set, and VHS runs them in its own virtual terminal while capturing frames. The output is a GIF by default, and the README also lists MP4, WebM, a PNG frame directory, and .txt or .ascii text files for golden-file testing. The README also covers recording a tape from a live session (vhs record), publishing a GIF to vhs.charm.sh, and running a self-hosted SSH server.",
+  "why_it_exists": "The README frames it as a way to \"Write terminal GIFs as code for integration testing and demoing your CLI tools.\" Keeping the demo in a versioned tape file means it can be regenerated in CI instead of being re-recorded by hand.",
+  "how_it_works": "Each tape command is an instruction for VHS to perform on its virtual terminal, and the README says Set commands must sit at the top of the file. The README does not explain the internals in detail, but it lists ttyd and ffmpeg as required programs that must be on PATH. Wait takes a regex and a scope (Line or Screen), and Sleep holds the recording while something like a spinner runs.",
+  "commands_seen": [
+   {
+    "cmd": "vhs new demo.tape",
+    "context": "Creates a new .tape file to start from."
+   },
+   {
+    "cmd": "vhs demo.tape",
+    "context": "Feeds a tape file into VHS, which renders the GIF named by its Output line."
+   },
+   {
+    "cmd": "vhs record > cassette.tape",
+    "context": "Records your terminal actions into a tape file; run exit to stop recording."
+   },
+   {
+    "cmd": "vhs cassette.tape",
+    "context": "Generates the GIF from a tape file that was recorded or hand-edited."
+   },
+   {
+    "cmd": "vhs publish demo.gif",
+    "context": "Uploads a GIF to vhs.charm.sh and returns browser, HTML and Markdown links."
+   },
+   {
+    "cmd": "vhs serve",
+    "context": "Starts the built-in SSH server for self-hosting VHS."
+   },
+   {
+    "cmd": "ssh vhs.example.com < demo.tape > demo.gif",
+    "context": "Example of sending a tape to a remote VHS server over SSH and saving the returned GIF."
+   },
+   {
+    "cmd": "vhs manual",
+    "context": "Prints the VHS documentation on the command line (mentioned in a README note)."
+   },
+   {
+    "cmd": "brew install vhs",
+    "context": "Homebrew install on macOS or Linux."
+   },
+   {
+    "cmd": "docker run --rm -v $PWD:/vhs ghcr.io/charmbracelet/vhs <cassette>.tape",
+    "context": "Runs VHS from the official container image, with dependencies included, against a tape in the current directory."
+   }
+  ],
+  "install_notes": "VHS needs ttyd and ffmpeg installed and available on PATH; the README's Debian/Ubuntu and Fedora/RHEL snippets say to install ttyd separately from its GitHub releases. Other install routes are pacman -S vhs, nix-env -iA nixpkgs.vhs, scoop install vhs, winget install charmbracelet.vhs, sudo xbps-install vhs, go install github.com/charmbracelet/vhs@latest, plus Debian and RPM packages and binaries from the releases page. Server mode needs an SSH key at .ssh/vhs_ed25519 by default, which the server config can override with VHS_KEY_PATH. No account is needed for local use.",
+  "standout": "It treats a terminal demo as a text file you can version, diff, and regenerate in CI, and the README points to a golden-file workflow where .ascii or .txt output is committed and compared between runs. Its tape language also covers Hide/Show for setup steps that stay out of the recording, plus Wait on a regex so a recording can sync with a spinner or prompt.",
+  "status": "unknown. The README has a latest-release badge and a build status badge, and it documents recent features such as Set Columns, Set Rows, ScrollUp/ScrollDown and Copy/Paste, but it gives no release date or last-commit date and I did not check the releases or commit pages.",
+  "caveats": "Requires ttyd and ffmpeg on PATH, and Windows and Linux distributions need extra setup per the README. The README warns that the SSH server gives access to the host's commands and applications, and that leaving VHS_AUTHORIZED_KEYS_PATH empty makes the server publicly accessible. Set Columns cannot be combined with Set Width, and Set Rows cannot be combined with Set Height. Publishing sends your GIF to the vhs.charm.sh servers. The README does not state a license beyond a link to an MIT LICENSE file, which I did not open.",
+  "quotes": [
+   "Write terminal GIFs as code for integration testing and demoing your CLI tools.",
+   "VHS requires ttyd and ffmpeg to be installed and available on your PATH.",
+   "VHS has an SSH server built in! When you self-host VHS you can access it as though it were installed locally."
+  ],
+  "links": [
+   {
+    "label": "VHS GitHub repository (homepage)",
+    "url": "https://github.com/charmbracelet/vhs"
+   },
+   {
+    "label": "Examples directory",
+    "url": "https://github.com/charmbracelet/vhs/tree/main/examples"
+   },
+   {
+    "label": "VHS GitHub Action",
+    "url": "https://github.com/charmbracelet/vhs-action"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/charmbracelet/vhs (homepage): fetched OK, README returned in full. No further fetches needed."
+  ]
+ }
+}

@@ -1,0 +1,85 @@
+{
+ "name": "redo",
+ "desc": "Implements djb's redo: an alternative to make",
+ "homepage": "https://redo.rtfd.io/",
+ "installs_365d": 168,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "language"
+ ],
+ "why": "An implementation of djb's redo build system, a worthwhile idea about dependency tracking that is less known than make.",
+ "brief": {
+  "what_it_is": "redo is a Python implementation of Daniel J. Bernstein's redo build system, an alternative to make. You write a small shell script per target (for example default.o.do or myprog.do) that calls redo-ifchange on its inputs and then produces the output file, with $1, $2 and $3 supplied for target name, base name and temp output. Running `redo myprog` builds the target and records the dependencies it declared in a persistent .redo database, so later runs only rebuild what changed. The package installs eleven executables: redo, redo-always, redo-ifchange, redo-ifcreate, redo-log, redo-ood, redo-sources, redo-stamp, redo-targets, redo-unlocked and redo-whichdo.",
+  "why_it_exists": "The author says redo keeps the simplicity and flexibility of make while avoiding its flaws, and that it is simpler, more flexible and more powerful than make without giving up performance. djb's design existed only as terse notes with no code, so the author wrote this implementation from scratch based on those notes.",
+  "how_it_works": "Declaring a dependency is an ordinary shell command: redo-ifchange builds its arguments and, if any of them or their dependencies change, the current script is re-run. Dependencies can be declared after the build, for example by reading a gcc -MD dependency file, so no special make-style dependency syntax is needed. The initial build is imperative, with scripts declaring dependencies as they run, and later runs check the stored dependency data once at the start of the build, without re-running scripts that do not need it.",
+  "commands_seen": [
+   {
+    "cmd": "redo-ifchange $2.c",
+    "context": "First line of default.o.do: declares the matching .c source as a dependency of the .o target before compiling."
+   },
+   {
+    "cmd": "gcc -MD -MF $2.d -c -o $3 $2.c",
+    "context": "Second line of default.o.do: compiles the C file and writes header dependencies to $2.d."
+   },
+   {
+    "cmd": "read DEPS <$2.d",
+    "context": "Reads the gcc-generated dependency file into the DEPS variable in default.o.do."
+   },
+   {
+    "cmd": "redo-ifchange ${DEPS#*:}",
+    "context": "Declares the header dependencies found in the .d file, after the object has already been built."
+   },
+   {
+    "cmd": "redo myprog",
+    "context": "Builds the myprog target from myprog.do; the README shows its output listing a.o and b.o being built."
+   },
+   {
+    "cmd": "touch b.h",
+    "context": "Example edit used to show that only the affected object is rebuilt on the next run."
+   },
+   {
+    "cmd": "./do -j10 test",
+    "context": "README's build-and-test command for this repository, running the test suite with 10 parallel jobs."
+   },
+   {
+    "cmd": "DESTDIR= PREFIX=/usr/local ./do -j10 install",
+    "context": "README's install command, with the install prefix set to /usr/local and 10 parallel jobs."
+   }
+  ],
+  "install_notes": "The README gives no Homebrew-specific steps. The source install is `DESTDIR= PREFIX=/usr/local ./do -j10 install` after cloning, and the repository's own build script is ./do. The homepage says the implementation is written in Python, so a Python runtime is presumably needed, but neither page states a version. The author also ships an optional pure-POSIX-sh version called do in the minimal/ directory. No accounts or hardware are needed.",
+  "standout": "Dependencies are declared by running ordinary shell commands inside the build script, sometimes after the target is built, rather than in a special make-style syntax. The author also says this is the only known redo variant that supports parallel builds (redo -j) and log linearization (redo-log), which he calls important for large projects.",
+  "status": "unknown. Neither the homepage nor the GitHub README shows a release version, release date, or last commit date, so I could not confirm recent activity. The README does describe a maintained feature set (parallel builds, improved logging, automated tests, a mailing list), and it points to a plan to rewrite the code in C.",
+  "caveats": "The author says the Python version is not as fast as make for some things and that a C rewrite is planned but not yet done. The docs say some of the repository's t/ tests are deliberately abusive, so they should not be read as usage examples. Many other redo implementations exist and, per the author, most are unmaintained, incompatible with standard redo semantics, or lack tests. The homepage is an older documentation page and may not match the current release exactly. Licence not checked.",
+  "quotes": [
+   "redo is a competitor to the long-lived, but sadly imperfect, make program.",
+   "The key thing to understand about redo is that declaring a dependency is just another shell command.",
+   "My implementation of redo is called redo for the same reason that there are 75 different versions of make that are all called make. It's somehow easier that way."
+  ],
+  "links": [
+   {
+    "label": "redo documentation (homepage)",
+    "url": "https://redo.rtfd.io/"
+   },
+   {
+    "label": "Source code on GitHub (apenwarr/redo)",
+    "url": "https://github.com/apenwarr/redo"
+   },
+   {
+    "label": "Daniel J. Bernstein's original redo notes",
+    "url": "http://cr.yp.to/redo.html"
+   },
+   {
+    "label": "Mailing list archives",
+    "url": "https://groups.google.com/group/redo-list"
+   }
+  ],
+  "fetch_log": [
+   "https://redo.rtfd.io/ : fetched OK, documentation introduction page with full text",
+   "https://github.com/apenwarr/redo : fetched OK, README with build, install and mailing list information"
+  ]
+ }
+}

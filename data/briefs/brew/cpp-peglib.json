@@ -1,0 +1,79 @@
+{
+ "name": "cpp-peglib",
+ "desc": "Header-only PEG (Parsing Expression Grammars) library for C++",
+ "homepage": "https://yhirose.github.io/cpp-peglib/",
+ "installs_365d": 166,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "library",
+  "language"
+ ],
+ "why": "A header-only PEG parser library; grammars are a door into parsing theory, though it is still just a library.",
+ "brief": {
+  "what_it_is": "cpp-peglib is a C++17, header-only library for PEG (Parsing Expression Grammars). You include peglib.h and either write a grammar as text, such as Additive <- Multiplicative '+' Additive / Multiplicative, or build one with parser combinators. You attach semantic actions to rules, and the parser returns values or an AST for the input text. The README also describes a peglint command-line tool, which the package lists as an executable. The homepage is a browser PEG Playground where you paste a grammar and source text and see the AST, optimized AST, and profile.",
+  "why_it_exists": "The README gives no separate motivation. It frames the library as a PEG implementation that follows Bryan Ford's PEG definition and adds extras such as packrat memoization, left recursion, error recovery, and precedence climbing for infix expressions.",
+  "how_it_works": "A grammar is compiled into rule objects. Parsing is recursive descent with backtracking over ordered choices. Packrat parsing, enabled with enable_packrat_parsing, memoizes rule results per position. Left-recursive rules are handled by a seed-growing algorithm. Semantic actions run on each rule's SemanticValues, and enable_ast builds a tree whose nodes hold std::string_view tokens into the source.",
+  "commands_seen": [
+   {
+    "cmd": "-std=c++17",
+    "context": "Compiler option the README requires; the library only supports C++17 compilers."
+   },
+   {
+    "cmd": "/std:c++17 /Zc:__cplusplus",
+    "context": "The equivalent compiler options for MSVC."
+   },
+   {
+    "cmd": "-pthread",
+    "context": "Linker option the README says Ubuntu and CentOS need when linking."
+   },
+   {
+    "cmd": "cat sample.java",
+    "context": "README example showing the Java-like input file that peglint checks."
+   },
+   {
+    "cmd": "peglint java.peg sample.java",
+    "context": "Runs peglint with the java.peg grammar on sample.java; the README shows it reporting three recovered syntax errors."
+   },
+   {
+    "cmd": "cat custom_message.txt",
+    "context": "README example showing the input file for the custom-message grammar."
+   },
+   {
+    "cmd": "peglint custom_message.peg custom_message.txt",
+    "context": "Runs peglint on the custom_message grammar and input; the output shows the custom 'code format error...' message."
+   }
+  ],
+  "install_notes": "Header-only: include peglib.h in your project. Compile with -std=c++17 (/std:c++17 /Zc:__cplusplus on MSVC). On some Linux distributions such as Ubuntu and CentOS, link with -pthread. The README does not describe how peglint is installed or set up beyond the brew formula name, and it does not describe any accounts or runtimes.",
+  "standout": "The grammar dialect goes well beyond basic PEG. It includes a token-boundary operator, %whitespace skipping, %word keyword boundaries, a cut operator, labeled error recovery with custom messages, parameterized macros, left recursion in direct, indirect, and mutual forms, and precedence-climbing infix rules. It also has a browser playground for trying grammars without installing anything.",
+  "status": "maintained. The GitHub releases page lists v1.23.0 as Latest, published 20 Oct, with v1.22.0 on 16 Oct, v1.21.0 on 07 Oct, and v1.20.0 on 05 Oct. The year was not visible in the text I fetched. The README has a CI badge and a long, detailed feature set. I did not check a last-commit date.",
+  "caveats": "Requires C++17. Some Linux distributions need -pthread at link time. The v1.23.0 release changes the grammar blob format to PEG4, so load_blob rejects blobs written by v1.21.0 or v1.22.0, and such blobs must be rewritten with serialize_grammar(). Several grammars that used to load are now rejected, such as a repetition of something that can match empty. Packrat parsing trades memory that grows with input for speed, so the README says to measure. Deep left-recursive chains produce deep ASTs that can overflow the stack in optimize_ast or ast_to_s. Nodes hold string_view tokens, so the caller must keep the source text alive. The README is very long and full of corner-case rules, so expect a learning curve. I did not find the license in the text I fetched. The homepage fetch returned only the playground shell with no prose; the README is the substantive source.",
+  "quotes": [
+   "C++17 header-only PEG (Parsing Expression Grammars) library. You can start using it right away just by including `peglib.h` in your project.",
+   "This library supports the linear-time parsing known as the Packrat parsing.",
+   "Packrat parsing is turned on with `enable_packrat_parsing`. It remembers the result of a rule at a position and reuses it when the rule is tried there again"
+  ],
+  "links": [
+   {
+    "label": "PEG Playground (homepage)",
+    "url": "https://yhirose.github.io/cpp-peglib/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/yhirose/cpp-peglib"
+   },
+   {
+    "label": "Practical parsing with PEG and cpp-peglib (bert hubert)",
+    "url": "https://berthub.eu/articles/posts/practical-peg-parsing/"
+   }
+  ],
+  "fetch_log": [
+   "https://yhirose.github.io/cpp-peglib/ - loaded, but only the PEG Playground page shell with template placeholders and no README-style prose",
+   "https://github.com/yhirose/cpp-peglib - loaded (README), truncated at about 40000 characters; the packrat, recovery, and AST sections were read, the remainder was cut off",
+   "https://github.com/yhirose/cpp-peglib/releases - loaded, truncated; used for release list and dates, with the v1.23.0 notes partly visible"
+  ]
+ }
+}

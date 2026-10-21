@@ -1,0 +1,81 @@
+{
+ "name": "sqlsmith",
+ "desc": "Random SQL query generator",
+ "homepage": "https://github.com/anse1/sqlsmith",
+ "installs_365d": 63,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "language",
+  "reverse-engineering"
+ ],
+ "why": "A random SQL generator that fuzzes databases into crashing, a surprising way to find bugs in engines you trust.",
+ "brief": {
+  "what_it_is": "SQLsmith is a command-line random SQL query generator written in C++. It reads the schema of a target database (PostgreSQL, SQLite 3, or MonetDB), generates random SQL statements against that schema, and sends them to the server. Each statement is rolled back, and the tool reports the outcome of each query as it runs. Its purpose is to find crashes and bugs in database engines.",
+  "why_it_exists": "The README says its paragon is Csmith, which proved valuable for quality assurance in C compilers. It is aimed at RDBMS developers, and also at extension authors who want their code exposed to a random workload.",
+  "how_it_works": "It connects to the target database to retrieve schema information, then builds random query ASTs from a grammar and executes them, rolling back each statement. Verbose output shows one symbol per query, such as .ok, S for a syntax error (which the README says indicates a SQLsmith bug), t for a timeout, and C for a broken connection, which happens when a query crashes the server. The README says productions that consistently produce errors are blacklisted over time. To support another RDBMS, you implement two classes that provide schema information and connectivity.",
+  "commands_seen": [
+   {
+    "cmd": "sqlsmith --verbose --target=\"host=/tmp port=65432 dbname=regression\"",
+    "context": "Runs SQLsmith against a PostgreSQL database, with progress output on stderr (the README's example for testing Postgres)."
+   },
+   {
+    "cmd": "sqlsmith --verbose --sqlite=\"file:$HOME/.mozilla/firefox/places.sqlite?mode=ro\"",
+    "context": "Runs SQLsmith against a SQLite3 database, opened read-only (the README's example for testing SQLite)."
+   },
+   {
+    "cmd": "sqlsmith --verbose --monetdb=\"mapi:monetdb://localhost:50000/smith\"",
+    "context": "Runs SQLsmith against a MonetDB database (the README's example for testing MonetDB)."
+   },
+   {
+    "cmd": "apt-get install build-essential autoconf autoconf-archive libpqxx-dev libboost-regex-dev libsqlite3-dev",
+    "context": "Installs build tools and libraries on Debian before building from source."
+   },
+   {
+    "cmd": "cd sqlsmith",
+    "context": "Changes into the cloned source directory before building."
+   },
+   {
+    "cmd": "autoreconf -i",
+    "context": "Generates the configure script; the README says to skip this when building from a release tarball."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Standard autotools configure step for the source build."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the sqlsmith binary."
+   },
+   {
+    "cmd": "brew install libpqxx automake libtool autoconf autoconf-archive pkg-config",
+    "context": "Installs the build dependencies on macOS with Homebrew, before the same autoreconf, configure, and make steps."
+   }
+  ],
+  "install_notes": "No Homebrew-only steps are described beyond the dependencies. The README lists C++11, libpqxx as required, and boost::regex (only needed if your std::regex is broken), SQLite3, and monetdb_mapi as optional. Building from git needs autoreconf; a release tarball does not. The README says to use a suitably underprivileged database user for the connection, which is a configuration step worth doing before the first run. Build instructions are given for Debian and macOS.",
+  "standout": "The project keeps a public score list of 118 bugs found since 2015 in alphas, betas, and releases of the supported products, including some security vulnerabilities, plus bugs in extensions and libraries such as orafce and glibc. The README also documents how it blacklists productions that consistently error, so a new target produces a burst of errors at startup that then tapers off.",
+  "status": "unknown. The GitHub page shows 542 commits, 862 stars, 141 forks, and CI workflows under .github/workflows. The fetched page did not show a last-commit date or a release date, so I could not confirm recent activity. The README describes ongoing use, such as periodic filter-table updates, but gives no date.",
+  "caveats": "GPL-3.0 licensed. The README warns: 'Use it at your own risk. It may damage your database.' It calls functions that may have side effects, such as pg_terminate_backend, so the README says to use an underprivileged account. It supports only PostgreSQL, SQLite 3, and MonetDB out of the box. The README describes the --verbose output as sometimes showing many errors from primitive type systems or syntax errors from unsupported grammar. Large-scale testing needs a central PostgreSQL logging database (log.sql). I did not verify whether a Homebrew formula installs it.",
+  "quotes": [
+   "\"I love the smell of coredumps in the morning\"",
+   "SQLsmith is a random SQL query generator. Its paragon is Csmith, which proved valuable for quality assurance in C compilers.",
+   "Use it at your own risk. It may damage your database (one of the purposes of this tool is to try and break things)."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/anse1/sqlsmith"
+   },
+   {
+    "label": "Score list of bugs found",
+    "url": "https://github.com/anse1/sqlsmith/wiki#score-list"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/anse1/sqlsmith: worked. The GitHub page loaded and included the README text (README.org). I did not follow other links, since the README covered usage, install, and caveats adequately. The Doxygen, SQLreduce, and PGConf.EU slides links were named in the README but had no URLs in the fetched text."
+  ]
+ }
+}

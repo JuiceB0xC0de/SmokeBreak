@@ -1,0 +1,73 @@
+{
+ "name": "hcxtools",
+ "desc": "Utils for conversion of cap/pcap/pcapng WiFi dump files",
+ "homepage": "https://github.com/ZerBea/hcxtools",
+ "installs_365d": 3864,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "network",
+  "afternoon",
+  "reverse-engineering"
+ ],
+ "why": "Converts WiFi capture formats and shows how handshakes are structured, though it is tied to a security-testing niche.",
+ "brief": {
+  "what_it_is": "hcxtools is a small set of command-line utilities written in C for Linux. It reads WiFi capture files (cap, pcap, pcapng, and gzip-compressed versions of these) and converts the WPA handshake and PMKID data in them into hash files that Hashcat or John the Ripper can work on. The package also includes helpers that filter those hashes, compute or verify a PSK or PMK, generate weak PSK candidates, build wordlist candidates, convert hashes back into cap files, show MAC vendor information, and upload captures to the wpa-sec.stanev.org service. The README lists ten executables: hcxpcapngtool, hcxhashtool, hcxpmktool, hcxpottool, hcxpsktool, hcxeiutool, hcxwltool, hcxhash2cap, wlancap2wpasec, and whoismac.",
+  "why_it_exists": "The README says the main purpose is to detect weak points in one's own WiFi network by analysing hashes. Converting a dump file to a WPA-PBKDF2-PMKID+EAPOL hash lets the user check whether the WLAN key or PMK was sent unencrypted, or whether an AP or client is vulnerable to common wordlists or weak password generation.",
+  "how_it_works": "hcxpcapngtool parses the 802.11 frames in a capture and extracts PMKID and EAPOL handshake messages, then writes them as hashes in Hashcat mode 22000 format (and JtR formats). The README's Bitmask section explains that each EAPOL hash is built from two handshake messages: one supplies the MIC and the EAPOL frame, and the other supplies the nonce that is not already embedded in that frame. Message-pair bits and flags record which messages were used and whether the capture looks like an AP-less attack or a router with a known nonce-error pattern. The README's workflow line is hcxdumptool -> hcxpcapngtool -> hcxhashtool (additional hcxpsktool/hcxeiutool) -> hashcat or JtR.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/ZerBea/hcxtools.git",
+    "context": "Clones the source repository before building from git head (the README's install guide)."
+   },
+   {
+    "cmd": "cd hcxtools",
+    "context": "Changes into the cloned source directory."
+   },
+   {
+    "cmd": "make -j $(nproc)",
+    "context": "Compiles all tools in parallel, using as many jobs as the machine has CPU cores."
+   },
+   {
+    "cmd": "make install (as super user)",
+    "context": "Installs the built binaries to /usr/bin. The README says to run this as root."
+   },
+   {
+    "cmd": "make install PREFIX=/usr/local (as super user)",
+    "context": "Installs the built binaries to /usr/local/bin instead, as root."
+   }
+  ],
+  "install_notes": "Most Linux distributions package hcxtools, so the package manager is the simple route. To build from git head, you need a current distribution and these dependencies: Linux kernel 5.15 or newer (mandatory), a recent gcc (README says gcc >= 16 recommended), libopenssl 3.0 or newer with headers, librt, zlib with headers (for gzip input), libcurl 7.56 or newer with headers (used by whoismac and wlancap2wpasec), and pkg-config. Build with make, then make install, optionally with PREFIX=/usr/local. The README says the hcxpcapngtool version must match the hcxdumptool version. No accounts or hardware are needed to run the converters. The README also suggests Arch Linux for notebooks and desktops and OpenWRT for small systems like a Raspberry Pi or router. The hcxdumptool capture tool is a separate project and is not covered here.",
+  "standout": "Unlike most WiFi tools, which capture or crack, hcxtools stops at conversion: it turns captures into the exact hash formats that Hashcat and JtR accept, and the README says Hashcat endorses it. Its message-pair documentation explains which handshake messages were combined into each hash, which is unusual detail for a tool of this kind.",
+  "status": "Probably maintained, but I could not confirm a date. The README gives no release or last-commit date, and the page I fetched did not show them. It targets current toolchains (kernel 5.15 or newer, gcc 16 recommended), says the branch is 'pretty closely synced' to the Hashcat and JtR repositories, and points to Hashcat mode 22000 as the recommended format. Those are signs of active upkeep, but they are not a dated release record.",
+  "caveats": "Linux only. The README says Windows, macOS, Android, emulators and wrappers are unsupported. The README says it is not recommended for inexperienced users and expects knowledge of Linux, 802.11, and key derivation. Hash modes 250x and 1680x are deprecated, and the README recommends mode 22000. Dump files should not be merged, because this destroys custom-block hash values. The tools do not correct nonce errors, so packet loss can produce a wrong PTK. Output files are appended to existing files, except pcapng, pcap and cap outputs. The tools do not crack WPA PSK, WEP, or WPS, and do not decrypt traffic; the README names aircrack-ng, Reaver, Bully, and tshark for those jobs. The README frames the work as checking your own network. The wlancap2wpasec upload target is a third-party service.",
+  "quotes": [
+   "A small set of tools to convert packets from capture files to hash files for use with Hashcat or John the Ripper.",
+   "hcxtools are designed to be analysis tools. This means that everything is converted by default and unwanted information must be filtered out!",
+   "They do not crack WPA PSK related hashes. (Use Hashcat or JtR to recover the PSK.)"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/ZerBea/hcxtools"
+   },
+   {
+    "label": "wpa-sec upload service (cited in README)",
+    "url": "https://wpa-sec.stanev.org/?submit"
+   },
+   {
+    "label": "Hashcat wiki: WPA/WPA2 cracking overview (mode 22000)",
+    "url": "https://hashcat.net/wiki/doku.php?id=cracking_wpawpa2"
+   },
+   {
+    "label": "Hashcat forum: mode 22000 write-up by atom",
+    "url": "https://hashcat.net/forum/thread-10253.html"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/ZerBea/hcxtools - fetched OK, README returned in full. No further fetches were needed."
+  ]
+ }
+}

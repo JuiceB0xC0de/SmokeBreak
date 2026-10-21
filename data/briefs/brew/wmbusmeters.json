@@ -1,0 +1,95 @@
+{
+ "name": "wmbusmeters",
+ "desc": "Read wired or wireless mbus protocol to acquire utility meter readings",
+ "homepage": "https://github.com/wmbusmeters/wmbusmeters",
+ "installs_365d": 142,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "afternoon",
+  "protocol",
+  "radio"
+ ],
+ "why": "Decodes wireless M-Bus utility meter telegrams from cheap radio dongles, letting you read your neighbourhood's water and power meters.",
+ "brief": {
+  "what_it_is": "wmbusmeters is an open-source program that reads utility meter readings from wired M-Bus or wireless wM-Bus (OMS-compatible) meters. It takes in raw telegrams from radio dongles (im871a, iu891a, amb8465/Metis, amb3665, cul, rc1180, or rtl-sdr software-radio sticks), from serial M-Bus master converters, or from files, pipes, stdin, or MQTT topics. It decodes them with meter drivers into key-value pairs and outputs them as human-readable text, CSV fields, or JSON, which can be published via MQTT, posted to a REST API, inserted into a database, or written to log and meter files. The README's example turns the hex telegram 1844AE4C4455223368077A55000000_041389E20100023B0000 into a line showing a water meter's id, total m3, flow and timestamp.",
+  "why_it_exists": "The README frames the problem as getting utility meter readings out of wired or wireless M-Bus meters, and points out that a raw value like a 32-bit signed volume in storage slot 1 means nothing without knowing what it measures (last month's billing reading, last year's gas delivered, and so on). The drivers supply that meaning.",
+  "how_it_works": "Dongles or serial ports deliver telegrams to the program, which matches each one to a meter by id and selects a driver, either auto-detected or named in the config. Drivers translate manufacturer-specific bytes into named fields; since version 2.0 many drivers are written as declarative xmq/ixml text files rather than C++, and the README says new drivers should be written in that form. Users can also add calculated fields with formulas that track SI units, and run a shell command with METER_ environment variables for each reading.",
+  "commands_seen": [
+   {
+    "cmd": "./configure; make; sudo make install",
+    "context": "Build from source and install as a daemon. The README says this only works on GNU/Linux; on macOS it suggests starting wmbusmetersd from a script instead."
+   },
+   {
+    "cmd": "sudo systemctl start wmbusmeters",
+    "context": "Start the daemon after the config file at /etc/wmbusmeters.conf has been set up (device=auto:t1 in the example)."
+   },
+   {
+    "cmd": "wmbusmeters auto:t1",
+    "context": "Run from the command line instead of the daemon, probing for any attached dongle and listening on T1 mode. The README says to use auto for testing and a full device path in production."
+   },
+   {
+    "cmd": "wmbusmeters auto:c1 MyTapWater auto 12345678 00112233445566778899AABBCCDDEEFF",
+    "context": "Listen for C1 telegrams on any available dongle, and decode meter 12345678 named MyTapWater with auto-detected driver and a 16-byte key."
+   },
+   {
+    "cmd": "wmbusmeters 234433300602010014007a8e0000002f2f0efd3a1147000000008e40fd3a341200000000",
+    "context": "Decode a single hex telegram given on the command line with no config. The README says it prints the id, manufacturer, and recommended driver (here lansenpu)."
+   },
+   {
+    "cmd": "wmbusmeters --format=json --meterfiles=/home/me/meter_readings /dev/ttyUSB0:im871a:c1 MyTapWater multical21:c1 12345678 NOKEY",
+    "context": "Run without config files, output JSON, and store the latest reading per meter in a directory. NOKEY is used for meters that do not encrypt their data."
+   },
+   {
+    "cmd": "wmbusmeters --listdrivers=water",
+    "context": "Search the built-in list of meter drivers by keyword."
+   },
+   {
+    "cmd": "wmbusmeters --listfields=multical21",
+    "context": "List the fields a given driver can output, for use with --selectfields."
+   },
+   {
+    "cmd": "sudo killall -HUP wmbusmetersd",
+    "context": "Trigger a reload of the daemon's config files without restarting it."
+   },
+   {
+    "cmd": "wmbusmeters --useconfig=/etc",
+    "context": "Run in the terminal using the config files in /etc, for installs that cannot run as a daemon."
+   }
+  ],
+  "install_notes": "Distribution packages: dnf install wmbusmeters on Fedora 31 or newer, and a Debian package that is in Experimental. Docker and Snap images are marked experimental. Building from source is recommended by the README because development is fast: remove any wM-Bus dongle or rtl-sdr stick from the computer first, then run ./configure; make; sudo make install. Config lives in /etc/wmbusmeters.conf and /etc/wmbusmeters.d (or a directory passed with --useconfig). Each meter gets a file with name, id, key and driver. For rtl-sdr, the rtl_sdr and rtl_wmbus binaries must exist in /usr/bin or next to the wmbusmeters binary. Serial M-Bus needs a bus alias such as MAIN=/dev/ttyUSB0:mbus:2400. The wiki at wmbusmeters.github.io covers the snap and more.",
+  "standout": "Drivers are being moved out of C++ into a declarative xmq/ixml format that can be edited as text, and the maintainer says new drivers should be written that way and will not be accepted as C++. The project also gives an explicit upgrade promise: if a meter is pinned to a named driver, the JSON keys will not change incompatibly on upgrade, and the README spells out that rule.",
+  "status": "Maintained. The GitHub releases page shows 3.0.0 as latest, dated 2026-06-17, with 2.0.0 on 2026-03-01 and 1.20.0 on 2026-01-27, so releases are frequent. The README's usage text prints version 3.1.0, which is ahead of the latest tagged release, so the README may be slightly ahead of the tags. The README also says development progresses quickly.",
+  "caveats": "Runs on GNU/Linux, macOS, FreeBSD and Raspberry Pi. make install is GNU/Linux only. Hardware is required: a supported wM-Bus dongle, an rtl-sdr stick, or a serial M-Bus converter. The cul dongle is limited to shorter telegrams unless a firmware fix is applied. The rc1180 listens only to T1. Encrypted meters need that meter's own key, so this reads meters you have keys for, not arbitrary neighbours' meters. Plain /dev/ttyUSB0 no longer works and the device has to be named with its type. Auto-probing of serial ports is slow, and the README advises a full device path in production. Using a driver of auto in production is discouraged. Driver licensing is GPLv3 or later per the --license option; the README does not state a licence on the page I read. The README was truncated at 40000 characters, so later sections were not read.",
+  "quotes": [
+   "The program acquires utility meter readings from wired m-bus or wireless wm-bus meters.",
+   "I am not accepting new drivers as C++ code.",
+   "So wmbusmeters strives to guarantee that if you have specified the driver name, then wmbusmeters can be safely upgraded at any time."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/wmbusmeters/wmbusmeters"
+   },
+   {
+    "label": "FAQ / wiki / manual",
+    "url": "https://wmbusmeters.github.io/wmbusmeters-wiki/"
+   },
+   {
+    "label": "Run in the browser (serial ports)",
+    "url": "https://wmbusmeters.org/inbrowser"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/wmbusmeters/wmbusmeters/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/wmbusmeters/wmbusmeters \u2014 worked; README returned, truncated at 40000 characters",
+   "https://github.com/wmbusmeters/wmbusmeters/releases \u2014 worked, but the page was mostly page chrome and was truncated; release notes for 3.0.0, 2.0.0, 1.20.0 and earlier were readable"
+  ]
+ }
+}

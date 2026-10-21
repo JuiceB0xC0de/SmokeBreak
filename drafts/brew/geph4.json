@@ -1,0 +1,124 @@
+{
+ "name": "geph4",
+ "desc": "Modular Internet censorship circumvention system to deal with national filtering",
+ "homepage": "https://geph.io/",
+ "installs_365d": 87,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol",
+  "deprecated"
+ ],
+ "why": "A censorship circumvention system is a fascinating door into how national filtering and tunnelling work, though this is the older version.",
+ "brief": {
+  "what_it_is": "geph4-client is the command-line client for Geph, a circumvention tool built to get past national internet filtering. You give it an exit server name plus credentials (the README example uses username and password, with auth-password), and it opens a tunnel to a Geph exit server, relaying through bridge servers when the exit is blocked. What comes out is local SOCKS5 and HTTP proxies on 127.0.0.1 (ports 9909 and 9910 by default), and optionally a system-wide VPN through a TUN device on Linux or WinDivert on Windows. It also has sync, binder_proxy and debugpack subcommands, mostly used by the GUI or for exporting debug logs.",
+  "why_it_exists": "The README describes Geph as a modular Internet censorship circumvention system designed specifically to deal with national filtering. The homepage frames it as a VPN built from the ground up to resist ISP-level censorship, rather than one that plays cat-and-mouse with censors.",
+  "how_it_works": "connect builds a ClientTunnel that keeps a sosistab2 Multiplex session alive over several routes, some through bridges and some direct, and switches to the best working route; in China only bridge routes are used because all exits are blocked. Local proxies forward requests into that tunnel, and VPN mode sends packets over the same unreliable datagram connection. sync fetches subscription and exit information through domain fronting and checks the exit list against a public record on the Mel blockchain.",
+  "commands_seen": [
+   {
+    "cmd": "cargo install geph4-client",
+    "context": "Installs the client from crates.io; the README says to install Rust first."
+   },
+   {
+    "cmd": "geph4-client -h",
+    "context": "Lists the available subcommands and flags."
+   },
+   {
+    "cmd": "geph4-client connect --exit-server 2.mtl.ca.ngexits.geph.io auth-password --username public5 --password public5",
+    "context": "Typical connect invocation, using a public example account and a named exit server."
+   },
+   {
+    "cmd": "sudo $(which geph4-client) connect --vpn-mode tun-route --exit-server 2.mtl.ca.ngexits.geph.io auth-password --username public5 --password public5",
+    "context": "Starts connect in VPN mode on Linux, which needs root; the $(which ...) lets root find the binary."
+   },
+   {
+    "cmd": "geph4-client debugpack --export-to /your/preferred/path/",
+    "context": "Exports Geph's debug logs as an SQLite database to the given directory."
+   }
+  ],
+  "install_notes": "Install the Rust toolchain first (the README links rust-lang.org/tools/install), then run cargo install geph4-client. Running in VPN mode needs root or sudo. On Linux, tun-route uses iptables to route traffic into a TUN device. On Windows, --vpn-mode windivert uses WinDivert. The README gives no accounts or configuration steps beyond the credentials passed to connect. The example credentials are public demo accounts.",
+  "standout": "Instead of one fixed server, the client keeps a multiplex of routes and rotates the bridge servers it uses, so blocked bridges get swapped out. It also checks the exit list against a public blockchain record, so a compromised central binder cannot quietly feed it bad exits.",
+  "status": "unknown. The fetched README has no release date, last-commit date or deprecation notice, and I could not see either from the pages I loaded. The homepage describes the Geph service as ongoing (\"Over the past 7 years\"), and the scout note calls this the older version, but neither page confirms that this client is still maintained.",
+  "caveats": "VPN mode is not supported on macOS, according to the README. VPN mode requires root. In China, connect uses only bridge routes. The homepage admits the service is still centralized (\"Yes, but not for long!\") and says decentralization integration with Earendil is in development. The homepage's download list does not mention this CLI, and its Plus/Free subscription and blind-signature details describe the current service rather than this client. The README's examples use a hard-coded exit server name and public demo credentials.",
+  "quotes": [
+   "Geph (\u8ff7\u9727\u901a) is a modular Internet censorship circumvention system designed specifically to deal with national filtering.",
+   "A sosistab2 Multiplex is *a single end-to-end connection between a client and a server.*",
+   "VPN mode is currently not support for MacOS. Contributions are welcome!"
+  ],
+  "links": [
+   {
+    "label": "Geph homepage",
+    "url": "https://geph.io/"
+   },
+   {
+    "label": "geph4 repository (README source)",
+    "url": "https://github.com/geph-official/geph4"
+   },
+   {
+    "label": "sosistab2 (transport library)",
+    "url": "https://github.com/geph-official/sosistab2"
+   }
+  ],
+  "fetch_log": [
+   "https://geph.io/ \u2014 worked; product landing page with download list, FAQ and no command lines.",
+   "https://github.com/geph-official/geph4 \u2014 worked; the tool returned the README titled geph4-client, which covers the CLI. Not checked for commit or release dates."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Its bridge rotation and multiplexed routes make censorship resistance tangible to explore, though this older CLI\u2019s maintenance status is unclear."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "geph4",
+  "tldr": "A command-line client for Geph, a censorship-circumvention tunnel that rotates bridge routes and opens local SOCKS5 and HTTP proxies.",
+  "deeper_look": "geph4-client connects to a Geph exit server and exposes the tunnel as local proxies on 127.0.0.1, SOCKS5 on port 9909 and HTTP on 9910 by default. On Linux it can also route the whole system through a TUN device, and on Windows it uses WinDivert. There are a few other subcommands, `sync`, `binder_proxy` and `debugpack`, which are mostly used by the GUI or for exporting debug logs.\n\nThe README calls Geph \"a modular Internet censorship circumvention system designed specifically to deal with national filtering.\" The homepage frames it as a VPN built from the ground up to resist ISP-level censorship, instead of one that plays cat-and-mouse with censors.\n\nThe interesting idea is the transport. `connect` builds a tunnel that keeps a sosistab2 Multiplex session alive over several routes at once, some direct and some through bridges, and switches to the best one that works. Where exits are blocked outright, as in China, only bridge routes are used. Blocked bridges get swapped out as the client rotates through them.\n\nThe `sync` step fetches subscription and exit information through domain fronting. It then checks the exit list against a public record on the Mel blockchain, so a compromised central server cannot quietly hand the client bad exits. Reading how those pieces fit together is a good way into how national filtering works and how tunnels are built to survive it.",
+  "install": "brew install geph4\n# Alternative from the README: install Rust, then run `cargo install geph4-client`\n# VPN mode needs root. Connecting needs credentials; the README uses public demo accounts.",
+  "try_this": [
+   {
+    "cmd": "geph4-client -h",
+    "what_happens": "Lists the subcommands and flags."
+   },
+   {
+    "cmd": "geph4-client connect --exit-server 2.mtl.ca.ngexits.geph.io auth-password --username public5 --password public5",
+    "what_happens": "Connects through a named exit server with the README's public demo account and opens local SOCKS5 and HTTP proxies on ports 9909 and 9910."
+   },
+   {
+    "cmd": "geph4-client debugpack --export-to /your/preferred/path/",
+    "what_happens": "Exports Geph's debug logs as an SQLite database to the directory you give."
+   }
+  ],
+  "whats_unique": "It keeps a multiplex of routes and rotates bridges instead of relying on one fixed server. It also checks its exit list against a public blockchain record.",
+  "caveats": "This is the older client and the brief could not confirm it is still maintained. VPN mode needs root and is not supported on macOS, and the README examples hard-code an exit server and public demo credentials.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "network",
+   "proxy",
+   "censorship",
+   "tunnel",
+   "protocol"
+  ],
+  "links": [
+   {
+    "label": "Geph homepage",
+    "url": "https://geph.io/"
+   },
+   {
+    "label": "geph4 repository (README source)",
+    "url": "https://github.com/geph-official/geph4"
+   },
+   {
+    "label": "sosistab2 (transport library)",
+    "url": "https://github.com/geph-official/sosistab2"
+   }
+  ]
+ }
+}

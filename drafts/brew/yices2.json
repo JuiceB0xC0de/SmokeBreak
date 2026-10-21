@@ -1,0 +1,148 @@
+{
+ "name": "yices2",
+ "desc": "Yices SMT Solver",
+ "homepage": "https://yices.csl.sri.com/",
+ "installs_365d": 238,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "math",
+  "library"
+ ],
+ "why": "An SMT solver you can throw logic puzzles and constraints at, a real math engine that rewards an afternoon of tinkering.",
+ "brief": {
+  "what_it_is": "Yices 2 is an SMT solver from SRI International that decides satisfiability of formulas over uninterpreted functions with equality, real and integer arithmetic (linear and nonlinear), bitvectors, scalar types, and tuples. You feed it a problem written either in SMT-LIB (versions 2.0 and 1.2) or in Yices' own specification language, and it reports sat or unsat, plus a model of variable values when satisfiable. It ships as command-line tools (yices, yices-sat, yices-smt, yices-smt2) and can also be used as a library through a C API with bindings for Java, Python, Go, and OCaml.",
+  "why_it_exists": "The README frames it as a general-purpose engine for SMT problems, which are satisfiability questions that combine logical structure with arithmetic, bitvectors and other theories. The homepage describes it as a formal-methods tool from SRI's Computer Science Laboratory, developed with funding from SRI, NSF, NASA and DARPA.",
+  "how_it_works": "You write constraints as assertions over declared variables, then call check-sat and get-model. The example runs show the solver returning concrete witnesses, such as x = 2.0 and y = -1.0 for a linear real problem, or 32-bit vectors for a bitvector problem. Nonlinear arithmetic is handled by MC-SAT, which is not enabled in a default source build.",
+  "commands_seen": [
+   {
+    "cmd": "brew install SRI-CSL/sri-csl/yices2",
+    "context": "Installs the full MCSAT-enabled Yices on macOS via Homebrew, including the dynamic library and headers, according to the GitHub README."
+   },
+   {
+    "cmd": "sudo add-apt-repository ppa:sri-csl/formal-methods",
+    "context": "First step on Ubuntu or Debian to add the SRI formal-methods PPA before installing yices2 with apt."
+   },
+   {
+    "cmd": "sudo apt-get install yices2",
+    "context": "Installs the Yices executables on Debian or Ubuntu once the PPA is added and apt-get update has run. Use yices2-dev instead if you need the library and headers."
+   },
+   {
+    "cmd": "yices-smt2 lra.smt2",
+    "context": "Runs the solver on a QF_LRA example file; the README shows it printing sat and then a model with x = 2.0 and y = -1.0."
+   },
+   {
+    "cmd": "yices-smt2 bv.smt2",
+    "context": "Runs the solver on a QF_BV bitvector example; the README shows sat with two 32-bit model values."
+   },
+   {
+    "cmd": "autoconf",
+    "context": "First step of the source build, run before configure to generate the configure script."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Configures the source build; the default install prefix is /usr/local/ and can be changed with --prefix."
+   },
+   {
+    "cmd": "./configure --enable-mcsat",
+    "context": "Configures a source build with the MC-SAT solver for nonlinear arithmetic. This requires libpoly and CUDD to be installed first."
+   },
+   {
+    "cmd": "python3 utils/yices2_parallel.py --yices /path/to/yices_smt2 -n 4 --verbose path/to/problem.smt2",
+    "context": "Runs a portfolio of several Yices configurations in parallel on one SMT2 file and prints the first result (sat, unsat or unknown) that finishes."
+   },
+   {
+    "cmd": "make doc",
+    "context": "Builds the manual at doc/manual/manual.pdf from the source tree; needs LaTeX and latexmk."
+   }
+  ],
+  "install_notes": "Homebrew and apt packages are the easy routes on macOS and Debian/Ubuntu, and the homepage also offers prebuilt Linux (64-bit) and macOS (Intel and Apple Silicon) binaries. Building from source needs GCC 4.9 or newer (or clang 3.3 or newer), gperf 3.0 or newer, GMP 4.1 or newer, and GNU make, then autoconf, ./configure and make install. Nonlinear MC-SAT from source additionally needs SRI's libpoly and the CUDD BDD library, and you pass --enable-mcsat. Thread-safe builds use --enable-thread-safety. Windows is supported through Cygwin, or natively via MinGW cross-compilers as described in doc/COMPILING. No accounts or runtime setup are mentioned.",
+  "standout": "Yices is a full SMT solver with SMT-LIB input, its own specification language with tuples and scalar types, and bindings for several languages, and it comes from a formal-methods lab. The bundled parallel portfolio script that races several configurations is a practical extra.",
+  "status": "maintained. The homepage lists Yices 2.7.0 as the current release, dated 2025-07-16. The homepage says Yices 1 is no longer maintained, and the GitHub README shows active CI and coverage badges. I did not check commit history.",
+  "caveats": "Yices is GPLv3, and the homepage says alternative license terms can be discussed with fm-licensing@csl.sri.com. A source build does not include nonlinear MC-SAT by default, and it needs extra libraries (libpoly and CUDD) to enable it. The library is not thread-safe unless built with --enable-thread-safety. Native Windows needs MinGW cross-compilation, and Cygwin is the recommended route. The README says MC-SAT is being extended to handle bitvector constraints, which suggests that support is still growing.",
+  "quotes": [
+   "Yices 2 is an SMT solver that decides the satisfiability of formulas containing uninterpreted function symbols with equality, real and integer arithmetic, bitvectors, scalar types, and tuples.",
+   "Yices 2 can process input written in the SMT-LIB notation (both versions 2.0 and 1.2 are supported).",
+   "This repository includes the source of Yices 2, documentation, tests, and examples."
+  ],
+  "links": [
+   {
+    "label": "Yices homepage",
+    "url": "https://yices.csl.sri.com/"
+   },
+   {
+    "label": "GitHub repository (source, README, examples)",
+    "url": "https://github.com/SRI-CSL/yices2"
+   },
+   {
+    "label": "Yices C API header",
+    "url": "https://github.com/SRI-CSL/yices2/blob/master/src/include/yices.h"
+   },
+   {
+    "label": "Yices documentation and manual (linked from homepage, not fetched)",
+    "url": "https://yices.csl.sri.com/"
+   }
+  ],
+  "fetch_log": [
+   "https://yices.csl.sri.com/ - worked. Homepage text was readable and gave the description, install commands, and release info.",
+   "https://github.com/SRI-CSL/yices2 - worked. The README was returned in full and had the examples, build instructions, and MC-SAT notes. The manual and docs directory were not fetched."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Yices opens a practical rabbit hole in formal reasoning: combine logic, arithmetic, and bitvectors as constraints, then ask the solver for a proof or concrete model."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Yices 2",
+  "tldr": "An SMT solver from SRI that takes logical and arithmetic constraints and returns either a satisfying assignment or a verdict that none exists.",
+  "deeper_look": "Yices 2 decides satisfiability of formulas that mix logic with other theories: uninterpreted functions with equality, linear and nonlinear real and integer arithmetic, bitvectors, scalar types and tuples. You declare variables, assert constraints, call `check-sat`, and then `get-model`. If a solution exists, you get concrete values. If not, you get `unsat`.\n\nInput can be written in SMT-LIB (versions 2.0 and 1.2) or in Yices' own specification language, which adds tuples and scalar types. The README's examples show a linear real problem coming back with x = 2.0 and y = -1.0, and a bitvector problem returning two 32-bit values. It is also a library with a C API, with bindings for Java, Python, Go and OCaml.\n\nIt comes from SRI's Computer Science Laboratory, a formal-methods group, with funding from SRI, NSF, NASA and DARPA. The idea underneath is that many hard questions, such as whether a piece of code can overflow, whether a schedule is feasible, or whether two circuits are equivalent, can be rewritten as 'is there an assignment that makes this formula true?' A solver like this answers that mechanically. Learning to phrase problems that way opens up program verification, symbolic execution, and automated planning.\n\nThe repository also includes a script that runs several Yices configurations in parallel on one file and reports whichever finishes first.",
+  "install": "brew install yices2\n# The README's MCSAT-enabled build (nonlinear arithmetic) comes from SRI's tap: brew install SRI-CSL/sri-csl/yices2\n# Depends on gmp, which brew pulls in. No account or runtime needed.",
+  "try_this": [
+   {
+    "cmd": "yices-smt2 --help",
+    "what_happens": "Lists the options for the SMT-LIB 2 front end, the one most people will use."
+   },
+   {
+    "cmd": "yices-smt2 lra.smt2",
+    "what_happens": "Runs the solver on a linear real arithmetic file (you write it yourself, following the README's example). The README shows it printing sat and a model with x = 2.0 and y = -1.0."
+   },
+   {
+    "cmd": "yices-smt2 bv.smt2",
+    "what_happens": "Runs a bitvector problem; the README shows sat with two 32-bit model values."
+   }
+  ],
+  "whats_unique": "It is a full SMT solver that accepts standard SMT-LIB and also has its own richer specification language, with bindings for several languages. It comes from a formal-methods lab that has worked on this for years.",
+  "caveats": "Licensed GPLv3. Nonlinear arithmetic (MC-SAT) is not in a default source build and needs libpoly and CUDD, and the library is not thread-safe unless built with --enable-thread-safety.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "smt",
+   "solver",
+   "logic",
+   "formal-methods",
+   "math",
+   "library"
+  ],
+  "links": [
+   {
+    "label": "Yices homepage",
+    "url": "https://yices.csl.sri.com/"
+   },
+   {
+    "label": "GitHub repository (source, README, examples)",
+    "url": "https://github.com/SRI-CSL/yices2"
+   },
+   {
+    "label": "Yices C API header",
+    "url": "https://github.com/SRI-CSL/yices2/blob/master/src/include/yices.h"
+   }
+  ]
+ }
+}

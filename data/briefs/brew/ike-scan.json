@@ -1,0 +1,90 @@
+{
+ "name": "ike-scan",
+ "desc": "Discover and fingerprint IKE hosts",
+ "homepage": "https://github.com/royhills/ike-scan",
+ "installs_365d": 509,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol",
+  "reverse-engineering"
+ ],
+ "why": "A door into IPsec IKE handshakes, letting you fingerprint VPN gateways and see how they negotiate.",
+ "brief": {
+  "what_it_is": "ike-scan is a command-line scanner that finds hosts speaking IKE, the key exchange protocol behind IPsec VPNs, and fingerprints them. You give it IP addresses, CIDR ranges, hostnames, or a file of targets. It sends IKE phase-1 Main Mode or Aggressive Mode requests and prints the hosts that respond, either with a handshake or a notify message. With --showbackoff it also records response timing for fingerprinting, and the package includes psk-crack, which runs offline pre-shared-key cracking on material ike-scan captures.",
+  "why_it_exists": "The README says ike-scan \"discovers IKE hosts and can also fingerprint them using the retransmission backoff pattern\" and lists discovery, fingerprinting, transform enumeration, user enumeration, and pre-shared key cracking as its functions. The author wrote it to learn IKE from the RFCs and a book, and it is maintained as an NTA Monitor project.",
+  "how_it_works": "ike-scan builds an ISAKMP header and an SA payload with a set of transforms (by default 8 combinations of DES/3DES, MD5/SHA-1 and MODP 768/1024), sends it over UDP to port 500, and rate-limits outbound traffic (default 56000 bits per second). Responses are matched to hosts by IKE cookie rather than source IP, and a handshake response shows the chosen transform. Backoff fingerprinting times the retransmissions from a host that completes a handshake and compares the intervals against a text file of known patterns, ike-backoff-patterns.",
+  "commands_seen": [
+   {
+    "cmd": "autoreconf --install",
+    "context": "Build step: generates a configure script from the source tree (after git clone and cd ike-scan)."
+   },
+   {
+    "cmd": "./configure --with-openssl",
+    "context": "Configures the build to use OpenSSL hash functions, which the README says are normally faster for psk-crack."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the project after configure."
+   },
+   {
+    "cmd": "make check",
+    "context": "Runs the test suite to verify the build works as expected."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the binaries; the README notes you need root or sudo for this step."
+   },
+   {
+    "cmd": "ike-scan -h",
+    "context": "Prints the current usage information."
+   },
+   {
+    "cmd": "ike-scan 172.16.2.2",
+    "context": "Runs IKE detection against a single host with default options and no backoff fingerprinting."
+   },
+   {
+    "cmd": "ike-scan --file=hostlist.txt",
+    "context": "Reads target hosts from a file."
+   },
+   {
+    "cmd": "cat hostlist.txt | ike-scan --file=- --showbackoff=20",
+    "context": "Reads hosts from stdin and performs both detection and backoff fingerprinting, with a 20-second wait after the last packet."
+   },
+   {
+    "cmd": "ike-scan 172.16.0.0/16",
+    "context": "Scans an entire /16 network, 65536 addresses including network and broadcast."
+   }
+  ],
+  "install_notes": "Standard GNU autotools build: git clone, autoreconf --install, ./configure (or ./configure --with-openssl), make, make check, make install with root or sudo. The README recommends the OpenSSL option if you plan to do pre-shared key cracking, and says it needs OpenSSL headers and libraries, for example libssl-dev on Debian. Windows users can use Cygwin, or a standalone Windows binary with cygwin1.dll present; a README-WIN32 file covers the differences. No accounts or runtime services are mentioned.",
+  "standout": "Fingerprinting by retransmission timing: hosts that complete a handshake retransmit on a backoff schedule that differs by implementation, and ike-scan matches the timings against a pattern file that users can extend. The README also says ike-scan never answers the responses it receives, so the Main Mode handshake never completes, and that some implementations do not log incomplete handshakes.",
+  "status": "unknown. The fetched README has active-looking CI badges (build, coverage, CodeQL) and a GitHub issues and pull-request workflow, but it shows no release date or last-commit date, and I did not fetch the releases or commits pages. Its supported-platforms list is dated (Debian Woody, Windows NT 4.0 / Cygwin 1.5.12, Mac OS X Darwin 7.7.0), so the list may be stale.",
+  "caveats": "Built for Unix-like systems; the README says it works on Windows through Cygwin or a standalone binary, and the Windows section points to a separate README-WIN32 file. Any packet loss breaks backoff fingerprinting because every response must be seen. Some VPN servers ignore long packets, and custom transform sets can push packets past the MTU and cause fragmentation. Aggressive Mode is needed for PSK cracking with psk-crack. Only hosts that send a handshake can be fingerprinted by backoff, not hosts that send a notify. The author says some implementations won't log these scans, so the owners may not notice. The README gives no licence in the fetched text. The brew metadata says the package includes psk-crack and gives no separate usage examples for it.",
+  "quotes": [
+   "ike-scan discovers IKE hosts and can also fingerprint them using the retransmission backoff pattern.",
+   "ike-scan does not respond to any of the IKE responses it receives, so the IKE main mode handshake will never complete.",
+   "It works on Windows with Cygwin and can be used as a standalone Windows executable when cygwin1.dll is present."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/royhills/ike-scan"
+   },
+   {
+    "label": "NTA Monitor Wiki: ike-scan documentation",
+    "url": "http://www.royhills.co.uk/wiki/index.php/Ike-scan_Documentation"
+   },
+   {
+    "label": "GitHub issues (bug reports and feature requests)",
+    "url": "https://github.com/royhills/ike-scan/issues/new"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/royhills/ike-scan: fetched OK, returned the README in full (the README is substantial and covers installation, usage, output, and platforms). Did not follow the NTA Monitor wiki link; I did not need to, since the README covers the tool. Total fetches: 1 of 5."
+  ]
+ }
+}

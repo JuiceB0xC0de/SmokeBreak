@@ -1,0 +1,61 @@
+{
+ "name": "pari-elldata",
+ "desc": "J.E. Cremona elliptic curve data for PARI/GP",
+ "homepage": "https://pari.math.u-bordeaux.fr/packages.html",
+ "installs_365d": 58,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "math",
+  "library"
+ ],
+ "why": "Cremona's elliptic curve database for PARI/GP; real number theory data, though it is only a data package.",
+ "brief": {
+  "what_it_is": "elldata is an optional data package for PARI/GP, the number theory system. It is the PARI/GP-format version of J. E. Cremona's table of elliptic curve data. The package is a compressed archive (elldata.tgz, about 54.8 MB) that adds a data folder to a PARI/GP installation. Once installed, PARI/GP can look up curves by their Cremona labels, and the ellsearch and ellidentify functions use it. The package contains data only, with no executables. The source for this entry is the PARI group's shared packages page, which lists about seven optional packages, so this brief covers only the elldata entry.",
+  "why_it_exists": "The PARI group distributes these packages separately because they take up a nonnegligible amount of disk space and would be useless to most users. The page says they are 'distributed separately and maintained independently'.",
+  "how_it_works": "The archive is unpacked into a 'data' folder, and the elldata folder inside it is placed where PARI/GP expects architecture-independent files (the directory reported by default(datadir)), or next to gp.exe on Windows, or in the PARI source top directory before ./Configure for source builds. PARI/GP then reads the curve data from that folder when a function such as ellinit is given a Cremona label. The page says the package requires PARI/GP 2.2.11 or later.",
+  "commands_seen": [
+   {
+    "cmd": "ellinit(\"11a1\")",
+    "context": "Listed on the packages page as a test that fails if elldata is not available. It is the sample command for the elldata package."
+   },
+   {
+    "cmd": "make install-data",
+    "context": "Source-build step that installs only the packages extracted into the top-level pari directory, so they can be tested before the full install."
+   },
+   {
+    "cmd": "make test-all",
+    "context": "Source-build step that fully tests the distribution, including the newly installed packages."
+   },
+   {
+    "cmd": "make install",
+    "context": "Source-build step that fully installs the new distribution after the tests."
+   },
+   {
+    "cmd": "default(datadir)",
+    "context": "Typed inside the gp interpreter to find the directory where the package's data folder should be moved. Used when adding a package to an existing installation."
+   }
+  ],
+  "install_notes": "The page gives three routes. (A) On the Windows daily GP binary, extract the archive in the same folder as gp.exe, which creates a 'data' subfolder. (B) From a source distribution, extract the archive in the top-level pari directory before running ./Configure, then make install-data, make test-all, and make install. (C) For an existing installation, including the Windows self-extracting binary, run default(datadir) in gp, extract the archive anywhere, and move the elldata folder into the datadir. The archive is about 54.8 MB and has a published sha256 and md5. The package has no Homebrew-specific instructions on the page. The brew formula name is pari-elldata.",
+  "standout": "It is a small, quiet piece of infrastructure rather than a program. Its clever part is that the data is delivered as a plain folder that PARI/GP finds by path, so a single data package can be added to an existing installation without rebuilding anything. The page also gives a neat check, ellinit(\"11a1\"), that tells you whether the package is present.",
+  "status": "Quiet. The elldata.tgz archive is dated Mar 1 2021, and the page says these packages are 'rarely upgraded'. The packages page itself was last modified 2024-10-13, and the footer reads copyleft 2003-2025. I found no changelog for elldata and no release history beyond that date.",
+  "caveats": "It is data only, and useless without PARI/GP. It needs PARI/GP 2.2.11 or later. It is large (54.8 MB) for a data set. Install is manual on Windows and from source, and the page does not describe a Homebrew install path. Licensing: the page says the packages are \u00a9 the PARI group under GPL version 2 or any later version. The homepage is a shared listing for all PARI packages, not a project page for elldata alone, and the page does not describe the contents of the Cremona data (number of curves, range) beyond the name.",
+  "quotes": [
+   "PARI/GP version of J. E. Cremona Elliptic Curve Data, needed by ellsearch and ellidentify.",
+   "These packages use up a nonnegligible amount of disk space and will be useless for most users, hence they are distributed separately and maintained independently.",
+   "They are rarely upgraded so most of them will only be downloaded once."
+  ],
+  "links": [
+   {
+    "label": "PARI/GP optional packages page (homepage)",
+    "url": "https://pari.math.u-bordeaux.fr/packages.html"
+   }
+  ],
+  "fetch_log": [
+   "https://pari.math.u-bordeaux.fr/packages.html: fetched OK; shared listing of all optional PARI/GP packages, including the elldata entry. No further fetches were needed."
+  ]
+ }
+}

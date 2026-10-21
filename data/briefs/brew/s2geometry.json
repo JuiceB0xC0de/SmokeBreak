@@ -1,0 +1,97 @@
+{
+ "name": "s2geometry",
+ "desc": "Computational geometry and spatial indexing on the sphere",
+ "homepage": "https://github.com/google/s2geometry",
+ "installs_365d": 311,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "math",
+  "library",
+  "afternoon"
+ ],
+ "why": "Computational geometry on a sphere with hierarchical cell indexing, a real and unusual mathematical toolkit to explore.",
+ "brief": {
+  "what_it_is": "S2 Geometry is a C++ library for manipulating geometric shapes on the surface of a sphere rather than on a flat 2D plane. The README says it is especially suited to geographic data. Its docs live at s2geometry.io. Shapes go in as spherical geometry objects and results come out as geometry or measurements computed on the sphere. The README does not describe the inputs and outputs in detail. A Python interface is available as an optional SWIG build, and the README also lists Go and Java implementations made by others.",
+  "why_it_exists": "The README says that unlike many geometry libraries, S2 is primarily designed for spherical geometry, shapes drawn on a sphere rather than on a planar 2D map, which makes it especially suitable for working with geographic data.",
+  "how_it_works": "",
+  "commands_seen": [
+   {
+    "cmd": "bazel test \"//:*\"",
+    "context": "Builds and runs all tests from within s2geometry/src using Bazel 8 or newer, which the README says is required for the Bazel build."
+   },
+   {
+    "cmd": "bazel build //:s2",
+    "context": "Builds the library without running tests, from within s2geometry/src."
+   },
+   {
+    "cmd": "sudo apt-get install cmake libssl-dev",
+    "context": "Installs CMake and OpenSSL development headers on Ubuntu. The README says abseil-cpp must be installed separately."
+   },
+   {
+    "cmd": "sudo port install cmake abseil gtest openssl",
+    "context": "Installs the CMake build dependencies through MacPorts on macOS. The README also mentions Homebrew as an option."
+   },
+   {
+    "cmd": "cmake -DBUILD_TESTS=yes -DCMAKE_PREFIX_PATH=/path/to/absl/install -DCMAKE_CXX_STANDARD=17 ..",
+    "context": "Configures the CMake build from a build directory and points it at the Abseil install. The C++ standard must match the one used to build Abseil."
+   },
+   {
+    "cmd": "make -j $(nproc)",
+    "context": "Compiles the library in parallel from the build directory. On macOS the README suggests sysctl -n hw.logicalcpu in place of nproc."
+   },
+   {
+    "cmd": "make test ARGS=\"-j$(nproc)\"",
+    "context": "Runs the test suite in parallel, only if the build was configured with -DBUILD_TESTS=yes."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs headers and libraries to CMAKE_INSTALL_PREFIX. The README notes there is no uninstall target, though install_manifest.txt can help."
+   },
+   {
+    "cmd": "sudo apt-get install swig python3-dev",
+    "context": "Installs SWIG 4 and Python headers for the optional Python interface on Ubuntu."
+   },
+   {
+    "cmd": "python3 -m venv venv",
+    "context": "Creates a virtual environment as the first step for building Python wheels."
+   },
+   {
+    "cmd": "python -m build",
+    "context": "Builds the Python wheel, which ends up in the dist directory."
+   }
+  ],
+  "install_notes": "The README gives two build paths: Bazel 8 or newer (C++20 set in .bazelrc, with abseil-cpp and googletest pulled from the Bazel central repository via MODULE.bazel) and CMake 3.22 or newer with a C++17 compiler (g++ 7.5 or later, or clang 14 or later). The CMake section says abseil must be the LTS release 20260526 and that this exact version must be used. Abseil must be built with -DCMAKE_POSITION_INDEPENDENT_CODE=ON, and both projects must use the same C++ standard. Other dependencies are googletest 1.10 or later (optional, for tests and examples) and OpenSSL, used for its bignum library. The Python interface needs -DWITH_PYTHON=ON, SWIG 4.0, python3-dev, and Python 3.10 or later. The README says the Python API is particularly unstable and is planned for replacement by a pybind11 version. Nothing in the README mentions a Homebrew formula or a brew install step. The brief's brew context does not match the README's install instructions.",
+  "standout": "It is built for the sphere from the start, not as a planar library adapted to the globe, and the README says this is what makes it fit geographic data. The scout note mentions hierarchical cell indexing, but the README does not describe that mechanism, so I have not verified it from this source.",
+  "status": "Maintained, with some uncertainty. The README reports a current test status for x86 and M1 and points to a 20260526 Abseil LTS release, which suggests recent activity. I did not check commit or release dates, so I can't confirm the exact last-update date.",
+  "caveats": "All releases are 0.x, so the README states there are no API or ABI stability guarantees. The Python API is described as particularly unstable. The Bazel section header 'Requirements for End Users using Bazel' has no content beneath it. On Apple M1, the s2loop_measures_test fails with a 6% excess accumulated error, which the README attributes possibly to boringssl or exactfloat. The CMake build requires an exact Abseil version. The Go implementation is described as about 40% complete. The README includes a disclaimer that this is not an official Google product. Licensing was not checked, and I did not see a license note in the fetched text.",
+  "quotes": [
+   "Unlike many geometry libraries, S2 is primarily designed to work with _spherical geometry_, i.e., shapes drawn on a sphere rather than on a planar 2D map.",
+   "All tests enumerated in the BUILD.bazel file pass on x86 machines. On Apple M1, s2loop_measures_test fails due to a 6% excess accumlated error.",
+   "This is not an official Google product."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/google/s2geometry"
+   },
+   {
+    "label": "S2 documentation site",
+    "url": "http://s2geometry.io"
+   },
+   {
+    "label": "S2 overview",
+    "url": "http://s2geometry.io/about/overview"
+   },
+   {
+    "label": "C++ quick start",
+    "url": "http://s2geometry.io/devguide/cpp/quickstart"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/google/s2geometry (homepage, README returned successfully; I did not follow the linked docs, so the overview and quick start pages were not read)"
+  ]
+ }
+}

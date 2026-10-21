@@ -1,0 +1,89 @@
+{
+ "name": "twoping",
+ "desc": "Ping utility to determine directional packet loss",
+ "homepage": "https://www.finnie.org/software/2ping/",
+ "installs_365d": 146,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "Measuring directional packet loss reveals asymmetric network behaviour that ordinary ping hides, a good door into ICMP.",
+ "brief": {
+  "what_it_is": "2ping is a command-line ping utility written in Python 3 that reports which direction packet loss happens, outbound or inbound, rather than only whether packets were lost. You run the 2ping client against a host, and that host runs a 2ping listener (started with 2ping --listen). The output is per-ping lines marked as outbound lost, inbound lost, or received, followed by summary counts of outbound, inbound, and undetermined losses along with round-trip min/avg/max. The 2ping6 executable is listed alongside it for IPv6.",
+  "why_it_exists": "The page frames it as a bi-directional ping: ordinary ping cannot tell you whether a lost packet was lost on the way out or on the way back. The author built 2ping to make that split visible.",
+  "how_it_works": "Each probe uses a three-way exchange akin to TCP SYN, SYN/ACK, ACK. Afterward, the client and listener compare their state to work out which direction each loss occurred. The protocol is documented in a separate specification and is described as version-agnostic, so clients and listeners of different versions are meant to interoperate.",
+  "commands_seen": [
+   {
+    "cmd": "2ping test.2ping.net",
+    "context": "Example run against the public test listener; the sample output shows outbound and inbound losses labelled per sequence number and a statistics block with an outbound/inbound/undetermined breakdown."
+   },
+   {
+    "cmd": "2ping --listen",
+    "context": "Starts a listener on a stable remote host so that a client can test against it."
+   },
+   {
+    "cmd": "2ping remotehost",
+    "context": "Client run from the local side against a remote host's name, after that host is running a listener."
+   },
+   {
+    "cmd": "2ping 10.0.0.1",
+    "context": "Same client run, but addressing the remote listener by IP address instead of name."
+   },
+   {
+    "cmd": "apt-get install 2ping",
+    "context": "Install from the Debian or Ubuntu repositories (listed on the page)."
+   },
+   {
+    "cmd": "dnf install 2ping",
+    "context": "Install from Fedora repositories, also available via EPEL for RHEL and CentOS."
+   },
+   {
+    "cmd": "makepkg -si",
+    "context": "Arch Linux route: run inside the 2ping AUR snapshot directory."
+   },
+   {
+    "cmd": "emerge 2ping",
+    "context": "Gentoo install."
+   },
+   {
+    "cmd": "brew install 2ping",
+    "context": "Homebrew install on macOS, as listed on the page."
+   },
+   {
+    "cmd": "pip3 install .",
+    "context": "Windows route: run in the extracted 2ping source directory after installing Python 3 for Windows."
+   }
+  ],
+  "install_notes": "Needs Python 3.5 or higher. Beyond the package manager, nothing special is required on the client side, but a useful test needs a 2ping listener at the far end, which you either run yourself (2ping --listen on a stable host) or borrow from one of the public test listeners (test.2ping.net, ipv4./ipv6.test.2ping.net, and several secondary servers including cromulent.colobox.com and Finnix mirrors in Dallas, London and Tokyo). Windows is installed from source with pip3 rather than from a package. The page says tested on Linux, FreeBSD, OpenBSD, Mac OS X and Windows.",
+  "standout": "Most ping tools only count losses. 2ping uses a three-way exchange and compares state after the fact, so it can label each lost probe as outbound or inbound, which exposes asymmetric paths that plain ping hides.",
+  "status": "Maintained. The homepage lists source release 2.ping 4.6.1 dated 2026-03-02 with an OpenPGP signature, and it points to an active GitHub issue tracker and pull requests. The author is Ryan Finnie. I did not check commit history directly.",
+  "caveats": "A listener must be running at the far end, so you cannot test a host that you don't control unless it runs one (or you use a public listener). Public listeners must not be flooded: the page asks for no interval faster than 0.2 seconds, no excessive periods of pinging, and no constant large padded packets. Distribution packages may lag the latest release, and the official release tarballs differ from tagged git checkouts. Windows support depends on installing Python and using pip. The copyright line says 2010, but the release is recent. The license is the Mozilla Public License 2.0.",
+  "quotes": [
+   "2ping is a bi-directional ping utility.",
+   "It uses 3-way pings (akin to TCP SYN, SYN/ACK, ACK) and after-the-fact state comparison between a 2ping listener and a 2ping client to determine which direction packet loss occurs.",
+   "Please do not abuse the listeners. Do not flood ping (any interval faster than 0.2 seconds), ping for excessive periods, or constantly send large padded packets."
+  ],
+  "links": [
+   {
+    "label": "2ping homepage",
+    "url": "https://www.finnie.org/software/2ping/"
+   },
+   {
+    "label": "2ping issue tracker on GitHub",
+    "url": "https://github.com/rfinnie/2ping/issues"
+   },
+   {
+    "label": "2ping pull requests on GitHub",
+    "url": "https://github.com/rfinnie/2ping/pulls"
+   }
+  ],
+  "fetch_log": [
+   "https://www.finnie.org/software/2ping/ - fetched OK; homepage contains the full description, usage example, install list, public listener list, and license. The linked man page, original announcement and protocol specification were not fetched; their URLs were not given in the fetched text, so I did not follow them."
+  ]
+ }
+}

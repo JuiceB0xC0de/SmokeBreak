@@ -1,0 +1,94 @@
+{
+ "name": "raxml-ng",
+ "desc": "RAxML Next Generation: faster, easier-to-use and more flexible",
+ "homepage": "https://cme.h-its.org/exelixis/web/software/raxml/",
+ "installs_365d": 216,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "science",
+  "afternoon",
+  "library"
+ ],
+ "why": "Maximum-likelihood phylogenetic tree inference is real science you can run, though it is a specialist bioinformatics tool.",
+ "brief": {
+  "what_it_is": "RAxML-NG is a command-line phylogenetic tool that infers maximum-likelihood trees from a multiple sequence alignment. You give it an alignment (FASTA or similar via --msa) and a substitution model, and it searches for the best-scoring tree, optionally with bootstrap replicates, branch support values, or evaluation on a fixed topology. The output is tree files and run logs. It is the successor to RAxML 8 and is installed by the brew formula as the raxml-ng executable.",
+  "why_it_exists": "The README frames it as a faster, more flexible and more user-friendly successor to RAxML (Stamatakis 2014), and says it carries over features from ExaML such as checkpointing and load balancing for partitioned alignments.",
+  "how_it_works": "The search heuristic repeatedly applies Subtree Pruning and Regrafting (SPR) moves to climb toward the best-known maximum-likelihood tree. Likelihood computation uses the optimized coraxlib library. Version 2.0 adds adaptive search heuristics, automatic model selection (MOOSE), and fast branch support metrics, per the README.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt-get install libgmp3-dev libhts-dev libhtscodecs-dev",
+    "context": "Optional dependency install on Ubuntu and other Debian-based systems before building from source."
+   },
+   {
+    "cmd": "git clone --recursive https://codeberg.org/amkozlov/raxml-ng",
+    "context": "Clones the source repository with submodules for a from-source build."
+   },
+   {
+    "cmd": "cmake -DUSE_MPI=ON ..",
+    "context": "Configures the MPI build instead of the default PTHREADS build."
+   },
+   {
+    "cmd": "cmake -DSTATIC_BUILD=ON -DPORTABLE_BUILD=ON ..",
+    "context": "Configures a static, portable PTHREADS build compatible with older non-AVX CPUs."
+   },
+   {
+    "cmd": "./raxml-ng --fast --msa testDNA.fa --model DNA",
+    "context": "Quick single tree inference on a DNA alignment with automatic model selection and a simplified search with early stopping."
+   },
+   {
+    "cmd": "./raxml-ng --all --msa testAA.fa --model LG+G8+F --tree pars{10} --bs-trees 200",
+    "context": "All-in-one run: ML search from 10 parsimony starting trees plus 200 bootstrap replicates, with LG model, 8 GAMMA categories and empirical frequencies."
+   },
+   {
+    "cmd": "./raxml-ng --evaluate --msa testAA.fa --model partitions.txt --tree test.tree --brlen scaled",
+    "context": "Optimizes branch lengths and model parameters on a fixed topology across partitions with proportional branch lengths."
+   },
+   {
+    "cmd": "./raxml-ng --support --tree bestML.tree --bs-trees bootstraps.tree",
+    "context": "Maps bootstrap support values from replicate trees onto an existing best ML tree."
+   },
+   {
+    "cmd": "./raxml-ng --msa testDNA.fa --model GTR+G --extra compat-v11",
+    "context": "Runs in v1.1.0 compatibility mode, disabling adaptive search and related changes."
+   },
+   {
+    "cmd": "raxml-ng -h",
+    "context": "Prints the online help from the command line."
+   }
+  ],
+  "install_notes": "Brew installs the binary directly. Upstream offers prebuilt zips for 64-bit Linux and macOS (version 2.0.3), and the README says Windows users can run the Linux binary under WSL with possibly lower performance. Building from source needs git with submodules and cmake; GMP and htslib (with htscodecs on Debian-based systems) are listed as dependencies. The README also lists coraxlib and terraphast as needed only for builds without submodules. There are PTHREADS, MPI and portable builds, plus an unstable dev branch. No account, runtime or configuration is mentioned.",
+  "standout": "It is a maintained successor to a well-known phylogenetics program, with newer features such as adaptive search, automatic model selection and fast support metrics. It also keeps a compatibility mode for the older v1.1.0 behaviour.",
+  "status": "Maintained, judging by the README. It points to release 2.0.3 with downloadable binaries and describes version 2.0 features with DOIs dated 2023 to 2025. It notes that the primary repository has moved to Codeberg. I could not see a last-commit date on the pages I read, so the exact recency is unknown.",
+  "caveats": "The homepage given in the brew metadata is the legacy RAxML 8 Exelixis Lab page, not the RAxML-NG project. Its download links are for old RAxML versions and the 'latest' link points to GitHub. The README says issues and pull requests belong on Codeberg. The code is licensed under AGPL-3.0, which matters for redistribution. It is a specialist bioinformatics tool that needs a multiple sequence alignment and some model knowledge to use well. Windows has no native build in the README.",
+  "quotes": [
+   "RAxML-NG is a phylogenetic tree inference tool which uses maximum-likelihood (ML) optimality criterion.",
+   "RAxML-NG offers improvements in speed, flexibility and user-friendliness over the previous RAxML versions.",
+   "Please open new issues and pull requests in our primary repository on CodeBerg"
+  ],
+  "links": [
+   {
+    "label": "Legacy RAxML homepage (from brew metadata)",
+    "url": "https://cme.h-its.org/exelixis/web/software/raxml/"
+   },
+   {
+    "label": "Primary repository on Codeberg",
+    "url": "https://codeberg.org/amkozlov/raxml-ng"
+   },
+   {
+    "label": "Documentation wiki and hands-on tutorial",
+    "url": "https://codeberg.org/amkozlov/raxml-ng/wiki"
+   },
+   {
+    "label": "RAxML-NG paper (Bioinformatics 2019)",
+    "url": "https://doi.org/10.1093/bioinformatics/btz305"
+   }
+  ],
+  "fetch_log": [
+   "https://cme.h-its.org/exelixis/web/software/raxml/ - loaded, but it is the legacy RAxML 8 Exelixis Lab page, not RAxML-NG. It links to GitHub for the latest code.",
+   "https://github.com/amkozlov/raxml-ng - loaded, returned the README. It says the primary repository is on Codeberg. The wiki and tutorial pages were referenced but not fetched, so the tutorial is not checked."
+  ]
+ }
+}

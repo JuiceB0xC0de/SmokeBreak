@@ -1,0 +1,149 @@
+{
+ "name": "ser2net",
+ "desc": "Allow network connections to serial ports",
+ "homepage": "https://ser2net.sourceforge.net/",
+ "installs_365d": 366,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "network",
+  "protocol"
+ ],
+ "why": "Exposes serial ports over the network, a neat bridge into physical devices hiding behind old serial lines.",
+ "brief": {
+  "what_it_is": "ser2net is a daemon that makes a serial port reachable over the network. It takes a YAML configuration naming an accepter (such as tcp or telnet on a port number) and a connector (such as serialdev with a device path and line settings like 115200N81), then opens a network listener and relays bytes between the socket and the physical serial device. The README describes it as allowing connections between gensio accepters and gensio connectors, and says that generally means network connections to serial ports or IPMI Serial Over LAN connections. The homepage adds that it provides serial port setup, a configuration file, a control login for changing port parameters, and port monitoring and control.",
+  "why_it_exists": "The author, Corey Minyard, says on the homepage: \"I tried all the other ones I could find and found them lacking, so I wrote my own.\" The aim is to let people reach serial devices, such as UPS units and old equipment, from across a network without running a cable to the machine.",
+  "how_it_works": "ser2net is built on the gensio library, which supplies the accepter and connector layers, so the strings in its config are passed almost directly to gensio. Optional layers add RFC 2217 remote control of port parameters (via telnet(rfc2217)), TLS/SSL, certificate-based authentication (certauth), mDNS discovery, and multiplexing. It uses epoll on modern Linux and can run with a configurable number of threads, and it handles reconfiguration in a separate thread.",
+  "commands_seen": [
+   {
+    "cmd": "apt install libyaml-dev libcrypt-dev",
+    "context": "README build prerequisites on Ubuntu: installs libyaml and libxcrypt development headers."
+   },
+   {
+    "cmd": "apt install libgensio-dev",
+    "context": "README: installs the gensio library from the distro, if it is recent enough."
+   },
+   {
+    "cmd": "sudo useradd -r -M -d /usr/share/ser2net -G dialout ser2net",
+    "context": "README encrypted example: creates a non-root system user for ser2net in the dialout group so it can open serial devices."
+   },
+   {
+    "cmd": "sudo gtlssh-keygen --keydir /etc/ser2net serverkey ser2net",
+    "context": "README encrypted example: generates the server keys for ser2net under /etc/ser2net."
+   },
+   {
+    "cmd": "sudo -u ser2net ser2net",
+    "context": "README encrypted example: starts ser2net as the ser2net user, not root."
+   },
+   {
+    "cmd": "gensiot tcp,host,3001",
+    "context": "README: connects to a plain TCP ser2net port from the command line. The README advises against using the telnet command for this."
+   },
+   {
+    "cmd": "gtlssh --telnet -p 3001 server",
+    "context": "README encrypted example: connects from a client to a telnet-enabled port over an encrypted link."
+   },
+   {
+    "cmd": "gtlssh -m my-console",
+    "context": "README: connects by mDNS name to a connection called my-console on the local network, without specifying host or port."
+   },
+   {
+    "cmd": "-t <num threads>",
+    "context": "README: an option added to the ser2net command to spawn the given number of threads. Shown as a fragment, not a full command line."
+   }
+  ],
+  "install_notes": "The README says ser2net needs three libraries to build: libyaml, libxcrypt and gensio. The distro gensio package may be missing features or be too old, so gensio may need building from the tarball on SourceForge or from github.com/cminyard/gensio. Crypto, mDNS and IPMI features depend on how gensio was compiled. The build is standard autoconf; if you build from git rather than a release tarball, run the included reconf script first. Docker support is available from github.com/jippi/docker-ser2net. Windows builds are possible under MINGW64 or UCRT64 but need extra steps (see caveats). The config file lives at /etc/ser2net/ser2net.yaml in the README example. The Homebrew caveat says to edit $HOMEBREW_PREFIX/etc/ser2net/ser2net.yaml. The README also advises running ser2net as a dedicated user, not root.",
+  "standout": "Rather than being a simple socket-to-tty bridge, it sits on a general connection-stacking library, so one YAML line can add RFC 2217 remote port control, TLS with client certificates, mDNS advertisement, or IPMI Serial Over LAN as a serial source. The README also notes that a telnet-based port with rfc2217 turned on lets a client change baud and stop bits remotely.",
+  "status": "Maintained, as far as I can tell. The SourceForge project page shows a last update of 2026-08-14, a registration date of 2001-06-04, and a 2024 user-review reply saying multi-connection support has been added. The GitHub README is current and documents gensio-based features and a Windows build. I did not see commit dates on GitHub, so the most recent activity is the SourceForge date.",
+  "caveats": "The SourceForge page lists the operating systems as BSD and Linux. The README says the test suite runs only on Linux and needs a simulated serial kernel module (serialsim) plus Python bindings for gensio and, for IPMI tests, OpenIPMI. Building on Windows requires some work: libxcrypt does not build cleanly there, so you must remove -Werror from its Makefile, and the README also says it needs an Inno Setup step for the installer. Normal ssh clients do not work with ser2net encryption; you need gtlssh or gensiot. The standard telnet command cannot use RFC 2217 control; a compliant client such as gensiot or gtlssh is required. The README warns that putting passwords in the config is a security issue, so the file should be readable only by the ser2net user. The SourceForge page lists the license as GPLv2.",
+  "quotes": [
+   "I tried all the other ones I could find and found them lacking, so I wrote my own.",
+   "ser2net is just a veneer over gensio (with a bunch of added features)",
+   "You should *not* use the \"telnet\" command to connect to this."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://ser2net.sourceforge.net/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/cminyard/ser2net"
+   },
+   {
+    "label": "SourceForge project page",
+    "url": "https://sourceforge.net/projects/ser2net/"
+   },
+   {
+    "label": "gensio library (GitHub)",
+    "url": "https://github.com/cminyard/gensio"
+   }
+  ],
+  "fetch_log": [
+   "https://ser2net.sourceforge.net/ - worked; thin page, a few paragraphs and a JUPS mention. Followed link to SourceForge.",
+   "https://sourceforge.net/projects/ser2net/ - worked; noisy HTML, but it gave license, OS, last update, registration date, features and review info.",
+   "https://github.com/cminyard/ser2net - worked; returned the README, which holds the build, usage and config details."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A classic but little-known bridge into serial hardware, with a surprising protocol stack that adds remote port control, TLS, discovery, and IPMI Serial Over LAN."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "ser2net",
+  "tldr": "A daemon that puts a serial port on the network, so a UPS, router console or old instrument can be reached with a TCP connection instead of a cable.",
+  "deeper_look": "ser2net reads a YAML file that pairs an accepter with a connector. The accepter is something like a tcp or telnet listener on a port number. The connector is something like a serialdev with a device path and line settings such as 115200N81. When a client connects, ser2net opens the serial device and relays bytes both ways. The README says this generally means network connections to serial ports, or IPMI Serial Over LAN connections.\n\nThe author, Corey Minyard, started it in 2001 because, in his words: \"I tried all the other ones I could find and found them lacking, so I wrote my own.\" The practical aim is to reach serial devices such as UPS units and old equipment from across a network without running a cable to your machine.\n\nThe idea underneath is the gensio library. The README calls ser2net \"just a veneer over gensio (with a bunch of added features)\". Gensio stacks connection layers, so the strings in the config pass almost directly into it. One line can add RFC 2217 remote control of baud and stop bits, TLS with client certificates, mDNS advertisement, or multiplexing. A serial line becomes something you can compose with the rest of the network stack.\n\nThe tool is a door into how serial links, telnet option negotiation and layered transports fit together. Following it leads to gensio itself, which is useful beyond serial work.",
+  "install": "brew install ser2net\n# then edit $HOMEBREW_PREFIX/etc/ser2net/ser2net.yaml\n# you need a real serial device (USB adapter, console cable) to see anything useful",
+  "try_this": [
+   {
+    "cmd": "ser2net --help",
+    "what_happens": "Lists the daemon's options, a quick look before you write any config."
+   },
+   {
+    "cmd": "gensiot tcp,host,3001",
+    "what_happens": "Connects from the command line to a plain TCP ser2net port. The README says not to use the telnet command for this."
+   },
+   {
+    "cmd": "gtlssh -m my-console",
+    "what_happens": "Connects by mDNS name to a connection called my-console on the local network, with no host or port needed."
+   }
+  ],
+  "whats_unique": "It is not just a socket-to-tty bridge. It sits on a connection-stacking library, so one YAML line can add RFC 2217 control, TLS with client certificates, mDNS, or IPMI Serial Over LAN.",
+  "caveats": "You need a serial device to get anything out of it, and ordinary ssh and telnet clients will not work with its encryption or RFC 2217 control; use gensiot or gtlssh.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "serial",
+   "network",
+   "protocol",
+   "gensio"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://ser2net.sourceforge.net/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/cminyard/ser2net"
+   },
+   {
+    "label": "SourceForge project page",
+    "url": "https://sourceforge.net/projects/ser2net/"
+   },
+   {
+    "label": "gensio library (GitHub)",
+    "url": "https://github.com/cminyard/gensio"
+   }
+  ]
+ }
+}

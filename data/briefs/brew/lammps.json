@@ -1,0 +1,93 @@
+{
+ "name": "lammps",
+ "desc": "Molecular Dynamics Simulator",
+ "homepage": "https://docs.lammps.org/",
+ "installs_365d": 2099,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "science",
+  "simulation",
+  "afternoon",
+  "days-off"
+ ],
+ "why": "Large-scale molecular dynamics simulator, real physics you can run at home on your own molecules and materials.",
+ "brief": {
+  "what_it_is": "LAMMPS (Large-scale Atomic/Molecular Massively Parallel Simulator) is a classical molecular dynamics simulation code focused on materials modeling. You feed it an input script of commands describing atoms, interaction potentials, the simulation box and the run, and it prints progress to the screen and writes a logfile named log.lammps, plus whatever output files the script asks for. The docs describe it as open-source under GPLv2.",
+  "why_it_exists": "The docs say it was designed to run efficiently on parallel computers and to be easy to extend and modify. It was originally developed at Sandia National Laboratories, with most funding from the US Department of Energy, and now includes contributions from many groups.",
+  "how_it_works": "The executable reads commands from an input file (given with -in) or from standard input and runs the molecular dynamics steps they describe. Parallel runs are launched with mpirun or mpiexec, and the processors command controls how MPI tasks map onto the simulation box. Multi-threading per MPI task is set with the OMP_NUM_THREADS environment variable or the package command.",
+  "commands_seen": [
+   {
+    "cmd": "lmp -in in.file",
+    "context": "Basic serial run: reads the input script in.file from the current directory. The docs recommend the -in form."
+   },
+   {
+    "cmd": "lmp_serial -in in.file",
+    "context": "Same run using the serial executable name from the traditional build system, which is one of the names the brew formula installs."
+   },
+   {
+    "cmd": "mpirun -np 4 lmp_mpi -in in.file",
+    "context": "Parallel run on 4 MPI tasks using the lmp_mpi executable."
+   },
+   {
+    "cmd": "mpiexec -np 4 lmp -in in.file",
+    "context": "Parallel run on 4 MPI tasks using mpiexec with the lmp executable name."
+   },
+   {
+    "cmd": "sudo apt-get install lammps",
+    "context": "Installs the prebuilt Ubuntu/Debian package, which provides an executable named lmp."
+   },
+   {
+    "cmd": "dnf install lammps-openmpi",
+    "context": "Fedora install of the OpenMPI build; afterwards run module load mpi/openmpi-x86_64 before mpirun."
+   },
+   {
+    "cmd": "zypper install lammps",
+    "context": "OpenSuse install of the prebuilt package, which includes OpenMPI support."
+   },
+   {
+    "cmd": "emerge --ask lammps",
+    "context": "Gentoo install; Gentoo downloads the source and compiles it on the machine."
+   },
+   {
+    "cmd": "lmp -help",
+    "context": "Lists the compilation options, packages and styles included in the binary, as the install pages recommend."
+   }
+  ],
+  "install_notes": "The brew formula provides lmp_mpi and lmp_serial. The docs point to several non-brew routes: static Linux x86_64 tarballs from download.lammps.org (no MPI, no python module), Debian/Ubuntu, Fedora, EPEL, OpenSuse, Gentoo and Arch AUR build scripts, plus a Conda route and CMake or make source builds. Optional packages such as KIM need extra steps. Using openkim.org potentials needs the openkim-models package or KIM-API download commands. I did not read the source-build pages, so the prerequisites are unverified.",
+  "standout": "It is a long-running, DOE-backed materials MD code that is extensible through its own styles and plugin mechanism and is available as a large set of prebuilt packages. Its docs are unusually thorough, with a full command reference and a list of benchmarks.",
+  "status": "Maintained as far as the docs show. The manual is stamped 30 Sep 2026 and the git info reads 30Sep2026, and the docs carry both stable and develop branch versions. I did not check the GitHub release or commit history directly.",
+  "caveats": "The static Linux binaries are not built for MPI. Several distro packages are maintained by third parties, and the LAMMPS developers say they have no control over those packages' timing or configuration. Some examples and accelerator features need optional packages compiled in. Parallel runs need the correct MPI launcher, and the redirection operator < may fail under mpirun. Floating-point round-off means trajectories can diverge across processor counts. The license is GPLv2. The homepage is the documentation site, not a project landing page, and it does not mention Homebrew.",
+  "quotes": [
+   "LAMMPS is a classical molecular dynamics simulation code focusing on materials modeling.",
+   "It was designed to run efficiently on parallel computers and to be easy to extend and modify.",
+   "In theory you should get identical answers on any number of processors and on any machine.",
+   "Please use lmp -help to see which compilation options, packages, and styles are included in the binary."
+  ],
+  "links": [
+   {
+    "label": "LAMMPS documentation (homepage)",
+    "url": "https://docs.lammps.org/"
+   },
+   {
+    "label": "Stable branch manual",
+    "url": "https://docs.lammps.org/stable/"
+   },
+   {
+    "label": "Pre-built static Linux executables",
+    "url": "https://download.lammps.org/static/"
+   },
+   {
+    "label": "Download an executable for Linux",
+    "url": "https://docs.lammps.org/Install_linux.html"
+   }
+  ],
+  "fetch_log": [
+   "https://docs.lammps.org/ fetched OK: homepage with the About section, the manual's table of contents and the version banner (30 Sep 2026).",
+   "https://docs.lammps.org/Run_basics.html fetched OK (URL guessed from the homepage's section numbering): section 4.1, Basics of running LAMMPS, with run command examples.",
+   "https://docs.lammps.org/Install_linux.html fetched OK (URL guessed from the homepage's section numbering): section 2.1, Download an executable for Linux, with distro install commands."
+  ]
+ }
+}

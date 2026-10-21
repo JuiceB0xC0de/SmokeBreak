@@ -1,0 +1,126 @@
+{
+ "name": "fernflower",
+ "desc": "Advanced decompiler for Java bytecode",
+ "homepage": "https://github.com/JetBrains/fernflower",
+ "installs_365d": 1291,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "language"
+ ],
+ "why": "JetBrains' Java bytecode decompiler; a real window into reconstructing source from compiled classes.",
+ "brief": {
+  "what_it_is": "Fernflower is JetBrains' analytical decompiler for Java bytecode. It takes .class files, and .zip or .jar archives (directories are scanned recursively), and writes reconstructed Java source files into a destination directory. Optional library jars can be supplied so that class relationships resolve without being decompiled. It runs from the command line as a Java program, and it is also bundled inside IntelliJ IDEA to show source when debugging or navigating class files.",
+  "why_it_exists": "The README calls it 'the first actually working analytical decompiler for Java and probably for a high-level programming language in general.' Its renaming feature targets obfuscated bytecode: the README says obfuscators give classes and members 'short, meaningless and above all ambiguous names,' and recompiling such code 'leads to a great number of conflicts.'",
+  "how_it_works": "The README does not describe the internal decompilation algorithm. It does describe the inputs and controls: a long list of -<option>=<value> flags (mostly 0/1 toggles, such as hides bridge methods, decompile enumerations, and decompile lambda expressions to anonymous classes), an optional per-method time limit (mpm), and an optional renamer. The renamer, enabled with ren=1, renames elements that are reserved words or shorter than three characters to names like class_<n>, method_<n>, field_<n>. A custom renamer implementing IMemberIdentifierRenamer can be supplied with urc.",
+  "commands_seen": [
+   {
+    "cmd": "java -jar fernflower.jar [-<option>=<value>]* [<source>]+ <destination>",
+    "context": "General stand-alone usage synopsis from the README; sources are class, zip or jar files or directories, and the last argument is the output directory."
+   },
+   {
+    "cmd": "java -jar fernflower.jar -hes=0 -hdc=0 c:\\Temp\\binary\\ -e=c:\\Java\\rt.jar c:\\Temp\\source\\",
+    "context": "README example: decompiles a binary directory with hide-empty-super (hes) and hide-empty-default-constructor (hdc) turned off, using rt.jar as a library source for context, and writes to c:\\Temp\\source\\."
+   },
+   {
+    "cmd": "java -jar fernflower.jar -dgs=1 c:\\Temp\\binary\\library.jar c:\\Temp\\binary\\Boot.class c:\\Temp\\source\\",
+    "context": "README example: turns on decompile generic signatures (dgs) and mixes a jar and a single class as sources, writing output to c:\\Temp\\source\\."
+   },
+   {
+    "cmd": "./gradlew :installDist",
+    "context": "Development build step from the README; generates an executable start-up script in build/install/engine/bin."
+   }
+  ],
+  "install_notes": "The README does not mention Homebrew. It says releases are published in the IntelliJ Community repository (https://www.jetbrains.com/intellij-repository/releases), so a release jar is the expected artifact. Running it means invoking java -jar fernflower.jar, which needs a Java runtime. To build from source, run ./gradlew :installDist from the repository, then use the script in build/install/engine/bin. No accounts or hardware are needed. Whether the Homebrew 'fernflower' executable wraps the jar that way is not confirmed by the README.",
+  "standout": "Its own README treats the renamer as a first-class feature. The renamer is pluggable through an interface, and it can use library jars for context so that renames avoid conflicts with external classes. The options list also includes Java-language reconstruction choices such as record patterns and switch with patterns, which are unusual for a decompiler.",
+  "status": "Maintained by JetBrains, though the README gives no release date or recent-commit evidence. The credits say JetBrains has maintained it 'since 2014' and that its original author Stiver has passed away. Releases are published through the IntelliJ repository and bugs go to the IntelliJ YouTrack. Overall, it appears active, but the exact recency is unknown.",
+  "caveats": "The README is written as if the reader is already a Java developer, and it says most options are 'aimed at professional reverse engineers.' Some defaults are workarounds for compiler bugs. The -e library example points at rt.jar, a legacy file that modern JDKs no longer ship. The README describes Windows-style paths in its examples. The Homebrew formula's executable name matches the README but its invocation is not documented here. The license is Apache 2.0.",
+  "quotes": [
+   "Fernflower is the first actually working analytical decompiler for Java and probably for a high-level programming language in general.",
+   "Some obfuscators give classes and their member elements short, meaningless and above all ambiguous names.",
+   "The correct name is Fernflower, not FernFlower."
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repository",
+    "url": "https://github.com/JetBrains/fernflower"
+   },
+   {
+    "label": "Releases (IntelliJ repository)",
+    "url": "https://www.jetbrains.com/intellij-repository/releases"
+   },
+   {
+    "label": "Issue tracker (YouTrack, subsystem Java. Decompiler. Engine)",
+    "url": "https://youtrack.jetbrains.com/newIssue?project=IDEA&clearDraft=true&c=Subsystem%20Java.%20Decompiler.%20Engine"
+   },
+   {
+    "label": "IntelliJ Community repository (where contributions go)",
+    "url": "https://github.com/JetBrains/intellij-community"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/JetBrains/fernflower \u2014 fetched successfully; README returned and was complete enough that no further fetches were needed."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Fernflower turns compiled Java bytecode back into readable source, making compiler output and obfuscation tangible through a substantial reverse-engineering tool."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Fernflower",
+  "tldr": "JetBrains' Java decompiler: feed it .class files or jars and it writes back readable Java source, with a renamer for obfuscated code.",
+  "deeper_look": "Fernflower takes compiled Java bytecode (.class files, .zip or .jar archives, or directories scanned recursively) and writes reconstructed Java source into a destination directory. You can also pass library jars so that classes your code depends on resolve properly without being decompiled themselves. It is the same engine bundled in IntelliJ IDEA, which shows source when you debug or open a class file.\n\nThe README is confident about it: \"Fernflower is the first actually working analytical decompiler for Java and probably for a high-level programming language in general.\" The README does not explain the internal algorithm, so the interesting part is the surface. Bytecode keeps far less than source does, so decompiling is a series of guesses about what the author wrote. The long list of -option=value flags, mostly 0/1 toggles, exposes those guesses: hide bridge methods, decompile enumerations, turn lambdas into anonymous classes, keep generic signatures.\n\nThe renamer is the unusual feature. The README notes that \"Some obfuscators give classes and their member elements short, meaningless and above all ambiguous names,\" and recompiling such code produces many conflicts. With ren=1, Fernflower renames elements that are reserved words or shorter than three characters to names like class_<n>, method_<n> and field_<n>. You can plug in your own renamer by implementing IMemberIdentifierRenamer and passing it with urc.\n\nThe project has been maintained by JetBrains since 2014. Its original author, Stiver, has passed away, and the README includes a note on the correct spelling: Fernflower, not FernFlower.",
+  "install": "brew install fernflower\nRequires a Java runtime (the formula depends on openjdk). No account or hardware needed.",
+  "try_this": [
+   {
+    "cmd": "fernflower --help",
+    "what_happens": "Runs the installed executable. The README documents the underlying usage as java -jar fernflower.jar [-<option>=<value>]* [<source>]+ <destination>, and it is not confirmed that the brew wrapper takes the same arguments."
+   },
+   {
+    "cmd": "java -jar fernflower.jar -dgs=1 c:\\Temp\\binary\\library.jar c:\\Temp\\binary\\Boot.class c:\\Temp\\source\\",
+    "what_happens": "README example: decompiles a jar and a single class together with generic signatures turned on, writing the source to the last argument. Adjust the paths for your system."
+   },
+   {
+    "cmd": "java -jar fernflower.jar -hes=0 -hdc=0 c:\\Temp\\binary\\ -e=c:\\Java\\rt.jar c:\\Temp\\source\\",
+    "what_happens": "README example: decompiles a directory of classes, keeps empty super calls and default constructors visible, and uses a library jar for context."
+   }
+  ],
+  "whats_unique": "The renamer is a first-class, pluggable feature aimed at obfuscated bytecode, and the option list covers modern Java constructs such as records and pattern switches. It is also the decompiler inside IntelliJ IDEA.",
+  "caveats": "The README assumes you are a Java developer and says most options are aimed at professional reverse engineers. Its examples use Windows paths and an rt.jar that modern JDKs no longer ship. How the Homebrew executable wraps the jar is not documented.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "java",
+   "decompiler",
+   "reverse-engineering",
+   "bytecode",
+   "jetbrains"
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repository",
+    "url": "https://github.com/JetBrains/fernflower"
+   },
+   {
+    "label": "Releases (IntelliJ repository)",
+    "url": "https://www.jetbrains.com/intellij-repository/releases"
+   },
+   {
+    "label": "Issue tracker (YouTrack, subsystem Java. Decompiler. Engine)",
+    "url": "https://youtrack.jetbrains.com/newIssue?project=IDEA&clearDraft=true&c=Subsystem%20Java.%20Decompiler.%20Engine"
+   },
+   {
+    "label": "IntelliJ Community repository (where contributions go)",
+    "url": "https://github.com/JetBrains/intellij-community"
+   }
+  ]
+ }
+}

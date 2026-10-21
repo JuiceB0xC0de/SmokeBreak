@@ -1,0 +1,61 @@
+{
+ "name": "dislocker",
+ "desc": "FUSE driver to read/write Windows' BitLocker-ed volumes",
+ "homepage": "https://github.com/Aorimn/dislocker",
+ "installs_365d": 119,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "library"
+ ],
+ "why": "FUSE driver that reads and writes BitLocker volumes, a fascinating look at encrypted on-disk formats.",
+ "brief": {
+  "what_it_is": "Dislocker is a Linux tool for opening BitLocker-encrypted Windows volumes. It takes a BitLocker partition (or a BitLocker To Go USB stick) plus the user's key material, such as a password or recovery key, and exposes the decrypted contents. The README describes two routes: dislocker-fuse presents a virtual NTFS file through a FUSE mount, and dislocker-file writes the decrypted volume out as a flat NTFS image file. The README covers Vista, 7, 8, 8.1 and 10 volumes, using AES-CBC or AES-XTS at 128 or 256 bits, with or without the Elephant diffuser.",
+  "why_it_exists": "The README says the software was \"designed to read BitLocker encrypted partitions under a Linux system.\" It also explains BitLocker To Go's dual format, a FAT32 filesystem sitting alongside an encrypted volume, so the same tool handles both kinds of media.",
+  "how_it_works": "dislocker is a library with several binaries built on top of it. dislocker-fuse decrypts on demand through FUSE: once keys are unlocked, a file named dislocker-file appears in the mount point, and that file is a virtual NTFS partition that can be mounted normally. Writes to it go through to the underlying BitLocker volume. dislocker-file instead decrypts the whole volume into a separate flat file, which is detached from the original, so writes affect only the copy. The README notes that this file is the same size as the volume and can take a long time to create.",
+  "commands_seen": [
+   {
+    "cmd": "cmake .",
+    "context": "Configures the build from the source directory, per the README's build section (INSTALL.md is referenced for full steps)."
+   },
+   {
+    "cmd": "make dislocker-fuse",
+    "context": "Builds only the dislocker-fuse target, the binary the README says you use to mount a BitLocker volume. Other binaries can be built the same way by naming their make target."
+   },
+   {
+    "cmd": "/dev/sda2 /mnt/dislocker fuse.dislocker user-password=blah,nofail 0 0",
+    "context": "Example /etc/fstab line that mounts a BitLocker partition through dislocker using long options. The README says to adapt it to each case. This is an fstab entry, not a shell command."
+   }
+  ],
+  "install_notes": "Build from source with cmake and make, as described in INSTALL.md. The README also points to BUILD.md for building native packages. Mounting needs FUSE. The dislocker-find script needs the library built with Ruby bindings. The README does not describe any other accounts or runtimes. I did not fetch INSTALL.md or BUILD.md.",
+  "standout": "The BitLocker To Go section explains why the same tool works on both internal drives and USB sticks. A FAT32 filesystem and an encrypted volume occupy the same partition, and dislocker treats the whole partition as the BitLocker volume. The fuse route also gives you a live, writable view of the decrypted disk without making a full copy, which is different from the flat-file route.",
+  "status": "unknown. The README has a CI tests badge pointing at a GitHub Actions workflow, but it gives no release date, version, or changelog, and I did not check commit history. The README is detailed and the acknowledgments read as an active project, but I cannot confirm a recent release or commit from what I fetched.",
+  "caveats": "Linux-focused. The README credits OS X support, but it does not describe it. Writing through dislocker-fuse changes the real BitLocker volume, and the README warns about this directly. dislocker-file needs free disk space equal to the volume size. The README lists five binaries, but its own list includes dislocker-find, which is a Ruby script that exists only if the library is built with Ruby bindings. The Homebrew executables list omits dislocker-find. The README says \"There may be bugs.\" Licensing was not visible in the README, so I could not confirm it. The brew description says the tool reads and writes volumes, which matches the README.",
+  "quotes": [
+   "This software has been designed to read BitLocker encrypted partitions under a Linux system.",
+   "Note that writing to the NTFS virtual file will change the underlying BitLocker partition's content.",
+   "There may be bugs, and I'll be happy to hear about it!"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/Aorimn/dislocker"
+   },
+   {
+    "label": "Issues",
+    "url": "https://github.com/Aorimn/dislocker/issues"
+   },
+   {
+    "label": "CI tests workflow",
+    "url": "https://github.com/Aorimn/dislocker/actions/workflows/tests.yml"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/Aorimn/dislocker (homepage, GitHub README) - fetched OK; README is substantive, so I did not follow INSTALL.md, BUILD.md, or dislocker(1) manual page links."
+  ]
+ }
+}

@@ -1,0 +1,129 @@
+{
+ "name": "libbtbb",
+ "desc": "Bluetooth baseband decoding library",
+ "homepage": "https://github.com/greatscottgadgets/libbtbb",
+ "installs_365d": 556,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "radio-and-hardware",
+ "tags": [
+  "radio-and-hardware",
+  "needs-hardware",
+  "protocol",
+  "afternoon",
+  "library"
+ ],
+ "why": "Decodes Bluetooth baseband packets captured from a sniffer radio, a real door into the air interface most people never see.",
+ "brief": {
+  "what_it_is": "libbtbb is a C library that decodes Bluetooth baseband packets and piconet information. It takes raw captures from sniffer hardware, namely Ubertooth devices or GR-Bluetooth with a USRP, and turns them into decoded Bluetooth packets. The README does not describe the output format in detail. The Homebrew entry lists one executable, btaptap, but the README does not mention it, so I could not confirm what it does.",
+  "why_it_exists": "The README says it is forked from the GR-Bluetooth project and is meant to extract Bluetooth packet and piconet information from Ubertooth devices as well as GR-Bluetooth/USRP. It is a shared decoding layer for those sniffer sources.",
+  "how_it_works": "The README does not explain the decoding mechanism. It describes the library as a baseband decoder that works on captures from Ubertooth or GR-Bluetooth/USRP hardware. It is built with CMake and installs a library and headers into /usr/local.",
+  "commands_seen": [
+   {
+    "cmd": "mkdir build",
+    "context": "Creates a build directory, the first step of the out-of-tree CMake build."
+   },
+   {
+    "cmd": "cd build",
+    "context": "Enters the build directory."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Configures the build from the parent source directory."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles libbtbb."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the library to /usr/local/lib and headers to /usr/local/include by default."
+   },
+   {
+    "cmd": "cmake -DINSTALL_DIR=/path/to/install -DINCLUDE_DIR=/path/to/include ..",
+    "context": "Overrides the default library and header install locations at configure time."
+   },
+   {
+    "cmd": "sudo cmake/cleanup.sh -d",
+    "context": "Removes earlier libbtbb, libubertooth, or Ubertooth tool installs. The -d flag performs the removal."
+   },
+   {
+    "cmd": "cmake/cleanup.sh",
+    "context": "Lists the files a cleanup would remove without deleting anything."
+   }
+  ],
+  "install_notes": "Build from source with CMake: mkdir build, cd build, cmake .., make, sudo make install. The default install is /usr/local/lib and /usr/local/include, and the CMake variables INSTALL_DIR and INCLUDE_DIR change that. Remove older libbtbb, libubertooth, or Ubertooth tools first with the included cmake/cleanup.sh script. Capturing packets needs an Ubertooth device or a GR-Bluetooth/USRP setup. The README does not describe first-run configuration. The Homebrew formula is what supplies the btaptap executable.",
+  "standout": "It is the decoding core shared by Ubertooth and GR-Bluetooth/USRP, so it turns raw radio captures into Bluetooth piconet and packet data that other tools can build on. The README does not present it as an end-user application.",
+  "status": "Quiet. The GitHub releases page lists 2020-12-R1 ('the Christmas release', tagged 25 Dec, which I read as 2020) as the latest, and the page has releases going back to 2014. The README still says the code is 'under active development'. I did not check commit dates, so I cannot say how recent the last commit is.",
+  "caveats": "The README says the code is incomplete. It was developed and tested only on Linux, and other platforms are untested. The README does not document btaptap, so the one installed executable has no usage notes that I could find. The README gives no license information. Installation needs sudo for the default paths and the cleanup script removes older Ubertooth-related installs, so it is invasive. Capturing still requires supported sniffer hardware.",
+  "quotes": [
+   "This is the Bluetooth baseband decoding library, forked from the GR-Bluetooth project.",
+   "This code is incomplete, it is still under active development.",
+   "This software has been developed and tested on Linux, it should work on other platforms but this has yet to be tested."
+  ],
+  "links": [
+   {
+    "label": "Homepage and README (GitHub)",
+    "url": "https://github.com/greatscottgadgets/libbtbb"
+   },
+   {
+    "label": "Issue tracker",
+    "url": "https://github.com/greatscottgadgets/libbtbb/issues"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/greatscottgadgets/libbtbb/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/greatscottgadgets/libbtbb: worked, README returned",
+   "https://github.com/greatscottgadgets/libbtbb/releases: worked, release list returned; used for status evidence"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It exposes Bluetooth\u2019s normally invisible baseband and piconet traffic from radio captures\u2014a genuinely unusual protocol-inspection door, despite sparse docs and hardware requirements."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "libbtbb",
+  "tldr": "A C library that decodes Bluetooth baseband packets and piconet details from Ubertooth or USRP sniffer captures, opening up the radio layer beneath Bluetooth.",
+  "deeper_look": "libbtbb is the Bluetooth baseband decoding library, forked from the GR-Bluetooth project. It takes raw captures from sniffer hardware, either an Ubertooth device or GR-Bluetooth with a USRP, and turns them into decoded Bluetooth packets and piconet information.\n\nIt exists as a shared decoding layer. Rather than each sniffer project reimplementing the baseband logic, the Ubertooth and GR-Bluetooth/USRP sources can lean on one library. It is not presented as an end-user application. Other tools build on it, and you link against it or use what those tools expose.\n\nThe door it opens is the air interface most people never see. Bluetooth devices hop between channels and talk in small networks called piconets, and a decoder like this is where raw radio samples start to become something readable. The README does not explain the decoding mechanism, so the details are a matter for reading the source.\n\nHomebrew installs one executable, `btaptap`. The README does not mention it, so what it does is not confirmed here. Start with its `--help`.",
+  "install": "brew install libbtbb\n# Capturing packets needs an Ubertooth device or a GR-Bluetooth/USRP setup.\n# Upstream builds from source with CMake: mkdir build && cd build && cmake .. && make && sudo make install",
+  "try_this": [
+   {
+    "cmd": "btaptap --help",
+    "what_happens": "Prints usage for the one executable Homebrew installs, which the README does not document."
+   }
+  ],
+  "whats_unique": "It is the decoding core shared by Ubertooth and GR-Bluetooth/USRP, turning raw radio captures into Bluetooth packet and piconet data that other tools build on.",
+  "caveats": "The README calls the code incomplete and tested only on Linux, the latest release found is from December 2020, btaptap is undocumented, and capturing needs supported sniffer hardware.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "bluetooth",
+   "protocol",
+   "library",
+   "sniffing"
+  ],
+  "links": [
+   {
+    "label": "Homepage and README (GitHub)",
+    "url": "https://github.com/greatscottgadgets/libbtbb"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/greatscottgadgets/libbtbb/releases"
+   },
+   {
+    "label": "Issue tracker",
+    "url": "https://github.com/greatscottgadgets/libbtbb/issues"
+   }
+  ]
+ }
+}

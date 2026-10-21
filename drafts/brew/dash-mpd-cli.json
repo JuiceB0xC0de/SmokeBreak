@@ -1,0 +1,137 @@
+{
+ "name": "dash-mpd-cli",
+ "desc": "Download media content from a DASH-MPEG or DASH-WebM MPD manifest",
+ "homepage": "https://emarsden.github.io/dash-mpd-cli/",
+ "installs_365d": 624,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "media",
+  "network",
+  "protocol"
+ ],
+ "why": "Downloads DASH streams from manifests, a window into how adaptive video is actually assembled.",
+ "brief": {
+  "what_it_is": "A command-line application, written in Rust and MIT-licensed, that downloads audio or video described by a DASH MPD manifest. Input is an MPD URL. It selects the best-matching alternative by bitrate, codec and similar criteria, fetches the segments over HTTP, HTTPS or HTTP/2, and muxes audio and video together using an external tool (mkvmerge, ffmpeg, VLC or MP4Box). It can also download subtitles in WebVTT, TTML, SRT, tx3g, SMIL and wvtt. Output is a local media file, with the container chosen from the output filename extension (for example .mp4, .mkv or .webm).",
+  "why_it_exists": "The author built it to watch a news programme from a public broadcaster's replay service at the gym, where the network was sometimes poor. The README frames it as a way to download streaming video or audio for local use, and it builds on the dash-mpd-rs library.",
+  "how_it_works": "It parses the MPD XML and chooses a representation by bitrate, codec, language, resolution, stream id and role. It then requests the media segments over HTTP(S) and calls an external muxer to combine them. The muxer is picked by output extension, in a preference order: for .mkv, mkvmerge then ffmpeg then MP4Box; for .mp4, ffmpeg then VLC then MP4Box; for .webm, VLC then ffmpeg. A --muxer-preference option overrides this order.",
+  "commands_seen": [
+   {
+    "cmd": "brew install dash-mpd-cli",
+    "context": "Homebrew install, listed as the install route on macOS and Linux."
+   },
+   {
+    "cmd": "cargo install dash-mpd-cli",
+    "context": "Builds and installs the binary from crates.io into the Cargo bin directory, typically $HOME/.cargo/bin."
+   },
+   {
+    "cmd": "podman run --rm -v .:/content ghcr.io/emarsden/dash-mpd-cli -v <MPD-URL> -o foo.mp4",
+    "context": "Runs the prebuilt container with Podman, mounting the current directory as /content and writing foo.mp4 to it."
+   },
+   {
+    "cmd": "sudo podman --runtime=runsc run --rm -v .:/content ghcr.io/emarsden/dash-mpd-cli -v <MPD-URL> -o foo.mp4",
+    "context": "Same container run under the gVisor runsc runtime for extra sandboxing; Linux AMD64 only, requires root."
+   },
+   {
+    "cmd": "podman machine start",
+    "context": "Optional step, needed only on Windows and macOS before running the container with Podman."
+   },
+   {
+    "cmd": "cargo build --release",
+    "context": "Builds from a git clone; the binary lands at target/release/dash-mpd-cli."
+   },
+   {
+    "cmd": "target/release/dash-mpd-cli --help",
+    "context": "Prints the built binary's help, which the README points to as the reference for flags."
+   },
+   {
+    "cmd": "--muxer-preference avi:vlc,ffmpeg",
+    "context": "Example of the muxer preference flag, not a standalone command: for AVI output, try VLC first, then ffmpeg."
+   },
+   {
+    "cmd": "yt-dlp <MPD-URL>",
+    "context": "Listed under similar tools as a comparable way to download from a DASH manifest; not part of dash-mpd-cli itself."
+   }
+  ],
+  "install_notes": "Prebuilt binaries are on GitHub releases for Linux AMD64 (static musl), Windows AMD64 and macOS aarch64. Alternatives are cargo install or a container image at ghcr.io/emarsden/dash-mpd-cli (about 220 MB, Podman or Docker, multiarch including arm64, armv7 and riscv64). The README treats the container as the safest route because it bundles every helper. Native installs need external tools depending on use: mkvmerge (MKVToolNix) for .mkv; ffmpeg or VLC for .mp4; MP4Box (GPAC) optionally for wvtt subtitles and as a fallback muxer; mp4decrypt (Bento4) or shaka-packager for DRM; xsltproc for MPD rewriting. Non-standard install locations can be given with flags such as --ffmpeg-location, --vlc-location, --mkvmerge-location, --mp4box-location, --mp4decrypt-location and --shaka-packager-location. No account is mentioned.",
+  "standout": "Compared with yt-dlp, ffmpeg, VLC or streamlink, the README claims it handles multi-period manifests, XLink elements and xHE-AAC audio that those tools reportedly fail on. It can also read cookies from installed browsers, add Basic or Bearer auth for both manifest and CDN, and rewrite the MPD with a user XSLT stylesheet before downloading.",
+  "status": "unknown. The GitHub README shows a CI badge, a crates.io badge, a deps.rs dependency-status badge and a published container image, which suggests active upkeep. I did not see a release date or last-commit date on either page, so I cannot confirm recency.",
+  "caveats": "Live (dynamic) MPD streams are not really supported. Pseudo-live streams work with --enable-live-streams, and --sleep-requests may help with live. Not supported: HLS m3u8, XLink with actuate=onRequest, and Microsoft Smooth Streaming. DRM decryption needs mp4decrypt or shaka-packager installed plus a key via --key. Android (termux), FreeBSD and OpenBSD need the cookies feature disabled, and OpenBSD support for the external decryptors is poor. Static musl builds do not work with OpenSSL, so they use rustls, which can fail some handshakes. The README warns that redistributing media you did not produce may breach IP law and that circumventing DRM may be prohibited in some countries.",
+  "quotes": [
+   "A commandline application for downloading media content from a DASH MPD file, as used for on-demand replay of TV content and video streaming services.",
+   "dash-mpd-cli is written in the Rust programming language, meaning that it\u2019s high performance and protected from a variety of vulnerabilities that can affect more traditional software.",
+   "The author is not the morality police nor a lawyer, but please note that redistributing media content that you have not produced may, depending on the publication licence, be a breach of intellectual property laws."
+  ],
+  "links": [
+   {
+    "label": "Homepage and user manual",
+    "url": "https://emarsden.github.io/dash-mpd-cli/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/emarsden/dash-mpd-cli"
+   },
+   {
+    "label": "dash-mpd-rs core library",
+    "url": "https://github.com/emarsden/dash-mpd-rs"
+   }
+  ],
+  "fetch_log": [
+   "https://emarsden.github.io/dash-mpd-cli/ : worked. Returned the rendered mdbook user-manual page; the feature text matches the README, but it contains no full command lines, only flag names.",
+   "https://github.com/emarsden/dash-mpd-cli : worked. Returned the full README, including install, container and muxing sections. Its docs links (usage.html, container.html, rewriting.html) were not fetched, since the README was complete."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A specialist DASH client that exposes how manifests, representations, and segments fit together, with unusual support for multi-period streams and XLink."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "dash-mpd-cli",
+  "tldr": "Feed it a DASH manifest URL and it fetches the segments and muxes them into one local video file, exposing how adaptive streaming is assembled.",
+  "deeper_look": "Most streaming video is not a file. It is a manifest, an XML document called an MPD, that lists audio and video tracks at several bitrates, each cut into short segments served over plain HTTP. dash-mpd-cli reads that manifest, picks a representation by bitrate, codec, language, resolution, stream id or role, downloads the segments, and hands them to an external muxer to stitch into a single file.\n\nThe output container comes from the filename extension. Asking for .mkv, .mp4 or .webm makes it try mkvmerge, ffmpeg, VLC or MP4Box in a preference order, which `--muxer-preference` can override. It can also fetch subtitles in formats such as WebVTT, TTML and SRT.\n\nThe author wrote it to watch a public broadcaster's replay programme at a gym with a flaky network. The README describes it as a tool for downloading media for local use. Underneath is the idea that a player is just a client making a series of HTTP requests against a manifest. Once you see that, you can follow how a player picks quality, and where multi-period manifests and XLink elements fit in.\n\nIt is written in Rust, MIT-licensed, and built on the dash-mpd-rs library. It can also read browser cookies, send Basic or Bearer auth, and rewrite the MPD with an XSLT stylesheet before downloading.",
+  "install": "brew install dash-mpd-cli\n# Homebrew pulls in ffmpeg, bento4 and mkvtoolnix. Alternatives: cargo install dash-mpd-cli, or the container ghcr.io/emarsden/dash-mpd-cli (about 220 MB, bundles every helper). You need an MPD URL to do anything useful.",
+  "try_this": [
+   {
+    "cmd": "dash-mpd-cli --help",
+    "what_happens": "Prints the full list of flags for choosing quality, muxers, auth, subtitles and decryption."
+   },
+   {
+    "cmd": "podman run --rm -v .:/content ghcr.io/emarsden/dash-mpd-cli -v <MPD-URL> -o foo.mp4",
+    "what_happens": "Runs the container, downloads the stream behind the manifest verbosely, and writes foo.mp4 to the current directory."
+   }
+  ],
+  "whats_unique": "The README claims it handles multi-period manifests, XLink elements and xHE-AAC audio that yt-dlp, ffmpeg, VLC and streamlink reportedly fail on. It can also rewrite the manifest with XSLT before downloading.",
+  "caveats": "Live DASH streams are not really supported (pseudo-live works with --enable-live-streams), HLS and Smooth Streaming are out, DRM needs a key you supply, and the brief could not confirm recent release dates.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "media",
+   "video",
+   "streaming",
+   "protocol",
+   "rust",
+   "dash"
+  ],
+  "links": [
+   {
+    "label": "Homepage and user manual",
+    "url": "https://emarsden.github.io/dash-mpd-cli/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/emarsden/dash-mpd-cli"
+   },
+   {
+    "label": "dash-mpd-rs core library",
+    "url": "https://github.com/emarsden/dash-mpd-rs"
+   }
+  ]
+ }
+}

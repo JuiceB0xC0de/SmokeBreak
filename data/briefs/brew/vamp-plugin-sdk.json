@@ -1,0 +1,67 @@
+{
+ "name": "vamp-plugin-sdk",
+ "desc": "Audio processing plugin system sdk",
+ "homepage": "https://www.vamp-plugins.org/",
+ "installs_365d": 11831,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "afternoon",
+  "audio",
+  "library",
+  "science"
+ ],
+ "why": "Vamp plugins extract structured features like pitch and onsets from audio, a door into music information retrieval.",
+ "brief": {
+  "what_it_is": "Vamp is an API and C/C++ SDK for audio analysis plugins: binary modules that a host application loads and feeds with sampled audio. Unlike an effect such as a VST plugin, a Vamp plugin produces no audio. It outputs symbolic or descriptive information such as note onset times, spectrograms, or curves like power or fundamental frequency. The SDK ships example plugins (ZeroCrossing, SpectralCentroid, PowerSpectrum, AmplitudeFollower, PercussionOnsetDetector, FixedTempoEstimator), a skeleton for new plugins, and a simple command-line host that runs a plugin over a whole audio file with its default parameters. The Homebrew package provides two executables: vamp-simple-host and vamp-rdf-template-generator.",
+  "why_it_exists": "The homepage frames Vamp as a plugin system for extracting descriptive information from audio, which is what the site calls audio analysis or audio feature extraction plugins. It is meant to be a nice API for developers and DSP researchers, built at the Centre for Digital Music at Queen Mary, University of London.",
+  "how_it_works": "A Vamp plugin is a dynamic library (.so, .dll or .dylib) exposing a C entry point, vampGetPluginDescriptor. Plugin authors subclass Vamp::Plugin and use Vamp::PluginAdapter to expose the C API. Hosts use Vamp::HostExt::PluginLoader to search a plugin path for libraries, enumerate their plugins, and read optional .cat category files. Adapters handle frequency-domain input, channel mixdown, block buffering, and summarising outputs such as mean and median.",
+  "commands_seen": [
+   {
+    "cmd": "mkdir build && cd build",
+    "context": "First step of the CMake build from the SDK README: creates and enters a build directory."
+   },
+   {
+    "cmd": "cmake .. -DVAMPSDK_BUILD_EXAMPLE_PLUGINS=ON",
+    "context": "Configures the CMake build and turns on the example plugin library. The README notes that VAMPSDK_BUILD_SIMPLE_HOST and VAMPSDK_BUILD_RDFGEN are also available and default to OFF."
+   },
+   {
+    "cmd": "cmake --build .",
+    "context": "Compiles the SDK after configuration."
+   },
+   {
+    "cmd": "./configure && make && make install",
+    "context": "The older autoconf build. The README says it is still the recommended route for installable shared libraries on Linux and is not advised elsewhere."
+   }
+  ],
+  "install_notes": "The README recommends CMake for most platforms. By default only the plugin and host SDK libraries are built, so the simple host (VAMPSDK_BUILD_SIMPLE_HOST) needs libsndfile installed where CMake can detect it. The RDF template generator needs VAMPSDK_BUILD_RDFGEN. No accounts, hardware, or runtime setup is mentioned. Hosts can honour the VAMP_PATH environment variable to override the default plugin search path. I did not inspect the Homebrew formula itself, so I cannot say which build options it uses.",
+  "standout": "The API is a plain C ABI, with a C++ layer on top and a small hosting library that handles discovery, channel mixing, buffering, and frequency-domain conversion for hosts. Plugins return structured features rather than audio, which makes it a door into music information retrieval. Sonic Visualiser and Audacity can use Vamp plugins, and the RDF generator is aimed at linked-data use.",
+  "status": "unknown: I found no release date or last-commit date in the pages I read. The README is for version 2.10 of the SDK, with copyright notices running to 2024 and CI badges for Linux, macOS, and Windows. That suggests it is actively kept, but I have not confirmed it.",
+  "caveats": "Vamp is for C and C++ developers, and the README says most people should use the C++ abstractions rather than the C API directly. Plugins built against 2.x are binary-compatible with each other, and with 1.0 only under restrictions described in a separate compatibility README. The otherbuilds directory (including Visual Studio projects) is explicitly unsupported. The autoconf path is discouraged outside Linux. The simple host processes whole files with default parameters only, and the README says it is not really simple. Licensing is new-style BSD, which permits commercial use with attribution.",
+  "quotes": [
+   "Vamp is an audio processing plugin system for plugins that extract descriptive information from audio data",
+   "a Vamp plugin does not generate audio output, but some sort of symbolic information instead",
+   "Vamp is a nice API to develop with."
+  ],
+  "links": [
+   {
+    "label": "Vamp homepage",
+    "url": "https://www.vamp-plugins.org/"
+   },
+   {
+    "label": "SDK source and README (GitHub)",
+    "url": "https://github.com/vamp-plugins/vamp-plugin-sdk"
+   },
+   {
+    "label": "Vamp plugin writing guide (PDF)",
+    "url": "https://www.vamp-plugins.org/guide.pdf"
+   }
+  ],
+  "fetch_log": [
+   "https://www.vamp-plugins.org/ - worked, homepage text read",
+   "https://github.com/vamp-plugins/vamp-plugin-sdk - worked, README returned. I built this URL from the GitHub organisation named on the homepage, not from a link I followed. The guide.pdf link is cited from the README but I did not fetch it."
+  ]
+ }
+}

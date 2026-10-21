@@ -1,0 +1,93 @@
+{
+ "name": "dnscrypt-wrapper",
+ "desc": "Server-side proxy that adds dnscrypt support to name resolvers",
+ "homepage": "https://cofyc.github.io/dnscrypt-wrapper/",
+ "installs_365d": 46,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "Adds DNSCrypt to ordinary resolvers, a quiet door into encrypted DNS that most people never look at.",
+ "brief": {
+  "what_it_is": "dnscrypt-wrapper is a server-side DNSCrypt proxy written in C. It sits in front of an ordinary DNS resolver and adds DNSCrypt support to it. It accepts encrypted, authenticated DNS queries from DNSCrypt clients on a listen address, forwards them to an existing resolver such as 114.114.114.114:53, and returns the answers. It also serves its own certificate as a TXT record for the provider name. The README describes it as a server-side dnscrypt proxy that helps add dnscrypt support to any name resolver.",
+  "why_it_exists": "The README frames it as a way to add DNSCrypt support to any existing name resolver without replacing that resolver. The software is described as modified from dnscrypt-proxy.",
+  "how_it_works": "You generate a long-term provider key pair and a time-limited crypt key with a signed certificate. The wrapper runs with the resolver address, listen address, provider name, and key and certificate files. Clients using dnscrypt-proxy send encrypted queries, and the wrapper decrypts them and passes them to the upstream resolver. Time-limited keys can be rotated without changing client configuration, and on Linux kernel 3.9 or later several instances can run at once for zero-downtime switches.",
+  "commands_seen": [
+   {
+    "cmd": "brew install dnscrypt-wrapper",
+    "context": "The README's recommended install on MacOS (marked as best recommended)."
+   },
+   {
+    "cmd": "pkg install dnscrypt-wrapper",
+    "context": "Install step on FreeBSD."
+   },
+   {
+    "cmd": "git clone --recursive git://github.com/cofyc/dnscrypt-wrapper.git",
+    "context": "Source install on Linux, cloning the repo with submodules."
+   },
+   {
+    "cmd": "dnscrypt-wrapper --gen-provider-keypair",
+    "context": "Generates the long-term provider key pair, writing public.key and secret.key to the current directory."
+   },
+   {
+    "cmd": "dnscrypt-wrapper --gen-crypt-keypair --crypt-secretkey-file=1.key",
+    "context": "Creates a time-limited secret key saved as 1.key."
+   },
+   {
+    "cmd": "dnscrypt-wrapper --gen-cert-file --crypt-secretkey-file=1.key --provider-cert-file=1.cert",
+    "context": "Generates the certificate 1.cert for the time-limited key 1.key."
+   },
+   {
+    "cmd": "dnscrypt-wrapper --resolver-address=114.114.114.114:53 --listen-address=0.0.0.0:443 --provider-name=2.dnscrypt-cert.yechengfu.com --crypt-secretkey-file=1.key --provider-cert-file=1.cert",
+    "context": "Starts the server. The README wraps this across several lines with backslashes, which are joined here. It forwards to a resolver, listens on port 443, and uses the example provider name."
+   },
+   {
+    "cmd": "dnscrypt-proxy --local-address=127.0.0.1:55 --resolver-address=127.0.0.1:443 --provider-name=2.dnscrypt-cert.yechengfu.com --provider-key=<provider_public_key_fingerprint>",
+    "context": "Client-side check using dnscrypt-proxy, which the README wraps across lines. It connects to the wrapper and opens a local listener on port 55."
+   },
+   {
+    "cmd": "dig -p 55 google.com @127.0.0.1",
+    "context": "Test query through the local dnscrypt-proxy listener to confirm the setup works."
+   },
+   {
+    "cmd": "dnscrypt-proxy --resolver-address=127.0.0.1:443 --provider-name=2.dnscrypt-cert.yechengfu.com --provider-key=<provider_public_key_fingerprint> --test=10080",
+    "context": "Checks certificate expiry. The value is a grace margin in minutes. Exit code 4 means the certificate expires before the margin, so it can be used in cron to alert."
+   }
+  ],
+  "install_notes": "Install libsodium and libevent 2.1.1 or later first. On Linux, run ldconfig if libsodium was installed from source, then clone with submodules, run make configure, ./configure, and make install. On FreeBSD use pkg. On OpenBSD, install gmake, autoconf, and libevent with pkg_add, then build with gmake and LDFLAGS=-L/usr/local/lib/ and CFLAGS=-I/usr/local/include/. On MacOS use brew. Docker is handled by a separate repo, jedisct1/dnscrypt-server-docker. First run requires generating the provider key pair, a time-limited key, and a certificate, then starting the server. The server needs a provider name starting with 2.dnscrypt-cert. and is typically run on port 443 or another port. The README does not say whether the process needs root.",
+  "standout": "Key rotation is designed in: new time-limited keys and certificates can be swapped without changing client config, and the wrapper can serve the certificate as a TXT record itself. The dnscrypt-proxy --test margin with exit codes is a cron-friendly expiry check. It is a small wrapper that retrofits DNSCrypt onto any resolver.",
+  "status": "unknown. The README has no release date, changelog, or recent commit reference. The copyright line reads 2012-2015, and the Chinese third-party docs are noted as possibly out of date. The scout note calls it a quiet door into encrypted DNS. I did not check the GitHub repo for commit or release dates.",
+  "caveats": "Only DNSCrypt queries are accepted by default. The -U (--unauthenticated) switch allows plain DNS on the same port, which the README says is not recommended. Build requires libsodium and libevent 2.1.1 or later. Multiple concurrent instances need Linux kernel 3.9 or later. Docker support is out of tree. The Chinese docs may lag the README. The README does not state a license, and I did not find one in the homepage text. The example provider name and resolver IP are illustrative.",
+  "quotes": [
+   "This is dnscrypt wrapper (server-side dnscrypt proxy), which helps to add dnscrypt support to any name resolver.",
+   "Time-limited secret keys and certificates can be updated at any time without requiring clients to update their configuration.",
+   "This also allows upgrades with zero downtime."
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://cofyc.github.io/dnscrypt-wrapper/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/cofyc/dnscrypt-wrapper"
+   },
+   {
+    "label": "dnscrypt-proxy (upstream it was modified from)",
+    "url": "https://github.com/jedisct1/dnscrypt-proxy"
+   },
+   {
+    "label": "DNSCrypt project",
+    "url": "http://dnscrypt.org/"
+   }
+  ],
+  "fetch_log": [
+   "https://cofyc.github.io/dnscrypt-wrapper/ - fetched OK; full README text returned, so no further fetches were needed."
+  ]
+ }
+}

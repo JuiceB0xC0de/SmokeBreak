@@ -1,0 +1,62 @@
+{
+ "name": "grt",
+ "desc": "Gesture Recognition Toolkit for real-time machine learning",
+ "homepage": "https://nickgillian.com/grt/",
+ "installs_365d": 12,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "library",
+  "math",
+  "afternoon"
+ ],
+ "why": "A real-time gesture recognition toolkit, an obscure ML library with a genuinely curious application domain.",
+ "brief": {
+  "what_it_is": "GRT (Gesture Recognition Toolkit) is a cross-platform, open-source C++ machine learning library for real-time gesture recognition. It takes in any N-dimensional floating-point vector, such as samples from cameras, Kinect, Leap Motion, accelerometers, or a custom sensor, plus labeled training data from .grt or CSV files. It outputs a trained model that predicts a class label and likelihood for each new sample, and it also provides regression and clustering. Modules for preprocessing, feature extraction, classification, regression, and post-processing can be chained into a GestureRecognitionPipeline. The README also describes a companion GUI, available as a separate download.",
+  "why_it_exists": "The README frames it as a toolkit for real-time gesture recognition, built to work with live sensor data while also supporting conventional offline machine learning. The homepage example shows the pattern: set up a pipeline, train it on a labeled dataset, then call predict on each incoming sensor sample.",
+  "how_it_works": "Modules share one interface: input is an N-dimensional float vector, and each class offers train, predict, save, load, reset, and clear. A pipeline chains them with the << operator, for example a MovingAverageFilter, then an FFT, then a RandomForest classifier, and pipeline.train(trainingData) fits the whole chain. The README also notes that class label 0 is reserved as a null gesture for automatic gesture spotting, so real gestures should not use label zero.",
+  "commands_seen": [
+   {
+    "cmd": "./example my_data.csv",
+    "context": "Running the Getting Started example from the README. It takes one argument, the CSV data file to load, then splits, trains, saves, loads, and tests a KNN pipeline."
+   },
+   {
+    "cmd": "./ExampleName",
+    "context": "Generic form for running a built example. If GRT is built with CMake, the examples are generated in grt/build/examples, and you run the example from that directory by name."
+   }
+  ],
+  "install_notes": "GRT is a C++ library, not a standalone CLI, and the README documents no Homebrew-specific steps. To build, use the CMakeLists file in the build folder to generate a makefile, then follow the build folder's readme to build a static library on Linux, OS X, or Windows. Use of the library goes through its build directory docs. The default Float type is double precision and can be switched to single precision in GRT/Util/GRTTypedefs.h. Nothing in the README mentions accounts, hardware, or runtimes. The Homebrew formula's executables (grt-lin-reg-tool, grt-log-reg-tool, grt-merge-tool, grt-mlp-tool, grt-rf-tool, grt-softmax-tool, grt-split-tool, grt-svm-tool, grt-test-tool) do not appear in the README I read, so their purpose and usage are unverified.",
+  "standout": "It is a real-time gesture library with a C++ API that is built around pipelines. Its generic N-dimensional float input means one toolkit covers cameras, Kinect, Leap Motion, and homemade sensors. It also reserves label 0 for automatic gesture spotting, which is a niche feature most general ML libraries lack.",
+  "status": "unknown, leaning quiet. The README points to version 0.2.5 and its API docs, and both the homepage and README date from the old nickgillian.com era. The forum is described as broken, with users told to use GitHub issues instead. Build badges point to travis-ci.org, which is an older CI service. I did not see a last-commit or release date, so I cannot confirm recent activity.",
+  "caveats": "The forum is documented as broken, and the README says to use GitHub issues instead. Much of the documentation lives on the wiki and an old pmwiki site that may be stale. Build and install guidance is delegated to a build-folder readme I did not fetch. The Homebrew executables are not explained in anything I read. The MIT license is in the README. The homepage I fetched was mostly a code sample with almost no prose, so the README was the real source.",
+  "quotes": [
+   "The Gesture Recognition Toolkit (GRT) is a cross-platform, open-source, C++ machine learning library designed for real-time gesture recognition.",
+   "The input to the GRT can be any N-dimensional floating-point vector - this means you can use the GRT with Cameras, Kinect, Leap Motion, accelerometers, or any other custom sensor you might have built",
+   "The toolkit reserves the class label value of zero as a special null gesture class label for automatic gesture spotting, so if you want to use gesture spotting avoid labeling any of your gestures with the class label of zero"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://nickgillian.com/grt/"
+   },
+   {
+    "label": "Source code (GitHub)",
+    "url": "https://github.com/nickgillian/grt"
+   },
+   {
+    "label": "JMLR paper (PDF)",
+    "url": "http://jmlr.csail.mit.edu/papers/volume15/gillian14a/gillian14a.pdf"
+   },
+   {
+    "label": "C++ API reference 0.2.5",
+    "url": "http://nickgillian.com/grt/api/0.2.5/"
+   }
+  ],
+  "fetch_log": [
+   "https://nickgillian.com/grt/ - worked, returned the homepage text: a short description plus a C++ pipeline code sample, with no install or docs prose",
+   "https://github.com/nickgillian/grt - worked, returned the README, which carried most of the content used here"
+  ]
+ }
+}

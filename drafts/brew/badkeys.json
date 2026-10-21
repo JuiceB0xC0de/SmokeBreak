@@ -1,0 +1,120 @@
+{
+ "name": "badkeys",
+ "desc": "Tool to find common vulnerabilities in cryptographic public keys",
+ "homepage": "https://badkeys.info",
+ "installs_365d": 300,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "math",
+  "reverse-engineering"
+ ],
+ "why": "Scans public keys for known weaknesses like batch-generated RSA factors, a sharp look at how keys go wrong.",
+ "brief": {
+  "what_it_is": "badkeys is a tool and library that checks cryptographic public keys for known vulnerabilities. It takes public keys in several formats (PEM PKCS #1 and PKCS #8 keys, X.509 certificates, certificate signing requests, and SSH public keys), detects the format automatically, and reports only the keys that are vulnerable by default. It can also scan live SSH and TLS hosts and check the keys they present. The web version at badkeys.info accepts pasted keys and checks them against the same list of weaknesses.",
+  "why_it_exists": "The README describes it simply as a tool to check cryptographic public keys for known vulnerabilities. The homepage's success stories show the aim: finding weak keys that real deployments are using, such as printer firmware RSA keys and certificates with ROCA-vulnerable or OpenSSL test keys.",
+  "how_it_works": "badkeys checks each key against a list of known weaknesses, and the blocklist data must be downloaded first with badkeys --update-bl. Checks include the Debian OpenSSL bug, common prime factors, ROCA, Fermat factorization, Wiener's small private exponent attack, and several vendor-specific flaws. It also flags discouraged practices such as DSA keys and unusual RSA exponents or key sizes. Its exit code is a bitmask: 4 means a vulnerable key was found and 2 means some input could not be scanned.",
+  "commands_seen": [
+   {
+    "cmd": "pip3 install badkeys",
+    "context": "Installs badkeys from PyPI; the README suggests using a virtual environment first."
+   },
+   {
+    "cmd": "badkeys --update-bl",
+    "context": "Downloads the blocklist data, which must be done before the first scan."
+   },
+   {
+    "cmd": "badkeys test.crt my.key",
+    "context": "Scans a certificate file and a private key file, detecting each file's format automatically."
+   },
+   {
+    "cmd": "badkeys -ts example.org",
+    "context": "Scans TLS and SSH on a host, combining the -t and -s scanning flags."
+   }
+  ],
+  "install_notes": "Installation is through pip (pip3 install badkeys), and a virtual environment is suggested. The README also mentions running ./badkeys-cli directly from the git repository and packages for various Linux distributions and other systems, tracked on Repology. Before first use, run badkeys --update-bl to fetch the blocklist. SSH scanning needs the paramiko Python package as an extra dependency. The Python module API is in beta and may change.",
+  "standout": "Most key checkers only test the key's mathematics. badkeys also includes a community-maintained blocklist of compromised private keys, and users can submit known-compromised keys to it through the website. Its web front end includes a 'Fill with test data' feature that loads sample keys for each weakness, which makes the checks easy to try.",
+  "status": "maintained. The README credits Hanno B\u00f6ck and says the work was funded in 2025/2026 by NLnet's NGI0 Core Fund. The homepage lists a 2025 Fortinet/Fortigate key leak among its checks and a 2025 OpenID Connect success story. I did not see a release date or last-commit date.",
+  "caveats": "The README says the Python API is in beta and may change regularly. TLS scanning cannot detect multiple certificates on one host, such as ECDSA and RSA together, because of a limitation in Python's ssl.get_server_certificate(). The website accepts private keys even though it says uploading them is discouraged for production keys. SSH scanning needs the paramiko package. The homepage did not show a licence, and I did not see one in the README text I fetched.",
+  "quotes": [
+   "badkeys checks public keys in various formats for known vulnerabilities.",
+   "currently the software is in beta state and the API may change regularly",
+   "By default, badkeys will only output information about vulnerable keys, meaning no output will be generated if no vulnerabilities are found."
+  ],
+  "links": [
+   {
+    "label": "badkeys.info (web version)",
+    "url": "https://badkeys.info"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/badkeys/badkeys"
+   },
+   {
+    "label": "PyPI package",
+    "url": "https://pypi.org/project/badkeys/"
+   }
+  ],
+  "fetch_log": [
+   "https://badkeys.info (homepage): fetched OK, but it is a web form, not a README. It gave the checks list and success stories.",
+   "https://github.com/badkeys/badkeys: fetched OK, README returned. I guessed this URL because the homepage did not link to a repository. The README links to it from the web version and confirms the project."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It makes cryptographic failures tangible by finding weak and compromised keys, combining classic attacks with a community-maintained blocklist and live host scanning."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "badkeys",
+  "tldr": "Checks public keys, certificates and live SSH or TLS hosts against known cryptographic weaknesses, from the Debian OpenSSL bug to ROCA to leaked vendor keys.",
+  "deeper_look": "badkeys takes public keys in several formats: PEM PKCS #1 and PKCS #8 keys, X.509 certificates, certificate signing requests and SSH public keys. It detects the format itself and checks each key against a list of known flaws. It can also connect to hosts and check the keys they present. A web version at badkeys.info does the same with pasted keys.\n\nThe checks go beyond a mathematical sanity test. They include the Debian OpenSSL bug, common prime factors shared between keys, ROCA, Fermat factorization, Wiener's small private exponent attack, and several vendor-specific flaws. It also flags discouraged choices such as DSA keys and unusual RSA exponents or key sizes. The homepage's success stories point at real finds: printer firmware RSA keys, and certificates using ROCA-vulnerable keys or OpenSSL test keys.\n\nThe idea underneath is that a key can look perfectly valid and still be broken, because of how it was generated or because someone already has its private half. Two RSA keys that share a prime can be factored by anyone holding both. A key in a public blocklist is compromised no matter how good its math is. badkeys is a way to see how keys go wrong in practice.\n\nBy default it prints nothing for a clean key, and only reports vulnerable ones. The exit code is a bitmask: 4 means a vulnerable key was found, 2 means some input could not be scanned.",
+  "install": "brew install badkeys\nbadkeys --update-bl\n\nThe blocklist data has to be downloaded with --update-bl before the first scan. SSH scanning needs the paramiko Python package as an extra dependency. The README's own route is pip3 install badkeys, ideally in a virtual environment.",
+  "try_this": [
+   {
+    "cmd": "badkeys --update-bl",
+    "what_happens": "Downloads the blocklist data that the checks need before the first scan."
+   },
+   {
+    "cmd": "badkeys test.crt my.key",
+    "what_happens": "Scans a certificate and a key file, detecting each format automatically. It prints nothing if both are clean."
+   },
+   {
+    "cmd": "badkeys -ts example.org",
+    "what_happens": "Connects to the host, scans the keys it presents over TLS and SSH, and reports any that are vulnerable."
+   }
+  ],
+  "whats_unique": "Most key checkers only test the key's mathematics. badkeys also includes a community-maintained blocklist of compromised private keys, and its web page has a 'Fill with test data' button that loads sample keys for each weakness.",
+  "caveats": "The README says the Python API is in beta and may change regularly, and TLS scanning cannot see multiple certificates on one host, such as ECDSA and RSA together.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "crypto",
+   "math",
+   "keys",
+   "tls",
+   "ssh",
+   "security"
+  ],
+  "links": [
+   {
+    "label": "badkeys.info (web version)",
+    "url": "https://badkeys.info"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/badkeys/badkeys"
+   },
+   {
+    "label": "PyPI package",
+    "url": "https://pypi.org/project/badkeys/"
+   }
+  ]
+ }
+}

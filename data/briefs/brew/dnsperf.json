@@ -1,0 +1,90 @@
+{
+ "name": "dnsperf",
+ "desc": "Measure DNS performance by simulating network conditions",
+ "homepage": "https://www.dns-oarc.net/tools/dnsperf",
+ "installs_365d": 1427,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "afternoon"
+ ],
+ "why": "A DNS load tester from the OARC crowd that opens a real door into how resolvers behave under pressure.",
+ "brief": {
+  "what_it_is": "dnsperf and resperf are two command-line DNS benchmarking tools from DNS-OARC. dnsperf reads a file of DNS queries and sends them to DNS servers, measuring latency and throughput. resperf ramps up the query rate and watches how the response rate holds up, to simulate a caching DNS service. The tools take a query data file and a target server, and output latency and throughput metrics; the homepage says the output is concise and that latency data can feed detailed graphs. Sample query data is published alongside the releases.",
+  "why_it_exists": "The homepage says the tools make it simple to gather accurate latency and throughput metrics for DNS, so network operators can benchmark their naming and addressing infrastructure and plan upgrades. The README adds that they are meant to simulate typical Internet conditions.",
+  "how_it_works": "dnsperf \"self-paces\" the query load to simulate network conditions, and newer versions are multithreaded, with each dnsperf client needing two cores. resperf systematically increases the query rate and monitors the response rate to find where a caching resolver stops keeping up. Per-query latency reporting is available in newer versions.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://codeberg.org/DNS-OARC/dnsperf.git",
+    "context": "Clones the source repository from Codeberg (the homepage's recommended way to get the code)."
+   },
+   {
+    "cmd": "./autogen.sh",
+    "context": "Generates the configure script when building from the Git repository (not needed for the release tarball)."
+   },
+   {
+    "cmd": "./configure [options]",
+    "context": "Configures the build; the README shows [options] as a placeholder and does not list specific flags."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles dnsperf and resperf."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the built binaries onto the system."
+   },
+   {
+    "cmd": "tar zxvf dnsperf-version.tar.gz",
+    "context": "Unpacks the release source tarball, the alternative to cloning Git."
+   },
+   {
+    "cmd": "apt-get install -y libssl-dev libldns-dev libck-dev libnghttp2-dev libjson-c-dev",
+    "context": "Installs build dependencies on Debian/Ubuntu."
+   },
+   {
+    "cmd": "yum install -y openssl-devel ldns-devel ck-devel libnghttp2-devel json-c-devel",
+    "context": "Installs build dependencies on CentOS (with EPEL/PowerTools enabled)."
+   },
+   {
+    "cmd": "pkg install -y openssl ldns concurrencykit libnghttp2 json-c",
+    "context": "Installs build dependencies on FreeBSD 12+ using pkg."
+   },
+   {
+    "cmd": "pkg_add libldns nghttp2 json-c",
+    "context": "Installs some build dependencies on OpenBSD 6+ using pkg_add (the README's list here does not include OpenSSL or Concurrency Kit)."
+   }
+  ],
+  "install_notes": "Homebrew is not mentioned in either page. Building needs a C toolchain plus autoconf, automake, libtool and pkgconfig. Libraries: OpenSSL (for TSIG), Concurrency Kit (atomic operations), nghttp2 (DNS-over-HTTPS over HTTP/2). LDNS is optional, for dynamic update support, and json-c is optional, for JSON statistics output. Prebuilt Debian, Ubuntu and RPM packages (CentOS, Fedora, RHEL, SLE, openSUSE) are listed at dev.dns-oarc.net/packages. The source tarball ships with configure, so no autotools are needed for it. No accounts or runtime configuration are mentioned; you supply your own query file and target server.",
+  "standout": "The tool is a DNS load generator that paces traffic to imitate real Internet query patterns, not just a flood. resperf is a separate ramp-up mode aimed at caching resolvers. Its lineage runs from Nominum to Akamai to DNS-OARC, and the project has sample query data and IPv6 query support.",
+  "status": "maintained. The homepage lists release 2.16.0 dated August 5, 2026, with a long history of releases since 2019. The Codeberg repo shows 443 commits, 29 tags, 7 open issues, and a latest commit dated 2026-10-13. The README points to issues on Codeberg and a Mattermost chat for support.",
+  "caveats": "Build needs several C libraries (OpenSSL, Concurrency Kit, nghttp2, plus LDNS and json-c for optional features), so it is not a single-binary install. Each dnsperf client needs two cores. The README's license note says Apache 2.0. The Codeberg page says it needs JavaScript to render, and the README only shows OpenBSD and FreeBSD install lines, not macOS. The brew install is outside what the sources cover. Some older links point to PDFs for v2.0.0.0, which are not the current manuals.",
+  "quotes": [
+   "dnsperf and resperf are free tools developed by Nominum/Akamai (2006-2018) and DNS-OARC (since 2019) that make it simple to gather accurate latency and throughput metrics for Domain Name Service (DNS).",
+   "dnsperf \"self-paces\" the DNS query load to simulate network conditions.",
+   "resperf systematically increases the query rate and monitors the response rate to simulate caching DNS services."
+  ],
+  "links": [
+   {
+    "label": "DNS-OARC dnsperf homepage",
+    "url": "https://www.dns-oarc.net/tools/dnsperf"
+   },
+   {
+    "label": "Source repository on Codeberg",
+    "url": "https://codeberg.org/DNS-OARC/dnsperf"
+   },
+   {
+    "label": "Issues on Codeberg",
+    "url": "https://codeberg.org/DNS-OARC/dnsperf/issues"
+   }
+  ],
+  "fetch_log": [
+   "https://www.dns-oarc.net/tools/dnsperf: worked; the page gave the description, release list, dependencies pointer and license, and linked to README.md and the Codeberg repo.",
+   "https://codeberg.org/DNS-OARC/dnsperf: worked; the page rendered the README with the install steps, dependency list, and license, after some JavaScript-related chrome."
+  ]
+ }
+}

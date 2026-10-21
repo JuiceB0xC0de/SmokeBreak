@@ -1,0 +1,87 @@
+{
+ "name": "rgbds",
+ "desc": "Rednex GameBoy Development System",
+ "homepage": "https://rgbds.gbdev.io",
+ "installs_365d": 1413,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "afternoon",
+  "ancient",
+  "reverse-engineering"
+ ],
+ "why": "A Game Boy assembler and linker toolchain, a real doorway into writing code for retro hardware.",
+ "brief": {
+  "what_it_is": "RGBDS (Rednex Game Boy Development System) is a free assembler and linker package for the Game Boy and Game Boy Color. It has four tools: RGBASM (assembler), RGBLINK (linker), RGBFIX (ROM checksum and header fixer), and RGBGFX (PNG-to-Game Boy graphics converter). Source assembly code and PNG art go in, and a playable ROM comes out. The homepage says each tool can be swapped for a custom one or used standalone in another process.",
+  "why_it_exists": "The homepage frames it as giving developers complete control over the console with no middle-man, so debugging is simpler, and pushing the Game Boy's limited capabilities by writing native assembly. It also positions itself as a long-running open source project (dating back to 1997) that supports the homebrew community.",
+  "how_it_works": "Each stage of the pipeline is a separate program: RGBGFX converts images to Game Boy tile formats, RGBASM assembles source into object files, RGBLINK links those objects into a ROM, and RGBFIX patches the ROM header and checksum. The README and homepage do not describe the internal object format or language syntax in detail.",
+  "commands_seen": [
+   {
+    "cmd": "make",
+    "context": "Builds RGBDS from source using the Makefile build system."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the built RGBDS tools system-wide after a make build."
+   },
+   {
+    "cmd": "sudo make install PREFIX=install_dir/ SUFFIX=-$(git rev-parse --short HEAD)",
+    "context": "Make install with a custom install prefix and a version suffix taken from the current git commit ID."
+   },
+   {
+    "cmd": "cmake -S . -B build -DCMAKE_BUILD_TYPE=Release",
+    "context": "Configures a CMake build in the build directory with a Release build type."
+   },
+   {
+    "cmd": "cmake --build build",
+    "context": "Compiles the CMake-configured RGBDS build."
+   },
+   {
+    "cmd": "cmake --install build",
+    "context": "Installs the CMake-built RGBDS tools."
+   },
+   {
+    "cmd": "cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DSUFFIX=-$(git rev-parse --short HEAD)",
+    "context": "CMake configure step that appends a git commit ID suffix to the installed tool names."
+   },
+   {
+    "cmd": "cmake --install build --prefix install_dir",
+    "context": "Installs the CMake build into a chosen directory instead of the default prefix."
+   }
+  ],
+  "install_notes": "The homepage has an Install page with platform-specific instructions (rgbds.gbdev.io/install/), which I did not fetch. Building from source needs make or cmake. On Windows, any SUFFIX must include the .exe extension. Brew installs the five executables listed in the catalogue data: rgbasm, rgbfix, rgbgfx, rgblink, rgbobj.",
+  "standout": "The toolchain is split into small single-purpose programs that the project explicitly says can be replaced or used on their own, and RGBGFX handles the art conversion step that most toy assemblers leave to you. The project also keeps its manual generated from man pages in the repository, which is unusual for a hobby toolchain.",
+  "status": "Active-looking but unconfirmed. The README and homepage link to a full manual, a version history, and a contribution guide, and the project is maintained through the GBDev community. I did not see a last release date or last commit date in the pages I read, so I cannot give a firm date.",
+  "caveats": "The README describes building from source, and the homepage points to platform-specific install pages I did not read. The scope is Game Boy and Game Boy Color only. The homepage talks about writing native assembly, so this is a low-level, assembly-first workflow. The brew caveats field is empty.",
+  "quotes": [
+   "A free assembler/linker package for the Game Boy and Game Boy Color.",
+   "Push the Game Boy's limited capabilities to the limits writing native assembly code.",
+   "Gain complete control over the console; with no middle-man, debugging is made simpler."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://rgbds.gbdev.io"
+   },
+   {
+    "label": "Full documentation",
+    "url": "https://rgbds.gbdev.io/docs/"
+   },
+   {
+    "label": "Install instructions",
+    "url": "https://rgbds.gbdev.io/install/"
+   },
+   {
+    "label": "Version history",
+    "url": "https://rgbds.gbdev.io/versions"
+   }
+  ],
+  "fetch_log": [
+   "https://rgbds.gbdev.io - worked; homepage text retrieved, no links list returned.",
+   "https://github.com/gbdev/rgbds - worked; README retrieved, including build commands."
+  ]
+ }
+}

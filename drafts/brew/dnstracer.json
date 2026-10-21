@@ -1,0 +1,109 @@
+{
+ "name": "dnstracer",
+ "desc": "Trace a chain of DNS servers to the source",
+ "homepage": "https://www.mavetju.org/unix/dnstracer.php",
+ "installs_365d": 158,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "Walking the DNS delegation chain from root to authority is a clear door into how DNS resolution actually works.",
+ "brief": {
+  "what_it_is": "dnstracer is a command-line Unix tool that takes a domain name (or PTR/SOA/CNAME query) and walks the DNS delegation chain from the root servers down to the authoritative servers that hold the answer. It prints a tree of each server it asked, the name and IP of that server, whether it gave an authoritative answer, cached data, a lame-server response, or nothing (shown as * * *). The homepage's examples show a trace for www.mavetju.org starting from a clean resolver, and a trace started from a chosen server with -s.",
+  "why_it_exists": "The page frames it as a way to find \"where a given Domain Name Server (DNS) gets its information from, and follows the chain of DNS servers back to the servers which know the data.\" It is aimed at debugging and understanding delegation, caching, and broken servers.",
+  "how_it_works": "It starts at a resolver (127.0.0.1 by default, or a server given with -s, where a dot means A.ROOT-SERVERS.NET) and queries each server in turn, following referrals to the next level of the hierarchy. Each answer or referral is shown as a branch, and additional records or failed lookups are noted. The author says addresses without additional records are fetched with gethostbyname(), that multiple additional records are each tested, and that there are three retries by default before a * is printed.",
+  "commands_seen": [
+   {
+    "cmd": "dnstracer www.mavetju.org",
+    "context": "Basic full trace of a name from a clean resolver, walking root, then .org, then the zone's own servers; the author notes this example produced about 480 lines."
+   },
+   {
+    "cmd": "dnstracer -o -s m.gtld-servers.net www.mavetju.org",
+    "context": "Starts the trace at a named server (-s) and prints an overview of received answers at the end (-o), to keep output short."
+   },
+   {
+    "cmd": "dnstracer -q ptr 1.0.0.127.in-addr.arpa",
+    "context": "Reverse (PTR) lookup; the name must use the .in-addr.arpa or ip6.int suffix."
+   },
+   {
+    "cmd": "dnstracer -q soa -o mavetju.org",
+    "context": "SOA query with overview output, which adds serial number, mname and rname fields."
+   },
+   {
+    "cmd": "dnstracer -q cname -s M.GTLD-SERVERS.NET fataldimensions.nl.eu.org",
+    "context": "CNAME query started from a specific server; used in the page's example of timeouts and lame servers (ns.lf.net shows * * *, ns.eu.org is marked Lame server)."
+   },
+   {
+    "cmd": "dnstracer www.telstra.com.au",
+    "context": "Full trace used to show multiple additional records being tested and the difference between authoritative and cached (non-authoritative) answers."
+   }
+  ],
+  "install_notes": "Nothing beyond brew install is described on the page. It is a plain command-line tool with a single executable, dnstracer. No accounts, runtimes or configuration steps are mentioned. The default starting point is 127.0.0.1, so it assumes a local resolver is running unless -s is given.",
+  "standout": "Instead of asking one resolver for an answer, it shows the whole referral tree, with every server tried at each level and whether each one answered authoritatively, from cache, or as a lame server. That makes it a direct way to watch delegation and caching work, and to see which server in a chain is broken.",
+  "status": "Quiet. The homepage is a personal page by one author, and its only date marker is a CVS Id stamp from 2002-11-17 at the bottom of the page. The page does not state a software version, release date or repository, and I did not check a package or repo, so I cannot confirm current maintenance. The Homebrew formula is what makes it installable today.",
+  "caveats": "The page is the only source I read. Its examples are from around 2002 and use old root and gTLD server names, so output on a modern network will differ. The author notes that a full trace can produce hundreds of lines, which is why -o and -s exist. Timeouts are 15 seconds by default and there are three retries. No licence is stated on the page, and I did not check one. The page does not say which platforms it supports.",
+  "quotes": [
+   "dnstracer determines where a given Domain Name Server (DNS) gets its information from, and follows the chain of DNS servers back to the servers which know the data.",
+   "This DNS server doesn't know anything about mavetju.org, so it forwards returns pointers to the root-servers.",
+   "The *'s in the output means that there wasn't an answer on the request. By default there is three retries."
+  ],
+  "links": [
+   {
+    "label": "Homepage and README (author's page)",
+    "url": "https://www.mavetju.org/unix/dnstracer.php"
+   }
+  ],
+  "fetch_log": [
+   "https://www.mavetju.org/unix/dnstracer.php: fetched OK. This is the full documentation page with examples, not a GitHub README. No further links were followed because the page was complete."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It turns DNS delegation into an inspectable tree, exposing which servers answer authoritatively, serve cached data, fail, or are lame\u2014more revealing than a single lookup."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "dnstracer",
+  "tldr": "Walks the DNS delegation chain from the root servers down to the authoritative one, printing every server it asks along the way.",
+  "deeper_look": "dnstracer takes a domain name and follows the trail of referrals that DNS uses to find an answer. It starts at a resolver (127.0.0.1 by default), then asks the root servers, then the top-level domain servers, then the zone's own servers. Each server becomes a branch in a printed tree, with its name, its IP, and what kind of answer it gave.\n\nThe usual way to look up a name hides all of this: you ask one resolver and get one answer. Here you see the delegation happen. Each branch is marked as an authoritative answer, cached data, a lame server (one that is supposed to know the zone but does not), or nothing at all, shown as `* * *`. The author's own wording: \"The *'s in the output means that there wasn't an answer on the request. By default there is three retries.\"\n\nThe author built it for debugging: finding where a server gets its information, and which server in a chain is broken or stale. As a side effect it works as a small lesson in how the DNS hierarchy is put together. Queries are not limited to A records. PTR, SOA and CNAME lookups work too, and `-s` lets you start the trace at a server you choose, where a dot means A.ROOT-SERVERS.NET.",
+  "install": "brew install dnstracer",
+  "try_this": [
+   {
+    "cmd": "dnstracer www.mavetju.org",
+    "what_happens": "Runs a full trace from your resolver through the root, .org and the zone's own servers. The author's example produced about 480 lines, so expect a lot of output."
+   },
+   {
+    "cmd": "dnstracer -o -s m.gtld-servers.net www.mavetju.org",
+    "what_happens": "Starts the trace at a named server and prints an overview of the answers received at the end, which keeps the output short."
+   },
+   {
+    "cmd": "dnstracer -q soa -o mavetju.org",
+    "what_happens": "Asks for the SOA record and shows the overview, which adds serial number, mname and rname fields."
+   }
+  ],
+  "whats_unique": "Instead of asking one resolver for an answer, it shows the whole referral tree, with every server tried at each level and whether it answered authoritatively, from cache, or as a lame server.",
+  "caveats": "The documentation is a single personal page whose examples date from around 2002, so the server names in them are old and output on a modern network will differ; current maintenance is unconfirmed.",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "dns",
+   "network",
+   "protocol",
+   "debugging"
+  ],
+  "links": [
+   {
+    "label": "Homepage and documentation (author's page)",
+    "url": "https://www.mavetju.org/unix/dnstracer.php"
+   }
+  ]
+ }
+}

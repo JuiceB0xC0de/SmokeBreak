@@ -1,0 +1,90 @@
+{
+ "name": "mbpoll",
+ "desc": "Command-line utility to communicate with ModBus slave (RTU or TCP)",
+ "homepage": "https://epsilonrt.fr",
+ "installs_365d": 1037,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "protocol",
+  "quick"
+ ],
+ "why": "A Modbus client for talking to industrial PLCs and sensors, a real door into factory protocols.",
+ "brief": {
+  "what_it_is": "mbpoll is a command-line Modbus master, a tool that polls and writes registers on Modbus slave devices over serial (RTU) or Ethernet (TCP). You give it a serial port or host name, a slave address, a data table type and a start register, and it prints the values it reads or writes them from the arguments. It can read discrete inputs, read and write coils, read input registers, and read and write holding registers, shown as decimal, hex, or 32-bit int/float. Its output format and option syntax are modelled on the proprietary modpoll tool, but the README says mbpoll is an independent GPL project with its own source.",
+  "why_it_exists": "The README does not state a motivation in its own words. It presents mbpoll as a command-line way to 'communicate with ModBus slave (RTU or TCP)', and it is positioned as a Modbus master simulator for testing and polling field devices from a shell.",
+  "how_it_works": "Each run opens a connection (serial port for RTU, host and port for TCP), sends Modbus requests for the chosen table and address range, and prints the replies. With no write values it reads; with values listed after the device it writes them. Without -1 it keeps polling at the poll rate (-l) until Ctrl-C, and it prints per-run frame statistics. RS-485 direction control can use the RTS line, optionally driven from a GPIO pin via piduino.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt install mbpoll",
+    "context": "Installs the prebuilt mbpoll package after adding the piduino.org APT repository, which the README calls the fastest and safest route."
+   },
+   {
+    "cmd": "brew install mbpoll",
+    "context": "Homebrew install on macOS and Linux, per the README's Homebrew section."
+   },
+   {
+    "cmd": "mbpoll -a 33 -b 38400 -t 3 -r 1 -c 2 /dev/ttyUSB2",
+    "context": "The README's worked example: reads input registers 1 and 2 from slave address 33 over RTU on /dev/ttyUSB2 at 38400 baud, polling repeatedly."
+   },
+   {
+    "cmd": "mbpoll -t4:int /dev/ttyUSB0 -- 123 -1568 8974 -12",
+    "context": "From the help text: writes a list of values to holding registers as 32-bit ints on /dev/ttyUSB0; the -- separates negative numbers from options."
+   },
+   {
+    "cmd": "mbpoll -w",
+    "context": "Prints the warranty information; the README uses this in the banner text."
+   },
+   {
+    "cmd": "man mbpoll",
+    "context": "Opens the man page on Unix systems, which the README mentions as a companion to -h."
+   },
+   {
+    "cmd": "make package",
+    "context": "Builds a .deb package from the source build, as an alternative to make install."
+   },
+   {
+    "cmd": "sudo dpkg -i *.deb",
+    "context": "Installs the .deb produced by make package."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Generates the Makefile inside the build directory from a source build."
+   },
+   {
+    "cmd": "export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH",
+    "context": "Fixes pkg-config so cmake can find libmodbus in /usr/local/lib when it was installed from source."
+   }
+  ],
+  "install_notes": "Three routes are documented. (1) The piduino.org APT repository, which ships mbpoll and libmodbus 3.1.7 for i386, amd64, armhf and arm64. (2) Homebrew on macOS and Linux with brew install mbpoll. (3) Building from source: libmodbus 3.1.7 or newer (from apt or built from the libmodbus git repository with autogen, configure, make, make install), then cmake, make, sudo make install and sudo ldconfig. piduino is only needed if you want the RS-485 RTS line driven from a GPIO pin; it needs cmake, libcppdb-dev, libsqlite3-dev and libudev-dev. Windows setup is in a separate README-WINDOWS.md file. No account or licence key is needed.",
+  "standout": "The read and write options use a compact notation for the table type and format in a single argument, such as -t 3:float for a 32-bit float from input registers or -t 4:int16 for signed holding registers. It also supports address lists like -a 32,33,34,36:40 to poll several slaves in one run.",
+  "status": "Maintained, as far as the README shows. The repository has CI badges for Linux, Windows and macOS builds, the copyright line runs to 2026, and the README says major version 1 is complete while version 2 on libmodbuspp is under development. I did not see a release date or last commit date, so the exact recency is unknown.",
+  "caveats": "Version 2 on libmodbuspp is still in development, and the README says new feature proposals go to that branch. RTU is serial-only. Build from source needs libmodbus 3.1.7 or newer, and the PKG_CONFIG_PATH workaround can be needed on first install. The README says the code was tested on GNU Linux x86, x86_64, armhf and arm64, Windows, and macOS. The epsilonrt.fr homepage is the author's French blog about libmodbuspp, piduino and an HMI board; it has no mbpoll-specific content in the part I read, so the GitHub README is the real source for this entry.",
+  "quotes": [
+   "mbpoll is a command line utility to communicate with ModBus slave (RTU or TCP).",
+   "mbpoll is distributed under the GPL license, but the original modpoll program is not covered by the GPL license.",
+   "All contributions must target the `dev` branch \u2014 `master` is reserved for stable releases only."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/epsilonrt/mbpoll"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/epsilonrt/mbpoll/releases"
+   },
+   {
+    "label": "Homepage (author's blog, French)",
+    "url": "https://epsilonrt.fr"
+   }
+  ],
+  "fetch_log": [
+   "https://epsilonrt.fr: worked. Returned the author's French blog index (libmodbuspp, piduino, Hmi4DinBox articles). Content was cut at 40000 characters and mbpoll was not mentioned in the part I read.",
+   "https://github.com/epsilonrt/mbpoll: worked. Returned the full README. I chose this URL from the author name and project name, since the homepage did not point to it directly."
+  ]
+ }
+}

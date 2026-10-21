@@ -1,0 +1,91 @@
+{
+ "name": "blink1",
+ "desc": "Control blink(1) indicator light",
+ "homepage": "https://blink1.thingm.com/",
+ "installs_365d": 140,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "quick",
+  "needs-hardware",
+  "library"
+ ],
+ "why": "Driving a USB RGB indicator light from the command line is a small hardware toy, though the payoff is thin.",
+ "brief": {
+  "what_it_is": "blink1-tool is a C command-line program that drives the blink(1), a small USB RGB LED indicator made by ThingM. You pass it colour, brightness, fade, blink and pattern options, and it sends them to the light over USB HID. It can also list connected devices, read back the last colour sent, and store colour patterns in the device's flash. The same repo builds blink1-tiny-server, a small HTTP JSON API server for controlling the light, and blink1control-tool, which goes through the Blink1Control app instead of USB.",
+  "why_it_exists": "The blink(1) is pitched as a glanceable status light that connects cloud services, email, URLs and scripts to a visible colour, so you can see what is happening without checking a window or typing a command. The blink1-tool repo exists so that scripts, servers and headless machines can drive that light directly.",
+  "how_it_works": "The tool talks to the blink(1)'s built-in USB firmware through hidapi (default) or libusb, and on Linux through hidraw. Colours can be given as RGB values or hex codes, with optional gamma correction and fade time in milliseconds. Patterns can be played from the command line, or saved to the device so it runs without a host connected.",
+  "commands_seen": [
+   {
+    "cmd": "blink1-tool --list",
+    "context": "Lists connected blink(1) devices (from the --help output)."
+   },
+   {
+    "cmd": "blink1-tool --rgb '#FF9900'",
+    "context": "Fades the light to a hex colour, which the README's example labels pumpkin orange."
+   },
+   {
+    "cmd": "blink1-tool -m 100 --rgb=255,0,255",
+    "context": "Fades to magenta in 100 ms; the README glosses this as 0.1 seconds."
+   },
+   {
+    "cmd": "blink1-tool --rgb 0xff,0x00,0x00 --blink 3",
+    "context": "Blinks red three times."
+   },
+   {
+    "cmd": "blink1-tool -t 2000 --random=100",
+    "context": "Shows a new random colour every 2 seconds, 100 times."
+   },
+   {
+    "cmd": "blink1-tool --playpattern '10,#ff00ff,0.1,0,#00ff00,0.1,0'",
+    "context": "Plays a purple-green flash pattern 10 times. The README notes this blocks, because the pattern runs inside blink1-tool."
+   },
+   {
+    "cmd": "blink1-tool --chase=5,3,18",
+    "context": "Runs a chase effect 5 times across LEDs 3 to 18, a multi-LED option."
+   },
+   {
+    "cmd": "blink1-tool --clearpattern ; blink1-tool --savepattern",
+    "context": "Erases the stored colour pattern and saves the empty pattern to flash."
+   },
+   {
+    "cmd": "sudo cp 51-blink1.rules /etc/udev/rules.d/51-blink1.rules",
+    "context": "Installs the udev rules so a non-root user can access the device on Debian-style Linux, followed by sudo udevadm control --reload and sudo udevadm trigger."
+   },
+   {
+    "cmd": "docker run --rm -it --privileged todbot/blink1 blink1-tool --on",
+    "context": "Runs blink1-tool in the project's Docker image with the light set to full-on white; the README says --privileged is needed to reach USB."
+   }
+  ],
+  "install_notes": "You need the physical blink(1) USB light, sold through the ThingM store or resellers. Beyond brew install, Linux users need the udev rules above to run without root. Building from source needs make, or CMake 3.15+ with the hidapi git submodule (git submodule update --init). Linux needs build-essential, pkg-config and libudev-dev, and libusb-1.0-0-dev only for the libusb variant. macOS needs Xcode command-line tools. Windows needs MSYS2 with MinGW. FreeBSD uses gmake. Docker needs --privileged or a --device USB passthrough. I did not check the Homebrew formula itself.",
+  "standout": "It is a small, dependency-light C tool that runs on a very wide range of systems (the README lists macOS, Windows, FreeBSD, Raspberry Pi, BeagleBone and OpenWRT). It also keeps the light's pattern in the device's own flash, so it can run on a headless box with no host attached.",
+  "status": "unknown. The README and repo page I fetched show CI build badges for Linux, macOS and Windows, but I saw no release date, last-commit date or changelog to confirm recent activity. The blink1 hardware repo says most of its code is deprecated.",
+  "caveats": "Needs the physical USB device, and the software is useless without it. Linux non-root access requires the udev rules. Static builds can clash with some libusb implementations, and glibc static linking is broken on newer Ubuntu, so musl is needed for a static build. Some features are limited to mk2 or mk3 hardware (for example --savepattern, --setstartup, and the notes commands). The blink1 hardware repo says most of its code is deprecated. Docs are CC BY-SA 3.0, and 'blink(1)' is a ThingM trademark. The homepage fetch returned mostly page chrome, so the substance came from the GitHub READMEs.",
+  "quotes": [
+   "blink(1) is a super status light: it packs three dimensions of information (color, brightness and pattern) into a single tiny package that fits into any USB port on nearly every device.",
+   "We designed blink(1) in the spirit of our favorite old school Unix tools and we tried hard to make it simple, flexible, and robust.",
+   "This is an official collection of C/C++ commandline tools for controlling the blink1 USB RGB LED."
+  ],
+  "links": [
+   {
+    "label": "Homepage (blink(1) product site)",
+    "url": "https://blink1.thingm.com/"
+   },
+   {
+    "label": "blink1-tool repo (CLI, server and C library)",
+    "url": "https://github.com/todbot/blink1-tool"
+   },
+   {
+    "label": "blink1 hardware and clearinghouse repo",
+    "url": "https://github.com/todbot/blink1"
+   }
+  ],
+  "fetch_log": [
+   "https://blink1.thingm.com/ : worked, but returned mostly page chrome and marketing text; no README-style commands on the page",
+   "https://github.com/todbot/blink1 : worked; README fetched, a clearinghouse page that lists the official repos and links to usage docs",
+   "https://github.com/todbot/blink1-tool : worked; README fetched, including the --help output and build instructions"
+  ]
+ }
+}

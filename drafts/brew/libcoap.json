@@ -1,0 +1,140 @@
+{
+ "name": "libcoap",
+ "desc": "Lightweight application-protocol for resource-constrained devices",
+ "homepage": "https://github.com/obgm/libcoap",
+ "installs_365d": 311,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "A reference CoAP implementation, a door into the constrained-device protocol running in sensors and IoT gear.",
+ "brief": {
+  "what_it_is": "libcoap is a C library implementing CoAP, the Constrained Application Protocol standardized as RFC 7252, for devices with limited computing power, memory, bandwidth, or packet sizes. It provides a protocol parser and basic networking on platforms with malloc() and BSD-style sockets, and also supports Contiki-NG, ESP-IDF, LwIP and RIOT-OS. The repository's examples directory contains a CoAP client, a CoAP Resource Directory server and a CoAP server. The Homebrew formula installs six executables: coap-client, coap-client-openssl, coap-rd, coap-rd-openssl, coap-server and coap-server-openssl. The README does not describe their command-line usage.",
+  "why_it_exists": "The README frames CoAP as a lightweight application protocol for resource-constrained devices, and libcoap is a C reference implementation of it. The README also points to libcoap-minimal for usage examples.",
+  "how_it_works": "",
+  "commands_seen": [
+   {
+    "cmd": "./autogen.sh",
+    "context": "Generates the build scripts. Needed only when cloning from git; optional for a source archive (libcoap.net/install.html)."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Configures the POSIX build. Options include --enable-tests, --enable-examples, --enable-documentation, and --enable-dtls, which selects the DTLS library (GnuTLS, OpenSSL, tinyDTLS by default) (libcoap.net/install.html)."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds libcoap after configure (libcoap.net/install.html)."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs libcoap after build (libcoap.net/install.html)."
+   },
+   {
+    "cmd": "--enable-examples",
+    "context": "Configure switch that builds the included POSIX examples (libcoap.net/install.html)."
+   },
+   {
+    "cmd": "--enable-tests",
+    "context": "Configure switch that builds the unit tests; requires cunit and its headers (libcoap.net/install.html)."
+   },
+   {
+    "cmd": "--with-openssl",
+    "context": "Configure switch that selects OpenSSL as the DTLS library (libcoap.net/install.html)."
+   }
+  ],
+  "install_notes": "Homebrew's formula installs the six executables above. Beyond brew install, the libcoap.net install page describes a source build: on POSIX systems, run ./autogen.sh if cloned from git, then ./configure, make and make install. DTLS is enabled by default and looks for GnuTLS 3.3.0+, OpenSSL 1.1.0+, or tinyDTLS. Examples and tests are opt-in configure flags. Embedded targets (Contiki, RIOT, LwIP, TinyOS) have their own hand-built setups. The Contiki and RIOT setups are documented, with DTLS not supported on Contiki. The install page says a Debian package is being worked on.",
+  "standout": "It covers a long list of CoAP extensions, including RFC 7641 observe, RFC 7959 block-wise transfer, RFC 8613 OSCORE, RFC 8323 CoAP over TCP/TLS/WebSockets and RFC 9175/9177. It supports six TLS libraries (OpenSSL, GnuTLS, Mbed TLS, wolfSSL, TinyDTLS, openHiTLS) and several embedded OSes. The repository also shows OSS-Fuzz, CIFuzz and Coverity badges.",
+  "status": "maintained. The README copyright runs 2010 to 2026, the develop branch has a build status badge and CI-driven fuzzing and static analysis, and a pre-commit badge is present. I did not find a release date or last-commit date in the README or install page, so the status rests on those signals rather than a dated release.",
+  "caveats": "The README gives no usage instructions for the executables, so the command syntax has to come from the --help output or the docs. The install page calls the Debian package work-in-progress. Support varies by platform: no DTLS on Contiki, no DTLS on TinyOS, and TinyOS support is for an outdated protocol version. LwIP needs a hand-crafted Makefile. The library is under a simplified BSD license with no warranty. The README notes the libraries may bring their own licenses.",
+  "quotes": [
+   "libcoap is a C implementation of a lightweight application-protocol for devices that are constrained their resources such as computing power, RF range, memory, bandwidth, or network packet sizes.",
+   "The examples directory contain a CoAP client, CoAP Resource Directory server and a CoAP server to demonstrate the use of this library.",
+   "This library is published as open-source software without any warranty of any kind. Use is permitted under the terms of the simplified BSD license."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub)",
+    "url": "https://github.com/obgm/libcoap"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://libcoap.net"
+   },
+   {
+    "label": "Install guide",
+    "url": "https://libcoap.net/install.html"
+   },
+   {
+    "label": "libcoap-minimal usage examples",
+    "url": "https://github.com/obgm/libcoap-minimal"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/obgm/libcoap: worked, README returned",
+   "https://libcoap.net/install.html: worked, install page text returned"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "CoAP\u2019s compact, observable resource protocol opens a window into constrained-device networking, and libcoap\u2019s client and server make it practical to explore."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "libcoap",
+  "tldr": "A reference C implementation of CoAP, the tiny HTTP-like protocol that sensors and IoT gear speak, with a client and server you can run locally.",
+  "deeper_look": "CoAP, the Constrained Application Protocol (RFC 7252), is built for devices with little computing power, memory, bandwidth, or packet size. It keeps the request and response shape of HTTP, with resources, methods and status codes, but runs over small UDP datagrams instead of TCP and text headers. libcoap is a C library that implements it. It needs only malloc() and BSD-style sockets, and it also supports Contiki-NG, ESP-IDF, LwIP and RIOT-OS.\n\nThe Homebrew formula installs the example programs from the repository: a CoAP client, a Resource Directory server and a general CoAP server. Each comes in a plain build and an `-openssl` build. The README says they exist \"to demonstrate the use of this library\", so you can start a server in one terminal and talk to it from a client in another, and see what a constrained-device protocol looks like on the wire.\n\nThe library goes well past the basics. It covers observe (RFC 7641), block-wise transfer (RFC 7959), OSCORE (RFC 8613), and CoAP over TCP, TLS and WebSockets (RFC 8323). It can use any of six TLS libraries for DTLS. CoAP is a good door into how IoT protocols trade features for size, and how security is retrofitted onto tiny devices.",
+  "install": "brew install libcoap",
+  "try_this": [
+   {
+    "cmd": "coap-server --help",
+    "what_happens": "Lists the options for the example CoAP server, since the README gives no usage notes."
+   },
+   {
+    "cmd": "coap-client --help",
+    "what_happens": "Shows how to choose a method, set a URI and send a request to a CoAP server."
+   },
+   {
+    "cmd": "coap-rd --help",
+    "what_happens": "Shows the options for the Resource Directory server, which lets devices register the resources they offer."
+   }
+  ],
+  "whats_unique": "It is a reference-grade CoAP stack that covers many extensions (observe, block-wise transfer, OSCORE, CoAP over TCP and WebSockets) and runs from desktop POSIX down to embedded OSes.",
+  "caveats": "The README does not document the executables' command-line usage, so you will rely on --help and libcoap.net, and features such as DTLS vary by platform.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "coap",
+   "iot",
+   "protocol",
+   "network",
+   "udp",
+   "c"
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub)",
+    "url": "https://github.com/obgm/libcoap"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://libcoap.net"
+   },
+   {
+    "label": "Install guide",
+    "url": "https://libcoap.net/install.html"
+   },
+   {
+    "label": "libcoap-minimal usage examples",
+    "url": "https://github.com/obgm/libcoap-minimal"
+   }
+  ]
+ }
+}

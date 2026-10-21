@@ -1,0 +1,84 @@
+{
+ "name": "dvd-vr",
+ "desc": "Utility to identify and extract recordings from DVD-VR files",
+ "homepage": "https://www.pixelbeat.org/programs/dvd-vr/",
+ "installs_365d": 27,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering"
+ ],
+ "why": "Pokes at the DVD-VR recording file format to pull out recordings, a small but genuine dive into an obscure format.",
+ "brief": {
+  "what_it_is": "dvd-vr is a command-line utility that reads the DVD-VR navigation data on a disc and lists the recordings it contains. Per the page, it can identify recordings and optionally copy them out. Its input is a path to a VR_MANGR.IFO file on a mounted disc, such as /media/dvd/DVD_RTAV/VR_MANGR.IFO. Its output is a text report giving the format version, per-VOB video and audio parameters (TV system, resolution, MPEG2, AC-3 audio), and for each program a title, date, VOB format number, and size in bytes.",
+  "why_it_exists": "The DVD-VR format is used by DVD recorders and camcorders, and the author wrote the tool in February 2007 by reverse engineering DVD-VR discs. The page describes the goal as identifying and optionally copying recordings from such a disc.",
+  "how_it_works": "The tool parses the VR_MANGR.IFO navigation file on the disc and reports the format version (the example shows DVD-VR V1.1), the VOB stream parameters, and the program list. The page does not explain the parsing internals beyond this.",
+  "commands_seen": [
+   {
+    "cmd": "$ dvd-vr /media/dvd/DVD_RTAV/VR_MANGR.IFO",
+    "context": "Example run from the homepage. Points the tool at the VR_MANGR.IFO navigation file on a mounted DVD-VR disc and prints the format, VOB details, and list of recordings."
+   }
+  ],
+  "install_notes": "The homepage offers a download of V0.9.7 (28K) and a Source link, but the page text gives no build or install steps. Nothing in the page mentions extra runtimes or accounts. The tool needs a mounted DVD-VR disc or a copy of its files. The page says it has been tested on Linux, Mac OS X, and Windows via WSL or Cygwin.",
+  "standout": "It targets a niche consumer disc format that most rippers ignore, and it was built by reverse engineering rather than from a published spec. The example output shows Japanese title text, so it handles non-ASCII titles.",
+  "status": "Quiet. The latest listed release is V0.9.7, and the page footer carries a copyright line dated Aug 24 2010. The page links a ChangeLog, but I did not open it, so I cannot confirm the most recent change date.",
+  "caveats": "The page only describes the tool as a 'DVD-VR ripper for linux' in its title and says it has been tested on Mac OS X and Windows through WSL or Cygwin, so native Windows and Mac support are unclear. Licensing is not stated on the page; it only says 'open source'. The README-equivalent text is short and documents one example run, with no list of options or flags beyond the file argument.",
+  "quotes": [
+   "DVD-VR ripper for linux",
+   "dvd-vr is a utility to identify and optionally copy recordings from a DVD-VR format disc",
+   "This open source program was created in Feb 2007 by reverse engineering DVD-VR format discs"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.pixelbeat.org/programs/dvd-vr/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.pixelbeat.org/programs/dvd-vr/ : fetched OK. Page text includes the description, example run, and download/source/ChangeLog link labels, but the link targets were not exposed, so I did not follow them."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A reverse-engineered reader for DVD recorders\u2019 obscure navigation format offers a worthwhile way to inspect and recover recordings ordinary media tools may overlook."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "dvd-vr",
+  "tldr": "Reads the navigation file on a DVD-VR disc from a recorder or camcorder and lists every recording on it, built by reverse engineering.",
+  "deeper_look": "dvd-vr is a small command-line tool for a niche consumer format. DVD recorders and camcorders often write discs in DVD-VR, which keeps its recordings in a different layout from a normal video DVD. The tool reads the navigation file, `VR_MANGR.IFO`, and prints what it finds. It can also optionally copy recordings out.\n\nThe report gives the format version (the homepage example shows DVD-VR V1.1), the video and audio parameters of each VOB (TV system, resolution, MPEG2, AC-3 audio), and for each program a title, date, VOB format number, and size in bytes. The example output includes Japanese title text, so non-ASCII titles come through.\n\nThe author wrote it in February 2007 by reverse engineering DVD-VR discs, not from a published spec. That is the idea underneath it: a disc is just bytes with structure, and a patient person with a few sample discs can work out the index, the stream descriptions, and the title table. The tool is a compact example of how a closed consumer format gets opened up.\n\nThe homepage does not explain the parsing internals, so the source is the place to learn how the file is laid out.",
+  "install": "brew install dvd-vr\n# You also need a mounted DVD-VR disc, or a copy of its files, to point it at.",
+  "try_this": [
+   {
+    "cmd": "dvd-vr --help",
+    "what_happens": "Prints usage. The homepage documents only the file argument, so expect little."
+   },
+   {
+    "cmd": "dvd-vr /media/dvd/DVD_RTAV/VR_MANGR.IFO",
+    "what_happens": "Reads the navigation file on a mounted disc and prints the format version, per-VOB video and audio details, and each recording's title, date and size."
+   }
+  ],
+  "whats_unique": "It targets a consumer disc format most rippers ignore, and it was built by reverse engineering rather than from a spec.",
+  "caveats": "Quiet for years: the latest listed release is V0.9.7 and the page footer is dated 2010. It is only useful if you have a DVD-VR disc, and the page documents just one example run.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "reverse-engineering",
+   "file-formats",
+   "dvd",
+   "video"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.pixelbeat.org/programs/dvd-vr/"
+   }
+  ]
+ }
+}

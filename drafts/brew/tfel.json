@@ -1,0 +1,102 @@
+{
+ "name": "tfel",
+ "desc": "Code generation tool dedicated to material knowledge for numerical mechanics",
+ "homepage": "https://thelfer.github.io/tfel/web/index.html",
+ "installs_365d": 149,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "science",
+  "math",
+  "afternoon",
+  "library"
+ ],
+ "why": "Generates material-behaviour numerical code for mechanics, a real scientific tool that is obscure and worth a closer look.",
+ "brief": {
+  "what_it_is": "TFEL/MFront is a code generator. MFront takes short domain-specific language files that describe material knowledge and translates them into plain C++ built on the TFEL library. The languages cover material properties (such as Young's modulus or thermal conductivity), mechanical behaviours (constitutive laws for finite element and FFT solvers), and simple point-wise models such as fuel swelling. The bundled MTest tool can test a material's local behaviour by imposing constraints on strain or stress components. The homepage lists interfaces for Cast3M, Code-Aster, Abaqus Standard and Explicit, CalculiX, ANSYS APDL, ZeBuLoN, ElmerFEM, and the AMITEX_FFTP and TMFFT FFT solvers.",
+  "why_it_exists": "The README frames it as a way to manage material knowledge in numerical mechanics: write a behaviour once in a readable DSL and get optimised C++ for several solvers. The project is a collaboration of CEA and EDF, and the citation section points to a 2015 paper in Computers & Mathematics with Applications introducing it as part of the PLEIADES fuel element modelling platform.",
+  "how_it_works": "You write a behaviour or property in MFront's DSL. The MFront code generator translates it into plain C++ that links against the TFEL library, and the generated code is then used inside a solver's interface. MTest runs the behaviour locally under imposed strain or stress conditions, which the README says is much faster than a full finite element run, by a factor of ten to several hundred depending on the test.",
+  "commands_seen": [],
+  "install_notes": "Neither fetched page gave install commands. The homepage links to an Installation Guide covering Linux, Windows, macOS and FreeBSD, and to a CMake Options page and a Compiling MFront page. The README says the current official version is built on the C++-20 standard, so expect a modern C++ compiler. I did not open those linked pages, so build dependencies are unverified.",
+  "standout": "It is a code generator for material constitutive laws that targets many commercial and research finite element solvers from one source, and the README says its generated code is competitive with the solvers' native implementations. MTest's local testing is a practical way to check a behaviour before running a full simulation.",
+  "status": "Maintained, judging by the README and homepage. The README says the latest official version is TFEL-5.1.0 and that the rliv-5.1 branch is recommended for most users. The homepage release notes list up to 5.2.0, so the README may be slightly behind. The homepage's own publication date reads 15/08/2014, which looks stale, and I saw no commit or release dates to confirm activity.",
+  "caveats": "The homepage says it is a work in progress. The tfel-unicode-filt and tfel-config tools are in the executables list but I saw no usage for them. Licensing is GPL or CECILL-A from version 2.x onward (the README notes a linking exception added to GPL in 2023), and earlier versions had other terms. AMITEX_FFTP is distributed under a free licence for research and education only. The domain is specialised, so the DSL and solver interfaces assume prior knowledge of computational mechanics.",
+  "quotes": [
+   "MFront is a code generator which translates a set of closely related domain specific languages into plain C++ on top of the TFEL library.",
+   "MTest that can test the local behaviour of a material, by imposing independent constraints on each component of the strain or the stress.",
+   "This tool has been much faster (from ten to several hundred times depending on the test case) than using a full-fledged finite element solver."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://thelfer.github.io/tfel/web/index.html"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/thelfer/tfel"
+   },
+   {
+    "label": "Introducing paper (DOI)",
+    "url": "https://doi.org/10.1016/j.camwa.2015.06.027"
+   }
+  ],
+  "fetch_log": [
+   "https://thelfer.github.io/tfel/web/index.html: worked, returned the documentation site with navigation, overview and licence text, but no install commands",
+   "https://github.com/thelfer/tfel: worked, returned the README with description, licences, citation and current version notes"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A specialized scientific tool whose DSL turns constitutive material laws into code for many solvers, with fast local testing before full simulations."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "TFEL/MFront",
+  "tldr": "A code generator from CEA and EDF that turns short material-law descriptions into C++ for many finite element solvers, with a local tester.",
+  "deeper_look": "TFEL/MFront is a code generator for material knowledge in numerical mechanics. You write a short file in one of MFront's domain-specific languages, and MFront translates it into plain C++ built on the TFEL library. The languages cover material properties (Young's modulus, thermal conductivity), mechanical behaviours (constitutive laws for finite element and FFT solvers), and simple point-wise models such as fuel swelling.\n\nThe idea underneath is to write a material behaviour once, in a readable form, and not rewrite it for every solver. The homepage lists interfaces for Cast3M, Code-Aster, Abaqus Standard and Explicit, CalculiX, ANSYS APDL, ZeBuLoN, ElmerFEM, and the AMITEX_FFTP and TMFFT FFT solvers. The README says the generated code is competitive with the solvers' native implementations.\n\nThe bundled MTest tool tests a material's local behaviour by imposing constraints on strain or stress components, with no mesh and no full simulation. In the project's words, it \"has been much faster (from ten to several hundred times depending on the test case) than using a full-fledged finite element solver.\"\n\nThe project is a collaboration of CEA and EDF. A 2015 paper in Computers & Mathematics with Applications introduces it as part of the PLEIADES fuel element modelling platform. It is a door into how constitutive laws, the equations saying how a material responds to load, actually become running code inside simulation software.",
+  "install": "brew install tfel\n# Homebrew pulls in python@3.15. The README says the current version is built on C++-20, so a modern C++ compiler is expected if you build from source or compile generated code.",
+  "try_this": [
+   {
+    "cmd": "mfront --help",
+    "what_happens": "Lists the code generator's options, including the choice of DSL and solver interface."
+   },
+   {
+    "cmd": "mtest --help",
+    "what_happens": "Shows how to run a local material test under imposed strain or stress."
+   },
+   {
+    "cmd": "tfel-config --help",
+    "what_happens": "Shows the helper that reports the compiler and linker settings for the installed TFEL library."
+   }
+  ],
+  "whats_unique": "One source file targets many commercial and research finite element solvers. MTest lets you check a behaviour in isolation before committing to a full simulation.",
+  "caveats": "The domain is specialised and assumes some computational mechanics background, the homepage calls it a work in progress, and I did not verify build details or usage for every tool.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "science",
+   "mechanics",
+   "code-generation",
+   "c++",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://thelfer.github.io/tfel/web/index.html"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/thelfer/tfel"
+   },
+   {
+    "label": "Introducing paper (DOI)",
+    "url": "https://doi.org/10.1016/j.camwa.2015.06.027"
+   }
+  ]
+ }
+}

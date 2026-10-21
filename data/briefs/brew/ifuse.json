@@ -1,0 +1,91 @@
+{
+ "name": "ifuse",
+ "desc": "FUSE module for iOS devices",
+ "homepage": "https://libimobiledevice.org/",
+ "installs_365d": 171,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "protocol",
+  "afternoon",
+  "reverse-engineering"
+ ],
+ "why": "Mounts an iPhone as a filesystem via usbmuxd and AFC; a door into Apple's device protocols over USB.",
+ "brief": {
+  "what_it_is": "ifuse is a command-line FUSE filesystem for iOS devices. You give it a mountpoint and it mounts a directory from a connected iPhone or iPad onto your computer, so you can browse and copy files with ordinary tools. By default it exposes the Media partition (/var/mobile/Media, holding music and pictures). It can also mount the Documents or sandbox container of a named app, and on jailbroken devices it can mount the root filesystem. It talks to the device through libimobiledevice, using usbmuxd over USB and the AFC file protocol.",
+  "why_it_exists": "The homepage frames the wider libimobiledevice project as an effort to let Linux users talk to iOS hardware without iTunes, with the goal to 'allow penguins to talk to fruits'. ifuse is the piece that makes the device's files appear as a normal mounted folder.",
+  "how_it_works": "ifuse connects to the device through usbmuxd and libimobiledevice, then opens an AFC session that serves files from the chosen directory. It registers that session as a FUSE filesystem via libfuse 3 on Linux or macFUSE on macOS. Reads and writes from the mountpoint are translated into AFC calls. The README says the device is reached through usbmuxd, so that daemon must be running.",
+  "commands_seen": [
+   {
+    "cmd": "brew install libtool autoconf automake",
+    "context": "macOS build prerequisites from the README, installed with Homebrew before compiling ifuse from source."
+   },
+   {
+    "cmd": "./autogen.sh --prefix=/usr/local",
+    "context": "Configures the source tree from a git checkout; --prefix sets the install target."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds ifuse after configuration succeeds."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the built binaries; the README says to drop sudo if your user can write to the prefix."
+   },
+   {
+    "cmd": "ifuse <mountpoint>",
+    "context": "Mounts the device's media partition (/var/mobile/Media) at the given directory."
+   },
+   {
+    "cmd": "fusermount -u <mountpoint>",
+    "context": "Unmounts the filesystem when running as a regular user."
+   },
+   {
+    "cmd": "ifuse --root <mountpoint>",
+    "context": "Mounts the full root filesystem, which the README says works only on jailbroken devices with the AFC2 service installed."
+   },
+   {
+    "cmd": "ifuse --documents org.videolan.vlc-ios /mnt",
+    "context": "Example of mounting the Documents folder of the VLC app to /mnt, using the app's bundle identifier."
+   },
+   {
+    "cmd": "ifuse --container <appid> <mountpoint>",
+    "context": "Mounts the sandboxed root folder of an app, identified by bundle identifier."
+   },
+   {
+    "cmd": "ifuse --list-apps",
+    "context": "Lists installed file-sharing-enabled apps and their bundle identifiers, for use with --documents or --container."
+   }
+  ],
+  "install_notes": "On macOS: install Xcode command line tools, then install automake, autoconf and libtool with MacPorts or Homebrew. Build and install libplist, libimobiledevice-glue, libusbmuxd and libimobiledevice first. Install macFUSE from its releases page, then allow the macFUSE system extension under Settings > Privacy & Security > Security. That change needs a restart. On Linux (Debian/Ubuntu): apt-get install build-essential, pkg-config, checkinstall, git, autoconf, automake, libtool-bin, libplist-dev, libimobiledevice-dev, libfuse3-dev and usbmuxd. You may need to run 'sudo modprobe fuse' and add your user to the fuse group ('sudo adduser $USER fuse'), then log out and back in. Build with autogen.sh (git) or configure (release tarball), then make and make install. The homepage also offers a Homebrew route for the wider stack (brew install libimobiledevice), but the ifuse README gives the source build steps. No account or signing is mentioned. The device must be trusted and connected by USB.",
+  "standout": "It is a small, focused FUSE front end over a reimplemented native protocol stack, so you can browse an iPhone's files from a shell with no Apple software. The 'Jailbreak' option to mount the root filesystem is also unusual. The homepage frankly notes that GNOME's GVFS already provides device access, which makes ifuse redundant there.",
+  "status": "Maintained. The homepage lists ifuse 1.2.0, dated 2025-10-14, as the current download. The README was updated 2026-04-22, and it already points to a 1.2.1 bug-fix release. The homepage download list had not caught up with 1.2.1 when I read it.",
+  "caveats": "The README warns that version 1.2.0 has a serious bug that corrupts data. The regression came in with commit 36956a and was fixed in 1.2.1 (commit 903a29). The homepage still lists 1.2.0 as the download, so use 1.2.1 or later. The tool needs usbmuxd running and the device trusted. Linux and macOS are the documented platforms (macOS needs macFUSE). Windows is not covered by the ifuse README. By default AFC only exposes the Media chroot. The README says AFC was not built to reach the root filesystem, so --root should be used with care. The README says some jailbreaks (for example blackra1n) do not install AFC2, so --root will not work there. On GNOME, GVFS already offers device access. The license is LGPL-2.1.",
+  "quotes": [
+   "A fuse filesystem implementation to access the contents of iOS devices.",
+   "This project allows mounting various directories of an iOS device locally using the FUSE file system interface.",
+   "A cross-platform FOSS library written in C to communicate with iOS devices natively."
+  ],
+  "links": [
+   {
+    "label": "Homepage (libimobiledevice)",
+    "url": "https://libimobiledevice.org/"
+   },
+   {
+    "label": "ifuse repository and README",
+    "url": "https://github.com/libimobiledevice/ifuse"
+   },
+   {
+    "label": "ifuse issue tracker",
+    "url": "https://github.com/libimobiledevice/ifuse/issues"
+   }
+  ],
+  "fetch_log": [
+   "https://libimobiledevice.org/ - fetched OK. It is the project-wide homepage. It lists ifuse 1.2.0 among its components, but says nothing ifuse-specific beyond that.",
+   "https://github.com/libimobiledevice/ifuse - fetched OK. The README was returned in full. It holds the ifuse usage, build, and warning content."
+  ]
+ }
+}

@@ -1,0 +1,97 @@
+{
+ "name": "open-ocd",
+ "desc": "On-chip debugging, in-system programming and boundary-scan testing",
+ "homepage": "https://openocd.org/",
+ "installs_365d": 7113,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "reverse-engineering",
+  "protocol"
+ ],
+ "why": "JTAG and boundary-scan access to chips is a real door into hardware debugging, though the tool itself is well-established in embedded circles.",
+ "brief": {
+  "what_it_is": "OpenOCD (Open On-Chip Debugger) is an open-source tool for on-chip debugging, in-system programming and boundary-scan testing of embedded chips. It drives a hardware debug adapter (dongles such as FT2232, J-Link, ST-LINK, CMSIS-DAP and others) that connects a computer to a target board over JTAG or SWD. It is configured with interface, board and target config scripts, and it can be driven from a telnet/Tcl interface or a GDB server. Its output is flash programming, memory access, breakpoints, trace and debugging sessions against the chip. The homepage presents version 0.12.0 as the current release.",
+  "why_it_exists": "The homepage does not state a problem-statement or mission in its own words. The release notes and user guide describe it as a debugger for embedded targets that works through on-chip debug ports, and the scout notes describe JTAG and boundary-scan access to chips as the door it opens.",
+  "how_it_works": "The user guide's table of contents describes a layered design: a debug adapter is selected and configured, a JTAG or SWD transport is set up, and TAP declarations describe the scan chain of the target. Target CPU objects are then defined, and a server stage exposes GDB, telnet and a Tcl RPC interface. Boundary-scan support includes SVF and XSVF file playback, and IPDBG JTAG-host server functionality, per the guide's section list.",
+  "commands_seen": [],
+  "install_notes": "The homepage says Homebrew packages OpenOCD 0.12.0 for macOS, alongside Debian, Fedora, Gentoo, OpenWrt and MSYS2. Beyond the package, you need a supported debug adapter dongle and the matching interface and board or target config files (the guide has sections on 'Choosing a Dongle', 'Hooking up the JTAG Adapter' and 'Configuration Basics'). I did not read those sections' contents, only their headings, so I have no exact invocation or first-run steps.",
+  "standout": "Board and target support is enormous and is delivered as Tcl config scripts; the 0.12.0 notes list dozens of new board, target and adapter configs, including Raspberry Pi, ESP32 and STM32 parts. It is also used for boundary-scan work through SVF and XSVF, not only for debugging.",
+  "status": "maintained. The homepage announces OpenOCD 0.12.0 as released, with an 0.12.0-rc1 post before it and an 0.11.0 release before that. The 0.11.0 post says it came four years after the previous release. The homepage does not give a date for 0.12.0 itself, and I did not check the git log.",
+  "caveats": "The homepage is a news feed and contains no usage examples or commands. I read only the user guide's table of contents, not its body, so I could not verify the command syntax. Hardware is required: you need a compatible debug adapter and a board. Licensing of the code was not confirmed; the guide itself is under GFDL 1.2. The guide header states 'release 0.12.0+dev, dated 19 October 2026', which does not match the homepage's account of a released 0.12.0, so treat its version and date as unreliable.",
+  "quotes": [
+   "I'm happy to announce the availability of OpenOCD version 0.12.0.",
+   "Some major GNU/Linux distros (Debian, Fedora, Gentoo, OpenWrt), Homebrew for macOS and MSYS2 for Windows have already picked the release up.",
+   "Finally! Final.",
+   "Hooray for the developers!"
+  ],
+  "links": [
+   {
+    "label": "OpenOCD homepage",
+    "url": "https://openocd.org/"
+   },
+   {
+    "label": "OpenOCD User's Guide (HTML)",
+    "url": "https://openocd.org/doc/html/index.html"
+   },
+   {
+    "label": "0.12.0 git change log (SourceForge)",
+    "url": "http://sourceforge.net/p/openocd/code/ci/v0.12.0/log/?path="
+   }
+  ],
+  "fetch_log": [
+   "https://openocd.org/ - worked, news page with 0.12.0 release notes and older posts; no commands or usage shown",
+   "https://openocd.org/doc/html/index.html - worked, but only the table of contents and front matter were visible; no command lines in the text"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "OpenOCD gives you a hands-on path into chip internals via JTAG/SWD, and its boundary-scan support makes it more than a conventional debugger."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "OpenOCD",
+  "tldr": "An open-source tool that talks to the debug port of a microcontroller over JTAG or SWD, so you can flash, halt and inspect a chip directly.",
+  "deeper_look": "OpenOCD, the Open On-Chip Debugger, sits between your computer and an embedded chip. A hardware debug adapter (an FT2232 board, J-Link, ST-LINK, CMSIS-DAP and others) plugs into your machine, and its other end connects to a target board over JTAG or SWD. OpenOCD drives that adapter and gives you flash programming, memory access, breakpoints and debugging sessions against the chip.\n\nIt is built in layers, according to the user guide's table of contents. You pick and configure an adapter, set up a JTAG or SWD transport, and declare the TAPs that describe the target's scan chain. Then you define the target CPUs. A server stage exposes a GDB server, a telnet interface and a Tcl RPC interface. All of this is configured through Tcl scripts, and the 0.12.0 release notes list dozens of new board, target and adapter configs, including Raspberry Pi, ESP32 and STM32 parts.\n\nThe idea underneath is that most chips ship with a side door for debugging, and that door is a standard. Once you can speak JTAG, you can halt a CPU, read its memory, rewrite its flash, or walk a scan chain without the chip's own software cooperating. OpenOCD also covers boundary-scan work, with SVF and XSVF file playback, so it is not only a debugger.\n\nThe homepage is a news feed with no usage examples, so the user guide is the real starting point. Its sections on choosing a dongle, hooking up the adapter and configuration basics are where a first session begins.",
+  "install": "brew install open-ocd\n# Needs a supported debug adapter (dongle) and a target board, plus the matching interface and target config scripts.",
+  "try_this": [
+   {
+    "cmd": "openocd --help",
+    "what_happens": "Prints the command-line options, including how to point OpenOCD at config scripts. No hardware is needed for this."
+   }
+  ],
+  "whats_unique": "Support for boards, targets and adapters comes as Tcl config scripts, and the list is huge. The same tool also handles boundary-scan playback through SVF and XSVF, not just debugging.",
+  "caveats": "You need a compatible debug adapter and a board to do anything real, and the homepage shows no commands, so expect to work from the user guide.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "jtag",
+   "swd",
+   "embedded",
+   "debugging",
+   "boundary-scan"
+  ],
+  "links": [
+   {
+    "label": "OpenOCD homepage",
+    "url": "https://openocd.org/"
+   },
+   {
+    "label": "OpenOCD User's Guide (HTML)",
+    "url": "https://openocd.org/doc/html/index.html"
+   },
+   {
+    "label": "0.12.0 git change log (SourceForge)",
+    "url": "http://sourceforge.net/p/openocd/code/ci/v0.12.0/log/?path="
+   }
+  ]
+ }
+}

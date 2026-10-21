@@ -1,0 +1,142 @@
+{
+ "name": "swift-section",
+ "desc": "CLI tool for parsing mach-o files to obtain Swift information",
+ "homepage": "https://github.com/MxIris-Reverse-Engineering/MachOSwiftSection",
+ "installs_365d": 295,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "reverse-engineering",
+  "afternoon",
+  "tui"
+ ],
+ "why": "Parses Mach-O binaries to pull out Swift type metadata, a good way to watch compiled Swift reveal its structure.",
+ "brief": {
+  "what_it_is": "swift-section is a command-line tool that reads a compiled Mach-O binary or a dyld shared cache and prints the Swift metadata inside it: types, protocols, conformances, and field layouts. It takes a file path (with --architecture for fat binaries) and writes text to stdout or to a file. Its subcommands are dump, interface (generates a .swiftinterface-style file), diff, snapshot, evolution, transformer, and objc (Objective-C declarations). It is the CLI wrapper around the MachOSwiftSection Swift library, and it reads the binary without loading it into a process.",
+  "why_it_exists": "The README frames the project as a way to recover Swift metadata from Mach-O files and dyld shared caches without loading them into a process. It is built as an extension of MachOKit for Swift, and it reimplements the Swift runtime's own reading logic.",
+  "how_it_works": "The library parses the __swift5_* sections and the descriptors in them, resolves relative pointers, and uses its own demangler (originally from CwlDemangle, now swift-demangling) to turn symbolic references into names. Field offsets, type layouts, and enum layouts are computed statically by the SwiftLayout engine, the way the runtime would compute them at load time. Some types stored behind metadata accessor thunks are read by decoding the thunk's ARM64 code with Capstone rather than running it.",
+  "commands_seen": [
+   {
+    "cmd": "brew install swift-section",
+    "context": "Homebrew install route listed in the README's Installation section."
+   },
+   {
+    "cmd": "swift-section dump /path/to/binary",
+    "context": "Dumps all Swift information from a Mach-O file."
+   },
+   {
+    "cmd": "swift-section dump /path/to/binary --sections types protocols",
+    "context": "Restricts dump output to types and protocols; the README warns the file path must come before the option."
+   },
+   {
+    "cmd": "swift-section dump --emit-field-offsets /path/to/binary",
+    "context": "Adds statically computed field-offset comments for struct and class stored properties."
+   },
+   {
+    "cmd": "swift-section interface --output-path interface.swiftinterface /path/to/binary",
+    "context": "Generates a complete Swift interface file and saves it to the given path."
+   },
+   {
+    "cmd": "swift-section diff old/Foo.framework/Foo new/Foo.framework/Foo",
+    "context": "Compares the binary-level ABI of two versions and gives a breaking or backward-compatible verdict."
+   },
+   {
+    "cmd": "swift-section diff old.dylib new.dylib --summary-only --fail-on-breaking",
+    "context": "CI-style check: summary only, nonzero exit on a breaking change."
+   },
+   {
+    "cmd": "swift-section snapshot /path/to/binary --label 1.0 -o baseline-1.0.json",
+    "context": "Freezes a binary's ABI into a JSON baseline that later diffs can use without the original binary."
+   },
+   {
+    "cmd": "swift-section evolution 17.0.json 18.0.json /path/to/Foo-26.0.dylib --labels 17.0,18.0,26.0",
+    "context": "Tracks one module's ABI across an ordered series of versions and reports each declaration's lifeline."
+   },
+   {
+    "cmd": "swift-section objc dump /path/to/Some.framework/Some",
+    "context": "Prints every Objective-C declaration in a binary as a header."
+   }
+  ],
+  "install_notes": "Install with brew install swift-section, or download a binary from GitHub Releases. To build from source, run ./build-executable-product.sh with Xcode 26.0 and a Swift 6.2+ toolchain, or run ./install.sh [install-directory], which defaults to /usr/local/bin and uses sudo only when that directory is not writable. Fat or universal binaries require --architecture <arch>, since there is no silent default since 0.10.0. --resolve-c-module-names needs Xcode and indexes the SDK modules on the first run per SDK. Simulator-runtime frameworks and app binaries outside a dyld cache may need --dependency-search-path pointing at the runtime's cache or RuntimeRoot. There is no account or first-run setup described in the README.",
+  "standout": "It reads Swift metadata statically and can recover things that are not in the Swift metadata itself, such as @objc and override markers, from the ObjC method table, and property wrapper names from other images. The diff command compares ABI at the binary level, so it sees field retypes, tag renumbering, and witness-table slot changes that a .swiftinterface diff cannot see.",
+  "status": "unknown. The README has no release date or commit date. It does reference library version 0.23.0 in the SPM example, a 0.10.0 change, and recent toolchains (Swift 6.2, Xcode 26, iOS 27 simulator runtimes), which suggests active development. The README also has a Changelogs directory and an agent plugin, both of which point to ongoing releases.",
+  "caveats": "Building requires Swift 6.2+ and Xcode 26.0+. The library supports macOS 10.15+ and the iOS 13+ family. TypeIndexing (which resolves __C types to modules) and --resolve-c-module-names are macOS only and need Xcode. --parse-opaque-return-type is marked experimental and may fail on complex return types. Diffs between a symbol-rich build and a stripped build can report a requirement as a member swap, so compare binaries in similar strip states. Some features are opt-in, such as --infer-objc-overrides. The test suite needs a fixture built with Xcode, and the README warns that unsigned fixture builds break ABI baselines. The license is MIT.",
+  "quotes": [
+   "A Swift library that recovers Swift metadata \u2014 types, protocols, conformances, field layouts \u2014 from Mach-O files and dyld shared caches without loading them into a process.",
+   "It carries its own demangler, symbolic references included, and reimplements the Swift runtime's own reading logic.",
+   "The companion `swift-section` CLI exposes all of it, and covers the Objective-C side of a binary as well."
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repository",
+    "url": "https://github.com/MxIris-Reverse-Engineering/MachOSwiftSection"
+   },
+   {
+    "label": "GitHub Releases (binaries)",
+    "url": "https://github.com/MxIris-Reverse-Engineering/MachOSwiftSection/releases"
+   },
+   {
+    "label": "Documentation index (in repo)",
+    "url": "https://github.com/MxIris-Reverse-Engineering/MachOSwiftSection/blob/main/Documentations/README.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/MxIris-Reverse-Engineering/MachOSwiftSection (homepage, README returned in full, worked)",
+   "Did not follow further links: the README is complete and covers the CLI, install, and usage in detail."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It turns compiled Swift binaries into inspectable type layouts and ABI history through static analysis\u2014an unusually revealing reverse-engineering tool, not generic plumbing."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "swift-section",
+  "tldr": "Reads a compiled Mach-O binary and prints the Swift types, protocols, and field layouts inside it, without running the binary.",
+  "deeper_look": "swift-section is a command-line tool that opens a Mach-O binary or a dyld shared cache and prints the Swift metadata it finds: types, protocols, conformances, and field layouts. You give it a file path (plus `--architecture` for fat binaries) and it writes text to stdout or a file. Subcommands include `dump`, `interface` (which generates a .swiftinterface-style file), `diff`, `snapshot`, `evolution`, and `objc` for Objective-C declarations.\n\nThe project's own description is that it recovers metadata \"without loading them into a process.\" It parses the `__swift5_*` sections and the descriptors inside them, resolves relative pointers, and uses its own demangler to turn symbolic references into names. Field offsets and type and enum layouts are computed statically, the way the Swift runtime would compute them at load time. For some types behind metadata accessor thunks, it decodes the thunk's ARM64 code with Capstone instead of executing it.\n\nThe idea underneath is that a compiled Swift binary carries a surprising amount of its own structure, and the runtime's reading logic can be reimplemented offline. That makes the `diff` command interesting: it compares ABI at the binary level, so it can see field retypes, tag renumbering, and witness-table slot changes that a .swiftinterface diff cannot. It can also recover things not in the Swift metadata itself, such as `@objc` and override markers, from the ObjC method table.\n\nIt is the CLI wrapper around the MachOSwiftSection Swift library, which is built as an extension of MachOKit.",
+  "install": "brew install swift-section\n# Needs a Mach-O binary to inspect, so macOS is the natural home. Building from source needs Xcode 26.0 and a Swift 6.2+ toolchain. Binaries are also on GitHub Releases.",
+  "try_this": [
+   {
+    "cmd": "swift-section dump /path/to/binary",
+    "what_happens": "Dumps all Swift information found in the Mach-O file."
+   },
+   {
+    "cmd": "swift-section dump --emit-field-offsets /path/to/binary",
+    "what_happens": "Adds statically computed field-offset comments to struct and class stored properties."
+   },
+   {
+    "cmd": "swift-section interface --output-path interface.swiftinterface /path/to/binary",
+    "what_happens": "Generates a complete Swift interface file from the binary and saves it."
+   }
+  ],
+  "whats_unique": "It reads Swift metadata statically with its own demangler and layout engine, and its diff compares binary-level ABI rather than source-level interfaces.",
+  "caveats": "Building from source needs Swift 6.2+ and Xcode 26.0+, some features such as `--resolve-c-module-names` are macOS-only and need Xcode, and the README gives no release dates, so maintenance status is unclear.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "reverse-engineering",
+   "mach-o",
+   "swift",
+   "macos",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repository",
+    "url": "https://github.com/MxIris-Reverse-Engineering/MachOSwiftSection"
+   },
+   {
+    "label": "GitHub Releases (binaries)",
+    "url": "https://github.com/MxIris-Reverse-Engineering/MachOSwiftSection/releases"
+   },
+   {
+    "label": "Documentation index (in repo)",
+    "url": "https://github.com/MxIris-Reverse-Engineering/MachOSwiftSection/blob/main/Documentations/README.md"
+   }
+  ]
+ }
+}

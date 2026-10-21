@@ -1,0 +1,139 @@
+{
+ "name": "packmol",
+ "desc": "Packing optimization for molecular dynamics simulations",
+ "homepage": "https://www.ime.unicamp.br/~martinez/packmol/",
+ "installs_365d": 433,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "simulation"
+ ],
+ "why": "Packs molecules into boxes for molecular dynamics setups, real science, though a niche preprocessing step.",
+ "brief": {
+  "what_it_is": "Packmol is a command-line program that builds starting coordinates for molecular dynamics simulations by placing copies of molecules into a region of space without overlaps. You supply a coordinate file for one molecule of each type (PDB, TINKER, or XYZ), the number of copies of each, and spatial constraints such as being inside a box, sphere, cylinder, or above a plane. It writes a coordinate file of the packed system. The user guide's example packs 2000 water molecules into a 40 \u00c5 cube from a short text input file.",
+  "why_it_exists": "The homepage says PACKMOL \"creates an initial point for molecular dynamics simulations by packing molecules in defined regions of space\" so that short-range repulsive interactions do not disrupt the simulation. It also says that the variety of constraints makes it easy to build ordered systems such as lamellar, spherical, or tubular lipid layers.",
+  "how_it_works": "The input file lists each molecule type with a number of copies and constraint keywords (inside/outside box, sphere, ellipsoid, cylinder, plane, and others). The tolerance keyword sets the minimum atom-atom distance, which is 2.0 \u00c5 for typical all-atom systems. The program optimizes the positions and rotations of the molecules to satisfy the distance and region constraints, and it reports a final objective value and maximum violations when it succeeds. The guide says it is a first-pass coordinate generator and that the output should go through minimization and equilibration afterward.",
+  "commands_seen": [
+   {
+    "cmd": "tar -xvzf packmol-21.0.0.tar.gz",
+    "context": "Unpacks the Packmol source tarball (the user guide's example version is 21.0.0); creates a packmol directory."
+   },
+   {
+    "cmd": "cd packmol",
+    "context": "Moves into the unpacked source directory before building."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the packmol executable from source, per the user guide's compile instructions."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Fallback if the build fails: the configure script tries to find a suitable compiler. The guide says to run chmod +x ./configure first."
+   },
+   {
+    "cmd": "packmol < packmol.inp",
+    "context": "Runs Packmol by redirecting the input file on stdin (option 1)."
+   },
+   {
+    "cmd": "packmol -i packmol.inp -o output.pdb",
+    "context": "Runs Packmol with command-line arguments (option 2, from v21.1.0 onward); -o is optional and overrides the output name in the input file."
+   },
+   {
+    "cmd": "tolerance 2.0",
+    "context": "Input-file keyword setting the minimum distance between atoms of different molecules; the guide calls 2.0 a good value for room-temperature systems in Angstroms."
+   },
+   {
+    "cmd": "pbc 30.0 30.0 60.0",
+    "context": "Input-file keyword that turns on orthorhombic periodic boundary conditions for a 30x30x60 \u00c5 box."
+   },
+   {
+    "cmd": "restart_to restart.pack",
+    "context": "Input-file keyword that writes a restart file so a later run can build on this packing."
+   },
+   {
+    "cmd": "solvate.tcl PROTEIN.pdb",
+    "context": "Bundled helper script that generates a Packmol input file to solvate a large molecule such as a protein with water and ions. Runs with no arguments to print its options."
+   }
+  ],
+  "install_notes": "Requires a C/Fortran toolchain to build from source: download packmol-21.0.0.tar.gz from the homepage, unpack, run make (or ./configure then make). The guide says most users should use the Julia wrapper (Packmol.jl), which needs no compilation and works on all platforms. Windows users are advised to use Packmol.jl. No account or license acceptance is mentioned. Not verified: whether the Homebrew formula also installs solvate.tcl or other utilities.",
+  "standout": "Constraints are declared as geometric regions (inside or outside a cylinder, sphere, or gaussian surface, above or below a plane, per-atom selections), so you can describe a lipid vesicle or a membrane interface in a few lines. The restart-file mechanism lets very large systems be built in stages.",
+  "status": "Maintained as far as the pages show: the user guide refers to version 21.0.0 and mentions a 21.1.0 feature, and the homepage links a version history. I did not find a release date or commit date, so recency is not confirmed.",
+  "caveats": "Packmol is a preprocessing step, not a simulation engine; the guide says the output needs minimization and equilibration. The guide notes that a memory \"Killed\" error requires editing maxatom in sizes.i and recompiling. The 'Command not found' fix is ./packmol or adding the directory to PATH. Packing can fail to converge; the guide suggests tweaking discale, maxit, movefrac, or other settings. The guide says Windows users should use the Julia wrapper instead of the source build. The first homepage fetch returned only an 'Opening page...' stub; the content came from the m3g.github.io mirror. The guide also points to an older download host (m3g.iqm.unicamp.br), so links may be inconsistent. License was not checked.",
+  "quotes": [
+   "PACKMOL creates an initial point for molecular dynamics simulations by packing molecules in defined regions of space.",
+   "The user must provide only the coordinates of one molecule of each type, the number of molecules of each type and the spatial constraints that each type of molecule must satisfy.",
+   "Always download the latest version of Packmol to ensure all features are available."
+  ],
+  "links": [
+   {
+    "label": "Packmol homepage (UNICAMP)",
+    "url": "https://www.ime.unicamp.br/~martinez/packmol/"
+   },
+   {
+    "label": "Packmol site with downloads, input examples, and version history",
+    "url": "https://m3g.github.io/packmol/"
+   },
+   {
+    "label": "Packmol user guide",
+    "url": "https://m3g.github.io/packmol/userguide.shtml"
+   }
+  ],
+  "fetch_log": [
+   "https://www.ime.unicamp.br/~martinez/packmol/ \u2014 loaded but returned only the title and 'Opening page...' with no content (thin).",
+   "https://m3g.github.io/packmol/ \u2014 loaded; full homepage text with description, menu, and related links.",
+   "https://m3g.github.io/packmol/userguide.shtml \u2014 loaded; full user guide with commands and constraint syntax."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Geometric constraints let you build molecular systems such as vesicles and membrane interfaces from simple inputs\u2014a distinctive doorway into molecular simulation."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Packmol",
+  "tldr": "Packmol packs hundreds or thousands of molecules into boxes, spheres, or membranes without overlaps, building the starting point for molecular dynamics simulations from a short text file.",
+  "deeper_look": "Packmol is a command-line program that builds starting coordinates for molecular dynamics. You give it a coordinate file for one molecule of each type (PDB, TINKER, or XYZ), say how many copies you want, and describe where they should go. It writes out a single file with everything placed. The user guide's example packs 2000 water molecules into a 40 \u00c5 cube from a short input file.\n\nIt exists because a simulation that starts with atoms sitting on top of each other blows up. In the homepage's words, Packmol \"creates an initial point for molecular dynamics simulations by packing molecules in defined regions of space\", so that short-range repulsive interactions do not wreck the run. Under the hood it optimizes the positions and rotations of each molecule until a minimum atom-atom distance (the `tolerance`, typically 2.0 \u00c5 for all-atom systems) and the region constraints are met.\n\nThe interesting part is the constraint language. Regions are geometric: inside or outside a box, sphere, ellipsoid, or cylinder, above or below a plane, and even per-atom selections. A few lines can describe a lipid layer, a vesicle, or a tube, and the project says this makes ordered systems like lamellar, spherical, or tubular lipid layers easy to build. A restart file lets very large systems be assembled in stages.\n\nThe guide is clear that this is a first-pass generator, not a simulator. The output still needs energy minimization and equilibration in a real MD engine. Still, it is a good way to see what the setup side of computational chemistry looks like.",
+  "install": "brew install packmol\n# Homebrew builds it with gcc (Fortran). You also need your own molecule coordinate files (PDB, TINKER, or XYZ) and an input file. The guide also points to a Julia wrapper, Packmol.jl, that needs no compilation.",
+  "try_this": [
+   {
+    "cmd": "packmol < packmol.inp",
+    "what_happens": "Reads a Packmol input file on stdin, packs the listed molecules into the regions you described, and writes the output coordinate file."
+   },
+   {
+    "cmd": "packmol -i packmol.inp -o output.pdb",
+    "what_happens": "Same run with command-line arguments (from v21.1.0 on); -o optionally overrides the output filename set in the input file."
+   }
+  ],
+  "whats_unique": "Systems are described as geometric regions rather than coordinates, so a membrane interface or a vesicle takes a few lines of input. Restart files let very large systems be built in stages.",
+  "caveats": "It is only a preprocessing step, so the output needs minimization and equilibration elsewhere; packing can also fail to converge and need tuning of settings like discale or maxit.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "science",
+   "simulation",
+   "chemistry",
+   "molecular-dynamics"
+  ],
+  "links": [
+   {
+    "label": "Packmol homepage (UNICAMP)",
+    "url": "https://www.ime.unicamp.br/~martinez/packmol/"
+   },
+   {
+    "label": "Packmol site with downloads, input examples, and version history",
+    "url": "https://m3g.github.io/packmol/"
+   },
+   {
+    "label": "Packmol user guide",
+    "url": "https://m3g.github.io/packmol/userguide.shtml"
+   }
+  ]
+ }
+}

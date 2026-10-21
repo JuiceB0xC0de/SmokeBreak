@@ -1,0 +1,144 @@
+{
+ "name": "minipro",
+ "desc": "Open controller for the MiniPRO TL866xx series of chip programmers",
+ "homepage": "https://gitlab.com/DavidGriffith/minipro/",
+ "installs_365d": 620,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "reverse-engineering",
+  "afternoon"
+ ],
+ "why": "Open driver for TL866 chip programmers, opening up EEPROM and microcontroller dumping with real hardware in hand.",
+ "brief": {
+  "what_it_is": "minipro is an open source command-line program that controls XGecu's TL866xx series of chip programmers (the MiniPRO hardware). The README says it runs on Linux, macOS and other Unix-like systems, and supports the TL866CS, TL866A, TL866II+, T48 and T56 programmers. You name a target device with -p and a file with -w (write) or -r (read). The README claims more than 13000 target devices, including AVRs, PICs, BIOS chips and EEPROMs.",
+  "why_it_exists": "The README says XGecu does not provide a program for Linux or other Unix flavors, so the maintainers wanted a simple, free, open-source program with a command-line interface that could also sit under a GUI front-end if desired.",
+  "how_it_works": "",
+  "commands_seen": [
+   {
+    "cmd": "minipro -p ATMEGA48 -w atmega48.bin",
+    "context": "Synopsis: writes atmega48.bin to an ATMEGA48 target chip."
+   },
+   {
+    "cmd": "minipro -p ATMEGA48 -r atmega48.bin",
+    "context": "Synopsis: reads (dumps) an ATMEGA48 target chip into atmega48.bin."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds minipro from the cloned source tree on Linux and macOS."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the built minipro after compiling."
+   },
+   {
+    "cmd": "make algorithm",
+    "context": "Downloads XGecu's official software and converts the T56 bitstream algorithms into one file for minipro; needed only for the T56."
+   },
+   {
+    "cmd": "sudo make install-algorithm",
+    "context": "Installs that converted T56 algorithm file."
+   },
+   {
+    "cmd": "sudo cp udev/*.rules /etc/udev/rules.d/",
+    "context": "Copies udev rules so the programmer can be accessed without root."
+   },
+   {
+    "cmd": "sudo udevadm trigger",
+    "context": "Reloads udev so the new rules take effect."
+   },
+   {
+    "cmd": "sudo usermod -a -G plugdev YOUR-USER",
+    "context": "Adds your regular user to the plugdev group; takes effect after next login."
+   },
+   {
+    "cmd": "brew install minipro",
+    "context": "Recommended macOS install of the most recent release via Homebrew."
+   }
+  ],
+  "install_notes": "Needs libusb 1.0.16 or newer. Linux build dependencies are listed per distro (Debian/Ubuntu, CentOS 7, openSUSE, Fedora), e.g. libusb-1.0-0-dev and zlib1g-dev on Debian. Clone from GitLab, then make and sudo make install. For regular-user access, install the udev rules and add your user to plugdev, then log out and back in. Bash completion is optional (bash_completion.d/minipro). Packaging is covered for .deb, PPA source packages, and .rpm for Fedora, CentOS and openSUSE. Guix users can run guix install minipro. On macOS, Homebrew is easiest; compiling from source needs pkg-config and libusb from brew or MacPorts. T56 users need the make algorithm step to fetch Xgecu's bitstreams.",
+  "standout": "The T56 does not keep its FPGA bitstreams in the hardware, so the host software has to load them. The project cannot ship those for copyright reasons, so its build downloads them from XGecu's official package and converts them into one file. The README also notes that GitLab tarball hashes are unstable, and points packagers to the FreeBSD ports approach of pinning a commit hash.",
+  "status": "unknown. The README names 0.7.4 as the latest 'stable' version, but it gives no release date. The GitLab page shows only a creation date of June 02, 2018, and no last-commit or release date was visible to me. The README also links an active FreeBSD port, which suggests ongoing packaging, but that is not proof of recent activity.",
+  "caveats": "Tested on Linux and macOS only; other Unices may work but are untested. libusb older than 1.0.16 is untested. T56 support needs Xgecu's algorithms, which the project cannot distribute, so you must run the download step yourself. License is GNU GPLv3 per the GitLab page. The Guix udev snippet in the README appears truncated (unclosed parenthesis). The scout notes list a dump-alg-minipro.bash executable, which I did not see described in the README.",
+  "quotes": [
+   "This program exists because XGecu does not provide a program for use on Linux or other flavors of Unix.",
+   "a simple, free, and open-source program that presents a command-line interface that allows for a GUI front-end if desired.",
+   "Unlike the other programmers from Xgecu, the T56 does not store its FPGA bitstreams in the hardware."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitLab)",
+    "url": "https://gitlab.com/DavidGriffith/minipro/"
+   },
+   {
+    "label": "XGecu (hardware vendor)",
+    "url": "http://www.xgecu.com/en/"
+   },
+   {
+    "label": "FreeBSD ports entry for minipro",
+    "url": "https://github.com/freebsd/freebsd-ports/tree/main/sysutils/minipro"
+   }
+  ],
+  "fetch_log": [
+   "https://gitlab.com/DavidGriffith/minipro/ (worked, but returned only the GitLab project summary, not the README text)",
+   "https://gitlab.com/DavidGriffith/minipro/-/blob/master/README.md (loaded, but only the GitLab page shell with no README text)",
+   "https://gitlab.com/DavidGriffith/minipro/-/raw/master/README.md (worked; full README text retrieved and used for this brief)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A niche command-line tool for reading and writing thousands of chips makes firmware and EEPROM contents tangible, with an especially odd host-loaded FPGA bitstream workflow for the T56."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "minipro",
+  "tldr": "A command-line driver for the cheap TL866 and T48/T56 chip programmers, for reading and writing AVRs, PICs, BIOS chips and EEPROMs from Linux or macOS.",
+  "deeper_look": "minipro controls XGecu's MiniPRO chip programmers, the small USB boxes with a ZIF socket that you drop a chip into to read or flash it. The README lists the TL866CS, TL866A, TL866II+, T48 and T56, and claims support for more than 13000 target devices, including AVRs, PICs, BIOS chips and EEPROMs.\n\nThe project exists because, in the README's words, \"XGecu does not provide a program for use on Linux or other flavors of Unix.\" The maintainers wanted \"a simple, free, and open-source program that presents a command-line interface that allows for a GUI front-end if desired.\" You name the chip with -p and give a file to write with -w or read into with -r.\n\nThe idea underneath is that a chip is just a file you have not read yet. Dump an old EEPROM or a microcontroller's flash and you have bytes you can inspect, diff, patch and write back. That makes this a door into firmware archaeology, repairing old hardware, and reverse engineering, with the programmer as the physical bridge.\n\nThe T56 adds a wrinkle. It does not keep its FPGA bitstreams in the hardware, so the host software must load them. The project cannot redistribute them, so a build step downloads XGecu's official package and converts the algorithms into one file for minipro.",
+  "install": "brew install minipro\n\nRequires a supported XGecu programmer (TL866CS, TL866A, TL866II+, T48 or T56) and libusb. On Linux, the README suggests installing the udev rules (sudo cp udev/*.rules /etc/udev/rules.d/, then sudo udevadm trigger) and adding your user to the plugdev group so you do not need root. T56 users also need to run make algorithm and sudo make install-algorithm from a source checkout.",
+  "try_this": [
+   {
+    "cmd": "minipro --help",
+    "what_happens": "Lists the options for selecting a device and for reading, writing and other operations."
+   },
+   {
+    "cmd": "minipro -p ATMEGA48 -r atmega48.bin",
+    "what_happens": "Reads (dumps) the contents of an ATMEGA48 in the programmer's socket into atmega48.bin."
+   },
+   {
+    "cmd": "minipro -p ATMEGA48 -w atmega48.bin",
+    "what_happens": "Writes atmega48.bin to the ATMEGA48 in the socket."
+   }
+  ],
+  "whats_unique": "It is an open, scriptable command-line replacement for a vendor tool that has no Unix version, covering thousands of chips. Its build also fetches the T56's FPGA bitstreams from the vendor because they cannot be redistributed.",
+  "caveats": "Needs a physical programmer, and writing can overwrite a chip's contents. Tested only on Linux and macOS, and the README does not make the project's recent activity clear.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "needs-hardware",
+   "reverse-engineering",
+   "eeprom",
+   "firmware",
+   "usb",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitLab)",
+    "url": "https://gitlab.com/DavidGriffith/minipro/"
+   },
+   {
+    "label": "XGecu (hardware vendor)",
+    "url": "http://www.xgecu.com/en/"
+   },
+   {
+    "label": "FreeBSD ports entry for minipro",
+    "url": "https://github.com/freebsd/freebsd-ports/tree/main/sysutils/minipro"
+   }
+  ]
+ }
+}

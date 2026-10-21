@@ -1,0 +1,87 @@
+{
+ "name": "certgraph",
+ "desc": "Crawl the graph of certificate Alternate Names",
+ "homepage": "https://lanrat.github.io/certgraph/",
+ "installs_365d": 88,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol",
+  "tls"
+ ],
+ "why": "Crawling certificate Alternate Names maps hidden web-of-hostnames relationships, a door into how TLS certificates link the internet together.",
+ "brief": {
+  "what_it_is": "CertGraph is a command-line crawler written in Go. You give it one or more hostnames, it fetches the TLS certificate for each one, and it follows the certificate's Alternate Names (SANs) to the next domains, building a directed graph where each domain is a node and each certificate name is an edge. New domains are printed as they are found. In detailed mode it prints the adjacency list at the end: node, depth, status, and certificate fingerprint. A web UI can draw the graph from the JSON output (-json).",
+  "why_it_exists": "The README says it was designed for host name enumeration via SSL certificates, and that it can also show the chain of trust between domains and the certificates reused across them. The author's blog post, linked from the README, gives more background.",
+  "how_it_works": "By default the http driver connects to each host over HTTPS and reads its certificate. The smtp driver does the same on port 25 using STARTTLS. The censys and crtsh drivers instead query Certificate Transparency logs through censys.io and crt.sh, and the README says no packets are sent to the target domains with those drivers. Crawling is breadth-first up to -depth (default 5), with -parallel certificate fetches at a time (default 10).",
+  "commands_seen": [
+   {
+    "cmd": "./certgraph -details eff.org",
+    "context": "Crawls eff.org and prints the adjacency list for the graph, one line per domain with depth, status, and certificate fingerprint. This is the README's main example."
+   },
+   {
+    "cmd": "docker run --rm -it ghcr.io/lanrat/certgraph example.com",
+    "context": "Runs the published Docker image from the GitHub Container Registry against example.com with no local install."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the certgraph binary in the repo directory. Requires Go 1.23 or newer."
+   },
+   {
+    "cmd": "go install github.com/lanrat/certgraph@latest",
+    "context": "Installs certgraph into the Go bin directory with a single command, as an alternative to make."
+   },
+   {
+    "cmd": "certgraph --serve 127.0.0.1:8080",
+    "context": "Starts the embedded web server so the graph UI can be used locally."
+   },
+   {
+    "cmd": "certgraph -depth 1 -driver CT-DRIVER -ct-subdomains -cdn -apex [DOMAIN]...",
+    "context": "BygoneSSL self-detection recipe from the README. CT-DRIVER is a placeholder for a Certificate Transparency driver such as crtsh or censys. Any printed domain you do not own means you are vulnerable."
+   },
+   {
+    "cmd": "certgraph -cdn -dns -apex [DOMAIN]...",
+    "context": "BygoneSSL bug-bounty recipe from the README. Domains printing '* Missing DNS for' are said to have vulnerable certificates that should be rotated."
+   },
+   {
+    "cmd": "make test",
+    "context": "Runs the project's tests, as listed under Development in the README."
+   },
+   {
+    "cmd": "make lint",
+    "context": "Runs the project's linting, as listed under Development in the README."
+   }
+  ],
+  "install_notes": "Pre-built binaries for Linux, macOS, and Windows are on the GitHub releases page. A Docker image is on ghcr.io. Packaged in BlackArch and Kali Linux. Building from source needs Go 1.23 or newer, via make or go install. The censys driver needs Censys API credentials (-censys-appid and -censys-secret). The README mentions no other accounts, runtimes, or first-run configuration. The -updatepsl flag updates the default Public Suffix List.",
+  "standout": "Most certificate tools inspect one host. This one treats the certificate SAN list as a graph and crawls it, so it can map which hostnames share certificates and which certs link unrelated sites together. It can also run entirely from public Certificate Transparency logs without touching the targets. The README applies the same graph to finding dangling certificates that enable BygoneSSL-style attacks.",
+  "status": "unknown. The README shows Go 1.23 as a requirement, GitHub Actions CI and GoReleaser release automation, and distro packaging in BlackArch and Kali, which suggests active upkeep. The fetched pages did not show a release date, last commit, or maintenance note, so I cannot confirm recency.",
+  "caveats": "The default http and smtp drivers send connections to every target host, which can be noticed. The censys driver needs paid or free API keys. Crawl size is limited by -depth (default 5) and -sanscap (default 80 apex domains per certificate). The homepage at lanrat.github.io/certgraph is only the web UI shell; its text did not include the README, so the GitHub repo was the real source. The README does not state a license in the fetched text. The README describes BygoneSSL detection as a use case, and that is a security-sensitive framing.",
+  "quotes": [
+   "CertGraph crawls SSL certificates creating a directed graph where each domain is a node and the certificate alternative names for that domain's certificate are the edges to other domain nodes.",
+   "This tool was designed to be used for host name enumeration via SSL certificates, but it can also show you a \"chain\" of trust between domains and the certificates that re-used between them.",
+   "No packets are sent to any of the domains when using this driver."
+  ],
+  "links": [
+   {
+    "label": "Web UI homepage (GitHub Pages)",
+    "url": "https://lanrat.github.io/certgraph/"
+   },
+   {
+    "label": "Source repository and README",
+    "url": "https://github.com/lanrat/certgraph"
+   },
+   {
+    "label": "Blog post with more information",
+    "url": "https://lanrat.com/certgraph/"
+   }
+  ],
+  "fetch_log": [
+   "https://lanrat.github.io/certgraph/ - loaded, but returned only the web UI shell (menus, tabs, load dialogs) with no README text; insufficient for the brief",
+   "https://github.com/lanrat/certgraph - loaded, returned the full README, which was used as the main source"
+  ]
+ }
+}

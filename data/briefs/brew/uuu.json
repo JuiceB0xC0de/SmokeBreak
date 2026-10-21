@@ -1,0 +1,98 @@
+{
+ "name": "uuu",
+ "desc": "Universal Update Utility, mfgtools 3.0. NXP I.MX Chip image deploy tools",
+ "homepage": "https://github.com/nxp-imx/mfgtools",
+ "installs_365d": 466,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "protocol",
+  "reverse-engineering"
+ ],
+ "why": "Talks the NXP USB recovery protocol to flash i.MX boards, a real door into bootloader internals, though it is a deploy tool.",
+ "brief": {
+  "what_it_is": "uuu (Universal Update Utility, from mfgtools 3.0) is a command-line tool for flashing NXP i.MX application processors over USB. You give it a boot image such as u-boot.imx, a script file ending in .uu, or an interactive shell command, and it pushes the image to a board in USB recovery mode. It also has a daemon mode that waits for a known device to appear and then downloads to it, and it can write whole disk images such as .wic.zst to eMMC. Its output is a progress display listing devices, succeeded and failed counts, and the SDP command in flight.",
+  "why_it_exists": "The README gives no separate rationale. It describes the tool as an 'Freescale/NXP I.MX Chip image deploy tools' suite and calls itself 'The real cross platform' version of the older mfgtools, running on Linux, Windows and macOS.",
+  "how_it_works": "uuu talks to the i.MX boot ROM over USB in its recovery mode and sends commands such as SDP: jump and SDP: boot, as its progress output shows. It is built on libuuu and depends on libusb, zlib and bzip2, with zstd and tinyxml2 pulled in for newer builds. Firmware such as U-Boot or the kernel can advertise WCID descriptors so Windows loads the WinUSB driver automatically.",
+  "commands_seen": [
+   {
+    "cmd": "uuu u-boot.imx",
+    "context": "Download u-boot.imx via HID device."
+   },
+   {
+    "cmd": "uuu list.uu",
+    "context": "Run all the commands in list.uu."
+   },
+   {
+    "cmd": "uuu -s",
+    "context": "Enter shell mode and type commands interactively."
+   },
+   {
+    "cmd": "uuu -v u-boot.imx",
+    "context": "Verbose mode while downloading u-boot.imx."
+   },
+   {
+    "cmd": "uuu -d u-boot.imx",
+    "context": "Daemon mode: once a known device attaches, download boot.imx. The README notes u-boot.imx can be swapped and re-sent on board reset, and warns not to unplug or write the SD card while debugging U-Boot."
+   },
+   {
+    "cmd": "uuu -b emmc u-boot.imx",
+    "context": "Write u-boot.imx to the eMMC boot partition. The image needs fastboot enabled."
+   },
+   {
+    "cmd": "uuu -b emmc_all wic.zst",
+    "context": "Decompress wic.zst and download the whole image into eMMC."
+   },
+   {
+    "cmd": "sudo apt-get install libusb-1.0-0-dev libbz2-dev libzstd-dev pkg-config cmake libssl-dev g++ zlib1g-dev libtinyxml2-dev",
+    "context": "Linux build dependencies, from the README's Linux build section."
+   },
+   {
+    "cmd": "cmake . && make",
+    "context": "Build in source on Linux."
+   },
+   {
+    "cmd": "brew install cmake libusb openssl pkg-config tinyxml2",
+    "context": "Homebrew dependencies for building on macOS."
+   },
+   {
+    "cmd": "cmake -DOPENSSL_ROOT_DIR=$(brew --prefix)/opt/openssl . && make",
+    "context": "Configure and build on macOS, pointing CMake at Homebrew's OpenSSL."
+   }
+  ],
+  "install_notes": "The README's prebuilt route is 'ubuntu 22.04, apt-get install uuu' and release binaries are on the GitHub releases page. Building from source needs git clone (add --recurse-submodules for Windows), cmake, and a C++ compiler. On Windows, the README says to open msvs/uuu.sln in Visual Studio 2017; the Community edition is allowed. Windows 7 users need the WinUSB driver from zadig.akeo.ie, and Windows 10 installs it automatically. On macOS, if you see \"can't detach kernel driver\", the README suggests checking the libusb version. Nothing in the README requires an account or a license key.",
+  "standout": "It goes straight to the i.MX boot ROM's USB recovery path and lets you script it: list files, interactive shell, and a daemon that re-flashes the board every time it reboots into recovery. The firmware-side WCID trick, which lets Windows install the driver with no manual steps, is an unusual detail.",
+  "status": "Likely maintained, though the README gives no release date. It has active-looking CI badges for macOS, Windows and Ubuntu builds, a snapcraft badge, and a wiki. I did not check the releases page or the last commit date, so the exact recency is unknown.",
+  "caveats": "The README says macOS support is 'not test yet' and lists macOS Catalina as the target. The README warns that 32-bit systems have problems with big files. The Windows build instructions name Visual Studio 2017. The Linux build needs a long list of -dev packages. Daemon mode can cause problems if you change the SD card during debugging. The README mentions 'apt-get install uuu' for Ubuntu 22.04, which may not match the package name a user finds. Licensing: uuu is BSD, but the prebuilt Windows binary links libusb statically under LGPL-2.1, which the README calls out.",
+  "quotes": [
+   "The real cross platform. Linux, Windows, MacOS(not test yet)",
+   "Few dependencies (only libusb, zlibc, libbz2)",
+   "u-boot.imx can be replaced, new file will be download once board reset."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/nxp-imx/mfgtools"
+   },
+   {
+    "label": "Releases (prebuilt binaries)",
+    "url": "https://github.com/nxp-imx/mfgtools/releases"
+   },
+   {
+    "label": "Wiki (UUU.pdf is a snapshot of it)",
+    "url": "https://github.com/nxp-imx/mfgtools/wiki"
+   },
+   {
+    "label": "Python bindings (wrapper)",
+    "url": "https://github.com/nxp-imx/mfgtools/tree/master/wrapper"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/nxp-imx/mfgtools (homepage, fetched OK; README returned in full)"
+  ]
+ }
+}

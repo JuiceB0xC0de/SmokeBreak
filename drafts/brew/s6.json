@@ -1,0 +1,100 @@
+{
+ "name": "s6",
+ "desc": "Small & secure supervision software suite",
+ "homepage": "https://skarnet.org/software/s6/",
+ "installs_365d": 236,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "tui",
+  "ancient",
+  "protocol"
+ ],
+ "why": "A small init and supervision suite from skarnet with an unusual philosophy about process supervision worth reading into.",
+ "brief": {
+  "what_it_is": "s6 is a small suite of UNIX command-line programs for process supervision (service supervision), in the line of daemontools and runit, plus various other operations on processes and daemons. Its tools are independent and can be used inside or outside the supervision framework, then combined into larger functions. The homepage lists examples: syslogd-style logging, service readiness notification for dependency management, sudo-like privilege gain without setuid binaries, and socket-activation-like behaviour without changing application code. The executables are the s6-* programs plus ucspilogd, and the packaging list includes many of them (s6-svscan, s6-supervise, s6-svc, s6-log, s6-fdholderd, s6-sudo and others).",
+  "why_it_exists": "The author describes s6 as a toolbox for low-level process and service administration, meant to do a lot with very little code. The homepage has a \"Why another supervision suite? Isn't runit good enough?\" section, which I did not fetch.",
+  "how_it_works": "Two long-lived processes, s6-svscan and s6-supervise, maintain the supervision tree, and other programs act as a user interface to control them and watch service state. Readiness notification (s6-svwait, s6-notifyoncheck and related tools) is the basis for dependency management. Fifodirs and the ftrigr/ftrigw libraries provide instant notification between processes. Most programs use the documented exit codes: 111 for a temporary error, 100 for a permanent error, 127 if a program to exec is not found, and 126 if exec fails for another reason.",
+  "commands_seen": [
+   {
+    "cmd": "git clone git://git.skarnet.org/s6",
+    "context": "Clones the s6 git repository, one of the ways to get the source. The homepage also says a Codeberg, GitHub or SourceHut mirror exists. Compilation is described only as following the INSTALL file in the source."
+   }
+  ],
+  "install_notes": "Requirements: a POSIX-compliant system with a standard C development environment, and GNU make 3.81 or later. skalibs 2.16.0.0 or later is required at build time, and at run time if you link against its shared library. execline 2.10.0.0 or later is optional but recommended for full functionality; it is needed at build time when s6 is built with execline support (the default), and at run time for binaries that spawn execlineb scripts. On musl, nsss 0.2.1.3 or later gives nsswitch-like functionality, needed at build time and boot time. The current release on the homepage is 2.15.1.1, with checksums linked. The homepage does not mention brew, and the brew caveats field is empty. The homepage does not mention a Homebrew formula, so the install route should be checked before the entry asserts one.",
+  "standout": "The programs are rewrites of daemontools utilities with extras, and the suite does things that are usually done by larger systems: fd-holding (s6-fdholderd) as the sensible part of socket activation, and suidless privilege gain via s6-sudo. The author argues the tools are meant to be assembled rather than used as an all-in-one init, and the homepage's section on other init systems is opinionated about systemd and suckless init.",
+  "status": "unknown: the homepage names 2.15.1.1 as the current released version and lists git mirrors on Codeberg, GitHub and SourceHut, but I saw no release date or last-commit date.",
+  "caveats": "The homepage is a project page, not a README, so no install commands beyond git clone were shown. Installation is by building from source against skalibs (and optionally execline). The scout note calls s6 a small init; the homepage presents it as a supervision suite, and init replacement is a separate choice (s6-linux-init, s6-rc and s6-overlay are separate projects it links to). The homepage is also explicit that the Linux socket-activation article it links is one to read with caution. The man-page port, the s6-linux-init and s6-rc links, and the background pages on the mailing list, IRC and related projects were not fetched.",
+  "quotes": [
+   "s6 is a small suite of programs for UNIX, designed to allow process supervision (a.k.a service supervision), in the line of daemontools and runit, as well as various operations on processes and daemons.",
+   "It is meant to be a toolbox for low-level process and service administration, providing different sets of independent tools that can be used within or without the framework, and that can be assembled together to achieve powerful functionality with a very small amount of code.",
+   "s6 is free software. It is available under the ISC license.",
+   "All-in-one init systems generally feel complex and convoluted, and when most people find out about the process supervision approach to init systems, they usually find it much simpler."
+  ],
+  "links": [
+   {
+    "label": "s6 homepage (skarnet.org)",
+    "url": "https://skarnet.org/software/s6/"
+   },
+   {
+    "label": "s6 git repository (git:// clone URL from homepage)",
+    "url": "git://git.skarnet.org/s6"
+   }
+  ],
+  "fetch_log": [
+   "https://skarnet.org/software/s6/ - fetched OK; the homepage is the full documentation overview, and the sub-pages it links were not fetched"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "s6\u2019s composable supervision model, readiness notifications, and fd-holding offer a distinctive look at building service-management behavior from small process tools."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "s6",
+  "tldr": "A small toolbox of independent Unix programs for supervising services, descended from daemontools and runit, built to be assembled rather than used as one big init.",
+  "deeper_look": "s6 is a suite of command-line programs for process supervision: starting a long-running service, watching it, restarting it when it dies, logging its output, and telling other things when it is ready. It follows daemontools and runit. Two long-lived processes, `s6-svscan` and `s6-supervise`, hold the supervision tree up. The other programs control them and report service state.\n\nThe interesting part is how the pieces are cut. The tools are independent and work inside or outside the supervision framework. The homepage lists some of what they can be combined into: syslogd-style logging with `s6-log`, readiness notification that serves as the basis for dependency management, sudo-like privilege gain without setuid binaries (`s6-sudo`), and socket-activation-like behaviour without changing the application. `s6-fdholderd` is the fd-holding piece of that last idea.\n\nThe author describes it as a toolbox for low-level process and service administration, meant to do a lot with very little code. The homepage argues that all-in-one init systems feel complex and convoluted, and that people who meet the supervision approach usually find it much simpler. Reading that section, and the opinionated page on other init systems, is a good way into the design argument.\n\nThe programs also share conventions. Exit codes are documented: 111 for a temporary error, 100 for a permanent one, 127 if the program to exec is not found, and 126 if exec fails for another reason. That makes the tools easy to chain in scripts.",
+  "install": "brew install s6\n# The homepage does not mention Homebrew; it describes building from source. Needs a POSIX system with a C toolchain and GNU make 3.81+, plus skalibs, and optionally execline (both are formula dependencies).\n# Source: git clone git://git.skarnet.org/s6, then follow the INSTALL file.",
+  "try_this": [
+   {
+    "cmd": "git clone git://git.skarnet.org/s6",
+    "what_happens": "Fetches the source if you want to build it yourself; the homepage says to follow the INSTALL file."
+   },
+   {
+    "cmd": "s6-svscan --help",
+    "what_happens": "Prints usage for the program that scans a service directory and keeps a supervisor running for each service."
+   },
+   {
+    "cmd": "s6-log --help",
+    "what_happens": "Shows usage for s6's logger, the piece that handles service output and log rotation."
+   }
+  ],
+  "whats_unique": "It splits supervision, logging, readiness notification, fd-holding and privilege gain into separate small tools you compose yourself. It is not a single init, and the author argues that is the point.",
+  "caveats": "The brief found no release date or last-commit date, and s6 on its own is a supervision suite rather than an init; init replacement lives in separate projects (s6-linux-init, s6-rc, s6-overlay).",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "supervision",
+   "init",
+   "unix",
+   "daemontools",
+   "processes"
+  ],
+  "links": [
+   {
+    "label": "s6 homepage (skarnet.org)",
+    "url": "https://skarnet.org/software/s6/"
+   },
+   {
+    "label": "s6 git repository",
+    "url": "git://git.skarnet.org/s6"
+   }
+  ]
+ }
+}

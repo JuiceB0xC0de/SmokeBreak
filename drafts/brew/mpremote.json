@@ -1,0 +1,127 @@
+{
+ "name": "mpremote",
+ "desc": "Tool for interacting remotely with MicroPython devices",
+ "homepage": "https://docs.micropython.org/en/latest/reference/mpremote.html",
+ "installs_365d": 808,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "quick",
+  "needs-hardware",
+  "library",
+  "protocol"
+ ],
+ "why": "Remote control of MicroPython boards over serial is a practical door into talking to physical devices, though fairly standard tooling.",
+ "brief": {
+  "what_it_is": "mpremote is a command-line tool for talking to a MicroPython board over its serial connection. With no arguments it finds the first USB serial device and opens an interactive REPL, which is the device's Python prompt and program output. It also takes a sequence of subcommands that copy, list, edit, and delete files on the device, run or evaluate Python code, mount a host folder onto the device, install packages with mip, deploy ROMFS images, and reset the board. Output is terminal text, plus any files you ask it to pull back from the device.",
+  "why_it_exists": "The docs describe it as an integrated set of utilities to remotely interact with, manage the filesystem on, and automate a MicroPython device over a serial connection. It gathers into one tool the serial-terminal, file-transfer, and reset steps that MicroPython developers otherwise handle separately.",
+  "how_it_works": "Each command has the form <command name> [--options] [args...], and several commands can be chained in one invocation and run in order. Any command that needs the device connects implicitly, and actions stop a running program without clearing interpreter state, so variables persist until a soft-reset. The run command sends a local script to the device and executes it from RAM without writing it to the filesystem. The mount command installs a filesystem driver on the device that uses the serial link as a side channel, exposing the host directory at /remote.",
+  "commands_seen": [
+   {
+    "cmd": "pip install --user mpremote",
+    "context": "Installs mpremote with pip for the current user; the docs also offer pipx install mpremote."
+   },
+   {
+    "cmd": "mpremote",
+    "context": "Run with no arguments: connects to the first USB serial device and opens the REPL."
+   },
+   {
+    "cmd": "mpremote fs cp main.py :main.py + repl",
+    "context": "Copies main.py from the host to the device (the colon marks the remote path), then enters the REPL; the + ends the file argument list."
+   },
+   {
+    "cmd": "mpremote run <file.py>",
+    "context": "Executes a local script directly from device RAM without copying it to the device filesystem."
+   },
+   {
+    "cmd": "mpremote mount .",
+    "context": "Mounts the current local directory on the device as /remote and opens a REPL with /remote as the working directory."
+   },
+   {
+    "cmd": "mpremote romfs build myapp/",
+    "context": "Builds a ROMFS image from the host directory myapp/, compiling .py files to .mpy when mpy_cross is installed."
+   },
+   {
+    "cmd": "mpremote mip install aioble",
+    "context": "Installs the aioble package from micropython-lib onto the device."
+   },
+   {
+    "cmd": "mpremote reset sleep 0.5 bootloader",
+    "context": "Hard-resets the device, waits 500 ms, then puts it into its bootloader."
+   },
+   {
+    "cmd": "mpremote cp utils/driver.py :utils/driver.py + run test.py",
+    "context": "Updates one file on the device, then runs the local test.py from RAM, which is never copied to the device."
+   },
+   {
+    "cmd": "mpremote exec \"import micropython; micropython.mem_info()\"",
+    "context": "Runs the given Python code on the device and prints its output, the same as typing it at the REPL."
+   }
+  ],
+  "install_notes": "Install with pip install --user mpremote or pipx install mpremote; pipx run mpremote ...args runs it without a permanent install. The device needs to be a MicroPython board reachable over a serial port; auto-detection only finds USB serial ports (CDC/ACM or FTDI-style), and rfc2217://host:port reaches a networked serial port. Optional: pip install mpy_cross enables .py to .mpy compilation for romfs. Optional user config lives at $XDG_CONFIG_HOME/mpremote/config.py (or $HOME/.config/mpremote/config.py, or %LOCALAPPDATA% on Windows) for custom shortcuts and auto_soft_reset. The edit command needs $EDITOR set.",
+  "standout": "mount exposes a host folder to the device as its filesystem over the existing serial link, so you can iterate on code without copying files. Its cp command follows the scp colon convention and skips files whose SHA256 already matches, and run executes a script without writing anything to the device.",
+  "status": "unknown for an exact date: the docs page lists releases from v1.4.4 through v1.29.0 plus a latest development branch, which suggests ongoing releases, but the page shows no release or commit date. The docs say they describe the latest development branch.",
+  "caveats": "The docs warn that there is no supported way to undelete files removed by mpremote rm -r :, and that rm -rv :/ removes everything including mounted filesystems. Only USB serial ports are auto-detected. On some devices, such as those using a dynamic USBDevice or WebREPL, soft-reset drops the connection. If the device runs main.py at startup, remount after a Ctrl-D soft reset may fail, so a raw-mode reboot (Ctrl-A Ctrl-D, then Ctrl-B) is needed. Shortcut aliases are platform-specific (a0 for /dev/ttyACM0 on Linux, c1 for COM1 on Windows). Serial ports open in exclusive mode. The docs describe the development branch, which may differ from released versions. License not stated on the page.",
+  "quotes": [
+   "The mpremote command line tool provides an integrated set of utilities to remotely interact with, manage the filesystem on, and automate a MicroPython device over a serial connection.",
+   "This will execute the file directly from RAM on the device without copying it to the filesystem.",
+   "There is no supported way to undelete files removed by mpremote rm -r :. Please use with caution."
+  ],
+  "links": [
+   {
+    "label": "mpremote documentation (MicroPython latest docs)",
+    "url": "https://docs.micropython.org/en/latest/reference/mpremote.html"
+   }
+  ],
+  "fetch_log": [
+   "https://docs.micropython.org/en/latest/reference/mpremote.html: loaded, full reference page with commands, examples, ROMFS, shortcuts, and config notes. No GitHub README fetched because the homepage was sufficient; the page links to GitHub but gives no URL."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Mounting a host directory on a MicroPython board over its serial link is a surprisingly useful trick, and makes this more than routine file-transfer plumbing."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "mpremote",
+  "tldr": "A command-line tool that opens a Python prompt on a MicroPython board over USB serial, and copies files, runs scripts, and mounts folders.",
+  "deeper_look": "mpremote talks to a MicroPython board over its serial connection. Run with no arguments, it finds the first USB serial device and opens the REPL, which is the board's live Python prompt and program output. Beyond that it takes subcommands to copy, list, edit and delete files on the device, run or evaluate code, install packages with mip, build ROMFS images, and reset the board.\n\nThe docs describe it as an integrated set of utilities to remotely interact with, manage the filesystem on, and automate a MicroPython device. It pulls the serial terminal, file transfer and reset steps, which developers otherwise handle with separate tools, into one command. Commands chain with a `+`, so one line can copy a file and then drop you into the REPL.\n\nTwo ideas make it more than a serial terminal. `run` sends a local script to the device and executes it from RAM, so nothing is written to the board's filesystem. `mount` installs a filesystem driver on the device that uses the serial link as a side channel, and your host directory appears on the board at /remote. You edit code on your computer and the microcontroller sees it as its own files.\n\nThat is a small, concrete way into a bigger idea: a tiny computer with no screen or keyboard that you drive entirely through one cable and a protocol layered on top.",
+  "install": "brew install mpremote\n# Needs a MicroPython board reachable over a serial port. Auto-detection only finds USB serial ports.\n# Alternatives: pip install --user mpremote, or pipx install mpremote",
+  "try_this": [
+   {
+    "cmd": "mpremote",
+    "what_happens": "Connects to the first USB serial device and opens the REPL."
+   },
+   {
+    "cmd": "mpremote exec \"import micropython; micropython.mem_info()\"",
+    "what_happens": "Runs that Python on the device and prints its memory report."
+   },
+   {
+    "cmd": "mpremote mount .",
+    "what_happens": "Mounts the current local directory on the device as /remote and opens a REPL with it as the working directory."
+   }
+  ],
+  "whats_unique": "The mount command exposes a host folder to the board as its filesystem over the existing serial link, so you can iterate without copying files. The cp command borrows scp's colon convention for remote paths.",
+  "caveats": "Needs a MicroPython board to be useful, and the docs warn there is no supported way to undelete files removed with `mpremote rm -r :`.",
+  "commitment": "quick",
+  "category": "radio-and-hardware",
+  "tags": [
+   "quick",
+   "needs-hardware",
+   "micropython",
+   "serial",
+   "repl",
+   "python"
+  ],
+  "links": [
+   {
+    "label": "mpremote documentation (MicroPython latest docs)",
+    "url": "https://docs.micropython.org/en/latest/reference/mpremote.html"
+   }
+  ]
+ }
+}

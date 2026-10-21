@@ -1,0 +1,129 @@
+{
+ "name": "base16384",
+ "desc": "Encode binary files to printable utf16be",
+ "homepage": "https://github.com/fumiama/base16384",
+ "installs_365d": 20,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "library"
+ ],
+ "why": "Packs binary into printable CJK-range UTF-16 characters, a delightful encoding transform that turns bytes into odd text.",
+ "brief": {
+  "what_it_is": "base16384 is a command-line tool that encodes any binary file into printable text made of 16384 CJK characters in UTF-16BE, and decodes that text back to the original bytes. It reads a file (or stdin, with - ) and writes encoded text to a file (or stdout, with -). Each character carries 14 bits of the input, so the output is shorter than base64 but reads as Chinese-looking glyphs. The README says the tool is also packaged for Debian, Homebrew, Ubuntu PPA, OpenWrt and the Arch AUR.",
+  "why_it_exists": "The README presents it as a base64-style alphabet built from Chinese characters, which saves more space than base64. It also argues that the code 0x0000 maps to \"\u4e00\", so zero-filled regions in a binary are easier to spot in the encoded text.",
+  "how_it_works": "The alphabet is the 16384 characters from U+4E00 to U+8DFF, in the way base64 uses 64 symbols. If the input length is not a multiple of 7 bytes, a trailing marker in the form \\u3Dxx (xx from 01 to 06) records the number of leftover bytes. Output begins with a UTF-16BE BOM (0xFEFF) unless -n is passed, and -c or -C embeds or checks a checksum in the remainder.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt install base16384",
+    "context": "Installs from Debian Bookworm or newer."
+   },
+   {
+    "cmd": "brew install base16384",
+    "context": "Installs via Homebrew on macOS and similar systems."
+   },
+   {
+    "cmd": "base16384 -[ed][t][n][cC] [inputfile] [outputfile]",
+    "context": "Usage synopsis: -e encode (default), -d decode, -t show time, -n skip BOM, -c checksum, -C force checksum, - for stdin or stdout."
+   },
+   {
+    "cmd": "echo -n \"1234567\" | base16384 -e - - | iconv -f utf-16be -t utf-8",
+    "context": "Encodes the text 1234567 from stdin and prints it as the CJK string \u5a4c\u7133\u5ed4\u8437 after converting to UTF-8 for display."
+   },
+   {
+    "cmd": "echo -n \"\u5a4c\u7133\u5ed4\u8437\" | iconv -f utf-8 -t utf-16be | base16384 -d - -",
+    "context": "Decodes the CJK string back to 1234567."
+   },
+   {
+    "cmd": "git clone https://github.com/fumiama/base16384.git",
+    "context": "Clones the repository for a source build."
+   },
+   {
+    "cmd": "cmake -DCMAKE_BUILD_TYPE:STRING=Release -G Ninja ..",
+    "context": "Configures a Release build in the build directory using Ninja."
+   },
+   {
+    "cmd": "cmake --install .",
+    "context": "Installs the built binary after the cmake build step."
+   },
+   {
+    "cmd": "ctest",
+    "context": "Runs the functional tests after building with -DBUILD=test."
+   }
+  ],
+  "install_notes": "Beyond brew, the README lists sudo apt install base16384 on Debian Bookworm or later; an Ubuntu PPA (sudo add-apt-repository ppa:fumiama/ppa, then apt-get update and apt-get install base16384); opkg install base16384 on OpenWrt; and yay -S base16384 from the Arch AUR. Building from source needs git, cmake and Ninja (the README's cmake line uses -G Ninja). No accounts, hardware or runtimes are mentioned. The source build clones the repo, then runs mkdir build, cd build, cmake with Release and Ninja, cmake --build, and cmake --install.",
+  "standout": "It maps 14 bits of input onto a 16384-character CJK alphabet, so the output is a dense block of Chinese-looking text rather than the ASCII of base64. The project is also built with cosmopolitan for cross-platform binaries, and there are many language ports listed in the README.",
+  "status": "unknown. The README has no release date, changelog or last-commit information, and it mentions v2.2.0 only as the version used in an example. Packaging in Debian, Homebrew, PPA, OpenWrt and AUR suggests it has been maintained for some time, but I could not confirm a recent release from the README alone.",
+  "caveats": "The output is UTF-16BE text in the CJK range, so it is not compatible with ordinary base64 tools and needs the matching decoder or an iconv step to read it. The README says that decoding requires piping through iconv for UTF-8 terminals. The default output includes a BOM unless -n is passed. The README also has a small inconsistency: the Chinese example says MacOS Mojave and the English says MacOS 12.6. The README gives no license information in the part I read.",
+  "quotes": [
+   "Encode binary file to printable utf16be, and vice versa.",
+   "Use 16384 Chinene characters (from \\u4E00 to \\u8DFF) as the \"alphabet\", just like what base64 did.",
+   "Save more space and since the code 0x0000 is encoded to \"\u4e00\", finding zero space seems to be easier."
+  ],
+  "links": [
+   {
+    "label": "homepage / README",
+    "url": "https://github.com/fumiama/base16384"
+   },
+   {
+    "label": "cosmopolitan (cross-platform binary tool used for the build)",
+    "url": "https://github.com/jart/cosmopolitan"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/fumiama/base16384 (worked, README returned)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Packing 14 bits into each CJK character turns an everyday binary encoding problem into a genuinely odd, inspectable Unicode transform."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "base16384",
+  "tldr": "Encodes any binary file as dense CJK characters in UTF-16BE, a base64 alternative that turns bytes into text that looks like Chinese.",
+  "deeper_look": "base16384 reads a file or stdin and writes printable text drawn from 16384 characters, U+4E00 to U+8DFF. It works like base64, but the alphabet is 16384 symbols instead of 64. Each character carries 14 bits of input, so the output is shorter than base64 and reads as a block of Chinese-looking glyphs. Decoding turns the text back into the original bytes.\n\nThe README gives two reasons for the design. It saves more space than base64. And since the code 0x0000 encodes to \"\u4e00\", zero-filled regions in a binary are easier to spot in the encoded text. In the README's words: \"Save more space and since the code 0x0000 is encoded to \"\u4e00\", finding zero space seems to be easier.\"\n\nThe idea underneath is that an encoding is just a choice of alphabet and bit width. Base64 packs 6 bits per symbol, and here 14 bits per symbol land in a Unicode range. Input that is not a multiple of 7 bytes gets a trailing marker of the form \\u3Dxx, with xx from 01 to 06, recording the leftover bytes. Output starts with a UTF-16BE byte order mark unless you pass -n, and -c or -C adds or checks a checksum.\n\nBecause the output is UTF-16BE rather than UTF-8, a terminal will not show it directly. The README's examples pipe through iconv to convert in each direction.",
+  "install": "brew install base16384\n# Debian Bookworm or newer: sudo apt install base16384\n# Arch AUR: yay -S base16384",
+  "try_this": [
+   {
+    "cmd": "echo -n \"1234567\" | base16384 -e - - | iconv -f utf-16be -t utf-8",
+    "what_happens": "Encodes seven bytes from stdin and prints them as the four CJK characters \u5a4c\u7133\u5ed4\u8837 after iconv converts them for display."
+   },
+   {
+    "cmd": "echo -n \"\u5a4c\u7133\u5ed4\u8837\" | iconv -f utf-8 -t utf-16be | base16384 -d - -",
+    "what_happens": "Converts the CJK string to UTF-16BE and decodes it back to 1234567."
+   },
+   {
+    "cmd": "base16384 --help",
+    "what_happens": "Prints the usage synopsis: -e, -d, -t, -n, -c, -C, and - for stdin or stdout."
+   }
+  ],
+  "whats_unique": "It trades base64's ASCII alphabet for 16384 CJK characters at 14 bits each, so encoded data is a compact block of Chinese-looking text. Zero bytes show up as repeated \"\u4e00\".",
+  "caveats": "The output is UTF-16BE, not ordinary text, so it needs the matching decoder or an iconv step, and the README gives no clear release or maintenance dates.",
+  "commitment": "quick",
+  "category": "quick-weird-payoffs",
+  "tags": [
+   "quick",
+   "encoding",
+   "unicode",
+   "utf-16",
+   "cjk",
+   "base64"
+  ],
+  "links": [
+   {
+    "label": "homepage / README",
+    "url": "https://github.com/fumiama/base16384"
+   },
+   {
+    "label": "cosmopolitan (cross-platform binary tool used for the build)",
+    "url": "https://github.com/jart/cosmopolitan"
+   }
+  ]
+ }
+}

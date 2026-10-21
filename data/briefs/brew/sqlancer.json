@@ -1,0 +1,69 @@
+{
+ "name": "sqlancer",
+ "desc": "Detecting Logic Bugs in DBMS",
+ "homepage": "https://github.com/sqlancer/sqlancer",
+ "installs_365d": 124,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "library",
+  "science"
+ ],
+ "why": "Automatically finds logic bugs in database engines via generated queries, a fascinating look at how DBMS correctness is tested.",
+ "brief": {
+  "what_it_is": "SQLancer is a command-line Java tool that automatically tests database management systems for logic bugs, meaning cases where the DBMS returns an incorrect result set, such as silently omitting a record. It generates schemas, data, indexes, views, and queries in several phases, then checks the results with test oracles such as TLP, NoREC, PQS, DQP, and CODDTest. The input is a target DBMS, and the output is bug reports with log files containing the statements needed to reproduce each bug. It also covers performance issues via CERT and crash bugs. It supports many DBMSs, including SQLite3, DuckDB, H2, MySQL, PostgreSQL, and TiDB.",
+  "why_it_exists": "The README says SQLancer finds bugs in the DBMS implementation itself, not in user-written queries, and it presents logic bugs as its main focus. It states that it has found hundreds of bugs in mature, widely known DBMSs.",
+  "how_it_works": "SQLancer uses hand-written generators that work in phases: create a schema, insert data, add other database state, then generate queries. Each query is validated by a test oracle that compares results, for example by checking that a TLP partition or a NoREC rewrite matches the original query's result set. An optional feedback-guided mode (--qpg-enable, from QPG) mutates database state when no new query plans appear, to exercise more distinct plans. An experimental reducer (--use-reducer) applies delta debugging to shrink bug-inducing inputs.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/sqlancer/sqlancer",
+    "context": "Clones the repository; the README's getting-started path builds from source rather than using brew."
+   },
+   {
+    "cmd": "mvn package -DskipTests",
+    "context": "Builds the SQLancer JAR with Maven, skipping the test suite."
+   },
+   {
+    "cmd": "java -jar sqlancer-*.jar --num-threads 4 sqlite3 --oracle NoREC",
+    "context": "Example run that tests SQLite with the NoREC oracle using four threads. --num-threads is a general option and must come before the DBMS name."
+   },
+   {
+    "cmd": "java -jar sqlancer-*.jar --help",
+    "context": "Lists all available options; the README shows partial output such as --ast-reducer-max-steps and --constant-cache-size."
+   },
+   {
+    "cmd": "CREATE DATABASE test",
+    "context": "SQL, not a shell command. Suggested fix when SQLancer reports that database 'test' does not exist, for DBMSs that expect that database."
+   }
+  ],
+  "install_notes": "Requires Java 11 or above and Maven. The README's main route is to clone the repo and run mvn package -DskipTests, then run the JAR from the target directory. Embedded DBMSs (DuckDB, H2, SQLite) need no separate install because their binaries come in as JAR dependencies. Other DBMSs need a running server. For those, SQLancer may expect a database named test to exist. Released JARs are on GitHub Releases, Maven Central, and DockerHub, but the README recommends the latest source version and says official releases are infrequent and irregular. Logs go to target/logs.",
+  "standout": "Rather than checking for crashes or hand-written expected results, it uses metamorphic and differential oracles, such as partitioning a query into three pieces or comparing a query with a rewrite that avoids optimizations. Its tests run in an infinite loop until a bug is found or a timeout is hit. Its lineage is academic, with a published paper behind almost every oracle, and the README links papers and talks.",
+  "status": "unknown. The README mentions 'As of January 2025' for the supported-DBMS list and lists a SIGMOD 2025 technique (CODDTest), which suggests recent activity. It also says the PQS approach is currently unmaintained, and the Twitter account is no longer maintained. The fetched README contains no release date or last-commit date, and I did not check the GitHub API or the releases page.",
+  "caveats": "Support depends on the DBMS version: the README says SQLancer targets a specific previous release, so newer versions can produce many AssertionErrors and false alarms. Some DBMSs are better supported than others. Non-English error locales can cause many failures. Crashes in embedded engines (DuckDB, H2, SQLite) will also crash the JVM. Without a bug, it runs forever unless you set --num-tries or --timeout-seconds. The reducer is experimental. The README says CERT findings are performance issues rather than clear-cut bugs. The license was not visible in the README, so I did not check it.",
+  "quotes": [
+   "SQLancer is a tool to automatically test Database Management Systems (DBMSs) in order to find bugs in their implementation.",
+   "If SQLancer does not find any bugs, it executes infinitely.",
+   "any bug reported by SQLancer is expected to be a real bug, except those reported by CERT"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/sqlancer/sqlancer"
+   },
+   {
+    "label": "Video Guide",
+    "url": "https://www.youtube.com/watch?v=lcZ6LixPH1Y"
+   },
+   {
+    "label": "Papers and .bib entries",
+    "url": "https://github.com/sqlancer/sqlancer/blob/main/docs/PAPERS.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/sqlancer/sqlancer (homepage, fetched successfully; README returned and used as the main source; no further fetches needed)"
+  ]
+ }
+}

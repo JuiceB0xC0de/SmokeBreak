@@ -1,0 +1,150 @@
+{
+ "name": "helib",
+ "desc": "Implementation of homomorphic encryption",
+ "homepage": "https://github.com/homenc/HElib",
+ "installs_365d": 53,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "math",
+  "science",
+  "library",
+  "afternoon"
+ ],
+ "why": "A homomorphic encryption library where you can compute on ciphertexts, a genuinely strange idea to dig into.",
+ "brief": {
+  "what_it_is": "HElib is an open-source C++17 library, under the Apache License v2.0, that implements homomorphic encryption. It provides the BGV scheme (with bootstrapping) and the CKKS approximate-number scheme. Data goes in encrypted as ciphertexts, and arithmetic such as add, multiply, and shift runs directly on those ciphertexts, so the results stay encrypted. The library depends on the NTL mathematical library, and the README describes it as an 'assembly language for HE' with low-level routines.",
+  "why_it_exists": "The README says that since mid-2018 HElib has been under extensive refactoring for Reliability, Robustness & Serviceability, Performance, and most importantly Usability for researchers and developers working on HE and its uses. The stated goal is to make homomorphic evaluation practical and usable, with an emphasis on performance.",
+  "how_it_works": "The README names the techniques used: Smart-Vercauteren ciphertext packing and Gentry-Halevi-Smart optimizations, along with automatic noise management and multi-threading. It also supports Ptxt (plaintext) objects that mirror the functionality of Ctxt (ciphertext) objects. The README points to a design report (eprint 2020/1481) for further detail.",
+  "commands_seen": [
+   {
+    "cmd": "cmake -DPACKAGE_BUILD=ON -DCMAKE_INSTALL_PREFIX=/home/alice/helib_install ..",
+    "context": "Configure the recommended package build, which bundles HElib with NTL and GMP in one relocatable folder; run from a build directory inside the repo."
+   },
+   {
+    "cmd": "make -j16",
+    "context": "Compile HElib; the output lands in the relocatable helib_pack folder. The 16 is an example thread count."
+   },
+   {
+    "cmd": "ctest",
+    "context": "Optional: run HElib's tests. Requires configuring with -DENABLE_TEST=ON."
+   },
+   {
+    "cmd": "make install",
+    "context": "Optional: copy helib_pack to CMAKE_INSTALL_PREFIX. May need sudo if the prefix is /usr/local."
+   },
+   {
+    "cmd": "cmake -DGMP_DIR=\"${GMPDIR}\" -DNTL_DIR=\"${NTLDIR}\" -DCMAKE_INSTALL_PREFIX=/home/alice/helib_install ..",
+    "context": "Configure the advanced library build, linking against separately installed GMP (>=6.2.1) and NTL (>=11.5.1)."
+   },
+   {
+    "cmd": "cmake [-Dhelib_DIR=<directory-to-installed-HElib>/share/cmake/helib] <directory-to-examples> ..",
+    "context": "Configure the examples directory against an installed HElib; the examples are built with pure CMake."
+   },
+   {
+    "cmd": "./BGV_packed_arithmetic -h",
+    "context": "Print the help for one of the BGV example programs, which show the arithmetic APIs on ciphertexts and plaintexts."
+   },
+   {
+    "cmd": "bats . [-j <number-of-threads>]",
+    "context": "Run the example test suite; the tests are written in bats and require bats-core and a successful examples build."
+   },
+   {
+    "cmd": "DEBUG=1 bats . [-j <number-of-threads>]",
+    "context": "Run the example tests with DEBUG set so the artifacts they generate are kept for inspection."
+   }
+  ],
+  "install_notes": "The brew formula is not the only route. The README and INSTALL.md describe two source builds. The package build (option 1, recommended) fetches and compiles GMP and NTL itself, and needs m4 >= 1.4.18 and, on Linux, patchelf >= 0.14.3. The library build (option 2) needs you to build GMP >= 6.2.1 and NTL >= 11.5.1 yourself, with NTL configured using NTL_GMP_LIP=on SHARED=on NTL_THREADS=on NTL_THREAD_BOOST=on. Prerequisites are g++ >= 11.3.0 (or Apple clang >= 14), cmake >= 3.22, GNU make >= 4.3, pthreads, and git >= 2.36 if you run the test suite. Optional Intel HEXL acceleration needs AVX512DQ and AVX512-IFMA CPUs, a static build, and HEXL >= 1.2.1. Tested platforms are Ubuntu 22.04 and recent macOS releases. No account or runtime configuration is mentioned.",
+  "standout": "HElib is one of the reference implementations of BGV and CKKS and is aimed at people who want to program against the scheme directly, not at a turnkey product. The README pitches it as an assembly language for homomorphic encryption, so you work with ciphertext and plaintext objects and low-level operations.",
+  "status": "Status is unknown from what I read. The README shows a passing 'Build and Test' CI badge and INSTALL.md lists tested platforms up to macOS Ventura 13.4.1 and Ubuntu 22.04, which suggests active work. I did not see a release date or last-commit date on the pages I fetched, and I did not open CHANGES.md to check.",
+  "caveats": "HEXL acceleration is experimental, only works on specific Intel CPUs, and is only supported for static library builds with -DPACKAGE_BUILD=OFF and -DBUILD_SHARED=OFF. Building as a shared library fails unless NTL was also built as a shared library. The build is C++ with several dependencies (NTL, GMP) and needs a fairly recent toolchain. The README links a separate CKKS-security.md for the security status of the CKKS implementation, which I did not read. The examples are BGV-focused, and the README says more are expected later. The brew formula's description says only 'Implementation of homomorphic encryption', and brew reports no executables, so this is a library, not a command-line tool.",
+  "quotes": [
+   "HElib supports an \"assembly language for HE\", providing low-level routines (set, add, multiply, shift, etc.), sophisticated automatic noise management, improved BGV bootstrapping, multi-threading, and also support for Ptxt (plaintext) objects which mimics the functionality of Ctxt (ciphertext) objects.",
+   "HElib is an open-source (Apache License v2.0) software library that implements homomorphic encryption (HE).",
+   "HElib is written in C++17 and uses the NTL mathematical library."
+  ],
+  "links": [
+   {
+    "label": "HElib GitHub repository (homepage)",
+    "url": "https://github.com/homenc/HElib"
+   },
+   {
+    "label": "INSTALL.md (build and dependency instructions)",
+    "url": "https://github.com/homenc/HElib/blob/master/INSTALL.md"
+   },
+   {
+    "label": "Examples and tutorials README",
+    "url": "https://github.com/homenc/HElib/blob/master/examples/README.md"
+   },
+   {
+    "label": "Design and implementation of HElib (eprint 2020/1481)",
+    "url": "https://eprint.iacr.org/2020/1481"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/homenc/HElib: worked, README returned",
+   "https://github.com/homenc/HElib/blob/master/INSTALL.md: worked, full installation guide returned",
+   "https://github.com/homenc/HElib/blob/master/examples/README.md: worked, examples guide returned",
+   "Not fetched: CKKS-security.md and CHANGES.md, which the README links. Not followed because of the fetch budget and because they were not needed for the core brief."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A reference homomorphic-encryption library lets you compute on encrypted data, opening a genuinely unusual and important area of cryptography."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "HElib",
+  "tldr": "A C++ library for homomorphic encryption: add and multiply numbers while they stay encrypted, so the machine doing the math never sees the data.",
+  "deeper_look": "HElib implements two homomorphic encryption schemes: BGV (with bootstrapping) and CKKS, which works on approximate numbers. You encrypt data into ciphertext objects, then add, multiply and shift them directly. The results are still encrypted, and only the key holder can read them. The README describes the library as an \"assembly language for HE\", with low-level routines such as set, add, multiply and shift.\n\nThe library is for people who want to program against the schemes themselves, not use a finished product. It manages noise automatically. In schemes like these every operation adds a little noise to the ciphertext, and too much makes the result unreadable. It also supports multi-threading and Ptxt (plaintext) objects that mirror the interface of Ctxt (ciphertext) objects, so the same code shape works on both. The README names ciphertext packing (Smart-Vercauteren) and Gentry-Halevi-Smart optimizations as the techniques underneath.\n\nThe README says that since mid-2018 the project has been heavily refactored for reliability, performance and, above all, usability for researchers and developers working on HE. The stated goal is to make homomorphic evaluation practical. A design report (eprint 2020/1481) explains the internals.\n\nThe idea that opens up is computing on data you cannot see. Once you have added two numbers inside ciphertexts, questions about outsourced computation, private queries and the cost of doing math under encryption follow naturally.",
+  "install": "brew install helib\n# Library, not a command-line tool: brew installs no executables. It depends on gmp and ntl.\n# The README also describes source builds (needs g++ >= 11.3 or Apple clang >= 14, cmake >= 3.22, GNU make >= 4.3).",
+  "try_this": [
+   {
+    "cmd": "cmake -DPACKAGE_BUILD=ON -DCMAKE_INSTALL_PREFIX=/home/alice/helib_install ..",
+    "what_happens": "Configures the recommended source build, which bundles HElib with NTL and GMP in one relocatable folder. Run it from a build directory inside the repo."
+   },
+   {
+    "cmd": "make -j16",
+    "what_happens": "Compiles HElib into the relocatable helib_pack folder. The 16 is an example thread count."
+   },
+   {
+    "cmd": "./BGV_packed_arithmetic -h",
+    "what_happens": "Prints the help for one of the BGV example programs, which demonstrate arithmetic on ciphertexts and plaintexts."
+   }
+  ],
+  "whats_unique": "It is one of the reference implementations of BGV and CKKS, and it exposes the schemes directly as ciphertext and plaintext objects with low-level operations.",
+  "caveats": "It is a C++ library with no command-line tool, it needs a recent toolchain, and the examples are BGV-focused. The README links a separate CKKS-security.md on the security status of the CKKS implementation.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "cryptography",
+   "homomorphic-encryption",
+   "library",
+   "c++",
+   "math",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "HElib GitHub repository",
+    "url": "https://github.com/homenc/HElib"
+   },
+   {
+    "label": "INSTALL.md (build and dependency instructions)",
+    "url": "https://github.com/homenc/HElib/blob/master/INSTALL.md"
+   },
+   {
+    "label": "Examples and tutorials README",
+    "url": "https://github.com/homenc/HElib/blob/master/examples/README.md"
+   },
+   {
+    "label": "Design and implementation of HElib (eprint 2020/1481)",
+    "url": "https://eprint.iacr.org/2020/1481"
+   }
+  ]
+ }
+}

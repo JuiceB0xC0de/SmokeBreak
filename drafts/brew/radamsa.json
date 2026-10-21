@@ -1,0 +1,143 @@
+{
+ "name": "radamsa",
+ "desc": "Test case generator for robustness testing (a.k.a. a \"fuzzer\")",
+ "homepage": "https://gitlab.com/akihe/radamsa",
+ "installs_365d": 170,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "math"
+ ],
+ "why": "A mutation-based fuzzer that quietly generates malformed inputs, a good window into how programs break under strange bytes.",
+ "brief": {
+  "what_it_is": "Radamsa is a general-purpose, black-box fuzzer (test case generator) distributed as a single binary with no runtime dependencies. You feed it sample data on stdin or as files, and it emits mutated variants of that data to stdout, to numbered files, or over TCP. The README describes it as a cat-like filter that breaks data in interesting ways as it flows through. It needs no knowledge of the target program or the data format.",
+  "why_it_exists": "The author frames fuzzing as a way to find unexpected program behavior by feeding it varied inputs, and says Radamsa solves the input-generation half of that job while a short shell script handles checking what happened. The stated selling points are that it has already found a slew of bugs in programs that matter, that it is easily scriptable, and that it is easy to get running.",
+  "how_it_works": "Radamsa mutates the sample data using various heuristics and change patterns that it varies between runs, from a single change to many, including bit flips and more advanced mutations. By default it takes a random seed from /dev/urandom, and a fixed seed (--seed or -s) reproduces the same output. The README suggests testing with a shell loop that flags a crash when the target's exit status is greater than 127.",
+  "commands_seen": [
+   {
+    "cmd": "echo \"HAL 9000\" | radamsa",
+    "context": "Nutshell quick start: pipe a line of text through radamsa to see one mutated output."
+   },
+   {
+    "cmd": "git clone https://gitlab.com/akihe/radamsa.git && cd radamsa && make && sudo make install",
+    "context": "Build from source and install system-wide; the README says make install is optional and bin/radamsa can be used directly."
+   },
+   {
+    "cmd": "echo \"aaa\" | radamsa",
+    "context": "Simplest pipe use; output differs between runs unless a seed is given."
+   },
+   {
+    "cmd": "echo \"Fuzztron 2000\" | radamsa --seed 4",
+    "context": "Fixed seed gives reproducible output; the README's example produces Fuzztron 4294967296."
+   },
+   {
+    "cmd": "echo \"1 + (2 + (3 + 4))\" | radamsa --seed 12 -n 4",
+    "context": "Asks for four outputs from one sample using a fixed seed."
+   },
+   {
+    "cmd": "echo \"100 * (1 + (2 / 3))\" | radamsa -n 10000 | bc",
+    "context": "Feeds 10000 generated inputs to the bc calculator to look for crashes, hangs, and error messages."
+   },
+   {
+    "cmd": "gzip -c /bin/bash | radamsa -n 1000 | gzip -d > /dev/null",
+    "context": "Fuzzes gzip decompression using a gzipped binary as the sample."
+   },
+   {
+    "cmd": "while true; do radamsa sample.gz | gzip -d > /dev/null; done",
+    "context": "Continuous test loop that runs a fresh fuzzed input through gzip each iteration, with no exit check."
+   },
+   {
+    "cmd": "radamsa -o fuzz-%n -n 100 sample-*",
+    "context": "Writes 100 numbered output files, one per fuzzed case, from several sample files; %n expands to the case number."
+   },
+   {
+    "cmd": "radamsa -o output-%n.foo -n 100 samples/*.foo",
+    "context": "The README's recommended general-purpose invocation, which it says is also used internally at OUSPG."
+   }
+  ],
+  "install_notes": "Building from source needs gcc or clang, make, git, and wget; the Nutshell example installs these with sudo apt-get install gcc make git wget. The result is one binary with no external dependencies, and you can run bin/radamsa from the build directory without make install if you lack root. Prebuilt binaries are offered on the project's Downloads page. The README warns that compiling can take several GB of memory, which it attributes to a compiler problem. Windows support is listed as experimental via Cygwin. No accounts or runtimes are needed beyond the build tools. The Homebrew executables list includes ol and three shell scripts (release.sh, tournament.sh, uniqtest.sh) that the fetched README does not describe.",
+  "standout": "It is a black-box fuzzer that needs no instrumentation and no format description, yet it is built to be piped and scripted like cat, so a basic test loop is a single shell line. The README's list of CVEs credited to it, spanning libarchive, libtiff, Chromium, Firefox, and others, is a concrete record of what the approach has found.",
+  "status": "unknown. The GitLab project page shows a creation date of June 04, 2018 and an MIT license, and has a CHANGELOG link, but I saw no last-release or last-commit date. The README says the tool is under development and that no one at OUSPG develops it full-time. It also points to an IRC channel on Freenode, which suggests the docs may be dated.",
+  "caveats": "The README says Radamsa is not designed to have a GUI. It warns that fuzzed data can cause unexpected harm, including reboots, hangs, file system corruption, and data loss, especially against privileged programs, and it says to use a disposable system, chroot, sandbox, or VM, and summarizes that the tool is 'Not safe when used as prescribed.' File managers and antivirus scanners may act on fuzzed files. Windows support is experimental and untested by the authors. Some outputs repeat because Radamsa does not track what it has already produced. Compiling can need a lot of memory. The license (MIT) comes from the GitLab page, not the README. The fetched README was not confirmed as the current release.",
+  "quotes": [
+   "Radamsa can be thought as the cat UNIX tool, which manages to break the data in often interesting ways as it flows through.",
+   "The intention is to keep it simple and scriptable for use in automated regression tests and continuous testing.",
+   "Not safe when used as prescribed."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitLab)",
+    "url": "https://gitlab.com/akihe/radamsa"
+   },
+   {
+    "label": "README (raw)",
+    "url": "https://gitlab.com/akihe/radamsa/-/raw/master/README.md"
+   },
+   {
+    "label": "Issue tracker (new issue)",
+    "url": "https://gitlab.com/akihe/radamsa/issues/new"
+   }
+  ],
+  "fetch_log": [
+   "https://gitlab.com/akihe/radamsa: worked, but returned only the project title, description, MIT license, creation date, and an empty README heading.",
+   "https://gitlab.com/akihe/radamsa/-/blob/master/README.md: loaded but returned no body text.",
+   "https://gitlab.com/akihe/radamsa/-/raw/master/README.md: worked and returned the full README, which was used for this brief."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Radamsa makes arbitrary samples into reproducible hostile inputs with a simple pipe, offering a hands-on way to explore how real software breaks."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Radamsa",
+  "tldr": "A fuzzer that works like cat: pipe in sample data, get back subtly broken variants, and watch what falls over when you feed them to a program.",
+  "deeper_look": "Radamsa is a general-purpose, black-box fuzzer shipped as a single binary with no runtime dependencies. You give it sample data on stdin or as files, and it writes mutated copies to stdout, to numbered files, or over TCP. It needs no knowledge of the target program or the data format. The README describes it as the cat tool, which \"manages to break the data in often interesting ways as it flows through.\"\n\nInside, it applies a mix of heuristics and change patterns, varying between runs from a single small change to many, including bit flips and more advanced mutations. By default the seed comes from /dev/urandom. Pass a fixed seed with --seed and the same output comes back, which is what makes a crash reproducible.\n\nThe idea underneath is that fuzzing has two halves: generating odd inputs, and noticing what the target did with them. Radamsa handles the first half. The second is left to a few lines of shell, for example a loop that flags a crash when the exit status is above 127. That split is why it is easy to script and drop into regression tests. The README credits it with CVEs in libarchive, libtiff, Chromium, Firefox and others.\n\nTry it on something harmless first. A calculator or a decompressor fed thousands of mangled inputs shows how many ways a program can be surprised.",
+  "install": "brew install radamsa\n# Building from source instead needs gcc or clang, make, git and wget; compiling can take several GB of memory.\n# Fuzzed data can hang, reboot or corrupt things, so run it against targets in a VM, sandbox or disposable system.",
+  "try_this": [
+   {
+    "cmd": "echo \"HAL 9000\" | radamsa",
+    "what_happens": "Prints one mutated version of the line; run it again and the result changes."
+   },
+   {
+    "cmd": "echo \"Fuzztron 2000\" | radamsa --seed 4",
+    "what_happens": "A fixed seed gives the same output every time. The README's example produces Fuzztron 4294967296."
+   },
+   {
+    "cmd": "echo \"100 * (1 + (2 / 3))\" | radamsa -n 10000 | bc",
+    "what_happens": "Feeds 10000 mangled expressions to the bc calculator so you can watch for errors, hangs and crashes."
+   }
+  ],
+  "whats_unique": "It needs no instrumentation or format description, yet behaves like a plain Unix filter, so a basic fuzzing loop is one line of shell.",
+  "caveats": "The README warns that fuzzed data can cause reboots, hangs and data loss and sums it up as \"Not safe when used as prescribed\"; I could not confirm when it was last updated, and the README may be dated.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "fuzzing",
+   "testing",
+   "security",
+   "unix-filter"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitLab)",
+    "url": "https://gitlab.com/akihe/radamsa"
+   },
+   {
+    "label": "README (raw)",
+    "url": "https://gitlab.com/akihe/radamsa/-/raw/master/README.md"
+   },
+   {
+    "label": "Issue tracker (new issue)",
+    "url": "https://gitlab.com/akihe/radamsa/issues/new"
+   }
+  ]
+ }
+}

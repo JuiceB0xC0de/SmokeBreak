@@ -1,0 +1,93 @@
+{
+ "name": "picoruby",
+ "desc": "Smallest Ruby implementation for microcontrollers",
+ "homepage": "https://picoruby.org",
+ "installs_365d": 167,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "needs-hardware",
+  "afternoon",
+  "library"
+ ],
+ "why": "A tiny Ruby runtime for microcontrollers, a fun look at squeezing a high-level language onto very small hardware.",
+ "brief": {
+  "what_it_is": "PicoRuby is an alternative mruby implementation of Ruby aimed at microcontrollers, such as the Raspberry Pi Pico and Pico 2 W. You build it from source with rake, which produces three binaries: bin/mrbc compiles a Ruby source file into .mrb bytecode for an mruby-compatible VM, bin/picoruby runs Ruby source directly the way the ruby command does, and bin/r2p2 is a POSIX build of the R2P2 shell. The README also describes a second artifact, FemtoRuby, which is the mruby/c VM variant with a smaller RAM footprint. The homepage is a documentation site with sections for R2P2, PicoRuby.WASM, Funicular, and hardware device classes.",
+  "why_it_exists": "The README presents it as a small-footprint, portable Ruby for microcontroller boards, with RAM targets of 512 KB or less for PicoRuby with networking and 128 KB or less for FemtoRuby. The Brew description calls it the smallest Ruby implementation for microcontrollers.",
+  "how_it_works": "The README says it depends only on a standard C library (glibc, Newlib or Newlib-nano, or emcc) and builds on a bundled PicoRuby compiler (mruby-compiler2), Estalloc, Littlefs, mruby, and mruby/c. Source files are compiled by mrbc into bytecode that runs on the mruby-compatible VM. The README says the mruby VM version is the one mainly being developed.",
+  "commands_seen": [
+   {
+    "cmd": "git clone --recurse-submodules https://github.com/picoruby/picoruby",
+    "context": "Clones the repository together with its submodules, which the build needs."
+   },
+   {
+    "cmd": "rake",
+    "context": "Default build; the README says the same as rake picoruby:prod."
+   },
+   {
+    "cmd": "rake picoruby:debug",
+    "context": "Debug build of the main PicoRuby artifact."
+   },
+   {
+    "cmd": "bin/picoruby -e 'puts \"Hello World!\"'",
+    "context": "Smoke test of the freshly built interpreter, run from the repo."
+   },
+   {
+    "cmd": "bin/mrbc path/to/source.rb",
+    "context": "Compiles a Ruby source file to path/to/source.mrb, bytecode for the VM."
+   },
+   {
+    "cmd": "bin/picoruby source.rb",
+    "context": "Executes a Ruby file just like the normal ruby command."
+   },
+   {
+    "cmd": "rake femtoruby:prod",
+    "context": "Builds the FemtoRuby (mruby/c VM) variant for production."
+   },
+   {
+    "cmd": "rake femtoruby:debug",
+    "context": "Builds the FemtoRuby variant with debug settings."
+   },
+   {
+    "cmd": "rake LDFLAGS=-L$(brew --prefix openssl@3)/lib CFLAGS=-I$(brew --prefix openssl@3)/include",
+    "context": "macOS workaround: points the build at Homebrew's openssl@3, since Homebrew does not link openssl into the default prefix."
+   },
+   {
+    "cmd": "git submodule update --init --recursive",
+    "context": "Fixes a clone made without --recurse-submodules."
+   }
+  ],
+  "install_notes": "Prerequisites are a C toolchain, git, and CRuby 3.4 or newer. Clone with submodules, then run rake. On a Mac, the openssl workaround above is needed. Cross-compiling for boards is configured through build files, with an example at build_config/r2p2-picoruby-pico2.rb. The README's testing guide is at docs/testing-guide.md. The README does not describe Homebrew-specific steps beyond the openssl note.",
+  "standout": "One Ruby codebase runs as a desktop interpreter, a POSIX shell, and firmware on a Pico, and the same project also ships a WebAssembly build and a browser-side framework (Funicular) according to the homepage navigation. The brew entry's description, 'smallest Ruby implementation for microcontrollers', is the project's own tagline in spirit, though the README frames it more modestly as an alternative mruby implementation.",
+  "status": "unknown. The README has a C/C++ CI badge and refers to version 4.x with the mruby VM under active development, but I did not see a release date or last-commit date in any page I fetched. The homepage navigation lists many sections, and the Introduction page URL I tried returned 404.",
+  "caveats": "The homepage fetch returned only navigation text, cut off at 40,000 characters, so I did not see prose from the site itself. The /introduction URL returned HTTP 404. The README's build requires CRuby 3.4+ and a macOS openssl workaround. The RAM figures depend on build config. The README names FemtoRuby and PicoRuby as two artifacts with renamed history, which may confuse readers. The brew description is a single line with no license or install beyond brew. The README license is MIT, from MIT-LICENSE.",
+  "quotes": [
+   "PicoRuby is an alternative mruby implementation which is:",
+   "Small foot print (depending on build config)",
+   "mruby VM version is mainly being developed.",
+   "bin/picoruby source.rb executes Ruby just like normal ruby command"
+  ],
+  "links": [
+   {
+    "label": "Project homepage and API docs",
+    "url": "https://picoruby.org"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/picoruby/picoruby"
+   },
+   {
+    "label": "Project wiki",
+    "url": "https://github.com/picoruby/picoruby/wiki"
+   }
+  ],
+  "fetch_log": [
+   "https://picoruby.org \u2014 worked, but returned only site navigation text and was truncated at 40,000 characters; no prose content",
+   "https://github.com/picoruby/picoruby \u2014 worked, README returned",
+   "https://picoruby.org/introduction \u2014 failed, HTTP 404"
+  ]
+ }
+}

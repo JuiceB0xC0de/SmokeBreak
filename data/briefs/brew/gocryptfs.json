@@ -1,0 +1,90 @@
+{
+ "name": "gocryptfs",
+ "desc": "Encrypted overlay filesystem written in Go",
+ "homepage": "https://nuetzlich.net/gocryptfs/",
+ "installs_365d": 161,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "science"
+ ],
+ "why": "An encrypted overlay filesystem whose layered design of encrypted names and blocks is worth understanding.",
+ "brief": {
+  "what_it_is": "gocryptfs is an encrypted overlay filesystem written in Go, built on the go-fuse FUSE library. You mount a directory of encrypted files as a plain-looking folder. Each plaintext file is stored as one corresponding encrypted file on disk, and the encrypted store can live on any disk, USB stick, or synced folder such as Dropbox. Input is a password (or master key) plus a cipher directory; output is a mounted plaintext view. The on-disk layout has a 18-byte header per non-empty file and 32 bytes of overhead per 4kB block.",
+  "why_it_exists": "The project was inspired by EncFS and aims to fix its security problems while keeping good performance. The homepage argues that file-based encryption, unlike whole-disk encryption, lets encrypted files sync efficiently with tools like Dropbox or rsync, and lets the encrypted store grow with available disk space.",
+  "how_it_works": "Forward mode encrypts each file's contents with AES-GCM (or XChaCha20-Poly1305 when chosen at init) and encrypts file names with EME wide-block encryption using a per-directory IV, with the password run through scrypt. Reverse mode instead exposes an encrypted view of a plaintext directory, using AES-SIV for deterministic encryption. The README and homepage point to a separate Security or Cryptography design document for the full scheme, which I did not fetch.",
+  "commands_seen": [
+   {
+    "cmd": "mkdir cipher plain",
+    "context": "Create an empty ciphertext directory and a mountpoint for the quick-start example in the README."
+   },
+   {
+    "cmd": "./gocryptfs -init cipher",
+    "context": "Initialise an encrypted filesystem in the cipher directory (prompts for a password and prints the master key)."
+   },
+   {
+    "cmd": "./gocryptfs cipher plain",
+    "context": "Mount the encrypted directory cipher on the mountpoint plain so plaintext is visible there."
+   },
+   {
+    "cmd": "./gocryptfs -reverse -init plain",
+    "context": "Reverse mode: initialise a filesystem that presents an encrypted view of the existing plain directory."
+   },
+   {
+    "cmd": "./gocryptfs -reverse plain cipher",
+    "context": "Reverse mode: mount the encrypted view of plain at cipher."
+   },
+   {
+    "cmd": "./gocryptfs -speed",
+    "context": "Run the built-in benchmark to see which cipher is fastest on your CPU."
+   },
+   {
+    "cmd": "./test.bash",
+    "context": "Run the project test suite, which takes about a minute and requires FUSE because it mounts test filesystems."
+   },
+   {
+    "cmd": "./build-without-openssl.bash",
+    "context": "Build a static binary that uses the Go standard library crypto backend."
+   },
+   {
+    "cmd": "./build.bash",
+    "context": "Build with the OpenSSL crypto backend, which is faster on older CPUs without AES-NI; needs libssl-dev, gcc and pkg-config first."
+   },
+   {
+    "cmd": "apt install gocryptfs",
+    "context": "Install the packaged version on Debian or Ubuntu (other packagers listed are pacman -S gocryptfs for Arch and port install gocryptfs for MacPorts)."
+   }
+  ],
+  "install_notes": "Precompiled binaries are provided for x86_64 Linux on the GitHub releases page (arm64 binaries were added in v2.5.2). The distribution's fuse package must be installed for mounting to work. Building from source needs Go 1.13 or newer (apt install golang or dnf install golang), then git clone of the repository. The OpenSSL backend is optional and needs libssl-dev/openssl-devel, gcc and pkg-config. No accounts or hardware are required, though FIDO2 tokens are supported as an option.",
+  "standout": "Its design treats file names and file contents separately, with wide-block name encryption and per-directory IVs, and it ships a stable command-line ABI that the test suite regression-checks, so other tools can script it. It also has a reverse mode that exposes encrypted copies of a directory for backups, and third-party tools (gocryptfs-inspect in Python, cppcryptfs for Windows, DroidFS for Android) that can decrypt files without FUSE.",
+  "status": "maintained. The GitHub README lists a v2.6.1 release dated 2025-08-10 and a v2.6.0 dated 2025-07-14, and shows a CI badge. The homepage's news list is older and still shows v2.5.0 (2025-01-18) as the latest release, so the website lags the repository. I did not check commit dates.",
+  "caveats": "Linux is the native platform. macOS support is described as beta-quality. Windows is covered only by the separate cppcryptfs project, which is an independent C++ reimplementation. The README warns that the gocryptfs.com website is not affiliated with the project. The project says important data should be backed up, and that the master key printed at init should be stored safely in case the config file is lost. A third-party audit from defuse.ca (March 2017) is linked. The repository is MIT licensed. Some reverse-mode and ACL bugs were fixed in recent versions, and ACL support was incomplete for a time.",
+  "quotes": [
+   "gocryptfs uses file-based encryption that is implemented as a mountable FUSE filesystem.",
+   "Each file in gocryptfs is stored one corresponding encrypted file on the hard disk.",
+   "It is now considered ready for general consumption.",
+   "keep a copy of your master key (printed at init) in a safe place."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://nuetzlich.net/gocryptfs/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/rfjakob/gocryptfs"
+   },
+   {
+    "label": "Security design document (linked from README, not fetched)",
+    "url": "https://nuetzlich.net/gocryptfs/security/"
+   }
+  ],
+  "fetch_log": [
+   "https://nuetzlich.net/gocryptfs/ - worked; returned homepage text with news list and no command examples",
+   "https://github.com/rfjakob/gocryptfs - worked; returned README, truncated at 40000 characters, so later changelog entries and the full man page link were cut off"
+  ]
+ }
+}

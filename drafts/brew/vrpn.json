@@ -1,0 +1,105 @@
+{
+ "name": "vrpn",
+ "desc": "Virtual reality peripheral network",
+ "homepage": "https://github.com/vrpn/vrpn/wiki",
+ "installs_365d": 88,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "library",
+  "protocol"
+ ],
+ "why": "A peripheral network protocol for VR trackers and devices; a niche door into hardware plumbing worth a look.",
+ "brief": {
+  "what_it_is": "VRPN (Virtual Reality Peripheral Network) is a library and set of servers that expose VR hardware, such as trackers, button boxes, dials, haptic devices, analog inputs, sound and imagers, over a network. A host PC at each VR station drives the peripherals, and the application talks to them through VRPN client classes without needing to know the network topology. The wiki describes a class-of-service abstraction in which all devices of one base type, such as trackers, produce the same kind of reports. The brew entry lists a vrpn_server executable, but I did not see that name in the pages I read.",
+  "why_it_exists": "The wiki frames it as a network-transparent interface between application programs and the physical devices used in a VR system, so the application stays unaware of where the hardware is attached. It was originally developed at the UNC CISMM NIH National Research Resource and has been maintained by Sensics and later ReliaSolve.",
+  "how_it_works": "Each device type has one or more servers that read the hardware, plus a client-side class that reads values from the device and controls its operation. The system types are Analog, Button, Dial, ForceDevice, Imager, Sound, Text and Tracker, and each abstracts a set of semantics for its device type. Applications can derive specialized classes for features of a particular device, such as setting a tracker's update rate; other trackers simply ignore commands they do not understand.",
+  "commands_seen": [],
+  "install_notes": "The repository README is short and points to two other files, README.Compile for compiling at other sites and README.Legal for legal information on offsite use. I could not retrieve either: both URLs I tried returned HTTP 404. The wiki says source downloads with submodules updated are on the GitHub releases page. Tested platforms per the wiki are Win32, Cygwin, Linux, macOS (32- and 64-bit), ARM Linux and Android. The wiki also notes a community tutorial by Daniel Wilches for compiling the client side on iPhone. I saw no information about Homebrew-specific steps, runtimes or first-run configuration.",
+  "standout": "It predates most modern VR middleware, and its core idea is a common device-class abstraction, so one tracker class covers many different tracker models. It is a plumbing layer that sits between VR apps and hardware, which is rarely visible to users.",
+  "status": "Maintained, with some doubt. The wiki's Home page was last edited June 23, 2019 across 25 revisions. The README says the project is 'currently maintained and supported by ReliaSolve in collaboration with a productive community of contributors.' The wiki also says some platforms are 'not actively maintained' and that the debian packaging branch is 'only good for 07.22 right now, due to lack of attention.' I did not find a release date or latest commit.",
+  "caveats": "Several platforms, including SGI/Irix, HP-UX, Solaris and older handheld Linux, are no longer actively maintained. The wiki's debian branch is described as lacking attention. The repository README defers compile and legal details to other files I could not reach. I did not see the licence, and the legal file is flagged as important for offsite use. The brew caveats field is empty.",
+  "quotes": [
+   "The Virtual-Reality Peripheral Network (VRPN) is a set of classes within a library and a set of servers that are designed to implement a network-transparent interface between application programs and the set of physical devices (tracker, etc.) used in a virtual-reality (VR) system.",
+   "The application remains unaware of the network topology.",
+   "VRPN also provides an abstraction layer that makes all devices of the same base class look the same; for example, all tracking devices look like they are of the type vrpn_Tracker."
+  ],
+  "links": [
+   {
+    "label": "Project wiki (homepage)",
+    "url": "https://github.com/vrpn/vrpn/wiki"
+   },
+   {
+    "label": "Source repository",
+    "url": "https://github.com/vrpn/vrpn"
+   },
+   {
+    "label": "Source downloads and releases",
+    "url": "https://github.com/vrpn/vrpn/releases"
+   },
+   {
+    "label": "Supported hardware devices",
+    "url": "https://github.com/vrpn/vrpn/wiki/Available-hardware-devices"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/vrpn/vrpn/wiki: worked, returned the wiki Home page with the introduction, platform notes and branch descriptions",
+   "https://github.com/vrpn/vrpn: worked, returned a short repository README that points to README.Compile and README.Legal and to the Gitter chat",
+   "https://github.com/vrpn/vrpn/blob/master/README.Compile: failed, HTTP 404",
+   "https://github.com/vrpn/vrpn/blob/main/README.Compile: failed, HTTP 404"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "VRPN makes diverse VR peripherals look like shared device classes across a network, offering a worthwhile peek at the hidden protocol layer between hardware and applications."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "VRPN",
+  "tldr": "A network layer that makes VR trackers, buttons and dials look identical to applications, wherever the hardware is plugged in.",
+  "deeper_look": "VRPN, the Virtual Reality Peripheral Network, is a library plus a set of servers that put VR hardware on a network. A host PC at each VR station reads the physical devices. The application talks to them through client classes and never needs to know where the hardware sits.\n\nThe idea underneath is a class-of-service abstraction. Devices fall into a few base types: Analog, Button, Dial, ForceDevice, Imager, Sound, Text and Tracker. Every device of one type produces the same kind of report. In the project's words, \"all tracking devices look like they are of the type vrpn_Tracker.\" Swap one tracker model for another and the application code stays the same.\n\nWhen a device has special features, an application can derive a specialised class, for example to set a tracker's update rate. Other trackers simply ignore commands they do not understand. It was developed at the UNC CISMM NIH National Research Resource and has since been maintained by Sensics and then ReliaSolve. It predates most modern VR middleware, so it shows how this problem was solved before the current tooling existed.\n\nThe Homebrew formula installs a `vrpn_server` executable, the server side that reads devices and serves their reports. It is plumbing, so most of the interest is in reading how the device classes fit together.",
+  "install": "brew install vrpn\n# Real use needs a supported VR device (tracker, button box, etc.) and a client application or the VRPN client library.",
+  "try_this": [
+   {
+    "cmd": "vrpn_server --help",
+    "what_happens": "Prints the server's usage and options, a first look at how it is configured to serve devices."
+   }
+  ],
+  "whats_unique": "It predates most modern VR middleware, and its core idea is one common device class per kind of peripheral, so a single tracker class covers many different tracker models.",
+  "caveats": "Needs VR hardware to do anything interesting, and the wiki was last edited in 2019 and admits some platforms and the debian branch are not actively maintained.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "vr",
+   "protocol",
+   "library",
+   "peripherals"
+  ],
+  "links": [
+   {
+    "label": "Project wiki (homepage)",
+    "url": "https://github.com/vrpn/vrpn/wiki"
+   },
+   {
+    "label": "Source repository",
+    "url": "https://github.com/vrpn/vrpn"
+   },
+   {
+    "label": "Source downloads and releases",
+    "url": "https://github.com/vrpn/vrpn/releases"
+   },
+   {
+    "label": "Supported hardware devices",
+    "url": "https://github.com/vrpn/vrpn/wiki/Available-hardware-devices"
+   }
+  ]
+ }
+}

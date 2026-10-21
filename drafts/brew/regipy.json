@@ -1,0 +1,134 @@
+{
+ "name": "regipy",
+ "desc": "Offline registry hive parsing tool",
+ "homepage": "https://github.com/mkorman90/regipy",
+ "installs_365d": 248,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "library"
+ ],
+ "why": "Offline Windows registry hive parsing opens a window into forensic artifacts most developers never see, though it's a fairly ordinary parser.",
+ "brief": {
+  "what_it_is": "Regipy is a Python library and set of command-line tools for parsing offline Windows registry hive files, meaning REGF-format files such as SYSTEM, NTUSER.DAT and amcache.hve. It takes a hive file, and optionally its transaction logs, and outputs JSON, a timeline, CSV hive diffs, a recovered hive file, or plugin results. The library exposes RegistryHive with recurse_subkeys, get_key, iter_subkeys and get_values. A plugin system extracts forensic artifacts such as amcache, shimcache, computer name, BAM and NTUser Run-key persistence, and the hive type is detected automatically.",
+  "why_it_exists": "The README does not state a problem or motivation in so many words. It describes the project as a library for parsing offline registry hives, with CLI tools for dumping, diffing, recovering and running plugins against them.",
+  "how_it_works": "Pure-Python parsing of REGF structures, using the construct library per the README's profiling notes, with the option of an alpha Rust backend (regipy-rs) that exposes the same API via regipy.registry_rs. The CLI applies transaction logs to recover a dirty hive before comparison, and regipy-parse-header also runs checksum and transaction validation. Plugins are chosen by detected hive type and run through run_relevant_plugins.",
+  "commands_seen": [
+   {
+    "cmd": "pip install regipy[full]",
+    "context": "Recommended PyPI install with all dependencies; the README notes that [full] needs compilation tools and can take a while."
+   },
+   {
+    "cmd": "pip install --editable .[full]",
+    "context": "Install from a cloned source tree in editable mode."
+   },
+   {
+    "cmd": "pip install regipy[rust]",
+    "context": "Opt-in install of the alpha Rust-accelerated backend, published separately as regipy-rs."
+   },
+   {
+    "cmd": "regipy-parse-header ~/Documents/TestEvidence/Registry/SYSTEM",
+    "context": "Prints the REGF header fields of a hive and warns if the hive is not clean and needs transaction logs applied."
+   },
+   {
+    "cmd": "regipy-dump ~/Documents/TestEvidence/Registry/NTUSER-CCLEANER.DAT -o /tmp/output.json",
+    "context": "Dumps an entire hive to JSON; the README says this may take some time. Adding -t produces a timeline instead."
+   },
+   {
+    "cmd": "regipy-plugins-run ~/Documents/TestEvidence/Registry/SYSTEM -o /tmp/plugins_output.json",
+    "context": "Detects the hive type and runs the relevant plugins, writing results to JSON."
+   },
+   {
+    "cmd": "regipy-diff NTUSER.dat NTUSER_modified.dat -o /tmp/diff.csv",
+    "context": "Compares two hives of the same type and writes differences to CSV; prints to screen without -o."
+   },
+   {
+    "cmd": "regipy-process-transaction-logs NTUSER.DAT -p ntuser.dat.log1 -s ntuser.dat.log2 -o recovered_NTUSER.dat",
+    "context": "Applies the primary and secondary transaction logs to produce a recovered hive file."
+   }
+  ],
+  "install_notes": "Requires Python 3.9 or higher; v6.0.0 dropped 3.6 to 3.8 and replaced the attrs dependency with the standard dataclasses module, so code importing internal classes and using attr.asdict() must switch to dataclasses.asdict(). Use pip install regipy[full] for full functionality, which needs compilation tools; omitting [full] gives relaxed dependencies. The optional Rust backend needs pip install regipy[rust] and is imported from regipy.registry_rs instead of regipy.registry. Development setup uses pip install -e \".[full,dev]\" and pre-commit install. Running the GitHub Actions workflows locally needs Docker and the act tool. No Homebrew-specific steps appear in the README.",
+  "standout": "The README makes an unusually specific claim for the alpha Rust backend: it is validated 1:1 against the pure-Python parser by matching SHA-256 traversal digests over a test-hive corpus, with benchmarks up to roughly 2,550x on a SOFTWARE hive. That is a self-reported figure with a disclaimer about intentional divergences on corrupted hives. The breadth of forensic plugins and the transaction-log recovery path also go beyond a bare hive reader.",
+  "status": "Maintained, with evidence from the README: it describes a recent v6.0.0 with breaking changes, an active alpha Rust backend, CI and lint configuration, and an OpenSSF Scorecard badge. The README shows no release date or last-commit date, so I cannot confirm a date.",
+  "caveats": "Requires Python 3.9+. The [full] extra needs compiler tooling and can be slow to install. The Rust backend is explicitly alpha and may raise different exception types on corrupted hives than the Python parser. The benchmark numbers and parity claims are the project's own and were not independently checked. The example header output includes a warning that the hive is not clean, so real evidence often needs transaction-log recovery first. The regipy-plugins-list executable appears in the Homebrew metadata but is not documented in the README. Licensed under MIT.",
+  "quotes": [
+   "Regipy is a python library for parsing offline registry hives (Hive files with REGF header).",
+   "It is a drop-in replacement validated 1:1 against the pure-Python parser over the entire test-hive corpus",
+   "The pure-Python parser remains the default and is unaffected when the Rust backend is not installed."
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repository",
+    "url": "https://github.com/mkorman90/regipy"
+   },
+   {
+    "label": "Plugins documentation (docs/PLUGINS.md)",
+    "url": "https://github.com/mkorman90/regipy/blob/HEAD/docs/PLUGINS.md"
+   },
+   {
+    "label": "regipy-rs on PyPI (Rust backend)",
+    "url": "https://pypi.org/project/regipy-rs/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/mkorman90/regipy: fetched successfully, README returned in full. Did not follow further links; the README was complete enough, and I did not fetch docs/PLUGINS.md, CHANGELOG.md or regipy-rs/BENCHMARKS.md."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It makes obscure Windows forensic artifacts tangible, combining hive recovery, timelines, diffs, and plugins rather than merely exposing a generic parser."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "regipy",
+  "tldr": "Parses offline Windows registry hive files from the command line, dumping them to JSON, diffing them, and running forensic plugins without needing Windows.",
+  "deeper_look": "Regipy is a Python library with a set of command-line tools for reading Windows registry hives: the binary REGF files such as SYSTEM, NTUSER.DAT and amcache.hve. You point it at a hive file, optionally with its transaction logs, and it gives back JSON, a timeline, a CSV diff, a recovered hive, or plugin results.\n\nThe registry is one of the places Windows keeps a record of what a machine has done: which programs ran, what persists across logins, what the computer is called. Most developers never see it as a file format. Here it is just a structured binary file you can open on any machine and walk with calls like `get_key`, `iter_subkeys` and `recurse_subkeys`.\n\nA plugin system sits on top. Regipy detects the hive type, then runs the relevant plugins to pull out artifacts such as amcache, shimcache, computer name, BAM, and Run-key persistence entries. Transaction-log handling is the other notable piece: a hive that was not cleanly closed can hold changes only in its logs, and the tools can apply those logs to produce a recovered hive before you compare or dump anything.\n\nThe parser is pure Python by default, built on the construct library. There is also an alpha Rust backend, regipy-rs, with the same API under `regipy.registry_rs`.",
+  "install": "brew install regipy\n# Needs Python. You also need a registry hive file to parse (SYSTEM, NTUSER.DAT, etc.). The README's PyPI route is `pip install regipy[full]`, which needs compilation tools.",
+  "try_this": [
+   {
+    "cmd": "regipy-parse-header ~/Documents/TestEvidence/Registry/SYSTEM",
+    "what_happens": "Prints the REGF header fields of the hive and warns if it is not clean and needs transaction logs applied."
+   },
+   {
+    "cmd": "regipy-plugins-run ~/Documents/TestEvidence/Registry/SYSTEM -o /tmp/plugins_output.json",
+    "what_happens": "Detects the hive type, runs the relevant plugins, and writes the extracted artifacts to JSON."
+   },
+   {
+    "cmd": "regipy-diff NTUSER.dat NTUSER_modified.dat -o /tmp/diff.csv",
+    "what_happens": "Compares two hives of the same type and writes the differences to a CSV file."
+   }
+  ],
+  "whats_unique": "Beyond reading hives, it recovers dirty ones by applying transaction logs and ships forensic plugins that run based on detected hive type. The alpha Rust backend claims 1:1 parity with the Python parser, a self-reported figure.",
+  "caveats": "You need hive files to look at, ideally from a test image or your own machine, and the [full] pip extra can be slow to install; the Rust backend is alpha and its benchmark claims are the project's own.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "forensics",
+   "windows",
+   "registry",
+   "python",
+   "file-formats"
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repository",
+    "url": "https://github.com/mkorman90/regipy"
+   },
+   {
+    "label": "Plugins documentation",
+    "url": "https://github.com/mkorman90/regipy/blob/HEAD/docs/PLUGINS.md"
+   },
+   {
+    "label": "regipy-rs on PyPI (Rust backend)",
+    "url": "https://pypi.org/project/regipy-rs/"
+   }
+  ]
+ }
+}

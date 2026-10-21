@@ -1,0 +1,87 @@
+{
+ "name": "freeipmi",
+ "desc": "In-band and out-of-band IPMI (v1.5/2.0) software",
+ "homepage": "https://www.gnu.org/software/freeipmi/",
+ "installs_365d": 2687,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "radio-and-hardware",
+ "tags": [
+  "protocol",
+  "needs-hardware",
+  "network",
+  "afternoon"
+ ],
+ "why": "Talks IPMI to server baseboard management controllers, a hidden out-of-band management door most developers never knock on.",
+ "brief": {
+  "what_it_is": "FreeIPMI is a set of command-line tools and C libraries for talking to IPMI (v1.5 and 2.0) management hardware, both in-band from the host OS and out-of-band over the network. The homepage lists tools for reading BMC info, FRU data, sensor readings and the System Event Log, remote power control, Serial-over-LAN console access, and BMC configuration. It takes requests to a server's baseboard management controller and returns sensor values, event records, hardware inventory and configuration results. The page does not describe output formats beyond linking example outputs.",
+  "why_it_exists": "The page says IPMI is implemented by many vendors for system management and that the features most users care about are sensor monitoring, system event monitoring, power control, and serial-over-LAN. It presents FreeIPMI as the open tooling to reach those features, with added support for large HPC and cluster environments.",
+  "how_it_works": "The homepage does not explain the mechanism in detail. It says the libfreeipmi library includes KCS, SSIF, and OpenIPMI Linux and Solaris BMC drivers plus IPMI 1.5 and 2.0 LAN communication, which covers the in-band and out-of-band paths. Higher-level libraries (libipmiconsole, libipmimonitoring, libipmidetect) wrap these for SOL, sensor and SEL monitoring, and node detection.",
+  "commands_seen": [],
+  "install_notes": "",
+  "standout": "It is a GNU project that covers both in-band and out-of-band IPMI in one toolset, with a long list of focused tools (bmc-info, ipmi-sel, ipmi-sensors, ipmiconsole, ipmi-dcmi) and matching C libraries for programmers. Its daemons (ipmiseld, ipmidetectd, bmc-watchdog) suggest it is meant for running on cluster nodes, not just for one-off checks.",
+  "status": "Maintained according to the NEWS list on the homepage, which shows releases 1.6.20 and 1.7.0.beta1 through beta4, with the newest dated Tue Oct 13 2026 (1.7.0.beta4). The page footer reads 'Last Update: 02:11:37 PM Sat Jul 22, 2023' and the copyright reads 2004-2008, which conflicts with the NEWS dates, so the page is not internally consistent. I did not check the download or repository pages to confirm the release dates.",
+  "caveats": "The homepage names no supported platforms, license, or build requirements, and it does not show install steps. It also says the detailed README or FAQ holds more info, which I did not follow. The footer date conflicts with the release list. The executables list includes both old and new names (ipmipower and ipmi-power, ipmiping and ipmi-ping, rmcpping and rmcp-ping), so the names may overlap. Hardware access (BMC drivers, LAN credentials) is implied by the design but not spelled out on this page.",
+  "quotes": [
+   "FreeIPMI provides in-band and out-of-band IPMI software based on the IPMI v1.5/2.0 specification.",
+   "The features of IPMI that most users will be interested in are sensor monitoring, system event monitoring, power control, and serial-over-LAN (SOL).",
+   "This library is for programmers intimately familiar with the IPMI protocol and IPMI specification. Most users may wish to use the libraries listed below."
+  ],
+  "links": [
+   {
+    "label": "FreeIPMI homepage",
+    "url": "https://www.gnu.org/software/freeipmi/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.gnu.org/software/freeipmi/ - fetched OK. The page is a GNU project page with a NEWS list and tool and library descriptions. It has no command examples. I did not follow the linked docs, download, or example-output pages."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "FreeIPMI opens the hidden IPMI channel to server hardware, exposing live sensors, event logs, remote power control, and serial consoles through a substantial toolset."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "FreeIPMI",
+  "tldr": "GNU command-line tools for talking to a server's baseboard management controller: read sensors, event logs, power state, and serial console, locally or over the network.",
+  "deeper_look": "FreeIPMI is a set of command-line tools and C libraries for IPMI v1.5 and 2.0, the management interface built into most server hardware. A baseboard management controller (BMC) is a small computer on the motherboard that stays alive when the host is off. FreeIPMI sends it requests and gets back sensor values, event records, hardware inventory, and configuration results.\n\nIt works in two ways. In-band, it talks to the BMC from the host OS through drivers. Out-of-band, it talks over the network using IPMI's LAN protocols, so a machine can be queried or power-cycled without any OS running. The homepage names the features most people want: \"sensor monitoring, system event monitoring, power control, and serial-over-LAN (SOL).\"\n\nThe toolset is split into many small programs, each with one job: `bmc-info`, `ipmi-sensors`, `ipmi-sel`, `ipmi-power`, `ipmiconsole`, `ipmi-dcmi`. There are also daemons such as `ipmiseld`, `ipmidetectd` and `bmc-watchdog`, and the project mentions support for large HPC and cluster environments. For programmers, matching libraries wrap sensor monitoring, SOL consoles and node detection, and a low-level libfreeipmi sits beneath them.\n\nThe interesting idea is the hidden second computer: a management plane that runs separately from the operating system and answers to a different protocol.",
+  "install": "brew install freeipmi\n# Useful output needs a BMC: either local access through a BMC driver on a server, or network access to one with LAN credentials.",
+  "try_this": [
+   {
+    "cmd": "ipmi-sensors --help",
+    "what_happens": "Lists the options for reading temperature, voltage and fan sensors from a BMC."
+   },
+   {
+    "cmd": "bmc-info --help",
+    "what_happens": "Shows how to query a BMC for its identity and capabilities, locally or remotely."
+   },
+   {
+    "cmd": "ipmi-power --help",
+    "what_happens": "Shows the options for checking or changing a machine's power state through its BMC."
+   }
+  ],
+  "whats_unique": "It covers in-band and out-of-band IPMI in one GNU toolset, with focused single-purpose tools, daemons for cluster nodes, and C libraries for building your own.",
+  "caveats": "Without a server BMC or network access to one, there is little to see, and the homepage does not list supported platforms or build requirements.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "ipmi",
+   "bmc",
+   "needs-hardware",
+   "servers",
+   "protocol",
+   "network"
+  ],
+  "links": [
+   {
+    "label": "FreeIPMI homepage",
+    "url": "https://www.gnu.org/software/freeipmi/"
+   }
+  ]
+ }
+}

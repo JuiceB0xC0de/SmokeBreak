@@ -1,0 +1,95 @@
+{
+ "name": "owamp",
+ "desc": "Implementation of the One-Way Active Measurement Protocol",
+ "homepage": "https://www.internet2.edu/products-services/performance-analytics/performance-tools/",
+ "installs_365d": 25,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol",
+  "library"
+ ],
+ "why": "A door into One-Way Active Measurement Protocol, measuring one-direction latency and packet loss between hosts, an unusual look at network timing.",
+ "brief": {
+  "what_it_is": "OWAMP is an implementation of the One-Way Active Measurement Protocol, per the Brew description and the GitHub About line (\"A tool for performing one-way or two-way active measurements\"). The Brew entry lists seven executables: owampd, owfetch, owping, owstats, owtvec, owup, and powstream. I could not retrieve the README, so I cannot confirm from the project's own text what each one takes in or emits. The homepage is a generic Internet2 Performance Tools page that does not describe OWAMP specifically.",
+  "why_it_exists": "The homepage frames the wider toolkit as tools to \"help network engineers quickly identify service problems across national and international networks.\" I did not find an OWAMP-specific rationale in the pages I could read.",
+  "how_it_works": "",
+  "commands_seen": [],
+  "install_notes": "The homepage says the wider performance tools are distributed \"as both source code and binary packages in the RPM format.\" The GitHub repo has a Makefile and a .gitmodules file, which suggests a source build with submodules, but I did not read the build instructions. Nothing about hardware, accounts, or first-run configuration was visible.",
+  "standout": "OWAMP measures each direction of a path separately, so a one-way latency or loss figure does not get blended with the return path. The scout note calls this an unusual look at network timing. I could not confirm the clock or measurement details from the README.",
+  "status": "Likely maintained, but unverified. The GitHub page showed 1,501 commits, 88 stars, 31 forks, a .github/workflows directory, and an Apache-2.0 license. I could not see a release date or last-commit date.",
+  "caveats": "The homepage is generic and does not mention OWAMP. The README fetch returned 404 on the raw URL, and the repo page returned only the LICENSE text, so the project's own description of usage is missing from these notes. The scout note says one-way measurement, while the repo says one-way or two-way; the writer should check. The Brew entry has no caveats. Platform support and build requirements are unknown.",
+  "quotes": [
+   "A tool for performing one-way or two-way active measurements",
+   "These dependable tools enable the installation, configuration, and management of performance monitoring software\\u2014available as both source code and binary packages in the RPM format.",
+   "Performance monitoring tools to help network engineers quickly identify service problems across national and international networks."
+  ],
+  "links": [
+   {
+    "label": "Internet2 Performance Tools (homepage)",
+    "url": "https://www.internet2.edu/products-services/performance-analytics/performance-tools/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/perfsonar/owamp"
+   }
+  ],
+  "fetch_log": [
+   "https://www.internet2.edu/products-services/performance-analytics/performance-tools/ - loaded, but generic Internet2 page; no OWAMP-specific text",
+   "https://github.com/perfsonar/owamp - loaded; returned LICENSE text and repo sidebar, not README",
+   "https://raw.githubusercontent.com/perfsonar/owamp/main/README.md - failed, HTTP 404"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Measuring latency and packet loss independently in each direction exposes network asymmetry\u2014a useful, unusual way to inspect timing on real paths."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "owamp",
+  "tldr": "Measures network latency and packet loss in each direction separately between two hosts, instead of blending them into one round-trip number like ping.",
+  "deeper_look": "OWAMP is an implementation of the One-Way Active Measurement Protocol. Ping reports a round trip, which hides the fact that the path out and the path back are often different routes with different problems. OWAMP measures each direction on its own, so a slow or lossy leg shows up on the side where it actually happens.\n\nThe package installs seven executables: owampd, owfetch, owping, owstats, owtvec, owup, and powstream. The names suggest a daemon (owampd), a client (owping), and tools for fetching and summarising results (owfetch, owstats, powstream), but the brief could not confirm what each one takes in or emits, so check the `--help` output before assuming.\n\nIt comes out of the Internet2 performance tools, which the project describes as \"Performance monitoring tools to help network engineers quickly identify service problems across national and international networks.\" The repo describes itself as \"A tool for performing one-way or two-way active measurements.\" The idea underneath is that one-way timing is a different problem from round-trip timing, and a good door into how network measurement works.",
+  "install": "brew install owamp\n# pulls in the i2util dependency. Meaningful measurements need a second host running the daemon (owampd); setup and platform support were not confirmed.",
+  "try_this": [
+   {
+    "cmd": "owping --help",
+    "what_happens": "Lists the options for the one-way ping client."
+   },
+   {
+    "cmd": "owampd --help",
+    "what_happens": "Shows how to run the measurement daemon that a remote owping would talk to."
+   },
+   {
+    "cmd": "powstream --help",
+    "what_happens": "Shows the options for the tool that appears to run continuous measurements."
+   }
+  ],
+  "whats_unique": "It measures each direction of a path separately, so a one-way latency or loss figure is not mixed with the return path.",
+  "caveats": "The brief could not retrieve the README, so usage, build requirements, clock-sync needs, and last release date are unverified, and the homepage is a generic Internet2 page.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "network",
+   "protocol",
+   "latency",
+   "measurement"
+  ],
+  "links": [
+   {
+    "label": "Internet2 Performance Tools (homepage)",
+    "url": "https://www.internet2.edu/products-services/performance-analytics/performance-tools/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/perfsonar/owamp"
+   }
+  ]
+ }
+}

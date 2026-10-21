@@ -1,0 +1,73 @@
+{
+ "name": "htpdate",
+ "desc": "Synchronize time with remote web servers",
+ "homepage": "https://www.vervest.org/htp/",
+ "installs_365d": 267,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "Sets the clock by reading HTTP Date headers from web servers, a neat back door into time sync without NTP.",
+ "brief": {
+  "what_it_is": "htpdate is a command-line tool that sets the local system clock by reading the Date header from remote web servers over HTTP, rather than using NTP. According to the Homebrew formula description, it synchronizes time with remote web servers, and the executable is named htpdate. I could not read the project's own documentation, so the details of inputs and outputs are not confirmed.",
+  "why_it_exists": "Not confirmed. The project homepage at vervest.org/htp/ is a redirect to GitHub, and I could not reach the README, so I have no author framing to quote.",
+  "how_it_works": "",
+  "commands_seen": [],
+  "install_notes": "Installed via Homebrew (brew install htpdate). No further install, configuration, or first-run details were available because the README was not reached.",
+  "standout": "The scout note describes it as a way to set the clock from HTTP Date headers without NTP, which is an unusual approach. I have not verified this against the project's own documentation.",
+  "status": "unknown",
+  "caveats": "The homepage https://www.vervest.org/htp/ redirects to GitHub but the response did not include the target URL. I guessed https://github.com/vervest/htpdate and it returned HTTP 404, so the repository location is unconfirmed. Nothing about platform support, licensing, or maintenance could be checked. The description above relies only on the Homebrew formula text and the scout note.",
+  "quotes": [],
+  "links": [
+   {
+    "label": "Project homepage (redirects to GitHub)",
+    "url": "https://www.vervest.org/htp/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.vervest.org/htp/ - worked, but returned only a 'Redirecting to GitHub\u2026' page with no target URL",
+   "https://github.com/vervest/htpdate - failed, HTTP 404 (guessed URL, not confirmed by any source)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Using ordinary HTTP Date headers to recover clock sync when NTP is unavailable is a small but genuinely surprising protocol trick, though the project\u2019s current status is unclear."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "htpdate",
+  "tldr": "Sets your computer's clock from the Date headers of ordinary web servers, a way to keep time over HTTP without NTP.",
+  "deeper_look": "htpdate is a command-line tool that synchronizes the local clock with remote web servers. Instead of speaking NTP, it reads the Date header that web servers include in their HTTP responses and uses that as a time source. The Homebrew description reads: \"Synchronize time with remote web servers.\"\n\nThe idea underneath is that time is leaking out of the network all the time. Every web server stamps its responses with the current time, so any HTTP server you can reach is a rough clock. That matters on networks where NTP's UDP port is blocked or filtered but web traffic still flows. The tradeoff is precision: HTTP Date headers carry whole seconds, so this is a coarser clock than NTP gives you.\n\nThe details of its options and output were not confirmed for this entry, because the project's own documentation could not be reached. Read `htpdate --help` after installing to see what it actually offers.",
+  "install": "brew install htpdate",
+  "try_this": [
+   {
+    "cmd": "htpdate --help",
+    "what_happens": "Prints the tool's usage and options, the quickest way to see how it picks servers and whether it sets the clock or only reports."
+   }
+  ],
+  "whats_unique": "It treats the ordinary web as a time source, using the HTTP Date header instead of a dedicated time protocol like NTP.",
+  "caveats": "The project homepage redirects to a GitHub page that could not be confirmed, so maintenance status and platform details are unverified, and setting the system clock normally needs root.",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "network",
+   "protocol",
+   "http",
+   "time"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (redirects to GitHub)",
+    "url": "https://www.vervest.org/htp/"
+   }
+  ]
+ }
+}

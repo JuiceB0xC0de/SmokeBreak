@@ -1,0 +1,67 @@
+{
+ "name": "libltc",
+ "desc": "POSIX-C Library for handling Linear/Logitudinal Time Code (LTC)",
+ "homepage": "https://x42.github.io/libltc/",
+ "installs_365d": 185,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "library",
+  "audio",
+  "quick"
+ ],
+ "why": "A C library for decoding and encoding SMPTE timecode carried as audio, a niche transform from sound into time data with a bit of mystery.",
+ "brief": {
+  "what_it_is": "libltc is a POSIX C library for encoding and decoding Linear (Longitudinal) Timecode, which is SMPTE or EBU timecode stored as a Manchester-biphase audio signal. On the decode side it takes 8-bit unsigned audio samples and returns decoded LTC frames tagged with the audio sample numbers where each frame starts and ends. On the encode side it takes timecode values and produces the audio samples for an LTC signal. It is a library, not an application, so it ships no command-line tools of its own.",
+  "why_it_exists": "The author describes it as the successor to libltcsmpte, which had API and ABI problems from early design choices such as naming conventions and compile-time sample-format options. libltc is meant to operate on LTC frames only and to stay ignorant of framerate and timecode semantics, which the author says belong to the application or to the separate libtimecode project.",
+  "how_it_works": "The library runs a signal tracker over the audio samples, recovers the Manchester-biphase bit stream, and maps the 80 LTC bits to HH:MM:SS:FF timecode, including SMPTE date support. It follows speed variations (vari-speed) and reverse-played tape, and each decoded frame carries its audio sample position. The encoder accepts a per-byte speed parameter and can increment or decrement timecode.",
+  "commands_seen": [
+   {
+    "cmd": "./configure",
+    "context": "Standard autotools configure step to prepare the build from a release tarball."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds libltc after configure."
+   },
+   {
+    "cmd": "make dox",
+    "context": "Regenerates the API documentation with Doxygen, if Doxygen is installed."
+   },
+   {
+    "cmd": "make check",
+    "context": "Compiles and runs the self-test scenarios and example code; the README says these also serve as examples."
+   },
+   {
+    "cmd": "aclocal; autoheader; libtoolize \u2013copy; autoconf; automake \u2013gnu \u2013add-missing \u2013copy",
+    "context": "Generates the build environment when building from a git checkout instead of a release tarball. The README notes OSX users should use glibtoolize."
+   }
+  ],
+  "install_notes": "Uses GNU autotools and libtool. A release tar.gz includes configure, so ./configure then make is enough. Building from the git repository requires first generating the build system with the autotools chain listed in commands_seen; macOS users substitute glibtoolize. Doxygen is optional, for make dox. No hardware, accounts, or runtimes beyond a C toolchain and autotools are mentioned. The README points to the INSTALL file for more detail. The Q&A also mentions ltc-tools, which uses libsndfile and JACK, but those are separate projects.",
+  "standout": "Most LTC tools are tied to a frame rate or to a particular application. libltc deliberately strips out timecode semantics and works only on LTC frames, and it handles vari-speed and reverse-played LTC, which the author says is a deliberate feature of the new API and not a patch on libltcsmpte.",
+  "status": "unknown. The homepage shows version 1.3.2, and its generated Doxygen footer is dated Sun Sep 4 2022. The GitHub README I fetched has no release or commit dates, so I could not confirm when the project was last active.",
+  "caveats": "Audio is limited to 8-bit unsigned samples. The author says wrappers exist for 16-bit signed or unsigned and 32-bit float, but the core takes 8-bit only. The stated minimum amplitude is -36 dB, so very low-level or DC-offset signals need your own amplifier and high-pass filter; the author says the generic tracker will likely do worse than an application-specific one. License is LGPLv3 only, with no commercial option. Dynamic linking is the author's suggested route for closed-source projects; copying the code into a statically linked project pulls in LGPL obligations. Timecode-to-seconds and video-timecode conversions were dropped from libltcsmpte and moved to libtimecode. The API differs from libltcsmpte, and the author says most changes are renames.",
+  "quotes": [
+   "Linear (or Longitudinal) Timecode (LTC) is an encoding of timecode data as a Manchester-Biphase encoded audio signal.",
+   "It's doing very well, thanks. :)",
+   "8bit samples are more than sufficient to carry LTC information.",
+   "libltc operates on LTC-frames. It ought to be ignorant about timecode or framerate semantics and should not make assumptions about the data, which is application dependent."
+  ],
+  "links": [
+   {
+    "label": "Project homepage and API docs",
+    "url": "https://x42.github.io/libltc/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/x42/libltc"
+   }
+  ],
+  "fetch_log": [
+   "https://x42.github.io/libltc/ - worked; docs-style homepage with introduction, installation, Q&A, and version 1.3.2 shown",
+   "https://github.com/x42/libltc - worked; README is short and points to the homepage for documentation"
+  ]
+ }
+}

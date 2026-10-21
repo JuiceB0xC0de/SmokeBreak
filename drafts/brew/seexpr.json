@@ -1,0 +1,145 @@
+{
+ "name": "seexpr",
+ "desc": "Embeddable expression evaluation engine",
+ "homepage": "https://wdas.github.io/SeExpr/",
+ "installs_365d": 58,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "library",
+  "visual",
+  "generative",
+  "afternoon"
+ ],
+ "why": "An embeddable expression language from Disney's renderer, a niche glimpse into procedural shading and noise.",
+ "brief": {
+  "what_it_is": "SeExpr is an embeddable arithmetic expression language and evaluation engine, written as a C++ library. Host programs hand it expression text, and it evaluates scalar and vector arithmetic against a large built-in function library. The homepage says it is used for procedural geometry synthesis, image synthesis, simulation control, crowd animation, and geometry deformation. The project also ships a UI component set for editing and visualizing expressions, plus demo apps (asciiCalc, asciiGraph, imageSynth, imageSynthPaint3d) that run expressions from the command line or as small tools.",
+  "why_it_exists": "The homepage describes it as giving flexible artistic control and customization when creating computer graphics images, so artists can tweak values through expressions inside a larger program rather than writing code for each change. The README frames it as an embeddable evaluation engine that host applications extend with their own variables and functions.",
+  "how_it_works": "A host program subclasses the Expression class and implements the methods that declare the extra functions and variables its expressions need. The README points to the demo applications in src/demo as the main worked examples of this pattern. The homepage also says extensible variables and functions can be supplied through DSOs (dynamically loaded shared objects).",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/wdas/SeExpr",
+    "context": "Clones the source repository, from the README's 'super impatient' CMake build guide."
+   },
+   {
+    "cmd": "cd SeExpr",
+    "context": "Enters the cloned source directory."
+   },
+   {
+    "cmd": "mkdir build",
+    "context": "Creates a build directory for an out-of-tree CMake build."
+   },
+   {
+    "cmd": "cd build",
+    "context": "Enters the build directory."
+   },
+   {
+    "cmd": "cmake ../",
+    "context": "Configures the build from the parent directory's CMakeLists."
+   },
+   {
+    "cmd": "make doc",
+    "context": "Optional step that generates the doxygen documentation."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the library and tools to the system."
+   },
+   {
+    "cmd": "./asciiGraph \"x^3-8*x\"",
+    "context": "Runs the test application asciiGraph, a simple text function grapher, on the expression x^3-8*x. The README describes it as a test app; the Homebrew executable is named asciiGraph2, not asciiGraph."
+   }
+  ],
+  "install_notes": "Build from source with CMake: clone the repository, create a build directory, run cmake against the source root, then make install (make doc is optional for docs). The README gives no other runtime, account, or hardware requirements. The Homebrew formula's executables are asciiCalc2, asciiGraph2, imageSynth2, and imageSynthPaint3d2. Brew caveats were empty.",
+  "standout": "It is an expression language built for artists and embedded in production graphics tools rather than a standalone scripting language, and it comes from Walt Disney Animation Studios. It also ships reusable editing UI components, not only the evaluator.",
+  "status": "Quiet. The homepage's newest news item is v3.0.1 from Nov 18, 2019, preceded by v3.0.0 in Jul 2019. I did not see a commit date or a release after 2019, so I cannot confirm recent maintenance. The README has no deprecation notice.",
+  "caveats": "The README's example uses ./asciiGraph but the Homebrew build installs asciiGraph2, so the command name differs. The README calls asciiGraph a test application. The README says v3 features and porting need the FAQ, which I did not open. The license is Apache 2.0 per the homepage. Python 2 and 3 compatibility appears only in a 2019 news item. The brew caveats field was empty, and I did not test the build.",
+  "quotes": [
+   "SeExpr is an embeddable, arithmetic expression language that enables flexible artistic control and customization in creating computer graphics images.",
+   "The basic strategy is to subclass the Expression class and implement the methods that describe what extra functions and variables your expression evaluation will need",
+   "Our library is licensed under the Apache License, Version 2.0."
+  ],
+  "links": [
+   {
+    "label": "SeExpr homepage",
+    "url": "https://wdas.github.io/SeExpr/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/wdas/SeExpr"
+   },
+   {
+    "label": "Doxygen API docs",
+    "url": "http://wdas.github.io/SeExpr/doxygen/"
+   },
+   {
+    "label": "SeExpr v3 FAQ (porting and new features)",
+    "url": "http://wdas.github.io/SeExpr/doxygen/html/SeExpr_FAQ.html"
+   }
+  ],
+  "fetch_log": [
+   "https://wdas.github.io/SeExpr/ - worked; project page with news and feature list, links to GitHub",
+   "https://github.com/wdas/SeExpr - worked; returned the README, which covers build steps, demo usage, and source layout",
+   "Not fetched: SeExpr v3 FAQ and doxygen docs (linked from the README; not needed for this brief)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "SeExpr turns artist-written expressions into procedural graphics and simulations, with demos that make this production-oriented language easy to explore."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "SeExpr",
+  "tldr": "Disney Animation's embeddable expression language for artists, with small demo tools that graph formulas and synthesize images from the command line.",
+  "deeper_look": "SeExpr is a C++ library that evaluates scalar and vector arithmetic expressions against a large built-in function library. A host program hands it a string of text, and SeExpr returns a value. The homepage lists uses such as procedural geometry synthesis, image synthesis, simulation control, crowd animation, and geometry deformation.\n\nIt exists so artists can adjust a look or behaviour by editing a short expression inside a larger program, instead of asking someone to write and recompile code for each change. In the README's words, it is \"an embeddable, arithmetic expression language that enables flexible artistic control and customization in creating computer graphics images.\"\n\nThe underlying idea is the small, embedded language. A host subclasses the Expression class and declares the extra variables and functions its expressions may use. The README points to the demo apps in src/demo as the worked examples of this pattern. The homepage adds that extensions can also be loaded as DSOs (dynamically loaded shared objects).\n\nThe Homebrew formula installs the demos as command-line tools: asciiCalc2, asciiGraph2, imageSynth2, and imageSynthPaint3d2. They are the easiest way to see what the evaluator does without writing any C++. The project also ships UI components for editing and visualizing expressions.",
+  "install": "brew install seexpr",
+  "try_this": [
+   {
+    "cmd": "asciiGraph2 \"x^3-8*x\"",
+    "what_happens": "Plots the expression x^3-8*x as a text graph. The README shows this as ./asciiGraph, but the Homebrew executable is named asciiGraph2."
+   },
+   {
+    "cmd": "asciiCalc2 --help",
+    "what_happens": "Prints usage for the command-line calculator demo that evaluates expressions."
+   },
+   {
+    "cmd": "imageSynth2 --help",
+    "what_happens": "Prints usage for the image synthesis demo, which builds pictures from expressions."
+   }
+  ],
+  "whats_unique": "It is an expression language built for artists and embedded in production graphics tools, not a standalone scripting language, and it comes from Walt Disney Animation Studios. It also ships reusable editing UI components alongside the evaluator.",
+  "caveats": "The project is quiet: the newest release the homepage mentions is v3.0.1 from November 2019, and the demos are described as test applications.",
+  "commitment": "afternoon",
+  "category": "quick-weird-payoffs",
+  "tags": [
+   "afternoon",
+   "library",
+   "generative",
+   "graphics",
+   "expression-language",
+   "disney"
+  ],
+  "links": [
+   {
+    "label": "SeExpr homepage",
+    "url": "https://wdas.github.io/SeExpr/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/wdas/SeExpr"
+   },
+   {
+    "label": "Doxygen API docs",
+    "url": "http://wdas.github.io/SeExpr/doxygen/"
+   },
+   {
+    "label": "SeExpr v3 FAQ (porting and new features)",
+    "url": "http://wdas.github.io/SeExpr/doxygen/html/SeExpr_FAQ.html"
+   }
+  ]
+ }
+}

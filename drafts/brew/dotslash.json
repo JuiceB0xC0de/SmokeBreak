@@ -1,0 +1,124 @@
+{
+ "name": "dotslash",
+ "desc": "Simplified executable deployment",
+ "homepage": "https://dotslash-cli.com",
+ "installs_365d": 1161,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "cli",
+  "reverse-engineering"
+ ],
+ "why": "Turns executables into small manifest files that fetch binaries on demand, a curious idea about what a runnable file can be.",
+ "brief": {
+  "what_it_is": "DotSlash is a command-line tool, invoked as `dotslash`, that replaces a set of platform-specific, heavyweight executables with one small, readable text file. You make the file executable and give it a `#!/usr/bin/env dotslash` shebang. The file is a JSON-like manifest (the README example uses `//` comments) that lists, per platform, the download URL, size, hash digest, archive format and the path inside the archive. When you run the file, DotSlash fetches, decompresses and verifies the right binary for your platform. The homepage also says it provides tools for generating DotSlash files from GitHub releases.",
+  "why_it_exists": "The README frames it as a way to keep executables in source control without bloating the repository, so build toolchains and other tools can be checked into the repo. That reduces dependence on the host environment and helps with reproducible builds.",
+  "how_it_works": "The manifest names a platform-keyed set of entries, each with a provider URL, a blake3 digest and size, and the archive path of the binary. On first run DotSlash downloads, decompresses and verifies the matching archive, which is the small delay the README mentions, and later runs are near-instant. The README points to a docs page on execution for the details, which I did not fetch.",
+  "commands_seen": [
+   {
+    "cmd": "#!/usr/bin/env dotslash",
+    "context": "Shebang line that goes at the top of the manifest file so the OS hands the file to dotslash."
+   },
+   {
+    "cmd": "chmod +x node",
+    "context": "Marks the manifest file as executable so it can be run directly, per the README's instructions."
+   },
+   {
+    "cmd": "$ ./node --version",
+    "context": "Example of running the manifest-wrapped Node.js exactly as before; the README shows output v18.16.0."
+   }
+  ],
+  "install_notes": "The README gives no install steps beyond a link to the installation page on dotslash-cli.com/docs/installation/, which I did not fetch. It assumes `dotslash` is on your $PATH. Each user must chmod +x the manifest file. No accounts or runtimes are mentioned.",
+  "standout": "Instead of a shell wrapper plus several binaries, a single text file is the executable, and it fetches the correct binary per platform on demand. Storing the manifest in git keeps the repo small while still vendoring tools like Node.js.",
+  "status": "unknown. The GitHub page shows an MIT OR Apache-2.0 license badge and a build workflow badge pointing at main, but I saw no release date, last commit date or maintenance note in the text I could read.",
+  "caveats": "The README example pins Node.js v18.19.0 in the manifest but its sample output reads v18.16.0, which looks like a typo or a stale example. The first run has a download and verify delay. The Rust performance claim appears only on the homepage, not in the README. I did not read the installation or execution docs, so platform support and setup details are unverified.",
+  "quotes": [
+   "DotSlash (`dotslash`) is a command-line tool that lets you represent a set of platform-specific, heavyweight executables with an equivalent small, easy-to-read text file.",
+   "This paves the way for checking build toolchains and other tools directly into the repo, reducing dependencies on the host environment and thereby facilitating reproducible builds.",
+   "DotSlash is written in Rust so it can run your executables quickly and transparently."
+  ],
+  "links": [
+   {
+    "label": "DotSlash homepage",
+    "url": "https://dotslash-cli.com"
+   },
+   {
+    "label": "GitHub repository (facebook/dotslash)",
+    "url": "https://github.com/facebook/dotslash"
+   },
+   {
+    "label": "Installation instructions",
+    "url": "https://dotslash-cli.com/docs/installation/"
+   },
+   {
+    "label": "How DotSlash works (execution docs)",
+    "url": "https://dotslash-cli.com/docs/execution/"
+   }
+  ],
+  "fetch_log": [
+   "https://dotslash-cli.com \u2014 worked, but returned only marketing text with no README or command examples; no outbound links were visible in the returned text.",
+   "https://github.com/facebook/dotslash \u2014 worked; the tool returned the README. I guessed this URL from the project name and the README's license and CI badges; it was not a link taken from the homepage.",
+   "https://dotslash-cli.com/docs/installation/ and https://dotslash-cli.com/docs/execution/ \u2014 not fetched; they are linked from the README and cited here only as links."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "An executable text manifest that selects, downloads, and verifies the right binary per platform is a small but genuinely surprising way to make tools portable."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "DotSlash",
+  "tldr": "A shebang-driven tool that turns a small text manifest into a runnable file, fetching and verifying the right platform binary on first use.",
+  "deeper_look": "DotSlash (`dotslash`) is a command-line tool that lets you represent a set of platform-specific, heavyweight executables with an equivalent small, easy-to-read text file. You put `#!/usr/bin/env dotslash` at the top of the file, mark it executable, and run it like any other program. The file itself is a JSON-like manifest (the README example uses `//` comments) listing, per platform, a download URL, size, hash digest, archive format and the path of the binary inside the archive.\n\nOn first run, DotSlash downloads the matching archive, decompresses it and checks it against the blake3 digest and size in the manifest. That is the small delay the README mentions. Later runs are near-instant. The README's example wraps Node.js, so `./node --version` behaves as if a real Node binary sat there.\n\nThe stated reason is source control. Checking large binaries into a repository bloats it, but depending on whatever the host machine has installed makes builds less repeatable. A manifest is small, readable in a diff, and pins exact hashes, so build toolchains and other tools can live in the repo without the weight. In the project's words, this reduces \"dependencies on the host environment and thereby facilitating reproducible builds.\"\n\nThe idea underneath is what counts as an executable. Here it is a description of where a program lives and how to verify it, and the OS shebang mechanism does the rest. The homepage also mentions tools for generating DotSlash files from GitHub releases.",
+  "install": "brew install dotslash\n# Each user must chmod +x a manifest file before running it. No accounts or extra runtimes are mentioned. The README links an installation page but assumes `dotslash` is on your $PATH.",
+  "try_this": [
+   {
+    "cmd": "dotslash --help",
+    "what_happens": "Lists the options the tool itself accepts."
+   },
+   {
+    "cmd": "chmod +x node",
+    "what_happens": "Marks a DotSlash manifest file as executable so the OS can hand it to dotslash via its shebang line."
+   },
+   {
+    "cmd": "./node --version",
+    "what_happens": "Runs the manifest-wrapped Node.js as if it were a normal binary, downloading and verifying it on first run."
+   }
+  ],
+  "whats_unique": "A single text file is the executable, and it fetches the correct binary for each platform on demand. The repo stays small while still vendoring tools like Node.js.",
+  "caveats": "The README's Node.js example pins v18.19.0 but shows v18.16.0 as output, which looks like a stale example, and the first run waits on a download.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "cli",
+   "executables",
+   "reproducible-builds",
+   "rust",
+   "shebang"
+  ],
+  "links": [
+   {
+    "label": "DotSlash homepage",
+    "url": "https://dotslash-cli.com"
+   },
+   {
+    "label": "GitHub repository (facebook/dotslash)",
+    "url": "https://github.com/facebook/dotslash"
+   },
+   {
+    "label": "Installation instructions",
+    "url": "https://dotslash-cli.com/docs/installation/"
+   },
+   {
+    "label": "How DotSlash works (execution docs)",
+    "url": "https://dotslash-cli.com/docs/execution/"
+   }
+  ]
+ }
+}

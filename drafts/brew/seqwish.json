@@ -1,0 +1,151 @@
+{
+ "name": "seqwish",
+ "desc": "Alignment to variation graph inducer",
+ "homepage": "https://github.com/pangenome/seqwish",
+ "installs_365d": 18,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "library"
+ ],
+ "why": "Builds variation graphs from pairwise sequence alignments; real genomics science, but a specialised pipeline piece.",
+ "brief": {
+  "what_it_is": "seqwish is a command-line tool and Rust library that converts pairwise sequence alignments into a variation graph. It takes FASTA or FASTQ sequences (plain or gzipped) plus alignments in PAF format, where each alignment must carry a cg:z: CIGAR tag. It writes a GFA1 graph to the file given with -g, or to standard output if -g is omitted. The README says the input is typically all-versus-all alignments, produced by aligners such as wfmash or minimap2.",
+  "why_it_exists": "The README says seqwish is built for very large inputs with many noisy sequences, where memory must stay bounded. It uses disk-backed sorts and passes over the alignment and sequence inputs, and the author describes the goal as a lossless conversion from alignments to a graph. The project's own framing is \"These sequences wish they were squished into a graph.\"",
+  "how_it_works": "The README describes a \"squish\" induction algorithm. Sequences are concatenated into a coordinate space Q with a compressed suffix array and rank/select dictionaries, and alignments are sorted by position in Q. For each base, the transitive closure of aligned bases is collapsed into one graph base, and links between graph bases are derived from the rewritten input sequences. Unitigs are then compressed into single nodes, and the result is written as GFA or vg format. The README says memory is limited by sorted disk-backed arrays and succinct rank/select structures.",
+  "commands_seen": [
+   {
+    "cmd": "seqwish -s sequences.fa -p alignments.paf -g output.gfa",
+    "context": "Basic usage: build a GFA graph from a FASTA of sequences and a PAF of alignments."
+   },
+   {
+    "cmd": "seqwish -s sequences.fa -p alignments.paf -g output.gfa -t 16 -k 19 -P",
+    "context": "Same run with 16 threads, minimum exact match length 19, and progress messages enabled (the README shows this across several lines with backslash continuations)."
+   },
+   {
+    "cmd": "wfmash x.fa x.fa -X > x.paf",
+    "context": "Generates all-versus-all alignments of x.fa against itself with wfmash, writing PAF to x.paf."
+   },
+   {
+    "cmd": "seqwish -s x.fa -p x.paf -g x.gfa",
+    "context": "Builds the graph from the wfmash PAF output."
+   },
+   {
+    "cmd": "minimap2 x.fa x.fa -c -X > x.paf",
+    "context": "Runs minimap2 all-versus-all with -c so the PAF includes the CIGAR string that seqwish requires."
+   },
+   {
+    "cmd": "git clone https://github.com/pangenome/seqwish.git",
+    "context": "Gets the source for building the Rust version."
+   },
+   {
+    "cmd": "cargo build --release",
+    "context": "Builds the Rust binary, placed at target/release/seqwish. Requires Rust 1.70 or newer."
+   },
+   {
+    "cmd": "RUSTFLAGS=\"-C target-cpu=native\" cargo build --release",
+    "context": "Faster build tuned to the local CPU; the README warns the binary may not run on other machines, so do not share it."
+   },
+   {
+    "cmd": "cargo install seqwish",
+    "context": "Installs from crates.io once published."
+   },
+   {
+    "cmd": "conda install -c bioconda seqwish",
+    "context": "Installs the Bioconda package."
+   }
+  ],
+  "install_notes": "No accounts or special hardware are needed. Building from source needs Rust 1.70 or newer and cargo. The Bioconda package is the other route. The README gives no first-run configuration. Default temp files go in the current directory, so use -b to move them if needed. The legacy C++ implementation is kept in cpp/ for reference, and the README says new builds should use the Rust package.",
+  "standout": "The README claims the Rust version produces byte-for-byte identical output to the legacy C++ implementation. It also uses succinct rank/select structures and disk-backed sorts so that very large noisy datasets can be processed, and it offers a library API as well as a CLI.",
+  "status": "The README shows a build-and-test CI badge and a Bioconda badge, and it describes the Rust version as the one now maintained. I found no release date or last-commit date in the fetched README, so recency is not confirmed.",
+  "caveats": "The README says that binaries built with target-cpu=native may not run on other computers. The graph uses single-base nodes internally and compresses them only in a later step. Downstream tools such as vg, GCSA2, and GBWT are still needed for most analyses, and the README says graph traversal and modification features are planned but not yet implemented. The inputs must come from aligners that emit cg:z: CIGAR tags. The library API links to docs.rs, which I did not fetch.",
+  "quotes": [
+   "These sequences wish they were squished into a graph.",
+   "seqwish implements a lossless conversion from pairwise alignments between sequences to a variation graph encoding the sequences and their alignments.",
+   "Produces **byte-for-byte identical output** to the legacy C++ implementation",
+   "This binary may not work on other computers, so do not use it for packages you share."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/pangenome/seqwish"
+   },
+   {
+    "label": "Citation: Unbiased pangenome graphs, Bioinformatics 2023",
+    "url": "https://doi.org/10.1093/bioinformatics/btac743"
+   },
+   {
+    "label": "API documentation on docs.rs",
+    "url": "https://docs.rs/seqwish"
+   },
+   {
+    "label": "Bioconda recipe",
+    "url": "https://bioconda.github.io/recipes/seqwish/README.html"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/pangenome/seqwish: fetched OK, README returned in full. No further fetches were needed."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It losslessly turns sequence alignments into variation graphs, an unusual and scientifically meaningful transformation that opens a deeper rabbit hole than ordinary pipeline plumbing."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "seqwish",
+  "tldr": "Turns a pile of pairwise sequence alignments into a variation graph, so many genomes collapse into one shared structure.",
+  "deeper_look": "seqwish takes sequences (FASTA or FASTQ, plain or gzipped) and alignments between them in PAF format, then writes a variation graph as GFA1. The alignments are usually all-versus-all, made by an aligner such as wfmash or minimap2. Each alignment must carry a cg:z: CIGAR tag. The graph goes to the file given with -g, or to standard output if -g is left out.\n\nThe idea underneath is that a reference genome is a single line, while a graph can hold many genomes at once, with shared stretches merged and differences shown as branches. seqwish builds that graph from the alignments alone. Per the README, it concatenates the sequences into one coordinate space, then for each base collapses the transitive closure of aligned bases into a single graph base. Links between graph bases come from the rewritten input sequences. Runs of unbranching bases are then compressed into single nodes.\n\nIt is designed for very large inputs with many noisy sequences, with memory kept bounded through disk-backed sorts and succinct rank/select structures. The author describes the conversion as lossless, and the project's own line is \"These sequences wish they were squished into a graph.\" It is both a command-line tool and a Rust library, and it is described in the paper \"Unbiased pangenome graphs\" (Bioinformatics, 2023).",
+  "install": "brew install seqwish\n# No account or special hardware needed. Input needs PAF alignments with cg:z: CIGAR tags from an aligner such as wfmash or minimap2, which are installed separately.\n# Temp files go in the current directory by default; use -b to move them.",
+  "try_this": [
+   {
+    "cmd": "seqwish --help",
+    "what_happens": "Lists the options, including the sequence, alignment, graph output, thread and match-length flags."
+   },
+   {
+    "cmd": "minimap2 x.fa x.fa -c -X > x.paf",
+    "what_happens": "Aligns a FASTA against itself, with -c so the PAF includes the CIGAR strings seqwish requires."
+   },
+   {
+    "cmd": "seqwish -s x.fa -p x.paf -g x.gfa",
+    "what_happens": "Builds a variation graph in GFA format from the sequences and their alignments."
+   }
+  ],
+  "whats_unique": "It induces the graph directly from alignments, with bounded memory on large noisy inputs. The README claims the Rust version gives byte-for-byte identical output to the older C++ one.",
+  "caveats": "It is a pipeline piece: you need an aligner to feed it, and downstream tools like vg, GCSA2 and GBWT for most analyses. Recency of development could not be confirmed from the README.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "genomics",
+   "pangenome",
+   "graphs",
+   "bioinformatics",
+   "rust"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/pangenome/seqwish"
+   },
+   {
+    "label": "Paper: Unbiased pangenome graphs, Bioinformatics 2023",
+    "url": "https://doi.org/10.1093/bioinformatics/btac743"
+   },
+   {
+    "label": "API documentation on docs.rs",
+    "url": "https://docs.rs/seqwish"
+   },
+   {
+    "label": "Bioconda recipe",
+    "url": "https://bioconda.github.io/recipes/seqwish/README.html"
+   }
+  ]
+ }
+}

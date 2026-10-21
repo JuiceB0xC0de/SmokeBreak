@@ -1,0 +1,154 @@
+{
+ "name": "pict",
+ "desc": "Pairwise Independent Combinatorial Tool",
+ "homepage": "https://github.com/Microsoft/pict/",
+ "installs_365d": 231,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "quick",
+  "math",
+  "library"
+ ],
+ "why": "Pairwise combinatorial test generation is a genuinely interesting covering-array idea, though the tool itself is fairly plain.",
+ "brief": {
+  "what_it_is": "PICT is a command-line tool that generates a compact set of test cases from a plain-text model file. You list parameters and their possible values, optionally add sub-models, constraints, weights, aliases, and negative values, and PICT prints a tab-separated table of test cases. The default goal is that every pair of values across parameters appears in at least one test case, and /o raises the order to triplets or higher. The output goes to stdout and any warnings or errors go to stderr.",
+  "why_it_exists": "The README says PICT produces tests 'more effective than manually generated tests and in a fraction of the time required by hands-on test case design.' Its framing is that exhaustive testing of all combinations is impractical, and that 'Research shows that testing all pairs is an effective alternative to exhaustive testing and much less costly.'",
+  "how_it_works": "The model file has a parameter section, optional sub-model lines like { PLATFORM, CPUS, RAM, HDD } @ 2, and optional constraints written as IF ... THEN ... predicates over [Parameter] names. The engine packs value combinations into as few rows as it can with deterministic heuristics; /r:N sets a random seed and /b:N tries N seeds and keeps the smallest suite. The doc says different seeds commonly change the row count by about 5% to 10%, while coverage stays the same.",
+  "commands_seen": [
+   {
+    "cmd": "pict model [options]",
+    "context": "Usage line from doc/pict.md: model file in, test cases out on stdout."
+   },
+   {
+    "cmd": "pict.exe model.txt /e:seedrows.txt",
+    "context": "Seeds generation with rows from a tab-separated file so earlier or required combinations are kept."
+   },
+   {
+    "cmd": "./pict-benchmark --runs 1000",
+    "context": "Runs the default six pairwise.org benchmark scenarios 1000 times with different seeds and reports the smallest suite for each."
+   },
+   {
+    "cmd": "./pict-benchmark --runs 250 --benchmark 3^13 --benchmark \"4^15 3^17 2^29\"",
+    "context": "Runs 250 trials against two specific benchmark notations, one built-in and one custom."
+   },
+   {
+    "cmd": "./pict-benchmark --runs 500 --benchmark \"6^20\"",
+    "context": "Runs 500 trials against a single custom benchmark notation."
+   },
+   {
+    "cmd": "cmake -DCMAKE_BUILD_TYPE=Release -S . -B build",
+    "context": "Configures a Release build in the build directory on Linux, OS/X, or BSD using CMake."
+   },
+   {
+    "cmd": "cmake --build build",
+    "context": "Builds the project after configuration."
+   },
+   {
+    "cmd": "pushd build && ctest -V && popd",
+    "context": "Runs the CMake test suite verbosely from inside the build directory."
+   },
+   {
+    "cmd": "make image-build",
+    "context": "Builds a container image with PICT."
+   },
+   {
+    "cmd": "make image-run",
+    "context": "Runs the container image against a sample model."
+   },
+   {
+    "cmd": "podman run -it --rm -v ./<local-dir>:/var/pict:Z pict:latest <your-model-file> [<pict-options>]",
+    "context": "Runs PICT in the container on your own model file, mounted from a local directory."
+   }
+  ],
+  "install_notes": "The README gives no brew-specific steps. Windows builds need Visual Studio 2022 with VC++ build tools and use pict.sln or _build.cmd. The Windows test script _test.cmd needs Perl. Linux, OS/X, and BSD builds need CMake and a C++ toolchain. A container path is available through make image-build. Windows binaries are on the GitHub releases page.",
+  "standout": "PICT handles negative testing with a ~ prefix, so each test contains at most one invalid value and invalid inputs cannot mask each other. Sub-models let you set a different combination order for a group of parameters, such as hardware, which keeps the number of distinct hardware configurations down.",
+  "status": "unknown. The fetched README and doc/pict.md show no release dates, version numbers, or last-commit dates, and the GitHub page text I received did not include them. The README does describe current features, including pict-benchmark, a container target, and the /t thread option.",
+  "caveats": "Weights are described as 'opportunistic hints' and are not guaranteed to appear in output. Randomized output changes from run to run, and the README admits that some randomized tests 'should be masked in the baseline but currently aren't.' Constraints can become complicated when you use the dummy-value technique. Windows and Linux build instructions differ, and the Windows path needs Visual Studio and Perl. The doc page I fetched was mostly GitHub page chrome around the readable text. The scout note calls the tool plain, and the README itself does not make a stronger claim than 'a compact set of test cases.' Licensing was not visible in the pages I read.",
+  "quotes": [
+   "PICT generates test cases and test configurations.",
+   "Research shows that testing all pairs is an effective alternative to exhaustive testing and much less costly.",
+   "Weights are not guarantees but merely opportunistic hints."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/Microsoft/pict/"
+   },
+   {
+    "label": "Full documentation: doc/pict.md",
+    "url": "https://github.com/Microsoft/pict/blob/main/doc/pict.md"
+   },
+   {
+    "label": "Releases (pict.exe builds)",
+    "url": "https://github.com/microsoft/pict/releases/"
+   },
+   {
+    "label": "Pairwise testing background at pairwise.org",
+    "url": "http://pairwise.org"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/Microsoft/pict/ - worked, README returned",
+   "https://github.com/Microsoft/pict/blob/main/doc/pict.md - worked, the page is mostly GitHub chrome but the documentation text is readable"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "PICT makes covering arrays tangible: it compresses vast configuration spaces into small test suites while supporting constraints, higher-order coverage, and deliberate negative cases."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "pict",
+  "tldr": "Microsoft's pairwise test generator turns a list of parameters and values into a small table of test cases that still covers every pair of values.",
+  "deeper_look": "PICT reads a plain-text model file: parameter names, each followed by its possible values. It prints a tab-separated table to stdout. Instead of every combination, it aims for a much smaller set in which every pair of values from different parameters appears together in at least one row. The `/o` option raises that to triplets or higher.\n\nThe idea underneath is covering arrays. Exhaustive testing grows multiplicatively with each new parameter, but the README's framing is that \"Research shows that testing all pairs is an effective alternative to exhaustive testing and much less costly.\" Packing combinations into as few rows as possible is a real combinatorial problem, and PICT solves it with deterministic heuristics. `/r:N` sets a random seed and `/b:N` tries N seeds and keeps the smallest suite. The docs say seeds commonly shift the row count by about 5% to 10% while coverage stays the same.\n\nThe model language is more than a list. Sub-models such as `{ PLATFORM, CPUS, RAM, HDD } @ 2` give a group of parameters its own combination order. Constraints are written as `IF ... THEN ...` over `[Parameter]` names. Values can carry weights and aliases. A `~` prefix marks a negative value, so each test contains at most one invalid input and invalid inputs cannot mask each other.\n\nThe repository also ships `pict-benchmark`, which runs the pairwise.org benchmark scenarios many times with different seeds and reports the smallest suite for each. That makes it a handy way to watch the heuristic work.",
+  "install": "brew install pict",
+  "try_this": [
+   {
+    "cmd": "pict --help",
+    "what_happens": "Prints the usage line and the list of options, including order, seeding, and randomization."
+   },
+   {
+    "cmd": "pict model [options]",
+    "what_happens": "Reads your model file of parameters and values and prints a tab-separated table of test cases to stdout."
+   },
+   {
+    "cmd": "pict.exe model.txt /e:seedrows.txt",
+    "what_happens": "Seeds generation with rows from a tab-separated file so required or earlier combinations are kept (written as pict.exe in the docs; the Homebrew binary is pict)."
+   }
+  ],
+  "whats_unique": "Negative testing with a `~` prefix keeps invalid values from masking each other, and per-group sub-models let hardware-like parameters use a different combination order than the rest.",
+  "caveats": "The brief found no release or commit dates, weights are only \"opportunistic hints\", and randomized output varies from run to run.",
+  "commitment": "quick",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "quick",
+   "math",
+   "testing",
+   "combinatorics",
+   "covering-arrays"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/Microsoft/pict/"
+   },
+   {
+    "label": "Full documentation: doc/pict.md",
+    "url": "https://github.com/Microsoft/pict/blob/main/doc/pict.md"
+   },
+   {
+    "label": "Pairwise testing background at pairwise.org",
+    "url": "http://pairwise.org"
+   },
+   {
+    "label": "Releases (pict.exe builds)",
+    "url": "https://github.com/microsoft/pict/releases/"
+   }
+  ]
+ }
+}

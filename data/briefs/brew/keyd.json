@@ -1,0 +1,89 @@
+{
+ "name": "keyd",
+ "desc": "Key remapping daemon for Linux",
+ "homepage": "https://github.com/rvaiya/keyd",
+ "installs_365d": 133,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "library"
+ ],
+ "why": "A key remapping daemon that works at the kernel input layer, a fascinating look at how keyboards become events on Linux.",
+ "brief": {
+  "what_it_is": "keyd is a key remapping daemon for Linux. It runs system-wide and intercepts keyboard input at the kernel input layer (evdev, with uinput for output), then emits remapped events through a virtual keyboard device. Its config is a plain INI-style file, usually /etc/keyd/default.conf, with sections like [ids] and [main] and bindings such as capslock = overload(control, esc). It supports layers, oneshot modifiers, tap/hold overloading, per-keyboard config, and Unicode output. Optional per-application remapping is marked experimental.",
+  "why_it_exists": "The README says Linux lacks a good key remapping solution, and that people usually have to chain tools like xcape and xmodmap, which tie the result to X11. keyd is meant to be a single display-server-independent daemon that works at the kernel level.",
+  "how_it_works": "keyd reads raw events from physical keyboards through evdev and applies the mappings from its config. It then writes the results to a virtual device created through uinput, which is why the same config works in a VT, under X, or under Wayland. Because it sits below the display server, libinput sees a single virtual keyboard, and the README notes that this can break libinput's disable-while-typing trackpad behaviour unless a quirks override is added.",
+  "commands_seen": [
+   {
+    "cmd": "make && sudo make install",
+    "context": "Builds keyd from source and installs it, the README's from-source route."
+   },
+   {
+    "cmd": "sudo systemctl enable --now keyd",
+    "context": "Enables and starts the keyd service under systemd."
+   },
+   {
+    "cmd": "sudo keyd reload",
+    "context": "Reloads the config set after editing /etc/keyd/default.conf."
+   },
+   {
+    "cmd": "keyd monitor",
+    "context": "Prints key names as keyd sees them, used to find the names to put in the config. The README says to stop keyd first to see the raw input events."
+   },
+   {
+    "cmd": "sudo journalctl -eu keyd",
+    "context": "Shows config errors in the service log."
+   },
+   {
+    "cmd": "usermod -aG keyd <user>",
+    "context": "Adds your user to the keyd group, a prerequisite for application-specific remapping."
+   },
+   {
+    "cmd": "keyd-application-mapper -d",
+    "context": "Starts the application mapper as a daemon, suggested for display server startup such as ~/.xinitrc unless you use Gnome."
+   },
+   {
+    "cmd": "sudo apt install keyd",
+    "context": "Installs the Debian or Ubuntu package where it is available."
+   },
+   {
+    "cmd": "sudo xbps-install -Su keyd",
+    "context": "Installs the Void Linux package."
+   },
+   {
+    "cmd": "man keyd",
+    "context": "Opens the man page, which the README points to for the full config reference and for migrating from v1."
+   }
+  ],
+  "install_notes": "The README gives no Homebrew instructions. Its installation options are: build from source with a C compiler and Linux kernel headers (git clone, make, sudo make install), or install a distro package (Debian 13 and later, Ubuntu 25.04 and later, Arch extra, Alpine, Fedora COPR, Gentoo GURU, openSUSE, Void). After installing, enable the systemd service, put the config in /etc/keyd/default.conf, and run sudo keyd reload. Optional extras are python (for application-specific remapping), python-xlib (X support), and dbus-python (KDE support). The README says master is the development branch and tagged releases are the stable ones.",
+  "standout": "Layers, oneshot modifiers, and tap/hold overloads are usually found only in QMK-style keyboard firmware, and keyd brings them to the OS level with a short config format. The README also says the core is written in C in under 2000 lines, aiming at a sub-millisecond input loop.",
+  "status": "The README shows no release date, last commit, or changelog entry. Packaging in Debian 13, Ubuntu 25.04, Arch extra, and several other distributions suggests active upkeep, but I could not confirm recency from the README alone. Overall status: unknown, with signs of maintenance.",
+  "caveats": "Linux only, and the README says nothing about macOS or Homebrew, so the brew caveat in the metadata about $HOMEBREW_PREFIX/etc/keyd/default.conf is not something I could confirm from the source. Misconfiguration can make the machine unusable; the README's escape hatch is backspace+escape+enter, which terminates keyd. Wildcard [ids] * also matches devices like the Logitech MX Master that emit keys, so you may need to exclude them. The trackpad interference fix needs a libinput quirks file. Application-specific remapping is marked experimental. The README says the project will likely never be as configurable as kmonad, and it deliberately leaves out things like running arbitrary executables as root. The README warns that master may break between releases.",
+  "quotes": [
+   "Linux lacks a good key remapping solution.",
+   "keyd attempts to solve this problem by providing a flexible system wide daemon which remaps keys using kernel level input primitives (evdev, uinput).",
+   "Want to put the control and escape keys where God intended.",
+   "it supplies (in the author's opinion) the most valuable features in less than 2000 lines of C while providing a simple language agnostic config format."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repository)",
+    "url": "https://github.com/rvaiya/keyd"
+   },
+   {
+    "label": "Man page (docs/keyd.scdoc)",
+    "url": "https://raw.githubusercontent.com/rvaiya/keyd/refs/heads/master/docs/keyd.scdoc"
+   },
+   {
+    "label": "Changelog",
+    "url": "https://github.com/rvaiya/keyd/blob/master/docs/CHANGELOG.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/rvaiya/keyd (homepage, fetched OK, README returned in full)"
+  ]
+ }
+}

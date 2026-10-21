@@ -1,0 +1,97 @@
+{
+ "name": "rtp2httpd",
+ "desc": "Multicast RTP/RTSP-to-HTTP converter with web player and status dashboard",
+ "homepage": "https://rtp2httpd.com",
+ "installs_365d": 63,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol",
+  "tui"
+ ],
+ "why": "Bridges multicast RTP IPTV streams to HTTP, a real door into how multicast television travels over networks.",
+ "brief": {
+  "what_it_is": "rtp2httpd is an IPTV forwarding server written in C. It takes multicast RTP/UDP streams and RTSP streams from an IPTV network and re-serves them as ordinary HTTP unicast streams, so a normal browser or player can watch them. It can also reverse-proxy HLS sources from an internal IPTV network out to a LAN or the public internet. It includes a built-in web player, a live status dashboard at /status, and M3U playlist generation at /playlist.m3u. The README says it is a drop-in replacement for udpxy and msd_lite, and it is aimed at the Chinese mainland IPTV environment.",
+  "why_it_exists": "The README frames it as a way to get near set-top-box viewing quality on IPTV from ordinary devices, using carrier-grade FCC (Fast Channel Change) for quick channel switching. It positions itself as a lightweight, zero-dependency alternative to udpxy and msd_lite for routers, optical modems, NAS boxes and other embedded hardware.",
+  "how_it_works": "The server joins multicast groups, reads the RTP packets, and reorders out-of-order packets. It can apply Reed-Solomon FEC recovery where the upstream multicast supports it. It sends the result to HTTP clients over epoll-driven non-blocking IO, with multiple worker processes sharing multicast subscriptions and a preallocated buffer pool. For channel changes it uses the carrier's FCC server to get an IDR frame quickly so the player can decode immediately. The web player is pure front-end and does no transcoding, so the server's overhead is small.",
+  "commands_seen": [],
+  "install_notes": "The README gives no build or install commands. It points to a Quick Start guide for OpenWrt (https://rtp2httpd.com/guide/quick-start) and an installation page covering several platforms (https://rtp2httpd.com/guide/installation). I did not open those pages. Setup needs a working multicast IPTV feed on the network; the README recommends a separate IPTV setup tutorial for newcomers who are unfamiliar with DHCP authentication, routing, multicast and firewalls. The built-in player needs an M3U playlist configured first, then it is opened at http://<server:port>/player. Timeshift and catch-up need an RTSP catch-up source from the carrier. FCC fast switching needs a carrier FCC server address, and the README links a collection of regional FCC addresses. The brew formula installs an executable named rtp2httpd, and I did not verify the brew install path.",
+  "standout": "It is a small pure-C server with no dependencies, and the x86_64 binary is about 509KB with the whole web player bundled in. It implements FCC fast channel change, which is usually found only in carrier set-top boxes. It also reverse-proxies HLS, not just multicast. The author publishes a benchmark against udpxy, msd_lite and tvgate, claiming 25 simultaneous 1080p multicast streams at 8 Mbps each using about 25% of one core of an i3-N305 and 4MB of RAM. Those numbers are self-reported and I did not check them.",
+  "status": "Probably maintained, but I could not confirm dates. The README is detailed and current, and its sponsor banner references a 2026 September promotion, which suggests recent activity. I did not see a release date or last commit date in the fetched pages. The GitHub page returned the README only, so I did not check the commit history or release tags.",
+  "caveats": "Licensed under GPL v2.0. The README spells out that modified source must be published and that binaries must ship with source. Its features are tuned to Chinese mainland IPTV, and FCC fast switching only works with a carrier FCC server. FEC needs multicast upstream support. Fast switching is only noticeable in IPTV-optimised players; the README says PotPlayer and IINA will not show the difference. The built-in web player may show no audio or a black screen on some channels because of browser decoding limits. The README's performance figures come from the author. The README and homepage carry a sponsor advertisement for Token Unlimited, which is not part of the software. The README is in Chinese, with an English documentation site at https://rtp2httpd.com/en/.",
+  "quotes": [
+   "rtp2httpd \u662f\u4e00\u4e2a IPTV \u8f6c\u53d1\u670d\u52a1\u5668\uff0c\u652f\u6301\u5c06\u7ec4\u64ad RTP/UDP\u3001RTSP \u8f6c\u6362\u4e3a HTTP \u6d41\uff0c\u6216\u5c06 HLS \u6d41\u4ece\u5185\u7f51\u4ee3\u7406\u5230\u5916\u7f51\u3002",
+   "\u672c\u9879\u76ee\u4e13\u4e3a\u4e2d\u56fd\u5927\u9646 IPTV \u73af\u5883\u8fdb\u884c\u4f18\u5316\uff0c\u5b9e\u73b0\u4e86\u8fd0\u8425\u5546\u7ea7\u7684 FCC\uff08Fast Channel Change\uff09\u5feb\u901f\u6362\u53f0\u534f\u8bae\uff0c\u53ef\u4f5c\u4e3a `udpxy` \u548c `msd_lite` \u7684\u65e0\u7f1d\u66ff\u4ee3\uff0c\u4e3a IPTV \u7528\u6237\u63d0\u4f9b\u63a5\u8fd1\u539f\u751f\u673a\u9876\u76d2\u7684\u89c2\u770b\u4f53\u9a8c\u3002",
+   "\u7eaf C \u8bed\u8a00\u7f16\u5199\uff0c\u96f6\u4f9d\u8d56\uff0c\u5c0f\u5de7\u7b80\u6d01\uff0c\u9002\u5408\u8fd0\u884c\u5728\u5404\u79cd\u5d4c\u5165\u5f0f\u8bbe\u5907\u4e0a\uff08\u8def\u7531\u5668\u3001\u5149\u732b\u3001NAS \u7b49\uff09"
+  ],
+  "links": [
+   {
+    "label": "Project homepage and docs",
+    "url": "https://rtp2httpd.com"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/stackia/rtp2httpd"
+   },
+   {
+    "label": "Performance benchmark report",
+    "url": "https://rtp2httpd.com/reference/benchmark"
+   }
+  ],
+  "fetch_log": [
+   "https://rtp2httpd.com: worked. Returned the Chinese homepage with feature list and links, but no install commands.",
+   "https://rtp2httpd.com/llms.txt: worked. Returned the table of contents for the documentation. The guide pages it lists were not fetched.",
+   "https://github.com/stackia/rtp2httpd: worked. Returned the README, which is in Chinese and contains no shell command lines. The URL was inferred from the homepage's GitHub link and the project name."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A niche IPTV bridge becomes a window into multicast delivery, packet recovery, and carrier fast-channel-change protocols\u2014not merely another generic stream proxy."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "rtp2httpd",
+  "tldr": "A tiny C server that turns carrier multicast IPTV streams into plain HTTP, so any browser or player can watch what a set-top box would.",
+  "deeper_look": "rtp2httpd joins multicast groups on an IPTV network, reads the RTP packets, puts out-of-order ones back in sequence, and re-serves the stream as ordinary HTTP unicast. It can also reverse-proxy HLS sources from an internal IPTV network out to a LAN or the internet. It ships with a web player, a status dashboard at `/status`, and M3U playlist generation at `/playlist.m3u`.\n\nIt exists because multicast television works nicely inside a carrier network and not at all in a browser. The README pitches it as a zero-dependency replacement for udpxy and msd_lite, small enough for routers, optical modems and NAS boxes. It is tuned for Chinese mainland IPTV, and the README is written in Chinese; English docs are at rtp2httpd.com/en/.\n\nThe idea underneath is how TV is delivered over IP. One sender, many receivers, with the network copying packets only where needed. The server also implements FCC (Fast Channel Change), where a carrier server hands the client an IDR frame at once so video appears without waiting for the next keyframe. That trick is usually locked inside set-top boxes. It can also apply Reed-Solomon FEC recovery when the upstream multicast supports it.\n\nInternally it uses epoll-driven non-blocking IO, several worker processes sharing multicast subscriptions, and a preallocated buffer pool. The web player is pure front-end and does no transcoding, which keeps the server light.",
+  "install": "brew install rtp2httpd\n# Useful output needs a working multicast IPTV feed on your network. The brew install path was not verified; the project's own guides cover OpenWrt and other platforms: https://rtp2httpd.com/guide/installation",
+  "try_this": [
+   {
+    "cmd": "rtp2httpd --help",
+    "what_happens": "Lists the server's command-line options so you can see how listening ports and config are set."
+   }
+  ],
+  "whats_unique": "It carries carrier-grade fast channel change and Reed-Solomon FEC in a pure-C, zero-dependency binary of about 509KB with the web player bundled in. Most udpxy-style tools only forward packets.",
+  "caveats": "Without a multicast IPTV feed there is nothing to watch, FCC needs a carrier FCC server, and the features are tuned for Chinese mainland IPTV; the benchmark figures are the author's own.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "multicast",
+   "iptv",
+   "rtp",
+   "rtsp",
+   "network",
+   "protocol"
+  ],
+  "links": [
+   {
+    "label": "Project homepage and docs",
+    "url": "https://rtp2httpd.com"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/stackia/rtp2httpd"
+   },
+   {
+    "label": "Performance benchmark report",
+    "url": "https://rtp2httpd.com/reference/benchmark"
+   }
+  ]
+ }
+}

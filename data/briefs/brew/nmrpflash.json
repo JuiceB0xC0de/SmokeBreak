@@ -1,0 +1,81 @@
+{
+ "name": "nmrpflash",
+ "desc": "Netgear Unbrick Utility",
+ "homepage": "https://github.com/jclehner/nmrpflash",
+ "installs_365d": 618,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "network",
+  "reverse-engineering",
+  "protocol"
+ ],
+ "why": "Talks the NMRP recovery protocol to rescue bricked Netgear routers, a hidden bootloader door you can actually walk through.",
+ "brief": {
+  "what_it_is": "nmrpflash is a command-line utility that pushes a firmware image onto a Netgear router over Ethernet using Netgear's NMRP recovery protocol, which the device's bootloader listens for. You give it a network interface connected directly to the router and a firmware file (typically .chk, .bin, .trx or .img, extracted from the Netgear download zip). It advertises an NMRP server, assigns the router a temporary IP, uploads the image via TFTP, and then reports when it is safe to reboot. It runs on Linux, macOS, Windows, the BSDs and other POSIX systems.",
+  "why_it_exists": "The README frames it as a way to recover Netgear devices that have been bricked, using Netgear's NMRP protocol to flash a new firmware image to a compatible device. Its title is 'Netgear Unbrick Utility'.",
+  "how_it_works": "After you start nmrpflash on a chosen interface and then power on the router, the tool advertises an NMRP server on that link and answers the router's configuration request by assigning it an IP (default 10.164.183.252, with the host side at 10.164.183.253). It then receives the router's upload request and sends the firmware over TFTP, printing progress and keep-alive messages. Once the transfer finishes, the router may spend many minutes writing to flash, and the tool prints 'Reboot your device now.' only when the process is done.",
+  "commands_seen": [
+   {
+    "cmd": "nmrpflash -L",
+    "context": "Lists the network interfaces on the machine so you can find the one wired to the router."
+   },
+   {
+    "cmd": "nmrpflash -i eth2 -f EX2700-V1.0.1.8.img",
+    "context": "Example invocation: waits on interface eth2 for the router to appear, then uploads the given firmware file. Turn the router off first, then power it on when the 'Waiting for Ethernet connection' message appears."
+   },
+   {
+    "cmd": "sudo apt install libpcap libnl-3",
+    "context": "Installs the runtime libraries on Debian-based distros (such as Ubuntu) so the Linux binary will start."
+   },
+   {
+    "cmd": "sudo apt install libpcap-dev libnl-3-dev libnl-route-3-dev",
+    "context": "Installs the development packages needed before building from source on Linux."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds nmrpflash from source on Linux, Mac OS X and BSDs after the dev packages are installed."
+   },
+   {
+    "cmd": "C:\\> net stop npcap",
+    "context": "Windows fix for 'No suitable network interfaces found'; run as administrator, paired with the start command below."
+   },
+   {
+    "cmd": "C:\\> net start npcap",
+    "context": "Restarts the Npcap service after the stop command, run as administrator."
+   }
+  ],
+  "install_notes": "Homebrew is the README's preferred route on Linux and macOS. On Windows you need Npcap installed with the 'WinPcap Compatibility' option enabled, and prebuilt binaries are on the GitHub releases page. A FreeBSD package exists in the ports tree. On Linux you need libpcap and libnl-3 at runtime. Building from source on Windows uses the included CodeBlocks project file (nmrpflash.cbp) and requires the Npcap SDK extracted into an Npcap folder in the source root. Before flashing, you extract the firmware from the Netgear zip, and you connect the router to the computer with an Ethernet cable on the LAN port labeled 1 (often blue).",
+  "standout": "It turns a router's built-in recovery mode into a scripted, cross-platform push: the tool impersonates the recovery server, assigns addresses on both ends, and walks you through the power-on timing. The README is unusually practical, with a long troubleshooting section that explains each error message and what to do about it.",
+  "status": "maintained. The GitHub releases page shows nmrpflash 0.9.27 as Latest, dated '05 Mar' (the year was not visible in the fetched text), and reports 4 commits to master since that release. The README also lists a FreeBSD port and a Homebrew formula.",
+  "caveats": "Tested on a specific list of models (D7000, DC112A, DNG3700v2, EX2700, R7000, RAX75, WNDR3800 and others), and the README says other Netgear devices are only 'likely' to work. Some devices need the reset button held while powering on. Flashing can take 15 minutes or more, and the router must not be rebooted until the tool says so. TFTP uploads are limited to about 32 MiB, so larger images may fail. Windows needs Npcap, and version 0.9.13 was the last to support Windows XP. macOS Gatekeeper may block the binary. The README notes that the bootloader itself may be bricked or the device may not support NMRP at all. The README says nothing about risks from flashing the wrong image.",
+  "quotes": [
+   "nmrpflash uses Netgear's NMRP protocol to flash a new firmware image to a compatible device.",
+   "On Linux and macOS, Homebrew is the preferred method of installation!",
+   "Do not reboot your device at this time, because flashing is probably still in progress (sometimes indicated by flashing LEDs).",
+   "Only when nmrpflash says Reboot your device now. you can assume that the process has finished."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README (homepage)",
+    "url": "https://github.com/jclehner/nmrpflash"
+   },
+   {
+    "label": "Latest release (prebuilt binaries)",
+    "url": "https://github.com/jclehner/nmrpflash/releases/latest"
+   },
+   {
+    "label": "NMRP protocol write-up (archived)",
+    "url": "https://web.archive.org/web/www.chubb.wattle.id.au/PeterChubb/nmrp.html"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/jclehner/nmrpflash: worked, README returned in full",
+   "https://github.com/jclehner/nmrpflash/releases/latest: worked, used only for the release version and date (0.9.27, 05 Mar, year not shown)"
+  ]
+ }
+}

@@ -1,0 +1,144 @@
+{
+ "name": "imessage-exporter",
+ "desc": "Command-line tool to export and inspect local iMessage database",
+ "homepage": "https://github.com/ReagentX/imessage-exporter",
+ "installs_365d": 7230,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "tui",
+  "reverse-engineering"
+ ],
+ "why": "Opens and inspects the hidden local iMessage database, a good look at how a consumer app stores data.",
+ "brief": {
+  "what_it_is": "imessage-exporter is a Rust command-line tool, also published as a library crate, that reads the local iMessage database (on a Mac, chat.db) or an iOS device backup directory. It exports conversations to txt or html, with optional copying and conversion of attachments, and it can run diagnostics on the database. The README says the binary performs read-only operations. Output goes to ~/imessage_export by default, or to a directory you choose with -o.",
+  "why_it_exists": "The README frames it as a way to save, back up, archive and migrate iMessage history in open, portable formats, giving users \"full ownership and control over your communication history.\" It also lists data-retention and legal-compliance use. The stated aim is \"the most comprehensive and accurate representation of iMessage data available.\"",
+  "how_it_works": "The tool opens the SQLite message database and maps handles (phone numbers and emails) to names using the macOS Address Book or a contacts database found in an iOS backup. It then renders each conversation as txt or html, and can copy attachments and convert formats such as HEIC to JPEG and CAF or MOV to MP4. The README says its reverse engineering drew on the typedstream format and the payload_data plist format, and it credits SQLiteFlow and Xplist for that work.",
+  "commands_seen": [
+   {
+    "cmd": "cargo install --locked imessage-exporter",
+    "context": "Recommended install from crates.io; the README says this is the best way for normal use."
+   },
+   {
+    "cmd": "brew install imessage-exporter",
+    "context": "Homebrew install; the README warns the Homebrew version may lag the latest release."
+   },
+   {
+    "cmd": "brew upgrade",
+    "context": "Upgrade step for the Homebrew install."
+   },
+   {
+    "cmd": "imessage-exporter -f html -c full",
+    "context": "Exports as html from the default database location to the home directory, copying attachments in web-compatible formats."
+   },
+   {
+    "cmd": "imessage-exporter -f txt -o output -c clone",
+    "context": "Exports as txt into a folder called output in the current directory, copying attachments in their original formats."
+   },
+   {
+    "cmd": "imessage-exporter -f txt -p ~/iphone_backup_latest -a iOS -o backup_export",
+    "context": "Exports as txt from an iPhone backup directory, with the platform set to iOS."
+   },
+   {
+    "cmd": "imessage-exporter -f html -c disabled -p /Volumes/external/chat.db -o /Volumes/external/export",
+    "context": "Exports as html from a chat.db file on an external drive without copying attachments."
+   },
+   {
+    "cmd": "imessage-exporter -f txt -o ~/export-2020 -s 2020-01-01 -e 2021-01-01 -a macOS",
+    "context": "Exports one year of messages as txt using the start and end date filters, with the platform set to macOS."
+   },
+   {
+    "cmd": "imessage-exporter -f html -c clone -t \"5558675309\"",
+    "context": "Exports only the conversation with one phone number, copying attachments in original formats."
+   },
+   {
+    "cmd": "imessage-exporter -f txt -t \"Steve Jobs\"",
+    "context": "Exports only conversations matching a contact name, without attachments."
+   }
+  ],
+  "install_notes": "Install with Cargo (Rust toolchain required). The README also covers upgrading and uninstalling via cargo, and removing Rust with rustup self uninstall. Prebuilt binaries for Apple Silicon and Intel Macs are on the GitHub releases page. To build from source, clone the repository and run cargo run --release. For HTML exports read from ~/Library, Safari needs permission to read local files and the browser needs Full Disk Access in System Settings, unless a valid --copy-method is passed. On non-macOS platforms, ImageMagick is needed for image conversion and ffmpeg for audio and video. Encrypted iOS backups prompt for a password unless one is given.",
+  "standout": "It is a read-only, cross-platform exporter built on a reverse-engineered model of a closed Apple database, and it ships as both a CLI and a reusable Rust library. The README's feature list is long and specific, covering tapbacks, edited messages, Digital Touch, and handwritten messages.",
+  "status": "unknown. The fetched pages show no release date, last-commit date or changelog, so I could not confirm recency. The README does claim support for macOS Golden Gate 27.0.1 and iOS 27.0.1, which suggests it is being kept current, but that is not verified.",
+  "caveats": "The README says PDF export does not work well: the author could not get it to work reasonably, and the advice is to print to PDF from Safari. Passing a password with -x is visible in the process table and shell history. HTML exports that point at files in ~/Library need Full Disk Access or a copy method. The README credits a Linux and Windows build but the message database itself comes from a Mac or an iOS backup, so those platforms need an exported chat.db or a backup. The --use-message-times option has timestamp caveats: it only sets creation times on macOS and Windows. The README shows no license in the fetched text.",
+  "quotes": [
+   "The aim of this project is to provide the most comprehensive and accurate representation of iMessage data available.",
+   "The `imessage-exporter` binary exports iMessage data to `txt` or `html` formats. It can also run diagnostics to find problems with the iMessage database.",
+   "A password provided with this option is visible on screen, in the process table, and in your shell history"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/ReagentX/imessage-exporter"
+   },
+   {
+    "label": "Binary documentation (flags and install)",
+    "url": "https://github.com/ReagentX/imessage-exporter/blob/develop/imessage-exporter/README.md"
+   },
+   {
+    "label": "FAQ",
+    "url": "https://github.com/ReagentX/imessage-exporter/blob/develop/docs/faq.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/ReagentX/imessage-exporter (homepage, worked: README returned)",
+   "https://github.com/ReagentX/imessage-exporter/blob/develop/imessage-exporter/README.md (binary README, linked from the homepage, worked: full flag reference and examples; the page text had GitHub chrome around it)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A useful window into Apple\u2019s opaque message store, built on reverse-engineered formats; more than a routine export utility."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "imessage-exporter",
+  "tldr": "A read-only Rust tool that opens the local iMessage SQLite database, or an iPhone backup, and exports your conversations to plain text or HTML.",
+  "deeper_look": "imessage-exporter reads the iMessage database on a Mac (chat.db) or inside an iOS device backup, and writes each conversation out as txt or html. It can copy attachments and convert them along the way: HEIC to JPEG, CAF or MOV to MP4. It also has a diagnostics mode that looks for problems in the database. The README says the binary only performs read-only operations.\n\nThe project exists so people can save, back up, archive and migrate their message history in open formats. The README puts it as \"full ownership and control over your communication history\", and its stated aim is \"the most comprehensive and accurate representation of iMessage data available.\"\n\nThe interesting part is what sits underneath. A closed consumer app keeps your conversations in an ordinary SQLite file. Handles are phone numbers and emails, and the tool maps them to names through the Address Book or a backup's contacts database. Newer message features are stored in less obvious blobs. The README says the author reverse engineered the typedstream format and the payload_data plist format to decode them, crediting SQLiteFlow and Xplist. It covers tapbacks, edited messages, Digital Touch and handwritten messages.\n\nIt is also published as a library crate, so the same decoding work can be reused in other Rust programs.",
+  "install": "brew install imessage-exporter\n# The README recommends `cargo install --locked imessage-exporter` for normal use, since the Homebrew version may lag the latest release. Cargo needs a Rust toolchain.\n# Needs a Mac's chat.db or an iOS backup to read. On non-macOS platforms, ImageMagick is needed for image conversion and ffmpeg for audio and video.",
+  "try_this": [
+   {
+    "cmd": "imessage-exporter --help",
+    "what_happens": "Prints the full flag reference: formats, attachment copy methods, date filters, platform and path options."
+   },
+   {
+    "cmd": "imessage-exporter -f txt -o output -c clone",
+    "what_happens": "Exports every conversation as text into ./output, copying attachments in their original formats."
+   },
+   {
+    "cmd": "imessage-exporter -f txt -o ~/export-2020 -s 2020-01-01 -e 2021-01-01 -a macOS",
+    "what_happens": "Exports only messages from 2020 as text, using the start and end date filters."
+   }
+  ],
+  "whats_unique": "It is a read-only exporter built on a reverse-engineered model of a closed Apple database, and it ships as both a CLI and a reusable Rust library. Its feature list is long and specific, down to tapbacks and handwritten messages.",
+  "caveats": "On a Mac, the terminal needs Full Disk Access to read the database, PDF export does not work well (the README suggests printing to PDF from Safari), and a password passed with -x is visible in the process table and shell history.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "sqlite",
+   "reverse-engineering",
+   "rust",
+   "macos",
+   "ios",
+   "backup"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/ReagentX/imessage-exporter"
+   },
+   {
+    "label": "Binary documentation (flags and install)",
+    "url": "https://github.com/ReagentX/imessage-exporter/blob/develop/imessage-exporter/README.md"
+   },
+   {
+    "label": "FAQ",
+    "url": "https://github.com/ReagentX/imessage-exporter/blob/develop/docs/faq.md"
+   }
+  ]
+ }
+}

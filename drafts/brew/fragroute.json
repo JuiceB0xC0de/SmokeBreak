@@ -1,0 +1,72 @@
+{
+ "name": "fragroute",
+ "desc": "Intercepts, modifies and rewrites egress traffic for a specified host",
+ "homepage": "https://www.monkey.org/~dugsong/fragroute/",
+ "installs_365d": 39,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "Rewrites and fragments outgoing packets, a hands-on door into how IDS evasion and TCP fragmentation actually work.",
+ "brief": {
+  "what_it_is": "fragroute is a command-line tool that intercepts outbound (egress) traffic destined for a specified host and rewrites it according to a small ruleset language. The ruleset can delay, duplicate, drop, fragment, overlap, print, reorder, segment, source-route, or otherwise alter each outgoing packet, with minimal support for randomized or probabilistic behaviour. The page names libdnet, libpcap, and libevent as required libraries. It implements most of the attacks described in the 1998 Secure Networks paper \"Insertion, Evasion, and Denial of Service: Eluding Network Intrusion Detection.\"",
+  "why_it_exists": "The author wrote it to help test network intrusion detection systems, firewalls, and basic TCP/IP stack behaviour. The page says it was \"written in good faith to aid in the testing of network intrusion detection systems, firewalls, and basic TCP/IP stack behaviour.\"",
+  "how_it_works": "The homepage does not explain the internals. It says the tool intercepts and modifies egress packets bound for one target host, and that the behaviour is driven by a ruleset file. The homepage does not describe the ruleset syntax, so the fragroute(8) manpage would be needed for details.",
+  "commands_seen": [],
+  "install_notes": "The page lists the download as fragroute-1.2.tar.gz, so it is built from source rather than installed from a package. Required libraries are libdnet, libpcap, and libevent (libevent is needed on non-Windows platforms only). Supported platforms are BSD (OpenBSD, FreeBSD, NetBSD, BSD/OS, Mac OS X), Linux, Solaris, and Windows 2000. On Solaris, a TUN/TAP driver is listed for sparc64 and x86. On Windows 2000, the page says the CIPE-Win32 driver is required for fragroute, and WinPcap is required for fragtest. An OpenBSD earlier than 3.1 needs a loopback MTU patch. Build steps are in an INSTALL document the page links to, which I did not fetch.",
+  "standout": "It is a hands-on way to see how IP fragmentation, TCP segmentation, overlapping fragments, and reordering can evade IDS reassembly. Because it rewrites real outbound packets rather than simulating them, it can test how a target device handles them. The author also lists ideas such as simulating one-way latency, loss, and retransmissions, and evading passive OS fingerprinting.",
+  "status": "Unknown. The homepage shows the current version as 1.2 but gives no release date, last commit, or changelog. The references to 1998 and Windows 2000 suggest the project is old, and the page reads as a long-stable personal distribution page rather than an active project. I did not check a source repository for recent activity.",
+  "caveats": "The author's note says \"Please do not abuse this software.\" The page gives no license. The platform list is dated and includes components such as CIPE-Win32, WinPcap, and the Solaris TUN/TAP driver, so a modern system may need substitutes or patches. The homepage mentions a TCP Daytona implementation that the author will not release. The homepage was reachable, but the INSTALL, fragroute(8), and fragtest(8) pages were not fetched, so details on ruleset syntax and build steps are missing from these notes.",
+  "quotes": [
+   "fragroute intercepts, modifies, and rewrites egress traffic destined for a specified host, implementing most of the attacks described in the Secure Networks \"Insertion, Evasion, and Denial of Service: Eluding Network Intrusion Detection\" paper of January 1998.",
+   "It features a simple ruleset language to delay, duplicate, drop, fragment, overlap, print, reorder, segment, source-route, or otherwise monkey with all outbound packets destined for a target host",
+   "This tool was written in good faith to aid in the testing of network intrusion detection systems, firewalls, and basic TCP/IP stack behaviour.  Please do not abuse this software."
+  ],
+  "links": [
+   {
+    "label": "fragroute homepage",
+    "url": "https://www.monkey.org/~dugsong/fragroute/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.monkey.org/~dugsong/fragroute/ - fetched OK; page is a project homepage with an abstract, download list, platform list, and links to INSTALL and manpages (no URLs given in the text, so not followed)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It lets you rewrite real outbound packets\u2014fragmenting, overlapping, and reordering them\u2014to explore how IDS systems and TCP/IP stacks handle evasive traffic."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "fragroute",
+  "tldr": "A packet-mangling tool that rewrites your outgoing traffic to one host, fragmenting, reordering, and overlapping packets to show how intrusion detection systems get fooled.",
+  "deeper_look": "fragroute sits between your machine and a chosen target host and intercepts everything you send to it. A small ruleset language tells it what to do with each outbound packet: delay, duplicate, drop, fragment, overlap, print, reorder, segment, source-route, or otherwise alter it. The target still receives your traffic, only chopped up and shuffled.\n\nThe author wrote it to test network intrusion detection systems, firewalls, and basic TCP/IP stack behaviour. It implements most of the attacks in the January 1998 Secure Networks paper \"Insertion, Evasion, and Denial of Service: Eluding Network Intrusion Detection.\" The core idea from that paper is that a monitoring device has to reassemble packets the way the real destination will. If it guesses differently about overlapping fragments or out-of-order segments, an attacker can show the monitor one stream and the host another.\n\nBecause it rewrites real packets instead of simulating them, you can watch how an actual stack reacts to odd but legal traffic. The homepage also lists ideas such as simulating one-way latency, loss, and retransmission, and evading passive OS fingerprinting. The homepage does not explain the ruleset syntax or the internals. For that you need the fragroute(8) manpage, which the brief did not cover.",
+  "install": "brew install fragroute\n# Homebrew installs libdnet and libevent as dependencies. Upstream builds from source (fragroute-1.2.tar.gz) and also lists libpcap. Packet interception generally needs root.",
+  "try_this": [],
+  "whats_unique": "It rewrites live outbound packets for a single host using a tiny ruleset language, which makes the 1998 IDS evasion paper something you can reproduce rather than just read.",
+  "caveats": "The software and its platform notes are old (1998-era references, Windows 2000 drivers), the homepage gives no release date or license, and the author asks you not to abuse it, so only use it on hosts you are allowed to test.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "network",
+   "protocol",
+   "ip-fragmentation",
+   "ids-evasion",
+   "old"
+  ],
+  "links": [
+   {
+    "label": "fragroute homepage",
+    "url": "https://www.monkey.org/~dugsong/fragroute/"
+   }
+  ]
+ }
+}

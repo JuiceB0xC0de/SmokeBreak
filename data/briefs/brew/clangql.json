@@ -1,0 +1,86 @@
+{
+ "name": "clangql",
+ "desc": "Run a SQL like language to perform queries on C/C++ files",
+ "homepage": "https://amrdeveloper.github.io/ClangQL/",
+ "installs_365d": 375,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "language",
+  "library"
+ ],
+ "why": "Querying C and C++ source with a SQL-like language is a neat transform that turns code into a database to poke at.",
+ "brief": {
+  "what_it_is": "ClangQL is a command-line tool that runs SQL-like queries against C and C++ source files instead of a database. You pass it source files with -f, or a query with -q, or a script file with -s. Results come out as a rendered table, JSON, or CSV, and it can paginate output or print a query analysis. Queries run over tables such as functions and globals, and there are functions like m_constructor() and m_pure_virtual() for filtering by declaration properties. It is built on the GitQL SDK and uses Clang's AST.",
+  "why_it_exists": "The README frames it as a way to run SQL-like queries on C/C++ code instead of database files, using the GitQL SDK.",
+  "how_it_works": "ClangQL parses the given C/C++ files with Clang and exposes the AST as queryable tables (for example functions and globals with columns such as name, source_loc, return_type, and is_volatile). The GitQL SDK evaluates the SQL-like query over those tables. The README does not go into more detail than that.",
+  "commands_seen": [
+   {
+    "cmd": "cargo install clangql",
+    "context": "Install from Cargo (crates.io); requires LibClang 17 per the README."
+   },
+   {
+    "cmd": "brew install clangql",
+    "context": "Install from Homebrew."
+   },
+   {
+    "cmd": "git clone https://github.com/AmrDeveloper/clangql.git",
+    "context": "First step of building from source."
+   },
+   {
+    "cmd": "cargo build",
+    "context": "Builds ClangQL from the cloned source directory."
+   },
+   {
+    "cmd": "SELECT name, source_loc FROM functions WHERE m_function(ast_function, (m_public() && m_constructor()) || m_default_constructor());",
+    "context": "Sample query listing public constructors or default constructors among functions."
+   },
+   {
+    "cmd": "SELECT COUNT(name) from functions WHERE return_type = \"int\"",
+    "context": "Sample query counting functions that return int."
+   },
+   {
+    "cmd": "SELECT DISTINCT name AS function_name FROM functions",
+    "context": "Sample query listing distinct function names with an alias."
+   },
+   {
+    "cmd": "SELECT name, source_loc FROM functions WHERE m_function(ast_function, m_pure_virtual());",
+    "context": "Sample query finding pure virtual functions."
+   },
+   {
+    "cmd": "SELECT * FROM globals WHERE is_volatile",
+    "context": "Sample query finding volatile global variables."
+   },
+   {
+    "cmd": "SELECT 1 + 2",
+    "context": "Sample showing the language can evaluate plain expressions, not only table queries."
+   }
+  ],
+  "install_notes": "Installing from Cargo.io or building from source requires LibClang 17 to be installed. Homebrew is the simplest route. The README gives no account, licence key, or first-run configuration steps. The -ps/--pagesize option defaults to 10.",
+  "standout": "It points a SQL-style query language at source code, so you can ask questions of a C or C++ codebase like a database, with predicates such as m_constructor() and m_pure_virtual() for declaration properties. It reuses the GitQL SDK rather than building its own query engine.",
+  "status": "unknown. The README has a crates.io version badge and a GitHub issues badge but no release date, changelog, or last-commit information. The homepage is the default MkDocs placeholder page, which suggests the docs site was never filled in. I could not confirm whether the project is actively maintained.",
+  "caveats": "The homepage is the stock MkDocs 'Welcome to MkDocs' placeholder, so the README is the only real documentation I found. Building from source or installing via Cargo needs LibClang 17 installed; the Homebrew route avoids that step, but the README does not say whether the brew formula bundles it. Licence is MIT (Copyright 2024 Amr Hesham). The README gives no information on supported platforms, performance on large codebases, or the full list of tables and m_ predicates.",
+  "quotes": [
+   "ClangQL is a tool that allow you to run SQL-like query on C/C++ Code instead of database files using the GitQL SDK.",
+   "Note that all Keywords in ClangQL are case-insensitive, similar to SQL.",
+   "Note that Building from source or installing from Cargo.io requires LibClang 17 to be installed"
+  ],
+  "links": [
+   {
+    "label": "Homepage (MkDocs placeholder page)",
+    "url": "https://amrdeveloper.github.io/ClangQL/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/amrdeveloper/ClangQL"
+   }
+  ],
+  "fetch_log": [
+   "https://amrdeveloper.github.io/ClangQL/ - fetched, but returned only the default MkDocs 'Welcome to MkDocs' placeholder with no ClangQL content",
+   "https://github.com/amrdeveloper/ClangQL - fetched successfully; README returned and used as the main source"
+  ]
+ }
+}

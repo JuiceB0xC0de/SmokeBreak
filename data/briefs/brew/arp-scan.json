@@ -1,0 +1,85 @@
+{
+ "name": "arp-scan",
+ "desc": "ARP scanning and fingerprinting tool",
+ "homepage": "https://github.com/royhills/arp-scan",
+ "installs_365d": 7762,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "A direct door into ARP, showing how devices on your LAN announce themselves and how fingerprinting reads their replies.",
+ "brief": {
+  "what_it_is": "arp-scan is a command-line network scanning tool that uses the ARP protocol to discover and fingerprint IPv4 hosts on the local network. It is written in C and runs on Linux, BSD, macOS and Solaris under GPLv3. The package also installs three helper scripts: arp-fingerprint, get-oui and get-iab. The README does not say in detail what output format arp-scan produces, so check the manual page for that.",
+  "why_it_exists": "The README gives no explicit motivation. It describes the project only as a tool to discover and fingerprint IPv4 hosts on the local network using ARP.",
+  "how_it_works": "The README does not explain the mechanism in detail. It says arp-scan uses the ARP protocol to discover hosts and fingerprint them, and that the Perl scripts arp-fingerprint and get-oui handle fingerprinting and OUI vendor lookups. Packaging notes mention that it needs libpcap for raw packet capture and can use libcap POSIX.1e capabilities on Linux.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/royhills/arp-scan.git",
+    "context": "Obtains the latest source code from GitHub."
+   },
+   {
+    "cmd": "autoreconf --install",
+    "context": "Generates the configure script from the automake and autoconf files. Needed when building from git; the release tarball already includes configure."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Creates a makefile for the local system. Accepts options such as --with-libcap, and ./configure --help lists them."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the project."
+   },
+   {
+    "cmd": "make check",
+    "context": "Optional. Runs the test suite to verify that everything works as expected."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs arp-scan. The README notes you need root or sudo/doas for this step."
+   },
+   {
+    "cmd": "arp-scan --help",
+    "context": "Shows usage information."
+   },
+   {
+    "cmd": "arp-scan --version",
+    "context": "Shows the installed version, for comparing against the NEWS and ChangeLog files on GitHub."
+   }
+  ],
+  "install_notes": "Building from git needs GNU automake and autoconf, a make utility, a C99 compiler (gcc or clang tested), and libpcap 1.5 or later with development headers. libcap development headers are optional, and enable POSIX.1e capabilities on Linux (kernel 2.6.24 or later). The perl and scripts arp-fingerprint and get-oui also need the perl interpreter and the Perl modules LWP::UserAgent and Text::CSV. If autoreconf is not available, the README points to the release tarball arp-scan-1.10.0.tar.gz, which is older than the git version. Binary packages from distributions and BSD ports are also available. During make install, the install-exec-hook gives the binary CAP_NET_RAW if it can, and otherwise installs it setuid root.",
+  "standout": "It is a direct way to see how ARP works on your own LAN: it sends ARP requests and reads the replies, and the fingerprinting step interprets those replies. The install hook that tries to grant CAP_NET_RAW before falling back to setuid root is a deliberate least-privilege choice.",
+  "status": "Appears maintained. The README is for version 1.10.1-git, and the repository has active build, coverage and CodeQL badges. I did not check release dates or recent commits, so exact recency is unknown.",
+  "caveats": "Building from source needs autotools and libpcap development headers. The Perl helper scripts need extra modules. The README says Solaris 11 has known problems. It also says that if configure reports an unsupported OS, the project should be asked to port. The fallback to setuid root on installs without capabilities is a security trade-off. The README lists the release tarball as older than the git version.",
+  "quotes": [
+   "arp-scan is a network scanning tool that uses the ARP protocol to discover and fingerprint IPv4 hosts on the local network.",
+   "Note that Makefile.am contains an install-exec-hook that will install arp-scan with CAP_NET_RAW capabilities if it can, and failing that it will install it suid root.",
+   "For detailed information, see the manual pages: arp-scan(1), arp-fingerprint(1), get-oui(1) and mac-vendor(5)."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/royhills/arp-scan"
+   },
+   {
+    "label": "Wiki",
+    "url": "https://github.com/royhills/arp-scan/wiki"
+   },
+   {
+    "label": "Release tarball 1.10.0",
+    "url": "https://github.com/royhills/arp-scan/releases/download/1.10.0/arp-scan-1.10.0.tar.gz"
+   },
+   {
+    "label": "NEWS",
+    "url": "https://github.com/royhills/arp-scan/blob/master/NEWS.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/royhills/arp-scan (homepage, GitHub README) - worked"
+  ]
+ }
+}

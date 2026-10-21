@@ -1,0 +1,53 @@
+{
+ "name": "scrub",
+ "desc": "Writes patterns on magnetic media to thwart data recovery",
+ "homepage": "https://github.com/chaos/scrub",
+ "installs_365d": 62,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "science",
+  "needs-hardware"
+ ],
+ "why": "Implements DoD and Gutmann-style overwrite patterns on magnetic media, a concrete look at how data persistence and recovery actually work.",
+ "brief": {
+  "what_it_is": "Scrub is a command-line tool that overwrites files or disk devices with patterns over several passes, so the original data is harder to recover. It accepts a raw block or character device (where it destroys all data on the disk), a regular file (where it destroys that file's data and optionally its name), or a directory mode (-X) that fills free space with files and then scrubs them. Its output is progress lines for each pass, such as random, 0x00 and verify, reported as it runs.",
+  "why_it_exists": "The README frames it as a way to make 'retrieving the data more difficult' and documents standard overwrite schemes (NNSA, DoD 5220.22-M, BSI, Gutmann, Schneier, Pfitzner, US Army) for people who need to sanitize media. It is explicit that it is not a guarantee: 'If you need this level of protection, physical destruction is your best bet.'",
+  "how_it_works": "Scrub iteratively writes patterns to the target, choosing a method by name (default NNSA, which is random twice, then 0x00, then verify). Each method is a fixed sequence of fixed bytes, complements, or pseudorandom passes, and the final verify pass reads back to check. Scrubbing a whole raw device is the most effective mode; scrubbing a regular file depends on the filesystem's behaviour, which the README warns can defeat it on journaled, log-structured, copy-on-write, versioned, and network filesystems.",
+  "commands_seen": [
+   {
+    "cmd": "# scrub /dev/sdf1",
+    "context": "Scrubs the raw device /dev/sdf1 using the default NNSA patterns. The README shows it with a root prompt (#) and then the program's progress output, which includes a warning to verify the device size before continuing."
+   }
+  ],
+  "install_notes": "The README gives no build or install steps and nothing beyond the Homebrew formula. Running it against a block device needs root privileges, as the example's # prompt implies. The README does not describe any configuration or first-run steps.",
+  "standout": "It is a small, direct implementation of the published overwrite standards, with the methods named after their sources and the Gutmann 35-pass sequence included. Its caveats are unusually candid: it says which filesystems defeat file-level scrubbing, and that spared blocks are out of its reach, and it points to ATA security erase, hdparm, and HDDERASE for those cases.",
+  "status": "unknown. The README has no release date, changelog, or version note, and I did not fetch the commit history or releases page. The README cites 2006 and 2008 sources and carries a UCRL-CODE-2003-006 identifier, which suggests an older project, but I could not confirm recent activity.",
+  "caveats": "Scrubbing regular files through a filesystem may not reach all the data on journaled, log-structured, copy-on-write, versioned, or network filesystems; the README says to scrub the raw disk device when in doubt. Blocks spared out by the disk controller cannot be reached. The SCSI equivalent of ATA security erase is optional and not widely implemented. The tool may not stop a lab-level recovery effort. On macOS HFS it only handles the traditional data and resource forks. Licensed GPL-2.0-or-later. The Homebrew formula's caveats field is empty.",
+  "quotes": [
+   "Scrub iteratively writes patterns on files or disk devices to make retrieving the data more difficult.",
+   "Scrub may be insufficient to thwart heroic efforts to recover data in an appropriately equipped lab.",
+   "If in doubt, scrub the raw disk device."
+  ],
+  "links": [
+   {
+    "label": "Project homepage and README (GitHub)",
+    "url": "https://github.com/chaos/scrub"
+   },
+   {
+    "label": "Gutmann, Secure Deletion of Data from Magnetic and Solid-State Memory (1996)",
+    "url": "https://www.cs.auckland.ac.nz/~pgut001/pubs/secure_del.html"
+   },
+   {
+    "label": "NIST SP 800-88, Guidelines for Media Sanitization",
+    "url": "http://csrc.nist.gov/publications/nistpubs/800-88/NISTSP800-88_with-errata.pdf"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/chaos/scrub: fetched OK, README returned in full; no further links followed"
+  ]
+ }
+}

@@ -1,0 +1,120 @@
+{
+ "name": "sdrmm",
+ "desc": "Modular, client-server software-defined radio",
+ "homepage": "https://github.com/Newspicel/sdrminusminus",
+ "installs_365d": 47,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "network",
+  "library"
+ ],
+ "why": "A client-server software-defined radio system, a neat architectural idea for listening to the airwaves with real hardware.",
+ "brief": {
+  "what_it_is": "SDR-- (the brew formula calls it sdrmm) is a software-defined radio application for listening, decoding, and recording. You plug in a radio (the README's first example is an RTL-SDR dongle) and wire up nodes on a canvas: a Device node for the radio, channel nodes such as WFM, and displays and outputs such as a Speaker. It can run as a desktop app with a local SDR, or as a server near the antenna that you reach from a browser; both use the same receiver engine and interface. Outputs include audio, decoded messages, maps, recordings, and network IQ, and a phone remote is also offered. The brew formula's desc calls it a modular, client-server software-defined radio, which matches the server-plus-browser design the README describes.",
+  "why_it_exists": "The README frames it as a single application for listening, decoding, and recording radio signals, with a layout that puts connections in a Patch view and everyday controls in a Rack view. It also positions the server as something you can put near an antenna and reach remotely, rather than a desktop-only tool.",
+  "how_it_works": "Radios, channels, and displays are nodes you connect with wires in the Patch view; for example, Device iq is wired to WFM iq, and WFM audio to the Speaker. Nodes you use often can be pinned to the Rack view with the p key. The desktop app and the server share one receiver engine, so the browser interface and the local app behave the same. The README says Automation is available through REST, WebSocket, and MCP APIs.",
+  "commands_seen": [
+   {
+    "cmd": "docker pull ghcr.io/newspicel/sdrmm:nightly",
+    "context": "From the Nightly pre-release on the GitHub releases page (not the README): pulls the nightly container image, which the release notes say is a build of main replaced every night."
+   },
+   {
+    "cmd": "docker pull ghcr.io/newspicel/sdrmm:2.2.1",
+    "context": "From the v2.2.1 release notes on the releases page: pulls the container image pinned to that version."
+   },
+   {
+    "cmd": "brew install sdrmm-app",
+    "context": "From the v2.1.0 release notes on the releases page: installs the desktop app via the Homebrew cask."
+   },
+   {
+    "cmd": "brew install sdrmm",
+    "context": "From the v2.1.0 release notes on the releases page: the server formula, which moved to Homebrew core."
+   }
+  ],
+  "install_notes": "The README points to GitHub Releases for a desktop installer or portable server, and to the install guide at sdrmm.com/docs covering macOS, Windows, Linux, Homebrew, APT, DNF, Nix, and Docker (I did not open that guide). The README's first-run steps: plug in the RTL-SDR, pick it on the Device node, set the rate to 2.4 MS/s, add a WFM channel set to a local FM station, wire Device iq to WFM iq and WFM audio to the Speaker, then start the Speaker. Release notes mention an APT and DNF repository at downloads.sdrmm.com that has to be re-added with commands from the install guide. Other hardware (Airspy, AntSDR, FUNcube Dongle, Aaronia, KrakenRF) is listed as supported or tested; the release notes also mention ESP32 boards running ESP-SDR firmware, and AntSDR streaming over Ethernet.",
+  "standout": "It combines a visual patch-and-rack signal graph with a very broad decoder catalogue (aircraft, ships, pagers, digital voice, weather satellites, DAB, DVB, and more) in one app. It also ships with automation hooks (REST, WebSocket, MCP) and a phone remote, which is unusual for a radio tool.",
+  "status": "Maintained. The releases page shows v2.3.0 marked Latest, with assets timestamped 2026-10-20, and a nightly pre-release built from main on the same date. The earlier releases run back through v1.7.0 with regular feature and fix notes.",
+  "caveats": "The README does not list platform requirements, build dependencies, or the license beyond AGPL-3.0-or-later and a commercial license offer. The repo name is Newspicel/sdrminusminus, while the releases and Docker image live under Newspicel/sdrmm, so the naming is split across repos and the brew name (sdrmm) differs from the app name (SDR--). The v2.3.0 release notes flag breaking changes to the REST API. I did not read the sdrmm.com docs, so hardware support details come from the README and release notes only. The releases page output was truncated.",
+  "quotes": [
+   "A software-defined radio application for listening, decoding, and recording.",
+   "Connect radios, channels, and displays in Patch view, then pin your everyday controls to Rack view.",
+   "Run the desktop app with a local SDR, or place the server near your antenna and connect through a browser. Both use the same receiver engine and interface."
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repo",
+    "url": "https://github.com/Newspicel/sdrminusminus"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://sdrmm.com/docs/"
+   },
+   {
+    "label": "GitHub releases",
+    "url": "https://github.com/Newspicel/sdrmm/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/Newspicel/sdrminusminus (homepage, GitHub repo README): worked",
+   "https://github.com/Newspicel/sdrmm/releases (releases page, used for status and install notes): worked, but output was very long and was truncated at 40000 characters"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Its patchable signal graph and integrated decoders make exploring live radio\u2014from FM broadcasts to satellites and aircraft\u2014more than just tuning in."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "SDR-- (sdrmm)",
+  "tldr": "A patch-cable style software-defined radio app that runs on your desktop or on a server beside the antenna, with a browser as the front panel.",
+  "deeper_look": "SDR-- is an application for listening to, decoding, and recording radio signals. You plug in a radio, with an RTL-SDR dongle as the README's first example, and build a signal chain out of nodes on a canvas. A Device node produces raw IQ samples, a channel node such as WFM turns them into audio, and a Speaker node plays it. You connect them with wires in the Patch view.\n\nThe idea underneath is that a software-defined radio is just a stream of samples passing through stages. Here every stage is a visible box. Wiring Device iq to WFM iq, then WFM audio to the Speaker, shows the whole path from antenna to sound. Nodes you use often can be pinned to a simpler Rack view with the p key.\n\nThe architecture is the other draw. In the README's words: \"Run the desktop app with a local SDR, or place the server near your antenna and connect through a browser. Both use the same receiver engine and interface.\" The radio can sit in a window, an attic, or a shed while you tune from elsewhere. Automation is exposed through REST, WebSocket, and MCP APIs, and a phone remote is offered.\n\nThe decoder catalogue is broad: aircraft, ships, pagers, digital voice, weather satellites, DAB, DVB, and more. Outputs include audio, decoded messages, maps, recordings, and network IQ.",
+  "install": "brew install sdrmm\n# this is the server formula; the desktop app is a separate cask: brew install sdrmm-app\n# needs an SDR such as an RTL-SDR dongle (Airspy, AntSDR, FUNcube Dongle, Aaronia and KrakenRF are also listed); the formula pulls in ffmpeg",
+  "try_this": [
+   {
+    "cmd": "sdrmm --help",
+    "what_happens": "Lists the server's options, a starting point before you open the browser interface."
+   },
+   {
+    "cmd": "brew install sdrmm-app",
+    "what_happens": "Installs the desktop app via the Homebrew cask, for use with a locally attached SDR."
+   },
+   {
+    "cmd": "docker pull ghcr.io/newspicel/sdrmm:nightly",
+    "what_happens": "Pulls the nightly container image, a build of main replaced every night, if you would rather run the server in Docker."
+   }
+  ],
+  "whats_unique": "It pairs a visual patch-and-rack signal graph with a very wide decoder catalogue in one app. The same engine runs locally or remotely behind a browser, with REST, WebSocket, and MCP automation, which is unusual for a radio tool.",
+  "caveats": "You need real SDR hardware to get anything out of it, v2.3.0 flags breaking REST API changes, and the repo and brew naming is split between SDR--, sdrminusminus, and sdrmm.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "sdr",
+   "network",
+   "decoders",
+   "server"
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repo",
+    "url": "https://github.com/Newspicel/sdrminusminus"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://sdrmm.com/docs/"
+   },
+   {
+    "label": "GitHub releases",
+    "url": "https://github.com/Newspicel/sdrmm/releases"
+   }
+  ]
+ }
+}

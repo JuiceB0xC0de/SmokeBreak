@@ -1,0 +1,144 @@
+{
+ "name": "libfreefare",
+ "desc": "API for MIFARE card manipulations",
+ "homepage": "https://github.com/nfc-tools/libfreefare",
+ "installs_365d": 86,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "protocol",
+  "reverse-engineering",
+  "afternoon"
+ ],
+ "why": "Manipulates MIFARE contactless smart cards, a door into how the ubiquitous RFID access cards and transit tickets actually work.",
+ "brief": {
+  "what_it_is": "libfreefare is a C library that provides an API for reading and manipulating MIFARE contactless smart cards. It runs on top of libnfc, the nfc-tools library for NFC readers, so a card is presented to an NFC reader and the library drives the card's commands. The README's feature matrix lists supported tags: FeliCa Lite, MIFARE Classic 1k and 4k, MIFARE DESFire (2k, 4k, 8k, EV1), MIFARE Mini, MIFARE Ultralight and Ultralight C, and NTAG21x. MIFARE Plus is marked not supported. The README does not describe the Homebrew command-line tools (such as mifare-desfire-info); those names come from the package metadata, not the README.",
+  "why_it_exists": "The README frames it as a convenient API for MIFARE card manipulations, part of the wider nfc-tools family of projects.",
+  "how_it_works": "The README does not explain the internals. It states that libfreefare depends on libnfc and it documents Mifare Application Directory (MAD) v1, v2 and v3 support, with v3 covered as part of DESFire support. The examples directory contains programs such as mifare-classic-write-ndef that can be run under gdb.",
+  "commands_seen": [
+   {
+    "cmd": "apt-get install autoconf automake git libtool libssl-dev pkg-config",
+    "context": "Debian/Ubuntu dependency install for building from source (the README also lists libnfc as a dependency)."
+   },
+   {
+    "cmd": "git clone https://github.com/nfc-tools/libfreefare.git",
+    "context": "Clones the development source tree."
+   },
+   {
+    "cmd": "autoreconf -vis",
+    "context": "Regenerates the autotools build files; the README says to run it before compiling."
+   },
+   {
+    "cmd": "./configure --prefix=/usr",
+    "context": "Configures the autotools build with /usr as the install prefix."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles libfreefare after configure."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the built library and tools system-wide."
+   },
+   {
+    "cmd": "mingw64-cmake -DLIBNFC_INCLUDE_DIRS=/path/to/libnfc-source/include  -DLIBNFC_LIBRARIES=/path/to/libnfc.dll",
+    "context": "Windows build with MinGW, pointing cmake at the libnfc headers and DLL."
+   },
+   {
+    "cmd": "CFLAGS=\"-O0 -ggdb\" ./configure --prefix=/usr",
+    "context": "Configures a debug build with no optimisation and gdb symbols."
+   },
+   {
+    "cmd": "./libtool --mode=execute gdb examples/mifare-classic-write-ndef",
+    "context": "Runs an example program under gdb from the repository root."
+   },
+   {
+    "cmd": "./configure --enable-debug",
+    "context": "Enables transfer traces between the PCD (reader) and the PICC (card)."
+   }
+  ],
+  "install_notes": "Linux/Unix needs libnfc, git, autoconf, automake, libtool, OpenSSL development headers and pkg-config, then autoreconf -vis, ./configure, make, sudo make install. Windows uses cmake, make and a mingw32 or mingw64 gcc toolchain, and needs a libnfc source tree and libnfc DLL. The README gives no account, licence key or reader model requirement, and does not describe first-run configuration. Homebrew handles this package.",
+  "standout": "Its scope is the card-side protocols of MIFARE tags, including DESFire, which are the chips behind many access cards and transit tickets. It also has a built-in way to see the reader-to-card transfer trace via a configure flag, which helps when studying how a card responds.",
+  "status": "unknown. The README has no release dates, changelog or recent-commit information. The Travis CI badge points to travis-ci.org, which is an older CI service, so that badge may be stale. Homebrew packaging suggests it is still distributed, but I could not confirm recent activity.",
+  "caveats": "MIFARE Plus S and Plus X (2k and 4k) are not supported. Building requires libnfc, and the README gives no hardware details for compatible readers. The README covers only Unix and Windows source builds, with no macOS section. The README does not document the command-line tools. I did not see a licence statement in the README text I fetched. The README is short and points to external wiki and forum pages for more information.",
+  "quotes": [
+   "The _libfreefare_ project provides a convenient API for MIFARE card manipulations.",
+   "It is part of the _nfc-tools_, you can find more info on them on the [nfc-tools wiki](http://nfc-tools.org/).",
+   "If you are only interested in viewing transfert traces between the PCD and the PICC, simply use the `--enable-debug` configure flag:"
+  ],
+  "links": [
+   {
+    "label": "libfreefare GitHub repository (homepage)",
+    "url": "https://github.com/nfc-tools/libfreefare"
+   },
+   {
+    "label": "nfc-tools project website and wiki",
+    "url": "http://nfc-tools.org/"
+   },
+   {
+    "label": "libnfc (required dependency)",
+    "url": "https://github.com/nfc-tools/libnfc"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/nfc-tools/libfreefare: fetched OK, README returned. Thin on usage detail; the nfc-tools.org site and libnfc repo were not followed."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A low-level gateway into the card protocols behind access badges and transit tickets, with transfer tracing that makes real NFC exchanges inspectable."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "libfreefare",
+  "tldr": "A C library and set of command-line tools for talking to MIFARE contactless cards, the chips inside many access badges and transit tickets.",
+  "deeper_look": "libfreefare is a C library for reading and manipulating MIFARE contactless smart cards. It sits on top of libnfc: an NFC reader is plugged in, a card is held to it, and libfreefare issues the card-specific commands. The README's feature matrix lists MIFARE Classic 1k and 4k, Mini, Ultralight and Ultralight C, DESFire (2k, 4k, 8k, EV1), FeliCa Lite and NTAG21x. MIFARE Plus is marked as not supported.\n\nThe Homebrew package installs a set of small tools named for the card family they target: `mifare-desfire-info`, `mifare-classic-format`, `mifare-classic-read-ndef`, `mifare-ultralight-info` and others. The names suggest they inspect cards, format them, and read or write NDEF data, plus a few DESFire EV1 configuration commands. The README does not document these tools, so the names are the best guide, along with their `--help` output.\n\nThe idea underneath is that the cards in your wallet are small, standardised computers with a command set, file layouts and key-based access control. The library also handles the Mifare Application Directory (MAD v1, v2 and v3), which is how several applications share one card. Building from source with `./configure --enable-debug` prints the traffic between the reader (PCD) and the card (PICC), which is a way to watch a card answer, byte by byte.\n\nIt is part of the wider nfc-tools family, and the README is short and points to the nfc-tools wiki for more.",
+  "install": "brew install libfreefare\n# Needs an NFC reader supported by libnfc, plus some cards to present to it. The README gives no reader model details.",
+  "try_this": [
+   {
+    "cmd": "mifare-desfire-info --help",
+    "what_happens": "Shows the options for the DESFire inspection tool, the usual first step with a card on the reader."
+   },
+   {
+    "cmd": "mifare-ultralight-info --help",
+    "what_happens": "Shows how to query an Ultralight tag, the simple, cheap kind found in stickers and tickets."
+   },
+   {
+    "cmd": "mifare-classic-read-ndef --help",
+    "what_happens": "Shows how to read NDEF data from a MIFARE Classic card."
+   }
+  ],
+  "whats_unique": "It covers the card side of the protocols, including DESFire, so you can work with the chips behind real access cards and tickets. A configure flag turns on reader-to-card transfer traces for studying how a card responds.",
+  "caveats": "It needs an NFC reader that libnfc supports, the README has no usage docs for the command-line tools, MIFARE Plus is unsupported, and recent project activity could not be confirmed.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "nfc",
+   "rfid",
+   "mifare",
+   "protocol",
+   "c-library"
+  ],
+  "links": [
+   {
+    "label": "libfreefare on GitHub",
+    "url": "https://github.com/nfc-tools/libfreefare"
+   },
+   {
+    "label": "nfc-tools project website and wiki",
+    "url": "http://nfc-tools.org/"
+   },
+   {
+    "label": "libnfc (required dependency)",
+    "url": "https://github.com/nfc-tools/libnfc"
+   }
+  ]
+ }
+}

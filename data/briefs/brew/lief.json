@@ -1,0 +1,67 @@
+{
+ "name": "lief",
+ "desc": "Library to Instrument Executable Formats",
+ "homepage": "https://lief.re/",
+ "installs_365d": 174,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "library",
+  "afternoon"
+ ],
+ "why": "A library for parsing and modifying ELF, PE and Mach-O binaries, a real door into instrumenting executables.",
+ "brief": {
+  "what_it_is": "LIEF is a cross-platform library that parses, inspects, modifies, and rebuilds executable files in ELF, PE, and Mach-O formats (and also COFF, DEX, and others, per the README). You feed it a binary file or an in-memory buffer and get back a structured object model with sections, symbols, relocations, and entry points, plus a shared abstraction across formats. You can change parts of that model, such as adding a section or renaming a symbol, and write a valid binary back to disk. The API is available in C++, Python, and Rust. The optional LIEF Extended tier adds disassembly, assembly, DWARF and PDB debug info, and Objective-C metadata.",
+  "why_it_exists": "The homepage pitches it as a way to move from raw executable file formats to a high-level representation, make precise changes, and write a valid binary back, without booting a heavyweight reverse-engineering stack. The README frames the purpose as providing a cross-platform library to parse, modify and abstract ELF, PE and MachO formats.",
+  "how_it_works": "LIEF parses the file into a format-specific object model, and for ELF, PE, and Mach-O it also offers a common abstraction layer over shared concepts like sections, symbols, and entry points. Changes are made on that model, and format-aware builders serialize the result back to a file. The Extended tier layers disassembly and assembly (AArch64, x86/x86-64, ARM, RISC-V and others) on top of the same model.",
+  "commands_seen": [
+   {
+    "cmd": "brew install lief",
+    "context": "Homebrew install of the LIEF package, listed under the Homebrew heading in the README."
+   },
+   {
+    "cmd": "pip install lief",
+    "context": "Installs the latest released Python package from PyPI, per the README's Python section."
+   },
+   {
+    "cmd": "pip install [--user] --force-reinstall --index-url https://lief.s3-website.fr-par.scw.cloud/latest lief==2.0.0.dev0",
+    "context": "Installs a nightly Python build from the project's own index instead of PyPI. The bracketed --user flag is optional."
+   }
+  ],
+  "install_notes": "Homebrew (brew install lief) and pip (pip install lief) are the simplest routes. C++ projects use CMake with find_package(LIEF REQUIRED) and link LIEF::LIEF. Rust projects add lief = \"1.0.0\" to Cargo.toml. Nightly SDK and wheels come from a separate S3 index. The README links per-platform guides for Python, Visual Studio, Xcode, and CMake. LIEF Extended is distributed separately at extended.lief.re and requires GitHub OAuth sign-in. The README gives no runtime or account requirements for the core library.",
+  "standout": "One API spans three major executable formats, so the same concepts (sections, symbols, entry point) carry over between ELF, PE, and Mach-O. Compared with stacks that focus on analysis, LIEF is built for rewriting: the homepage's example patches an entry point and calls write, and its Extended demo disassembles an instruction, reassembles it as same-size NOPs, and rebuilds the ELF. It also ships a lief-patchelf reimplementation of NixOS patchelf and Ghidra and Binary Ninja plugins.",
+  "status": "maintained. The homepage announces LIEF 1.0.0 with a blog post dated Jul 13, 2026, and lists an earlier 0.17.0 release dated Sep 14, 2025 along with a lief-patchelf post from Jul 13, 2025. It also states 10+ years of continuous development and an active sponsor (Quansight). I did not see a last-commit date.",
+  "caveats": "Disassembly and assembly are part of LIEF Extended, not the open-source core; the homepage notes that the mutation and rebuild stages use the core API. Extended packages require GitHub OAuth. The README lists an unofficial, AI-generated Node.js binding (node-lief), which is not maintained by the project. The homepage's install-count and '1,000,000+ installs every month' figure is the project's own claim and I did not verify it. The BibTeX entry still points to the older lief.quarkslab.com address. The homepage example writes to a patched file and the README does not say it is safe on arbitrary binaries. Licensing: the core is Apache-2.0; I did not check the license terms for Extended.",
+  "quotes": [
+   "Parse, inspect, modify, and build ELF, PE, Mach-O, and more through one consistent C++, Python, or Rust API.",
+   "Move from raw executable file formats to a high-level representation, make precise changes, then write a valid binary back to disk.",
+   "The purpose of this project is to provide a cross-platform library to parse, modify and abstract ELF, PE and MachO formats."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://lief.re/"
+   },
+   {
+    "label": "Documentation (Sphinx)",
+    "url": "https://lief.re/doc/latest/index.html"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/lief-project/LIEF"
+   },
+   {
+    "label": "LIEF Extended",
+    "url": "https://extended.lief.re"
+   }
+  ],
+  "fetch_log": [
+   "https://lief.re/ - worked, homepage text returned",
+   "https://github.com/lief-project/LIEF - worked, README returned"
+  ]
+ }
+}

@@ -1,0 +1,90 @@
+{
+ "name": "diffoci",
+ "desc": "Diff for Docker and OCI container images",
+ "homepage": "https://github.com/reproducible-containers/diffoci",
+ "installs_365d": 402,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering"
+ ],
+ "why": "Diffs container images layer by layer, a handy lens into the structure of OCI image formats.",
+ "brief": {
+  "what_it_is": "diffoci is a command-line tool that compares two Docker or OCI container images and reports where they differ. Its inputs are image references: registry names such as alpine:3.18.2, local Docker images via docker:// prefix, Podman images via podman://, or images in the containerd store. The output is a table of differing entries (type, name, and a digest or message for each input). In --semantic mode it ignores timestamps, build histories, file ordering inside tar layers, and image name annotations. With --report-dir it writes the conflicting files to a directory so you can inspect them with diff -ur or diffoscope.",
+  "why_it_exists": "The README frames it as a way to help with reproducible builds: you build an image from published source, then check whether your result matches the official binary image.",
+  "how_it_works": "The README does not describe internals in detail. It says diffoci is not aware of file formats inside layers, so differences like timestamps inside a nested scripts.tar are reported as-is and are not filtered by --semantic. Layer-level diffs are shown as length mismatches and whiteout entries, and file-level diffs by content digest.",
+  "commands_seen": [
+   {
+    "cmd": "diffoci diff --semantic alpine:3.18.2 alpine:3.18.3",
+    "context": "Main example: semantic (non-strict) diff of two Alpine image tags, printing a TYPE/NAME/INPUT-0/INPUT-1 table of differing files."
+   },
+   {
+    "cmd": "diffoci diff IMAGE0 IMAGE1",
+    "context": "Strict-mode diff, the default. The README says this is often too strict."
+   },
+   {
+    "cmd": "diffoci diff --platform=linux/amd64 IMAGE0 IMAGE1",
+    "context": "Tip for non-Linux users and multi-platform images from Docker: pick the platform explicitly."
+   },
+   {
+    "cmd": "diffoci diff --semantic --report-dir=/tmp/diff alpine:3.18.2 alpine:3.18.3",
+    "context": "Same semantic diff, also dumping conflicting files into /tmp/diff for inspection with diff -ur."
+   },
+   {
+    "cmd": "diffoci --backend=local",
+    "context": "Explicitly disables the containerd image store backend."
+   },
+   {
+    "cmd": "diffoci --backend=containerd --containerd-address=ADDRESS --containerd-namespace=NAMESPACE",
+    "context": "Explicitly selects the containerd backend with a given socket address and namespace. The default namespace is default."
+   },
+   {
+    "cmd": "docker build -t foo ~/foo",
+    "context": "Builds a local Docker image named foo, to be compared later with docker:// prefix."
+   },
+   {
+    "cmd": "diffoci diff docker://foo docker://bar",
+    "context": "Compares two local Docker images that were never pushed to a registry."
+   },
+   {
+    "cmd": "mise use -g diffoci@latest",
+    "context": "Installs diffoci globally through the mise tool version manager."
+   },
+   {
+    "cmd": "go install github.com/reproducible-containers/diffoci/cmd/diffoci@latest",
+    "context": "Builds and installs diffoci from source with Go."
+   }
+  ],
+  "install_notes": "Prebuilt binaries are provided for Linux and macOS on the GitHub releases page. Building from source needs Go 1.21 or later per the README, though the v0.1.8 release notes say go.mod now declares go 1.24, so the newer version is likely the real floor. Using mise is another route. No account is needed for public images. For docker:// images, Docker v28+ is needed for platform filtering. containerd v1.7 or later is used by default when running. Private registry images need a ~/.docker/config.json created with docker login. The golang example also needs DOCKER_BUILDKIT=0 for the official image build, and diffoscope installed via apt for file-level inspection.",
+  "standout": "It compares images at the layer and tar-entry level, with a semantic mode that strips out the noise of reproducibility work (timestamps, tar ordering, names). Its README doubles as a case study: it diffs the official golang:1.21-alpine3.18 image against a locally rebuilt copy and explains each leftover difference, such as missing opaque whiteout files and timestamps inside Alpine's scripts.tar.",
+  "status": "maintained. The latest release is v0.1.8 (dated 04 Feb on the releases page, year not shown; by sequence it is the newest), with v0.1.7 on 26 Jun and v0.1.6 on 19 Mar earlier. Release notes show active work: dependency bumps, a Go version update, and a fix for docker save blob errors. I did not check the commit log.",
+  "caveats": "Strict mode is often too strict, so the semantic flag is usually needed. Non-Linux users and multi-platform images need --platform. Platform filtering for docker:// needs Docker v28+. Semantic mode does not filter format-specific noise inside layer files, such as timestamps in apk scripts.tar. Binaries are listed only for Linux and macOS. The v0.1.3 release notes say report.json is marked experimental. The README warns that output can be very large without --semantic.",
+  "quotes": [
+   "diffoci compares Docker and OCI container images for helping reproducible builds.",
+   "The strict mode is often too strict.",
+   "Without this flag, the diffoci command may print an enourmous amount of output.",
+   "If the published source is trustable, this image binary can be trusted too."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/reproducible-containers/diffoci"
+   },
+   {
+    "label": "Releases and prebuilt binaries",
+    "url": "https://github.com/reproducible-containers/diffoci/releases"
+   },
+   {
+    "label": "diffoscope (used in README for file-level diffs)",
+    "url": "https://diffoscope.org/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/reproducible-containers/diffoci: worked, README returned in full",
+   "https://github.com/reproducible-containers/diffoci/releases: worked, but the page text was noisy HTML; release dates, versions and notes were readable"
+  ]
+ }
+}

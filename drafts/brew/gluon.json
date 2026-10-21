@@ -1,0 +1,135 @@
+{
+ "name": "gluon",
+ "desc": "Static, type inferred and embeddable language written in Rust",
+ "homepage": "https://gluon-lang.org",
+ "installs_365d": 100,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "afternoon"
+ ],
+ "why": "A statically typed, embeddable, type-inferred language in Rust is an uncommon design worth an afternoon.",
+ "brief": {
+  "what_it_is": "Gluon is a small, statically typed, functional programming language built to be embedded inside Rust applications, with type inference so types are rarely written out. Source programs go in, and the gluon virtual machine evaluates them; a command-line gluon_repl executable can run a file or start an interactive REPL with -i. The homepage shows a short example that imports std.json, derives Serialize and Deserialize on a record type, parses a JSON string, updates the record, and prints it back as pretty JSON. The REPL supports :t for types and :i for information about a name, and it tab-completes identifiers.",
+  "why_it_exists": "The README frames gluon as a language 'designed for application embedding', with the goal of being 'similar to Lua' in that it is meant to be included in another program to extend its functionality. Its stated inspirations are Lua, Haskell and OCaml.",
+  "how_it_works": "The README says the library is split into a parser, a type checker, and a virtual machine plus compiler, and each part can be used on its own. It uses a Hindley-Milner based type system with some extensions. Values are marshalled to and from Rust with little boilerplate, so Rust functions can be passed straight into gluon, and each executing gluon thread gets its own garbage-collected heap.",
+  "commands_seen": [
+   {
+    "cmd": "cargo install gluon_repl",
+    "context": "Installs the gluon executable from crates.io via Cargo, as the README's install route besides prebuilt binaries from GitHub releases."
+   },
+   {
+    "cmd": "cargo run -p gluon_repl -- -i",
+    "context": "Runs the REPL from a source checkout; the -i flag starts interactive mode."
+   },
+   {
+    "cmd": "cargo install gluon_language-server",
+    "context": "Installs the gluon language server, which provides code completion and formatting for editors."
+   },
+   {
+    "cmd": ":h",
+    "context": "Inside the REPL, prints help about available commands."
+   },
+   {
+    "cmd": ":l path_to_file",
+    "context": "Inside the REPL, loads a file; its result is stored under a variable named after the file without its extension."
+   },
+   {
+    "cmd": ":t expression",
+    "context": "Inside the REPL, shows the type of an expression."
+   },
+   {
+    "cmd": ":i name",
+    "context": "Inside the REPL, prints information about a name, for example :i std.prelude.List."
+   },
+   {
+    "cmd": ":q",
+    "context": "Inside the REPL, exits."
+   }
+  ],
+  "install_notes": "The homepage gives no install steps. The README offers prebuilt executables from the GitHub releases page or 'cargo install gluon_repl'. Building from source uses Cargo, and the README asks for a recent Rust compiler (it says 1.9.0 or later). For Rust projects, add gluon = \"0.18.4\" to Cargo.toml. The language server is installed separately with cargo install gluon_language-server. The VS Code extension is found by searching the marketplace for gluon, and vim-gluon is available for Vim syntax and indentation. The Brew formula's caveats are empty, and the README does not mention the Brew formula.",
+  "standout": "It is a statically typed, Hindley-Milner-inferred language meant to be embedded in a host program, which is uncommon. The README's embedding story is that Rust functions can be passed directly into gluon with almost no marshalling code, and the examples include a parser-combinator library and a Rosetta-style 24 game written in the language itself.",
+  "status": "Unknown from what I read. The README cites version 0.18.4 and lists a Build Status badge and a crates.io badge, but I saw no release date, last commit date, or deprecation note. The homepage has separate 'Latest release' and 'Nightly' documentation sections, so it appears to be actively documented, but I could not confirm recent activity.",
+  "caveats": "The README says the easiest way to use the VM is through Rust, and the C API is 'rudimentary' and will be extended later. Parallel execution is 'a recent addition and may still have issues such as deadlocks'. The Rust build needs a recent compiler. The README says the goals 'may change or be refined over time'. The README's install instructions point to gluon_repl and cargo, not the Brew formula, so the Brew-installed gluon executable may differ from what the README describes. I did not verify the Brew install. I did not read the book or CONTRIBUTING.md.",
+  "quotes": [
+   "Gluon is a small, statically-typed, functional programming language designed for application embedding.",
+   "Type inference ensures that types rarely have to be written explicitly giving all the benefits of static types with none of the typing.",
+   "Gluon is written in Rust, which guarantees thread safety.",
+   "Currently, the easiest way to interact with the gluon virtual machine is through Rust but a rudimentary C api exists which will be extended in the future to bring it closer to the Rust API."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://gluon-lang.org"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/gluon-lang/gluon"
+   },
+   {
+    "label": "The Gluon Book",
+    "url": "https://gluon-lang.org/doc/crates_io/book/index.html"
+   }
+  ],
+  "fetch_log": [
+   "https://gluon-lang.org: worked; returned the homepage text, a sample program, and documentation links. It does not include install steps or the GitHub URL, so I followed the GitHub link pattern.",
+   "https://github.com/gluon-lang/gluon: worked; returned the README, which covers features, examples, install, REPL, tools, goals, and inspiration."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "An obscure, embeddable Hindley\u2013Milner language that lets Rust functions enter its VM with little boilerplate is a genuinely interesting runtime to explore."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Gluon",
+  "tldr": "A small, statically typed, type-inferred functional language written in Rust, designed to be embedded in other programs the way Lua is.",
+  "deeper_look": "Gluon is a functional language meant to live inside a host application. The README frames it as 'designed for application embedding' and 'similar to Lua': you include it in your program so users or developers can script behaviour. Its stated inspirations are Lua, Haskell and OCaml.\n\nThe twist is the type system. Gluon uses a Hindley-Milner based type system with some extensions, so types are rarely written out. In the project's words: 'Type inference ensures that types rarely have to be written explicitly giving all the benefits of static types with none of the typing.' Most embeddable languages are dynamically typed, which is what makes this one uncommon.\n\nThe library is split into a parser, a type checker, and a virtual machine plus compiler, and each can be used on its own. Rust functions can be passed straight into Gluon with little marshalling code, and each executing Gluon thread gets its own garbage-collected heap. The homepage example imports std.json, derives Serialize and Deserialize on a record, parses a JSON string, updates the record and prints it back as pretty JSON.\n\nThe REPL is the quickest way in. It can tell you the type of an expression, describe a name, load files and tab-complete identifiers. The examples include a parser-combinator library and a 24 game written in Gluon itself.",
+  "install": "brew install gluon\n# The README's own routes are prebuilt binaries from GitHub releases, or: cargo install gluon_repl (needs a recent Rust toolchain)",
+  "try_this": [
+   {
+    "cmd": "gluon --help",
+    "what_happens": "Lists the options of the executable, including -i for interactive mode."
+   },
+   {
+    "cmd": ":t expression",
+    "what_happens": "Inside the REPL, shows the inferred type of any expression you type."
+   },
+   {
+    "cmd": ":i std.prelude.List",
+    "what_happens": "Inside the REPL, prints information about a name, here the List type from the standard prelude."
+   }
+  ],
+  "whats_unique": "It pairs Hindley-Milner type inference with a Lua-style embedding goal, so a host Rust program gets a statically typed scripting language with little marshalling code.",
+  "caveats": "Recent activity is unconfirmed, the C API is described as 'rudimentary', parallel execution 'may still have issues such as deadlocks', and the Brew-installed executable may differ from the README's gluon_repl.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "language",
+   "rust",
+   "embeddable",
+   "type-inference",
+   "functional",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://gluon-lang.org"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/gluon-lang/gluon"
+   },
+   {
+    "label": "The Gluon Book",
+    "url": "https://gluon-lang.org/doc/crates_io/book/index.html"
+   }
+  ]
+ }
+}

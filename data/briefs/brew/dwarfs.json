@@ -1,0 +1,97 @@
+{
+ "name": "dwarfs",
+ "desc": "Fast high compression read-only file system for Linux, Windows, and macOS",
+ "homepage": "https://github.com/mhx/dwarfs",
+ "installs_365d": 1199,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "library",
+  "simulation"
+ ],
+ "why": "A read-only compressed filesystem that lets you mount huge archives and explore how deduplicated, block-based storage really works.",
+ "brief": {
+  "what_it_is": "DwarFS is a read-only, compressed file system for Linux, FreeBSD, macOS and Windows. You feed mkdwarfs a directory and it writes a single .dwarfs image file. The dwarfs driver then mounts that image as an ordinary folder, and dwarfsextract can unpack it if you need real files. dwarfsck lists the contents of an image and can print per-file checksums. The README pitches it as a mountable archive that opens instantly with no full extraction and no temporary files.",
+  "why_it_exists": "The author, Marcus Holland-Moritz, started it in 2013 to store several hundred Perl versions, about 30 GB, in a fraction of their size. Cromfs compressed well but was slow to build and often crashed, and SquashFS never reached its compression rates. The README says other read-only compressed file systems do not exploit redundancy well, and DwarFS is built for fast random reads together with space savings.",
+  "how_it_works": "According to the README, DwarFS clusters files by similarity using a similarity hash function, so redundancy across file boundaries can be exploited. It segments analysis across file system blocks to shrink the uncompressed file system, which saves memory when mounted. A categorization framework lets different file types or fragments be handled differently, for example skipping compression on incompressible files or using FLAC for PCM audio. The tools are highly multi-threaded.",
+  "commands_seen": [
+   {
+    "cmd": "$ mkdwarfs -i /path/to/input/dir -o /path/to/image.dwarfs",
+    "context": "Quick Start: creates a DwarFS image from a directory."
+   },
+   {
+    "cmd": "$ dwarfs /path/to/image.dwarfs /path/to/mountpoint",
+    "context": "Quick Start: mounts the image read-only via the FUSE driver at the mountpoint, which must already exist on Linux."
+   },
+   {
+    "cmd": "$ ls /path/to/mountpoint",
+    "context": "Quick Start: browse the mounted image like a normal folder."
+   },
+   {
+    "cmd": "$ dwarfsextract -i /path/to/image.dwarfs -o /path/to/output/dir",
+    "context": "Quick Start: extracts the image to a real directory, only when needed."
+   },
+   {
+    "cmd": "$ dwarfsck /path/to/image.dwarfs -l",
+    "context": "Quick Start: lists the files in the image."
+   },
+   {
+    "cmd": "$ dwarfsck /path/to/image.dwarfs --checksum=sha512 | sha512sum --check",
+    "context": "Quick Start: prints a checksum per file in a format that sha512sum can verify, for integrity checks."
+   },
+   {
+    "cmd": "$ mkdwarfs --man",
+    "context": "Usage: prints the manual page for a binary. The same --man option works on each tool."
+   },
+   {
+    "cmd": "$ brew install dwarfs",
+    "context": "macOS section: installs the libraries and the mkdwarfs, dwarfsck and dwarfsextract tools from Homebrew."
+   },
+   {
+    "cmd": "$ brew tap gromgit/homebrew-fuse",
+    "context": "macOS section: adds the third-party tap that carries the FUSE driver."
+   },
+   {
+    "cmd": "$ brew install dwarfs-fuse-mac",
+    "context": "macOS section: installs the FUSE driver, which needs macFUSE."
+   },
+   {
+    "cmd": "$ sudo ninja install",
+    "context": "Building and Installing: installs the CMake/Ninja build after compiling from source."
+   }
+  ],
+  "install_notes": "Homebrew covers macOS, with the FUSE driver coming from the gromgit/homebrew-fuse tap and requiring macFUSE. Release pages have prebuilt, statically linked binaries for several architectures, and the README says they should run without dependencies. Universal binaries bundle all the tools into one executable, but they decompress on each run, and they need Linux kernel 3.17 or later. The FUSE driver on Linux needs the fuse3 tools installed separately. Building from source uses CMake and Ninja, with dependency lists in the CI Dockerfiles for Ubuntu, Debian, Fedora, Arch and openSUSE, and a FreeBSD setup script. Building from the release tarball needs fewer dependencies than building from git. On Windows, you need WinFsp and the README recommends vcpkg with MSVC. Static builds are described as discouraged and unsupported.",
+  "standout": "Its folly-free rewrite is unusual: the author removed the Facebook folly dependency, forked the needed parts of fbthrift, and rewrote thrift code generation in Python, which the README says also made some binaries smaller. The published benchmarks are striking but self-reported, including a Perl corpus compressed to 0.310 GiB with lzma against 12.17 GiB for tar.gz. Its categorizer and similarity clustering go beyond what SquashFS does, and it is designed for random reads in large collections.",
+  "status": "Unknown from what I could see. The README shows active CI, a Repology badge and a Homebrew install badge, and it cites a 0.14.1 release in the benchmarks. The fetched text was cut off before any release date or commit history, and I did not follow the releases page, so I cannot confirm a last-release or last-commit date. The README looks actively developed.",
+  "caveats": "Windows support is labelled experimental by the author, and the README says to expect bugs and rough edges. Extended attributes are not preserved when building an image. There is no built-in recovery data, so the README recommends par2. Before 1.0.0 there are no API stability guarantees, and the writer API is likely to change. Windows has several WinFsp-related limits, including symlinks that cannot point outside the mount, and a case-insensitive mode that only works if no names differ only by case. The macOS FUSE tap bottles can break when Homebrew libraries change. Static builds are not officially supported. The benchmark tables were produced by the author and some comparison tools did not support every test. The fetched README was truncated at 40000 characters, so the comparison and performance-monitoring sections were not read.",
+  "quotes": [
+   "A fast high-compression read-only file system for Linux, FreeBSD, macOS and Windows.",
+   "DwarFS is a mountable archive: you pack a directory into one file (an image), then open it instantly like a normal folder, no full extraction, no temporary files.",
+   "I started working on DwarFS in 2013 and my main use case and major motivation was that I had several hundred different versions of Perl that were taking up something around 30 gigabytes of disk space"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/mhx/dwarfs"
+   },
+   {
+    "label": "mkdwarfs manual",
+    "url": "https://github.com/mhx/dwarfs/blob/main/doc/mkdwarfs.md"
+   },
+   {
+    "label": "DwarFS file system format (dwarfs-format(5))",
+    "url": "https://github.com/mhx/dwarfs/blob/main/doc/dwarfs-format.md"
+   },
+   {
+    "label": "Releases (prebuilt binaries)",
+    "url": "https://github.com/mhx/dwarfs/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/mhx/dwarfs: worked, README returned but truncated at 40000 characters, so the comparison and performance-monitoring sections were not read. Stopped after one fetch because the README covered the brief."
+  ]
+ }
+}

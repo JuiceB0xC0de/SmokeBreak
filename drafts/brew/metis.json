@@ -1,0 +1,103 @@
+{
+ "name": "metis",
+ "desc": "Programs that partition graphs and order matrices",
+ "homepage": "https://papers.karypis.org/glaros/software/metis/overview.html",
+ "installs_365d": 18490,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "math",
+  "science",
+  "library"
+ ],
+ "why": "Graph partitioning and fill-reducing matrix ordering are real algorithms you can run, though they hide inside scientific computing.",
+ "brief": {
+  "what_it_is": "METIS is a set of serial C programs that split graphs into parts and compute fill-reducing orderings for sparse matrices. It also partitions finite element meshes. The homepage describes it as a library-style source distribution (over 35,000 lines of ANSI C) that you build yourself, and the Homebrew formula installs its executables: cmpfillin, gpmetis, graphchk, m2gmetis, mpmetis, and ndmetis. The homepage does not describe what each executable takes in or emits, so that detail has to come from the manual.",
+  "why_it_exists": "The page presents METIS as the output of the author's lab, built on multilevel recursive-bisection, multilevel k-way, and multi-constraint partitioning schemes. The implied purpose is splitting large unstructured graphs and meshes across parts, and ordering sparse matrices to reduce fill-in during factorization.",
+  "how_it_works": "The homepage names the algorithm families (multilevel recursive-bisection, multilevel k-way, and multi-constraint partitioning) but does not explain how they operate. The manual at metis-5.x.y/manual/manual.pdf is the place to find the mechanism, and I did not fetch it.",
+  "commands_seen": [
+   {
+    "cmd": "gunzip metis-5.x.y.tar.gz",
+    "context": "Homepage's first step for the source download: decompress the tarball. The page uses 5.x.y as a version placeholder."
+   },
+   {
+    "cmd": "tar -xvf metis-5.x.y.tar",
+    "context": "Homepage's follow-up step to unpack the source tree, which yields a metis-5.x.y directory with the source and Install.txt."
+   }
+  ],
+  "install_notes": "Homebrew handles installation, but the upstream route is to download metis-5.1.0.tar.gz, unpack it, and follow metis-5.x.y/Install.txt to build. The page says the GNU C compiler is enough. Nothing about hardware, accounts, or runtime configuration is listed on the page. ParMETIS and hMETIS are separate downloads and are not part of the brew formula.",
+  "standout": "The homepage places METIS in a family that also includes ParMETIS (MPI, parallel), mt-metis (OpenMP), and hMETIS (hypergraph/VLSI). The brew formula bundles six command-line tools, which is more than the single-binary picture most people have of a partitioner.",
+  "status": "Quiet. The homepage lists METIS stable 5.1.0 dated 3/30/2013, which is over a decade old. It also lists mt-metis 0.7.3 dated 6/4/2020, but the download link on the same page says 0.7.2, so the page is internally inconsistent. I saw no commit history or changelog. The page is an academic lab page, not an active project page.",
+  "caveats": "Licensing is a real concern. The ParMETIS and hMETIS sections state that use is limited to non-profit educational and research purposes, and that other organizations may use the software only for evaluation unless they obtain prior approval. The homepage does not state a license for METIS itself, so the terms should be checked in the distribution before commercial use. The software is provided as is with no warranty. Usage details are not on this page; they are in the PDF manual, which I did not read. The formula description and scout notes mention executables, but I did not confirm what each one does.",
+  "quotes": [
+   "METIS is a set of serial programs for partitioning graphs, partitioning finite element meshes, and producing fill reducing orderings for sparse matrices.",
+   "It is written entirely in ANSI C, and is portable on most Unix systems that have an ANSI C compiler (the GNU C compiler will do).",
+   "As unestablished research software, this code is provided on an \u201cas is\u2019\u2019 basis without warranty of any kind, either expressed or implied."
+  ],
+  "links": [
+   {
+    "label": "METIS overview (homepage)",
+    "url": "https://papers.karypis.org/glaros/software/metis/overview.html"
+   },
+   {
+    "label": "ParMETIS (parallel version, same family page)",
+    "url": "https://papers.karypis.org/glaros/software/metis/overview.html"
+   },
+   {
+    "label": "hMETIS (hypergraph version, same family page)",
+    "url": "https://papers.karypis.org/glaros/software/metis/overview.html"
+   }
+  ],
+  "fetch_log": [
+   "https://papers.karypis.org/glaros/software/metis/overview.html \u2014 fetched successfully; an HTML overview page, not a README. It links to downloads and a manual PDF but does not give a fetchable URL for the manual, so I did not follow further."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "METIS makes multilevel graph partitioning and sparse-matrix ordering runnable ideas, opening a useful algorithmic rabbit hole largely unfamiliar outside scientific computing."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "METIS",
+  "tldr": "Classic C programs that split big graphs and meshes into balanced pieces and reorder sparse matrices, the quiet machinery behind a lot of scientific computing.",
+  "deeper_look": "METIS is a set of serial programs for partitioning graphs, partitioning finite element meshes, and producing fill-reducing orderings for sparse matrices. It comes from Karypis's lab and is written entirely in ANSI C, over 35,000 lines of it. The Homebrew formula installs six command-line tools: cmpfillin, gpmetis, graphchk, m2gmetis, mpmetis and ndmetis.\n\nThe homepage names the algorithm families behind it: multilevel recursive-bisection, multilevel k-way, and multi-constraint partitioning. The implied purpose is to cut a large unstructured graph or mesh into parts, so that work can be spread out, and to order the rows and columns of a sparse matrix so that factorizing it creates less fill-in. The homepage does not explain how the algorithms work. That is in the PDF manual shipped in the source distribution.\n\nThe idea underneath is that many problems, such as simulations, solvers and routing, are really graph problems. Where you cut a graph decides how fast everything downstream runs. METIS is a hands-on way to see that: you feed it a graph and watch how it divides it.\n\nMETIS sits in a family with ParMETIS (MPI, parallel), mt-metis (OpenMP) and hMETIS (hypergraph, aimed at VLSI). Those are separate downloads and not part of the brew formula.",
+  "install": "brew install metis",
+  "try_this": [
+   {
+    "cmd": "gpmetis --help",
+    "what_happens": "Prints usage for the graph partitioner, the main tool for splitting a graph into parts."
+   },
+   {
+    "cmd": "ndmetis --help",
+    "what_happens": "Prints usage for the nested dissection tool, which computes fill-reducing orderings for sparse matrices."
+   },
+   {
+    "cmd": "graphchk --help",
+    "what_happens": "Prints usage for the graph checker, a good first stop before feeding it your own data."
+   }
+  ],
+  "whats_unique": "It is the reference implementation of multilevel graph partitioning, and the brew formula gives you six separate command-line tools rather than a single binary.",
+  "caveats": "The stable release, 5.1.0, dates from 2013, and the homepage does not state a license for METIS itself, so check the distribution's terms before commercial use; the usage details live in the PDF manual.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "math",
+   "graphs",
+   "sparse-matrices",
+   "c",
+   "science"
+  ],
+  "links": [
+   {
+    "label": "METIS overview (homepage)",
+    "url": "https://papers.karypis.org/glaros/software/metis/overview.html"
+   }
+  ]
+ }
+}

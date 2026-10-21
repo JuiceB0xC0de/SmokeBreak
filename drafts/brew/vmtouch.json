@@ -1,0 +1,147 @@
+{
+ "name": "vmtouch",
+ "desc": "Portable file system cache diagnostics and control",
+ "homepage": "https://hoytech.com/vmtouch/",
+ "installs_365d": 284,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "tui"
+ ],
+ "why": "Shows which files sit in the OS page cache and can pin or evict them, a revealing look at how memory works.",
+ "brief": {
+  "what_it_is": "vmtouch is a command-line tool for seeing and controlling the operating system's file system cache on Unix and Unix-like systems. You give it files or directories, and it reports how many of their pages are currently resident in memory, with page counts and percentages. It can also touch files to pull them into cache (-t), evict them (-e), and lock them into physical memory (-l), and it can run as a daemon (-d). The output is a summary block of file, directory and page counts plus elapsed time, and with -v a per-file progress bar.",
+  "why_it_exists": "The README frames it as a way of 'learning about and controlling the file system cache', listing uses such as discovering which files the OS is caching, preserving a virtual memory profile when failing over servers, keeping a hot-standby file server, and maintaining 'soft quotas' of cache usage.",
+  "how_it_works": "The homepage and README do not describe the internals. The examples show it reading residency for a file's pages, touching pages to load them, and asking the system to evict or lock them. The README points to a separate TUNING.md for system tuning parameters, which I did not fetch.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/hoytech/vmtouch.git",
+    "context": "Quick install step: clones the source repository."
+   },
+   {
+    "cmd": "make",
+    "context": "Quick install step: builds vmtouch from the cloned directory."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Quick install step: installs the built binary system-wide."
+   },
+   {
+    "cmd": "vmtouch /bin/",
+    "context": "Example 1: reports how many pages of the /bin/ directory are resident in cache (92 files, 348 of 1307 pages, 26.6%)."
+   },
+   {
+    "cmd": "vmtouch -v big-dataset.txt",
+    "context": "Example 2: verbose residency check for one file, showing a per-page progress bar."
+   },
+   {
+    "cmd": "tail -n 10000 big-dataset.txt > /dev/null",
+    "context": "Example 2: reads the end of the file with tail, which pulls those pages into cache as a side effect."
+   },
+   {
+    "cmd": "vmtouch -vt big-dataset.txt",
+    "context": "Example 3: touches the whole file to bring it into memory, with an animated progress bar; took about 12 seconds in the example."
+   },
+   {
+    "cmd": "vmtouch -ve a.txt",
+    "context": "Example 4: evicts a.txt from the page cache to make room for other files."
+   },
+   {
+    "cmd": "vmtouch -dl /var/www/htdocs/critical/",
+    "context": "Example 5: daemonises and locks all files in the directory into physical memory."
+   }
+  ],
+  "install_notes": "The documented route is the three-step source build: git clone, make, sudo make install. Nothing beyond that appears on the homepage or the GitHub README. No runtime, account or hardware requirement is stated, and no Homebrew-specific notes were given.",
+  "standout": "It exposes the page cache directly: you can see which pages of a specific file are resident and deliberately load or evict them, with a progress bar that shows the cache filling page by page. The homepage also shows real-world use, including a linked Instagram architecture write-up and a parse_vmtouch.py script used there.",
+  "status": "unknown. The README gives no release version, release date or last-commit date that I could see. The copyright line reads 'copyright (c) 2009-2017', and the README's build badge points to travis-ci.org, which suggests the project may be quiet, but I could not confirm that. The homepage also lists Debian packaging as '(stalled)'.",
+  "caveats": "The README says only 'unix and unix-like systems' and names no specific platforms, so I could not confirm which systems are supported. Locking (-l) and daemon mode (-d) are presented as features, but the README gives no limits on them. The Debian packaging is marked stalled on the homepage. The README's build badge links to travis-ci.org. Hoytech sells advanced development, support contracts and training, and the project is BSD licensed.",
+  "quotes": [
+   "vmtouch is a tool for learning about and controlling the file system cache of unix and unix-like systems.",
+   "It is BSD licensed so you can basically do whatever you want with it.",
+   "Maintaining \"soft quotas\" of cache usage",
+   "Locking files into memory so the OS won't evict them"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://hoytech.com/vmtouch/"
+   },
+   {
+    "label": "Online manual (vmtouch.pod)",
+    "url": "https://github.com/hoytech/vmtouch/blob/master/vmtouch.pod"
+   },
+   {
+    "label": "System tuning parameters (TUNING.md)",
+    "url": "https://github.com/hoytech/vmtouch/blob/master/TUNING.md"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/hoytech/vmtouch"
+   }
+  ],
+  "fetch_log": [
+   "https://hoytech.com/vmtouch/ - worked; full homepage with install steps, examples, and a long list of links",
+   "https://github.com/hoytech/vmtouch - worked; README returned, with install steps and links to the manual and TUNING.md; the linked manual and TUNING.md were not fetched"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It makes the usually invisible filesystem page cache inspectable and controllable, offering a hands-on way to explore how the OS keeps file data in memory."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "vmtouch",
+  "tldr": "vmtouch shows which pages of a file are sitting in the operating system's page cache, and lets you load, evict or lock them yourself.",
+  "deeper_look": "vmtouch takes files or directories and reports how many of their pages are currently resident in memory, as page counts and percentages. Point it at /bin/ and the README's example reports 348 of 1307 pages cached, 26.6%. With -v it draws a per-page progress bar for a single file, so you can see which parts of the file are in RAM.\n\nIt does more than look. -t touches a file to pull it into cache, -e evicts it, and -l locks it into physical memory so the OS won't evict it. -d runs it as a daemon. The README lists uses such as finding out which files the OS is caching, preserving a virtual memory profile when failing over servers, keeping a hot-standby file server, and maintaining \"soft quotas\" of cache usage.\n\nThe idea underneath is that file reads on Unix go through a page cache, so the same read can be fast or slow depending on what happened earlier. Normally that is invisible. Here you can run tail on the end of a big file, check again, and watch only the last pages light up. Then you can touch the whole file and watch the bar fill. The README's own example took about 12 seconds to load a large file.\n\nThe homepage and README do not describe the internals, and they point to a separate TUNING.md for system tuning parameters.",
+  "install": "brew install vmtouch\n# documented upstream route, from source: git clone https://github.com/hoytech/vmtouch.git && cd vmtouch && make && sudo make install",
+  "try_this": [
+   {
+    "cmd": "vmtouch /bin/",
+    "what_happens": "Prints a summary of files, directories and how many pages of /bin/ are resident in cache."
+   },
+   {
+    "cmd": "vmtouch -v big-dataset.txt",
+    "what_happens": "Shows a per-page progress bar of which parts of the file are cached. Use any large file you have."
+   },
+   {
+    "cmd": "vmtouch -vt big-dataset.txt",
+    "what_happens": "Touches every page to load the file into memory, with an animated progress bar showing the cache filling."
+   }
+  ],
+  "whats_unique": "It makes the page cache visible and steerable from one small command, down to which pages of a specific file are resident. The homepage links an Instagram architecture write-up that used it in real work.",
+  "caveats": "The README gives no release date, and its copyright line reads 2009-2017 with a travis-ci.org badge, so the project may be quiet; it also names no specific supported platforms beyond 'unix and unix-like systems'.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "page-cache",
+   "memory",
+   "unix",
+   "filesystem",
+   "cli"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://hoytech.com/vmtouch/"
+   },
+   {
+    "label": "Online manual (vmtouch.pod)",
+    "url": "https://github.com/hoytech/vmtouch/blob/master/vmtouch.pod"
+   },
+   {
+    "label": "System tuning parameters (TUNING.md)",
+    "url": "https://github.com/hoytech/vmtouch/blob/master/TUNING.md"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/hoytech/vmtouch"
+   }
+  ]
+ }
+}

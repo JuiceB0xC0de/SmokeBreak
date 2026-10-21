@@ -1,0 +1,112 @@
+{
+ "name": "up",
+ "desc": "Tool for writing command-line pipes with instant live preview",
+ "homepage": "https://github.com/akavel/up",
+ "installs_365d": 390,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "tui"
+ ],
+ "why": "Interactive pipeline builder with live preview of command-line text transforms; a fun way to learn sed and awk style piping.",
+ "brief": {
+  "what_it_is": "up, the Ultimate Plumber, is a terminal UI for building Linux shell pipelines interactively. You redirect any text-emitting command into up, type a pipeline into the input box at the top, and press Enter. up runs the pipeline with bash -c and shows its output in a scrollable preview below. When you are happy with the result, Ctrl-X exits and writes the pipeline to an up1.sh file (or up2.sh and so on if that name is taken). Ctrl-C quits without saving.",
+  "why_it_exists": "The README says the goal is to help people interactively and incrementally explore textual data in Linux by giving a fast feedback loop while building complex pipelines out of grep, sort, cut, paste, awk, wc, perl and similar tools. The author was surprised no one seemed to have written a similar tool before.",
+  "how_it_works": "up reads the piped input into a buffer, which the README says is fixed at 40 MB, and runs the pipeline you type through bash -c on each execution. Pressing Enter reruns the pipeline and replaces the preview. Ctrl-S freezes the input and injects a fake EOF, so commands like wc or sort will print results before the input stream has actually ended. Ctrl-Q unfreezes.",
+  "commands_seen": [
+   {
+    "cmd": "lshw |& ./up",
+    "context": "Example of redirecting a command's output into up to start using it."
+   },
+   {
+    "cmd": "grep network -A2 | grep : | cut -d: -f2- | paste - -",
+    "context": "Example pipeline the README suggests typing into up's input box; the README shows its output as two lines of wireless and ethernet interface names."
+   }
+  ],
+  "install_notes": "Installs with brew install up on macOS, though the README says the author does not have a Mac and cannot confirm it works there. Other routes given are a direct Linux binary download from GitHub releases, the AUR (aur/up), and FreeBSD pkg install up. No runtime, account, or configuration is mentioned. The Homebrew scout notes list one executable, up.",
+  "standout": "It runs the pipeline you are typing on every Enter and shows the live output, so you can build a pipeline one stage at a time against real data. The README credits Bret Victor's talks as an influence, and points to Pipecut as earlier prior art.",
+  "status": "quiet. The README is signed October 2018 and calls the project a purely hobby project. I did not see a release date or last commit in the README, and I did not check the releases page, so the exact last release is unknown.",
+  "caveats": "The README warns that writing rm or dd into it could be dangerous, since pipelines run for real through bash. The input buffer is fixed at 40 MB. Long-running input shows a tilde and needs Ctrl-S to get partial results from commands like wc or sort. The author says the Mac build is untested. Windows is listed as a future idea, not supported. There is no --help yet and no tests, according to the README's future ideas. The README does not name a license.",
+  "quotes": [
+   "up is the Ultimate Plumber, a tool for writing Linux pipes in a terminal-based UI interactively, with instant live preview of command results.",
+   "WARNING: Please be careful when using it! It could be dangerous.",
+   "I was surprised no one seemed to write a similar tool before, that I could find."
+  ],
+  "links": [
+   {
+    "label": "Project homepage and README (GitHub)",
+    "url": "https://github.com/akavel/up"
+   },
+   {
+    "label": "Latest Linux release binary",
+    "url": "https://github.com/akavel/up/releases/latest/download/up"
+   },
+   {
+    "label": "Demo recording on asciinema",
+    "url": "https://asciinema.org/a/208538"
+   },
+   {
+    "label": "Pipecut, the earlier similar project the README mentions",
+    "url": "http://pipecut.org/index.html"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/akavel/up (worked; README returned, substantive enough that no further fetches were needed)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Ultimate Plumber makes ordinary shell pipelines an interactive, live-preview exploration tool, turning familiar text utilities into a genuinely useful way to discover transformations."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "up (the Ultimate Plumber)",
+  "tldr": "A terminal UI where you type a shell pipeline and see its output update live, so you can build grep, awk and sort chains against real data.",
+  "deeper_look": "up, the Ultimate Plumber, sits at the end of a pipe. You send any text-emitting command into it, type a pipeline into the input box at the top, and press Enter. up runs your pipeline with `bash -c` and shows the result in a scrollable preview underneath. Change the pipeline, press Enter again, and the preview is replaced.\n\nThe usual way to build a long pipeline is to run a command, squint at the output, add a stage, and run it all again, often re-running the slow upstream command each time. up reads the input once into a buffer and reruns only what you typed against it. The README describes the goal as helping people interactively and incrementally explore textual data, using tools like grep, sort, cut, paste, awk, wc and perl. It credits Bret Victor's talks as an influence, and the author writes: \"I was surprised no one seemed to write a similar tool before, that I could find.\" It also points to Pipecut as earlier prior art.\n\nWhen the pipeline does what you want, Ctrl-X exits and saves it to an `up1.sh` file (or `up2.sh` and so on if that name is taken). Ctrl-C quits without saving. For input that never ends, Ctrl-S freezes the buffer and injects a fake EOF, so commands like wc or sort print results before the stream finishes. Ctrl-Q unfreezes.\n\nThe idea underneath is the Unix pipeline as something you can explore rather than compose blind. Watching each stage reshape real data is a good way to learn the classic text tools.",
+  "install": "brew install up\n# The README says the author has no Mac and cannot confirm it works there. Linux binary: https://github.com/akavel/up/releases/latest/download/up. Also on the AUR (aur/up) and FreeBSD (pkg install up). Needs bash.",
+  "try_this": [
+   {
+    "cmd": "lshw |& ./up",
+    "what_happens": "Pipes the output of lshw into up so you can start typing pipelines against it. If installed via brew, run it as `up` instead of `./up`."
+   },
+   {
+    "cmd": "grep network -A2 | grep : | cut -d: -f2- | paste - -",
+    "what_happens": "Typed into up's input box on lshw output, this is the README's example. It reduces the output to two lines of wireless and ethernet interface names."
+   }
+  ],
+  "whats_unique": "It reruns your pipeline against a buffered copy of the input each time you press Enter, so you build a pipeline one stage at a time against real data. It then saves the result as a script.",
+  "caveats": "The README calls it a hobby project, signed October 2018. Pipelines run for real, so typing rm or dd is dangerous. The input buffer is fixed at 40 MB, the Mac build is untested, and there is no --help yet.",
+  "commitment": "quick",
+  "category": "quick-weird-payoffs",
+  "tags": [
+   "quick",
+   "tui",
+   "shell",
+   "pipes",
+   "unix"
+  ],
+  "links": [
+   {
+    "label": "Project homepage and README (GitHub)",
+    "url": "https://github.com/akavel/up"
+   },
+   {
+    "label": "Demo recording on asciinema",
+    "url": "https://asciinema.org/a/208538"
+   },
+   {
+    "label": "Latest Linux release binary",
+    "url": "https://github.com/akavel/up/releases/latest/download/up"
+   },
+   {
+    "label": "Pipecut, the earlier similar project",
+    "url": "http://pipecut.org/index.html"
+   }
+  ]
+ }
+}

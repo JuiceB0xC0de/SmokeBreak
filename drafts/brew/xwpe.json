@@ -1,0 +1,139 @@
+{
+ "name": "xwpe",
+ "desc": "Borland-style IDE clone with LSP/DAP support (terminal UI)",
+ "homepage": "https://codeberg.org/mendezr/xwpe",
+ "installs_365d": 98,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "tui",
+  "afternoon",
+  "language"
+ ],
+ "why": "A Borland-style IDE in the terminal is a nostalgic old-school environment with a fun retro twist.",
+ "brief": {
+  "what_it_is": "xwpe is a terminal and X11 programming editor and IDE modelled on the Borland C and Pascal environments. It has syntax highlighting, project management, function-key driven menus, mouse support, and Emacs cursor keys (Ctrl-P/N/F/B/A/E). It runs compilers and debuggers for 12 languages from inside the editor (F9 builds with error navigation, Ctrl-G R starts a debugger). Through an Alt-Q prefix it also acts as an LSP client (hover, go-to-definition, references, rename, diagnostics) for C/C++, Python, Go, Rust and Scala, and as a DAP client for source-level debugging of Go and Rust. The binaries are wpe (ncurses terminal mode) and xwpe (graphical mode, native Wayland or X11).",
+  "why_it_exists": "The README presents it as a revival: the original Borland-style editor by Fred Kruse (1993), continued by Dennis Payne (1997-2006), was untested for nearly 20 years and was taken up again in 2026 by Juan Manuel Mendez Rey. Its stated aim is a discoverable Borland-style UX with no per-project config and no heavy GUI runtime, that works over SSH or on a plain console, while adding modern language servers and debuggers.",
+  "how_it_works": "It is a C program that draws its own text interface: ncurses in the terminal, and Cairo/Pango/Xft rendering in X11 or on Wayland, with a double-buffered screen model. Language servers and debug adapters are spoken to over the same protocols VS Code and Neovim use (LSP and DAP), so existing servers such as clangd, Metals and Delve plug in. The README says the LSP client attaches to one open file at a time.",
+  "commands_seen": [
+   {
+    "cmd": "autoreconf -fi && ./configure && make && sudo make install",
+    "context": "The from-source build for any UNIX, as given in the install table (full steps in BUILDING.md). The README says make install is required, since it installs syntax rules, in-app Help, the option file and the man page."
+   },
+   {
+    "cmd": "sudo apt install build-essential autoconf automake pkg-config texinfo \\\\ libncurses-dev libx11-dev libxft-dev libcairo2-dev libpango1.0-dev libvterm-dev libjson-c-dev libgpm-dev zlib1g-dev librsvg2-bin",
+    "context": "Debian/Ubuntu build dependencies for the fast path. The README wraps this across lines with backslashes; it is shown here joined."
+   },
+   {
+    "cmd": "autoreconf -fi && ./configure && make && sudo make install",
+    "context": "Fast path on Debian/Ubuntu, run after the apt line above to build and install the whole editor."
+   },
+   {
+    "cmd": "apt install xwpe",
+    "context": "Debian unstable package (the README says it is migrating to testing)."
+   },
+   {
+    "cmd": "yay -S xwpe",
+    "context": "Arch install via the AUR."
+   },
+   {
+    "cmd": "wpe file.c",
+    "context": "Opens a file in terminal mode (ncurses)."
+   },
+   {
+    "cmd": "xwpe file.c",
+    "context": "Opens a file in graphical mode, native Wayland (auto-detected) or X11."
+   },
+   {
+    "cmd": "info xwpe",
+    "context": "Reads the Texinfo manual (13 chapters)."
+   },
+   {
+    "cmd": "man xwpe",
+    "context": "Shows the command-line options man page."
+   }
+  ],
+  "install_notes": "Beyond brew install, the README lists these: Debian/Ubuntu install via apt; Fedora, openSUSE, Arch, macOS (Homebrew tap, per docs/install/macos.md), FreeBSD/OpenBSD/NetBSD each have a separate guide, and the generic route is from source with autoreconf, configure, make, make install. The from-source build needs the dev libraries listed above (ncurses, X11, Xft, Cairo, Pango, libvterm, json-c, gpm, zlib, librsvg). make install is part of the build and is needed for the full install. Compilers, language servers and debuggers are set up separately after the editor builds, per docs/ide-setup.md. The README says the Wayland backend is auto-detected from WAYLAND_DISPLAY and falls back to XWayland.",
+  "standout": "It keeps the Borland-style menus and zero-config feel of a 1990s DOS-era IDE, but its terminal build now speaks LSP and DAP, so the same editor provides language-server navigation and a source-level debugger for Go and Rust. The README also describes a native Wayland backend and a few-megabyte binary.",
+  "status": "Maintained. The README says the current release is 1.6.9. The most recent commit I saw is dated 2026-07-13 (a docs commit about the Wayland backend). The repository shows 719 commits, 6 releases and 2 open issues. The README asks for testers and says the LSP client is newer and still maturing.",
+  "caveats": "The README says the LSP client is newer and still maturing, so expect rough edges. Rename (Alt-Q N) applies only to the current file; edits to other files are reported, not applied. Dialog scrollbars are still ASCII (cosmetic, planned for v1.7). The source build needs a long list of dev libraries, and make install is required for a full install. The X11 and Wayland GUI paths need a display, and the README says the editor was untested for nearly 20 years before 2026. The license is GPL-2. I did not read the per-platform install guides, so macOS and BSD specifics are unverified.",
+  "quotes": [
+   "Xwpe is a programming editor and IDE for UNIX terminals and X11, inspired by the Borland C and Pascal family.",
+   "A discoverable Borland-style UX (menus, mouse and all), zero per-project config, no X server or heavy GUI runtime required",
+   "xwpe was untested for nearly 20 years. If you can try it \u2014 any terminal, any compiler, any workflow \u2014 open an issue even if everything works."
+  ],
+  "links": [
+   {
+    "label": "Codeberg repository (homepage)",
+    "url": "https://codeberg.org/mendezr/xwpe"
+   },
+   {
+    "label": "Historical archive",
+    "url": "https://codeberg.org/mendezr/xwpe-archives"
+   },
+   {
+    "label": "Dennis Payne continuation (1.5.x) site",
+    "url": "https://www.identicalsoftware.com/xwpe/"
+   }
+  ],
+  "fetch_log": [
+   "https://codeberg.org/mendezr/xwpe: worked. The full README was returned, along with the repository file listing and commit list. The README was complete, so I did not follow the docs/ links."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "The Borland-style, function-key-driven IDE is a genuinely unusual interface, now bridged to LSP and DAP rather than merely recreating a retro look."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "xwpe",
+  "tldr": "A Borland-style terminal IDE from 1993, revived in 2026, with function-key menus, mouse support, and a modern LSP and DAP client bolted on.",
+  "deeper_look": "xwpe is a programming editor and IDE for UNIX terminals and X11, modelled on the Borland C and Pascal environments. It has syntax highlighting, project management, menus driven by function keys, mouse support and Emacs-style cursor keys. F9 builds and lets you step through compiler errors, and Ctrl-G R starts a debugger. It can drive compilers and debuggers for 12 languages from inside the editor.\n\nThe project is old and was revived. Fred Kruse wrote the original in 1993, Dennis Payne continued it from 1997 to 2006, and according to the README it then went untested for nearly 20 years. In 2026 Juan Manuel Mendez Rey took it up again. The stated aim is a discoverable Borland-style interface with no per-project config and no heavy GUI runtime, which works over SSH or on a plain console.\n\nThe new part is that it speaks LSP and DAP, the same protocols VS Code and Neovim use. Behind an Alt-Q prefix it offers hover, go-to-definition, references, rename and diagnostics for C/C++, Python, Go, Rust and Scala. It also does source-level debugging for Go and Rust. Existing servers such as clangd, Metals and Delve plug in.\n\nUnderneath is a C program that draws its own interface: ncurses in the terminal (the wpe binary), and Cairo, Pango and Xft in graphical mode (xwpe), on native Wayland or X11. The idea worth poking at is how much of a modern editing workflow a 1990s menu-and-function-key design can hold once the language servers do the heavy lifting.",
+  "install": "brew install xwpe\n# installs the terminal binaries we and wpe. Compilers, language servers and debuggers are set up separately (see docs/ide-setup.md in the repo).",
+  "try_this": [
+   {
+    "cmd": "wpe file.c",
+    "what_happens": "Opens a file in the ncurses terminal editor, where F9 builds and the menus are reachable with keys or mouse."
+   },
+   {
+    "cmd": "info xwpe",
+    "what_happens": "Opens the 13-chapter Texinfo manual."
+   },
+   {
+    "cmd": "man xwpe",
+    "what_happens": "Shows the man page for the command-line options."
+   }
+  ],
+  "whats_unique": "It keeps the menus and zero-config feel of a DOS-era Borland IDE, yet the terminal build speaks LSP and DAP. It also has a native Wayland backend and a binary of a few megabytes.",
+  "caveats": "The README says the LSP client is newer and still maturing, and rename only applies to the current file.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "tui",
+   "ide",
+   "borland",
+   "retro",
+   "lsp",
+   "editor"
+  ],
+  "links": [
+   {
+    "label": "Codeberg repository (homepage)",
+    "url": "https://codeberg.org/mendezr/xwpe"
+   },
+   {
+    "label": "Historical archive",
+    "url": "https://codeberg.org/mendezr/xwpe-archives"
+   },
+   {
+    "label": "Dennis Payne continuation (1.5.x) site",
+    "url": "https://www.identicalsoftware.com/xwpe/"
+   }
+  ]
+ }
+}

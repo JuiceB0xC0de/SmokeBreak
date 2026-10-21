@@ -1,0 +1,81 @@
+{
+ "name": "redress",
+ "desc": "Tool for analyzing stripped Go binaries compiled with the Go compiler",
+ "homepage": "https://github.com/goretk/redress",
+ "installs_365d": 877,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "reverse-engineering",
+  "afternoon",
+  "tui"
+ ],
+ "why": "Recovers package and type information from stripped Go binaries, a real door into how compiled programs are taken apart.",
+ "brief": {
+  "what_it_is": "Redress is a command-line tool written in Go that analyzes stripped Go binaries built with the Go compiler. It reads the binary, pulls out embedded data, and rebuilds symbols, packages, types, and an approximate source layout. Its output is text on the terminal, and in radare2 mode it also sets symbol flags and type annotations inside the r2 session. The README's examples use a macOS malware sample called pplauncher.",
+  "why_it_exists": "The README says it tries to 're-dress' a 'stripped' binary, recovering the names and structure that the build removed so the code is easier to analyze.",
+  "how_it_works": "The README says redress extracts data from the binary and uses it to reconstruct symbols and perform analysis. It runs in two modes: standalone, where you run it on its own, and inside radare2 via r2pipe, where it detects that it is in that environment and changes behavior. With no flags, standalone mode extracts nothing, and the README says the design is to print more than the user asks for. In r2 mode, running it with no flags performs automatic analysis: it creates symbol flags for functions and methods, extracts types and marks the matching _type symbols, and recursively analyzes main.init and main.main.",
+  "commands_seen": [
+   {
+    "cmd": "redress -h",
+    "context": "Prints the top-level help, listing the subcommands: completion, gomod, help, info, moduledata, packages, r2, source, types, and version."
+   },
+   {
+    "cmd": "redress info pplauncher",
+    "context": "Prints a summary: OS, arch, compiler version and date, build ID, GoRoot, main package path, and counts of main, std, and vendor packages."
+   },
+   {
+    "cmd": "redress packages pplauncher --unknown",
+    "context": "Lists packages redress classified as project packages, plus a separate list of packages it could not classify. Without --unknown, only the project packages are shown."
+   },
+   {
+    "cmd": "redress packages pplauncher --std --vendor",
+    "context": "Adds the standard library and third-party (vendor) packages to the listing."
+   },
+   {
+    "cmd": "redress types interface pplauncher",
+    "context": "Lists interface type definitions. Standard library and vendor interfaces are hidden unless --std or --vendor is given."
+   },
+   {
+    "cmd": "redress types struct pplauncher --methods",
+    "context": "Lists struct type definitions along with their method signatures."
+   },
+   {
+    "cmd": "redress source pplauncher",
+    "context": "Reconstructs the source layout: package name and compile-time folder, then each file with its functions and estimated start and end line numbers."
+   },
+   {
+    "cmd": "r2 pplauncher",
+    "context": "Opens the binary in radare2, the step before running redress inside the r2 session."
+   },
+   {
+    "cmd": "#!pipe redress r2 init",
+    "context": "Run inside radare2. Performs the initial analysis: creates function symbols and type symbols and analyzes main.init and main.main."
+   },
+   {
+    "cmd": "#!pipe redress r2 type 0x01116c20",
+    "context": "Run inside radare2. Given the address of a type flag, prints the Go struct definition for that type."
+   }
+  ],
+  "install_notes": "The README gives no installation steps beyond saying the tool can be downloaded from its GitHub page. Using the radare2 mode requires radare2 and r2pipe, as the README describes. No accounts, extra runtimes, or configuration are mentioned.",
+  "standout": "It is built to work inside radare2: the same binary runs standalone or as an r2pipe plugin, and in r2 it turns recovered Go type information into type flags that show which types get heap-allocated. The README's examples use a real malware sample, which makes the tool's purpose concrete.",
+  "status": "unknown. The README has no release version, changelog, or date. The examples use Go 1.10 output from 2018, which describes the example binary and says nothing about current activity. I did not check the commit history or releases page.",
+  "caveats": "The README does not state which Go versions are supported. Its examples come from a Go 1.10 binary on macOS, so newer compiler output is not shown. The README does not mention a license or platform support beyond the macOS example. The radare2 mode needs radare2 and r2pipe. The README shows the tool output rather than documenting every flag, and it calls the output an estimate in places, such as the reconstructed line numbers.",
+  "quotes": [
+   "It essentially tries to \"re-dress\" a \"stripped\" binary.",
+   "The idea is to print more information than what is asked by the user.",
+   "The binary is aware of its environment and behaves accordingly."
+  ],
+  "links": [
+   {
+    "label": "redress on GitHub",
+    "url": "https://github.com/goretk/redress"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/goretk/redress: fetched successfully; README returned. The README was complete, so I did not follow any further links."
+  ]
+ }
+}

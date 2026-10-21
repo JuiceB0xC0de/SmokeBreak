@@ -1,0 +1,90 @@
+{
+ "name": "espeak-ng",
+ "desc": "Speech synthesizer that supports more than hundred languages and accents",
+ "homepage": "https://github.com/espeak-ng/espeak-ng",
+ "installs_365d": 28425,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "quick",
+  "audio",
+  "language"
+ ],
+ "why": "Formant speech synthesis from the terminal, with a fascinating hand-built approach to voice across hundreds of languages.",
+ "brief": {
+  "what_it_is": "eSpeak NG is a compact open-source text-to-speech synthesizer for Linux, Windows, Android and other systems, supporting more than 100 languages and accents. As a command-line program it takes text from a file or stdin and speaks it aloud; it can also write the speech out as a WAV file. It is also available as a shared library (a DLL on Windows) and as a SAPI5 engine for Windows screen readers. The project is written in C and is based on the eSpeak engine by Jonathan Duddington.",
+  "why_it_exists": "The README frames it as a small, broadly multilingual synthesizer: formant synthesis lets many languages fit in a small footprint, at the cost of sounding less natural than recording-based synthesizers. It is a cleaned-up fork of eSpeak, started in late 2015 with the intention of tidying the existing codebase, adding features, and improving the supported languages.",
+  "how_it_works": "It uses formant synthesis, a method that generates speech from modelled vocal-tract resonances rather than from recorded human speech, which is why the data for many languages stays small. The README says it also supports Klatt formant synthesis and can use MBROLA diphone voices as a backend, in which case eSpeak NG converts text to phonemes with pitch and length information. Its text-to-phoneme output can also be used as a front end for another speech engine.",
+  "commands_seen": [
+   {
+    "cmd": "espeak-ng hello",
+    "context": "From the user guide's Problems with pcaudiolib section: a basic invocation that speaks the word hello. Without pcaudiolib it may produce no sound."
+   },
+   {
+    "cmd": "espeak-ng hello --stdout|aplay",
+    "context": "Workaround from the same guide section: send the audio to standard output and pipe it to aplay (paplay on Ubuntu) to get sound."
+   },
+   {
+    "cmd": "sudo apt-get install espeak-ng",
+    "context": "Installs the precompiled package on Debian-like distributions such as Ubuntu and Mint, per the user guide."
+   },
+   {
+    "cmd": "sudo pacman -S espeak-ng",
+    "context": "Installs the precompiled package on Arch-like distributions such as EndeavourOS, per the user guide."
+   },
+   {
+    "cmd": "sudo yum install espeak-ng",
+    "context": "Installs the precompiled package on Red Hat-like distributions such as Fedora, per the user guide."
+   },
+   {
+    "cmd": "cmake -Bbuild -DCMAKE_INSTALL_PREFIX=/usr -DUSE_LIBPCAUDIO=OFF",
+    "context": "Configures a source build without pcaudiolib/PulseAudio support, as a fallback in the user guide's PulseAudio troubleshooting section."
+   },
+   {
+    "cmd": "cmake --build build",
+    "context": "Builds the project from the configured build directory in the source-build fallback."
+   },
+   {
+    "cmd": "sudo cmake --install build",
+    "context": "Installs the built binaries into the prefix chosen at configure time."
+   },
+   {
+    "cmd": "git replace 8d59235f 63c1c019",
+    "context": "From the README history section: lets git show the pre-1.24.02 eSpeak history stored on the historical branch."
+   },
+   {
+    "cmd": "sudo apt install --reinstall alsa",
+    "context": "From the guide's PulseAudio troubleshooting: reinstalls ALSA after removing PulseAudio, as one route to working audio output."
+   }
+  ],
+  "install_notes": "Linux: install from the distribution package manager (apt, yum or pacman, per the guide), or build from source with CMake. If you build from source without pcaudiolib installed, the guide says espeak-ng may compile but produce no sound by default; install libpulse-dev or pcaudiolib and check that the CMake output reports pcaudiolib was found, then rebuild. Windows: download the .msi installer from the GitHub Releases page; the guide's example filename is espeak-ng-20191129-b702b03-x64.msi. The build creates espeak and speak symlinks to espeak-ng and speak-ng. The data was renamed to espeak-ng-data, so it is not interchangeable with original espeak data. No accounts are needed.",
+  "standout": "The project is a live fork of an older engine that keeps espeak's command-line options and C API (speak_lib.h) for compatibility while changing the data format. It can speak through MBROLA diphone voices and can also emit phonemes, so it works as a front end rather than only a standalone speaker. Its formant approach keeps the whole multilingual package to a few megabytes.",
+  "status": "unknown. The README and user guide fetched here show no release date, last-commit date, or deprecation notice. It has a CI badge for Linux, a roadmap wiki page, a ChangeLog, and a Catalan-language extension funded under Projecte AINA, which suggests active work, but I did not verify recent activity.",
+  "caveats": "Speech is clear and fast but, by the README's own account, not as natural as recording-based synthesizers. SSML support is described as incomplete. The espeakedit program is not included; its functions moved into libespeak-ng. Audio output on Linux can fail silently when pcaudiolib or PulseAudio is missing, and the guide's workarounds involve removing PulseAudio. Several languages are at varying stages of progress. Windows requires Windows 8 or later. The README lists Mac and BSD as platforms without a minimum version or details. Licence is GPL v3 or later, with a BSD-2 getopt file on Windows.",
+  "quotes": [
+   "The eSpeak NG is a compact open source software text-to-speech synthesizer for Linux, Windows, Android and other operating systems.",
+   "The speech is clear, and can be used at high speeds, but is not as natural or smooth as larger synthesizers which are based on human speech recordings.",
+   "It supports more than 100 languages and accents."
+  ],
+  "links": [
+   {
+    "label": "Homepage / README (GitHub)",
+    "url": "https://github.com/espeak-ng/espeak-ng"
+   },
+   {
+    "label": "User guide (docs/guide.md)",
+    "url": "https://github.com/espeak-ng/espeak-ng/blob/master/docs/guide.md"
+   },
+   {
+    "label": "Supported languages (docs/languages.md)",
+    "url": "https://github.com/espeak-ng/espeak-ng/blob/master/docs/languages.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/espeak-ng/espeak-ng (worked; README returned in full)",
+   "https://github.com/espeak-ng/espeak-ng/blob/master/docs/guide.md (worked; GitHub page HTML returned with navigation noise, but the guide text was readable)"
+  ]
+ }
+}

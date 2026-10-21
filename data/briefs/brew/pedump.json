@@ -1,0 +1,85 @@
+{
+ "name": "pedump",
+ "desc": "Dump Windows PE files using Ruby",
+ "homepage": "https://pedump.me",
+ "installs_365d": 139,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering"
+ ],
+ "why": "Dumping Windows PE headers from the terminal is a friendly way to see inside executables.",
+ "brief": {
+  "what_it_is": "pedump is a pure Ruby command-line tool that dumps the internals of Windows executables. You point it at a PE file (and it also handles DOS MZ, win16 NE, and EFI TE files) and it prints the headers, sections, data directories, resources, strings, imports, exports, version info, and packer/compiler guess to the terminal. Output defaults to a table and can be switched to bin, c, dump, hex, inspect, json, or yaml. It can also upload a file to the pedump.me website for an HTML rendering.",
+  "why_it_exists": "The README gives no separate problem statement. The homepage pitches it as a way to \"dump your PE!\", and the README describes it as a pure Ruby implementation of a win32 PE binary dumper.",
+  "how_it_works": "It parses the binary's structures in Ruby and prints them per section, selected with flags such as --pe, --sections, --imports, or --resources. Extraction flags such as --extract resource:VERSION/#1 or --extract section:.text write raw bytes to stdout, so they pipe into hexdump. Conversion flags such as --rva2file and --va2file translate addresses. Packer detection is heuristic, and --deep runs a slower scan.",
+  "commands_seen": [
+   {
+    "cmd": "gem install pedump",
+    "context": "Installs the pedump gem from RubyGems. The README's only install line."
+   },
+   {
+    "cmd": "pedump filename.exe",
+    "context": "Basic run on a PE file, which prints the default table output."
+   },
+   {
+    "cmd": "pedump -h",
+    "context": "Prints the full option list, including formats, extract IDs, patch flags, and the -W upload switch."
+   },
+   {
+    "cmd": "pedump --mz calc.exe",
+    "context": "Dumps the MZ (DOS) header of calc.exe."
+   },
+   {
+    "cmd": "pedump --rich calc.exe",
+    "context": "Shows the 'Rich' header, which lists the Visual Studio build tools that produced the binary."
+   },
+   {
+    "cmd": "pedump --imports zlib.dll",
+    "context": "Lists the DLL's imported modules and functions."
+   },
+   {
+    "cmd": "pedump --packer zlib.dll",
+    "context": "Guesses the packer or compiler; the README's example result is 'MS Visual C v2.0'."
+   },
+   {
+    "cmd": "pedump --packer-only -qqq samples/*",
+    "context": "Mimics the output of the Unix 'file' command across a set of samples, with one line per file."
+   },
+   {
+    "cmd": "pedump calc.exe --extract resource:VERSION/#1 | hexdump -C | head",
+    "context": "Extracts the VERSION resource by type and name, then pipes the raw bytes to hexdump."
+   },
+   {
+    "cmd": "pedump --file2va 0x4ae00 calc.exe --format hex",
+    "context": "Converts a file offset to a virtual address and prints the result in hex."
+   }
+  ],
+  "install_notes": "The homepage says you need Ruby 1.9+ with RubyGems installed, then run gem install pedump. No accounts, API keys, or special hardware are mentioned. The -W/--web option uploads your file to pedump.me, which needs network access. The news log says a 0.7.6 release fixed gem building from tar.gz for Homebrew users.",
+  "standout": "It is a pure Ruby PE dumper that covers old formats too (DOS MZ, win16 NE, EFI TE) and supports the .NET CLR. It also has an --extract mechanism for pulling out resources, sections, or data directories by name, RVA, or raw offset, plus a --packer-only mode that imitates the 'file' command.",
+  "status": "maintained. The README's News section has entries dated 2026.01.28 (versions 0.7.5 and 0.7.6), 2025.11.11, and 2025.03.16. The GitHub fetch returned only the README, so I could not see the last commit date.",
+  "caveats": "The -W/--web option sends your binary to a third-party site (pedump.me), which matters for proprietary or sensitive files. The README's dependency list was trimmed in 0.7.5 but still expects a working Ruby install. The README is short and points to the pedump.me site for examples, so I could not check how thorough the tool is against every format. The homepage lists a privacy policy, which I did not fetch.",
+  "quotes": [
+   "A pure ruby implementation of win32 PE binary files dumper.",
+   "a convenient way to upload your PE's to https://pedump.me for a nice HTML tables with image previews, candies & stuff",
+   "(can cause exceptions & heavy wounds)"
+  ],
+  "links": [
+   {
+    "label": "pedump.me homepage (web upload and examples)",
+    "url": "https://pedump.me"
+   },
+   {
+    "label": "GitHub repository (README, source, issues)",
+    "url": "http://github.com/zed-0xff/pedump"
+   }
+  ],
+  "fetch_log": [
+   "https://pedump.me: worked; returned the homepage with examples, usage notes, and a link to the GitHub repo",
+   "http://github.com/zed-0xff/pedump: worked; returned the README, with the full usage text, examples, and news log"
+  ]
+ }
+}

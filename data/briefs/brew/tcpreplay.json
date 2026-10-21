@@ -1,0 +1,91 @@
+{
+ "name": "tcpreplay",
+ "desc": "Replay saved tcpdump files at arbitrary speeds",
+ "homepage": "https://tcpreplay.appneta.com/",
+ "installs_365d": 1285,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol",
+  "pcap"
+ ],
+ "why": "Replays captured packets onto live networks at chosen speeds, a hands-on way to watch traffic and protocols act out again.",
+ "brief": {
+  "what_it_is": "Tcpreplay is a suite of GPLv3 command-line utilities for UNIX (and Windows under Cygwin) that takes a capture file (.pcap, from tcpdump, Wireshark or similar), optionally rewrites its Layer 2-4 headers, and sends the packets back onto a live network. The main tcpreplay binary replays at the original timing, at a target rate in packets/sec or Mbps, or as fast as the hardware allows. The suite also includes tcpreplay-edit (replay with rewriting in one pass), tcprewrite, tcpprep, tcpbridge, tcpliveplay and tcpcapinfo. Output is packets on the wire, plus replay statistics.",
+  "why_it_exists": "Real network traffic is messy, bursty and hard to reproduce on demand. Tcpreplay lets you capture a slice of traffic once and replay it deterministically as often as you like, with the same packets and timing, to benchmark throughput, reproduce a bug, regression-test a firewall rule, or drive a NetFlow appliance to its limits.",
+  "how_it_works": "A capture goes in and packets come out on the wire. tcpprep and tcprewrite are optional pre-processing stages that can be used alone, together, or not at all; tcpprep writes a cache file that classifies packets as client or server, which is what a two-NIC in-line test needs. tcpreplay-edit folds tcprewrite's rewriting options into the replay so headers are changed in a single pass, while plain tcpreplay stays a lean, edit-free engine. tcpliveplay replays a captured TCP session against a real server so the full stack up to the application responds, rather than staying at Layer 2.",
+  "commands_seen": [
+   {
+    "cmd": "tar xf tcpreplay-*.tar.xz && cd tcpreplay-*",
+    "context": "Unpacks the release tarball from the GitHub releases page before building."
+   },
+   {
+    "cmd": "./configure && make && sudo make install",
+    "context": "Autotools install from a release tarball; needs only a C compiler and libpcap."
+   },
+   {
+    "cmd": "cmake -B build",
+    "context": "CMake configure step, which the README calls the recommended build system as of 4.6."
+   },
+   {
+    "cmd": "cmake --build build",
+    "context": "Compiles the CMake build tree created in ./build."
+   },
+   {
+    "cmd": "sudo cmake --install build",
+    "context": "Installs the CMake-built suite system-wide."
+   },
+   {
+    "cmd": "sudo apt-get install liburing-dev",
+    "context": "Debian/Ubuntu package needed to enable the io_uring fast path."
+   },
+   {
+    "cmd": "sudo tcpreplay -i eth0 --io-uring test.pcap",
+    "context": "Replays test.pcap out eth0 using the io_uring send path."
+   },
+   {
+    "cmd": "sudo tcpreplay -i eth0 --xdp test.pcap",
+    "context": "Replays test.pcap out eth0 through AF_XDP, bypassing the kernel network stack; needs libxdp-dev and libbpf-dev and an eBPF-capable driver."
+   },
+   {
+    "cmd": "sudo tcpreplay -i wg0 test.pcap",
+    "context": "Replays onto a layer-3-only interface such as WireGuard; Layer 2 headers are stripped automatically on Linux."
+   },
+   {
+    "cmd": "sudo make test",
+    "context": "Runs the autotools test suite from the test directory; it needs root and sends live traffic on configured test NICs."
+   }
+  ],
+  "install_notes": "Beyond brew install: a release tarball needs only a C compiler and libpcap. Building from a git checkout needs python3 and asciidoctor to generate CLI parsers and man pages (AutoGen is no longer needed for most of this). CMake 3.16+ is the recommended build. Optional fast paths: io_uring needs liburing-dev on Linux; AF_XDP needs libxdp-dev and libbpf-dev plus an eBPF-capable driver; netmap needs netmap-patched drivers and a netmap source tree pointed to with -DWITH_NETMAP. Injecting packets requires root (sudo) because it uses raw sockets. The test suite needs test NICs configured with --with-testnic and --with-testnic2 under autotools.",
+  "standout": "The suite can replay traffic into a device with real timing and at high rates, including up to hundreds of thousands of flows per second for NetFlow appliance testing, and tcpliveplay replays a TCP session so a real server answers, which plain replay tools usually cannot do. The 4.6 release also ships libtcpreplay, a static C library, so programs can embed the replay engine instead of parsing its output.",
+  "status": "maintained. The README describes 4.6 as the current release with a changelog, CI and CodeQL badges, and the homepage and GitHub repo are both up. I did not see an explicit release date or last-commit date in the pages I read, so the timing of the latest activity is unconfirmed.",
+  "caveats": "GPLv3 license, and some bundled files carry other licenses marked in-file. UNIX-focused; Windows is supported only under Cygwin. netmap is the most invasive option: the network stack goes dark on that interface while it is active, so the README warns not to test on the interface you SSH in on. The test suite sends live traffic. Non-IP packets such as ARP fail on L3 interfaces, and --io-uring is not supported there. Autotools is being phased out in favor of CMake. The homepage and README are slightly inconsistent about whether tcpreplay-edit is built by default, saying it exists only 'when built with editing support'.",
+  "quotes": [
+   "Edit and replay captured network traffic \u2014 at the original timing, a fixed rate, or as fast as the hardware allows.",
+   "Take a .pcap file, optionally rewrite its Layer 2\u20134 headers, and push it back onto the wire.",
+   "Tcpreplay lets you capture a slice of it once and replay it deterministically as often as you like \u2014 the same packets, the same timing, at whatever speed your test calls for."
+  ],
+  "links": [
+   {
+    "label": "Homepage and documentation",
+    "url": "https://tcpreplay.appneta.com/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/appneta/tcpreplay"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/appneta/tcpreplay/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://tcpreplay.appneta.com/ (worked; homepage text, no install commands on the page)",
+   "https://github.com/appneta/tcpreplay (worked; README with install and build commands)"
+  ]
+ }
+}

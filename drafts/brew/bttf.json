@@ -1,0 +1,143 @@
+{
+ "name": "bttf",
+ "desc": "CLI tool for datetime arithmetic, parsing, formatting and more",
+ "homepage": "https://github.com/BurntSushi/bttf",
+ "installs_365d": 78,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "math"
+ ],
+ "why": "Datetime arithmetic and parsing CLI by BurntSushi, a fun quirky tool though date utilities are a modest hook.",
+ "brief": {
+  "what_it_is": "bttf is a command-line datetime tool written in Rust by BurntSushi. Its subcommands cover time formatting (bttf time fmt, with rfc3339, rfc9557 and strftime-style format strings), relative and duration arithmetic (bttf time add with inputs like '1 week, 12 hours ago' or 6mo), time zone conversion (bttf time in), rounding, sequence generation (bttf time seq with daily, monthly, weekday and set-position rules), spans between dates (bttf span since), and sorting. It takes datetimes as arguments or on stdin and prints formatted datetimes or spans. A bttf tag command finds datetimes inside arbitrary text and wraps them as JSON lines, so you can pipe log files or git output through it and rewrite the timestamps in place. It was originally named Biff.",
+  "why_it_exists": "The author built it to expose the Jiff datetime library on the command line, and wanted a succinct way to format datetimes and do arithmetic. He describes the Unix date command as weird enough that he keeps re-reading its manual, so he sees room for improvement. Once it could only handle datetimes, he added tag so it could work on arbitrary data.",
+  "how_it_works": "Nearly all datetime logic is delegated to the Jiff library, with localization provided by ICU4X through the jiff-icu integration. The one exception the README names is bttf's own RFC 5545 implementation, which is used for recurrence rules such as the -w and --set-position options in time seq. The tag command finds datetimes in arbitrary text and emits them as JSON lines, and untag reverses that, with a -f option for a custom template like '{tag}\\t{data}'.",
+  "commands_seen": [
+   {
+    "cmd": "bttf",
+    "context": "With no arguments, prints the current time, for example 'Sat, May 10, 2025, 8:02:04 AM EDT'."
+   },
+   {
+    "cmd": "bttf time fmt -f rfc3339 now",
+    "context": "Formats the current time using the rfc3339 preset."
+   },
+   {
+    "cmd": "bttf time fmt -f '%Y-%m-%d %H:%M:%S %Z' now",
+    "context": "Formats the current time with a strftime-style format string."
+   },
+   {
+    "cmd": "bttf time in Asia/Bangkok now | bttf time round -i 15 -s minute",
+    "context": "Converts the current time to another time zone, then pipes it into round to snap to the nearest 15-minute increment."
+   },
+   {
+    "cmd": "bttf time add 6mo now",
+    "context": "Adds six months to the current time, showing the calendar-aware arithmetic (the example output moves across the DST change)."
+   },
+   {
+    "cmd": "bttf span since 2025-01-20T12:00 -l year",
+    "context": "Prints the span since a past datetime, with the largest unit set to years."
+   },
+   {
+    "cmd": "bttf time seq monthly -w 2-tue --until $(bttf time end-of year now) | bttf time fmt -f '%a, %F'",
+    "context": "Generates the second Tuesday of each month until the end of the year, then formats each one."
+   },
+   {
+    "cmd": "bttf tag lines /tmp/access.log | bttf time in system | bttf time fmt -f '%c' | head -n3 | bttf untag -s",
+    "context": "Finds timestamps in a log file, converts them to the system time zone, reformats them in place, and strips the tags."
+   },
+   {
+    "cmd": "cargo install bttf",
+    "context": "Installs bttf from crates.io with default features, including locale support."
+   },
+   {
+    "cmd": "cargo install bttf --no-default-features",
+    "context": "Installs bttf without locale support, for faster compile times and a smaller binary."
+   }
+  ],
+  "install_notes": "Precompiled archives for Windows, macOS and Linux are on the GitHub releases page; Linux and Windows binaries are static. You can also install from crates.io with cargo install bttf, which needs a Rust toolchain. Locale support is on by default; to use it at runtime you set BTTF_LOCALE in your shell environment, and without that the output falls back to a non-localized format (e.g. '2025 M05 10, Mon 08:02:04'). To build from source, clone the repo and run cargo build --release. For a static Linux build you need the musl library from your package manager, then rustup target add x86_64-unknown-linux-musl and build with --target x86_64-unknown-linux-musl. Note that the cargo-installed binary contains debug symbols on purpose, so run strip if you want it smaller.",
+  "standout": "Its tag command turns it from a date calculator into a filter for arbitrary text: it finds datetimes in logs or git output and rewrites them in place, which the author says other datetime utilities do not do. It also covers calendar-rule recurrence (for example last weekday of each month) in a shell one-liner.",
+  "status": "unknown. The README has a CI badge and a crates.io version badge, but it shows no release version, release date or last-commit date. It does say the author may ship breaking changes at any time. I did not fetch the releases or commits page, so I cannot confirm whether it is actively maintained.",
+  "caveats": "The README says it is not a drop-in replacement for date and it is not meant to become one; it only honours the TZ environment variable from POSIX. The author warns that arbitrary and capricious breaking changes may ship. Locale output needs BTTF_LOCALE set, otherwise the output format looks odd. The default cargo build is larger than expected because of debug symbols. Disabling locale support is a build-time option. The license is dual MIT or Unlicense. The README links a user guide (GUIDE.md) and a comparison with similar tools (COMPARISON.md) by relative path; I did not fetch either.",
+  "quotes": [
+   "I built this tool primarily as a way to expose some of the library functionality offered by Jiff on the command line.",
+   "no compatibility with `date` is intended. This is not a drop-in replacement.",
+   "I may ship arbitrary and capricious breaking changes at this point. You have been warned.",
+   "It's unclear to me how broadly useful folks will find this functionality, but other datetime utilities don't seem to have it."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repository)",
+    "url": "https://github.com/BurntSushi/bttf"
+   },
+   {
+    "label": "User guide (GUIDE.md, linked by relative path in the README)",
+    "url": "https://github.com/BurntSushi/bttf/blob/master/GUIDE.md"
+   },
+   {
+    "label": "Comparison with similar tools (COMPARISON.md, linked by relative path in the README)",
+    "url": "https://github.com/BurntSushi/bttf/blob/master/COMPARISON.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/BurntSushi/bttf (homepage, fetched OK, returned the README)",
+   "https://github.com/BurntSushi/bttf/blob/master/GUIDE.md (not fetched; linked from README only)",
+   "https://github.com/BurntSushi/bttf/blob/master/COMPARISON.md (not fetched; linked from README only)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Its reversible timestamp tagging lets ordinary text pipelines extract, convert, and rewrite dates, while recurrence rules make it more than another date wrapper."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "bttf",
+  "tldr": "A Rust datetime tool that formats, shifts and converts times, and can find timestamps in any text and rewrite them in place.",
+  "deeper_look": "bttf is a command-line datetime tool by BurntSushi, originally named Biff. Its subcommands cover formatting (`time fmt`), calendar-aware arithmetic (`time add`, which accepts inputs like `6mo` or `1 week, 12 hours ago`), time zone conversion (`time in`), rounding, sorting, spans between dates (`span since`), and sequences of dates. It reads datetimes from arguments or stdin, so the pieces chain together in a pipe.\n\nThe author built it mainly to expose the Jiff datetime library on the command line. He says the Unix `date` command is odd enough that he keeps re-reading its manual, and he wanted something more succinct. Nearly all the date logic is delegated to Jiff, with localization via ICU4X. The exception named in the README is bttf's own RFC 5545 implementation, used for recurrence rules in `time seq`. That is how a one-liner can produce the second Tuesday of every month.\n\nThe idea underneath is the `tag` command. It finds datetimes inside arbitrary text, such as a log file or git output, and wraps them as JSON lines. Anything downstream can then convert or reformat the timestamps, and `untag` turns the result back into plain text with the surrounding text intact. In the author's words: \"It's unclear to me how broadly useful folks will find this functionality, but other datetime utilities don't seem to have it.\"",
+  "install": "brew install bttf",
+  "try_this": [
+   {
+    "cmd": "bttf time in Asia/Bangkok now | bttf time round -i 15 -s minute",
+    "what_happens": "Converts the current time to Bangkok, then rounds it to the nearest 15 minutes."
+   },
+   {
+    "cmd": "bttf time seq monthly -w 2-tue --until $(bttf time end-of year now) | bttf time fmt -f '%a, %F'",
+    "what_happens": "Lists the second Tuesday of each month until the end of the year, formatted as weekday and date."
+   },
+   {
+    "cmd": "bttf tag lines /tmp/access.log | bttf time in system | bttf time fmt -f '%c' | head -n3 | bttf untag -s",
+    "what_happens": "Finds timestamps in a log file, converts them to your time zone, reformats them in place, and strips the tags."
+   }
+  ],
+  "whats_unique": "The `tag` and `untag` pair turns a date calculator into a filter that rewrites timestamps inside arbitrary text. It also does calendar-rule recurrence such as the second Tuesday of each month in a shell one-liner.",
+  "caveats": "The README says it is not a drop-in replacement for `date`, and warns the author may ship \"arbitrary and capricious breaking changes\"; locale output only works if BTTF_LOCALE is set.",
+  "commitment": "quick",
+  "category": "languages-and-oddities",
+  "tags": [
+   "quick",
+   "datetime",
+   "rust",
+   "unix-pipes",
+   "text-filter"
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repository)",
+    "url": "https://github.com/BurntSushi/bttf"
+   },
+   {
+    "label": "User guide (GUIDE.md)",
+    "url": "https://github.com/BurntSushi/bttf/blob/master/GUIDE.md"
+   },
+   {
+    "label": "Comparison with similar tools (COMPARISON.md)",
+    "url": "https://github.com/BurntSushi/bttf/blob/master/COMPARISON.md"
+   }
+  ]
+ }
+}

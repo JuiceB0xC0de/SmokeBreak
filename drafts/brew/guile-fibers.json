@@ -1,0 +1,131 @@
+{
+ "name": "guile-fibers",
+ "desc": "Concurrent ML-like concurrency for Guile",
+ "homepage": "https://codeberg.org/guile/fibers",
+ "installs_365d": 172,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language",
+  "library"
+ ],
+ "why": "Concurrent ML-style fibers for Guile Scheme, an unusual corner of a Lisp with a real idea behind it.",
+ "brief": {
+  "what_it_is": "Fibers is a Guile Scheme library that adds lightweight, Go-like concurrency in the style of Concurrent ML. You write fibers with spawn-fiber, run them under run-fibers, and pass messages between them over channels with put-message and get-message. The README's example is a client and server that exchange messages over two channels, and it prints the messages it receives as it runs. Input is Scheme code that uses the library, and output is the program's own results, such as the printed message traces.",
+  "why_it_exists": "The README says Fibers 'provides Go-like concurrency for Guile Scheme, in the tradition of Concurrent ML.' The project is an attempt to bring CML-style channel-based concurrency to Guile.",
+  "how_it_works": "The README does not explain the internals. It shows that fibers run inside a run-fibers call, that spawn-fiber starts a new fiber, and that fibers communicate through make-channel, put-message, and get-message. The manual's index lists sections for API reference, pitfalls, examples, and project status, but I could not read their contents.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://codeberg.org/guile/fibers",
+    "context": "Installation step: clone the Git repository. The README says release tarballs are not provided, so building from a clone is the expected route."
+   },
+   {
+    "cmd": "cd fibers",
+    "context": "Enter the cloned repository before verifying and building."
+   },
+   {
+    "cmd": "git tag --verify $TAG",
+    "context": "Authenticate the version tag before checking it out. The README's example tag is v1.4.3."
+   },
+   {
+    "cmd": "git checkout $TAG",
+    "context": "Check out the verified release tag."
+   },
+   {
+    "cmd": "autoreconf -vfi",
+    "context": "Generate the configure script and build files with Autoconf."
+   },
+   {
+    "cmd": "./configure --prefix=/opt/guile && make && make install",
+    "context": "Configure with the install prefix /opt/guile, build, and install. The README lists this as the build step."
+   },
+   {
+    "cmd": "./env guile",
+    "context": "Run Guile from the source tree without installing Fibers."
+   }
+  ],
+  "install_notes": "Requirements from the README: Guile 3.0.x or 2.2.x, plus Autoconf, Automake, and Libtool. On systems that do not use the Linux kernel, libevent is also required. There are no release tarballs, so you need to clone the Git repository, verify the tag with git tag --verify, check it out, run autoreconf -vfi, then run configure, make, and make install. The README's example prefix is /opt/guile. You can also run from the source tree with ./env guile without installing. The README includes no accounts or hardware requirements.",
+  "standout": "The design is Concurrent ML in Guile, not a Go clone. Channels are synchronous and first-class, and the README's example is a short pasteable session that shows message passing between two fibers. The README's contribution policy also rejects contributions produced by large language models, which is unusual for a library.",
+  "status": "Looks maintained. The Codeberg page shows 453 commits, 15 tags, and 15 releases, and it lists a README commit dated 2026-10-07, which is the most recent commit I saw. The Codeberg CI page shows the Guile 2.2 and 3.0 build jobs passing, including a libevent variant. The README's example refers to v1.4.3 as a tag. I did not confirm the date of that release.",
+  "caveats": "The README says there are no release tarballs, so a build needs git, Autoconf, Automake, Libtool, and on non-Linux systems libevent. Support is limited to Guile 2.2 and 3.0. The project is LGPLv3+. The README's contribution policy rejects LLM-generated contributions. The manual page I fetched shows a garbled date ('updated 1 January 170'), so treat its metadata with caution. The homepage is a Codeberg forge page, and its Codeberg banners and dates were not verified against an independent source.",
+  "quotes": [
+   "Fibers is a facility that provides Go-like concurrency for Guile Scheme, in the tradition of Concurrent ML.",
+   "The project does not provide release tarballs with pre-generated build scripts (make dist).",
+   "We welcome contributions by all and everyone under the terms of LGPLv3+."
+  ],
+  "links": [
+   {
+    "label": "Homepage (Codeberg)",
+    "url": "https://codeberg.org/guile/fibers"
+   },
+   {
+    "label": "Releases",
+    "url": "https://codeberg.org/guile/fibers/releases"
+   },
+   {
+    "label": "Manual",
+    "url": "https://doc.guix.gnu.org/fibers/latest/en/html_node/"
+   }
+  ],
+  "fetch_log": [
+   "https://codeberg.org/guile/fibers: fetched, worked. Returned the Codeberg repository page with README.md included.",
+   "https://doc.guix.gnu.org/fibers/latest/en/html_node/: fetched, worked, but returned only the manual's top-level index. No section text was available."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Concurrent ML\u2019s synchronous channel-based concurrency in Guile is a distinctive, hands-on way to explore a deeper model than ordinary lightweight threads."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "guile-fibers",
+  "tldr": "A Guile Scheme library for lightweight fibers that talk over synchronous channels, built on the ideas of Concurrent ML.",
+  "deeper_look": "Fibers adds cheap, Go-like concurrency to Guile Scheme. You start a fiber with `spawn-fiber`, run the whole thing inside `run-fibers`, and let fibers exchange values over channels using `make-channel`, `put-message` and `get-message`. The README's example is a client and a server swapping messages over two channels and printing what they receive.\n\nThe README describes it as providing \"Go-like concurrency for Guile Scheme, in the tradition of Concurrent ML.\" That second half is the interesting part. Concurrent ML is a design from the Standard ML world in which channels are synchronous and first-class, and communication is something you can compose. Go borrowed part of that lineage. Here it is applied in a Lisp with a long history of experimenting with control flow.\n\nThere is no executable to run. The library is the thing, and the output is whatever your own Scheme program prints. That makes it a small way to learn how channel-based concurrency feels without leaving a REPL. The brief could not read the manual's contents or the README's account of internals, so how the scheduler works is left for you to find in the source and docs.",
+  "install": "brew install guile-fibers\n# Needs Guile. Homebrew also pulls in libevent and bdw-gc.\n# Upstream ships no release tarballs. To build from source you need git, Autoconf, Automake and Libtool, and Guile 3.0.x or 2.2.x.",
+  "try_this": [
+   {
+    "cmd": "git clone https://codeberg.org/guile/fibers",
+    "what_happens": "Fetches the source, including the README with the client and server channel example."
+   },
+   {
+    "cmd": "./env guile",
+    "what_happens": "Run from inside the cloned repo, this starts Guile with Fibers available from the source tree, with no install step."
+   },
+   {
+    "cmd": "autoreconf -vfi",
+    "what_happens": "Generates the configure script in a checkout, the first step of the README's build from a tagged release."
+   }
+  ],
+  "whats_unique": "It is Concurrent ML brought to Guile rather than a plain Go imitation, with synchronous, first-class channels. The README's example is short enough to paste into a session.",
+  "caveats": "Upstream provides no release tarballs, supports only Guile 2.2 and 3.0, and its contribution policy rejects LLM-generated contributions.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "scheme",
+   "guile",
+   "concurrency",
+   "library",
+   "lisp"
+  ],
+  "links": [
+   {
+    "label": "Homepage (Codeberg)",
+    "url": "https://codeberg.org/guile/fibers"
+   },
+   {
+    "label": "Releases",
+    "url": "https://codeberg.org/guile/fibers/releases"
+   },
+   {
+    "label": "Manual",
+    "url": "https://doc.guix.gnu.org/fibers/latest/en/html_node/"
+   }
+  ]
+ }
+}

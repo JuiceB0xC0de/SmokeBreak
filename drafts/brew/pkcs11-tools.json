@@ -1,0 +1,142 @@
+{
+ "name": "pkcs11-tools",
+ "desc": "Tools to manage objects on PKCS#11 crypotographic tokens",
+ "homepage": "https://github.com/Mastercard/pkcs11-tools",
+ "installs_365d": 820,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "protocol",
+  "needs-hardware"
+ ],
+ "why": "A door into PKCS#11 hardware tokens and HSM object handling, a protocol few developers have poked at.",
+ "brief": {
+  "what_it_is": "pkcs11-tools is a toolkit of small command-line utilities for managing keys and objects on tokens that implement the PKCS#11 interface, including hardware tokens and HSMs. Its commands are modelled on Unix tools: p11ls, p11mv, p11rm, p11od and p11more. It also has commands that generate keys (p11keygen), generate CSRs (p11req) and self-signed certificates (p11mkcert), import certificates, public keys and data files, wrap and unwrap keys (p11wrap, p11unwrap, p11rewrap), and initialise or reset tokens (p11init). The tools work with software tokens such as SoftHSM, NSS and Kryoptic as well as vendor libraries, and there are with_xxx wrapper scripts that locate a vendor's library for you.",
+  "why_it_exists": "The README says the toolkit is for key management tasks on PKCS#11 tokens, and that its commands are compatible with many implementations, including both IBM and Oracle JVMs. The author is Eric Devolder at Mastercard.",
+  "how_it_works": "Each p11* command is a small program that loads a PKCS#11 library, which can be selected with -l or the PKCS11LIB environment variable, and then selects a slot and token with -s and -t. It then works on token objects by name, such as pubk/rsa or seck/aes-128, and the README says a PIN can be supplied with -p or PKCS11PASSWORD. Wrapped keys are written to a file (p11wrap writes to stdout) with a documented grammar, and p11unwrap reads that file back in. Shell completion for bash and zsh queries the token live, and the man pages are generated from markdown by pandoc at build time.",
+  "commands_seen": [
+   {
+    "cmd": "./bootstrap.sh",
+    "context": "First build step from the source tree; the README says to run it with appropriate privileges, followed by ./configure and make install."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Second build step from the source tree, run after bootstrap.sh and before make install."
+   },
+   {
+    "cmd": "make install",
+    "context": "Final build step that installs the binaries, the man pages and the shell completions."
+   },
+   {
+    "cmd": "p11ls -l /usr/local/opt/softhsm/lib/softhsm/libsofthsm2.so -s 0",
+    "context": "Lists the objects on the token in slot index 0 of the SoftHSM library, with their attributes in long format."
+   },
+   {
+    "cmd": "p11cat pubk/rsa",
+    "context": "Prints the value of a non-sensitive public key object as PEM."
+   },
+   {
+    "cmd": "p11od pubk/dh",
+    "context": "Dumps every attribute value of a public key object in hex, with the attribute names shown."
+   },
+   {
+    "cmd": "p11keygen -k ec -q prime256v1 -i my-ec-key sign=true verify=true",
+    "context": "Generates an elliptic-curve key pair on prime256v1 with the label my-ec-key, usable for sign and verify."
+   },
+   {
+    "cmd": "p11req -i my-ec-key -d '/CN=my.site.org/O=My organization/C=BE' -e 'DNS:another-url-for-my.site.org' -v",
+    "context": "Creates a PKCS#10 certificate signing request for the key my-ec-key, with a subject and a DNS subject alternative name, printed in verbose form."
+   },
+   {
+    "cmd": "p11wrap -w aes-wrapping -i rootca -a cbcpad >wrapped-key.wrap",
+    "context": "Wraps the key rootca under the wrapping key aes-wrapping using cbcpad and writes the wrapped key file to wrapped-key.wrap."
+   },
+   {
+    "cmd": "p11unwrap -f wrapped-key.wrap",
+    "context": "Unwraps a key from a previously created wrapped-key file and imports it onto the token."
+   }
+  ],
+  "install_notes": "Build from source with ./bootstrap.sh, ./configure and make install, and the README asks you to check the prerequisites in docs/INSTALL.md first. The build needs OpenSSL 3.x (libcrypto 3.0.0 or newer). Post-quantum CSR and certificate creation needs libcrypto 3.5.0 or newer, and PQC is on by default unless configured with --disable-pqc. Compiling on macOS requires brew. The README says the project builds on Linux, and older AIX and Solaris are deprecated. Windows builds use cross-compilers, and the Windows packages ship HTML docs instead of man pages. Shell completion for bash and zsh installs automatically after make install, but variables such as PKCS11LIB must be exported for the completion to see them. AWS CloudHSM support is disabled by default and needs its own setup. The brew formula's executable list includes the with_xxx wrapper scripts.",
+  "standout": "Most PKCS#11 tooling is a thin wrapper around one vendor's library, but this one gives you a Unix-style file-manager set (ls, mv, rm, cat, od) that works across many tokens. Its wrapped-key files are a documented format, so you can wrap a key on one token and unwrap it on another, and p11rewrap does both steps in one command, with the session key wrapped under one or more keys.",
+  "status": "Maintained. The README's news section has entries up to August 2026, with the 3.1.0 release described as adding a full set of man pages and a unit and integration test suite. The 3.0.0 release in July 2026 followed a gap of about three years, so release cadence is irregular. I did not check commit dates or the release page directly.",
+  "caveats": "Requires OpenSSL 3.x, so the older OpenSSL 1.1.1 is no longer supported. PQC CSR and certificate features need libcrypto 3.5.0 or newer. AIX and Solaris support is deprecated and may be removed. The AWS CloudHSM limits listed in the README are significant: certificates are not supported, attribute changes are not supported so p11mv and p11setattr do not work, p11od does not work, and wrap and unwrap templates are not supported. The README says ML-KEM, ML-DSA and SLH-DSA are supported, but the CSR and certificate features depend on the OpenSSL version. The README's SoftHSM p11slotinfo sample has a stray line of shell output at the top, so treat it as illustrative. The license is Apache 2.0, and the README's section headings and the desc field tell me nothing about the project's stability beyond the news items.",
+  "quotes": [
+   "a toolkit containing a bunch of small utilities to perform key management tasks on cryptographic tokens implementing a PKCS#11 interface",
+   "After three years of waiting, the 3.0.0 release is finally here!",
+   "Generating a key is easy: just use p11keygen with the proper arguments."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/Mastercard/pkcs11-tools"
+   },
+   {
+    "label": "Manual",
+    "url": "https://github.com/Mastercard/pkcs11-tools/blob/master/docs/MANUAL.md"
+   },
+   {
+    "label": "Change log",
+    "url": "https://github.com/Mastercard/pkcs11-tools/blob/master/CHANGELOG.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/Mastercard/pkcs11-tools (fetched, worked; README returned as the page content)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Its Unix-like object tools make the opaque PKCS#11 token model tangible, while cross-token key wrapping offers a useful way to explore HSM key management."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "pkcs11-tools",
+  "tldr": "Unix-style ls, cat, mv, rm and od for the keys inside hardware security modules and software tokens, so you can see what a PKCS#11 token holds.",
+  "deeper_look": "pkcs11-tools is a set of small command-line programs for managing objects on anything that speaks PKCS#11, the standard C interface that hardware tokens, smart cards and HSMs expose. Its commands are modelled on Unix file tools: p11ls lists objects, p11cat prints a public key as PEM, p11od dumps every attribute in hex, p11mv renames, p11rm deletes. Other commands generate keys (p11keygen), build certificate signing requests (p11req), make self-signed certificates (p11mkcert), and import certificates, public keys or data.\n\nEach command loads a PKCS#11 library, chosen with -l or the PKCS11LIB environment variable, then picks a slot and token with -s and -t. Objects are addressed by name, such as pubk/rsa or seck/aes-128. A PIN can be passed with -p or PKCS11PASSWORD. Bash and zsh completion queries the token live. Wrapper scripts named with_softhsm, with_yubico, with_nfast and so on find a vendor's library for you.\n\nThe idea underneath is that a key on an HSM is an object you can name and inspect but usually cannot read. Private keys stay inside the device, and you move them only by wrapping: encrypting one key under another. p11wrap writes a wrapped key to stdout in a documented file format, p11unwrap reads it back in, and p11rewrap does both steps in one go. You can do all of this without hardware, using SoftHSM, NSS or Kryoptic as a software token.\n\nThe tool comes from Eric Devolder at Mastercard. The README describes it as compatible with many implementations, including both IBM and Oracle JVMs.",
+  "install": "brew install pkcs11-tools\n# Needs a PKCS#11 library to talk to. SoftHSM is the easiest no-hardware option: brew install softhsm\n# Depends on OpenSSL 3.x (the formula pulls in openssl@4).",
+  "try_this": [
+   {
+    "cmd": "p11ls -l /usr/local/opt/softhsm/lib/softhsm/libsofthsm2.so -s 0",
+    "what_happens": "Lists the objects on the token in slot index 0 of SoftHSM, with attributes in long format."
+   },
+   {
+    "cmd": "p11keygen -k ec -q prime256v1 -i my-ec-key sign=true verify=true",
+    "what_happens": "Generates an elliptic-curve key pair on prime256v1 labelled my-ec-key, usable for signing and verifying."
+   },
+   {
+    "cmd": "p11od pubk/dh",
+    "what_happens": "Dumps every attribute of a public key object in hex, with attribute names shown."
+   }
+  ],
+  "whats_unique": "Most PKCS#11 tooling is a thin wrapper around one vendor's library. This gives you a file-manager-style toolset that works across many tokens, with a documented wrapped-key format that lets you move a key from one token to another.",
+  "caveats": "You need a PKCS#11 library to point it at (SoftHSM works), it requires OpenSSL 3.x, and the AWS CloudHSM support is disabled by default and has significant limits, including no p11mv, p11setattr or p11od.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "pkcs11",
+   "hsm",
+   "cryptography",
+   "keys",
+   "needs-hardware-optional"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/Mastercard/pkcs11-tools"
+   },
+   {
+    "label": "Manual",
+    "url": "https://github.com/Mastercard/pkcs11-tools/blob/master/docs/MANUAL.md"
+   },
+   {
+    "label": "Change log",
+    "url": "https://github.com/Mastercard/pkcs11-tools/blob/master/CHANGELOG.md"
+   }
+  ]
+ }
+}

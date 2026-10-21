@@ -1,0 +1,95 @@
+{
+ "name": "cmu-pocketsphinx",
+ "desc": "Lightweight speech recognition engine for mobile devices",
+ "homepage": "https://cmusphinx.github.io/",
+ "installs_365d": 241,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "afternoon",
+  "audio",
+  "library"
+ ],
+ "why": "Classic CMU speech recognition engine, historically interesting and still a door into how speech decoding works.",
+ "brief": {
+  "what_it_is": "PocketSphinx is an open-source, large-vocabulary, speaker-independent continuous speech recognition engine from Carnegie Mellon University. The `pocketsphinx` command-line program reads single-channel 16-bit PCM audio from standard input or files and recognizes speech using the default acoustic and language model. Output is line-delimited JSON with start times, durations, probabilities, full text, and per-word segments. The same engine is available as a C library and Python bindings. The README says it is compact and efficient enough for many applications despite its old algorithms.",
+  "why_it_exists": "The README frames it as a compact, efficient recognizer: 'Though the algorithms and models implemented by PocketSphinx are now quite old (dating back to the 1970s in some cases!) they are still useful in many applications due to their compactness and efficiency.' It descends from Sphinx-II and older CMU systems, and the author describes David Huggins-Daines as having added speed and memory optimizations, fixed-point computation, JSGF support, and portability.",
+  "how_it_works": "The `live` command detects speech segments in each input, runs recognition on each segment, and writes one JSON object per segment. The `single` command treats each input as one utterance. The `align` command force-aligns a known transcript to audio at word level, with optional phone or state alignments via `-phone_align yes` or `-state_align yes`. The README does not describe the decoder internals beyond attributing most of the decoder to Ravishankar Mosur.",
+  "commands_seen": [
+   {
+    "cmd": "pocketsphinx single speech.wav",
+    "context": "Recognizes a single-channel WAV file as one utterance; the README says results 'may not be wonderful'."
+   },
+   {
+    "cmd": "pocketsphinx align goforward.wav \"go forward ten meters\"",
+    "context": "Force-aligns the audio to the given text at word level; the user must normalize the text (punctuation, case)."
+   },
+   {
+    "cmd": "pocketsphinx -phone_align yes align audio.wav $text",
+    "context": "Adds phone-level segmentation to the alignment output."
+   },
+   {
+    "cmd": "pocketsphinx -state_align yes align audio.wav $text",
+    "context": "Adds state-level alignment, which also turns on phone alignment."
+   },
+   {
+    "cmd": "pocketsphinx align audio.wav $text | jq '.w[]|[.t,.b]'",
+    "context": "Pipes alignment JSON through jq to print each word and its start time."
+   },
+   {
+    "cmd": "sox -d $(pocketsphinx soxflags) | pocketsphinx -",
+    "context": "Live recognition from the microphone: sox captures audio in the format that `pocketsphinx soxflags` returns, and pocketsphinx reads stdin."
+   },
+   {
+    "cmd": "sox audio.mp3 $(pocketsphinx soxflags) | pocketsphinx -",
+    "context": "Decodes an MP3 file by having sox convert it to the required format on stdout."
+   },
+   {
+    "cmd": "pip3 install pocketsphinx",
+    "context": "Installs prebuilt Python binaries from PyPI, as shown on the project homepage."
+   },
+   {
+    "cmd": "cmake -S . -B build",
+    "context": "First step of the C library build from source, configuring into a build directory."
+   },
+   {
+    "cmd": "cmake --build build --target install",
+    "context": "Installs the C library and bindings, by default under /usr/local unless CMAKE_INSTALL_PREFIX is set."
+   }
+  ],
+  "install_notes": "Build with CMake (cmake -S . -B build, then cmake --build build, then install). The README says CMake should work on Linux and Windows and is uncertain about Mac OS X. Optional example dependencies on Debian/Ubuntu/Raspberry Pi OS are ffmpeg, libasound2-dev, libportaudio2, libportaudiocpp0, libpulse-dev, libsox-fmt-all, portaudio19-dev, and sox. The Python module installs with python3 -m venv, activating it, then pip install . from the source tree. There is no SphinxBase dependency anymore. No accounts or API keys are mentioned. The README does not describe Homebrew-specific steps.",
+  "standout": "The README is unusually candid and personal: it notes the version number is large because of a 5prealpha release people were already using, removes the audio library that 'never really built or worked correctly on any platform at all', and jokes 'All your SphinxBase are belong to us.' The `live` output format is line-delimited JSON with deliberately short keys (b, d, p, t, w), and `soxflags` lets sox handle any input format.",
+  "status": "Maintained. The homepage lists PocketSphinx 5.1.0 released May 6, 2026, with earlier releases in January 2025, December 2023, and May 2023. The GitHub README heading reads 'PocketSphinx 5.1.1'. The README says it is 'currently maintained by David Huggins-Daines again'. Release-process notes say Bump My Version and GitHub Actions handle most releases.",
+  "caveats": "The homepage is a news page and does not describe the engine; the substance came from the GitHub README. The README says Mac OS X support is uncertain, and it says the Read the Docs pages must be updated manually. The README does not mention mobile devices, although the catalogue description says 'for mobile devices'. Live recognition needs a microphone and sox or PortAudio setup. The README says partial results are not printed. Brew lists pocketsphinx_batch, pocketsphinx_jsgf2fsg, pocketsphinx_lm_convert, pocketsphinx_lm_eval, pocketsphinx_mdef_convert, and pocketsphinx_pitch, but the README I read does not document any of them. License terms are referenced as a LICENSE file that I did not open. The README describes its development docs as 'not quite enough information for potential developers'.",
+  "quotes": [
+   "Though the algorithms and models implemented by PocketSphinx are now quite old (dating back to the 1970s in some cases!) they are still useful in many applications due to their compactness and efficiency.",
+   "There is no longer any dependency on SphinxBase. There is no SphinxBase anymore. This is not the SphinxBase you're looking for.",
+   "I realize this isn't the prettiest format, but it sure beats XML."
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://cmusphinx.github.io/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/cmusphinx/pocketsphinx"
+   },
+   {
+    "label": "Python API documentation",
+    "url": "https://pocketsphinx.readthedocs.io"
+   },
+   {
+    "label": "C API documentation",
+    "url": "https://cmusphinx.github.io/doc/pocketsphinx/"
+   }
+  ],
+  "fetch_log": [
+   "https://cmusphinx.github.io/ - worked; returned the CMUSphinx news page with release notes for 5.1.0, 5.0.4, 5.0.3, and 5.0.1, but no engine description",
+   "https://github.com/cmusphinx/pocketsphinx - worked; returned the README (PocketSphinx 5.1.1) with installation, usage, programming, and development sections",
+   "Not fetched: pocketsphinx.readthedocs.io and cmusphinx.github.io/doc/pocketsphinx/ (linked from the README but not read; the fetch budget was used for the homepage and README)"
+  ]
+ }
+}

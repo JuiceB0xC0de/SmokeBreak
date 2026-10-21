@@ -1,0 +1,77 @@
+{
+ "name": "bgrep",
+ "desc": "Like grep but for binary strings",
+ "homepage": "https://github.com/tmbinc/bgrep",
+ "installs_365d": 150,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "tui"
+ ],
+ "why": "Grep for byte patterns in binaries, a small but handy entry point into poking at firmware and executables.",
+ "brief": {
+  "what_it_is": "bgrep is a small command-line tool that searches files for a byte sequence given as hex, the way grep searches for text. It takes a hex string as the pattern, plus one or more file paths (or standard input if no path is given), and prints matches. Options add context bytes before or after each match (-B, -A, -C), recurse into directories (-r), and read the pattern from a file (-f) with an optional wildcard mask file (-m).",
+  "why_it_exists": "The author was annoyed that grep(1) cannot search for binary strings, and could not find an existing tool called a binary grep that did it, so he wrote one.",
+  "how_it_works": "The README does not explain the internals. It documents usage: the pattern is hex bytes, and a mask file can mark wildcard bytes within the pattern. The whole tool is a single C file, bgrep.c.",
+  "commands_seen": [
+   {
+    "cmd": "make",
+    "context": "Builds bgrep from the source tree."
+   },
+   {
+    "cmd": "make install # to /user/local/bin, or",
+    "context": "Installs the binary to the default prefix. The README comment says /user/local/bin, which looks like a typo for /usr/local/bin."
+   },
+   {
+    "cmd": "make install PREFIX=~/.local",
+    "context": "Installs bgrep under ~/.local without root access."
+   },
+   {
+    "cmd": "curl -L 'https://github.com/tmbinc/bgrep/raw/main/bgrep.c' | gcc -O2 -x c -o $HOME/.local/bin/bgrep -",
+    "context": "Quick install with no clone: downloads bgrep.c and compiles it with gcc straight into ~/.local/bin/bgrep."
+   },
+   {
+    "cmd": "bgrep [-r] [-B bytes] [-A bytes] [-C bytes] <hex> [<path> [...]]",
+    "context": "Usage synopsis for searching by hex pattern."
+   },
+   {
+    "cmd": "bgrep [-r] -f <pattern> [-m <mask>] [<path> [...]]",
+    "context": "Usage synopsis for searching with a pattern file and optional mask file."
+   },
+   {
+    "cmd": "bgrep 424242 firmware.bin",
+    "context": "Example: searches firmware.bin for the bytes 0x42 0x42 0x42."
+   },
+   {
+    "cmd": "bgrep -r 424242 ./images",
+    "context": "Example: recursively searches ./images for the same byte sequence."
+   }
+  ],
+  "install_notes": "Build with make, then make install (default prefix is /usr/local, per the README's typo-ridden comment) or make install PREFIX=~/.local for a user install. A one-line alternative compiles directly from the raw bgrep.c with gcc -O2. No accounts, runtimes, or configuration are mentioned beyond a C compiler and make.",
+  "standout": "It is one small C file with a deliberately simple interface: hex in, matches out, with grep-style context flags and a mask file for wildcard bytes. The README also offers a single curl-and-gcc install line, which suits a throwaway tool.",
+  "status": "unknown. The README has no release notes, version numbers, or dates, and I did not fetch the commit history or releases page, so I cannot say when it was last updated.",
+  "caveats": "The README gives no information on platform support, and the install prefix comment contains a likely typo (/user/local/bin). The mask-file and pattern-file options are listed in the table but not shown in an example. The README gives no license detail beyond BSD 2-Clause, which it links to LICENSE.",
+  "quotes": [
+   "I'm terribly annoyed by the fact that grep(1) cannot look for binary strings.",
+   "I'm even more annoyed by the fact that a simple search for \"binary grep\" doesn't yield a tool which could do that. So I wrote one.",
+   "Feel free to modify, branch, fork, improve."
+  ],
+  "links": [
+   {
+    "label": "bgrep on GitHub (homepage)",
+    "url": "https://github.com/tmbinc/bgrep"
+   },
+   {
+    "label": "bgrep.c source (raw, used in the quick install)",
+    "url": "https://github.com/tmbinc/bgrep/raw/main/bgrep.c"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/tmbinc/bgrep: fetched OK, returned the README"
+  ]
+ }
+}

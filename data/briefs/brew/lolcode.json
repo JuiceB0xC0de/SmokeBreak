@@ -1,0 +1,95 @@
+{
+ "name": "lolcode",
+ "desc": "Esoteric programming language",
+ "homepage": "http://www.lolcode.org/",
+ "installs_365d": 55,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "language",
+  "esoteric",
+  "ancient"
+ ],
+ "why": "A lolspeak esoteric language with a real interpreter, a delightful and strange thing to run for a minute.",
+ "brief": {
+  "what_it_is": "LOLCODE is an esoteric programming language written in lolspeak. The reference interpreter, lci, is a C program that takes a .lol source file and runs it. The homepage's hello-world program is HAI 1.3 / CAN HAS STDIO? / VISIBLE \"HAI WORLD!!!1!\" / KTHXBYE, which prints a line of text. Beyond core language, lci provides standard libraries you load with CAN HAS, covering file I/O (STDIO), TCP sockets (SOCKS), string helpers (STRING), random numbers (STDLIB), and a character-level transformer language model (BRAINZ).",
+  "why_it_exists": "The homepage presents it as an esoteric programming language, and the README's framing is that lci is meant to be correct, portable, fast, and precisely documented. The joke is the lolspeak syntax; the engineering is a real implementation of the spec.",
+  "how_it_works": "lci runs programs in up to three stages and falls back a stage when the next cannot handle a construct. Stage 1 is a tree-walking interpreter that defines the semantics. Stage 2 is a register machine that compiles the parse tree to bytecode. Stage 3 is a JIT that emits AArch64 or x86-64 machine code, but only when a dataflow pass proves every value in a procedure is an integer or boolean. The README also says LOLCODE is dynamically scoped, so a whole-program analysis decides which names can become registers.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/justinmeza/lci.git",
+    "context": "Homepage install step: fetches the lci source from GitHub."
+   },
+   {
+    "cmd": "cd lci",
+    "context": "Homepage install step: enters the cloned source directory."
+   },
+   {
+    "cmd": "cmake .",
+    "context": "Configures the build in the current directory; the homepage and README both use it."
+   },
+   {
+    "cmd": "make && make install",
+    "context": "Homepage install step: builds lci and installs it to the default prefix."
+   },
+   {
+    "cmd": "./install.py -h",
+    "context": "README's easy install path on Linux or macOS: shows install options."
+   },
+   {
+    "cmd": "./install.py --prefix=\"/home/foo/opt\"",
+    "context": "README: installs lci to a custom prefix instead of the default."
+   },
+   {
+    "cmd": "ctest",
+    "context": "README manual path: runs the test suite (optional)."
+   },
+   {
+    "cmd": "make docs",
+    "context": "README manual path: builds the Doxygen documentation (optional)."
+   },
+   {
+    "cmd": "cmake -DPERFORM_MEM_TESTS:BOOL=ON .",
+    "context": "README: enables memory testing when configuring the build."
+   },
+   {
+    "cmd": "CAN HAS STDIO?",
+    "context": "LOLCODE line that loads the file I/O library; the README's examples begin with this kind of import."
+   }
+  ],
+  "install_notes": "Homepage gives four shell steps: git clone, cd lci, cmake ., make && make install. The README needs CMake and Python 3 (it looks for python3, then python, for the test driver). Linux and macOS are covered by ./install.py, and the manual cmake/make route also works. The README says lci is portable ANSI C. The README does not mention Homebrew; the formula is named lolcode and installs an lci executable.",
+  "standout": "The JIT only compiles procedures whose values are provably integers or booleans, and it falls back to the bytecode VM otherwise. The README benchmarks show fib(30) at about 5.4 ms against about 1,682 ms for the tree-walker, measured by the author on an Apple M2 Max, and it also includes a BRAINZ transformer library that trains from inside LOLCODE.",
+  "status": "Probably maintained, but I could not confirm dates. The homepage says the current release is v1.3 and links to the tags page. The GitHub README is current in tone and refers to a newer engine, recent benchmarks against CPython 3.14, and lulz 0.1.1. I saw no last-release or last-commit date in the fetched pages. The copyright line reads 2010-2015.",
+  "caveats": "The homepage says the current release is v1.3, but several README examples use HAI 1.4, so the spec version is inconsistent. The README links to a v1.3 tag for the spec implementation. The JIT only runs on AArch64 and x86-64, and it runs only integer- and boolean-typed procedures; other systems use stages 1 and 2. The performance table is the author's own, measured on one machine. Source is GPL v3 or later. The BRAINZ library and the STDIO/SOCKS libraries are C bindings that need the lci build. The homepage's spec link has no URL in the fetched text.",
+  "quotes": [
+   "LOLCODE is also on Twitter, Facebook, and GitHub.",
+   "lci is a LOLCODE interpreter written in C and is designed to be correct, portable, fast, and precisely documented.",
+   "Deep recursion is reported rather than run into the ground: all three stages check the remaining stack and stop with \"Recursion too deep\"."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "http://www.lolcode.org/"
+   },
+   {
+    "label": "lci GitHub repository (README)",
+    "url": "https://github.com/justinmeza/lci"
+   },
+   {
+    "label": "lci v1.3 tag (spec implementation)",
+    "url": "https://github.com/justinmeza/lci/tree/v1.3"
+   },
+   {
+    "label": "lollm (LOLCODE language model built on BRAINZ)",
+    "url": "https://github.com/justinmeza/lollm"
+   }
+  ],
+  "fetch_log": [
+   "http://www.lolcode.org/ - worked; homepage text with the hello-world sample and the git/cmake install steps. Spec and mailing-list links have no visible URLs in the text.",
+   "https://github.com/justinmeza/lci - worked; full README, including installation, performance, standard library, BRAINZ, and license."
+  ]
+ }
+}

@@ -1,0 +1,120 @@
+{
+ "name": "nacl",
+ "desc": "Network communication, encryption, decryption, signatures library",
+ "homepage": "https://nacl.cr.yp.to/",
+ "installs_365d": 52,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "library",
+  "protocol",
+  "quick"
+ ],
+ "why": "The NaCl crypto library is the basis of many modern protocols and a good door into how modern public-key primitives are assembled.",
+ "brief": {
+  "what_it_is": "NaCl (pronounced \"salt\") is a C and C++ software library for network communication, encryption, decryption, signatures and related core cryptographic operations. The caller hands it plaintext or messages plus keys, in the form of byte strings, and gets back ciphertext, authentication tags, signatures or hashes, also as byte strings. Its public-key section covers authenticated encryption, scalar multiplication and signatures. Its secret-key section covers authenticated encryption, encryption, authentication and one-time authentication. Its low-level section covers hashing and string comparison. The homepage describes the Python wrappers as prototypes and the Python API as a future priority, not a shipped feature.",
+  "why_it_exists": "The homepage says the goal is \"to provide all of the core operations needed to build higher-level cryptographic tools\" and that it improves on existing libraries \"by improving security, by improving usability, and by improving speed.\" The features page argues that typical libraries force programmers to pick primitives and modes, and that NaCl lets the programmer \"simply say 'sign this message.'\"",
+  "how_it_works": "NaCl ships a preselected set of modern primitives, so callers do not choose algorithms. A single crypto_box call handles the whole sequence of key handling, encryption and authentication, which the features page contrasts with a multi-step RSA/AES/SHA-256 pipeline. The library compiles every implementation of each function with each compiler option, then times them on the build machine and picks the fastest for that CPU. The docs also say the code avoids secret-dependent branches and secret-dependent array indices, to resist timing and cache attacks.",
+  "commands_seen": [
+   {
+    "cmd": "wget https://hyperelliptic.org/nacl/nacl-20110221.tar.bz2",
+    "context": "Download step from the installation page, using the 2011 release tarball."
+   },
+   {
+    "cmd": "bunzip2 < nacl-20110221.tar.bz2 | tar -xf -",
+    "context": "Unpacks the downloaded tarball from stdin."
+   },
+   {
+    "cmd": "cd nacl-20110221",
+    "context": "Changes into the unpacked source directory."
+   },
+   {
+    "cmd": "./do",
+    "context": "The build script. It compiles NaCl for every ABI and compiler it detects and writes the libraries and headers into a host-specific build/ subdirectory."
+   }
+  ],
+  "install_notes": "The installation page says NaCl works on a wide variety of UNIX-like systems, including Linux, BSD and Solaris. It is built from source rather than a package, using the wget, unpack and ./do steps above. The build writes to build/<hostname>, so several machines can share one filesystem and build at once. On multi-ABI machines it produces both 32-bit and 64-bit libraries, plus helper programs bin/okabi and bin/okc-amd64 that list supported ABIs and compilers. The page says system-wide install (headers and -lnacl) is still a TO DO. The recommended route is to copy the NaCl source into your application and let it choose the fastest ABI and compiler itself. Homebrew's 'nacl' formula is not mentioned in the sources I read, and the Homebrew metadata lists no executables.",
+  "standout": "Instead of hard-coding CPU detection, NaCl builds every implementation and picks the fastest by measuring on the target machine, so new CPUs get the best code without a library update. The one-call crypto_box API, which fixes the primitives and the wire format, is also distinctive compared with the usual pick-your-algorithm libraries.",
+  "status": "quiet. The homepage is stamped 'version 2016.03.15' and its 'Upcoming features' section lists PIC support, Ed25519 and NEON optimizations as next-release items. The features page is stamped 2011.02.20 and the example tarball is nacl-20110221. I did not see a release log or commit history, so I cannot give a last-release date beyond these page stamps.",
+  "caveats": "The site's own text says the current version supports C and C++ and that Python support is a 'high priority,' so there is no mature Python binding from the project itself. Multi-ABI system installation is still a TO DO in the installation docs. C NaCl functions return error codes that callers must check, and the docs warn that a caller who ignores them will 'blithely proceed as if the signatures were valid.' The no-malloc guarantee applies only to C NaCl, not Python. The project is in the public domain, so no licence restrictions apply. The homepage and install pages are old and the Ed25519 and PIC items listed as upcoming are from 2016, so check the current state before relying on any of it.",
+  "quotes": [
+   "NaCl (pronounced \"salt\") is a new easy-to-use high-speed software library for network communication, encryption, decryption, signatures, etc.",
+   "NaCl allows, and encourages, the programmer to simply say \"sign this message.\"",
+   "All of the NaCl software is in the public domain."
+  ],
+  "links": [
+   {
+    "label": "NaCl homepage",
+    "url": "https://nacl.cr.yp.to/"
+   },
+   {
+    "label": "Installation page",
+    "url": "https://nacl.cr.yp.to/install.html"
+   },
+   {
+    "label": "Features page",
+    "url": "https://nacl.cr.yp.to/features.html"
+   }
+  ],
+  "fetch_log": [
+   "https://nacl.cr.yp.to/ \u2014 worked, returned the homepage text (Introduction, contributors, upcoming features, version 2016.03.15).",
+   "https://nacl.cr.yp.to/install.html \u2014 worked, returned the installation page. This URL was inferred from the site's navigation, not taken from a link.",
+   "https://nacl.cr.yp.to/features.html \u2014 worked, returned the features page (version 2011.02.20). This URL was inferred from the site's navigation, not taken from a link."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "NaCl\u2019s opinionated, misuse-resistant crypto API and build-time benchmarking of implementations make this seminal library a worthwhile window into cryptographic design."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "NaCl",
+  "tldr": "A C crypto library by Daniel Bernstein and colleagues that fixes the algorithms for you, so you just say \"sign this message\" or \"box this message\".",
+  "deeper_look": "NaCl (pronounced \"salt\") is a C and C++ library for network communication, encryption, decryption and signatures. You pass in messages and keys as byte strings and get back ciphertext, authentication tags, signatures or hashes as byte strings. It covers public-key authenticated encryption, scalar multiplication and signatures, secret-key encryption and authentication, one-time authentication, hashing and constant-time string comparison.\n\nThe idea underneath is that most crypto failures come from choices the programmer should never have had to make. Typical libraries ask you to pick primitives, modes and padding, then glue them together. NaCl ships a preselected set of modern primitives. One crypto_box call does the key handling, encryption and authentication that would otherwise be a multi-step RSA, AES and SHA-256 pipeline. In the project's words, it \"allows, and encourages, the programmer to simply say 'sign this message.'\"\n\nIt also takes an unusual approach to speed. The build compiles every implementation of each function with every compiler option it finds, times them on the machine doing the build, and keeps the fastest. New CPUs get good code without anyone writing detection logic. The code avoids secret-dependent branches and array indices, which is how it resists timing and cache attacks.\n\nReading its API and its features page is a compact way to see how a modern, opinionated crypto interface is put together. Many later libraries borrowed its design.",
+  "install": "brew install nacl\n# The Homebrew formula installs no executables, only the library (it depends on libcpucycles).\n# The project's own route is to build from source: download a tarball, unpack it, and run ./do. It writes libraries and headers to build/<hostname>.",
+  "try_this": [
+   {
+    "cmd": "wget https://hyperelliptic.org/nacl/nacl-20110221.tar.bz2",
+    "what_happens": "Downloads the 2011 release tarball used in the project's installation instructions."
+   },
+   {
+    "cmd": "bunzip2 < nacl-20110221.tar.bz2 | tar -xf - && cd nacl-20110221",
+    "what_happens": "Unpacks the source and enters the directory."
+   },
+   {
+    "cmd": "./do",
+    "what_happens": "Compiles NaCl for every ABI and compiler it detects, benchmarks the implementations, and writes the fastest libraries and headers into build/<hostname>."
+   }
+  ],
+  "whats_unique": "It builds every implementation of each function, times them on your machine and keeps the fastest. Its one-call crypto_box API also fixes the primitives and wire format instead of asking you to choose.",
+  "caveats": "The pages are old (homepage stamped 2016, features page 2011), system-wide install is listed as a TO DO, there is no shipped Python binding, and C callers must check error codes themselves.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "crypto",
+   "library",
+   "c",
+   "public-key",
+   "signatures"
+  ],
+  "links": [
+   {
+    "label": "NaCl homepage",
+    "url": "https://nacl.cr.yp.to/"
+   },
+   {
+    "label": "Installation page",
+    "url": "https://nacl.cr.yp.to/install.html"
+   },
+   {
+    "label": "Features page",
+    "url": "https://nacl.cr.yp.to/features.html"
+   }
+  ]
+ }
+}

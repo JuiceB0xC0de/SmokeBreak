@@ -1,0 +1,96 @@
+{
+ "name": "healpix",
+ "desc": "Hierarchical Equal Area isoLatitude Pixelization of a sphere",
+ "homepage": "https://healpix.sourceforge.io",
+ "installs_365d": 708,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "science",
+  "math",
+  "afternoon",
+  "library"
+ ],
+ "why": "Equal-area sphere pixelization used in cosmology surveys, a real scientific tool worth an afternoon of curiosity.",
+ "brief": {
+  "what_it_is": "HEALPix is a pixelization scheme for the sphere and a software package built around it, distributed in C, C++, Fortran 90, IDL, Java and Python. It splits a sphere into pixels of identical area, and the package adds spherical harmonic transforms, filtering, pixel queries, median filtering, mask handling and map rotation, with FITS as the usual file format. Inputs are typically full-sky maps and harmonic coefficients, and outputs are maps, coefficients and images, including Google Earth/Sky images and DomeMaster planetarium images. The homepage's feature list is the only description of the tools; the executables list in the metadata names command-line programs that the pages I read do not describe.",
+  "why_it_exists": "It was built for cosmic microwave background satellite data (WMAP, and Planck), which needed full-sky maps at arcminute resolution and fast, accurate statistical analysis. The homepage says its use has since spread well beyond the CMB field.",
+  "how_it_works": "The sphere is hierarchically tessellated into 12 base curvilinear quadrilaterals, and each pixel divides into four at the next resolution level. Pixels lie on lines of constant latitude, which makes spherical harmonic integrals scale as about N^1/2 rather than N, according to the homepage. The harmonic transforms come from a shared optimised library called libsharp.",
+  "commands_seen": [],
+  "install_notes": "The downloads page recommends the source package from the SourceForge Download page under GPLv2 and says to follow its installation directions. Source is also browsable in a SourceForge SVN repository. Prebuilt packages exist for macOS (MacPorts, Homebrew) and Linux (RPM), with variable delays. The download is free with no registration, though the page suggests subscribing to the Healpix-users mailing list for updates. Python users get it through healpy, configured and installed via pip. Fortran codes on Apple ARM chips need CFITSIO 4.1.0 or higher. The 3.83 notes mention support for the Intel ifx compiler and Python 3.10 and above. I saw no hardware or account requirements.",
+  "standout": "The equal-area, iso-latitude grid is what makes it fast for harmonic analysis, and the homepage says so directly, which is less common than a plain area-equalizing claim. The base-12 recursive quartering scheme also reaches a stated resolution down to 0.4 milli-arcseconds.",
+  "status": "Maintained, though releases are infrequent. The latest software release listed is HEALPix 3.83 on 2022-11-18, with 3.82 on 2022-07-29 and 3.81 on 2022-01-25. The downloads page was last edited 2024-11-15, and its notes mention a 2024-09-27 IDL library update and healpy 1.18.0 support. I did not check a commit log.",
+  "caveats": "The pages give no command-line usage, so I have no verified command lines and no flag details. The executables list comes from the Homebrew metadata and was not checked against documentation. The software is GPLv2. Publications using it are expected to cite G\u00f3rski et al. 2005 and footnote the website. The Fortran build needs a recent CFITSIO on Apple ARM. The homepage is thin on install detail, which means the build steps live in the source package, which I did not fetch.",
+  "quotes": [
+   "Data Analysis, Simulations and Visualization on the Sphere",
+   "each pixel covers the same surface area as every other pixel.",
+   "The lowest resolution partition is comprised of 12 base pixels."
+  ],
+  "links": [
+   {
+    "label": "HEALPix homepage",
+    "url": "https://healpix.sourceforge.io"
+   },
+   {
+    "label": "Getting HEALPix (downloads page)",
+    "url": "https://healpix.sourceforge.io/downloads.php"
+   }
+  ],
+  "fetch_log": [
+   "https://healpix.sourceforge.io - worked, returned the features and introduction page",
+   "https://healpix.sourceforge.io/downloads.php - worked, returned the Getting HEALPix page with release notes; I guessed this URL from the homepage's nav and it loaded"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "HEALPix\u2019s recursive equal-area sphere grid makes full-sky data and spherical-harmonic analysis practical, opening a distinctive door into cosmology and scientific computing."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "HEALPix",
+  "tldr": "A way of cutting a sphere into equal-area pixels, built for mapping the cosmic microwave background, with command-line tools for analysing full-sky maps.",
+  "deeper_look": "HEALPix stands for Hierarchical Equal Area isoLatitude Pixelization. It is a scheme for dividing the surface of a sphere into pixels that all cover the same area, plus a software package built around that grid. The package ships in C, C++, Fortran 90, IDL, Java and Python. It handles spherical harmonic transforms, filtering, pixel queries, median filtering, mask handling and map rotation. FITS is the usual file format. Outputs include maps, harmonic coefficients and images, among them Google Earth/Sky and DomeMaster planetarium images.\n\nIt was built for cosmic microwave background satellite data, from WMAP and then Planck. Those missions needed full-sky maps at arcminute resolution and fast, accurate statistics. The homepage says its use has since spread well beyond the CMB field.\n\nThe idea underneath is the grid. The sphere is split into 12 base curvilinear quadrilaterals, and each pixel divides into four at the next resolution level. Pixels sit on lines of constant latitude, which, according to the homepage, makes spherical harmonic integrals scale as about N^1/2 rather than N. The transforms come from a shared optimised library called libsharp. The stated finest resolution reaches 0.4 milli-arcseconds.\n\nThe Homebrew formula installs a set of command-line programs, such as `anafast_cxx`, `smoothing_cxx`, `udgrade_cxx` and `map2tga`. The pages I read describe the package's features but not these programs' usage, so the executable names are the main hint at what each does.",
+  "install": "brew install healpix\n# Depends on cfitsio. Python users usually want healpy instead: pip install healpy\n# Fortran codes on Apple ARM chips need CFITSIO 4.1.0 or higher.",
+  "try_this": [
+   {
+    "cmd": "anafast_cxx --help",
+    "what_happens": "Prints usage for the C++ tool whose name suggests it analyses a map into harmonic coefficients."
+   },
+   {
+    "cmd": "smoothing_cxx --help",
+    "what_happens": "Prints usage for the smoothing tool, a good first look at how these programs take FITS maps."
+   },
+   {
+    "cmd": "udgrade_cxx --help",
+    "what_happens": "Prints usage for the tool that appears to change a map's resolution, which shows the hierarchical pixel idea in practice."
+   }
+  ],
+  "whats_unique": "The equal-area, iso-latitude grid is what makes harmonic analysis fast, and the homepage says so directly rather than just claiming equal pixels. The base-12 recursive quartering gives a clean hierarchy of resolutions.",
+  "caveats": "The pages I read give no command-line usage, so expect to work from --help and the source package docs; releases are infrequent, with 3.83 from November 2022 the latest listed.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "science",
+   "math",
+   "cosmology",
+   "astronomy",
+   "sphere",
+   "fits"
+  ],
+  "links": [
+   {
+    "label": "HEALPix homepage",
+    "url": "https://healpix.sourceforge.io"
+   },
+   {
+    "label": "Getting HEALPix (downloads page)",
+    "url": "https://healpix.sourceforge.io/downloads.php"
+   }
+  ]
+ }
+}

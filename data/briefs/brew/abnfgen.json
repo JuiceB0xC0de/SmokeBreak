@@ -1,0 +1,82 @@
+{
+ "name": "abnfgen",
+ "desc": "Quickly generate random documents that match an ABFN grammar",
+ "homepage": "https://www.quut.com/abnfgen/",
+ "installs_365d": 67,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "language",
+  "math"
+ ],
+ "why": "Generates random documents from ABNF grammars, a strange way to fuzz and see grammars come alive.",
+ "brief": {
+  "what_it_is": "abnfgen is a command-line tool written in C that takes a grammar written in Augmented Backus-Naur Form (ABNF, RFC 4234) and emits many random documents that match it. The input is a grammar file; the output is text printed to stdout, or with -d and -n, a directory of numbered files such as demo/0001.tst. The page's example turns the grammar 'ring = 1*12(\"ding\" SP) \"dong\" CRLF' into output like 'DInG DiNg doNg'. It is not a parser or validator, though it doubles as a rough check that a grammar is syntactically correct.",
+  "why_it_exists": "The author, Jutta Degener, uses it to stress-test parsers she has written and to show what a grammar can produce. The page lists three uses: verifying an ABNF grammar's syntactical correctness, illustrating a grammar with non-obvious examples, and testing software that consumes documents described by a grammar. The page is dedicated in memoriam to Peter Naur and John Backus.",
+  "how_it_works": "It expands the grammar's rules at random, bounded by a maximum recursion depth (adjustable with the -y runtime option). The page says it differs from standard ABNF in three ways. Single quotes give case-sensitive literals. A number in curly braces before an alternative, such as {2}, sets the relative chance that branch is taken. Numeric codes like %d13 are emitted as UTF-8 Unicode. The -l flag turns these extensions off.",
+  "commands_seen": [
+   {
+    "cmd": "cat GRAMMAR",
+    "context": "Shows the example grammar file before running the tool on it."
+   },
+   {
+    "cmd": "./abnfgen GRAMMAR",
+    "context": "Generates random documents from the grammar file; the example prints 'DInG DiNg doNg'."
+   },
+   {
+    "cmd": "abnfgen -h",
+    "context": "Prints the quick-reference usage summary (the page points here for a quick reference)."
+   },
+   {
+    "cmd": "gunzip < abnfgen-0.21.tar.gz | tar xf -",
+    "context": "Unpacks the 0.21 source tarball during the build from source."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Standard autotools configure step, run inside the unpacked abnfgen-0.21 directory."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the abnfgen binary with gcc."
+   },
+   {
+    "cmd": "./abnfgen section-4.txt",
+    "context": "Tutorial step: runs the tool on the ABNF-definition-of-ABNF section extracted from RFC 4234 and prints one random output."
+   },
+   {
+    "cmd": "./abnfgen -d demo -n 100 section-4.txt",
+    "context": "Creates the directory demo and writes 100 random grammars into demo/0001.tst through demo/0100.tst."
+   },
+   {
+    "cmd": "for i in demo/*; do ./abnfgen $i > /dev/null 2>&1; done",
+    "context": "Tutorial step: feeds the generated grammars back into abnfgen to see whether it crashes. The page reports segfaults only in version 0.1."
+   }
+  ],
+  "install_notes": "The page describes building from source rather than only giving brew install. You need a C compiler and a Unix-like environment. The steps are: download abnfgen-0.21.tar.gz, unpack it, run ./configure, then make. The configure output on the page shows gcc and autotools being checked. The page does not mention accounts, runtimes or runtime configuration beyond the -d, -n, -y, -l and -_ options it mentions.",
+  "standout": "It is a grammar-driven generator aimed at breaking parsers rather than at producing text for people. The author's testing advice is unusual: bias rules with {N} weights toward short output, reuse familiar identifier names, and inject occasional noise rules to shake out parser bugs. It is also a small, self-described alpha tool with a 2016-era tribute on the front page.",
+  "status": "quiet. The homepage says the release was last updated June 3rd, 2023, with version 0.21 as the current release and the latest change listed as 'Stop ignoring {chance} annotations for repetitions.' The page calls the tool 'in alpha' and names Jutta Degener as the maintainer. I did not check a repository or a commit log, so the date is from the page alone.",
+  "caveats": "The page calls the tool alpha. It targets Unix-like systems with a C compiler, so Windows is not mentioned. The author's own tutorial shows early versions segfaulting on generated input and notes that recursion-depth handling is still 'broken' in some cases. Other known limits from the page: output size is not limited (only recursion depth is), the 'full coverage' option is easy to satisfy, and chance annotations 'probably don't quite work everywhere'. Generated documents are often small or unreadable. The page licenses the tool as 'copyrighted, free for any use', which is not a formal open-source license. I did not see one named on the page.",
+  "quotes": [
+   "The tool is in alpha and, while copyrighted, free for any use.",
+   "I tend to use it to stress-test parsers I've written, and they ususally produce about a week's worth of painful crashes and bugs to find for about a day of work getting the grammar just right.",
+   "In retrospect, that's a bit of a hack.",
+   "Given an Augmented Backus-Naur form (ABNF) grammar (Wikipedia, RFC 4234), abnfgen quickly generates lots of random documents that match that grammar."
+  ],
+  "links": [
+   {
+    "label": "abnfgen homepage",
+    "url": "https://www.quut.com/abnfgen/"
+   },
+   {
+    "label": "RFC 4234 (ABNF definition, plain text)",
+    "url": "http://www.ietf.org/rfc/rfc4234.txt"
+   }
+  ],
+  "fetch_log": [
+   "https://www.quut.com/abnfgen/ - fetched OK. The page is the full README-style homepage with the description, differences from ABNF, changelog, tutorial and links. No separate docs or repo were fetched, so the man page and the tarball were not read directly."
+  ]
+ }
+}

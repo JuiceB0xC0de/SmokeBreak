@@ -1,0 +1,64 @@
+{
+ "name": "vmdktool",
+ "desc": "Converts raw filesystems to VMDK files and vice versa",
+ "homepage": "https://manned.org/vmdktool",
+ "installs_365d": 49,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering"
+ ],
+ "why": "Converts raw filesystems to and from VMDK disk images, a useful door into how disk image formats are actually laid out.",
+ "brief": {
+  "what_it_is": "vmdktool is a command-line utility that converts raw filesystem or disk images into VMDK (VMware virtual disk) files, and converts VMDK files back to raw images. It can also print header and table information for a given VMDK file. Its input is a raw disk or VMDK image, and its output is either a new VMDK file or a raw image, depending on the switches used.",
+  "why_it_exists": "The author, Brian Somers, wrote it in 2009 after a great deal of frustration over not finding any free tools to create VMDK files. The man page says it was later released to the general public in 2012.",
+  "how_it_works": "The man page says the tool was written from VMware's Virtual Disk Format 1.1 specification (November 2007). A VMDK file that is stream-optimized can be read sequentially with -s, while any VMDK can be read with random access via -r. With -z the deflate compression strength can be set, and -t shows table information at a given sector.",
+  "commands_seen": [
+   {
+    "cmd": "vmdktool -i file.vmdk",
+    "context": "Shows high-level information about file.vmdk (the man page's example for inspecting a VMDK)."
+   },
+   {
+    "cmd": "vmdktool -z9 -v fs.vmdk fn.raw",
+    "context": "Converts the raw filesystem image fn.raw to a stream-optimized VMDK file fs.vmdk, using deflate strength 9."
+   },
+   {
+    "cmd": "vmdktool -c2G -z9 -vfs.vmdk fn.raw",
+    "context": "Same conversion as above, but sets the virtual disk capacity to 2GB instead of the size of the input file."
+   },
+   {
+    "cmd": "vmdktool -s tmp.raw fs.vmdk",
+    "context": "Streams the contents of the VMDK fs.vmdk out to a raw file tmp.raw so it can be mounted and edited (FreeBSD and Linux examples both start here)."
+   },
+   {
+    "cmd": "vmdktool -vfs.vmdk -z9 tmp.raw",
+    "context": "Repacks the edited raw image tmp.raw back into the VMDK file fs.vmdk, the final step of the modify-in-place examples."
+   }
+  ],
+  "install_notes": "Nothing beyond brew install is mentioned on the man page. The modify-a-partition examples need root-level tools: on FreeBSD, mdconfig and mount; on Linux, fdisk, losetup, mount and sudo. The page says the tool was developed under FreeBSD and will build fairly easily under Linux and OSX.",
+  "standout": "It is a small, focused tool that exposes how VMDK disk images are laid out, including the difference between random-access and stream-optimized formats. The man page's examples show a full round trip: unpack a VMDK to raw, loop-mount a partition, edit files, and repack.",
+  "status": "Quiet. The only evidence is the man page, which is dated February 24, 2012, and says the tool was released to the public in 2012 and later updated for VMDK spec version 5.0. I did not find a release or commit history, so I cannot say whether it is still maintained.",
+  "caveats": "A VMDK must be stream-optimized before it can be read with -s; other VMDKs need random access (-r). The -v input file may be a character device but must be seekable. It targets the VMDK 1.1 spec, with a minor update to 5.0 mentioned on the page. Development was on FreeBSD, and Linux and OSX builds are described only as 'fairly easy'. The man page is an old manned.org rendering, and it is the only source I read.",
+  "quotes": [
+   "The utility converts raw filesystems to the VMDK format and vice versa.",
+   "was originally written by Brian Somers <brian@Awfulhak.org> in 2009 after a great deal of frustration over not finding any free tools to create VMDK files.",
+   "Although developed under FreeBSD, will build fairly easily under Linux and OSX."
+  ],
+  "links": [
+   {
+    "label": "Homepage (man page)",
+    "url": "https://manned.org/vmdktool"
+   },
+   {
+    "label": "VMware Virtual Disk Format spec referenced by the tool",
+    "url": "http://www.vmware.com/interfaces/vmdk.html"
+   }
+  ],
+  "fetch_log": [
+   "https://manned.org/vmdktool: worked, returned the vmdktool man page text (synopsis, description, switches, examples, history). No separate source repository or docs were fetched."
+  ]
+ }
+}

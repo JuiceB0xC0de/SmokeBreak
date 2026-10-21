@@ -1,0 +1,152 @@
+{
+ "name": "sile",
+ "desc": "Modern typesetting system inspired by TeX",
+ "homepage": "https://sile-typesetter.org",
+ "installs_365d": 340,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "language",
+  "visual"
+ ],
+ "why": "A TeX-inspired typesetting system written in Lua, an unusual and underknown take on document layout.",
+ "brief": {
+  "what_it_is": "SILE is a typesetting system that takes a plain-text source document (for example, a .sil file) and produces a printed-quality PDF. It is programmable in Lua, and the README says it can also process XML directly to PDF without XSL stylesheets. Its features include page layout with frames and typesetting text on a grid. The CLI is a Rust binary with a Lua VM built in since v0.15.0, and a pure-Lua CLI is still available as sile-lua.",
+  "why_it_exists": "The README says SILE is conceptually similar to TeX, borrowing some of its concepts and algorithms, but is 'a new typesetting and layout engine written from the ground up using modern technologies and borrowing some ideas from graphical systems such as InDesign.' The stated aim is 'to produce beautiful printed documents.'",
+  "how_it_works": "The Rust CLI embeds a Lua VM and runs SILE's Lua code, so documents and extensions are scripted in Lua. Font access and shaping use HarfBuzz with fontconfig, and PDF output uses libtexpdf, a PDF library extracted from TeX. ICU handles Unicode. Third-party packages are installed with LuaRocks and found by SILE at runtime.",
+  "commands_seen": [
+   {
+    "cmd": "brew install sile",
+    "context": "Installs the latest prebuilt stable release on macOS via Homebrew."
+   },
+   {
+    "cmd": "brew install sile --HEAD",
+    "context": "Builds and installs SILE from the latest git commit via Homebrew."
+   },
+   {
+    "cmd": "brew install font-gentium-book",
+    "context": "Installs Gentium Book, the default font, through a Homebrew cask, since the brew formula does not install it."
+   },
+   {
+    "cmd": "pacman -S sile",
+    "context": "Installs the prebuilt SILE package on Arch Linux."
+   },
+   {
+    "cmd": "dnf install sile",
+    "context": "Installs SILE from the official Fedora repositories."
+   },
+   {
+    "cmd": "./bootstrap.sh",
+    "context": "Sets up the environment when building from a git clone; not needed for source tarballs."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Configures the sources before building. Options include --enable-developer-mode and --with-system-luarocks."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds SILE after configure has run."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the built SILE to the system; requires system permissions."
+   },
+   {
+    "cmd": "sile test.sil",
+    "context": "Renders a one-line test document to test.pdf, used to check the installation."
+   }
+  ],
+  "install_notes": "Homebrew does not install the default font, so install Gentium Book (brew install font-gentium-book). Fonts that matter are Gentium Book for body text, Libertinus Math for formulas, and Hack for monospace. The README says that without these fonts the examples will not work unless modified. Building from source needs a Rust toolchain and Lua sources (Lua 5.1 through 5.4 or LuaJIT are supported), HarfBuzz 2.7.4 or newer, fontconfig, and ICU (on macOS: brew install icu4c, then export PKG_CONFIG_PATH if pkg-config cannot find it). OpenSSL development headers are needed to compile luasec. Third-party plugins are installed with luarocks --lua-version $(sile -q <<< SILE.lua_version) install <package>. Docker users must mount a fonts folder to /fonts because the container has no access to host fonts by default.",
+  "standout": "SILE is a TeX-inspired typesetter written in Lua rather than a TeX derivative, and it can be extended in Lua. It offers frames and grid typesetting, and the README claims it can take XML straight to PDF without XSL. Since v0.15.0 the CLI is a Rust binary with an embedded Lua VM.",
+  "status": "maintained. The homepage lists v0.15.12 released 11 Apr 2025, with v0.15.11 on 10 Apr, v0.15.10 on 21 Mar, and v0.15.9 on 4 Jan 2025, so releases are frequent. The README already describes a planned v0.15.14 that will change the default font to Gentium Book. I did not check the commit log, so the last-commit date is unknown.",
+  "caveats": "There is no Windows installer (see GitHub issue #410). The README says no one currently maintains Windows compatibility and the state is expected to be broken. Windows users are pointed to WSL, the Azure build pipeline, or CMake work that needs a refresh. The default font is inconsistent across sources: the Homebrew caveat says to install font-gentium-plus, while the README says v0.15.14 switches the default to Gentium Book. Building from source has real dependency friction (Rust, ICU, HarfBuzz, fontconfig, OpenSSL headers for luasec). The project is MIT licensed.",
+  "quotes": [
+   "SILE is a typesetting system; its job is to produce beautiful printed documents.",
+   "Rather than being a derivative of the TeX family SILE is a new typesetting and layout engine written from the ground up using modern technologies and borrowing some ideas from graphical systems such as InDesign.",
+   "SILE is completely programmable using the Lua programming language.",
+   "This release isn't ground breaking, but it is line breaking."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://sile-typesetter.org"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/sile-typesetter/sile"
+   },
+   {
+    "label": "Full manual (PDF)",
+    "url": "http://sile-typesetter.org/manual/sile-latest.pdf"
+   },
+   {
+    "label": "Examples gallery",
+    "url": "http://www.sile-typesetter.org/examples/"
+   }
+  ],
+  "fetch_log": [
+   "https://sile-typesetter.org: worked, returned the homepage with release news for v0.15.8 to v0.15.12",
+   "https://github.com/sile-typesetter/sile: worked, returned the README"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "SILE is an underknown, Lua-programmable typesetting engine built from scratch, with TeX-like ambitions, InDesign-inspired layout, and direct XML-to-PDF processing."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "SILE",
+  "tldr": "A typesetting system in the spirit of TeX, scriptable in Lua, that turns plain-text source or XML into a printed-quality PDF.",
+  "deeper_look": "SILE takes a source document, such as a `.sil` file, and lays it out as a PDF. It is conceptually close to TeX and borrows some of its concepts and algorithms, but it is not a TeX derivative. The README calls it \"a new typesetting and layout engine written from the ground up using modern technologies and borrowing some ideas from graphical systems such as InDesign.\"\n\nUnderneath, the command line is a Rust binary with a Lua VM built in (since v0.15.0), and a pure-Lua command line remains as `sile-lua`. Documents and extensions are scripted in Lua: \"SILE is completely programmable using the Lua programming language.\" Text shaping goes through HarfBuzz and fontconfig, ICU handles Unicode, and PDF output uses libtexpdf, a PDF library extracted from TeX. Third-party packages come in through LuaRocks.\n\nThe door it opens is how a page actually gets made: line breaking, frames, text set on a grid. The README says it can also take XML straight to PDF without XSL stylesheets. If you have ever wondered what TeX does and whether you could change it with a scripting language you already know, SILE is a readable place to look.",
+  "install": "brew install sile\n# Homebrew does not install the default fonts. Without them the examples will not work unless modified:\nbrew install --cask font-gentium-plus\nbrew install --cask font-libertinus\nbrew install --cask font-hack",
+  "try_this": [
+   {
+    "cmd": "sile --help",
+    "what_happens": "Lists the command line options of the Rust-based CLI."
+   },
+   {
+    "cmd": "sile test.sil",
+    "what_happens": "Renders a one-line test document to test.pdf, which also checks that the install and fonts work."
+   },
+   {
+    "cmd": "sile-lua --help",
+    "what_happens": "Shows the options of the pure-Lua command line that predates the Rust binary."
+   }
+  ],
+  "whats_unique": "It is a TeX-inspired typesetter written in Lua rather than a TeX derivative, so both documents and extensions are plain Lua scripts. It also offers frame-based page layout and grid typesetting.",
+  "caveats": "There is no Windows support (the README expects it to be broken, and points to WSL), and the default font is in flux: Homebrew's caveat names Gentium Plus while the README says v0.15.14 switches to Gentium Book.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "typesetting",
+   "lua",
+   "pdf",
+   "tex",
+   "fonts"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://sile-typesetter.org"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/sile-typesetter/sile"
+   },
+   {
+    "label": "Full manual (PDF)",
+    "url": "http://sile-typesetter.org/manual/sile-latest.pdf"
+   },
+   {
+    "label": "Examples gallery",
+    "url": "http://www.sile-typesetter.org/examples/"
+   }
+  ]
+ }
+}

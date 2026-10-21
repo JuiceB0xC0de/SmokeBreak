@@ -1,0 +1,138 @@
+{
+ "name": "lensfun",
+ "desc": "Remove defects from digital images",
+ "homepage": "https://lensfun.github.io/",
+ "installs_365d": 588,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "afternoon",
+  "library",
+  "visual"
+ ],
+ "why": "A lens database and correction library that undoes optical distortion, with a surprising amount of real optics behind it.",
+ "brief": {
+  "what_it_is": "Lensfun is an open source C/C++ library with a database of photographic lenses and their characteristics. It reads that database, lets you search it, and applies correction algorithms to images based on known lens properties. It currently corrects three defects: geometric distortion, transversal (lateral) chromatic aberration, and vignetting. Its C interface is a wrapper around the C++ classes. The package also ships helper executables, including lenstool, which the build options describe as the Lensfun reference implementation.",
+  "why_it_exists": "The homepage frames it as a way to fix the imperfections every camera and lens has, so that shots come out closer to ideal: \"rectifying the defects introduced by your photographic equipment.\" The README adds that an earlier free lens database, PTLens, had frozen when its author went commercial, and Lensfun was built to continue an open version of that database.",
+  "how_it_works": "The library stores lens characteristics in an XML-based database, which it parses with GLib. Client code searches that database for a given lens and then uses the stored lens model to correct distortion, lateral chromatic aberration, and vignetting in an image. The README does not describe the correction math in detail beyond saying the algorithms rely on detailed knowledge of lens properties.",
+  "commands_seen": [
+   {
+    "cmd": "cd lensfun",
+    "context": "Enter the source root before building."
+   },
+   {
+    "cmd": "mkdir build",
+    "context": "Create a build directory for out-of-tree CMake configuration."
+   },
+   {
+    "cmd": "cd build",
+    "context": "Enter the build directory."
+   },
+   {
+    "cmd": "cmake ../",
+    "context": "Configure the sources and generate build files. Options such as -DBUILD_LENSTOOL=ON are passed here."
+   },
+   {
+    "cmd": "make",
+    "context": "Build the library. Add VERBOSE=1 for more detailed output."
+   },
+   {
+    "cmd": "make install",
+    "context": "Install the built files."
+   },
+   {
+    "cmd": "make docs",
+    "context": "Build the end-user library documentation locally."
+   },
+   {
+    "cmd": "cmake -DCPACK_BINARY_DEB:BOOL=ON",
+    "context": "Optional flag to build a .deb package; the README says the packaging is not extensively tested. Used with make package."
+   },
+   {
+    "cmd": "cmake -DCPACK_BINARY_RPM:BOOL=ON",
+    "context": "Optional flag to build an .rpm package; same untested caveat. Used with make package."
+   }
+  ],
+  "install_notes": "Built with CMake. Required tools are CMake, GLib (greater than 2.26 for I/O and XML parsing, greater than 2.40 for the unit tests), libpng for the example implementation, and xmllint for database validation. Doxygen is needed for the library docs. After make install, the README suggests running ldconfig so programs can find the library. Notable CMake options include BUILD_STATIC, BUILD_TESTS, BUILD_LENSTOOL, BUILD_FOR_SSE, BUILD_FOR_SSE2, BUILD_DOC, and INSTALL_HELPER_SCRIPTS. The lensfun-update-data script needs CA certificates installed on the system. No Homebrew-specific notes were in the input, and I did not check the Homebrew formula.",
+  "standout": "The database is a rewrite of the data from PTLens's frozen open database, which the PTLens author allowed Lensfun to build on, while the code was rewritten from scratch in a new XML format. The licensing is split three ways: LGPL 3 for libraries, GPL 3 for apps, and CC BY-SA 3.0 for the lens data, which is unusual for a software project.",
+  "status": "Appears maintained but not certain. The homepage's latest news item is a 0.3.4 maintenance release dated 2023-07-12, and it lists the 0.3.2 stable release and a 0.3.95 alpha in the version menu. The homepage's most recent release date is 2023-07-12. I did not check the GitHub releases or commit history, so the most recent commit date is unknown.",
+  "caveats": "Corrects only distortion, lateral chromatic aberration, and vignetting. The README notes that the CMake deb/rpm packaging is not extensively tested. The lensfun-update-data script needs CA certificates. Licensing is mixed (LGPL, GPL, and CC BY-SA 3.0 data). The homepage's news section is a bit behind its version list, which shows 0.3.95 alpha. Build dependencies are a moderate list (CMake, GLib, libpng, xmllint, optionally Doxygen). The homepage was reachable, so this is not a fallback brief.",
+  "quotes": [
+   "The goal of the Lensfun library is to provide a open source database of photographic lenses and their characteristics.",
+   "So that's what's Lensfun is all about \u2013 rectifying the defects introduced by your photographic equipment.",
+   "But we all want ideal shots, don't we? :)"
+  ],
+  "links": [
+   {
+    "label": "Lensfun homepage",
+    "url": "https://lensfun.github.io/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/lensfun/lensfun"
+   },
+   {
+    "label": "Online user manual (latest)",
+    "url": "https://lensfun.github.io/manual/latest"
+   }
+  ],
+  "fetch_log": [
+   "https://lensfun.github.io/ \u2014 worked, homepage text with news and version list",
+   "https://github.com/lensfun/lensfun \u2014 worked, returned the README with build, license, and documentation sections"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Lensfun turns a detailed database of real lenses into optical corrections, making the quirks of everyday camera gear tangible and explorable."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Lensfun",
+  "tldr": "An open database of camera lens characteristics plus a library that uses it to undo distortion, colour fringing and vignetting in photos.",
+  "deeper_look": "Lensfun is a C/C++ library with an XML database of photographic lenses and how they misbehave. Client code looks up a lens, then uses the stored model to correct three defects: geometric distortion, transversal chromatic aberration (colour fringes toward the frame edges), and vignetting (darkened corners). The C interface wraps the C++ classes, and GLib parses the database.\n\nIt exists because an earlier free lens database, PTLens, froze when its author went commercial. That author allowed Lensfun to build on the data, and the code was rewritten from scratch around a new XML format. The README's stated goal is \"to provide a open source database of photographic lenses and their characteristics.\"\n\nThe idea underneath is that every lens has a measurable, repeatable fingerprint, and a photo can be corrected by inverting it. Most people meet Lensfun indirectly, when a raw converter quietly fixes a wide-angle shot. Here you can reach the pieces directly: the database, the update script, and `lenstool`, which the build options describe as the reference implementation.\n\nThe brief does not detail the correction math, so the library source and the online manual are the places to dig into how a lens model becomes a pixel remap.",
+  "install": "brew install lensfun",
+  "try_this": [
+   {
+    "cmd": "lenstool --help",
+    "what_happens": "Lists what the reference tool can do with the lens database and with images."
+   },
+   {
+    "cmd": "lensfun-update-data --help",
+    "what_happens": "Shows how to fetch the latest lens database updates; it needs CA certificates on the system."
+   },
+   {
+    "cmd": "lensfun-add-adapter --help",
+    "what_happens": "Shows the helper for adding lens adapter entries to the database."
+   }
+  ],
+  "whats_unique": "The lens data is a community-maintained open database, licensed separately from the code, under CC BY-SA 3.0, with LGPL 3 for libraries and GPL 3 for apps. That split is unusual for a software project.",
+  "caveats": "It corrects only distortion, lateral chromatic aberration and vignetting, and it is a library first, so most of the payoff comes from software built on it. The latest release on the homepage is a 0.3.4 maintenance release from July 2023.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "library",
+   "photography",
+   "optics",
+   "image-processing"
+  ],
+  "links": [
+   {
+    "label": "Lensfun homepage",
+    "url": "https://lensfun.github.io/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/lensfun/lensfun"
+   },
+   {
+    "label": "Online user manual (latest)",
+    "url": "https://lensfun.github.io/manual/latest"
+   }
+  ]
+ }
+}

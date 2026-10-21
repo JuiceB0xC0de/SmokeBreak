@@ -1,0 +1,87 @@
+{
+ "name": "xplanet",
+ "desc": "Create HQ wallpapers of planet Earth",
+ "homepage": "https://xplanet.sourceforge.net/",
+ "installs_365d": 117,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "visual",
+  "science"
+ ],
+ "why": "Renders planets as wallpapers from real astronomical data, a pleasant old-school trick, though the output is mostly pretty.",
+ "brief": {
+  "what_it_is": "Xplanet is a free, GPL-licensed program that renders an image of a planet, moon, or the Sun and either draws it to an X window, saves it to a file (gif, jpg, png, ppm, tiff), or sets it as the desktop wallpaper. Its inputs are command-line options and an optional configuration file, along with map and star images and, for precise positions, JPL ephemeris or SPICE kernel files. The output is a rendered picture of the chosen body as seen from a chosen observer position, date, and projection. Earth is the default body.",
+  "why_it_exists": "Xplanet was inspired by Xearth, which renders an image of the earth into the X root window. The author's homepage says all of the major planets and most satellites can be drawn, similar to the Solar System Simulator.",
+  "how_it_works": "The program places an observer at a chosen location and time relative to a target body, then computes the view and shading. Position data comes from a built-in model or from JPL ephemeris or SPICE files, and the view can be a globe or one of many map projections (azimuthal, Lambert, Mercator, Mollweide, orthographic, rectangular and others). Background stars come from a star map file, and output can be rerun on a timer with -wait or -num_times.",
+  "commands_seen": [
+   {
+    "cmd": "-body naif-82",
+    "context": "Centers the field of view on NAIF ID -82, which the README says is the Cassini orbiter. Requires SPICE support compiled in and the kernels present."
+   },
+   {
+    "cmd": "-body norad20580",
+    "context": "Centers the field of view on NORAD ID 20580, which the README says is the Hubble Space Telescope. Requires the appropriate TLE files."
+   },
+   {
+    "cmd": "-target earth -origin sun",
+    "context": "Places the observer at the center of the Sun while targeting Earth. The README notes that -origin -sun instead places the observer on the far side of Earth from the Sun."
+   },
+   {
+    "cmd": "-target earth -separation moon:-3",
+    "context": "Places the observer where the Moon appears 3 degrees to the left of Earth."
+   },
+   {
+    "cmd": "-date YYYYMMDD.HHMMSS",
+    "context": "Uses the given date (assumed GMT) instead of the current time."
+   },
+   {
+    "cmd": "-output filename",
+    "context": "Writes to a file instead of a window. The format comes from the extension and the default size is 512 by 512 pixels."
+   },
+   {
+    "cmd": "-geometry string",
+    "context": "Sets the image geometry in X syntax, for example 256x256-10+10. The README uses this with -window or -output."
+   },
+   {
+    "cmd": "-prev_command command",
+    "context": "Runs a command before each render. The README example is xplanet.exe -prev_command ./prev.bat on Windows."
+   },
+   {
+    "cmd": "-projection projection_type",
+    "context": "Selects a map projection such as mollweide or mercator. The README says multiple bodies are not shown when this option is used."
+   },
+   {
+    "cmd": "-rotate angle",
+    "context": "Rotates the globe counterclockwise. The README says -rotate 180 suits Southern Hemisphere viewers."
+   }
+  ],
+  "install_notes": "The homepage's own description implies a compile step: it lists several optional features that depend on build-time libraries or kernels, including the X Screensaver extension (for -idlewait and -hibernate), Pango (for -pango), SPICE (for -body naif-N), and image format libraries. Satellite and SPICE use needs extra data files: JPL ephemeris files (DE200, DE405 or DE406) for -ephemeris_file, SPICE kernels with a README in the spice subdirectory, and TLE files for norad IDs. Input files are found by searching the current directory, then -searchdir, then ~/.xplanet on X11, ~/Library/Xplanet on macOS, and DATADIR/xplanet, where DATADIR defaults to /usr/local/share. The homepage links to Maps & Scripts and Cloud Maps pages, which I did not fetch, so I can't say what map images are needed. I did not check the Homebrew formula.",
+  "standout": "It descends from Xearth but reaches further: many bodies, a wide range of projections, real ephemeris and spacecraft-tracking input, and cloud-overlay map generation. Its option set is large enough to work as a small astronomy visualizer rather than only a desktop picture.",
+  "status": "unknown. The homepage and option reference describe old platforms (FreeBSD 5.1, Sparc Solaris, Cygwin, Mac OS X Aqua) and have no release date or changelog visible in what I fetched. The sourceforge hosting and the Homebrew formula suggest it still packages, but I found no last-release or last-commit date.",
+  "caveats": "The homepage's tested platforms are old (i386 GNU/Linux, Sparc Solaris, FreeBSD 5.1, Cygwin, Darwin, Mac OS X Aqua). The README warns that -pango appears to leak memory, so it should not run indefinitely. -fork on Windows can leave multiple processes running unnoticed. Only TrueType fonts are supported. Satellite and SPICE features need extra data files and a build with those options. License is GPL, per the homepage.",
+  "quotes": [
+   "Xplanet was inspired by Xearth, which renders an image of the earth into the X root window.",
+   "My friends in the Southern Hemisphere can use -rotate 180 to make the earth look like it should!",
+   "Be careful when using this option; it's easy to have multiple processes running at the same time without knowing it - check the Task Manager."
+  ],
+  "links": [
+   {
+    "label": "Xplanet homepage",
+    "url": "https://xplanet.sourceforge.net/"
+   },
+   {
+    "label": "Option reference (the page served at /README)",
+    "url": "https://xplanet.sourceforge.net/README"
+   }
+  ],
+  "fetch_log": [
+   "https://xplanet.sourceforge.net/ : OK. Homepage text with navigation (Download, Documentation, FAQ, Maps & Scripts, Cloud Maps, Config Files, Discussion Forums). Short description, platforms, GPL license.",
+   "https://xplanet.sourceforge.net/Doc.php : failed, HTTP 404. This URL was a guess, not a link from the homepage.",
+   "https://xplanet.sourceforge.net/README : OK, but it returned a command-line option reference, not a conventional README with a project header. Used as the main source for commands and behavior. Did not fetch the Documentation, Download, FAQ, or Maps pages."
+  ]
+ }
+}

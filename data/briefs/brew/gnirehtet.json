@@ -1,0 +1,90 @@
+{
+ "name": "gnirehtet",
+ "desc": "Reverse tethering tool for Android",
+ "homepage": "https://github.com/Genymobile/gnirehtet",
+ "installs_365d": 1480,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "quick",
+  "needs-hardware",
+  "network",
+  "protocol"
+ ],
+ "why": "Reverse tethering that routes an Android phone's network through adb, a clever hack on USB networking.",
+ "brief": {
+  "what_it_is": "Gnirehtet is a command-line tool that gives an Android phone the internet connection of the computer it is plugged into over USB, a setup the README calls reverse tethering. It takes the phone's traffic, relays it through adb to a relay server on the computer, and sends it out through the computer's network. It needs no root on either the device or the computer, and runs on GNU/Linux, Windows and macOS. It relays TCP and UDP over IPv4 only; IPv6 is not supported. The Android side is a small APK that the tool installs, and the app has no UI of its own.",
+  "why_it_exists": "The README presents it as a way for devices to use the internet connection of the computer they are plugged into, without root access. The name is the word tethering reversed, and the project's own joke is \"rev <<< tethering\" (in Bash).",
+  "how_it_works": "The computer runs a relay server (Rust or Java) and sets up an adb reverse tunnel, adb reverse localabstract:gnirehtet tcp:31416, to the phone. A small APK on the phone is started with an adb shell command and forwards the phone's TCP and UDP traffic through that tunnel to the relay, which passes it to the computer's network. The README does not go into further detail about the protocol.",
+  "commands_seen": [
+   {
+    "cmd": "brew install gnirehtet",
+    "context": "Homebrew install of the Rust flavor, per the README's Get the app section."
+   },
+   {
+    "cmd": "./gnirehtet run",
+    "context": "Turns on reverse tethering for exactly one device; stays active until Ctrl+C. On Windows, replace ./gnirehtet with gnirehtet."
+   },
+   {
+    "cmd": "./gnirehtet autorun",
+    "context": "Enables reverse tethering for all connected devices, present and future."
+   },
+   {
+    "cmd": "./gnirehtet relay",
+    "context": "Starts the relay server and keeps it open, for the split-step workflow."
+   },
+   {
+    "cmd": "./gnirehtet install [serial]",
+    "context": "Installs the gnirehtet APK on the Android device. The serial is only needed when adb devices lists more than one device."
+   },
+   {
+    "cmd": "./gnirehtet start [serial]",
+    "context": "Starts a client for one device, run in another terminal after relay."
+   },
+   {
+    "cmd": "./gnirehtet stop [serial]",
+    "context": "Stops the client for one device."
+   },
+   {
+    "cmd": "./gnirehtet tunnel [serial]",
+    "context": "Resets the tunnel, for when a device is unplugged and replugged while gnirehtet is active."
+   },
+   {
+    "cmd": "adb install -r gnirehtet.apk",
+    "context": "Manual route: installs the APK directly with adb instead of using the gnirehtet wrapper."
+   },
+   {
+    "cmd": "adb reverse localabstract:gnirehtet tcp:31416",
+    "context": "Manual route: sets up the adb reverse tunnel that the phone-side app connects through. The README then starts the client with adb shell am start, but that is a long multi-line command, so it is not reproduced here."
+   }
+  ],
+  "install_notes": "Homebrew gives the Rust flavor (brew install gnirehtet). The Brew caveats say adb must be on PATH at runtime and suggest brew install --cask android-platform-tools. Enable adb debugging on each device. The Android app needs API 21 (Android 5.0) or later. The Java flavor needs Java 8 (JRE); on Debian-based distros the README names openjdk-8-jre. On Windows, if adb is only for this tool, the README says to copy adb.exe, AdbWinApi.dll and AdbWinUsbApi.dll into the gnirehtet directory. Other options: the ADB environment variable sets a custom adb path, and GNIREHTET_APK sets a custom APK path. On first run, the phone shows a permission popup, and a key icon appears in the status bar while the tunnel is active. The README also lists SHA-256 checksums for the release archives.",
+  "standout": "The phone needs no root and no special driver. It only needs adb, which the developer tooling already uses, and the entire tunnel is built on adb reverse. The project has two implementations: a Rust build that the README recommends, and a Java build that works anywhere Java 8 runs.",
+  "status": "Explicitly not actively maintained. The README says: \"This project is not actively maintained anymore, only major blockers (like build issues) are fixed. It should still work, though.\" The current release is v2.5.1 (Rust and Java). The macOS Rust build is still v2.2.1, which the README marks as an old release. I did not see a release date or last commit date in the README.",
+  "caveats": "Maintenance has stopped, so only build-breaking issues get fixes. IPv6 is not supported. The macOS Rust download is the older v2.2.1 build. The Java flavor requires Java 8. The Android app requires API 21 or later. adb must be on PATH or pointed to with ADB, and adb debugging must be enabled on the device. The tool needs the phone to have USB debugging enabled and to accept the permission popup on first run.",
+  "quotes": [
+   "This project is not actively maintained anymore, only major blockers (like build issues) are fixed. It should still work, though.",
+   "The application has no UI, and is intended to be controlled from the computer only.",
+   "rev <<< tethering"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/Genymobile/gnirehtet"
+   },
+   {
+    "label": "Gnirehtet rewritten in Rust (author's blog, English)",
+    "url": "https://blog.rom1v.com/2017/09/gnirehtet-rewritten-in-rust/"
+   },
+   {
+    "label": "Introducing gnirehtet (author's original article on Medium)",
+    "url": "https://medium.com/@rom1v/gnirehtet-reverse-tethering-android-2afacdbdaec7"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/Genymobile/gnirehtet: fetched OK, README returned (v2.5.1). The README was complete enough that I did not follow further links."
+  ]
+ }
+}

@@ -1,0 +1,85 @@
+{
+ "name": "bender",
+ "desc": "Dependency management tool for hardware projects",
+ "homepage": "https://github.com/pulp-platform/bender",
+ "installs_365d": 256,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "library",
+  "needs-hardware"
+ ],
+ "why": "Hardware dependency management is a niche corner worth a look, though it is mostly build plumbing.",
+ "brief": {
+  "what_it_is": "Bender is a dependency management tool for hardware design projects. It takes a package description in Bender.yml that lists HDL dependencies, which can come from Git repositories (by tag or revision) or local paths. It resolves compatible versions, records the exact result in Bender.lock, and outputs ordered source sets, include directories, defines, and target-specific file groups for downstream simulators and synthesis tools such as QuestaSim, VCS, Vivado, and Verilator.",
+  "why_it_exists": "The README says it is designed to fit existing hardware flows rather than impose a registry, directory layout, or simulator choice, and that it provides reproducible dependency resolution for IP reuse.",
+  "how_it_works": "A package is defined by three files: Bender.yml declares metadata, dependencies, sources, and targets; Bender.lock pins the resolved revisions; Bender.local holds local overrides, such as when developing a dependency in place. The usual loop is to edit Bender.yml, run bender update to resolve, bender checkout to fetch the pinned revisions, and bender script to emit tool inputs.",
+  "commands_seen": [
+   {
+    "cmd": "curl --proto '=https' --tlsv1.2 https://pulp-platform.github.io/bender/init -sSf | sh",
+    "context": "Quick Start install command that fetches and runs the installer script."
+   },
+   {
+    "cmd": "mkdir my_ip",
+    "context": "Quick Start step creating a new package directory."
+   },
+   {
+    "cmd": "cd my_ip",
+    "context": "Quick Start step entering the new package directory."
+   },
+   {
+    "cmd": "bender init",
+    "context": "Creates a new Bender package in the current directory."
+   },
+   {
+    "cmd": "bender update",
+    "context": "Resolves dependencies and records the results in Bender.lock."
+   },
+   {
+    "cmd": "bender script vsim > compile.tcl",
+    "context": "Generates a QuestaSim compile script from the resolved sources and redirects it to compile.tcl."
+   },
+   {
+    "cmd": "vsim -do compile.tcl",
+    "context": "Runs QuestaSim with the generated compile script."
+   },
+   {
+    "cmd": "bender checkout",
+    "context": "Downloads the revisions pinned in Bender.lock. Mentioned in the How It Works section."
+   }
+  ],
+  "install_notes": "The README's primary install path is the curl-to-shell installer at pulp-platform.github.io/bender/init. The README does not list other install methods, runtimes, or accounts. Setup for a dependency is done by adding an entry under dependencies in Bender.yml, for example a Git URL with a version tag. The README does not describe credentials, hardware, or first-run configuration beyond that. Installation details are on the linked installation docs page, which I did not fetch.",
+  "standout": "It is a package and lockfile manager for HDL that deliberately stays out of the way of the simulator, synthesis tool, and directory layout, instead emitting ordered source lists for whichever tool you use. The lock-plus-local-override model (Bender.lock and Bender.local) lets you edit a dependency in place while the rest of the team stays pinned.",
+  "status": "unknown. The README shows a CI build-status badge and crates.io and license badges, and it is maintained by the PULP Platform at ETH Zurich and the University of Bologna. I did not see a release date or last-commit date, and I did not check the GitHub releases page or the commit history, so I cannot confirm how recently it has been updated.",
+  "caveats": "The README does not state platform support or a minimum Rust toolchain, even though the crates.io badge suggests it is distributed as a Rust crate. Build pain and platform limits are not covered in the README. The brew description calls it niche build plumbing, which is accurate for the audience. Licensing is dual Apache-2.0 or MIT, at the user's option.",
+  "quotes": [
+   "A dependency management tool for hardware design projects.",
+   "It is designed to fit existing hardware flows rather than impose a registry, directory layout, or simulator choice.",
+   "Keep source ordering, include directories, defines, and target-specific file groups in one place."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/pulp-platform/bender"
+   },
+   {
+    "label": "Full documentation",
+    "url": "https://pulp-platform.github.io/bender/"
+   },
+   {
+    "label": "Commands reference",
+    "url": "https://pulp-platform.github.io/bender/commands.html"
+   },
+   {
+    "label": "Crates.io package",
+    "url": "https://crates.io/crates/bender"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/pulp-platform/bender (fetched OK, README returned; the README was complete enough that I did not follow the docs links)"
+  ]
+ }
+}

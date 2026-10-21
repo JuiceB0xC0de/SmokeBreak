@@ -1,0 +1,152 @@
+{
+ "name": "immudb",
+ "desc": "Lightweight, high-speed immutable database",
+ "homepage": "https://immudb.io/",
+ "installs_365d": 185,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "library",
+  "protocol"
+ ],
+ "why": "An immutable database with cryptographic verification of history, a twist worth an afternoon of poking at tamper-evident storage.",
+ "brief": {
+  "what_it_is": "immudb is an open-source database written in Go that adds cryptographic proof and verification to its stored history. It can be used as a key-value store, a document store, or a SQL relational database, and it accepts records, text, images, JSON, and blobs. Writes only add new versions; existing records are never changed or deleted, and reads can come back with a proof that clients check themselves. It runs as a standalone server with gRPC, PostgreSQL wire protocol, and REST access, or embedded in a Go program as a library.",
+  "why_it_exists": "The README says traditional database transactions and logs are mutable, so there is no way to know for sure whether data has been compromised, and immudb is positioned as a way to store critical data without fear of it being tampered with. The homepage pitches it as a practical alternative to a blockchain or a hosted ledger service, with throughput far beyond blockchains.",
+  "how_it_works": "Per the tech specs table, the core is a cryptographic commit log with a parallel Merkle tree, plus sync or async indexing on an extended B-tree. Clients verify proofs on their own without trusting the server, and the homepage says the server continuously checks disk and memory consistency. SQL users can call functions such as immudb_verify_row, immudb_verify_tx, and immudb_history to query proofs directly.",
+  "commands_seen": [
+   {
+    "cmd": "docker run -d -p 3322:3322 -p 8080:8080 -it --name immudb codenotary/immudb:latest",
+    "context": "From the homepage: starts immudb in a container with port 3322 and port 8080 published."
+   },
+   {
+    "cmd": "docker run -d --net host -it --rm --name immudb codenotary/immudb:latest",
+    "context": "From the GitHub README: starts immudb in a container using host networking. The README says that without host networking you must expose ports 3322 and 9497."
+   },
+   {
+    "cmd": "wget https://github.com/codenotary/immudb/releases/download/v1.9.5/immudb-v1.9.5-linux-amd64",
+    "context": "Downloads the immudb binary for linux amd64. The README gives v1.9.5 as an example version."
+   },
+   {
+    "cmd": "chmod +x immudb",
+    "context": "Marks the renamed immudb binary as executable before running it."
+   },
+   {
+    "cmd": "./immudb",
+    "context": "Runs immudb in the foreground so all output is visible."
+   },
+   {
+    "cmd": "./immudb -d",
+    "context": "Runs immudb in the background."
+   },
+   {
+    "cmd": "./immudb --audit-log --audit-log-events=write",
+    "context": "Enables structured audit logging of write, admin, auth, and system operations, with reads excluded. Per the README, the events are stored in immudb's own KV store under the audit: prefix."
+   },
+   {
+    "cmd": "./immuclient",
+    "context": "Starts the interactive shell of the immuclient client."
+   },
+   {
+    "cmd": "docker run -it --rm --net host --name immuclient codenotary/immuclient:latest",
+    "context": "Runs the immuclient client in a container instead of as a downloaded binary."
+   },
+   {
+    "cmd": "helm install immudb/immudb --generate-name",
+    "context": "Kubernetes route: after adding the immudb helm repo, installs the chart with a generated release name."
+   }
+  ],
+  "install_notes": "Homebrew formula exists per the GitHub badge. Beyond that: download a release binary from GitHub Releases, rename it, mark it executable, and run it. Docker and Helm (repo at https://packages.codenotary.org/helm) are also supported. Data storage can be pointed at S3 or an S3-compatible service such as MinIO through IMMUDB_S3_* environment variables, including role-based and Fargate credentials. The README says that when running in Docker you should expose ports 3322 and 9497, while the homepage's docker run example publishes 3322 and 8080 instead. The web console is served with the default immudb/immudb credentials on the online demo, but that is a demo only. The Go embedding guide is in docs/EMBEDDING.md in the repo.",
+  "standout": "Verification happens on the client side, so a client can check proofs without trusting the server, and the same proof system is exposed through ordinary SQL functions and a PostgreSQL wire endpoint that ORMs like Rails or Django can talk to. It is also the same engine whether you run it as a server or embed it as a Go library with no process at all.",
+  "status": "Appears maintained. The homepage has a blog post dated 3 September 2026 about release 1.11.2, and it lists a 2026 post about coding agents as recent. The README describes recent 1.11.x changes (structured audit logging, DIFF OF, PostgreSQL compatibility, security hardening). The homepage shows 9.0k and the README mentions 157M Docker Hub pulls. I did not find a last-commit date, so the exact activity level is unverified.",
+  "caveats": "The license is Business Source License 1.1 (the homepage says 'Source available'), which is not an OSI open-source license, so check the terms before commercial use. The README says there is no official Rust SDK; the crates.io immudb crate is unofficial and unmaintained by the authors, so Rust users are pointed to PostgreSQL clients or generating gRPC code from the protobuf files. The PostgreSQL compatibility layer has known gaps: no generated columns, no stored procedures or PL/pgSQL, only B-tree indexes (no GIN or GiST), no ARRAY/ENUM/composite types. Performance figures come from the author's own benchmark on a 4-core E3-1275v6 with SSD, and the roadmap lists data pruning and compression as not yet built. The PostgreSQL-compatible server logs a warning when run without TLS because cleartext password auth is used. The homepage has a cookie-consent banner about Google Analytics, which is unrelated to the project itself.",
+  "quotes": [
+   "immudb is a database with built-in cryptographic proof and verification. It tracks changes in sensitive data and the integrity of the history will be protected by the clients, without the need to trust the database.",
+   "Traditional database transactions and logs are mutable, and therefore there is no way to know for sure if your data has been compromised. immudb is immutable.",
+   "You can add new versions of existing records, but never change or delete records. This lets you store critical data without fear of it being tampered."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://immudb.io/"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://immudb.io/docs/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/codenotary/immudb"
+   },
+   {
+    "label": "Online demo",
+    "url": "https://demo.immudb.io"
+   }
+  ],
+  "fetch_log": [
+   "https://immudb.io/ - worked; homepage text returned, including the docker run line and the blog post list",
+   "https://github.com/codenotary/immudb - worked; full README returned"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A verifiable append-only database is a genuinely interesting way to explore tamper-evident storage, with clients checking Merkle proofs without trusting the server."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "immudb",
+  "tldr": "A database that only appends, and hands back cryptographic proofs that its history has not been altered, which clients check without trusting the server.",
+  "deeper_look": "immudb is a database written in Go that works as a key-value store, a document store, or a SQL database. Writes only add new versions. Existing records are never changed or deleted. A read can come back with a proof, and the client checks that proof itself.\n\nThe README's argument is that ordinary database transactions and logs are mutable, so there is no way to know for sure whether data has been compromised. immudb is positioned as a practical alternative to a blockchain or a hosted ledger service, without the throughput cost.\n\nUnderneath is a cryptographic commit log with a parallel Merkle tree, indexed with an extended B-tree. That is the same family of structure behind certificate transparency logs and similar tamper-evident systems. The proofs are also exposed in plain SQL through functions such as `immudb_verify_row`, `immudb_verify_tx` and `immudb_history`, so you can poke at them from any PostgreSQL client.\n\nIt runs as a standalone server with gRPC, PostgreSQL wire protocol and REST access, or embedded in a Go program as a library with no separate process. The Go embedding guide is in `docs/EMBEDDING.md` in the repo.",
+  "install": "brew install immudb\n# Docker also works: docker run -d -p 3322:3322 -p 8080:8080 -it --name immudb codenotary/immudb:latest",
+  "try_this": [
+   {
+    "cmd": "immudb",
+    "what_happens": "Starts the server in the foreground so all output is visible."
+   },
+   {
+    "cmd": "immuclient",
+    "what_happens": "Opens the interactive client shell, where you can write records and ask for verified reads."
+   },
+   {
+    "cmd": "immudb --audit-log --audit-log-events=write",
+    "what_happens": "Starts the server with structured audit logging of write, admin, auth and system operations, stored in immudb's own KV store under the audit: prefix."
+   }
+  ],
+  "whats_unique": "Verification happens on the client, so you do not have to trust the server, and the proofs are reachable through ordinary SQL and a PostgreSQL-compatible endpoint. The same engine runs as a server or embedded as a Go library.",
+  "caveats": "The license is Business Source License 1.1 (source available, not OSI open source), the PostgreSQL compatibility has known gaps, and benchmark figures come from the authors' own tests.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "database",
+   "cryptography",
+   "merkle-tree",
+   "go",
+   "sql",
+   "tamper-evident"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://immudb.io/"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://immudb.io/docs/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/codenotary/immudb"
+   },
+   {
+    "label": "Online demo",
+    "url": "https://demo.immudb.io"
+   }
+  ]
+ }
+}

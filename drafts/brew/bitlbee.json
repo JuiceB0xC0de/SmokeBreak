@@ -1,0 +1,134 @@
+{
+ "name": "bitlbee",
+ "desc": "IRC to other chat networks gateway",
+ "homepage": "https://www.bitlbee.org/",
+ "installs_365d": 189,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol",
+  "tui",
+  "ancient"
+ ],
+ "why": "An IRC gateway bridging to other chat networks is an old-school protocol door, and a charming relic of the bouncer era.",
+ "brief": {
+  "what_it_is": "BitlBee is an IRC server that bridges instant-messaging networks into IRC. You run it locally, or use one of the public servers, then connect with any ordinary IRC client. Your IM accounts and contacts show up as IRC nicks and chats, and you talk to them through queries or channels as you would with IRC users. Input is IRC traffic plus your IM credentials. Output is IM messages rendered as IRC. Per the 3.6 news item, only the Jabber/XMPP and Twitter protocols are built in. Others come from plugins such as facebook, discord, steam and mastodon, or from libpurple.",
+  "why_it_exists": "The homepage says BitlBee 'brings IM (instant messaging) to IRC clients' and is 'a great solution for people who have an IRC client running all the time and don't want to run an additional XMPP/facebook/discord/whatever client.'",
+  "how_it_works": "BitlBee acts like any other IRC daemon. On connecting, you are joined to the control channel &bitlbee, where a bot user called root answers your commands. Each contact on your list appears there, and you can talk to them by query or with 'nick: text' in the channel. The user guide says your settings and contacts are saved on the BitlBee server after you register with a password.",
+  "commands_seen": [
+   {
+    "cmd": "register <password>",
+    "context": "Quickstart: registers you on the BitlBee server so passwords, contacts and settings are saved. The guide says to pick a good password."
+   },
+   {
+    "cmd": "account add <protocol> <username> [<password>]",
+    "context": "Command reference syntax for adding an IM account. The guide notes the password can be omitted and entered separately with IRC /OPER."
+   },
+   {
+    "cmd": "account on",
+    "context": "Quickstart says to use this to enable your accounts. The reference says that with no account ID it logs into accounts that have auto_connect set."
+   },
+   {
+    "cmd": "add <connection> <handle>",
+    "context": "Quickstart example for adding a contact on a connection. The connection can be a number, a protocol name, or part of a screen name."
+   },
+   {
+    "cmd": "account twitter set stream off",
+    "context": "From the 3.6 homepage notes: users of 3.5.1 and older re-enable Twitter support by setting this."
+   },
+   {
+    "cmd": "account twitter set message_length 280",
+    "context": "Second setting from the same homepage note, paired with the stream setting above."
+   },
+   {
+    "cmd": "help set private",
+    "context": "Guide example for looking up one user setting; 'private' controls how BitlBee handles chats with people you have not talked to yet."
+   },
+   {
+    "cmd": "./configure --help",
+    "context": "Source build from the user guide: lists the configure options, such as protocol switches, ssl and config directory."
+   },
+   {
+    "cmd": "make install",
+    "context": "Guide's install step, run as root after configure and make."
+   }
+  ],
+  "install_notes": "The user guide describes a source build: unpack the tarball, run ./configure, then make, then make install as root. Configure picks GnuTLS or mozilla-nss for SSL by default, and OpenSSL must be requested explicitly because of licensing. BitlBee stores per-user data in a config directory, default /var/lib/bitlbee, which must be owned by the user running it (default nobody). The guide's inetd and xinetd section is old. For Windows, the homepage says the public servers are the preferred option unless you use cygwin. Brew-specific steps were not in the sources I read. The first run is: connect an IRC client to localhost port 6667, register, add an account, then turn it on.",
+  "standout": "It is a 2000s-style protocol gateway that still works. Contacts appear as an IRC 'buddy list' channel run by a bot, and group chats look like IRC channels. The news posts are candid about dying protocols, and the 3.4.2 post says 'you just have to appreciate the beauty of things that are imperfect, impermanent and incomplete.'",
+  "status": "Maintained, with a gap in stable releases. The last stable release is 3.6 on 2019-02-07. The homepage's git log shows main dev tree entries dated 2025-10-05 (drop Debian packaging), 2025-06-29 (purple googlechat hack) and 2025-04-16 (default IRC network is now libera). So development continues, but tagged releases are years apart.",
+  "caveats": "Built-in protocols are only Jabber/XMPP and Twitter, so most networks need plugins. The 3.6 release removed msn, skype and oscar (ICQ/AIM). The 3.5 release removed Yahoo because Yahoo shut its old protocol. Twitter now needs OAuth, so you should not enter a Twitter password. The user guide has a disclaimer: 'it can crash at any time, corrupt your data or whatever. Don't use it in any production environment.' The guide says its own install section is outdated. I did not see a license stated in the sources.",
+  "quotes": [
+   "BitlBee brings IM (instant messaging) to IRC clients.",
+   "Just install the program and connect to the BitlBee server with your favourite IRC-client.",
+   "MSN and gtalk are still fine, you just have to appreciate the beauty of things that are imperfect, impermanent and incomplete."
+  ],
+  "links": [
+   {
+    "label": "BitlBee homepage",
+    "url": "https://www.bitlbee.org/"
+   },
+   {
+    "label": "BitlBee User Guide (partly outdated, truncated in fetch)",
+    "url": "https://www.bitlbee.org/main.php/user-guide.html"
+   }
+  ],
+  "fetch_log": [
+   "https://www.bitlbee.org/ - worked; homepage text with release notes and news, no separate README",
+   "https://www.bitlbee.org/main.php/user-guide.html - worked; user guide text, cut off at 40000 characters before the end of the settings list"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "BitlBee turns an IRC client into a live interface for other chat protocols, a distinctive protocol-translation idea that still works despite its limited built-in networks."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "BitlBee",
+  "tldr": "An IRC server that turns your instant-messaging accounts into IRC nicks and channels, so any IRC client can talk XMPP, Twitter and more.",
+  "deeper_look": "BitlBee is an IRC daemon that does not host chat itself. You run it locally, point an ordinary IRC client at it, and it logs into your other chat accounts on your behalf. Your contacts appear as IRC nicks, and group chats appear as channels. You talk to people by opening a query, or by typing `nick: text` in the control channel.\n\nWhen you connect you are placed in a channel called &bitlbee, where a bot user named root answers commands. That channel is the whole interface for managing accounts. You register with a password so your settings and contacts are saved on the server, add an account, switch it on, and your buddy list fills in as people in the channel.\n\nThe homepage says it exists for 'people who have an IRC client running all the time and don't want to run an additional XMPP/facebook/discord/whatever client.' The idea underneath is the gateway: take one protocol and present it as another, so a single client can cover many networks. It shows how much of chat (presence, queries, group rooms) maps onto IRC's old model, and where the mapping gets awkward.\n\nOnly Jabber/XMPP and Twitter are built in. Other networks come from plugins such as facebook, discord, steam and mastodon, or through libpurple. The project's news posts are candid about protocols dying off, and the 3.4.2 post puts it this way: 'you just have to appreciate the beauty of things that are imperfect, impermanent and incomplete.'",
+  "install": "brew install bitlbee\n# You also need an IRC client. The brief did not cover Brew-specific setup; the user guide describes a source build (./configure, make, make install) with its config directory defaulting to /var/lib/bitlbee.",
+  "try_this": [
+   {
+    "cmd": "register <password>",
+    "what_happens": "Run in &bitlbee after connecting your IRC client to localhost port 6667. It saves your passwords, contacts and settings on the BitlBee server."
+   },
+   {
+    "cmd": "account add <protocol> <username> [<password>]",
+    "what_happens": "Adds an IM account, for example a Jabber/XMPP one. The password can be left out and entered separately."
+   },
+   {
+    "cmd": "account on",
+    "what_happens": "Logs into your accounts, and your contacts begin appearing in the control channel as IRC users."
+   }
+  ],
+  "whats_unique": "It is a 2000s-style protocol gateway that still works, with a bot-run buddy list channel and group chats that look like IRC channels. Few tools make the mapping between two chat protocols this visible.",
+  "caveats": "The last stable release is 3.6 from February 2019, though the git tree has activity through 2025; the 3.6 release removed MSN, Skype and ICQ/AIM, and the user guide itself warns it can crash or corrupt data and is partly outdated.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "irc",
+   "xmpp",
+   "protocol",
+   "gateway",
+   "chat",
+   "old-school"
+  ],
+  "links": [
+   {
+    "label": "BitlBee homepage",
+    "url": "https://www.bitlbee.org/"
+   },
+   {
+    "label": "BitlBee User Guide (partly outdated)",
+    "url": "https://www.bitlbee.org/main.php/user-guide.html"
+   }
+  ]
+ }
+}

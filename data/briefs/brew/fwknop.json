@@ -1,0 +1,71 @@
+{
+ "name": "fwknop",
+ "desc": "Single Packet Authorization and Port Knocking",
+ "homepage": "https://www.cipherdyne.org/fwknop/",
+ "installs_365d": 207,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "Single Packet Authorization hides services behind an encrypted packet knock, a fascinating and under-known take on port knocking.",
+ "brief": {
+  "what_it_is": "fwknop (FireWall KNock OPerator) is a Linux, BSD and macOS tool that implements Single Packet Authorization (SPA), a stronger successor to port knocking. It keeps a firewall in a default-drop stance so the protected service, typically SSH, shows no open port. A client sends one encrypted, HMAC-authenticated packet describing the access it wants, and the fwknopd server passively sniffs that packet with libpcap. If the packet decrypts, verifies and is not a replay, the server temporarily opens the firewall for that client. The project ships a client binary, fwknop, and a server daemon, fwknopd.",
+  "why_it_exists": "The author frames SPA as next-generation port knocking that fixes its known weaknesses: replay attacks, the difficulty of using asymmetric ciphers or HMACs, and DoS by spoofing an extra packet into a knock sequence. The stated goal is that exploitable services like SSHD cannot even be seen by nmap, so attackers cannot run password crackers or 0-day exploits against them.",
+  "how_it_works": "The client encrypts the SPA payload with Rijndael (key derived via PBKDF1, CBC mode) or with GnuPG, then appends an HMAC in an encrypt-then-authenticate arrangement. The server checks the HMAC before decrypting, and rejects replays by SHA-256 digest comparison. For iptables, ACCEPT rules go into custom chains and are removed after a configurable timeout. The README also covers NAT (DNAT/SNAT) and port randomization.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://www.github.com/mrash/fwknop fwknop.git",
+    "context": "Clones the fwknop source repository from GitHub; this is the only install command on the homepage."
+   },
+   {
+    "cmd": "./configure --disable-client --with-firewalld=/bin/firewall-cmd",
+    "context": "Example build for a server-only install that uses firewalld at the given path."
+   },
+   {
+    "cmd": "./configure --disable-client --with-iptables=/sbin/iptables --with-firewalld=no",
+    "context": "Example build for a server-only install that uses iptables and turns firewalld support off."
+   },
+   {
+    "cmd": "autogen.sh",
+    "context": "Developer step, run after cloning from git, to generate the autoconf files (README says to run it, the script is not invoked with ./)."
+   },
+   {
+    "cmd": "autoreconf -i",
+    "context": "Developer step to regenerate the configure script after autogen has run."
+   }
+  ],
+  "install_notes": "The build uses GNU autoconf; the README points to an INSTALL file for basics. Configure flags include --disable-client, --disable-server, --with-gpgme (for GnuPG support via libgpgme), --with-gpg, --with-iptables, --with-firewalld, --with-ipfw, --with-pf and --with-ipf. Symmetric keys and access rules live in /etc/fwknop/access.conf, and the HMAC key is generated with --key-gen. The README does not describe Homebrew-specific steps; the brew formula name is fwknop.",
+  "standout": "SPA sends one encrypted packet and the server listens passively with libpcap, so there is no listening port to connect to and nothing to scan. The HMAC is applied after encryption, and the server verifies it before any decryption or GnuPG code runs, to reduce padding-oracle-style exposure.",
+  "status": "Probably maintained, but the date is unconfirmed. The homepage lists latest release 2.6.11 and has blog posts titled as releases (2.6.10, 2.6.11). Against that, the README's 'Current State' section describes the 2.5 release from July 2013, and the homepage copyright reads 2001-2012. I did not see a last-commit date.",
+  "caveats": "Firewall support is limited to iptables and firewalld on Linux, ipfw on FreeBSD and macOS, and PF on OpenBSD; the README says NAT works only with iptables. The Perl version's features were not all ported, and the README says port-knocking mode is deprecated in favour of SPA. Tor integration breaks the 'single packet' property because the packet travels over TCP. The README says GnuPG is not yet supported by the fwknop-gui client. The client runs on Windows only under Cygwin. Licence is GPL v2 or later.",
+  "quotes": [
+   "SPA is essentially next generation Port Knocking (PK), but solves many of the limitations exhibited by PK while retaining its core benefits.",
+   "With fwknop deployed, anyone using nmap to look for SSHD can't even tell that it is listening - it makes no difference if they want to run a password cracker against SSHD or even if they have a 0-day exploit.",
+   "The authorization server passively sniffs SPA packets via libcap and hence there is no \"server\" to which to connect in the traditional sense."
+  ],
+  "links": [
+   {
+    "label": "fwknop homepage",
+    "url": "https://www.cipherdyne.org/fwknop/"
+   },
+   {
+    "label": "fwknop tutorial (linked from README, not fetched)",
+    "url": "http://www.cipherdyne.org/fwknop/docs/fwknop-tutorial.html"
+   },
+   {
+    "label": "fwknop source on GitHub",
+    "url": "https://github.com/mrash/fwknop"
+   }
+  ],
+  "fetch_log": [
+   "https://www.cipherdyne.org/fwknop/ - worked; homepage text with download and feature links",
+   "https://github.com/mrash/fwknop - worked; returned the README, which was used for the install, feature and caveat details",
+   "http://www.cipherdyne.org/fwknop/docs/fwknop-tutorial.html - not fetched; the fetch budget was spent on the homepage and README, and the tutorial is linked only"
+  ]
+ }
+}

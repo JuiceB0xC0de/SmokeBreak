@@ -1,0 +1,90 @@
+{
+ "name": "cdpr",
+ "desc": "Cisco Discovery Protocol Reporter",
+ "homepage": "https://www.monkeymental.com/",
+ "installs_365d": 40,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "Decodes Cisco Discovery Protocol broadcasts on your LAN, a door into a chatty protocol most people never see.",
+ "brief": {
+  "what_it_is": "CDPR (Cisco Discovery Protocol Reporter) is a command-line tool that listens for Cisco Discovery Protocol (CDP) broadcasts on your local network and reports which switch and port your machine is plugged into. By default it prints the device ID, the IP address of the neighbouring device, and the port number. In verbose mode it decodes the entire CDP packet, including details such as native VLAN and device capabilities. It can also send the collected data to a server to keep a continuously updated database of which devices sit on which switch ports.",
+  "why_it_exists": "The homepage frames it as a utility from MonkeyMental, a small development group that writes software to help sysadmins and operations staff do their jobs more quickly and efficiently. The homepage says the tool 'will tell you which switch and port your device is plugged into.'",
+  "how_it_works": "It passively decodes the CDP frames that Cisco switches broadcast on their ports, so the switch reports its own identity and port back to the connected host. The homepage says it compiles and runs on Solaris, Linux, HP-UX, AIX and Windows (using pcap). Reporting to a server is an optional feature that builds a running inventory of device-to-port mappings.",
+  "commands_seen": [],
+  "install_notes": "The Homebrew caveat says to run cdpr under sudo, because without it you get the error 'No interfaces found! Make sure pcap is installed.' Packet capture needs elevated privileges. The Homebrew formula's executable is cdpr. The homepage points to SourceForge for release downloads and for all past versions. I saw no build steps, config file, or first-run instructions on either page.",
+  "standout": "Most people never see CDP, which their switches broadcast constantly. CDPR turns that background chatter into a direct answer to 'which switch and port am I on?' and can log those answers centrally, which makes it useful for building a device-to-port map without any agent on the switches.",
+  "status": "quiet. The SourceForge project page shows a last update of 2013-02-18 and a registration date of 2003-02-11. The MonkeyMental homepage advertises 'CDPR 2.4 Just Released' but gives no date for that release, so I could not confirm when it shipped. The homepage also says the tool has been extended at Cisco's request and is used in their labs.",
+  "caveats": "Packet capture requires root or sudo, and pcap must be present; Homebrew's own caveat warns about the 'No interfaces found' error. The only Windows support is through pcap. Licence is GPLv2. The most recent release date I could see is 2013, so it may not work with newer platforms or switch firmware; I did not verify this. The homepage is a group landing page, not a README, so I found no command examples on it. The SourceForge page had a lot of unrelated page clutter, and its description was the only one I could use. The homepage also has a donation request for hosting costs.",
+  "quotes": [
+   "CDPR is the Cisco Discovery Protocol Reporter. This software will tell you which switch and port your device is plugged into.",
+   "It also has the ability to report the data back to a server so that you can use CDPR to keep an ever updating database of which devices are on which switch port.",
+   "This code has had several additions made to it at the request of Cisco and is used in many of their labs."
+  ],
+  "links": [
+   {
+    "label": "MonkeyMental homepage",
+    "url": "https://www.monkeymental.com/"
+   },
+   {
+    "label": "CDPR project page on SourceForge",
+    "url": "https://sourceforge.net/projects/cdpr/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.monkeymental.com/ \u2014 worked; returned the group homepage with a CDPR description and a SourceForge link, but no README or command examples.",
+   "https://sourceforge.net/projects/cdpr/ \u2014 worked, but I guessed this URL from the project name; it was not linked directly from the homepage text I received. The page was very noisy. It gave the license (GPLv2), last update (2013-02-18), registration date (2003-02-11), a short description, and the owner (ronnocol). It had no README or command examples."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "CDPR turns otherwise invisible Cisco Discovery Protocol broadcasts into a direct map of your switch and port, making everyday network chatter tangible."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "cdpr",
+  "tldr": "Listens for the Cisco Discovery Protocol chatter your switch already broadcasts and tells you which switch and port your machine is plugged into.",
+  "deeper_look": "CDPR (Cisco Discovery Protocol Reporter) passively listens on a network interface for CDP frames. Cisco switches broadcast these constantly so that neighbouring devices can learn who they are. CDPR decodes them and prints the neighbour's device ID, its IP address, and the port you are connected to.\n\nIn verbose mode it decodes the whole CDP packet, including details such as native VLAN and device capabilities. It can also report what it hears to a server, which lets you keep a running database of which devices sit on which switch ports, with no agent on the switches.\n\nThe idea underneath is that a lot of network gear announces itself all day to anyone who listens. Nothing needs to be probed or configured. Once you see one of these discovery protocols decoded, you start noticing how much of a LAN is neighbours quietly introducing themselves. The project's own line: \"This software will tell you which switch and port your device is plugged into.\"\n\nIt is old. The SourceForge page was registered in 2003 and last updated in 2013. It comes from MonkeyMental, a small group writing tools for sysadmins, and the homepage says it has been extended at Cisco's request and is used in their labs.",
+  "install": "brew install cdpr\n# packet capture needs root: run it as `sudo cdpr`, or you get 'No interfaces found! Make sure pcap is installed.'\n# you need to be on a network with a Cisco switch (or other gear sending CDP) to see anything",
+  "try_this": [
+   {
+    "cmd": "cdpr --help",
+    "what_happens": "Prints the list of options, including the verbose and server-reporting modes."
+   },
+   {
+    "cmd": "sudo cdpr",
+    "what_happens": "Listens on the network interface and prints the neighbouring device ID, its IP address, and the port once a CDP frame arrives."
+   }
+  ],
+  "whats_unique": "It answers one practical question, which switch port am I on, by reading broadcasts the switch was already sending. It can also log the answers centrally to build a device-to-port map.",
+  "caveats": "Last updated in 2013, needs root and pcap, and only shows anything on networks where the switches actually send CDP; I could not confirm it works with current switch firmware.",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "network",
+   "protocol",
+   "cdp",
+   "cisco",
+   "pcap"
+  ],
+  "links": [
+   {
+    "label": "MonkeyMental homepage",
+    "url": "https://www.monkeymental.com/"
+   },
+   {
+    "label": "CDPR project page on SourceForge",
+    "url": "https://sourceforge.net/projects/cdpr/"
+   }
+  ]
+ }
+}

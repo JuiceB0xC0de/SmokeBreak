@@ -1,0 +1,99 @@
+{
+ "name": "limesuite",
+ "desc": "Device drivers utilities, and interface layers for LimeSDR",
+ "homepage": "https://myriadrf.org/projects/software/lime-suite/",
+ "installs_365d": 345,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "afternoon",
+  "library"
+ ],
+ "why": "Drivers and utilities for the LimeSDR, a real door into software-defined radio hardware.",
+ "brief": {
+  "what_it_is": "Lime Suite is a collection of software for hardware built on the LMS7002M transceiver RFIC, mainly the LimeSDR family. It contains a C-style library API, LimeSuiteGUI for low-level chip and board settings, FFT display and firmware updates, a SoapyLMS plugin for SoapySDR, an Octave plugin with basic functions, and API examples. The command-line tools LimeUtil and LimeQuickTest sit alongside these. A host computer talks to the board over USB, and applications get back device control and sample streams through the library or plugins.",
+  "why_it_exists": "The wiki describes Lime Suite as software that 'provides drivers and tools for the LMS7002M transceiver RFIC, along with support for LimeSDR boards,' so that many SDR applications can be used with supported hardware through native APIs and plug-ins such as SoapySDR and GNU Radio.",
+  "how_it_works": "The library wraps the LMS7002M chip and the board's USB or PCIe interface, and the GUI and CLI tools are built on that library. LimeUtil lists devices and updates firmware, and LimeQuickTest runs basic tests. Downstream SDR software reaches the hardware through the SoapyLMS plugin or the native API.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/myriadrf/LimeSuite.git",
+    "context": "Wiki source-build step: clones the LimeSuite repository."
+   },
+   {
+    "cmd": "git checkout stable",
+    "context": "Wiki source-build step: switches to the stable branch before configuring."
+   },
+   {
+    "cmd": "cmake ../",
+    "context": "Wiki Unix-makefile build: configures the project from the builddir; its output lists enabled and disabled components."
+   },
+   {
+    "cmd": "make -j4",
+    "context": "Wiki Unix-makefile build: compiles the project in parallel."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Wiki Unix-makefile build: installs the built files system-wide."
+   },
+   {
+    "cmd": "cd LimeSuite/udev-rules",
+    "context": "Wiki Linux post-install step: moves into the udev rules folder so non-root users can access USB devices like the LimeSDR."
+   },
+   {
+    "cmd": "sudo ./install.sh",
+    "context": "Wiki Linux post-install step: installs the udev rules."
+   },
+   {
+    "cmd": "LimeUtil --info",
+    "context": "Wiki hardware check: confirms STREAM is among the available connections."
+   },
+   {
+    "cmd": "LimeUtil --find",
+    "context": "Wiki hardware check: locates LimeSDR devices on the system. Example output shows a 'USB 3.0 (LimeSDR-USB)' device."
+   },
+   {
+    "cmd": "brew tap pothosware/homebrew-pothos",
+    "context": "Wiki macOS route: adds the pothosware tap that carries the LimeSuite Homebrew recipe, before brew install limesuite."
+   }
+  ],
+  "install_notes": "On macOS, install the Xcode Command Line Tools and Homebrew, then run brew tap pothosware/homebrew-pothos, brew update, and brew install limesuite. On Ubuntu, the wiki points to the myriadrf/drivers PPA (sudo add-apt-repository -y ppa:myriadrf/drivers), then apt install limesuite liblimesuite-dev limesuite-udev limesuite-images, plus soapysdr-tools and soapysdr-module-lms7. The wiki packages only Ubuntu 22.04. FreeBSD has a port at comms/limesuite and a package (pkg install limesuite). Building from source needs git, a C++ compiler, CMake, sqlite3, wxWidgets with OpenGL for the GUI, libusb 1.0, and SoapySDR for the plugin. After a Linux source build, run the udev install script so non-root users can reach the device. The wiki says to install either from a package or from source, not both. Windows: LimeSuite is usually bundled inside other Windows SDR apps; building it needs Visual Studio (2015 preferred), Git, CMake, wxWidgets, and the Cypress CyUSB/FX3 SDK. The LimeSDR-USB needs a driver on Windows only. Firmware and FPGA images can be flashed from LimeSuiteGUI's programming dialogue, or downloaded manually from downloads.myriadrf.org.",
+  "standout": "It is the driver layer underneath much of the open SDR hardware ecosystem, with a Soapy plugin and GNU Radio support. The project is splitting in two: the older Classic branch is in maintenance mode, and the new Lime Suite NG has the new architecture, multi-transceiver support, and a native SDRDevice API that can coexist with the old one.",
+  "status": "Mixed. The wiki says Classic Lime Suite is 'transitioning to maintenance mode,' gets critical fixes and releases 'as and when appropriate,' and will get no new features or new boards. Lime Suite NG is where active development happens. The GitHub README has a live CI build badge. I did not find a release date or last-commit date on the pages I fetched, so recency is unknown.",
+  "caveats": "The official homepage URL (myriadrf.org/projects/software/lime-suite/) returned HTTP 404, so the GitHub README and the wiki were used instead. The wiki warns: 'Do not attempt to use Classic Lime Suite with a LimeSDR XTRX board, LimeNET Micro 2.0 or LimeSDR X3 board!' Those newer boards need Lime Suite NG, which I did not read. Classic support for older boards is less thoroughly tested per the wiki. The Ubuntu packages are only listed for 22.04. Windows builds are fiddly, with pinned MSVC and FX3 SDK versions. The Octave plugin provides only basic functionality. The brew_caveats field from the formula metadata was empty.",
+  "quotes": [
+   "Lime Suite is a collection of software supporting several hardware platforms based on the LMS7002M transceiver RFIC, such as LimeSDR family.",
+   "LimeUtil command line tool for listing LimeSDR devices and updating firmware;",
+   "Do not attempt to use Classic Lime Suite with a LimeSDR XTRX board, LimeNET Micro 2.0 or LimeSDR X3 board!"
+  ],
+  "links": [
+   {
+    "label": "Homepage (returned 404)",
+    "url": "https://myriadrf.org/projects/software/lime-suite/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/myriadrf/LimeSuite"
+   },
+   {
+    "label": "Lime Suite wiki: build and install",
+    "url": "http://wiki.myriadrf.org/Lime_Suite"
+   },
+   {
+    "label": "LimeSDR board information",
+    "url": "https://wiki.myriadrf.org/LimeSDR"
+   },
+   {
+    "label": "Discourse forum",
+    "url": "https://discourse.myriadrf.org/"
+   }
+  ],
+  "fetch_log": [
+   "https://myriadrf.org/projects/software/lime-suite/ : HTTP 404, failed",
+   "https://github.com/myriadrf/LimeSuite : worked, README returned",
+   "http://wiki.myriadrf.org/Lime_Suite : worked, install and build page returned"
+  ]
+ }
+}

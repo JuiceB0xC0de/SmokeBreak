@@ -1,0 +1,123 @@
+{
+ "name": "biodiff",
+ "desc": "Hex diff viewer using alignment algorithms from biology",
+ "homepage": "https://github.com/8051Enthusiast/biodiff",
+ "installs_365d": 146,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "tui",
+  "reverse-engineering"
+ ],
+ "why": "Diffs binaries using sequence alignment from bioinformatics, a striking transform for seeing how files differ.",
+ "brief": {
+  "what_it_is": "biodiff is a terminal hex diff viewer for binary files. You run `biodiff file_a file_b` and get the two files shown side by side in hex with an ASCII column. Its alignment step inserts padding so that similar bytes line up at the same position on both sides, and bytes present on only one side are shown as gaps. It can also print the diff to stdout with `biodiff --print file_a file_b`. The package also installs a `git-biodiff` executable, which the README does not describe.",
+  "why_it_exists": "The README frames it as a tool for binary diffing: showing two binary files so that similar places sit at the same position on both sides, with missing bytes padded. Its method is borrowed from bioinformatics, where DNA sequence alignment is the usual use of these algorithms.",
+  "how_it_works": "biodiff uses sequence-alignment algorithms from the wfa2 library or from rust-bio, both typically used for DNA alignment. In the default interactive mode it aligns block by block, starting with bytes near the cursor and then aligning further blocks. Global alignment over the whole file is available through F4 and is quadratic in time and space, so the README says it will not work well for files over 64kB; a faster but slightly less accurate banded algorithm is also offered. A selected region can be used as a pattern for a semiglobal search in the other file. The configuration dialogs are built with the cursive TUI library.",
+  "commands_seen": [
+   {
+    "cmd": "biodiff file_a file_b",
+    "context": "Opens the two files side by side in the interactive hex view. The files start unaligned; press F3 or 3 to align them."
+   },
+   {
+    "cmd": "biodiff --print file_a file_b",
+    "context": "Prints the diff directly to the terminal instead of opening the interactive view."
+   },
+   {
+    "cmd": "-gglobal",
+    "context": "Flag, added to the --print command, to request global alignment over the whole files rather than blockwise. The README suggests it only for small files."
+   },
+   {
+    "cmd": "cargo install biodiff",
+    "context": "Installs biodiff from crates.io using cargo, as an alternative to a package manager."
+   },
+   {
+    "cmd": "cargo run --release -- file_a file_b",
+    "context": "Runs biodiff directly from a clone of the repository, without installing it."
+   }
+  ],
+  "install_notes": "Installing with Homebrew works. Beyond that, the README lists a package-manager install via repology, prebuilt binaries on the GitHub releases page, and `cargo install biodiff`. The cargo route needs cmake to compile the `wfa2` feature. On Windows, wfa2 support requires the x86_64-unknown-linux-gnu target. Settings are stored in a platform-specific user directory, and the BIODIFF_CONFIG_DIR environment variable overrides it; the directory is created if missing. Configuration files are only guaranteed to stay compatible between tagged releases.",
+  "standout": "The transform is the striking part: a tool for comparing executables and binaries that uses DNA-style sequence alignment to pad and line up two byte streams, so insertions and deletions don't scramble the rest of the comparison. Views include unaligned, aligned, and several byte representations (bases 2, 8, 10, 16, braille, roman numerals), and search supports text, regex and hexagex.",
+  "status": "Unknown. The README shows crates.io and repology badges, and it links a releases page and a repology page. It has no date, changelog, or note about maintenance, and I did not fetch the releases or commit history to check.",
+  "caveats": "Global alignment is quadratic, so it is impractical for files over about 64kB; the banded mode is faster but less accurate. The wfa2 feature needs cmake, and on Windows it needs the linux-gnu target to get wfa2 support. The README does not document git-biodiff, which is installed as a second executable. Configuration files are only guaranteed compatible across tagged releases. The README does not mention a platform list beyond these Windows notes.",
+  "quotes": [
+   "Compare binary files using alignment algorithms.",
+   "The tool is able to show two binary files side by side so that similar places will be at the same position on both sides and bytes missing from one side are padded.",
+   "Generally, since it takes quadratic time and space, the global alignment will not work well for files bigger than 64kB."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/8051Enthusiast/biodiff"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/8051Enthusiast/biodiff/releases"
+   },
+   {
+    "label": "crates.io",
+    "url": "https://crates.io/crates/biodiff"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/8051Enthusiast/biodiff (homepage, GitHub repo, fetched OK, README returned)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "DNA sequence alignment makes insertions and deletions visible without scrambling later bytes, giving this terminal binary-diff tool a genuinely unusual and useful hook."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "biodiff",
+  "tldr": "A terminal hex diff viewer that lines up two binary files using DNA sequence alignment, so inserted or deleted bytes don't scramble the comparison.",
+  "deeper_look": "biodiff shows two binary files side by side in hex, with an ASCII column. Its alignment step pads the shorter side so that similar bytes sit at the same position in both columns. Bytes that exist in only one file show up as gaps.\n\nThe usual problem with comparing binaries is that one inserted byte shifts everything after it, and a byte-by-byte diff turns into noise. Bioinformatics solved the same problem for DNA, where sequences gain and lose letters over time. biodiff borrows those algorithms from the wfa2 library or from rust-bio, and applies them to executables and other byte streams.\n\nIn the default interactive mode it aligns block by block, starting near the cursor and then moving outward. Global alignment over the whole file is available with F4, but it takes quadratic time and space. The README says it \"will not work well for files bigger than 64kB\". A faster banded algorithm trades some accuracy for speed. You can also select a region and use it as a pattern for a semiglobal search in the other file.\n\nThe views go beyond hex. You can switch between several byte representations (bases 2, 8, 10, 16, braille, roman numerals), and search handles text, regex and hexagex. The configuration dialogs are built with the cursive TUI library.",
+  "install": "brew install biodiff",
+  "try_this": [
+   {
+    "cmd": "biodiff file_a file_b",
+    "what_happens": "Opens both files side by side in the interactive hex view. They start unaligned; press F3 or 3 to align them."
+   },
+   {
+    "cmd": "biodiff --print file_a file_b",
+    "what_happens": "Prints the diff straight to the terminal instead of opening the interactive view."
+   },
+   {
+    "cmd": "biodiff --help",
+    "what_happens": "Lists the available options, including the alignment choices."
+   }
+  ],
+  "whats_unique": "It treats two byte streams like two DNA sequences, so insertions and deletions get padded out instead of ruining the rest of the comparison.",
+  "caveats": "Global alignment is quadratic and impractical for files over about 64kB, and the README gives no maintenance status or date; it also leaves the installed git-biodiff executable undocumented.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "tui",
+   "reverse-engineering",
+   "hex",
+   "diff",
+   "bioinformatics",
+   "rust"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/8051Enthusiast/biodiff"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/8051Enthusiast/biodiff/releases"
+   },
+   {
+    "label": "crates.io",
+    "url": "https://crates.io/crates/biodiff"
+   }
+  ]
+ }
+}

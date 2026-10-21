@@ -1,0 +1,105 @@
+{
+ "name": "inspectrum",
+ "desc": "Offline radio signal analyser",
+ "homepage": "https://github.com/miek/inspectrum",
+ "installs_365d": 609,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "gui",
+  "needs-hardware",
+  "visual",
+  "science"
+ ],
+ "why": "Offline radio signal analyser that turns captured IQ recordings into spectrograms, perfect for seeing what signals hide in the air.",
+ "brief": {
+  "what_it_is": "inspectrum is a desktop tool for analysing captured radio signals, mainly recordings from software-defined radio receivers. You open a recorded IQ sample file, and it shows a spectrogram you can zoom and pan, plus plots of amplitude, frequency, phase and raw IQ samples. Cursors let you measure period and symbol rate and pull out symbols. It can export a selected time window, filtered samples, or demodulated data. It works on files, not live radio, and it reads many raw sample formats (SigMF, cf32, cs8, cu8 and others).",
+  "why_it_exists": "The README frames it as a tool for analysing captured signals, primarily from software-defined radio receivers. It is aimed at looking closely at recordings rather than at live reception.",
+  "how_it_works": "You pass it a capture file, and it reads the samples according to the file's extension, for example *.cf32 for complex 32-bit floats or *.cu8 for RTL-SDR unsigned 8-bit samples. Unknown extensions default to *.cf32. It draws the spectrogram and other plots from the samples, and its cursors and export options work on the selected time range. The README notes that 64-bit samples are truncated to 32-bit because the tool processes 32-bit internally.",
+  "commands_seen": [
+   {
+    "cmd": "./inspectrum [filename]",
+    "context": "Run from the build directory after compiling from source; opens inspectrum, optionally with a capture file as the argument."
+   }
+  ],
+  "install_notes": "On Linux, install from your package manager. On macOS, use Homebrew or MacPorts. On Windows, the README points to radioconda or conda-forge. Building from source needs cmake 3.1 or newer, fftw 3.x, liquid-dsp 1.3.0 or newer, pkg-config and qt5; the README sends build details to the project wiki. No accounts or hardware are mentioned, though you will need a capture file to open.",
+  "standout": "It handles a wide range of raw IQ file formats from different SDR hardware and software, so you can open a recording without converting it first. Large files (the README claims 100GB+) are supported, and the analysis is entirely offline.",
+  "status": "unknown. The README gives no release date, changelog, or last-commit information, and I did not check the repository's commit history. It is packaged in Homebrew, MacPorts and conda-forge, which suggests it is maintained to some degree, but I could not confirm recent activity.",
+  "caveats": "Builds from source need several dependencies, including Qt5 and liquid-dsp at 1.3.0 or newer. Windows is covered only through conda-based distributions in the README. 64-bit sample files lose precision because they are truncated to 32-bit. Unknown file extensions are assumed to be cf32, which can produce wrong plots if the guess is wrong. The screenshot in the README is a single image and I did not see any demo or video.",
+  "quotes": [
+   "inspectrum is a tool for analysing captured signals, primarily from software-defined radio receivers.",
+   "Large (100GB+) file support",
+   "Note: 64-bit samples will be truncated to 32-bit before processing, as inspectrum only supports 32-bit internally."
+  ],
+  "links": [
+   {
+    "label": "GitHub homepage and README",
+    "url": "https://github.com/miek/inspectrum"
+   },
+   {
+    "label": "Build instructions (wiki)",
+    "url": "https://github.com/miek/inspectrum/wiki/Build"
+   },
+   {
+    "label": "Homebrew formula",
+    "url": "https://formulae.brew.sh/formula/inspectrum"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/miek/inspectrum (homepage, README returned successfully)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A niche SDR tool that turns raw IQ recordings into inspectable signal structure, letting you measure symbol timing and extract demodulated data offline."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "inspectrum",
+  "tldr": "A desktop tool that opens recorded radio captures as zoomable spectrograms, so you can measure and decode signals long after they were received.",
+  "deeper_look": "inspectrum analyses captured radio signals, mainly IQ recordings from software-defined radio receivers. You open a sample file and it draws a spectrogram you can zoom and pan. Alongside it are plots of amplitude, frequency, phase and the raw IQ samples.\n\nThe work happens with cursors. You mark out the period of a burst, read off a symbol rate, and extract the symbols. You can then export a time window, filtered samples, or demodulated data. It works on files only, not live radio, and it reads many raw formats (SigMF, cf32, cs8, cu8 and others) without conversion. The README claims support for files of 100GB and more.\n\nThe idea underneath is that radio is just numbers once you record it. An IQ file is a stream of complex samples, and a spectrogram turns it into a picture where modulation, bursts and timing can be seen. Working offline means you can stop, rewind and measure the same transmission as often as you like, which is how many people learn to reverse engineer an unknown wireless protocol.",
+  "install": "brew install inspectrum\n# You need a capture file to open. Hardware is only needed if you want to record your own.",
+  "try_this": [
+   {
+    "cmd": "inspectrum --help",
+    "what_happens": "Shows the options the installed binary accepts."
+   },
+   {
+    "cmd": "inspectrum [filename]",
+    "what_happens": "Opens a capture file as a spectrogram. The extension sets the sample format, for example .cu8 for RTL-SDR recordings or .cf32 for complex floats."
+   }
+  ],
+  "whats_unique": "It opens raw IQ files from many SDR tools directly and handles very large recordings, so you can go from capture to measured symbols in one window.",
+  "caveats": "Unknown file extensions are read as cf32, which gives wrong plots if the guess is wrong, and 64-bit samples are truncated to 32-bit; I could not confirm how recently the project was updated.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "sdr",
+   "gui",
+   "spectrogram",
+   "iq",
+   "signals",
+   "needs-capture-file"
+  ],
+  "links": [
+   {
+    "label": "GitHub homepage and README",
+    "url": "https://github.com/miek/inspectrum"
+   },
+   {
+    "label": "Build instructions (wiki)",
+    "url": "https://github.com/miek/inspectrum/wiki/Build"
+   },
+   {
+    "label": "Homebrew formula",
+    "url": "https://formulae.brew.sh/formula/inspectrum"
+   }
+  ]
+ }
+}

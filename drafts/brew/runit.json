@@ -1,0 +1,134 @@
+{
+ "name": "runit",
+ "desc": "Collection of tools for managing UNIX services",
+ "homepage": "https://smarden.org/runit/",
+ "installs_365d": 675,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "ancient"
+ ],
+ "why": "A minimal init and service supervisor from the daemontools lineage, a small door into how Unix systems boot and keep processes alive.",
+ "brief": {
+  "what_it_is": "runit is a cross-platform UNIX init scheme with service supervision, meant as a replacement for sysvinit and other init schemes. Its programs are runit (run as process 1), runit-init (installed as /sbin/init replacement), runsvdir, runsvchdir, runsv, sv, svlogd, chpst and utmpset. Input is a service directory of run scripts; output is supervised long-running processes, with logging through svlogd and runlevel changes via runsvchdir. It runs on GNU/Linux, *BSD, MacOSX, Solaris, and can be adapted to other Unix systems.",
+  "why_it_exists": "The author presents it as a reliable, small replacement for sysvinit that handles booting, running and shutting down in three stages, and that keeps the code in process no 1 minimal. The homepage says runit is optimized for reliability and small size.",
+  "how_it_works": "At boot, runit-init starts runit, which runs /etc/runit/1 (one-time initialization, with full control of /dev/console for an emergency shell), then /etc/runit/2 (normally runsvdir, which should not return until halt or reboot and is restarted if it crashes), then /etc/runit/3 on halt or reboot. runsvdir starts one runsv supervisor per service directory entry, and runsv keeps each service's run script alive, with a log/ subdirectory piped through svlogd. Runlevels are handled through runsvdir and runsvchdir, and service dependencies are resolved automatically per the homepage.",
+  "commands_seen": [
+   {
+    "cmd": "mkdir -p /package",
+    "context": "Creates the /package hierarchy the default install expects, before unpacking runit there."
+   },
+   {
+    "cmd": "chmod 1755 /package",
+    "context": "Sets the sticky, world-readable permissions on /package during the default root install."
+   },
+   {
+    "cmd": "echo 'cc -O2 -Wall' >src/conf-cc",
+    "context": "On *BSD without gcc, writes the compiler setting into src/conf-cc before building."
+   },
+   {
+    "cmd": "echo 'cc -Xlinker -x' >src/conf-ld",
+    "context": "On MacOSX, sets the linker flags in src/conf-ld before building."
+   },
+   {
+    "cmd": "package/install",
+    "context": "Compiles and installs the runit programs in the default /package install."
+   },
+   {
+    "cmd": "package/install-man",
+    "context": "Optionally installs the man pages into /usr/local/man/."
+   },
+   {
+    "cmd": "package/compile",
+    "context": "In the manual install, compiles the runit programs into the command/ directory without installing them."
+   },
+   {
+    "cmd": "package/check",
+    "context": "In the manual install, checks the compiled runit programs."
+   },
+   {
+    "cmd": "init 0",
+    "context": "Per the homepage, tells runit to halt the system when runit-init replaces init."
+   },
+   {
+    "cmd": "init 6",
+    "context": "Per the homepage, tells runit to reboot the system when runit-init replaces init."
+   }
+  ],
+  "install_notes": "Default install is into /package (root needed to create it); the install page describes a manual non-root alternative where you copy command/runit* to /sbin and other command/ programs to /bin, or to $HOME/bin as non-root. Releases are tarballs (the install page names runit-2.3.1.tar.gz with a sha256sum), and you report success by mail to a listed address. Replacing init is a separate step covered by a 'How to replace init' page. Per the Homebrew metadata (not the homepage), the service directory is $HOMEBREW_PREFIX/var/service instead of /service, and runsvdir can be started manually with -P pointing there.",
+  "standout": "It is a init-plus-supervisor in one small toolkit from the daemontools lineage, with a three-stage boot model that is easy to read in shell scripts. The homepage itself is a plain, old-school document with real 2002 process listings from a Debian server, which is a window into how Unix systems have kept processes alive.",
+  "status": "Quiet. The homepage and install page reference release 2.3.1 but show no release date or last-commit date, and the homepage points to a GitHub repo for contributions. The author is G. Pape. Unknown exact date of last activity from the pages I read.",
+  "caveats": "Not a drop-in init on macOS: the Homebrew formula says it does not install runit as a replacement for init, and that some managed services may need to start as root. The install page assumes a /package directory and needs manual tweaks on MacOSX and some *BSD systems. The example outputs on the homepage are from 2002 Debian sarge systems. Discussion is on a mailing list, and the author asks people not to contact him privately. Licence not seen in the pages I read.",
+  "quotes": [
+   "runit is optimized for reliability and small size. The amount of code in process no 1 should be minimal.",
+   "The program runit is intended to run as Unix process no 1, it is automatically started by the runit-init /sbin/init-replacement if this is started by the kernel.",
+   "runit is discussed on the <supervision@list.skarnet.org> mailing list. Please contact this list and not me privately."
+  ],
+  "links": [
+   {
+    "label": "runit homepage",
+    "url": "https://smarden.org/runit/"
+   },
+   {
+    "label": "How to install runit",
+    "url": "https://smarden.org/runit/install.html"
+   }
+  ],
+  "fetch_log": [
+   "https://smarden.org/runit/ - worked, homepage with overview, stages, distribution list and example process output",
+   "https://smarden.org/runit/install.html - worked, installation page with build and install commands (guessed URL, linked from the homepage's 'How to install runit' entry)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "runit\u2019s three-stage boot and per-service supervision make Unix process lifecycle tangible in a compact, readable alternative init."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "runit",
+  "tldr": "A tiny init and service supervisor from the daemontools lineage, showing how Unix boots and keeps daemons alive with a few shell scripts.",
+  "deeper_look": "runit is an init scheme with service supervision, built as a small replacement for sysvinit and similar systems. It is a handful of programs: runit runs as process 1, runsvdir starts one runsv supervisor per entry in a service directory, and runsv keeps that service's run script alive. If the service dies, it is started again.\n\nBoot is three stages, each a plain script. Stage 1 (/etc/runit/1) does one-time setup, with control of the console for an emergency shell. Stage 2 (/etc/runit/2) normally runs runsvdir, which should not return until halt or reboot, and is restarted if it crashes. Stage 3 (/etc/runit/3) runs on halt or reboot. The homepage states the goal: \"runit is optimized for reliability and small size. The amount of code in process no 1 should be minimal.\"\n\nThe idea underneath is that a service is just a directory with a run script, and a supervisor is a small loop that restarts it. Logging goes through a log/ subdirectory piped to svlogd. Runlevels are handled with runsvdir and runsvchdir. Once that clicks, much of how Unix systems keep processes alive stops being mysterious.\n\nThe homepage is an old-school document that includes real process listings from 2002 Debian sarge servers. That is old, and fine for reading, because the model has barely changed.",
+  "install": "brew install runit\n# Homebrew does not install runit as an init replacement. The service directory is $HOMEBREW_PREFIX/var/service. Start a supervisor by hand with: runsvdir -P $HOMEBREW_PREFIX/var/service (may need root, depending on the services).",
+  "try_this": [
+   {
+    "cmd": "runsvdir --help",
+    "what_happens": "Shows how the directory supervisor is invoked, the entry point for running services from a directory of run scripts."
+   },
+   {
+    "cmd": "sv --help",
+    "what_happens": "Shows the control command for starting, stopping and checking supervised services."
+   },
+   {
+    "cmd": "chpst --help",
+    "what_happens": "Shows the helper that runs a process with changed user, limits or environment."
+   }
+  ],
+  "whats_unique": "It is init and supervisor in one small toolkit from the daemontools lineage, with a three-stage boot that is easy to read as shell scripts.",
+  "caveats": "Not a drop-in init on macOS, the homepage shows no release date for 2.3.1, and its example output dates from 2002.",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "init",
+   "supervision",
+   "unix",
+   "daemontools",
+   "ancient"
+  ],
+  "links": [
+   {
+    "label": "runit homepage",
+    "url": "https://smarden.org/runit/"
+   },
+   {
+    "label": "How to install runit",
+    "url": "https://smarden.org/runit/install.html"
+   }
+  ]
+ }
+}

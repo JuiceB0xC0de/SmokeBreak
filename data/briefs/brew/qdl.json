@@ -1,0 +1,98 @@
+{
+ "name": "qdl",
+ "desc": "Flash firmware on Qualcomm-based devices via USB Emergency Download (EDL) mode",
+ "homepage": "https://github.com/linux-msm/qdl",
+ "installs_365d": 24,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "afternoon",
+  "protocol",
+  "reverse-engineering"
+ ],
+ "why": "Talks to Qualcomm devices in USB emergency download mode, a fascinating low-level firmware door for taking phones apart.",
+ "brief": {
+  "what_it_is": "QDL is a command-line tool that talks to Qualcomm devices in USB Emergency Download (EDL) mode. It uploads a flash loader (a Sahara and Firehose programmer, typically prog_firehose_ddr.elf) to the device, then writes firmware images to it using the XML descriptors that come with a build (rawprogram*.xml and patch*.xml). Input is a programmer file plus XML and image files, or an installer zip, flashmap.json or contents.xml. Output is per-region flashing progress and a summary, and the same binary also reads, writes, erases, dumps and lists devices. It can also run as a dry run that never touches hardware.",
+  "why_it_exists": "The README says it lets you flash images on Qualcomm EDL USB devices, and it notes that EDL 'provides low-level access for firmware flashing and recovery', including on unresponsive devices or those with locked bootloaders. It is maintained under the linux-msm project.",
+  "how_it_works": "QDL matches any USB device with Vendor ID 05c6 that exposes a vendor-specific EDL interface, without relying on Product ID, because new IDs keep appearing. It can use a libusb backend (on Windows this needs WinUSB, for example via Zadig) or, on Windows only, the Qualcomm QDLoader 9008 COM port via the qud backend; the default auto backend polls both. The README describes the Sahara protocol for loading the programmer and the Firehose protocol for writing regions, with --debug printing timestamped SAHARA: and FIREHOSE: log lines.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt install qdl",
+    "context": "Installs the packaged qdl on Debian and Ubuntu; Debian stable ships an older snapshot."
+   },
+   {
+    "cmd": "brew install qdl",
+    "context": "Installs qdl from Homebrew on macOS (run after brew update)."
+   },
+   {
+    "cmd": "meson setup build",
+    "context": "Configures a source build in the build directory."
+   },
+   {
+    "cmd": "meson compile -C build",
+    "context": "Compiles qdl after configuring."
+   },
+   {
+    "cmd": "meson setup build -Dzip-container=disabled",
+    "context": "Configures a leaner build without zip archive support, which removes the libzip requirement."
+   },
+   {
+    "cmd": "qdl list",
+    "context": "Lists EDL devices visible through either backend, with their serial numbers."
+   },
+   {
+    "cmd": "qdl prog_firehose_ddr.elf rawprogram*.xml patch*.xml",
+    "context": "Example invocation to flash a FLAT build with the programmer and XML files."
+   },
+   {
+    "cmd": "qdl --serial=0AA94EFD prog_firehose_ddr.elf rawprogram*.xml patch*.xml",
+    "context": "Same flash, targeting one board by serial number when several are connected."
+   },
+   {
+    "cmd": "qdl flash <installer.zip>",
+    "context": "Flashes an installer package (zip, flashmap.json or contents.xml) without listing programmer and XML files by hand."
+   },
+   {
+    "cmd": "qdl --dry-run prog_firehose_ddr.elf rawprogram*.xml patch*.xml",
+    "context": "Validates XML descriptors and programmer arguments without connecting to or flashing any device."
+   },
+   {
+    "cmd": "meson test -C build",
+    "context": "Runs the unit and integration test suites (hardware-in-the-loop suites are skipped without an attached device)."
+   }
+  ],
+  "install_notes": "Packages exist for Debian and Ubuntu (apt), Fedora and EPEL (dnf, with EPEL enabled first on RHEL-family systems), Homebrew and MacPorts. Building from source uses meson and ninja with libxml2, libusb-1.0, libzip, cmocka and help2man on Linux; Homebrew or MacPorts equivalents on macOS; and MSYS2 MinGW64 packages on Windows. Optional features are meson options: zip-container (default enabled, needs libzip), tests (default auto, needs cmocka) and nbdkit (default auto). Flashing needs the device in EDL mode; the README points to the device's own documentation for entering it, and gives no general key sequence. On Linux, USB access may need permissions, which the README does not discuss.",
+  "standout": "QDL ignores the Product ID and matches only the Qualcomm vendor ID, so it keeps working on new devices without updates. It also has a dry-run mode that validates XML and programmer arguments with no hardware, plus a Sahara kickstart path for flashless-boot devices and a nbdkit plugin that exposes a physical partition as a block device.",
+  "status": "Appears maintained: the README has a build-on-push CI badge, a latest-release badge, and packages in Debian, Fedora and Homebrew. The README gives no release version or date and I did not follow the linked pages, so exact recency is unknown.",
+  "caveats": "Requires the device to be in EDL mode, and entering it is device-specific and left to the device's documentation. On Windows the libusb backend needs the device bound to WinUSB (for example with Zadig), while the qud backend is Windows only. Distribution packages may lag the latest release. The zip-container feature needs libzip and configure fails without it unless it is disabled. --finalize-provisioning performs irreversible UFS provisioning and needs a matching UFS provisioning XML. Hardware-in-the-loop tests need an attached device and several environment variables. The README does not state a license beyond BSD 3-Clause, and the scout note's 'taking phones apart' framing goes beyond what the README says; it describes flashing and recovery.",
+  "quotes": [
+   "This tool communicates with Qualcomm EDL USB devices (Vendor ID `05c6`) to upload a flash loader and use it to flash images.",
+   "Any Qualcomm device that exposes a vendor-specific EDL interface is accepted; the Product ID (commonly `9008` for Firehose and `900e` for crash dumps) is not used for matching, as new devices keep appearing with new IDs.",
+   "EDL is a special boot mode available on Qualcomm-based devices that provides low-level access for firmware flashing and recovery."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/linux-msm/qdl"
+   },
+   {
+    "label": "Installer packages and contents.xml docs",
+    "url": "https://github.com/linux-msm/qdl/blob/main/docs/installer-packages.md"
+   },
+   {
+    "label": "Raw binary read/write docs",
+    "url": "https://github.com/linux-msm/qdl/blob/main/docs/raw-io.md"
+   },
+   {
+    "label": "Homebrew formula",
+    "url": "https://formulae.brew.sh/formula/qdl"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/linux-msm/qdl - fetched OK; README returned in full, so no linked docs were followed."
+  ]
+ }
+}

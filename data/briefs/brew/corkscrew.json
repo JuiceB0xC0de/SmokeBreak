@@ -1,0 +1,86 @@
+{
+ "name": "corkscrew",
+ "desc": "Tunnel SSH through HTTP proxies",
+ "homepage": "https://packages.debian.org/sid/corkscrew",
+ "installs_365d": 616,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "Tunnels SSH through HTTP proxies via CONNECT, a neat door into how proxies smuggle raw TCP.",
+ "brief": {
+  "what_it_is": "Corkscrew is a small command-line tool that tunnels TCP connections through an HTTP proxy that supports the CONNECT method. It reads stdin and writes stdout during the connection, much like netcat. The main use is reaching an SSH server on a remote port 443 through a strict HTTPS proxy, usually wired in via an SSH ProxyCommand. The README also says it may be useful for other things. It is a C program built with autotools.",
+  "why_it_exists": "The README's framing is that Corkscrew is a tool for tunneling SSH through HTTP proxies, but 'you might find another use for it.' The Debian description adds that it is for reaching SSH on port 443 through a strict HTTPS proxy.",
+  "how_it_works": "Corkscrew connects to the HTTP proxy you name and issues a CONNECT request for the destination host and port, which is the usual way proxies pass raw TCP through. Once the proxy accepts it, Corkscrew relays stdin and stdout over that tunnel, so ssh can run over it through ProxyCommand. The README also describes optional proxy authentication, which reads a username:password file that you point it to.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt install build-essential",
+    "context": "Installs the compiler toolchain on Debian-based systems before building from source."
+   },
+   {
+    "cmd": "sudo yum groupinstall 'Development tools'",
+    "context": "Installs the development tools on Red Hat-based systems such as CentOS and Fedora."
+   },
+   {
+    "cmd": "autoreconf --install",
+    "context": "Run inside the cloned corkscrew source directory to generate the configure script."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Runs the autotools configure step."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles corkscrew."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Copies the binary to /usr/local/bin/corkscrew."
+   },
+   {
+    "cmd": "ProxyCommand /usr/local/bin/corkscrew proxy.example.com 8080 %h %p",
+    "context": "Line for ~/.ssh/config so ssh tunnels through the proxy; replace the host and port with real values."
+   },
+   {
+    "cmd": "chmod 600 myauth",
+    "context": "Restricts the proxy credentials file (username:password) so other users cannot read it."
+   },
+   {
+    "cmd": "ProxyCommand /usr/local/bin/corkscrew proxy.work.com 80 %h %p ~/.ssh/myauth",
+    "context": "ssh config line for a proxy that needs HTTP authentication, pointing at the credentials file as a fifth argument."
+   }
+  ],
+  "install_notes": "Install build tools first (build-essential on Debian-based systems, the Development tools group on Red Hat-based systems). Clone the repo, then run autoreconf --install, ./configure, make, and sudo make install, which puts the binary in /usr/local/bin/corkscrew. Debian and Ubuntu users can instead install the packaged corkscrew (version 2.0-15 in sid) with apt. For ~/.ssh/config, add a ProxyCommand line that gives the proxy host and port, followed by %h %p. The proxy port is required since version 1.5. For authenticated proxies, create a username:password file, keep it in ~/.ssh, and chmod it to 600.",
+  "standout": "It is a netcat-style relay that works only through the proxy's CONNECT method, so it turns an ordinary web proxy into a raw TCP tunnel for SSH. The author's own framing, that it is 'a tool for tunneling SSH through HTTP proxies, but... you might find another use for it,' suggests the mechanism matters more than the SSH use case.",
+  "status": "quiet. The Debian package is current in sid, trixie and forky at version 2.0-15, with a 2.0 source tarball. The upstream README gives no release dates or changelog, and I could not confirm the date of the last upstream commit. The README says the original site went down and that the GitHub repo was created to keep the code available.",
+  "caveats": "The README says the authentication feature is new and was not tested extensively, and that it had sporadic problems with Microsoft Proxy Server. It has been tested only against Gauntlet, CacheFlow, JunkBuster, and Apache mod_proxy, and it has been compiled on HPUX, Solaris, FreeBSD, OpenBSD, Linux, and Win32 under Cygwin. Command-line syntax changed after version 1.5, and the proxy port is now required. The original author's contact details are out of date, so there is no working support route. The Debian page lists the license under its copyright file, but I did not open it, so I cannot state the license.",
+  "quotes": [
+   "Corkscrew is a tool for tunneling SSH through HTTP proxies, but... you might find another use for it.",
+   "It can be used for instance to connect to an SSH server running on a remote 443 port through a strict HTTPS proxy.",
+   "The main author is Pat Padgett. But none of the contact info left work anymore, so a name is all we have."
+  ],
+  "links": [
+   {
+    "label": "Debian package page (the homepage given)",
+    "url": "https://packages.debian.org/sid/corkscrew"
+   },
+   {
+    "label": "Upstream repository (github.com/bryanpkc/corkscrew)",
+    "url": "https://github.com/bryanpkc/corkscrew"
+   },
+   {
+    "label": "Original distribution site, archived on the Wayback Machine",
+    "url": "https://web.archive.org/web/20170510154150/http://agroman.net/corkscrew/"
+   }
+  ],
+  "fetch_log": [
+   "https://packages.debian.org/sid/corkscrew: worked. Debian package page with the description, tags, maintainers, and versions. It points to an external homepage on github.com, but the page text does not include the full URL.",
+   "https://github.com/bryanpkc/corkscrew: worked. The README was returned. I took this URL from the README's own text, which names github.com/bryanpkc/corkscrew as the new location. I did not follow the INSTALL file or any other links, because the README was complete enough."
+  ]
+ }
+}

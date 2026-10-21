@@ -1,0 +1,82 @@
+{
+ "name": "icarus-verilog",
+ "desc": "Verilog simulation and synthesis tool",
+ "homepage": "https://steveicarus.github.io/iverilog/",
+ "installs_365d": 6896,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "simulation"
+ ],
+ "why": "A Verilog simulator that lets you design and watch digital circuits run in software, a real door into hardware design.",
+ "brief": {
+  "what_it_is": "Icarus Verilog is a free compiler for Verilog HDL, the hardware description language used to design digital circuits, written by Stephen Williams. You feed it Verilog source files, and it parses them into an internal netlist, elaborates and optimizes that netlist, and then emits output through a selectable code generator. The README's own example compiles a small hello-world module with `iverilog hello.vl` and runs the result as `./a.out`, which prints the message and finishes. The shipped executables are iverilog (the driver), iverilog-vpi, and vvp (the runtime). The README says it compiles all of IEEE 1364 Verilog, plus a growing subset of SystemVerilog (IEEE 1800).",
+  "why_it_exists": "The README frames the project as an attempt to compile all of the Verilog HDL as described in the IEEE 1364 standard, and it notes that 'it's not quite there yet.' It also describes the project as 'a GPL Verilog for Linux', per its credits section, which suggests it was started to give Verilog users a free toolchain.",
+  "how_it_works": "A preprocessor (ivlpp) handles `include and `define, then a parser builds a 'pform' that is elaborated into a netlist with scope and parameter passes followed by structural and behavioural passes. Optimization passes such as constant propagation run on the netlist, and the target chosen with -t generates the output. The README describes this as a compiler that 'generates code employed by back-end tools' rather than a traditional simulator, and the default vvp target produces a program that runs the simulation.",
+  "commands_seen": [
+   {
+    "cmd": "apt install -y autoconf gperf make gcc g++ bison flex",
+    "context": "Installs the build prerequisites on a Debian or Ubuntu system before compiling from source."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Generates the build configuration; the README says --prefix=<root> controls the install location and defaults to /usr/local."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the compiler from source after configure runs; the README says GNU make is required."
+   },
+   {
+    "cmd": "sh autoconf.sh",
+    "context": "Used only when building from a git checkout, to generate the configure script before ./configure."
+   },
+   {
+    "cmd": "make check",
+    "context": "Optional test run before installation to confirm the build works."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the files, by default into /usr/local, and may need root."
+   },
+   {
+    "cmd": "iverilog hello.vl",
+    "context": "Compiles the README's hello-world Verilog example, producing a.out by default."
+   },
+   {
+    "cmd": "./a.out",
+    "context": "Runs the compiled hello-world program, which prints 'Hello World' and calls $finish."
+   }
+  ],
+  "install_notes": "Building from source needs GNU make, a C++ compiler (gcc or g++), bison, flex, gperf 3.0 or later, readline 4.2 or later with development headers, termcap, and autoconf 2.53 or later if building from git. The README calls out macOS: its bundled bison 2.3 generates broken code, so bison 3+ is needed, and it suggests the Fink or Homebrew version of bison and flex. MSVC is stated not to work. For Windows, the configure --host option cross-builds with mingw-w64. The -o switch names the output file, and the -P and -N flags dump the pform and netlist for debugging.",
+  "standout": "The README's own framing is unusual: it says the tool is 'not aimed at being a simulator in the traditional sense, but a compiler that generates code employed by back-end tools.' It also keeps a published list of unsupported constructs and documents its nonstandard extensions as a 'Quirks' section, which is candid about what it does differently.",
+  "status": "maintained. The homepage's documentation index advertises a 'Release V13.0' with a 'Major Changes in V13' page, and the README copyright reads 'Copyright 2000-2026'. I did not see a last-commit date or a release date, so the exact recency is unconfirmed.",
+  "caveats": "The README says it is only a growing subset of SystemVerilog. Specify blocks are parsed but ignored unless -gspecify is given. trireg is unsupported, and net delays of the form `wire #N foo;` do not work. The README says the list of unsupported SystemVerilog constructs is too large to enumerate. The 'simulator' framing in the README differs from how the scout note describes it, so the entry should say the runtime is vvp. The homepage fetch returned only the documentation navigation and table of contents, with no body prose, so the detailed usage and flag material lives on subpages I did not open.",
+  "quotes": [
+   "Icarus Verilog is intended to compile ALL of the Verilog HDL, as described in the IEEE 1364 standard. Of course, it's not quite there yet.",
+   "Icarus Verilog is not aimed at being a simulator in the traditional sense, but a compiler that generates code employed by back-end tools.",
+   "The preferred way to invoke the compiler is with the `iverilog`(1) command."
+  ],
+  "links": [
+   {
+    "label": "Icarus Verilog documentation (homepage)",
+    "url": "https://steveicarus.github.io/iverilog/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/steveicarus/iverilog"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/steveicarus/iverilog/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://steveicarus.github.io/iverilog/ - worked, but returned only the documentation navigation and table of contents with no body prose",
+   "https://github.com/steveicarus/iverilog - worked, returned the full README (used as the main source)"
+  ]
+ }
+}

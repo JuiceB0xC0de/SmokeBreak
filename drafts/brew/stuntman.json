@@ -1,0 +1,139 @@
+{
+ "name": "stuntman",
+ "desc": "Implementation of the STUN protocol",
+ "homepage": "https://www.stunprotocol.org",
+ "installs_365d": 427,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "A STUN implementation opens the door to NAT traversal, the hidden protocol that lets peer-to-peer connections find each other.",
+ "brief": {
+  "what_it_is": "Stuntman is an open source server and client for STUN, the Session Traversal Utilities for NAT protocol. A STUN server answers binding requests and tells a client which public IP address and port it appears to come from. The package builds three binaries: stunserver, a high-performance STUN server; stunclient, a client test app; and stuntestcode, a unit test program. It also ships code libraries for building a STUN client into your own application. Input is STUN requests over UDP or TCP on IPv4 or IPv6, and output is STUN responses, plus NAT behavior detection results from the client in full mode.",
+  "why_it_exists": "The author describes it as an open source implementation of STUN that is compliant with RFCs 5389, 5769, and 5780, with backwards compatibility for RFC 3489. The homepage also says STUN by itself does not solve NAT traversal for P2P connectivity, so it is one piece of a larger solution.",
+  "how_it_works": "In basic mode the server listens on one port and responds to STUN binding requests. In full mode it listens on two different IP addresses, which lets the client run NAT behavior and filtering detection tests from RFC 5780. The client library and app implement all of those RFC 5780 tests.",
+  "commands_seen": [
+   {
+    "cmd": "make",
+    "context": "Builds the project from the source root; the README says to type 'make' (or 'gmake' on some systems) and that three binaries result."
+   },
+   {
+    "cmd": "./stunserver --help",
+    "context": "Shows the server's command-line options. Running stunserver with no arguments listens on port 3478 on all adapters."
+   },
+   {
+    "cmd": "./stunclient --help",
+    "context": "Shows the client test app's options."
+   },
+   {
+    "cmd": "./stunclient stun.selbie.com",
+    "context": "README example of running the client against a STUN server by hostname."
+   },
+   {
+    "cmd": "ifconfig",
+    "context": "Used to find your machine's IP address so you can point the client at it when a full-mode server does not answer on localhost."
+   },
+   {
+    "cmd": "stunclient 10.11.12.13",
+    "context": "Workaround for local testing: run the client against the server's actual interface IP (example address) instead of localhost."
+   },
+   {
+    "cmd": "sudo apt-get install libboost-dev",
+    "context": "Debian/Ubuntu/Mint prerequisite: installs Boost header files."
+   },
+   {
+    "cmd": "sudo apt-get install libssl-dev",
+    "context": "Debian/Ubuntu/Mint prerequisite: installs OpenSSL development files."
+   },
+   {
+    "cmd": "docker image build -t=stun-server-image .",
+    "context": "Docker route: builds the server image from the repository root."
+   },
+   {
+    "cmd": "docker container run -d -p 3478:3478/tcp -p 3478:3478/udp --name=stun-container stun-server-image",
+    "context": "Docker route: runs the server container detached, publishing port 3478 over both TCP and UDP."
+   }
+  ],
+  "install_notes": "You need a C++ compiler (g++ preferred, or clang++), GNU make, Boost header files, and OpenSSL development files. Debian/Ubuntu install with apt-get; RedHat/Fedora and Amazon Linux use yum groupinstall 'Development Tools' plus boost-devel and openssl-devel. On Solaris and Mac, OpenSSL is already present on Solaris and not needed on Mac, and Boost must be installed locally and its path set in common.inc. Boost only needs the source tree, not a compiled runtime. Pthreads and perl are also needed, though the author says these are always preinstalled. Open your firewall for the server's ports. Run stuntestcode first; any line ending in FAIL indicates a bug. Windows support is via Cygwin, with prebuilt zip binaries listed on the homepage.",
+  "standout": "It is a full RFC 5389/5780 STUN implementation with a built-in RFC 5780 NAT behavior test suite and a basic/full server mode that needs two IPs for NAT detection. It also has an authentication hook for plugging in your own username and password checks.",
+  "status": "Maintained, with some version drift. The GitHub README is headed Version 1.2.17, June 30, 2024, while the homepage lists latest stable 1.2.16 and still has a 2012 copyright line. A public server is listed at stunserver2025.stunprotocol.org, which suggests recent activity. I did not see commit dates, so I cannot confirm more than the release date.",
+  "caveats": "TLS mode is not implemented. The server ignores the STUN padding attribute. Authentication is off by default; the username lookup and password fetch are left for you to write, through hooks described in server/sampleauthprovider.h. The Makefile does no dependency checking, so run 'make clean' before rebuilding. In full mode, 'stunclient localhost' may fail because the server does not listen on loopback; use the machine's real IP. Windows is only available via Cygwin, and the Windows service work is on the roadmap but not finished. Multi-CPU scaling is also a roadmap item. The README lists tested platforms only as older toolchains (gcc 4.x, Ubuntu 11/12, Fedora 15/17, FreeBSD 9, Solaris 11, MacOS with XCode 7). The homepage describes the project as STUN only, not a complete NAT traversal solution. Licensed under Apache 2.0.",
+  "quotes": [
+   "STUNTMAN is an open source implementation of the STUN protocol (Session Traversal Utilities for NAT) as specified in RFCs 5389, 5769, and 5780.",
+   "STUN by itself does not solve the NAT Traversal problem for P2P connectivity issues.",
+   "Stuntman is open source software distributed under the Apache 2.0 License."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.stunprotocol.org"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/jselbie/stunserver"
+   },
+   {
+    "label": "Public STUN server (UDP and TCP port 3478)",
+    "url": "stunserver2025.stunprotocol.org"
+   }
+  ],
+  "fetch_log": [
+   "https://www.stunprotocol.org: fetched OK, homepage text with about, download, features, and related-protocols sections",
+   "https://github.com/jselbie/stunserver: fetched OK, README text with version 1.2.17, prerequisites, build steps, known issues, and Docker commands"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A runnable STUN server and client make NAT mapping and filtering behavior tangible, with RFC 5780 tests that reveal how peer-to-peer connectivity crosses routers."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Stuntman",
+  "tldr": "A STUN server and client that tell you which public IP and port the internet sees you as, and probe how your NAT behaves.",
+  "deeper_look": "Stuntman is an open source implementation of STUN, Session Traversal Utilities for NAT. A STUN server does one small thing: a client sends it a binding request, and it answers with the public IP address and port the request appeared to come from. That is how a machine behind a home router learns what address the outside world sees.\n\nThe package installs `stunserver`, `stunclient`, and `stuntestcode`. The server speaks UDP or TCP over IPv4 or IPv6, and by default listens on port 3478. In basic mode it uses one port. In full mode it listens on two different IP addresses, which lets the client run the NAT behavior and filtering tests from RFC 5780. The client implements all of those tests, so it can report how your NAT maps and filters traffic, not only your address.\n\nThe idea underneath is NAT traversal, the hidden problem behind video calls, games, and peer-to-peer apps. Two machines behind routers cannot simply connect, and STUN is one piece of how they find each other. The homepage is upfront that \"STUN by itself does not solve the NAT Traversal problem for P2P connectivity issues.\" Stuntman gives you a working piece of the larger machinery to read and run. It also ships code libraries for building a STUN client into your own program.",
+  "install": "brew install stuntman\n# Open your firewall for the server's port (3478 by default) if you want others to reach it.",
+  "try_this": [
+   {
+    "cmd": "stunserver --help",
+    "what_happens": "Lists the server's command-line options. Run with no arguments, it listens on port 3478 on all adapters."
+   },
+   {
+    "cmd": "stunclient --help",
+    "what_happens": "Shows the client's options, including how to pick a server and port."
+   },
+   {
+    "cmd": "stunclient stun.selbie.com",
+    "what_happens": "Asks a STUN server by hostname which public address and port it sees you as. This is the README's own example."
+   }
+  ],
+  "whats_unique": "It is a complete RFC 5389 and 5780 implementation with a built-in NAT behavior test suite, not just a bare binding responder. It also has a hook for plugging in your own authentication.",
+  "caveats": "TLS mode is not implemented, authentication is off by default and you must write the lookup hooks yourself, and in full mode `stunclient localhost` may fail because the server does not listen on loopback.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "network",
+   "protocol",
+   "stun",
+   "nat",
+   "udp"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.stunprotocol.org"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/jselbie/stunserver"
+   }
+  ]
+ }
+}

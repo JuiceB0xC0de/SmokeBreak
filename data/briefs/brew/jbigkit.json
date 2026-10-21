@@ -1,0 +1,57 @@
+{
+ "name": "jbigkit",
+ "desc": "JBIG1 data compression standard implementation",
+ "homepage": "https://www.cl.cam.ac.uk/~mgk25/jbigkit/",
+ "installs_365d": 294,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "library",
+  "protocol"
+ ],
+ "why": "JBIG1 bilevel image compression is a neat window into a fax-era standard, though the tool itself is plumbing.",
+ "brief": {
+  "what_it_is": "JBIG-KIT is a C software implementation of the JBIG1 lossless compression standard (ITU-T T.82 / ISO/IEC 11544), aimed at bi-level images such as scanned documents. It is a portable library for encoding and decoding JBIG1 streams, plus ready-to-use command-line converters that work like netpbm's tools: they take PBM/PGM bitmaps in and write JBIG data out, and reverse the process. The package has two variants: jbig.c implements nearly all of the standard but holds the full uncompressed image in memory, while jbig85.c implements the ITU-T T.85 profile with low memory use for embedded and fax work. The homepage says it is also usable for grayscale images up to 6 bits per pixel.",
+  "why_it_exists": "The homepage presents it as a ready-to-embed reference implementation of JBIG1, a lossless bi-level standard that the author says beats G4 fax compression on typical scanned documents by about 1.1 to 1.5 times, and that is widely used in fax products, printer firmware and document management systems.",
+  "how_it_works": "JBIG1 uses arithmetic coding over pixel neighbourhoods (templates) and can encode an image progressively as a low-resolution layer followed by resolution-enhancement layers, so a viewer can show a coarse version while the rest arrives. The library is built to decode incomplete and growing streams and to handle several streams at once, with no global or static variables. The homepage does not go into further mechanism detail.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://www.cl.cam.ac.uk/~mgk25/git/jbigkit",
+    "context": "Clones the source repository with full revision history; releases are tags on the master branch."
+   },
+   {
+    "cmd": "git checkout v2.2",
+    "context": "Switches the cloned repository to the current release 2.2 (the homepage gives this as \"git checkout v2.2\")."
+   }
+  ],
+  "install_notes": "The homepage gives a source tarball (jbigkit-2.2.tar.gz) and a git clone route, and says the code is portable ANSI/ISO C. It does not give build steps, a Makefile target, or a platform list, so those need checking in the tarball's own README. Some Linux distributions ship libtiff linked against it, which pulls jbigkit in as a dependency. Upgrading from 2.1 to 2.2 needs recompiling applications that use jbig.c, because struct jbg_dec_state gained a field. The brew caveats field was empty.",
+  "standout": "Its design targets streaming and progressive display: jbig85.c can stream an image of initially unknown height while buffering only a few lines, and the decoder can show a low-resolution layer before the full data arrives, similar to how browsers render incoming GIFs. The author also gives a personal opinion that a licence is not needed if a program can never reach the JBIG code, even when a shared library loads it.",
+  "status": "Maintained, by the homepage's own evidence. It lists release 2.2 dated 2026-10-09 and a last-modified date of 2026-10-11, and the author says he will try to support and maintain the software for the foreseeable future, subject to available time. I did not check the git commit log or the revision history page.",
+  "caveats": "Licence is GPL, and linking it into a combined work brings the whole work under the GPL; a commercial licence is available from Cambridge Enterprise (software@enterprise.cam.ac.uk). The jbig.c variant needs the whole uncompressed image in memory. The decoder does not support the SEQ and HITOLO options. The code is not designed for registers under 32 bits, and 16-bit pointer arithmetic only handles very small images. The release notes say that users handling BIE or PBM/PGM data from untrusted sources should upgrade to 2.2. The homepage was reachable, and no README was fetched.",
+  "quotes": [
+   "JBIG-KIT is a software implementation of the JBIG1 data compression standard (ITU-T T.82), which was designed for bi-level image data, such as scanned documents.",
+   "It is widely used in fax products, printer firmware, printer drivers, document management systems and imaging software.",
+   "I will try to provide free support and maintenance for this software for the foreseeable future depending on my available time."
+  ],
+  "links": [
+   {
+    "label": "JBIG-KIT homepage (Markus Kuhn)",
+    "url": "https://www.cl.cam.ac.uk/~mgk25/jbigkit/"
+   },
+   {
+    "label": "Source tarball jbigkit-2.2.tar.gz",
+    "url": "https://www.cl.cam.ac.uk/~mgk25/jbigkit/download/jbigkit-2.2.tar.gz"
+   },
+   {
+    "label": "Git repository",
+    "url": "https://www.cl.cam.ac.uk/~mgk25/git/jbigkit"
+   }
+  ],
+  "fetch_log": [
+   "https://www.cl.cam.ac.uk/~mgk25/jbigkit/ \u2014 fetched OK; full homepage text returned, including download, licence and compatibility notes. No README fetched, since the homepage was not a thin page."
+  ]
+ }
+}

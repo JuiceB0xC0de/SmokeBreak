@@ -1,0 +1,86 @@
+{
+ "name": "daemontools",
+ "desc": "Collection of tools for managing UNIX services",
+ "homepage": "https://cr.yp.to/daemontools.html",
+ "installs_365d": 223,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "protocol",
+  "afternoon",
+  "ancient"
+ ],
+ "why": "D. J. Bernstein's supervision suite is a classic old-school design for keeping services alive, a door into Unix process management worth a look.",
+ "brief": {
+  "what_it_is": "daemontools is a collection of tools for managing UNIX services, according to the homepage. Its central program, supervise, starts a service and restarts it if it dies, and it needs only a directory containing a run script that runs the service. multilog handles logging: it saves error messages to one or more logs, can timestamp each line, can include or exclude lines matching patterns for each log, and rotates logs to limit disk use. The package also ships further programs (svscan, svscanboot, svc, svok, svstat, tai64n, tai64nlocal, setuidgid, envuidgid, envdir, softlimit, setlock, fghack, pgrphack, readproctitle), which the homepage lists by name only.",
+  "why_it_exists": "The homepage gives no explicit motivation beyond describing the tools. It frames the problem as keeping UNIX services running and capturing their error output in managed logs.",
+  "how_it_works": "supervise watches one service directory and runs its run script, restarting the service whenever it exits. multilog receives the service's error output and writes it to one or more logs, optionally timestamping lines and filtering them by pattern. If the disk fills, multilog pauses and retries without losing data.",
+  "commands_seen": [],
+  "install_notes": "The Homebrew caveat says services are stored in $HOMEBREW_PREFIX/etc/service/. The homepage has a 'How to install daemontools' section and a 'How to start daemontools' section, but I did not fetch those sub-pages, so I have no install or first-run commands to report.",
+  "standout": "The supervision model is minimal: a service is just a directory with a run script, with no config format. multilog's rule that a full disk pauses logging and retries without dropping data is a specific, deliberate design choice.",
+  "status": "unknown. The homepage shows no release date, version, or last-updated note, and the Homebrew metadata gives no version date either. The page's own voice is that of a long-standing personal project by D. J. Bernstein.",
+  "caveats": "I read only the homepage. Its section titles point to install, start, and per-program pages whose contents I did not retrieve, so the list of commands is empty and the install steps are unverified. The homepage itself has no visible licence statement, and I did not check for one. The Homebrew scout note calls the design 'classic old-school'; that is an editorial comment, not something the homepage states.",
+  "quotes": [
+   "daemontools is a collection of tools for managing UNIX services.",
+   "supervise monitors a service. It starts the service and restarts the service if it dies.",
+   "all supervise needs is a directory with a run script that runs the service.",
+   "If the disk fills up, it pauses and tries again, without losing any data."
+  ],
+  "links": [
+   {
+    "label": "daemontools homepage (D. J. Bernstein)",
+    "url": "https://cr.yp.to/daemontools.html"
+   }
+  ],
+  "fetch_log": [
+   "https://cr.yp.to/daemontools.html: fetched OK, returned page text with section titles and the 'What is it?' description; per-program and install pages were not followed."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Its tiny directory-and-run-script supervision model, paired with unusually careful log rotation and retry behavior, makes a worthwhile Unix process-management design to explore."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "daemontools",
+  "tldr": "D. J. Bernstein's minimal service supervisor: a directory with a run script is a service, and it gets restarted whenever it dies.",
+  "deeper_look": "daemontools is a collection of tools for managing UNIX services, according to its homepage. The central program, supervise, starts a service and restarts it if it dies. In the homepage's words, \"all supervise needs is a directory with a run script that runs the service.\" There is no config format to learn. A service is a folder and a script.\n\nThe second main piece is multilog, which takes a service's error output and saves it to one or more logs. It can timestamp each line, include or exclude lines matching patterns for each log, and rotate logs to limit disk use. If the disk fills up, it \"pauses and tries again, without losing any data.\" That is a deliberate choice, and it shows how the suite thinks about failure.\n\nThe package also ships svscan, svscanboot, svc, svstat, svok, tai64n, tai64nlocal, setuidgid, envuidgid, envdir, softlimit, setlock, fghack, pgrphack and readproctitle. The homepage lists these by name, and this entry does not describe them further. Several of the names suggest small single-purpose tools meant to be chained together, which is a Unix idea worth studying.\n\nThe underlying idea is process supervision: a long-running parent that owns a service, watches it, and restarts it, instead of a service that daemonizes itself and hopes. Reading daemontools is a short way into that model, and into the design style behind it.",
+  "install": "brew install daemontools\n# Homebrew keeps services in $HOMEBREW_PREFIX/etc/service/\n# The homepage has 'How to install' and 'How to start' sections; check them before first run.",
+  "try_this": [
+   {
+    "cmd": "supervise --help",
+    "what_happens": "Runs the supervisor with no valid service directory, so expect a usage message rather than documentation. The homepage is the real manual."
+   },
+   {
+    "cmd": "svstat --help",
+    "what_happens": "Shows how to query the state of a supervised service directory."
+   },
+   {
+    "cmd": "multilog --help",
+    "what_happens": "Shows the usage line for the logger that timestamps, filters and rotates a service's output."
+   }
+  ],
+  "whats_unique": "A service is just a directory with a run script, and there is no config format at all. The logger's rule of pausing on a full disk instead of dropping data is a specific, stated design decision.",
+  "caveats": "The brief came only from the homepage, which shows no version or release date, so project status and the exact install and first-run steps are unverified.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "process-supervision",
+   "unix",
+   "logging",
+   "services",
+   "old-school"
+  ],
+  "links": [
+   {
+    "label": "daemontools homepage (D. J. Bernstein)",
+    "url": "https://cr.yp.to/daemontools.html"
+   }
+  ]
+ }
+}

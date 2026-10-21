@@ -1,0 +1,113 @@
+{
+ "name": "kwok",
+ "desc": "Kubernetes WithOut Kubelet - Simulates thousands of Nodes and Clusters",
+ "homepage": "https://kwok.sigs.k8s.io",
+ "installs_365d": 420,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "simulation",
+  "network",
+  "afternoon"
+ ],
+ "why": "Simulates thousands of fake Kubernetes nodes, a surprising way to watch a control plane behave at scale.",
+ "brief": {
+  "what_it_is": "KWOK (Kubernetes WithOut Kubelet) is a toolkit for building Kubernetes clusters whose nodes are simulated rather than real. It ships two executables: kwok, which simulates the lifecycle of fake nodes, pods, and other Kubernetes API resources, and kwokctl, a CLI that creates and manages clusters whose nodes are simulated by kwok. Input is a cluster-creation or node-configuration request; output is a Kubernetes API that kubectl, helm, and other standard clients can talk to, with fake nodes that report status and pods that never actually run. The homepage says a cluster of thousands of nodes can be set up in seconds on a laptop.",
+  "why_it_exists": "The homepage positions KWOK against kubemark and kind. Kubemark runs a kubelet that does not run containers, so it behaves exactly like a kubelet and needs a lot of memory to simulate many nodes and pods. KWOK simulates only the node's behavior, so it uses very little memory. Against kind, the homepage says kwokctl can stand in for kind when you don't need pods to actually run.",
+  "how_it_works": "kwok simulates each fake node and pod's lifecycle against the Kubernetes API, rather than running a kubelet or containers. kwokctl sets up a cluster using a chosen runtime (binary, docker, podman, nerdctl, lima, finch, or kind-based variants) and wires those simulated nodes into it. The README does not describe the internal mechanism in more detail than that.",
+  "commands_seen": [],
+  "install_notes": "Binaries are published for linux, darwin, and windows on amd64 and arm64. Alternatively, pre-built images can be run once a container runtime is installed; the homepage lists Docker, Podman, or Nerdctl, while the GitHub README lists Docker or Nerdctl. kwokctl needs a runtime chosen from its support matrix: the binary runtime is recommended and works on linux, darwin, and windows (amd64 and arm64), while docker and podman are recommended on linux and supported on darwin amd64/arm64 and windows amd64 with varying test coverage. nerdctl is unsupported on darwin and windows. lima, finch, and the kind-* variants are marked work in progress or not fully tested on several platforms. The README does not give exact install commands, and the brew formula notes contain no caveats.",
+  "standout": "Instead of running a kubelet for each fake node, KWOK simulates node behavior directly, so the API server and controllers see realistic nodes at a memory cost far below kubemark's. The point is to test the control plane at scale: the project pitches it as a way to see how a Kubernetes control plane behaves with thousands of nodes and tens of thousands of pods on a laptop.",
+  "status": "unknown. Neither the homepage nor the GitHub README shows a release date, last commit, or version number, so I cannot confirm recent activity from these pages. The project is hosted under kubernetes-sigs and its homepage and runtime matrix read as current, but that is not a maintenance signal in itself.",
+  "caveats": "Simulated pods are not real: the homepage notes that curling a pod's IP in a KWOK cluster returns nothing, so KWOK cannot test workloads that need to serve traffic or run containers. The performance figures (reliably 1k nodes and 100k pods; creating 20 nodes or pods per second) are the project's own claims and come with no methodology in these pages. Runtime support is uneven: the matrix marks lima and finch as work in progress, nerdctl as unsupported on darwin and windows, and several kind-* combinations as only partly tested or unsupported. The homepage and README disagree on whether Podman is a supported image runtime. The brew formula has no caveats.",
+  "quotes": [
+   "KWOK is a toolkit that enables setting up a cluster of thousands of Nodes in seconds.",
+   "kubemark is a kubelet that does not actually run a container.",
+   "kind runs Kubernetes in Docker, creating a real cluster. If you deploy a nginx pod to a kind cluster, you could curl to its IP address and get an HTTP response containing its HTML page. But in a KWOK cluster, you get nothing because the pod isn't real."
+  ],
+  "links": [
+   {
+    "label": "KWOK homepage",
+    "url": "https://kwok.sigs.k8s.io"
+   },
+   {
+    "label": "GitHub repository (kubernetes-sigs/kwok)",
+    "url": "https://github.com/kubernetes-sigs/kwok"
+   },
+   {
+    "label": "Manage simulated nodes and pods (docs)",
+    "url": "https://kwok.sigs.k8s.io/docs/user/kwok-manage-nodes-and-pods/"
+   },
+   {
+    "label": "All-in-one pre-built image (docs)",
+    "url": "https://kwok.sigs.k8s.io/docs/user/all-in-one-image/"
+   },
+   {
+    "label": "Contributor guide (docs)",
+    "url": "https://kwok.sigs.k8s.io/docs/contributing/getting-started"
+   }
+  ],
+  "fetch_log": [
+   "https://kwok.sigs.k8s.io (worked; homepage text, no shell commands)",
+   "https://github.com/kubernetes-sigs/kwok (worked; README text, no shell commands)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "KWOK lets you probe Kubernetes control-plane behavior at thousands-of-nodes scale by simulating node lifecycles directly, without running kubelets or workloads."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "kwok",
+  "tldr": "Builds Kubernetes clusters full of fake nodes and pods, so you can watch a control plane cope with thousands of machines on a laptop.",
+  "deeper_look": "KWOK stands for Kubernetes WithOut Kubelet. It ships two executables. `kwok` simulates the lifecycle of fake nodes, pods, and other API resources. `kwokctl` creates and manages whole clusters whose nodes are simulated by kwok. The result is a real Kubernetes API that kubectl, helm, and other standard clients can talk to, except the nodes report status and the pods never run anything.\n\nThe idea underneath is that a control plane does not care whether a node is real. It only sees objects and status updates. The homepage contrasts KWOK with kubemark, which is \"a kubelet that does not actually run a container\" and so still behaves like a kubelet and needs a lot of memory at scale. KWOK simulates only the node's behavior, which keeps memory use very low. The project pitches this as a way to see how the API server and controllers behave with thousands of nodes and tens of thousands of pods.\n\nIt also positions itself against kind. Where kind runs real Kubernetes in Docker, kwokctl can stand in when you do not need pods to actually run. Cluster creation works through a chosen runtime: binary, docker, podman, nerdctl, lima, finch, or kind-based variants. The README does not describe the internals beyond that, so the mechanism is worth reading about in the docs.",
+  "install": "brew install kwok\n# kwokctl needs a runtime. The binary runtime is recommended and works on linux, darwin and windows. Docker or Podman also work on some platforms.",
+  "try_this": [
+   {
+    "cmd": "kwokctl --help",
+    "what_happens": "Lists the subcommands for creating and managing simulated clusters."
+   },
+   {
+    "cmd": "kwok --help",
+    "what_happens": "Shows the options for the process that simulates node and pod lifecycles."
+   }
+  ],
+  "whats_unique": "It fakes only the node's behavior instead of running a kubelet, so the control plane sees realistic nodes at a memory cost far below kubemark's.",
+  "caveats": "Simulated pods are not real, so curling a pod's IP returns nothing. Runtime support is uneven across platforms, and the performance figures are the project's own claims with no methodology given.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "kubernetes",
+   "simulation",
+   "control-plane",
+   "scale",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "KWOK homepage",
+    "url": "https://kwok.sigs.k8s.io"
+   },
+   {
+    "label": "GitHub repository (kubernetes-sigs/kwok)",
+    "url": "https://github.com/kubernetes-sigs/kwok"
+   },
+   {
+    "label": "Manage simulated nodes and pods (docs)",
+    "url": "https://kwok.sigs.k8s.io/docs/user/kwok-manage-nodes-and-pods/"
+   },
+   {
+    "label": "All-in-one pre-built image (docs)",
+    "url": "https://kwok.sigs.k8s.io/docs/user/all-in-one-image/"
+   },
+   {
+    "label": "Contributor guide (docs)",
+    "url": "https://kwok.sigs.k8s.io/docs/contributing/getting-started"
+   }
+  ]
+ }
+}

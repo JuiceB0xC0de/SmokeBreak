@@ -1,0 +1,152 @@
+{
+ "name": "hashlink",
+ "desc": "Virtual machine for Haxe",
+ "homepage": "https://hashlink.haxe.org/",
+ "installs_365d": 516,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language",
+  "library"
+ ],
+ "why": "Virtual machine running Haxe bytecode; an unusual runtime that opens a corner of language implementation.",
+ "brief": {
+  "what_it_is": "HashLink is a virtual machine for Haxe, the cross-platform language. The Haxe compiler turns source into HashLink bytecode (.hl) using the -hl flag, and the hl runtime executes it through a JIT. Alternatively, the same bytecode can be converted to C (HL/C) and compiled with gcc or a similar compiler into a native executable. The runtime also ships with standard library support for file I/O, regular expressions, networking, and Unicode strings, plus optional libraries for compression and image decoding (fmt), OS dialogs (UI), and SDL windowing and OpenGL (SDL).",
+  "why_it_exists": "The homepage presents it as a fast, optionally native-compiled runtime for Haxe, with a case study of Northgard, a commercial 3D game originally built on Adobe AIR that moved to HashLink. The author framing is that HL/JIT gives fast development iteration and HL/C gives the best release performance.",
+  "how_it_works": "Haxe compiles to strictly typed HashLink bytecode. HL/JIT runs that bytecode in a just-in-time virtual machine for quick builds during development. HL/C instead translates the bytecode to C, which is compiled with gcc for release builds, and both paths share the same runtime and semantics. The runtime uses a mark-and-not-sweep garbage collector and has performance features such as typed virtuals for anonymous object access and static dispatch when no override exists.",
+  "commands_seen": [
+   {
+    "cmd": "haxe -hl output.hl -main MyApp",
+    "context": "Compiles the Haxe project with main class MyApp into HashLink bytecode output.hl (homepage, Compile step; requires Haxe 3.4+)."
+   },
+   {
+    "cmd": "hl output.hl",
+    "context": "Runs the bytecode file with the HL/JIT virtual machine (homepage, Run step)."
+   },
+   {
+    "cmd": "haxe -hl out/main.c -main MyApp",
+    "context": "Produces C source out/main.c from the Haxe project for the HL/C path (homepage, Dual compilation section)."
+   },
+   {
+    "cmd": "gcc -O3 -o myapp -std=c11 -I out out/main.c -lhl [-L/path/to/required/hdll]",
+    "context": "Compiles the generated C with optimisation into a native executable myapp, linking the hl runtime; the bracketed -L flag is only needed if extra hdll libraries are required (homepage)."
+   },
+   {
+    "cmd": "sudo apt-get install libpng-dev libturbojpeg-dev libvorbis-dev libopenal-dev libsdl3-dev libglu1-mesa-dev libmbedtls-dev libuv1-dev libsqlite3-dev",
+    "context": "Ubuntu package install for the optional library dependencies (GitHub README). The README notes libsdl3-dev is not yet released and must be built from source."
+   },
+   {
+    "cmd": "sudo dnf install libpng-devel turbojpeg-devel libvorbis-devel openal-soft-devel SDL3-devel mesa-libGLU-devel mbedtls-devel libuv-devel  sqlite-devel",
+    "context": "Fedora equivalent of the dependency install for building HashLink's libraries (GitHub README)."
+   },
+   {
+    "cmd": "brew bundle",
+    "context": "On macOS, installs the dependencies listed in the repo's Brewfile (GitHub README)."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds HashLink on Linux or macOS once dependencies are installed; disable individual libraries in the Makefile if you do not want them (GitHub README)."
+   },
+   {
+    "cmd": "sudo make codesign_osx",
+    "context": "On macOS, codesigns the hashlink binary so it can be used with the debugger (GitHub README)."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the hashlink binaries onto the system (GitHub README)."
+   }
+  ],
+  "install_notes": "Linux and macOS: install the listed dev packages for the libraries you want (libpng, libturbojpeg, libvorbis, OpenAL, SDL3, GLU, mbedtls, libuv, sqlite), then run make and optionally make install. On macOS use brew bundle for dependencies and sudo make codesign_osx if you want the debugger. Windows: open hl.sln in Visual Studio C++ and build; the full library set needs extra downloads such as SDL3-devel extracted to include/sdl and openal-soft extracted to include/openal, and each library has its own README. You need Haxe 3.4+ to produce bytecode. Prebuilt binaries are offered for Windows and Linux on the download page. Debugging works through a Visual Studio Code extension, HaxeFoundation.haxe-hl.",
+  "standout": "Most Haxe targets go to JavaScript or native code via the Haxe compiler directly. HashLink is a typed bytecode VM with a JIT and an alternative C backend that share one runtime, so a team can iterate fast on the JIT and then ship a C build from the same source. The Northgard case study with build-time numbers gives a concrete real-world example.",
+  "status": "Appears active but I could not confirm a date. The GitHub repo shows Azure and GitHub Actions build badges, and the README's build instructions reference SDL 3.4.10 and openal-soft 1.23.1, which suggests recent maintenance. I did not see a last-commit or latest-release date in the pages I fetched, so the status is best described as unknown rather than confirmed.",
+  "caveats": "The Homebrew caveat says the HL/JIT virtual machine (hl) is not installed on ARM processors, where only HL/C native compilation is supported (see GitHub issue 557), so Apple Silicon users get only the C path from brew. The homepage says JIT supports x86 and x86-64 only. Windows and Linux are the stated binary download targets. The UI library is Windows-only per the homepage. Building all libraries is involved: the Ubuntu SDL3 package is unreleased and may need a source build, and Windows needs several extra downloads. The Northgard numbers and the claim that HL/JIT outperforms Adobe AIR and Node/V8 come from the project's own benchmarks and are described as initial. The homepage notes some features are still in progress, such as null-check inference marked 'soon' and more FMT functionality 'to come'.",
+  "quotes": [
+   "HashLink is a virtual machine for Haxe",
+   "Use HL/JIT for daily development (fast compilation time)",
+   "Use HL/C for final release (best performance)",
+   "HL/C and HL/JIT share same runtime and semantics"
+  ],
+  "links": [
+   {
+    "label": "HashLink homepage",
+    "url": "https://hashlink.haxe.org/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/HaxeFoundation/hashlink"
+   },
+   {
+    "label": "HashLink wiki documentation",
+    "url": "https://github.com/HaxeFoundation/hashlink/wiki"
+   },
+   {
+    "label": "VS Code debugger extension (haxe-hl)",
+    "url": "https://marketplace.visualstudio.com/items?itemName=HaxeFoundation.haxe-hl"
+   }
+  ],
+  "fetch_log": [
+   "https://hashlink.haxe.org/ - fetched OK; homepage text with compile/run examples, features, libraries, Northgard case study",
+   "https://github.com/HaxeFoundation/hashlink - fetched OK; README with build instructions for Linux, macOS, Windows, and debugging. No release or commit dates visible in the README"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A relatively obscure typed-bytecode VM with both a JIT and a C backend offers a worthwhile glimpse into language runtimes and compilation."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "HashLink",
+  "tldr": "A virtual machine for Haxe that runs typed bytecode through a JIT, or turns the same program into C for a native build.",
+  "deeper_look": "HashLink is the runtime behind one of Haxe's compile targets. The Haxe compiler turns source into strictly typed bytecode with the `-hl` flag, and the `hl` program runs that bytecode through a just-in-time compiler. The runtime also ships standard library support for file I/O, regular expressions, networking and Unicode strings, plus optional libraries for image decoding, OS dialogs and SDL windowing with OpenGL.\n\nThe same bytecode can also be translated to C and built with gcc or a similar compiler into a native executable. Both paths share one runtime and the same semantics. The project's advice: \"Use HL/JIT for daily development (fast compilation time)\" and \"Use HL/C for final release (best performance).\" The homepage cites Northgard, a commercial 3D game that moved from Adobe AIR to HashLink, as its real-world example.\n\nThe door it opens is language implementation. Typed bytecode, a JIT, a C backend, a mark-and-not-sweep garbage collector, typed virtuals for fast access to anonymous objects, and static dispatch when nothing overrides a method are all visible in one codebase you can build and read. You also need the Haxe compiler, version 3.4 or later, to produce bytecode.",
+  "install": "brew install hashlink\n# Needs the Haxe compiler (3.4+) to produce bytecode. On ARM Macs, brew does not install the hl JIT VM, only the HL/C path is supported (see GitHub issue 557). The JIT supports x86 and x86-64 only.",
+  "try_this": [
+   {
+    "cmd": "haxe -hl output.hl -main MyApp",
+    "what_happens": "Compiles a Haxe project whose main class is MyApp into HashLink bytecode in output.hl."
+   },
+   {
+    "cmd": "hl output.hl",
+    "what_happens": "Runs that bytecode file in the HL/JIT virtual machine."
+   },
+   {
+    "cmd": "haxe -hl out/main.c -main MyApp",
+    "what_happens": "Generates C source for the HL/C path, which you can then build with gcc and link against libhl."
+   }
+  ],
+  "whats_unique": "One typed bytecode, one runtime, two ways to run it: a JIT for fast iteration and a C backend for release builds. Most Haxe targets go straight to JavaScript or native code instead.",
+  "caveats": "On Apple Silicon and other ARM machines brew installs no `hl` JIT binary, only the HL/C route; the benchmarks against Adobe AIR and Node/V8 are the project's own and described as initial.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "language",
+   "vm",
+   "jit",
+   "haxe",
+   "bytecode"
+  ],
+  "links": [
+   {
+    "label": "HashLink homepage",
+    "url": "https://hashlink.haxe.org/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/HaxeFoundation/hashlink"
+   },
+   {
+    "label": "HashLink wiki documentation",
+    "url": "https://github.com/HaxeFoundation/hashlink/wiki"
+   },
+   {
+    "label": "VS Code debugger extension (haxe-hl)",
+    "url": "https://marketplace.visualstudio.com/items?itemName=HaxeFoundation.haxe-hl"
+   }
+  ]
+ }
+}

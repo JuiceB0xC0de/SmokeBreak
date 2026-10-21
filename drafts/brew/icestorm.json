@@ -1,0 +1,97 @@
+{
+ "name": "icestorm",
+ "desc": "Tools for analyzing and creating Lattice iCE40 FPGA bitstream files",
+ "homepage": "https://prjicestorm.readthedocs.io",
+ "installs_365d": 388,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "needs-hardware"
+ ],
+ "why": "Reverse-engineered tools for Lattice iCE40 FPGA bitstreams open the door to actually reading and writing hardware configurations.",
+ "brief": {
+  "what_it_is": "Project IceStorm is a set of command-line tools for analyzing and creating bitstream files for Lattice iCE40 FPGAs. The README describes it as documenting the bitstream format and providing simple tools for analyzing and creating those files. The tools include icebox_asc2hlc, icebox_chipdb, icebox_hlc2asc, icebox_vlog, icepack, icepll, iceprog, icetime, iceunpack, and others listed in the package. The brief does not show each tool's inputs and outputs in detail, since I did not read their individual pages. Bitstream files are the input and output for most tools, and iceprog uploads a binary to the FPGA over USB.",
+  "why_it_exists": "The README says the project aims at documenting the bitstream format of Lattice iCE40 FPGAs and providing simple tools for analyzing and creating bitstream files. The docs ask 'Why the Lattice iCE40?' and 'What is the Status of the Project?' as their opening questions, but I did not read those answers.",
+  "how_it_works": "The docs index lists per-tile documentation for the FPGA fabric: logic tiles, IO tiles, RAM tiles, and UltraPlus features such as DSP tiles, SPRAM, and the RGB LED driver. It also covers the bitstream file format, CRAM and BRAM organization, and CRC checks. The tools are built on that reverse-engineered documentation. I did not read the detailed pages, so I cannot say more about the mechanism.",
+  "commands_seen": [
+   {
+    "cmd": "iceprog example.bin",
+    "context": "Appears in a docs troubleshooting heading about the error \"Can't find iCE FTDI USB device (vendor_id 0x0403, device_id 0x6010)\" when uploading code to the FPGA. It shows that iceprog takes a binary file and programs it to the board."
+   }
+  ],
+  "install_notes": "The docs index has separate install-related pages: 'Where are the Tools? How to install?', 'Notes for Installing on OSX', 'Installing FTDI Library', and troubleshooting pages for 'iceprog make error on \"ftdi.h not found\"', 'yosys make error on \"<tuple> not found\"', and the 'Can't find iCE FTDI USB device' error. Together these suggest building from source, needing the FTDI library for iceprog, and an FTDI USB device on the board. I did not read those pages, so the exact steps are unknown. The brew formula description did not give install caveats.",
+  "standout": "It is a fully open reverse-engineering effort. The iCE40 bitstream format was documented by reading the chip, and the tools are the working output of that. Together with Yosys and nextpnr, it forms a fully open-source FPGA flow.",
+  "status": "unknown. The README and docs index show no release date, last commit, or maintenance note. I could not check the repository's commit history or releases.",
+  "caveats": "I did not read the individual tool pages or the install pages, so commands, usage, and setup steps are not verified. The README says 'Most of Project IceStorm is licensed under the ISC license', which implies some parts may carry other licenses. Building from source and FTDI driver setup look error-prone according to the troubleshooting headings. Hardware needed: an iCE40 board with an FTDI USB interface, implied by the iceprog error.",
+  "quotes": [
+   "Project IceStorm aims at documenting the bitstream format of Lattice iCE40 FPGAs and providing simple tools for analyzing and creating bitstream files.",
+   "Most of Project IceStorm is licensed under the ISC license:"
+  ],
+  "links": [
+   {
+    "label": "Project IceStorm documentation (homepage)",
+    "url": "https://prjicestorm.readthedocs.io"
+   },
+   {
+    "label": "GitHub repository (YosysHQ/icestorm)",
+    "url": "https://github.com/YosysHQ/icestorm"
+   }
+  ],
+  "fetch_log": [
+   "https://prjicestorm.readthedocs.io \u2014 worked; returned the docs index page with section titles and no commands or install steps.",
+   "https://github.com/YosysHQ/icestorm \u2014 worked; returned the README, which is short and points to the docs for details. It includes the ISC license text."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Reverse-engineering FPGA bitstreams makes hardware configurations inspectable and writable, opening a distinctive door into how programmable logic works."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "IceStorm",
+  "tldr": "Open-source tools and documentation for the Lattice iCE40 FPGA bitstream format, letting you pack, unpack and inspect the file that configures the chip.",
+  "deeper_look": "An FPGA is a chip whose wiring is set by a file called a bitstream. Normally that format is secret and you must use the vendor's closed toolchain. Project IceStorm documents the bitstream format of the Lattice iCE40 family and provides small command-line tools for analyzing and creating those files. In its own words, it \"aims at documenting the bitstream format of Lattice iCE40 FPGAs and providing simple tools for analyzing and creating bitstream files.\"\n\nThe docs describe the chip tile by tile: logic tiles, IO tiles, RAM tiles, and on the UltraPlus parts the DSP tiles, SPRAM and RGB LED driver. They also cover the bitstream file layout, how configuration RAM and block RAM are organized, and the CRC checks. The tools are built on that reverse-engineered knowledge. Some convert between text and binary forms (icepack, iceunpack), some report on timing or PLL settings (icetime, icepll), and iceprog uploads a binary to a board over USB.\n\nThe larger idea is that a chip's configuration can be read as an ordinary file format. Together with Yosys and nextpnr, IceStorm forms a fully open-source flow from hardware description to a running FPGA. That makes it a good door into how FPGAs work inside, with no vendor software involved.",
+  "install": "brew install icestorm\nYou need an iCE40 board with an FTDI USB interface to program a chip with iceprog. The docs have separate pages on installing the FTDI library and on macOS notes. Yosys and nextpnr are separate tools for the rest of the flow.",
+  "try_this": [
+   {
+    "cmd": "icepack --help",
+    "what_happens": "Prints usage for the tool that converts between the text and binary bitstream forms."
+   },
+   {
+    "cmd": "icetime --help",
+    "what_happens": "Shows the options for the timing analysis tool."
+   },
+   {
+    "cmd": "iceprog example.bin",
+    "what_happens": "Programs a binary file to a connected iCE40 board over USB. This needs hardware and fails if no FTDI device is found."
+   }
+  ],
+  "whats_unique": "The iCE40 bitstream format was documented by reading the chip, and these tools are the working result. It is a key piece of a fully open-source FPGA flow.",
+  "caveats": "Most useful with an iCE40 board; the brief could not confirm maintenance status, and the docs list FTDI driver and build errors as common troubles.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "fpga",
+   "reverse-engineering",
+   "bitstream",
+   "needs-hardware"
+  ],
+  "links": [
+   {
+    "label": "Project IceStorm documentation",
+    "url": "https://prjicestorm.readthedocs.io"
+   },
+   {
+    "label": "GitHub repository (YosysHQ/icestorm)",
+    "url": "https://github.com/YosysHQ/icestorm"
+   }
+  ]
+ }
+}

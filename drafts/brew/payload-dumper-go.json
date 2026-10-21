@@ -1,0 +1,129 @@
+{
+ "name": "payload-dumper-go",
+ "desc": "Android OTA payload dumper written in Go",
+ "homepage": "https://github.com/ssut/payload-dumper-go",
+ "installs_365d": 1871,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering"
+ ],
+ "why": "Extracts partitions from Android OTA update payloads, a practical way to take firmware apart and see what is inside.",
+ "brief": {
+  "what_it_is": "payload-dumper-go is a command-line tool that unpacks Android OTA update packages. It takes a raw payload.bin file or an OTA zip (detected by content) and writes out each partition as an image file, such as boot, system, vendor, and so on. It can list the partitions with -l, dump selected ones with -p, and rebuild full images from incremental (delta) OTAs when given a directory of base images with -old. It is written in Go and also usable as a library via the github.com/ssut/payload-dumper-go/payload package.",
+  "why_it_exists": "The README does not state a single motivating problem. Its framing is practical: it is a fast, verifying Android OTA payload dumper, and it stresses speed, bit-exact output, and verification that fails loudly.",
+  "how_it_works": "The README describes parallel decompression of partition operations, with a worker count set by -c (default: number of CPUs). It shells out to the system xz library through CGO rather than the pure Go xz implementation, which the author found about 6 times slower. For delta OTAs it regenerates the dm-verity hash tree and FEC parity that the payload omits, and it checks operation data, source images, and final images with sha256. The payload format is defined by update_engine's update_metadata.proto, linked in the README.",
+  "commands_seen": [
+   {
+    "cmd": "chmod +x payload-dumper-go",
+    "context": "Sets executable permission on the extracted release binary on Linux and macOS, if needed."
+   },
+   {
+    "cmd": "export PATH=$PATH:/path/to/payload-dumper-go",
+    "context": "Adds the binary's directory to PATH for the current shell session only; the README says to add it to .bashrc or .zshrc to make it permanent."
+   },
+   {
+    "cmd": "brew install payload-dumper-go",
+    "context": "Homebrew install on macOS, as the README's recommended route on that platform."
+   },
+   {
+    "cmd": "payload-dumper-go /path/to/payload.bin",
+    "context": "Basic usage: dumps all partitions from a payload.bin into the output directory; the input may also be an OTA zip."
+   },
+   {
+    "cmd": "payload-dumper-go -o base_images base_full_ota.zip",
+    "context": "Extracts the base (previous) full OTA first, to be used as the source for an incremental update."
+   },
+   {
+    "cmd": "payload-dumper-go -old base_images -o new_images incremental_ota.zip",
+    "context": "Applies an incremental OTA on top of the base images from base_images and writes the result to new_images."
+   },
+   {
+    "cmd": "go run *.go payload.bin",
+    "context": "Command the author used in the performance benchmark output, run from a source checkout; not an official install step."
+   }
+  ],
+  "install_notes": "Requires the xz library on the system; the README calls this the only dependency to install. On Linux and macOS, download a release binary from the GitHub releases page, extract it, chmod +x if needed, and put it on PATH. Homebrew works on macOS with brew install. On Windows, download the binary from releases, extract it, and add its folder to the system Path variable through the Environment Variables dialog. No accounts or first-run configuration are mentioned. A fast SSD is recommended, since a HDD may bottleneck the run.",
+  "standout": "Delta OTA support that regenerates dm-verity hash trees and FEC parity itself, so no avbtool or fec tooling is needed and the output is claimed to be bit-exact. It also reads the OTA zip in place without making a temp copy of payload.bin.",
+  "status": "unknown. The README gives no release date, changelog, or dated commit information. Its benchmarks cite a 2021 MacBook and Go 1.22.4, which hints at mid-2024 but does not confirm current maintenance. I did not follow the releases page to check.",
+  "caveats": "PUFFDIFF, ZUCCHINI and LZ4DIFF_* delta operations are not supported, so system, product, and system_ext can fail on some delta OTAs; the README suggests extracting the rest with -p. -no-fec skips FEC generation and final image verification, and the README says those images must not be flashed and are for inspection only. The -m machine-readable output reports 100% when operations finish while FEC is still running, so wait for the process to exit. Performance numbers come from the author's own machines and a single 2.31GB payload. The README does not mention Windows-specific testing. The code is Apache License 2.0.",
+  "quotes": [
+   "Incredibly fast decompression. All decompression progresses are executed in parallel.",
+   "Verifies everything: operation data, source images, and final images (sha256). Fails loudly with a non-zero exit code.",
+   "There's just one dependency you need to install on your system: `xz`.",
+   "Regenerates the dm-verity metadata delta payloads omit (hash tree and FEC parity). No `avbtool` or `fec` tooling needed."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/ssut/payload-dumper-go"
+   },
+   {
+    "label": "Releases (binaries)",
+    "url": "https://github.com/ssut/payload-dumper-go/releases"
+   },
+   {
+    "label": "Android update_metadata.proto (format source)",
+    "url": "https://android.googlesource.com/platform/system/update_engine/+/master/update_metadata.proto"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/ssut/payload-dumper-go \u2014 fetched OK, README returned in full; no further fetches needed because the README is substantive."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It makes Android OTA internals inspectable, including reconstructing omitted dm-verity trees and FEC parity for incremental updates\u2014a substantial firmware-format trick, not just file extraction."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "payload-dumper-go",
+  "tldr": "Unpacks Android OTA update packages into individual partition images like boot, system and vendor, so you can look inside a phone's firmware.",
+  "deeper_look": "payload-dumper-go reads an Android OTA update, either a raw payload.bin or the OTA zip itself, and writes each partition out as an image file. You can list what is inside with -l, pull out only the partitions you want with -p, or dump everything. The zip is read in place, without first copying payload.bin out.\n\nThe interesting part is what an OTA actually is. Android's update_engine ships updates as a sequence of operations over partitions, described by a protobuf schema called update_metadata.proto. Full OTAs carry whole partitions. Incremental OTAs carry deltas, and applying one means starting from the previous version's images. This tool does that: extract the base full OTA to a directory, then pass it with -old along with the incremental OTA to rebuild the new images.\n\nFor delta updates, the payload leaves out the dm-verity hash tree and FEC parity data. The tool regenerates them itself, so no avbtool or fec tooling is needed, and it checks operation data, source images and final images with sha256. Its README says it \"Fails loudly with a non-zero exit code.\" Decompression runs in parallel, with the worker count set by -c.\n\nIt is written in Go, shells out to the system xz library via CGO (the author found the pure Go xz about 6 times slower), and the payload package can also be used as a library. Once you have the images, you have raw material for the rest of the firmware-poking toolbox.",
+  "install": "brew install payload-dumper-go\n# needs the xz library on the system; on Linux or Windows, download a binary from the GitHub releases page and put it on PATH",
+  "try_this": [
+   {
+    "cmd": "payload-dumper-go /path/to/payload.bin",
+    "what_happens": "Dumps every partition from the payload (or from an OTA zip) into the output directory as image files."
+   },
+   {
+    "cmd": "payload-dumper-go -o base_images base_full_ota.zip",
+    "what_happens": "Extracts a full OTA to a directory, which can serve as the base for an incremental update."
+   },
+   {
+    "cmd": "payload-dumper-go -old base_images -o new_images incremental_ota.zip",
+    "what_happens": "Applies an incremental OTA on top of the base images and writes the rebuilt partitions to new_images."
+   }
+  ],
+  "whats_unique": "It rebuilds images from incremental OTAs and regenerates the dm-verity hash tree and FEC parity itself, with output claimed to be bit-exact, rather than leaning on external Android tooling.",
+  "caveats": "PUFFDIFF, ZUCCHINI and LZ4DIFF delta operations are unsupported, so some partitions can fail on certain incremental OTAs, and images made with -no-fec are for inspection only, never for flashing; maintenance status was not confirmed.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "reverse-engineering",
+   "android",
+   "firmware",
+   "go"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/ssut/payload-dumper-go"
+   },
+   {
+    "label": "Releases (binaries)",
+    "url": "https://github.com/ssut/payload-dumper-go/releases"
+   },
+   {
+    "label": "Android update_metadata.proto (format source)",
+    "url": "https://android.googlesource.com/platform/system/update_engine/+/master/update_metadata.proto"
+   }
+  ]
+ }
+}

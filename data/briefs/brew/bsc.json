@@ -1,0 +1,90 @@
+{
+ "name": "bsc",
+ "desc": "Bluespec Compiler (BSC)",
+ "homepage": "https://github.com/B-Lang-org/bsc",
+ "installs_365d": 226,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "hardware",
+  "afternoon"
+ ],
+ "why": "The Bluespec compiler turns a Haskell-flavoured language into hardware circuits, a genuinely unusual door into chip design.",
+ "brief": {
+  "what_it_is": "BSC is the Bluespec Compiler, a toolchain for the Bluespec hardware description language. It takes Bluespec source, written in either the SystemVerilog-style flavor (BSV) or the Haskell-style flavor (BH, also called Bluespec Classic), and emits standard Verilog for any synthesis toolchain. The repository also ships a bluesim simulator, a standard library, and bluetcl, a Tcl scripting shell. The installed executables are bsc and bluetcl.",
+  "why_it_exists": "The README presents Bluespec as a high-level HDL with a powerful type system that can catch errors before synthesis, and whose key idea is Guarded Atomic Actions, which let you define hardware modules around their invariants and let the compiler pick a scheduler. It says the toolchain was developed by Bluespec Inc for almost 20 years and has been used in production designs such as Flute, Piccolo, and Shakti.",
+  "how_it_works": "Designers write modules as guarded atomic actions, and bsc's compiler chooses how those rules are scheduled into hardware, then generates Verilog. The core compiler is written in Haskell, with some libraries in C and C++. The build also compiles the Yices and STP SMT solvers into the installation, and bsc uses one of them at runtime, with Yices as the default.",
+  "commands_seen": [
+   {
+    "cmd": "bsc -help",
+    "context": "Shows the command-line options of the bsc executable."
+   },
+   {
+    "cmd": "bsc -help-hidden",
+    "context": "Shows additional flags intended for developers."
+   },
+   {
+    "cmd": "git clone --recursive https://github.com/B-Lang-org/bsc",
+    "context": "Clones the source with its submodules (Yices and STP) for building from source."
+   },
+   {
+    "cmd": "make install-src",
+    "context": "Run at the repo root; builds the toolchain and creates an inst directory containing the installation."
+   },
+   {
+    "cmd": "make check-smoke",
+    "context": "Runs a smoke test to confirm the compiler and simulator work; uses Icarus Verilog by default."
+   },
+   {
+    "cmd": "export PATH=$(pwd)/inst/bin:$PATH",
+    "context": "Adds the freshly built bin directory to PATH so bsc and bluetcl can be run."
+   },
+   {
+    "cmd": "make GHCJOBS=4",
+    "context": "Sets how many modules GHC compiles in parallel during the build."
+   },
+   {
+    "cmd": "make STP_STUB=1",
+    "context": "Skips building the STP SMT solver; at least one solver must remain."
+   },
+   {
+    "cmd": "make release",
+    "context": "Builds the tools and docs and assembles a complete release in the inst directory."
+   },
+   {
+    "cmd": "ghcup install ghc 9.6.7",
+    "context": "Installs the recommended GHC version for building BSC, as shown in the Debian, Fedora, and macOS instructions."
+   }
+  ],
+  "install_notes": "Beyond the package managers listed in the README (AUR, Fedora Terra, Gentoo GURU, Homebrew, Nix), building from source needs GHC, with 9.6.7 recommended and installed via GHCup, plus the Haskell libraries regex-compat, syb, old-time, split and strict-concurrency, installed with cabal v1-install. GMP (libgmp) and pkg-config are needed, and GNU Make. Optional pieces are Tcl dev libraries for bluetcl, autoconf and gperf for Yices, flex and bison for STP, and Icarus Verilog for the smoke test. Full docs need a LaTeX install. The inst directory is relocatable, but its bin and lib files must stay together. Running it needs only bin on PATH; the old BLUESPECDIR variable is no longer required. On macOS you need Xcode Command Line Tools and Homebrew.",
+  "standout": "Bluespec offers two interchangeable syntaxes for one language, and its guarded atomic actions let the compiler handle scheduling rather than the designer. The compiler emits plain Verilog, so the output drops into ordinary synthesis flows.",
+  "status": "maintained. The README badge points to release 2026.07.1, and the repo has a CI build-status badge on main. The README also says the repository is still evolving and welcomes issues and pull requests. I did not see commit dates, so the recency evidence is the release tag and CI badge only.",
+  "caveats": "The README says source builds work on Linux and macOS and may need changes on other Unix flavors. The build is heavy: it needs GHC, several Haskell libraries installed globally via cabal v1-install, and optionally LaTeX and SMT solver builds. The recommended GHC is 9.6.7, and older GHC releases are described as untested. The BSD-3-Clause license covers the toolchain, but the README notes the source includes other components under various license agreements. The README describes the repo as still evolving.",
+  "quotes": [
+   "Bluespec is a *high-level* hardware description language.",
+   "The Bluespec compiler `bsc` emits standard Verilog for maximum compatibility with any synthesis toolchain and comes with an included simulator (\"bluesim\"), standard library, and TCL scripting support (\"bluetcl\").",
+   "The repository is still evolving. We welcome your feedback, issue reports, and pull requests."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/B-Lang-org/bsc"
+   },
+   {
+    "label": "BSC User Guide (PDF, latest release)",
+    "url": "https://github.com/B-Lang-org/bsc/releases/latest/download/bsc_user_guide.pdf"
+   },
+   {
+    "label": "BSVLang training and tutorials",
+    "url": "https://github.com/BSVLang/Main"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/B-Lang-org/bsc: worked, README returned",
+   "https://github.com/B-Lang-org/bsc/blob/main/INSTALL.md: worked, build instructions returned (followed from the README's compile-from-source link)"
+  ]
+ }
+}

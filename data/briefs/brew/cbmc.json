@@ -1,0 +1,84 @@
+{
+ "name": "cbmc",
+ "desc": "C Bounded Model Checker",
+ "homepage": "https://www.cprover.org/cbmc/",
+ "installs_365d": 494,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "math",
+  "reverse-engineering",
+  "science"
+ ],
+ "why": "A bounded model checker that exhaustively explores C programs for assertion violations; a real formal-methods door into proving code wrong.",
+ "brief": {
+  "what_it_is": "CBMC is a bounded model checker for C and C++ programs. It takes C or C++ source (the homepage says C89, C99, most of C11/C17 and most compiler extensions from gcc, clang and Visual Studio; the GitHub README adds C23 and SystemC via Scoot) and checks it for memory safety, array bounds, pointer misuse, various undefined-behaviour cases, and user-written assertions. It reports violations it finds, and it can also check C or C++ for I/O equivalence with other languages such as Verilog. The 'executables' list in the package metadata is a family of tools (cbmc, goto-cc, goto-instrument, goto-analyzer, jbmc, and others), and the README points to TOOLS_OVERVIEW.md for what each does. The homepage notes that a Java bytecode variant is called JBMC and that Rust is handled by Kani.",
+  "why_it_exists": "The homepage presents CBMC as a tool for verifying memory safety and user assertions in real C code, and the README frames it as a way to check C and C++ programs for bugs such as buffer overflows and pointer errors. The homepage's primary reference is 'A Tool for Checking ANSI-C Programs', and the project is credited to research sponsored by SRC, NSF, ONR, NRL, DARPA and ARO, with Daniel Kroening listed as the contact.",
+  "how_it_works": "CBMC verifies a program by unwinding its loops up to a bound and turning the unwound program into a logical equation. That equation is passed to a decision procedure. By default it uses a built-in solver for bit-vector formulas based on MiniSat, and it can also use external SMT solvers; the homepage recommends Boolector, CVC5 and Z3, which must be installed separately.",
+  "commands_seen": [
+   {
+    "cmd": "brew install cbmc",
+    "context": "Installs CBMC on macOS via Homebrew; the homepage calls it a command-line tool only, with no GUI."
+   },
+   {
+    "cmd": "apt-get install cbmc",
+    "context": "Installs the Debian or Ubuntu packaged cbmc from the distribution repositories (6.6.0 on Debian trixie and Ubuntu 26.04, 6.4.1 on Ubuntu 25.04, per the homepage)."
+   },
+   {
+    "cmd": "dpkg -i ubuntu-24.04-cbmc-6.8.0-Linux.deb",
+    "context": "Installs the official 6.8.0 .deb binary package on Ubuntu 24.04; the homepage gives a matching package for Ubuntu 22.04."
+   },
+   {
+    "cmd": "dnf install cbmc",
+    "context": "Installs CBMC on Fedora; the homepage says Fedora 44 gives 6.8.0, Fedora 43 gives 6.7.1, and Fedora 42 gives 6.4.1."
+   },
+   {
+    "cmd": "apt install cbmc-x.y.deb",
+    "context": "From the GitHub README: installs the .deb built for a given release, run with root privileges, with x.y replaced by the version number."
+   },
+   {
+    "cmd": "brew upgrade cbmc",
+    "context": "From the GitHub README: updates an existing Homebrew install to the latest CBMC formula."
+   },
+   {
+    "cmd": "brew pin cbmc",
+    "context": "From the GitHub README: stops Homebrew from upgrading CBMC automatically, if you want to stay on one version."
+   },
+   {
+    "cmd": "git clone https://github.com/diffblue/cbmc.git",
+    "context": "From the GitHub README: gets the current develop branch, which the README says is not recommended for production use."
+   }
+  ],
+  "install_notes": "Windows: download the cbmc-6.8.0-win64.msi installer and run it. It is a command-line binary with no GUI, so run it from the Visual Studio Command Prompt. The GitHub README says the MSI depends on the Visual C++ redistributables, and you need to install vcredist.x64.exe from Microsoft if you don't already have them. Visual Studio Community is recommended. macOS: Homebrew is the easiest route, and you need the Command Line Tools for Xcode installed. Linux: you can use the distribution package, the per-release .deb (which must match your OS version because of libc/libc++ ABI differences), or compile from source following COMPILING.md in the repository. External solvers (Boolector, CVC5, Z3) are optional and must be installed separately. The homepage says they have different licences. The README also mentions a homebrew tap for installing historic versions.",
+  "standout": "The 'exhaustive' framing in the scout note needs correcting: this is a bounded checker, so it proves properties only up to the loop unwinding bound. It has been around for a long time, with a 2000-era reference paper that still gets many citations. It also covers a wider range than most C checkers, including I/O equivalence against other languages and a family of companion tools for analysing compiled goto programs.",
+  "status": "Maintained, as far as I can tell. The homepage says CBMC version 6 has been released, with a 6.8.0 binary for Windows and Ubuntu, and Fedora 44 packages 6.8.0. The GitHub README links to a releases page and a CI and coverage setup. I did not find an explicit date for the latest release or commit on the pages I read.",
+  "caveats": "CBMC is bounded: it only covers loop iterations up to the unwinding limit. Version 6 changed defaults: standard undefined-behaviour checks are on by default (use --no-standard-checks to turn them off), malloc may return NULL by default (use --no-malloc-may-fail), calls to bodiless functions now fail verification, and default verbosity is 6. The homepage lists the licence as BSD 4-clause, and the external solvers have their own licences. The Windows build has no GUI and must be run from the Visual Studio Command Prompt. The homepage says the Ubuntu 22.04 and 24.04 binaries are on the project site rather than the standard repositories, since the distro packages are old. The homepage was reachable, and I did not hit any build or runtime problems.",
+  "quotes": [
+   "CBMC is a Bounded Model Checker for C and C++ programs.",
+   "The verification is performed by unwinding the loops in the program and passing the resulting equation to a decision procedure.",
+   "Releases are tested and for production use.",
+   "Develop versions are not recommended for production use."
+  ],
+  "links": [
+   {
+    "label": "CBMC homepage",
+    "url": "https://www.cprover.org/cbmc/"
+   },
+   {
+    "label": "CPROVER documentation (manual, tutorial, properties checked)",
+    "url": "https://diffblue.github.io/cbmc/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/diffblue/cbmc"
+   }
+  ],
+  "fetch_log": [
+   "https://www.cprover.org/cbmc/ - worked, homepage text returned",
+   "https://github.com/diffblue/cbmc - worked, README returned"
+  ]
+ }
+}

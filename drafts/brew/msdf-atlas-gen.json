@@ -1,0 +1,143 @@
+{
+ "name": "msdf-atlas-gen",
+ "desc": "Generator of multi-channel signed distance field atlases from fonts",
+ "homepage": "https://github.com/Chlumsky/msdf-atlas-gen",
+ "installs_365d": 95,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "visual",
+  "library"
+ ],
+ "why": "Turning font glyphs into multi-channel distance fields is a neat transform from outlines to sharp-corner textures, though it is mainly a graphics tool.",
+ "brief": {
+  "what_it_is": "msdf-atlas-gen is a C++ utility that turns a TTF or OTF font into a texture atlas of multi-channel signed distance fields. It loads a chosen set of glyphs (by character set, glyph index, or all glyphs), generates a distance field for each, and packs them tightly into one bitmap. The output is the atlas image and/or its layout metadata, exported as an Artery Font file, a plain image, a CSV sheet, or a JSON file. It runs as a standalone console program or as a library that is linked into other code.",
+  "why_it_exists": "A font atlas is typically stored in texture memory and used to draw text in real-time rendering contexts such as video games. The README describes it as a utility for generating compact font atlases using MSDFgen, the author's distance-field library.",
+  "how_it_works": "Glyph outlines are loaded through FreeType and each glyph gets a distance field. In the MSDF mode, edges are colored across three channels so that sharp corners survive when the texture is upscaled. The packer then bin-packs the glyph boxes into an atlas, or places them in a uniform grid if -uniformgrid is set. The README does not describe the internals beyond this.",
+  "commands_seen": [
+   {
+    "cmd": "-font <fontfile.ttf/otf>",
+    "context": "Required argument that sets the input font file. -varfont takes the same role for variable fonts, with axis values in the query string."
+   },
+   {
+    "cmd": "-charset <charset.txt>",
+    "context": "Sets the character set from a text file. Ranges, strings and an @include directive are supported."
+   },
+   {
+    "cmd": "-type <type>",
+    "context": "Selects the atlas type: hardmask, softmask, sdf, psdf, msdf (the default), or mtsdf."
+   },
+   {
+    "cmd": "-format <format>",
+    "context": "Sets the atlas image format, such as png, bmp, tiff, rgba, fl32, text or bin. It may be inferred from the -imageout extension."
+   },
+   {
+    "cmd": "-dimensions <width> <height>",
+    "context": "Fixes the atlas dimensions. The alternatives are the auto constraints -pots, -potr, -square, -square2 and -square4 (the default)."
+   },
+   {
+    "cmd": "-size <em size>",
+    "context": "Sets the glyph size in the atlas in pixels per em."
+   },
+   {
+    "cmd": "-pxrange <pixel range>",
+    "context": "Sets the distance field range in output pixels. The default is 2."
+   },
+   {
+    "cmd": "-imageout <filename.*>",
+    "context": "Saves the atlas bitmap as a plain image file. The format follows -format."
+   },
+   {
+    "cmd": "-json <filename.json>",
+    "context": "Writes the atlas settings, font metrics, per-glyph layout and kerning pairs to a structured JSON file."
+   },
+   {
+    "cmd": "-arfont <filename.arfont>",
+    "context": "Saves the atlas and its layout data as an Artery Font file."
+   }
+  ],
+  "install_notes": "The README offers a Windows binary in the Releases section and says nothing about macOS or Linux binaries. To build from source, use the included CMake script. By default the build needs vcpkg for third-party dependencies, and setting the VCPKG_ROOT environment variable to the vcpkg directory lets CMake fetch those packages automatically. Library use is shown in C++ and calls FreeType through msdfgen. The brew formula's executable name is msdf-atlas-gen, and the brew caveats field was empty.",
+  "standout": "The three-channel MSDF encoding keeps glyph corners sharp when upscaled, which a single-channel SDF does not. The README's comparison table lays out six atlas types with clear trade-offs, and the same project covers both the command-line tool and a library with a dynamic atlas that grows as glyphs are needed.",
+  "status": "unknown. The README has no release dates or version numbers, and it links a CHANGELOG.md that I did not open. I did not check commit history.",
+  "caveats": "The README documents only a Windows binary, so other platforms need a source build, and the default build depends on vcpkg and CMake. The tool is aimed at real-time graphics, so it is of little use for general typography. The README warns that colour values must be read as linear rather than sRGB, even when the output format implies sRGB. Some atlas types lack features: hardmask has no anti-aliasing, and PSDF has no sharp-corner preservation.",
+  "quotes": [
+   "This is a utility for generating compact font atlases using MSDFgen.",
+   "A font atlas is typically stored in texture memory and used to draw text in real-time rendering contexts such as video games.",
+   "Sharp corners refers to preservation of corner sharpness when upscaled."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/Chlumsky/msdf-atlas-gen"
+   },
+   {
+    "label": "Changelog (linked from README)",
+    "url": "https://github.com/Chlumsky/msdf-atlas-gen/blob/master/CHANGELOG.md"
+   },
+   {
+    "label": "MSDFgen, the underlying distance-field library",
+    "url": "https://github.com/Chlumsky/msdfgen"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/Chlumsky/msdf-atlas-gen: worked, README returned in full. No other pages fetched because the README was complete."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "RGB distance fields preserving glyph corners under scaling make this a useful, approachable look at a genuinely surprising graphics technique."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "msdf-atlas-gen",
+  "tldr": "Turns a font file into a packed texture of multi-channel distance fields, so game text stays sharp at any scale.",
+  "deeper_look": "msdf-atlas-gen takes a TTF or OTF font, picks a set of glyphs (a character set, glyph indices, or everything), and generates a distance field for each one. It then packs them into a single bitmap and writes out the image plus layout data as JSON, CSV, or an Artery Font file. It runs as a console program or as a C++ library.\n\nThe reason for it: games and other real-time renderers keep text in texture memory. Ordinary bitmap glyphs go blurry or blocky when scaled. A distance field stores, for each pixel, how far it is from the glyph edge, and a shader can turn that back into a crisp outline at nearly any size. In the author's words, \"This is a utility for generating compact font atlases using MSDFgen.\"\n\nThe multi-channel trick is the interesting part. In MSDF mode, glyph edges are coloured across three channels so that sharp corners survive upscaling, which a single-channel distance field rounds off. The README lays out six atlas types (hardmask, softmask, sdf, psdf, msdf, mtsdf) and the trade-offs between them. Generating the same font in a few types and looking at the images is a good way to see the idea.\n\nThe library side also offers a dynamic atlas that grows as new glyphs are needed, for programs that cannot know their text ahead of time.",
+  "install": "brew install msdf-atlas-gen",
+  "try_this": [
+   {
+    "cmd": "msdf-atlas-gen --help",
+    "what_happens": "Lists the options for atlas type, size, pixel range, packing and output formats."
+   },
+   {
+    "cmd": "msdf-atlas-gen -font <fontfile.ttf/otf> -imageout atlas.png",
+    "what_happens": "Generates an MSDF atlas (the default type) for the font and saves it as a PNG you can open and inspect."
+   },
+   {
+    "cmd": "msdf-atlas-gen -font <fontfile.ttf/otf> -type sdf -imageout atlas.png -json atlas.json",
+    "what_happens": "Writes a single-channel SDF atlas plus a JSON file with font metrics, per-glyph layout and kerning pairs."
+   }
+  ],
+  "whats_unique": "It uses three-channel MSDF encoding to keep glyph corners sharp when scaled up. It is also both a command-line tool and a library, with a dynamic atlas that grows on demand.",
+  "caveats": "The README documents only a Windows binary and does not state a maintenance status. The tool is aimed at real-time graphics, and the README warns that colour values must be read as linear, not sRGB.",
+  "commitment": "quick",
+  "category": "quick-weird-payoffs",
+  "tags": [
+   "quick",
+   "fonts",
+   "graphics",
+   "textures",
+   "signed-distance-fields",
+   "cli",
+   "library"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/Chlumsky/msdf-atlas-gen"
+   },
+   {
+    "label": "MSDFgen, the underlying distance-field library",
+    "url": "https://github.com/Chlumsky/msdfgen"
+   },
+   {
+    "label": "Changelog (linked from README)",
+    "url": "https://github.com/Chlumsky/msdf-atlas-gen/blob/master/CHANGELOG.md"
+   }
+  ]
+ }
+}

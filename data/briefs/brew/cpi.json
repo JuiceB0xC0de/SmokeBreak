@@ -1,0 +1,97 @@
+{
+ "name": "cpi",
+ "desc": "Tiny c++ interpreter",
+ "homepage": "https://treefrogframework.github.io/cpi/",
+ "installs_365d": 137,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "language"
+ ],
+ "why": "A tiny C++ interpreter lets you run C++ as a script, a slightly odd and handy experiment.",
+ "brief": {
+  "what_it_is": "cpi is a small C++ interpreter for C++20 or C++23, built on Qt 6. You give it a .cpp file (or a line-by-line interactive session, or code pasted in) and it compiles and runs the code immediately. It uses an installed GNU, LLVM, or MSVC C++ compiler internally to do the work. Output is whatever the program prints to stdout, and interactive mode also evaluates expressions such as 3 << 23; and lambdas.",
+  "why_it_exists": "The README frames it as a way to run C++ almost like a scripting language: \"Almost a script language, but the source file is also C++ program which a compiler can compile successfully.\" Scripts with a shebang (.cpps) are a separate, non-compilable form that the author calls CppScript.",
+  "how_it_works": "cpi hands the source to a real C++ compiler, which compiles and runs it. Extra compiler or linker flags can be set with a comment line such as // CompileOptions: -lm, and pkg-config expressions can be used there too. Interactive mode keeps the session's code, and .rm LINENO and .show work on that code.",
+  "commands_seen": [
+   {
+    "cmd": "qmake",
+    "context": "Linux build step, run from the cpi source directory before make."
+   },
+   {
+    "cmd": "make",
+    "context": "Linux build step after qmake."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Linux install step that puts cpi on the system path."
+   },
+   {
+    "cmd": "cpi -v",
+    "context": "Prints the version, shown in the README as cpi 2.2.0."
+   },
+   {
+    "cmd": "cpi hello.cpp",
+    "context": "Compiles and runs a C++ source file in executive mode; prints Hello world."
+   },
+   {
+    "cmd": "cpi sqrt.cpp 2",
+    "context": "Runs a program that takes an argument; the README shows output 1.41421 (its sqrt example also uses // CompileOptions: -lm)."
+   },
+   {
+    "cmd": "cpi main.cpp",
+    "context": "Runs the C++23 std::generator example, with // CompileOptions: -std=c++23 set in the file; output 500000500000."
+   },
+   {
+    "cmd": "cpi dgemm.cpp",
+    "context": "Runs an OpenBLAS matrix multiply example whose CompileOptions line uses `pkg-config --cflags --libs openblas`."
+   },
+   {
+    "cmd": "cpi helloworld_qt.cpp",
+    "context": "Runs a Qt6 Widgets GUI program directly from source."
+   },
+   {
+    "cmd": "chmod +x hello.cpps",
+    "context": "Makes a shebang script executable before running it as a script."
+   },
+   {
+    "cmd": "./hello.cpps",
+    "context": "Runs the shebang script #!/usr/bin/env cpi directly, as with a shell script."
+   },
+   {
+    "cmd": ".help",
+    "context": "Interactive-mode command listing .conf, .help, .rm LINENO, .show, and .quit."
+   }
+  ],
+  "install_notes": "Requires Qt 6 and one of GNU, LLVM, or MSVC C++ compilers, because the compiler is the actual execution engine. Linux: qmake, make, sudo make install. Windows: build from the Visual Studio 2022 Developer Command Prompt after running Qt's qtenv2.bat (the README example uses C:\\Qt\\6.7.0\\msvc2019_64), then run qmake and nmake, and invoke cpi.bat. Interactive mode loads a config file at ~/.config/cpi/cpi.conf (shown as Loaded INI file on startup). Optional libraries such as OpenBLAS or Qt6Widgets are pulled in through pkg-config in the CompileOptions comment. No accounts or hardware are needed.",
+  "standout": "It is a C++ interpreter that uses a real compiler as its backend, so the source files stay valid C++ and can be compiled normally. Per-file compiler flags sit in a comment, and sample programs cover C++23 coroutines, OpenBLAS, and a Qt GUI.",
+  "status": "Unknown, leaning maintained. The README and the install transcript mention version 2.2.0, a Windows build dated with VS2022 v17.14.7 and a 2025 copyright line, and the GitHub page shows CI, license, and release badges. I did not see a last-commit or last-release date, so I cannot confirm recent activity.",
+  "caveats": "Depends on Qt 6 and an installed C++ compiler, so it is not a lightweight standalone tool. The Windows build needs the VS2022 developer environment. The .cpps shebang form is no longer valid C++, which means it cannot be compiled normally. The README's sqrt example output (1.7320 for sqrt(3)) is shown with fewer digits than standard printing would produce, so treat sample output as illustrative. The license is MIT per the README badge. Homebrew caveats were empty.",
+  "quotes": [
+   "Cpi is a tiny interpreter for C++20 or C++23.",
+   "Immediately compiled and executed! Almost a script language, but the source file is also C++ program which a compiler can compile successfully.",
+   "Yes, a shell script. I named it CppScript."
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://treefrogframework.github.io/cpi/"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/treefrogframework/cpi"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/treefrogframework/cpi/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://treefrogframework.github.io/cpi/ - worked; full homepage text with install, interactive, executive, and CppScript sections.",
+   "https://github.com/treefrogframework/cpi - worked; README returned, same content as the homepage plus CI, license, and release badges."
+  ]
+ }
+}

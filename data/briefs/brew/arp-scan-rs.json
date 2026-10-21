@@ -1,0 +1,94 @@
+{
+ "name": "arp-scan-rs",
+ "desc": "ARP scan tool written in Rust for fast local network scans",
+ "homepage": "https://github.com/kongbytes/arp-scan-rs",
+ "installs_365d": 248,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "A fast ARP scanner is a direct door into how local devices announce themselves on the link layer.",
+ "brief": {
+  "what_it_is": "arp-scan-rs is a command-line tool, installed as the arp-scan binary, that finds the hosts on your local network by sending ARP requests. It takes a network interface or IPv4 range as input, sends one ARP request per target address, and prints the hosts that reply, with IPv4 address, MAC address, hostname, and vendor (looked up from the IEEE OUI file). Output can be a plain table, JSON, YAML, or CSV. The README also lists scan profiles (default, fast, stealth, chaos) and options for timing, bandwidth, VLAN tagging, and raw ARP field customization.",
+  "why_it_exists": "The README describes it as a minimal Rust scanner that finds all hosts on a local network using the ARP protocol, inspired by the arp-scan project by Roy Hills.",
+  "how_it_works": "The README does not explain the mechanism in depth. It says that by default the scanner sends ARP requests to each address in the selected IPv4 range, with a 10ms gap between requests to avoid an ARP storm, and that the default destination MAC is broadcast (00:00:00:00:00:00). Replies are collected until the minimum timeout (2000ms by default) passes. Frame building uses libpnet, which the Windows build notes mention.",
+  "commands_seen": [
+   {
+    "cmd": "arp-scan -l",
+    "context": "Lists all network interfaces on the host with their UP/DOWN state, MAC, and IPv4 network, then exits."
+   },
+   {
+    "cmd": "arp-scan",
+    "context": "Runs a default ARP scan on the default interface with safe defaults and prints a table of IPv4, MAC, hostname, and vendor."
+   },
+   {
+    "cmd": "brew install arp-scan-rs",
+    "context": "Homebrew install, which the README labels as for MacOS."
+   },
+   {
+    "cmd": "wget -O arp-scan https://github.com/kongbytes/arp-scan-rs/releases/download/v0.15.1/arp-scan-v0.15.1-x86_64-unknown-linux-musl && chmod +x ./arp-scan",
+    "context": "Downloads the prebuilt Linux x86_64 musl binary for v0.15.1 and makes it executable."
+   },
+   {
+    "cmd": "cargo install arp-scan",
+    "context": "Builds and installs the tool from crates.io if Rust is installed."
+   },
+   {
+    "cmd": "cargo build --release",
+    "context": "Builds from a cloned repository; the binary lands at ./target/release/arp-scan."
+   },
+   {
+    "cmd": "wget -O /usr/share/arp-scan/ieee-oui.csv http://standards-oui.ieee.org/oui/oui.csv",
+    "context": "Optional step that fetches the IEEE OUI vendor reference file to the default path for MAC vendor lookup."
+   },
+   {
+    "cmd": "./arp-scan -i wlp1s0",
+    "context": "Launches a scan on the named interface wlp1s0."
+   },
+   {
+    "cmd": "./arp-scan -i wlp1s0 -t 5s",
+    "context": "Raises the minimum scan timeout from the 2-second default to 5 seconds."
+   },
+   {
+    "cmd": "./arp-scan -Q 45 -o json",
+    "context": "Scans the default interface with VLAN ID 45 tagged on outgoing frames and prints JSON output."
+   }
+  ],
+  "install_notes": "Homebrew is the easy path on macOS. On Linux, use the prebuilt musl binary from the releases page or build from source with Cargo. Building from source needs a Rust toolchain. The MAC vendor names need the IEEE OUI CSV: it is optional, and without it the vendor column stays empty. Its default path is /usr/share/arp-scan/ieee-oui.csv, and --oui-file points elsewhere. On Windows, the README says to follow the libpnet Windows instructions and place Packet.lib in the project root, but Windows is not listed as a supported platform. The README does not say whether root or capabilities are needed to send raw frames.",
+  "standout": "It is a Rust port in the spirit of the original arp-scan, with a single static-friendly binary and a set of scan profiles (fast, stealth, chaos) that bundle timing and packet options. It also exposes raw ARP header fields (operation, hardware type, protocol type) and Ethernet-level MAC and VLAN overrides for experimentation.",
+  "status": "Probably maintained, but the fetched README has no release date or commit date, so this is not confirmed. Evidence: the install section points to v0.15.1, the README has a crates.io version badge, a Semaphore build badge, and a deps.rs badge, and the roadmap marks many features as released between 0.7.0 and 0.13.0.",
+  "caveats": "Platform support is Linux and macOS. Windows is on the roadmap, and the Windows build needs a manual Packet.lib. The README warns that the ARP customization flags (--arp-op, --hw-type, --hw-addr, --proto-type, --proto-addr) 'can cause scan failure'. Complete VLAN support, advanced packet options (padding, LLC/SNAP), and BPF-based filtering are listed as unfinished roadmap items. The -M flag is documented twice, once for destination MAC and once for source MAC. The README's OUI section also has a stray quote character in the default path. The README does not state a license.",
+  "quotes": [
+   "Find all hosts in your local network using this fast ARP scanner.",
+   "Minimal Rust binary & fast ARP scans",
+   "By default, a `10ms` gap will be set between ARP requests to avoid an ARP storm on the network.",
+   "Inspired by the awesome arp-scan project."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/kongbytes/arp-scan-rs"
+   },
+   {
+    "label": "Releases page (prebuilt binaries)",
+    "url": "https://github.com/kongbytes/arp-scan-rs/releases"
+   },
+   {
+    "label": "Original arp-scan project (inspiration)",
+    "url": "https://github.com/royhills/arp-scan"
+   },
+   {
+    "label": "IEEE OUI reference CSV",
+    "url": "http://standards-oui.ieee.org/oui/oui.csv"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/kongbytes/arp-scan-rs (homepage, GitHub repo; worked, README returned in full; no further fetches needed)"
+  ]
+ }
+}

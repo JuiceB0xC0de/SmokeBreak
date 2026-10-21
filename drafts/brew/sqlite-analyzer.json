@@ -1,0 +1,102 @@
+{
+ "name": "sqlite-analyzer",
+ "desc": "Analyze how space is allocated inside an SQLite file",
+ "homepage": "https://www.sqlite.org/",
+ "installs_365d": 1932,
+ "deprecated": true,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "deprecated",
+  "tui"
+ ],
+ "why": "Shows how every byte of an SQLite file is allocated across pages, a satisfying way to see a database's internal layout, though deprecated.",
+ "brief": {
+  "what_it_is": "sqlite3_analyzer is a command-line tool that reports how space is used inside an SQLite database file. You pass it a database file path, and it prints a human-readable ASCII report of space utilization for each table and index, including page counts, unused bytes, and payload percentages. The SQLite documentation describes it as a TCL program that uses the dbstat virtual table to gather the data and then formats it. The homepage itself does not mention the tool; the details come from the sqlanalyze documentation page.",
+  "why_it_exists": "The documentation describes it as measuring and displaying how much and how efficiently space is used by individual tables and indexes within an SQLite database file. It does not give a longer motivation in the text I read.",
+  "how_it_works": "It uses the dbstat virtual table to collect information about the database file, then formats that information into a report. The report is plain text, but the documentation says it is also valid SQL: most of the text sits in a header comment, and the end of the report contains SQL statements that create and fill a database with the raw data behind the report. You can load that into the shell and query it to dig deeper.",
+  "commands_seen": [
+   {
+    "cmd": "sqlite3_analyzer database.sqlite",
+    "context": "Basic usage from the docs: runs the analyzer on a database file and prints the space-utilization report. Deprecated as of SQLite 3.54.0."
+   },
+   {
+    "cmd": "sqlite3 database.sqlite .diskused",
+    "context": "The docs' replacement, stated as 'As of 3.54.0, use instead': runs the CLI's .diskused dot-command on the same file."
+   }
+  ],
+  "install_notes": "Nothing beyond brew install was shown in the pages I read. The brew formula's executable is sqlite3_analyzer. The docs describe it as a TCL program, so a TCL runtime may be needed, but I did not see that stated. No accounts, hardware, or first-run configuration were mentioned.",
+  "standout": "The report is itself valid SQL: running it through the shell rebuilds a queryable database of the raw measurements, so you can dig into the layout with SQL. The docs' example is a Firefox places.sqlite file, showing per-table and per-index page counts and unused-byte percentages.",
+  "status": "quiet. The sqlanalyze documentation says that as of SQLite 3.54.0 (2026-10-09) the utility is deprecated and has been replaced by the .diskused CLI command and the diskused() SQL function. The homepage lists latest release 3.54.1 (2026-10-16), and the page was last updated 2026-10-16. The brew description and scout notes also call it deprecated. I did not find a separate last-commit date for the analyzer.",
+  "caveats": "Deprecated as of SQLite 3.54.0; the documented replacement is the CLI's .diskused command and the diskused() SQL function. The docs describe it as a TCL program. The homepage says the SQLite source code is public domain, but I did not check licensing specifically for this utility. The sqlanalyze page was truncated at 40000 characters during fetch, so I did not read the end of the example output or the explanation of the parameters.",
+  "quotes": [
+   "The sqlite3_analyzer.exe binary is a command-line utility program that measures and displays how much and how efficiently space is used by individual tables and indexes with an SQLite database file.",
+   "Note: As of SQLite version 3.54.0 (2026-10-09), the sqlite3_analyzer.exe utility is deprecated. It has been replaced by the .diskused command of the CLI and/or the diskused() SQL function.",
+   "The output is also valid SQL. Most of the report text is contained within a header comment, with various SQL statements that create and initialize a database at the end of the report."
+  ],
+  "links": [
+   {
+    "label": "SQLite homepage",
+    "url": "https://www.sqlite.org/"
+   },
+   {
+    "label": "sqlite3_analyzer documentation",
+    "url": "https://www.sqlite.org/sqlanalyze.html"
+   }
+  ],
+  "fetch_log": [
+   "https://www.sqlite.org/ : worked. Homepage with no mention of sqlite3_analyzer; the sqlanalyze page was reached via the docs.",
+   "https://www.sqlite.org/sqlanalyze.html : worked, but the page was cut off at 40000 characters during the Firefox example output. The deprecation note and the usage and implementation sections were read in full."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It makes SQLite\u2019s physical storage layout inspectable, and its SQL-replayable report is a neat way to explore the raw measurements, though the tool is deprecated."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "sqlite3_analyzer",
+  "tldr": "A small tool that reads an SQLite file and reports where every page went, table by table and index by index, as a report that is also valid SQL.",
+  "deeper_look": "sqlite3_analyzer takes the path to an SQLite database and prints a plain-text report on how space is used inside it. For each table and index it gives page counts, unused bytes and payload percentages. The SQLite documentation describes it as a TCL program that reads the dbstat virtual table and formats what it finds.\n\nThe odd part is the output. The report is also valid SQL: most of the text sits in a header comment, and the end of the file holds statements that create and fill a database with the raw measurements. Pipe it into the SQLite shell and you get a database about your database, which you can query to find which index wastes the most space.\n\nThe idea underneath is that an SQLite file is a sequence of fixed-size pages, and a table or index is a set of those pages with some left empty. Seeing that breakdown shows why a file is the size it is, and why deleting rows does not shrink it.\n\nThe tool is deprecated. As of SQLite 3.54.0 the docs say it has been replaced by the CLI's .diskused command and the diskused() SQL function. It is still a quick way to see the report format and the layout it describes, and the replacement is one command away.",
+  "install": "brew install sqlite-analyzer",
+  "try_this": [
+   {
+    "cmd": "sqlite3_analyzer database.sqlite",
+    "what_happens": "Prints the space-utilization report for each table and index in the file."
+   },
+   {
+    "cmd": "sqlite3 database.sqlite .diskused",
+    "what_happens": "Runs the CLI dot-command the docs name as the replacement, on the same file."
+   },
+   {
+    "cmd": "sqlite3_analyzer --help",
+    "what_happens": "Shows what the tool says about its own usage."
+   }
+  ],
+  "whats_unique": "Its report doubles as a SQL script that rebuilds the measurements as a database, so you can query the layout of your database with SQL.",
+  "caveats": "Deprecated as of SQLite 3.54.0 in favour of the CLI's .diskused command and the diskused() SQL function.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "sqlite",
+   "deprecated",
+   "database",
+   "file-formats"
+  ],
+  "links": [
+   {
+    "label": "SQLite homepage",
+    "url": "https://www.sqlite.org/"
+   },
+   {
+    "label": "sqlite3_analyzer documentation",
+    "url": "https://www.sqlite.org/sqlanalyze.html"
+   }
+  ]
+ }
+}

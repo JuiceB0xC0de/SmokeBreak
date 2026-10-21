@@ -1,0 +1,59 @@
+{
+ "name": "hidapi",
+ "desc": "Library for communicating with USB and Bluetooth HID devices",
+ "homepage": "https://libusb.info/hidapi/",
+ "installs_365d": 14859,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "library",
+  "needs-hardware",
+  "protocol",
+  "afternoon"
+ ],
+ "why": "A plumbing library, but HID device access is a real door into USB and Bluetooth peripherals if you poke at devices with it.",
+ "brief": {
+  "what_it_is": "HIDAPI is a C library for talking to USB and Bluetooth HID-class devices (keyboards, game controllers, custom gadgets, and similar) on Windows, Linux, FreeBSD and macOS. An application passes it a vendor ID and product ID, or a serial number, and gets back a device handle. From there it can read device strings (manufacturer, product, serial) and send or receive input, output and feature reports. It can be built as a shared library (.so, .dll or .dylib), or embedded by adding a single source file per platform plus one header. The homepage is Doxygen API reference output (version 1.9.8), and the README is the source repository's readme.",
+  "why_it_exists": "The README says the library is multi-platform and lets an application interface with USB and Bluetooth HID-Class devices across major operating systems. It was started by Alan Ott (signal11) and moved to libusb/hidapi on June 4th, 2019 to merge important bugfixes and continue development.",
+  "how_it_works": "HIDAPI has four back-ends: Windows (using hid.dll), Linux/hidraw (using the kernel's hidraw driver), libusb (using libusb-1.0 for Linux, BSD and other UNIX-like systems), and macOS (using IOHidManager). On Linux, the hidraw or libusb back-end is chosen at link time by linking libhidapi-libusb or libhidapi-hidraw. The hidraw back-end works with USB and Bluetooth devices but only with devices that have hidraw nodes, so keyboards and mice generally won't work through it. The libusb back-end talks to USB devices directly and does not support Bluetooth.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt install libhidapi-dev",
+    "context": "README's example for installing the HIDAPI development package on Ubuntu via APT. Other package managers may use different package names."
+   }
+  ],
+  "install_notes": "On Linux, unprivileged users need a udev rule file to access HID devices through hidapi; the README points to udev/69-hid.rules in the repo as an example. Building from source is covered in BUILD.md, which the homepage also links to with separate CMake and Autotools (deprecated) instructions. The optional Test GUI needs the Fox Toolkit v1.6 library, and the README gives no install instructions for it. The console app hidapitester is a separate third-party project. No accounts or runtimes are needed.",
+  "standout": "One API covers four operating-system back-ends, and you can drop in one source file per platform and one header instead of linking a shared library. The bundled hidtest tool gives a way to poke at a device from the command line before writing any code.",
+  "status": "Maintained, as far as the evidence shows. The repo's README shows active CI badges for Linux, macOS and Windows on master, plus BSD and Coverity Scan. The homepage was generated for version 1.9.8 on Aug 14 2026. I did not check the latest release tag or last commit date, so exact recency is unknown.",
+  "caveats": "The Test GUI is based on Fox Toolkit and is not actively developed or supported by the HIDAPI team; it is kept as a historical artifact and may not work. Linux hidraw cannot reach devices without hidraw nodes, such as keyboards and mice. The libusb back-end does not work with Bluetooth. The README warns that writing data with hid_write at random to HID devices can break them. The README lists the library's license as one of three options in LICENSE.txt, which I did not read.",
+  "quotes": [
+   "HIDAPI is a multi-platform library which allows an application to interface with USB and Bluetooth HID-Class devices on Windows, Linux, FreeBSD, and macOS.",
+   "Warning: Only run the code you understand, and only when it conforms to the device spec. Writing data (`hid_write`) at random to your HID devices can break them.",
+   "NOTE: Test GUI based on Fox Toolkit is not actively developed nor supported by HIDAPI team. It is kept as a historical artifact."
+  ],
+  "links": [
+   {
+    "label": "Homepage (Doxygen API reference)",
+    "url": "https://libusb.info/hidapi/"
+   },
+   {
+    "label": "Source repository",
+    "url": "https://github.com/libusb/hidapi"
+   },
+   {
+    "label": "Build instructions (BUILD.md)",
+    "url": "https://github.com/libusb/hidapi/blob/master/BUILD.md"
+   },
+   {
+    "label": "hidapitester (third-party console app)",
+    "url": "https://github.com/todbot/hidapitester"
+   }
+  ],
+  "fetch_log": [
+   "https://libusb.info/hidapi/ - worked; Doxygen output page with links to the source repository and build docs, no README content",
+   "https://github.com/libusb/hidapi - worked; returned the README"
+  ]
+ }
+}

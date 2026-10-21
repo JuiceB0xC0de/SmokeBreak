@@ -1,0 +1,141 @@
+{
+ "name": "chisel-ubuntu",
+ "desc": "Carve and cut Debian packages into slices",
+ "homepage": "https://github.com/canonical/chisel",
+ "installs_365d": 22,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "library"
+ ],
+ "why": "Carves Debian packages into minimal slices, an unusual way of taking package files apart and reassembling them.",
+ "brief": {
+  "what_it_is": "Chisel is a command-line tool, written in Go, that carves Debian packages into slices, which are small subsets of a package's files defined by its metadata. You give it a release name and a list of slice names, such as libgcc-s1_libs, and it fetches the matching Ubuntu packages from the archive. It installs only those slices into a target root directory, such as myrootfs/. The result is a trimmed filesystem tree, intended for building smaller container images.",
+  "why_it_exists": "The README argues that packages are too coarse: package A may ship files that package B never needs, so depending on the whole package pulls in waste. Its framing is that Chisel lets you carve a 'slice of Ubuntu' that contains just what you need, so that smaller but equally functional container images can be built.",
+  "how_it_works": "Slice definitions are YAML files, one per package per Chisel release, listing slices with their contents paths and optional essential dependencies on other slices. Chisel reads the release's chisel.yaml, pulls the requested packages from the Ubuntu archives with GPG signature checking, and extracts only the listed paths. Path kinds such as make, copy, symlink, text and mutate (Starlark scripts) let it also create directories, links and generated files. Release data comes from the chisel-releases repository by default, or from a local directory given as the release.",
+  "commands_seen": [
+   {
+    "cmd": "go install github.com/canonical/chisel/cmd/chisel@latest",
+    "context": "Installs the latest Chisel binary using the Go toolchain; this is the README's only install command."
+   },
+   {
+    "cmd": "chisel -h",
+    "context": "Shows a help summary."
+   },
+   {
+    "cmd": "chisel help --all",
+    "context": "Shows a short description of all commands."
+   },
+   {
+    "cmd": "chisel help <command>",
+    "context": "Shows details for one command."
+   },
+   {
+    "cmd": "chisel <command> -h",
+    "context": "Alternative way to get help for a single command."
+   },
+   {
+    "cmd": "chisel cut --release ubuntu-22.04 --root myrootfs/ libgcc-s1_libs libssl3_libs",
+    "context": "Main example: fetches the listed slices from the Ubuntu 22.04 (Jammy) archives and installs only those into myrootfs/."
+   },
+   {
+    "cmd": "chisel cut --release release/ ...",
+    "context": "Uses a local, custom Chisel release directory instead of a chisel-releases branch name."
+   },
+   {
+    "cmd": "sudo pro enable esm-infra",
+    "context": "Enables the esm-infra Pro service so Chisel can fetch Pro archive packages."
+   },
+   {
+    "cmd": "sudo setfacl -m u:$USER:r /etc/apt/auth.conf.d/90ubuntu-advantage",
+    "context": "Grants the current user read access to the Pro credentials file so Chisel can use it."
+   },
+   {
+    "cmd": "sudo chmod u+r /etc/apt/auth.conf.d/90ubuntu-advantage",
+    "context": "Alternative to setfacl: makes the Pro credentials file readable by its owner."
+   }
+  ],
+  "install_notes": "Install with go install (needs a Go toolchain) as shown in the README; the README does not mention brew. Chisel needs network access to Ubuntu archives, and it reads its release definitions from the chisel-releases repository by branch name (for example ubuntu-22.04). For Pro archives you need a Pro-enabled host, and the credentials file under /etc/apt/auth.conf.d/ must be made readable by your user. The location can be overridden with the CHISEL_AUTH_DIR environment variable. No first-run setup beyond this is described.",
+  "standout": "Chisel treats a package as a block of stone to carve rather than an indivisible unit to install. Its slice definitions live in a separate data repository, and they can contain Starlark mutation scripts that reproduce what maintainer scripts would have done, plus manifest generation.",
+  "status": "Unknown. The fetched README has CI badges for build, tests and snap workflows, and the TODO list shows some work in progress, but it gives no release version, release date or last-commit date. I did not fetch the releases or commits page, so I cannot confirm recent activity.",
+  "caveats": "Ubuntu only: the README says non-Ubuntu repositories and multiple repositories are not supported yet. The Ubuntu-version mapping is manual, so an unlisted release may fail. Package names must match the archive names, and file ownership is not preserved yet. Pro packages need a Pro-enabled host with readable credentials. Several items on the TODO list are unchecked, including functional tests and a fake archive server for tests. One example in the README still refers to the Kinetic release, which looks stale. The README does not state a licence.",
+  "quotes": [
+   "Chisel is a software tool for carving and cutting Debian packages!",
+   "Slices are basically subsets of the Debian packages, with their own content and set of dependencies to other internal and external slices.",
+   "In the end, it's like having a slice of Ubuntu - get *just what you need*."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage, README)",
+    "url": "https://github.com/canonical/chisel"
+   },
+   {
+    "label": "Chisel documentation",
+    "url": "https://ubuntu.com/chisel/docs/latest/"
+   },
+   {
+    "label": "chisel-releases (slice definitions database)",
+    "url": "https://github.com/canonical/chisel-releases"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/canonical/chisel (homepage, GitHub repo): worked, README returned. Not followed further: the README was substantial enough to write the brief."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Chisel makes packages non-indivisible: declarative slices and Starlark mutations let you assemble a minimal Ubuntu filesystem from selected files and dependencies."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Chisel",
+  "tldr": "Chisel carves Ubuntu's Debian packages into small slices, so you can build a root filesystem with only the files you need.",
+  "deeper_look": "Chisel is a Go command-line tool from Canonical. You name an Ubuntu release and a list of slices, such as `libgcc-s1_libs` or `libssl3_libs`. It fetches the matching packages from the Ubuntu archive and extracts only those slices into a target directory. What you get is a trimmed filesystem tree, meant as the base for a smaller container image.\n\nThe idea underneath is that a package is too coarse a unit. Package A may ship files that nobody depending on it ever uses. In the README's words, \"Slices are basically subsets of the Debian packages, with their own content and set of dependencies to other internal and external slices.\" Chisel treats a package as a block of stone to carve rather than something you install whole.\n\nSlice definitions are YAML files kept in a separate repository, chisel-releases, with one file per package per release. Each slice lists paths and can name dependencies on other slices. Paths can also be made, copied, symlinked or generated as text. Starlark mutation scripts can reproduce what a maintainer script would have done. Packages are fetched with GPG signature checking. Reading those definitions is a good way to see how a package's files are really divided up.",
+  "install": "go install github.com/canonical/chisel/cmd/chisel@latest\n# The README gives only this install route and does not mention brew. It needs a Go toolchain and network access to the Ubuntu archives.",
+  "try_this": [
+   {
+    "cmd": "chisel help --all",
+    "what_happens": "Prints a short description of every command."
+   },
+   {
+    "cmd": "chisel cut --release ubuntu-22.04 --root myrootfs/ libgcc-s1_libs libssl3_libs",
+    "what_happens": "Fetches those slices from the Ubuntu 22.04 archives and installs only them into myrootfs/, which you can then inspect."
+   },
+   {
+    "cmd": "chisel help cut",
+    "what_happens": "Shows the details of the cut command, including how to point --release at a local directory of slice definitions."
+   }
+  ],
+  "whats_unique": "Slice definitions live in a separate data repository and can include Starlark scripts that stand in for maintainer scripts. That makes packages cuttable at the file level.",
+  "caveats": "Ubuntu only, with no support yet for non-Ubuntu or multiple repositories, file ownership is not preserved, and the brief could not confirm recent project activity.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "debian",
+   "ubuntu",
+   "containers",
+   "packaging",
+   "go"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage, README)",
+    "url": "https://github.com/canonical/chisel"
+   },
+   {
+    "label": "Chisel documentation",
+    "url": "https://ubuntu.com/chisel/docs/latest/"
+   },
+   {
+    "label": "chisel-releases (slice definitions database)",
+    "url": "https://github.com/canonical/chisel-releases"
+   }
+  ]
+ }
+}

@@ -1,0 +1,77 @@
+{
+ "name": "wiiuse",
+ "desc": "Connect Nintendo Wii Remotes",
+ "homepage": "https://github.com/wiiuse/wiiuse",
+ "installs_365d": 674,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "library"
+ ],
+ "why": "A library for talking to Wii Remote Bluetooth hardware, a fun door into poking at a physical device's protocol.",
+ "brief": {
+  "what_it_is": "Wiiuse is a C library that connects to Nintendo Wii Remotes over Bluetooth and exposes them to your own program. Per the README it supports motion sensing, IR tracking, the Nunchuk, the Classic Controller, the Balance Board, and the Guitar Hero 3 controller. It runs on Linux, Windows, and Mac and builds as a shared library (libwiiuse.so, or wiiuse.dll on Windows). Input is the controller's Bluetooth reports and output is state your application reads through the API, which is single-threaded and nonblocking.",
+  "why_it_exists": "The README says it is for developers who want to add Wii Remote support to a third-party application. It is a community-maintained fork: the original author's upstream stopped being maintained, and the maintainers say the fork was made to replace scattered ad-hoc forks with one project that has real infrastructure.",
+  "how_it_works": "Wiiuse talks to the controller through each OS's Bluetooth stack (BlueZ on Linux, the Microsoft stack on Windows, the Mac OS X Bluetooth stack on Mac). The README says it is single-threaded and nonblocking, and the application calls wiiuse_poll or wiiuse_update in a loop to pump events. Expansions such as the Nunchuk and Motion Plus are initialized and calibrated over time after connection, which is why the README asks you to keep polling for 10 to 15 seconds before enabling Motion Plus.",
+  "commands_seen": [
+   {
+    "cmd": "mkdir build",
+    "context": "Creates a build directory for the out-of-tree CMake build on Linux and Mac."
+   },
+   {
+    "cmd": "cd build",
+    "context": "Enters the build directory before running cmake."
+   },
+   {
+    "cmd": "cmake .. [-DCMAKE_INSTALL_PREFIX=/usr/local] [-DCMAKE_BUILD_TYPE=Release] [-DBUILD_EXAMPLE_SDL=NO]",
+    "context": "Generates the makefile; the bracketed options are optional, setting the install prefix, build type, and skipping the SDL example."
+   },
+   {
+    "cmd": "cmake-gui ..",
+    "context": "Alternative to the cmake line above, opening the CMake GUI to configure the build."
+   },
+   {
+    "cmd": "make [target]",
+    "context": "Builds everything if no target is given; named targets include wiiuse, wiiuseexample, wiiuseexample-sdl, and doc."
+   },
+   {
+    "cmd": "make install",
+    "context": "System-wide install (run as root or with sudo) placing libwiiuse.so in the lib dir and the example binaries in bin."
+   }
+  ],
+  "install_notes": "Linux needs a Bluetooth-enabled kernel, the BlueZ drivers installed, and, if compiling, the BlueZ dev files (Debian/Ubuntu package libbluetooth-dev). Compiling needs CMake. The optional SDL example needs SDL 1.2 and OpenGL. On Windows, the README says to use the CMake GUI to generate a Visual Studio solution, and that you may need the Windows SDK (or the DDK for old SDKs); Visual Studio Community 2017 with the desktop C++ tools is said to be enough. To use the library, include include/wiiuse.h, link libwiiuse.so (-lwiiuse) on Linux or wiiuse.lib on Windows, and ship wiiuse.dll with the program. On Mac, the controller must be in discoverable mode (press the button inside the battery cover), and it must be unpaired from the OS Bluetooth preferences first, since disconnecting is not enough.",
+  "standout": "It is a small, C, nonblocking library that predates most Wii hacking tooling and still covers the Balance Board and Guitar Hero 3 controller, which many newer tools skip. The README is candid that it is deliberately left mostly unchanged because it is considered feature complete. Its acknowledgements credit the wiibrew.org reverse-engineering community as the source of the protocol knowledge.",
+  "status": "Quiet but not abandoned. The README says the library sees little change because it is effectively complete, and that the fork maintainer is 'mostly-absentee' with a co-maintainer named as effective. The repo shows 457 commits and 336 stars, with a GPL-3.0 license. I could not see a last-commit date or release date from the page text I received, so I cannot confirm how recent the most recent activity is.",
+  "caveats": "Compatibility with the hardware is not guaranteed: third-party controllers may or may not work, because some manufacturers change the protocol. Windows with more than about two Wiimotes may show significant latency. Motion Plus and expansions need a warm-up period before they initialize reliably. Mac requires discoverable mode and removing the device from OS Bluetooth settings. The build needs CMake and, on Windows, a Visual Studio setup. The README points out that the upstream 0.12 and earlier sites (wiiuse.net and wiiuse.sourceforge.net) are defunct. Licence is GPL 3 or later, which matters for embedding in closed-source software. The README's changelog and issue tracker links were not fetched.",
+  "quotes": [
+   "Wiiuse is a library written in C that connects with several Nintendo Wii remotes.",
+   "Single threaded and nonblocking makes a light weight and clean API.",
+   "This library sees little change not because it is dead, but because it is effectively \"complete\"."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/wiiuse/wiiuse"
+   },
+   {
+    "label": "Issue tracker",
+    "url": "https://github.com/wiiuse/wiiuse/issues"
+   },
+   {
+    "label": "Changelog",
+    "url": "https://github.com/wiiuse/wiiuse/blob/master/CHANGELOG.mkd"
+   },
+   {
+    "label": "xwiimote (alternative using the Linux kernel Wiimote support)",
+    "url": "https://github.com/dvdhrm/xwiimote"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/wiiuse/wiiuse (homepage, fetched and worked; the README was returned in full)"
+  ]
+ }
+}

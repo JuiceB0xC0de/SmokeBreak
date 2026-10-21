@@ -1,0 +1,57 @@
+{
+ "name": "crcany",
+ "desc": "Compute any CRC, a bit at a time, a byte at a time, and a word at a time",
+ "homepage": "https://github.com/madler/crcany",
+ "installs_365d": 29,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "math",
+  "library",
+  "quick"
+ ],
+ "why": "A generator for any CRC variant that shows the bit-level machinery behind checksums in a way few people have seen.",
+ "brief": {
+  "what_it_is": "crcany is a C suite of programs that compute any CRC from its parameter set (the Greg Cook / Ross Williams model format) and can generate C code for it. It takes a CRC definition, either by catalogue name or as parameters, plus data bytes, and outputs the checksum. It can also combine two CRCs, given the CRC of each sequence and the length of the second, to get the CRC of the concatenation. A companion tool generates .c and .h files for one or many CRC definitions.",
+  "why_it_exists": "The README's stated motivation is to \"Provide once and for all a definitive reference for how to compute and combine any CRC with any of bit, byte, or word-at-a-time algorithms, on any big or little-endian architecture.\"",
+  "how_it_works": "It computes a CRC bit at a time, as a hardware shift register would. For byte-at-a-time, it first uses the bit-at-a-time routine to build a 256-entry table of CRCs for all byte values. For word-at-a-time, it expands the byte table into n-1 further tables, where n is the word size in bytes, with separate little-endian and big-endian flavors.",
+  "commands_seen": [
+   {
+    "cmd": "make",
+    "context": "Compiles the crcany, crctest, crcall, crcadd, and mincrc executables from the repository root."
+   },
+   {
+    "cmd": "make test",
+    "context": "Tests CRC calculation and generated CRC code against the full list of catalogued CRCs."
+   }
+  ],
+  "install_notes": "Build from source with make; the README names no other dependencies, accounts, or runtimes. Generated code defaults to the host's integer sizes and endianness, and can be forced to 32- or 64-bit words and big- or little-endian. The README gives no usage syntax for the crcany binary itself.",
+  "standout": "It treats the CRC as a single parameterized algorithm and generates optimized C for any width up to 64 bits, rather than hard-coding one polynomial. It also includes CRC combination, which lets you join checksums of separate blocks without re-reading the data.",
+  "status": "unknown. The README has no release or version notes and I saw no commit dates. It does have a working build and test target and a full catalogue of CRC definitions.",
+  "caveats": "The README documents no usage syntax for crcany itself, so anyone writing examples will need to read the source or run it. Code generation is limited to CRCs up to 64 bits; the bit-wise calculation goes up to 128 bits on 64-bit machines. The getcrcs tool scrapes Greg Cook's website for definitions. The README does not name a C compiler requirement or a platform list beyond the endianness discussion.",
+  "quotes": [
+   "_crcany_ can compute a CRC in three different ways.",
+   "Provide once and for all a definitive reference for how to compute and combine any CRC with any of bit, byte, or word-at-a-time algorithms, on any big or little-endian architecture.",
+   "This code is under the zlib license, permitting free commercial use."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/madler/crcany"
+   },
+   {
+    "label": "Greg Cook's CRC catalogue",
+    "url": "https://reveng.sourceforge.io/crc-catalogue/all.htm"
+   },
+   {
+    "label": "Ross Williams CRC tutorial",
+    "url": "http://zlib.net/crc_v3.txt"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/madler/crcany: fetched OK, returned README text"
+  ]
+ }
+}

@@ -1,0 +1,153 @@
+{
+ "name": "libewf",
+ "desc": "Library for support of the Expert Witness Compression Format",
+ "homepage": "https://github.com/libyal/libewf",
+ "installs_365d": 3193,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "library"
+ ],
+ "why": "Reads Expert Witness forensic disk images, a rare look at how evidence files are structured internally, though it is mainly a library.",
+ "brief": {
+  "what_it_is": "libewf is a C library for reading and writing Expert Witness Compression Format (EWF) files, the container format used for forensic disk images, and it ships a set of command-line tools built on that library. It reads SMART .s01, EnCase .E01 and .Ex01 images, and reads (but does not write) Logical Evidence Files .L01 and .Lx01. Its tools take storage media data from devices, files or stdin and write EWF files (ewfacquire, ewfacquirestream), export to split RAW or another EWF version (ewfexport), print metadata (ewfinfo), verify stored data (ewfverify), mount EWF files through FUSE (ewfmount), and rebuild a new EWF set from a corrupt one (ewfrecover). The scout note calls it mainly a library, which the README supports: the tools are thin front ends to the library.",
+  "why_it_exists": "The README gives no explicit problem statement. It describes the project as a library to access the Expert Witness Compression Format, and its purpose is to let other software and people read and write those forensic evidence files without depending on a proprietary tool.",
+  "how_it_works": "The README does not explain the internals. It lists supported variants (EWF-S01, EWF-E01, EWF2-Ex01, EWF-L01, EWF2-Lx01) and features such as empty-block compression, delta or shadow files for read/write access, and write resume. The tools are described as wrappers, for example ewfrecover is a special variant of ewfexport.",
+  "commands_seen": [
+   {
+    "cmd": "./configure",
+    "context": "Wiki Building page: first step of the GCC build from the source distribution package, run inside the source directory."
+   },
+   {
+    "cmd": "make",
+    "context": "Wiki Building page: compiles after configure."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Wiki Building page: installs the built binaries, by default into /usr/local."
+   },
+   {
+    "cmd": "sudo ldconfig",
+    "context": "Wiki Building page: on Linux, run so libewf.so is in the library cache after install."
+   },
+   {
+    "cmd": "./configure --enable-python",
+    "context": "Wiki Building page: adds the Python bindings to the build."
+   },
+   {
+    "cmd": "git clone https://github.com/libyal/libewf.git",
+    "context": "Wiki Building page: building from the development git repository instead of a release tarball."
+   },
+   {
+    "cmd": "./synclibs.sh",
+    "context": "Wiki Building page: required after cloning, synchronises library dependencies; the git source will not build without it."
+   },
+   {
+    "cmd": "./autogen.sh",
+    "context": "Wiki Building page: generates the autotools files after synclibs.sh."
+   },
+   {
+    "cmd": "sudo apt install git autoconf automake autopoint libtool pkg-config flex bison",
+    "context": "Wiki Building page: Debian/Ubuntu packages needed for a git build."
+   },
+   {
+    "cmd": "tar xfv libewf-experimental-<version>.tar.gz",
+    "context": "Wiki Building page: unpacks the recommended source distribution tarball, which bundles its dependencies."
+   }
+  ],
+  "install_notes": "Homebrew is the easy route per the brief, but the README and wiki say that a source build is the normal path. The recommended source is the libewf-experimental tarball, not GitHub's source zip. Building from git needs autotools, flex and byacc, plus ./synclibs.sh and ./autogen.sh. GCC builds need zlib (optional but recommended), bzip2 (required) and OpenSSL libcrypto (optional but recommended). ewfmount needs FUSE headers (libfuse-dev on Debian, fuse-devel on Fedora, OSXFuse on macOS). Python bindings need python3-dev and setuptools and are enabled with --enable-python. Windows builds use MinGW, Cygwin or Visual Studio, and the Visual Studio files are for VS2008, converted to newer versions. The wiki also notes that multi-thread support can deadlock, in which case configure with --enable-multi-threading-support=no. No accounts or runtime setup are mentioned.",
+  "standout": "It is an open, clean-room implementation of a forensic container format that is otherwise tied to a proprietary toolchain, and it covers reading the newer Ex01 and logical L01 formats. Its tools are small, single-purpose, and named after their jobs (ewfacquire, ewfverify, ewfrecover), so it is a readable window into how evidence containers are laid out internally.",
+  "status": "Active as far as I can tell, but labelled experimental. The README's project information says 'Status: experimental'. The Building wiki page was last edited May 17, 2026 (15 revisions), and the README lists several work-in-progress items. I did not find a release date or last commit date on the pages I read, so I cannot give more precise evidence.",
+  "caveats": "Labelled experimental by the project. Not supported: .Ex01 bzip2 compression (work in progress) and .Ex01 encryption. Write support for EWF2-Ex01 is work in progress. L01 and Lx01 logical files are read-only, with writing planned long-term. The Dokan Windows mount is experimental, Python bindings and multi-threading are work in progress, and ewfdebug, per the README, 'does nothing at the moment'. The git build will not work without synclibs.sh, and Windows builds depend on the older Visual Studio files. Licence is LGPL-3.0-or-later. The brew caveats field was empty, and the scout note says it is mainly a library.",
+  "quotes": [
+   "libewf is a library to access the Expert Witness Compression Format (EWF).",
+   "Read or write supported EWF formats:",
+   "ewfrecover; special variant of ewfexport to create a new set of EWF files from a corrupt set.",
+   "ewfdebug; experimental tool does nothing at the moment."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/libyal/libewf"
+   },
+   {
+    "label": "Project documentation (wiki Home)",
+    "url": "https://github.com/libyal/libewf/wiki/Home"
+   },
+   {
+    "label": "Building from source (wiki)",
+    "url": "https://github.com/libyal/libewf/wiki/Building"
+   },
+   {
+    "label": "Previous stable releases (legacy)",
+    "url": "https://github.com/libyal/legacy/tree/master/libewf"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/libyal/libewf: worked, README returned (project info, supported formats, tool list, links to wiki).",
+   "https://github.com/libyal/libewf/wiki/Building: worked, build instructions returned, though page chrome is heavy; content is readable.",
+   "Did not fetch https://github.com/libyal/libewf/wiki/Home (linked from README; not needed for the brief)."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A clean-room implementation of forensic disk-image formats, with tools to mount, verify, and recover evidence containers, offers a distinctive window into how they work."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "libewf",
+  "tldr": "An open library and set of tools for reading, writing and verifying Expert Witness forensic disk images, the container format behind EnCase evidence files.",
+  "deeper_look": "libewf is a C library for the Expert Witness Compression Format (EWF), the container used to store forensic disk images. It reads SMART .s01, EnCase .E01 and .Ex01 images, and reads (but does not write) logical evidence files, .L01 and .Lx01. The command-line tools are thin front ends to the library, each named after its job.\n\nThe tools cover the life of an evidence image. `ewfacquire` and `ewfacquirestream` take data from a device, file or stdin and write EWF files. `ewfinfo` prints the metadata, `ewfverify` checks the stored data, and `ewfexport` converts to split RAW or another EWF version. `ewfmount` exposes an image through FUSE, so it looks like a raw disk. `ewfrecover` is described as a \"special variant of ewfexport to create a new set of EWF files from a corrupt set.\"\n\nThe idea underneath is that a disk image is not just a copy of bytes. An evidence container wraps the data with compression, hashes, case metadata and error records, so a copy can be verified later. The README mentions empty-block compression, delta or shadow files for read/write access, and write resume. Running the tools on an image is a practical way into how forensic containers are laid out, and the library gives other software open access to a format otherwise tied to one proprietary toolchain.",
+  "install": "brew install libewf\n# ewfmount needs FUSE support; on macOS the wiki points to OSXFuse. No account or runtime is needed.",
+  "try_this": [
+   {
+    "cmd": "ewfinfo --help",
+    "what_happens": "Lists the options for printing an image's stored metadata."
+   },
+   {
+    "cmd": "ewfverify --help",
+    "what_happens": "Shows how to check an image's stored data against its recorded checksums."
+   },
+   {
+    "cmd": "ewfacquire --help",
+    "what_happens": "Shows the options for imaging a device or file into EWF files."
+   }
+  ],
+  "whats_unique": "It is an open implementation of a forensic container format that is otherwise tied to a proprietary toolchain, and it reads the newer Ex01 and logical L01 variants. The tools are small and single-purpose.",
+  "caveats": "The project labels itself experimental: Ex01 bzip2 compression and encryption are unsupported, L01 files are read-only, and `ewfdebug` \"does nothing at the moment.\"",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "forensics",
+   "disk-images",
+   "file-formats",
+   "library",
+   "c"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/libyal/libewf"
+   },
+   {
+    "label": "Project documentation (wiki Home)",
+    "url": "https://github.com/libyal/libewf/wiki/Home"
+   },
+   {
+    "label": "Building from source (wiki)",
+    "url": "https://github.com/libyal/libewf/wiki/Building"
+   },
+   {
+    "label": "Previous stable releases (legacy)",
+    "url": "https://github.com/libyal/legacy/tree/master/libewf"
+   }
+  ]
+ }
+}

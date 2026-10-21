@@ -1,0 +1,104 @@
+{
+ "name": "libxmp",
+ "desc": "C library for playback of module music (MOD, S3M, IT, etc)",
+ "homepage": "https://xmp.sourceforge.net/",
+ "installs_365d": 12792,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "quick",
+  "audio",
+  "library",
+  "ancient"
+ ],
+ "why": "Plays decades-old tracker module formats like MOD and S3M, a window into a vanishing music culture.",
+ "brief": {
+  "what_it_is": "Libxmp is a C library that renders tracker module music files (MOD, S3M, XM, IT and many others) into linear PCM audio buffers at a sample rate and format the calling application chooses. It takes a module file and outputs PCM samples; it is not a player by itself. The separate xmp command-line player, built on libxmp, is what a person would run to hear a module. The library also reads compressed modules, using built-in decompressors for formats like gzip, bzip2, zip, and LZX, and external helpers for MO3 and RAR. The README says it supports over 90 formats.",
+  "why_it_exists": "The homepage describes libxmp as a way to play many mainstream and obscure module formats, and says applications for it include players, module information extractors, module-to-mp3 renderers, and game music. The project keeps decades of tracker music playable, including formats like Amiga Protracker MOD and PC Scream Tracker 3 S3M, and the site's own voice treats the work as preservation of classic and rare modules.",
+  "how_it_works": "Libxmp loads the module file and renders its sound as PCM samples into a buffer, at the rate and format the user specifies. The README says that by default Protracker MODs are played with a mix of Protracker 2/3 quirks, other Amiga 4-channel MODs use a generic Noisetracker/Protracker-style replayer, Scream Tracker III MODs use a Scream Tracker style replayer, and multichannel MODs use a Fasttracker II style replayer. Multi-file formats such as Startrekker AM and Magnetic Fields need all their files in the same directory.",
+  "commands_seen": [
+   {
+    "cmd": "$ xmp m5v-nwlf.itz",
+    "context": "Homepage screenshot of the xmp player (not libxmp itself) playing an Impulse Tracker module. The output shows the module name, type, pattern and channel counts, and a playback position display. The player prints a help hint: Press 'h' for help."
+   }
+  ],
+  "install_notes": "The brew formula installs libxmp, the library, and lists no executables, so the xmp command-line player is a separate package (GitHub libxmp/xmp-cli; the homepage says it requires libxmp 4.4.0 or newer and recommends 4.7.0 or newer). Source is available from GitHub (https://github.com/libxmp/libxmp.git) and from git://git.code.sf.net/p/xmp/libxmp.git. The README says the API reference is in docs/libxmp.html, with man page and PDF formats. Compressed formats MO3 and RAR need external helpers installed on the system (unmo3 and unrar). No account or special hardware is mentioned.",
+  "standout": "It is a portable, embeddable renderer for a huge range of tracker formats, including obscure Amiga, Atari, Acorn, and PC formats and many Amiga packers, which most modern players do not handle. A 'lite' build covers MOD, S3M, XM and IT under the MIT license for games and embedded use. The homepage also lists several related projects built on it, including a Python binding, an Android port, and a JavaScript build compiled with emscripten.",
+  "status": "Appears maintained. The homepage lists libxmp 4.7.4 as the current stable release, dated October 10, 2026, and xmp 4.3.1 dated July 30, 2026. The GitHub README shows copyright through 2026 and version 4.7. I did not check commit history, and these dates are as the pages state them, so I could not verify them independently.",
+  "caveats": "Only the first module in an archive is played. Some formats such as DTT and DMF were disabled in recent releases, and the homepage notes that Flextrax effects are not supported. Several packers need external helpers. The license for the full library is not clearly stated in the homepage text I saw, but the GitHub README carries a permissive MIT-style grant. The homepage has a broken sentence fragment ('below).') where a link or note seems to have been cut.",
+  "quotes": [
+   "The Extended Module Player, or xmp, is a portable command-line module player.",
+   "Libxmp loads the module and renders the sound as linear PCM samples in a buffer at rate and format specified by the user.",
+   "Libxmp is a library that renders module files to PCM data. It supports over 90 mainstream and obscure module formats including Protracker (MOD), Scream Tracker 3 (S3M), Fast Tracker II (XM), and Impulse Tracker (IT)."
+  ],
+  "links": [
+   {
+    "label": "Homepage (Extended Module Player)",
+    "url": "https://xmp.sourceforge.net/"
+   },
+   {
+    "label": "libxmp GitHub repository and README",
+    "url": "https://github.com/libxmp/libxmp"
+   },
+   {
+    "label": "xmp-cli player GitHub repository",
+    "url": "https://github.com/libxmp/xmp-cli"
+   },
+   {
+    "label": "Amiga Music Preservation",
+    "url": "https://xmp.sourceforge.net/"
+   }
+  ],
+  "fetch_log": [
+   "https://xmp.sourceforge.net/ : worked, homepage text retrieved (player screenshot, format lists, release notes, related projects, tracker gallery).",
+   "https://github.com/libxmp/libxmp : worked, README retrieved (overview, API docs pointer, supported formats and packers, license)."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A compact doorway into tracker music\u2019s history: libxmp reproduces the quirks of dozens of obscure module formats and renders them to audio."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "libxmp",
+  "tldr": "A C library that renders tracker module music (MOD, S3M, XM, IT and 90-plus other formats) into raw audio, keeping decades-old Amiga and PC songs playable.",
+  "deeper_look": "Libxmp loads a tracker module file and renders it as linear PCM samples into a buffer, at whatever rate and format the calling program asks for. It is a library, not a player. Players, module information extractors, module-to-mp3 renderers and game soundtracks are the uses the homepage names.\n\nTracker modules are an old way of making music. Instead of a recorded waveform, a file holds small instrument samples plus a grid of patterns that says which note triggers which sample on which channel, and with which effect. The format started on the Amiga with Protracker MOD and spread to PC trackers like Scream Tracker 3 (S3M), Fast Tracker II (XM) and Impulse Tracker (IT). Playing one correctly means reproducing the quirks of the original replayer. Libxmp does this by choosing a replayer style per file. Protracker MODs get a mix of Protracker 2/3 behaviour, other 4-channel Amiga MODs get a Noisetracker/Protracker-style replayer, and multichannel MODs get a Fasttracker II style one.\n\nIt also reads obscure Amiga, Atari, Acorn and PC formats, many Amiga packers, and compressed archives (gzip, bzip2, zip, LZX built in; MO3 and RAR via external helpers). The project's own framing is preservation of classic and rare modules.\n\nThe Homebrew formula installs only the library. To hear anything you want the separate xmp command-line player, which is built on libxmp.",
+  "install": "brew install libxmp\n# library only, no executables. The xmp command-line player is a separate package (github.com/libxmp/xmp-cli) and needs libxmp 4.4.0 or newer, 4.7.0 or newer recommended.\n# MO3 and RAR modules need the external helpers unmo3 and unrar.",
+  "try_this": [
+   {
+    "cmd": "xmp m5v-nwlf.itz",
+    "what_happens": "With the separate xmp player installed, plays an Impulse Tracker module and shows its name, type, pattern and channel counts, and playback position. Press 'h' for help."
+   }
+  ],
+  "whats_unique": "It is a portable, embeddable renderer covering an unusually wide range of tracker formats, including obscure Amiga, Atari and Acorn ones that most modern players skip. A MIT-licensed 'lite' build covers MOD, S3M, XM and IT for games and embedded use.",
+  "caveats": "It is a library with no executable of its own, so you need xmp-cli or your own C code to hear anything; only the first module in an archive plays, and a few formats such as DTT and DMF were disabled in recent releases.",
+  "commitment": "quick",
+  "category": "sound-and-live-coding",
+  "tags": [
+   "quick",
+   "audio",
+   "library",
+   "tracker",
+   "ancient",
+   "preservation"
+  ],
+  "links": [
+   {
+    "label": "Homepage (Extended Module Player)",
+    "url": "https://xmp.sourceforge.net/"
+   },
+   {
+    "label": "libxmp GitHub repository and README",
+    "url": "https://github.com/libxmp/libxmp"
+   },
+   {
+    "label": "xmp-cli player GitHub repository",
+    "url": "https://github.com/libxmp/xmp-cli"
+   }
+  ]
+ }
+}

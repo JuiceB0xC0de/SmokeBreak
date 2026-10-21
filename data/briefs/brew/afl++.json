@@ -1,0 +1,74 @@
+{
+ "name": "afl++",
+ "desc": "American Fuzzy Lop++",
+ "homepage": "https://aflplus.plus/",
+ "installs_365d": 1297,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "simulation"
+ ],
+ "why": "A coverage-guided fuzzer that evolves inputs to break programs, a fascinating way to watch software get taken apart.",
+ "brief": {
+  "what_it_is": "AFL++ is a fuzzing framework: a tool that generates many mutated inputs and feeds them to a target program to find crashes and hangs. You compile the target with AFL++'s compiler wrappers (afl-cc, afl-c++), then run afl-fuzz against it with a directory of seed inputs. The fuzzer mutates those inputs and keeps the ones that reach new code paths. Crashes and hangs are written to crashes/ and hangs/ under the output directory, and afl-fuzz shows a status screen while it runs. The package also ships helpers such as afl-cmin and afl-tmin for corpus minimization, afl-showmap for coverage maps, and afl-plot for graphs, plus binary-only instrumentation modes (QEMU, Unicorn, QBDI).",
+  "why_it_exists": "The homepage says AFLplusplus is the daughter of American Fuzzy Lop by Michal 'lcamtuf' Zalewski and was created to merge the best features developed for the AFL family that were never merged into AFL, which the homepage says has not been updated since November 2017. The README calls it 'a superior fork to Google's AFL - more speed, more and better mutations, more and better instrumentation, custom module support, etc.'",
+  "how_it_works": "Targets are built with instrumentation (LLVM mode, afl-as, or the GCC plugin) so the fuzzer can observe which code paths each input exercises. afl-fuzz then mutates seed inputs and keeps those that discover new coverage. The README also describes a CMPLOG option (AFL_LLVM_CMPLOG=1 with afl-clang-fast), which the README recommends for comparisons; its mechanism was not explained in the pages read.",
+  "commands_seen": [
+   {
+    "cmd": "docker pull aflplusplus/aflplusplus",
+    "context": "Pulls the prebuilt AFL++ image from Docker Hub (x86_64 and arm64), the README's first suggested route."
+   },
+   {
+    "cmd": "docker run -ti -v /location/of/your/target:/src aflplusplus/aflplusplus",
+    "context": "Runs the container with your target source mounted at /src."
+   },
+   {
+    "cmd": "CC=/path/to/afl-cc CXX=/path/to/afl-c++ ./configure --disable-shared",
+    "context": "Quick-start step 1: configures a target project to build with AFL++'s compiler wrappers."
+   },
+   {
+    "cmd": "make clean all",
+    "context": "Quick-start step 1: rebuilds the target after configure, using the AFL++ compilers."
+   },
+   {
+    "cmd": "./afl-fuzz -i seeds_dir -o output_dir -- \\\\ /path/to/tested/program [...program's cmdline...]",
+    "context": "Quick-start step 3: fuzzes a program that reads from stdin, with seeds in seeds_dir and results in output_dir. The README wraps this across two lines with a backslash; it is joined here."
+   },
+   {
+    "cmd": "cat output_dir/crashes/id:000000,* | /path/to/tested/program [...program's cmdline...]",
+    "context": "Quick-start step 5: replays a saved crash by piping it into the target over stdin."
+   }
+  ],
+  "install_notes": "The README recommends building from source and points to docs/INSTALL.md for that; I did not open that file. Quick start: compile the target with afl-cc/afl-c++ (for example via CC= and CXX= at configure time). Dictionaries for verbose formats are described in dictionaries/README.md. Docker is the fastest route; the image is rebuilt on pushes to the stable branch, and aflplusplus/aflplusplus:dev tracks the development branch. The README also says to read the fuzzing risks section in docs/fuzzing_in_depth.md before starting. Homebrew is not mentioned in the pages I read.",
+  "standout": "The license is split per file: afl-fuzz is AGPL-3.0-or-later, but code compiled into a harness stays Apache-2.0, and each file's SPDX header decides. The README also offers a commercial license that is 'obtained by donating to a good cause' (EUR 20,000 to the EFF or CCC), with the project receiving no money.",
+  "status": "maintained. The README lists release version 5.03c and GitHub version 5.04a, names four active maintainers, says the dev branch accepts pull requests, and the homepage lists current sponsors. I did not see a last-commit date, so the exact recency is unverified.",
+  "caveats": "The 'dev' branch is described in the README as 'bleeding edge and you might catch a checkout which does not compile or has a bug'. AGPL-3.0 applies to the combined afl-fuzz binary; commercial use without AGPL compliance requires the EUR 20,000 donation, renewable yearly. The README asks users to read the common-sense fuzzing risks before running it. The brew caveats field is empty. I did not check the build requirements in docs/INSTALL.md.",
+  "quotes": [
+   "AFL++ is a superior fork to Google's AFL - more speed, more and better mutations, more and better instrumentation, custom module support, etc.",
+   "Everything compiled into a fuzzing harness is and will stay Apache 2.0 licensed.",
+   "We cannot stress this enough - if you want to fuzz effectively, read the docs/fuzzing_in_depth.md document!"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://aflplus.plus/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/AFLplusplus/AFLplusplus"
+   },
+   {
+    "label": "Papers page",
+    "url": "https://aflplus.plus/papers/"
+   }
+  ],
+  "fetch_log": [
+   "https://aflplus.plus/ - worked; the page is the project website and links to the GitHub repository.",
+   "https://github.com/AFLplusplus/AFLplusplus - worked; returned the README. I did not fetch docs/INSTALL.md, docs/fuzzing_in_depth.md, or the Features page."
+  ]
+ }
+}

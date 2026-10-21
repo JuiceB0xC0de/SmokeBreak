@@ -1,0 +1,102 @@
+{
+ "name": "fatsort",
+ "desc": "Sorts FAT16 and FAT32 partitions",
+ "homepage": "https://fatsort.sourceforge.io/",
+ "installs_365d": 565,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "library"
+ ],
+ "why": "Sorts FAT directory entries in place without copying, a clever bit of old filesystem surgery that is close to plumbing.",
+ "brief": {
+  "what_it_is": "FATSort is a C command-line utility that sorts the directory entries of FAT12, FAT16, FAT32, and exFAT partitions. It reads the file system's boot sector, recursively sorts directory structures, and supports long file name entries. It runs on Linux, BSD and other UNIX systems, and macOS X. The homepage does not describe the input and output beyond sorting the partition's directories.",
+  "why_it_exists": "The author says it was originally written to organize MP3 files on a hardware MP3 player that did not support automatic file sorting, and that no suitable utility existed at the time.",
+  "how_it_works": "The homepage says the tool reads the file system's boot sector and recursively sorts directory structures. The scout note says it sorts FAT directory entries in place without copying, but the homepage and changelog I read do not say that, so treat the in-place claim as unverified. The changelog says directory entries are only written back when reordering happened, and that the tool checks that all FAT copies match before sorting.",
+  "commands_seen": [
+   {
+    "cmd": "make",
+    "context": "Build step from the homepage Compilation section: run the Makefile in the fatsort directory with make to build the fatsort executable."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installation step from the homepage: run make install to install FATSort."
+   }
+  ],
+  "install_notes": "No brew formula details were on the homepage. Install from source per the homepage: download the tarball from SourceForge, run make in the fatsort directory, then make install. The homepage says it is already packaged in Fedora, Debian, Ubuntu, and Gentoo. Usage is documented only by a man page, which I did not fetch. No accounts or runtimes are mentioned beyond a C toolchain implied by the build.",
+  "standout": "It is a small, focused C tool that sorts the on-disk directory entries of old FAT volumes, so a car stereo or MP3 player reads files in the order you want. It has been maintained since 2004 and added exFAT support in 2019.",
+  "status": "maintained. The SourceForge files page lists fatsort-1.7.1.683.tar.xz and README.md, both modified 2026-03-07, with v1.7 released November 2, 2025 and a changelog running from v0.9.1 in 2004 onward.",
+  "caveats": "The homepage lists no Windows support. Usage is only linked to a man page that I did not read, so the homepage gives no example commands. The scout note says FAT16 and FAT32, but the homepage says FAT12, FAT16, FAT32, and exFAT, so I followed the homepage. The sorting is destructive to on-disk directory order, and the changelog includes past bugs with endianness and multi-byte names. The homepage does not state a license for the brew build beyond the GPLv2 for FATSort itself.",
+  "quotes": [
+   "FATSort is a C-based utility that sorts FAT12, FAT16, FAT32, and exFAT partitions.",
+   "The tool was originally developed to organize MP3 files on a hardware MP3 player that did not support automatic file sorting.",
+   "Just run the Makefile in the fatsort directory with make."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://fatsort.sourceforge.io/"
+   },
+   {
+    "label": "SourceForge downloads and changelog",
+    "url": "https://sourceforge.net/projects/fatsort/files/"
+   }
+  ],
+  "fetch_log": [
+   "https://fatsort.sourceforge.io/ - worked, homepage text read",
+   "https://sourceforge.net/projects/fatsort/files/ - worked, download listing and changelog read; the page is noisy but the content was readable"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It exposes a hidden property of FAT: on-disk directory-entry order can determine how simple players browse files, and this tool lets you reshape it."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "fatsort",
+  "tldr": "A small C tool that reorders the directory entries on FAT and exFAT volumes, so dumb players and car stereos play files in the order you want.",
+  "deeper_look": "FATSort sorts the directory entries of FAT12, FAT16, FAT32 and exFAT partitions. It reads the volume's boot sector, walks the directory structure recursively, and rewrites the entries in sorted order. It handles long file name entries, and it runs on Linux, BSD and other UNIX systems, and macOS.\n\nThe author wrote it to organize MP3 files on a hardware player that could not sort them itself. Such devices often play files in the order they sit in the directory table, not alphabetically. A FAT directory is just a list of entries in whatever order files were written, so copying files over in the wrong order gives a wrong playlist. Sorting the table directly fixes that.\n\nThat is the door it opens: a filesystem is a data structure, and the order you see is a property of bytes on disk, not of the files. The changelog shows some care about this. Entries are only written back when reordering actually happened, and the tool checks that all copies of the FAT match before it sorts.\n\nIt has been around since 2004, with exFAT support added in 2019 and a v1.7 release in November 2025.",
+  "install": "brew install fatsort\n# From source instead: download the tarball from SourceForge, run `make` in the fatsort directory, then `make install`. Needs a C toolchain.",
+  "try_this": [
+   {
+    "cmd": "fatsort --help",
+    "what_happens": "Prints the usage summary and the available options."
+   },
+   {
+    "cmd": "make",
+    "what_happens": "Builds the fatsort executable from source when run in the fatsort directory, per the homepage."
+   },
+   {
+    "cmd": "make install",
+    "what_happens": "Installs the built FATSort, per the homepage."
+   }
+  ],
+  "whats_unique": "It changes the on-disk order of directory entries rather than anything a file manager shows, which is what simple hardware players actually read.",
+  "caveats": "It rewrites directory order on the volume itself, so back up first; the changelog records past bugs with endianness and multi-byte names, and there is no Windows support.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "filesystems",
+   "fat",
+   "exfat",
+   "c",
+   "mp3"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://fatsort.sourceforge.io/"
+   },
+   {
+    "label": "SourceForge downloads and changelog",
+    "url": "https://sourceforge.net/projects/fatsort/files/"
+   }
+  ]
+ }
+}

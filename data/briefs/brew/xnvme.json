@@ -1,0 +1,54 @@
+{
+ "name": "xnvme",
+ "desc": "Cross-platform libraries and tools for efficient I/O and low-level control",
+ "homepage": "https://xnvme.io/",
+ "installs_365d": 85,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "library"
+ ],
+ "why": "Low-level NVMe I/O library that talks directly to storage hardware; a close call for a catalogue of hardware doors.",
+ "brief": {
+  "what_it_is": "xNVMe is a set of C libraries and command-line tools for programming NVMe storage devices from user space, on Linux, FreeBSD, macOS and Windows. Its core, libxnvme, exposes one C API for memory allocation, synchronous and asynchronous NVMe command submission, and device geometry and parameter queries. The API sits on top of a swappable backend: Linux io_uring, io_uring_cmd, libaio or block-layer IOCTLs; the native NVMe driver on FreeBSD, macOS and Windows; SPDK; or the uPCIe user-space driver. The command-line tools (xnvme, lblk, zoned, kvs, xdd) and the libraries for NVM, Zoned and KV command sets are built on top of it, and there is a Fio IO engine for benchmarking. Input is an NVMe device or namespace; output is I/O results and device management actions.",
+  "why_it_exists": "The README frames the problem as a combinatorial one: without a unified API, supporting n platforms and m I/O interfaces costs n*m implementations, and xNVMe aims to reduce that to 1. Its stated goal is to let tool builders, application developers and anyone wanting host software to run on more than one platform talk to NVMe devices through a single C API.",
+  "how_it_works": "The backend is chosen at runtime, so the same application code runs unmodified across backends. The library provides a memory API for DMA-transferable buffers and a command interface for sync and async submission and completion, plus helpers such as maximum transfer size and a device geometry concept. The README also describes homi, a daemon that lets several host processes and accelerator compute kernels run I/O directly against one NVMe controller, which it likens to SR-IOV, and qublk, a ublk server that lets kernel I/O and file systems work alongside the user-space drivers.",
+  "commands_seen": [],
+  "install_notes": "The homepage (the Sphinx docs site) lists sections for building and installing, toolchains per OS (Linux, FreeBSD, macOS, Windows), and troubleshooting, but I did not open those pages, so build steps and the first-run flow are unverified. From the release page: source tarballs are published as xnvme-0.7.5.tar.gz (without subprojects) and xnvme-fat-0.7.5.tar.gz (including SPDK sources). Language bindings are available as a Python package on PyPI (ctypes based), a Rust crate (xnvme-sys) on crates.io, and libxnvme on conda-forge. Changelog entries show that the build uses Meson, that SPDK became optional in the build, and that liburing is taken from the system via pkg-config rather than bundled, so the build depends on what is installed on the host. Using the tools against real hardware requires access to NVMe devices; the README does not describe privileges or permissions, and the Linux backends and the uPCIe backend need device access (uPCIe is noted as Linux only).",
+  "standout": "One C API hides several very different I/O paths (io_uring, libaio, SPDK, a user-space PCIe driver with peer-to-peer data movement to CUDA and HIP accelerators) and chooses between them at runtime. The homi daemon, which the README compares to SR-IOV for sharing one NVMe controller among host processes and accelerator kernels, is also an unusual idea for a user-space library.",
+  "status": "Active. The README says the project is 'in active development' and names Simon A. F. Lund as maintainer. The latest release, v0.7.5, has assets timestamped 2024-09-17 on the releases page. The v0.7.4 release is dated 4 Feb and v0.7.3 is dated 21 Nov, with the year not shown on the page. The release notes list a steady stream of merged pull requests. I did not see a last-commit date, so I cannot give one.",
+  "caveats": "The README does not state supported hardware or kernel versions. The changelog for v0.7.5 includes 'drop support for WPDK (SPDK on Windows)', so SPDK on Windows is no longer supported; the Windows backend uses the native driver instead. The uPCIe backend is Linux-only and is described as compatible with CUDA and HIP (ROCm). The tool descriptions are brief, and the README points to the website for the rest. The homepage I fetched was the docs site landing page and showed only the table of contents for the tools, so I have no command examples from it. The brew description says 'Low-level NVMe I/O library', and the scout note calls it a close call for a catalogue of hardware doors. The project is BSD-3-Clause licensed according to the SPDX header in the README.",
+  "quotes": [
+   "Reduce your code-complexity from n * m (where n is the number of platforms and m are the number of I/O interfaces on the platform.) to 1.",
+   "xNVMe provides APIs, libraries, and tools for user space programming of NVMe devices on Linux, FreeBSD, macOS, and Windows, through a single C API backed by the `libxnvme` library.",
+   "`homi`, the software equivalent of SR-IOV: a daemon enabling multiple users, different processes on the host as well as compute kernels on accelerators, to run I/O directly against a single NVMe controller"
+  ],
+  "links": [
+   {
+    "label": "Documentation homepage",
+    "url": "https://xnvme.io/"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/xnvme/xnvme"
+   },
+   {
+    "label": "Releases (v0.7.5 latest)",
+    "url": "https://github.com/xnvme/xnvme/releases"
+   },
+   {
+    "label": "Python package on PyPI",
+    "url": "https://pypi.org/project/xnvme"
+   }
+  ],
+  "fetch_log": [
+   "https://xnvme.io/ \u2014 worked; returned the Sphinx docs site landing page (table of contents and overview text), with no command examples or install steps visible in the extracted text.",
+   "https://github.com/xnvme/xnvme \u2014 worked; returned the README, which has the project overview, backends, tools and contact info, but no command lines.",
+   "https://github.com/xnvme/xnvme/releases \u2014 worked but truncated at 40000 characters; the v0.7.5 release notes and assets were readable and the older releases were only partly visible."
+  ]
+ }
+}

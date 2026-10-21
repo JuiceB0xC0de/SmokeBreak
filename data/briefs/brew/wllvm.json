@@ -1,0 +1,90 @@
+{
+ "name": "wllvm",
+ "desc": "Toolkit for building whole-program LLVM bitcode files",
+ "homepage": "https://pypi.org/project/wllvm/",
+ "installs_365d": 318,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "library"
+ ],
+ "why": "Builds whole-program LLVM bitcode from ordinary builds, a useful trick for analysing programs at the IR level.",
+ "brief": {
+  "what_it_is": "WLLVM is a set of Python compiler wrappers that stand in for gcc or g++ (as CC and CXX) in an ordinary C or C++ build. Each wrapper runs the real compiler as normal, then also produces LLVM bitcode for each object file. The companion tool extract-bc pulls the bitcode out of a finished executable, library, or archive. Input is an unmodified C or C++ source package; output is a single whole-program LLVM bitcode module (or a bitcode archive). The README says it runs on *nix systems such as Linux, FreeBSD, and Mac OS X.",
+  "why_it_exists": "The README says the two-phase design is needed to be a drop-in replacement for gcc or g++ in any build system. It says gcc's LTO with the gold linker plugin works in many cases but fails when static libraries are involved, and that WLLVM's approach produces working binaries when a build step needs them.",
+  "how_it_works": "The wrappers first invoke the compiler as normal, then call a bitcode compiler to make LLVM bitcode for each object file. They also store the location of that bitcode file in a dedicated section of the object file, and those sections are concatenated when objects are linked. After the build, a WLLVM utility (extract-bc) reads that section and links all the bitcode into one whole-program bitcode file.",
+  "commands_seen": [
+   {
+    "cmd": "pip install wllvm",
+    "context": "Installs WLLVM from PyPI; the README also shows sudo pip install wllvm for system-wide installs."
+   },
+   {
+    "cmd": "export LLVM_COMPILER=clang",
+    "context": "Sets the required environment variable so the wrappers use clang (the other allowed value is dragonegg)."
+   },
+   {
+    "cmd": "CC=wllvm ./configure",
+    "context": "Runs a package's configure script with wllvm as the C compiler, so the build produces bitcode alongside normal objects."
+   },
+   {
+    "cmd": "extract-bc pkg-config",
+    "context": "Extracts the embedded bitcode from the built pkg-config executable and writes pkg-config.bc."
+   },
+   {
+    "cmd": "extract-bc -b src/LinearMath/libLinearMath.a",
+    "context": "Extracts bitcode from a static archive directly into a single module, libLinearMath.a.bc, instead of a bitcode archive."
+   },
+   {
+    "cmd": "WLLVM_CONFIGURE_ONLY=1 CC=wllvm ./configure",
+    "context": "Runs configure with bitcode production turned off so the configure script is not confused by unexpected bitcode files; the README then runs CC=wllvm make."
+   },
+   {
+    "cmd": "CC=wllvm CXX=wllvm++ cmake ../bullet-2.81-rev2613/",
+    "context": "Example of using wllvm for C and wllvm++ for C++ when configuring a CMake project (the Bullet physics library)."
+   },
+   {
+    "cmd": "llvm-ar x libjansson.bca",
+    "context": "Unpacks the bitcode archive produced by extract-bc into its individual bitcode files."
+   },
+   {
+    "cmd": "export WLLVM_OUTPUT_LEVEL=DEBUG",
+    "context": "Turns on the most verbose logging (ERROR, WARNING, INFO, DEBUG are the levels); output goes to stderr unless WLLVM_OUTPUT_FILE is set."
+   },
+   {
+    "cmd": "wllvm-sanity-checker",
+    "context": "Checks the environment variable setup and points out likely configuration mistakes."
+   }
+  ],
+  "install_notes": "Install with pip install wllvm (or sudo pip install wllvm). For development, git clone the repo and run pip install -e . inside it, optionally in a virtualenv. Before use, set LLVM_COMPILER to clang or dragonegg. If using dragonegg, you must also set LLVM_GCC_PREFIX (may be empty) and LLVM_DRAGONEGG_PLUGIN (full path to the plugin); these are ignored for clang. Optional variables include LLVM_CC_NAME, LLVM_CXX_NAME, LLVM_LINK_NAME, LLVM_AR_NAME (for suffixed binaries like clang-3.7), LLVM_COMPILER_PATH, WLLVM_BC_STORE (directory to keep copies of the bitcode), and LLVM_BITCODE_GENERATION_FLAGS. The Homebrew formula lists seven executables (extract-bc, wfortran, wllvm, wllvm++, wllvm-as, wllvm-sanity-checker, wparse-args), but the README only documents four: wllvm, wllvm++, extract-bc, and wllvm-sanity-checker. The README does not describe wfortran, wllvm-as, or wparse-args.",
+  "standout": "Instead of trying to make the linker do the work, it hides bitcode paths inside object-file sections, so ordinary build systems can be used unchanged and the real binaries still get produced. Extraction later gives one whole-program bitcode module for analysis.",
+  "status": "Unknown from the README alone. The README's install section says 'As of August 2016 WLLVM is now a pip package,' and it links a Travis CI badge for the older SRI-CSL repo and tutorials for Ubuntu 14.04 and 16.04, so it looks dated. I did not see a release date or last-commit date; the PyPI page could not be read, so I could not check its release history.",
+  "caveats": "Only *nix platforms are listed (Linux, FreeBSD, Mac OS X); no Windows. It needs clang or the dragonegg GCC plugin, and the dragonegg route needs extra environment setup. Three environment variables must be set before the wrappers work. Cross-compiling requires the right objcopy for the target, set through BINUTILS_TARGET_PREFIX. The README says gllvm is faster if dragonegg support is not needed. The repo links to an SRI-CSL repo for its Travis badge, so the canonical home may have moved. The README shows the main build as a shell-level workflow, not a single command; the brew caveats field was empty. Licensed under MIT.",
+  "quotes": [
+   "WLLVM provides python-based compiler wrappers that work in two steps.",
+   "This two-phase build process is necessary to be a drop-in replacement for gcc or g++ in any build system.",
+   "WLLVM's approach has the distinct advantage of generating working binaries, in case some part of a build process requires that."
+  ],
+  "links": [
+   {
+    "label": "PyPI page (homepage, JS challenge, no content readable)",
+    "url": "https://pypi.org/project/wllvm/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/travitch/whole-program-llvm"
+   },
+   {
+    "label": "Tutorial for building apache on Ubuntu 14.04 (linked from README)",
+    "url": "https://github.com/travitch/whole-program-llvm/blob/master/doc/tutorial.md"
+   }
+  ],
+  "fetch_log": [
+   "https://pypi.org/project/wllvm/ - loaded but returned only a JavaScript 'Client Challenge' page with no README text; treated as failed",
+   "https://github.com/travitch/whole-program-llvm - worked; returned the full README, which was used for all fields"
+  ]
+ }
+}

@@ -1,0 +1,136 @@
+{
+ "name": "arcade-learning-environment",
+ "desc": "Platform for AI research",
+ "homepage": "https://github.com/Farama-Foundation/Arcade-Learning-Environment",
+ "installs_365d": 622,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "library",
+  "simulation"
+ ],
+ "why": "Runs classic Atari ROMs as an RL environment, a real research platform that lets you watch emulated games learn.",
+ "brief": {
+  "what_it_is": "The Arcade Learning Environment (ALE) is a framework for building AI agents that play Atari 2600 games. It is built on the Stella emulator and separates emulation details from agent design. An agent sends an action, such as a joystick input, and the environment returns the screen image, the game score, and an end-of-game signal. The README describes Python, Gymnasium, C++, and WebAssembly interfaces, and says ROMs are packaged inside the pip package. Over 50 games are shown in a linked video, and automatic score and end-of-game extraction covers more than 100 games.",
+  "why_it_exists": "The README says the ALE exists to give researchers and hobbyists a platform for developing general AI agents on Atari 2600 games. It points to the JAIR paper 'The Arcade Learning Environment: An Evaluation Platform for General Agents' for the project's goals.",
+  "how_it_works": "The Python bindings wrap the Stella emulator core, which is kept separate from rendering and sound so emulation stays fast with few dependencies. The agent loop calls ale.act(action) to step the game, then reads the screen with getScreenRGB(). In Gymnasium, gym.make('ALE/Breakout-v5') wraps this into the standard reset/step API. A C++ vectorizer can run several ROMs at once.",
+  "commands_seen": [
+   {
+    "cmd": "pip install ale-py",
+    "context": "Installs the ALE Python package from PyPI. The README says to make sure pip is up to date first, or the install may fail."
+   },
+   {
+    "cmd": "pip install \"gymnasium[atari]\"",
+    "context": "Installs Gymnasium with the Atari extras, which the README says pulls in the necessary modules and ROMs for ale-py."
+   },
+   {
+    "cmd": "mkdir build && cd build",
+    "context": "First step of the C++ build from source with CMake."
+   },
+   {
+    "cmd": "cmake ../ -DCMAKE_BUILD_TYPE=Release",
+    "context": "Configures the C++ build in Release mode."
+   },
+   {
+    "cmd": "cmake --build . --target install",
+    "context": "Compiles and installs the ALE C++ library."
+   },
+   {
+    "cmd": "npm install @farama/ale-wasm",
+    "context": "Installs the WebAssembly build of the ALE from NPM for use in browsers."
+   }
+  ],
+  "install_notes": "Python: CPython 3.11 to 3.15 is supported. Free-threaded CPython builds (the t ABI, e.g. python3.14t) are not supported because OpenCV has no compatible wheels, which preprocessing needs. C++: requires a C++17 compiler, and the README assumes vcpkg is installed. Optional CMake flags include -DSDL_SUPPORT=ON/OFF (off by default, toggles display_screen and sound), -DBUILD_CPP_LIB=ON/OFF (on by default), and -DBUILD_PYTHON_LIB=ON/OFF (on by default). WebAssembly: install via NPM or use the standalone zip from release artifacts. No account or hardware setup is mentioned. ROMs ship in the pip package, so there is no separate ROM download step described.",
+  "standout": "Its Gymnasium integration makes an Atari game a standard environment in a few lines, and a C++ vectorizer runs many ROMs in parallel. It also runs in the browser through WebAssembly. The README also documents the evaluation protocol through the Machado et al. 2018 citation, which covers sticky actions and game mode and difficulty flavours.",
+  "status": "Appears actively maintained, but the fetched README has no release date or commit date, so this is inferred. Evidence: it supports Python 3.14 and 3.15, uses the maintained Gymnasium fork, lists a 2024 CALE citation, and is hosted under the Farama Foundation with a docs site. I did not check release or commit history.",
+  "caveats": "Free-threaded CPython is unsupported. The C++ SDL display and sound support is off by default. The README does not discuss ROM licensing, even though ROMs are bundled in the pip package. The scout note says the project lets you 'watch emulated games learn', but the README frames it as a research framework. Watching comes from render_mode='human' in Gymnasium, not from a dedicated feature.",
+  "quotes": [
+   "The Arcade Learning Environment (ALE) is a simple framework that allows researchers and hobbyists to develop AI agents for Atari 2600 games.",
+   "Emulation core uncoupled from rendering and sound generation modules for fast emulation with minimal library dependencies.",
+   "Atari roms are packaged within the pip package."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/Farama-Foundation/Arcade-Learning-Environment"
+   },
+   {
+    "label": "ALE documentation site",
+    "url": "https://ale.farama.org/"
+   },
+   {
+    "label": "Gymnasium Atari environments page",
+    "url": "https://gymnasium.farama.org/environments/atari/"
+   },
+   {
+    "label": "JAIR paper (2013)",
+    "url": "https://jair.org/index.php/jair/article/view/10819"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/Farama-Foundation/Arcade-Learning-Environment: worked, README returned. Followed no further links because the README covered install, usage, and citations."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "ALE turns classic Atari games into inspectable, programmable environments for experimenting with agents, a compact doorway into reinforcement learning and emulation."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Arcade Learning Environment",
+  "tldr": "A framework that turns Atari 2600 games into environments for AI agents: send a joystick action, get back the screen, the score, and a game-over flag.",
+  "deeper_look": "The Arcade Learning Environment (ALE) wraps the Stella Atari 2600 emulator so a program can play games instead of a person. An agent sends an action, such as a joystick input. The environment returns the screen image, the current score, and a signal for whether the game has ended. The README says score and end-of-game extraction work automatically for more than 100 games.\n\nThe README says it exists to give researchers and hobbyists a platform for developing general AI agents, and points to the JAIR paper 'The Arcade Learning Environment: An Evaluation Platform for General Agents' for the goals. The idea is that one agent, with no game-specific knowledge, should be tested across many different games, and Atari titles are a cheap, varied, well-understood set to do that on.\n\nIn practice you use it from Python. The loop calls ale.act(action) to step the game and getScreenRGB() to read the screen. Through Gymnasium, gym.make('ALE/Breakout-v5') gives the standard reset/step interface that most reinforcement learning code expects. The emulation core is kept separate from rendering and sound so it stays fast with few dependencies. There are also C++ and WebAssembly interfaces, and a C++ vectorizer that runs several ROMs at once.\n\nThe README also points to the Machado et al. 2018 evaluation protocol, which covers sticky actions and the game mode and difficulty flavours. That makes this a door into how reinforcement learning results are measured, not only a way to run old games.",
+  "install": "brew install arcade-learning-environment\n# The brew formula installs no executables. It provides the library, with numpy, python@3.15 and sdl2-compat as dependencies.\n# From PyPI: pip install ale-py (update pip first or the install may fail). Python 3.11 to 3.15 is supported.\n# For Gymnasium: pip install \"gymnasium[atari]\"\n# ROMs ship inside the pip package, so there is no separate download. No account or hardware needed.",
+  "try_this": [
+   {
+    "cmd": "pip install ale-py",
+    "what_happens": "Installs the ALE Python package from PyPI, with the Atari ROMs bundled inside."
+   },
+   {
+    "cmd": "pip install \"gymnasium[atari]\"",
+    "what_happens": "Installs Gymnasium with the Atari extras, so gym.make('ALE/Breakout-v5') gives you a standard reset/step environment."
+   },
+   {
+    "cmd": "npm install @farama/ale-wasm",
+    "what_happens": "Installs the WebAssembly build so the emulator environment can run in a browser."
+   }
+  ],
+  "whats_unique": "It makes an Atari game a standard Gymnasium environment in a few lines, and the same emulator core is reachable from Python, C++, and the browser. It also documents an evaluation protocol, not just a way to run games.",
+  "caveats": "Free-threaded CPython builds are not supported, and nothing here plays the game for you: watching an agent needs render_mode='human' in Gymnasium, and the README does not discuss the licensing of the bundled ROMs.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "reinforcement-learning",
+   "atari",
+   "emulator",
+   "python",
+   "gymnasium",
+   "research"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/Farama-Foundation/Arcade-Learning-Environment"
+   },
+   {
+    "label": "ALE documentation site",
+    "url": "https://ale.farama.org/"
+   },
+   {
+    "label": "Gymnasium Atari environments page",
+    "url": "https://gymnasium.farama.org/environments/atari/"
+   },
+   {
+    "label": "JAIR paper (2013)",
+    "url": "https://jair.org/index.php/jair/article/view/10819"
+   }
+  ]
+ }
+}

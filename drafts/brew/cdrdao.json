@@ -1,0 +1,86 @@
+{
+ "name": "cdrdao",
+ "desc": "Record CDs in Disk-At-Once mode",
+ "homepage": "https://cdrdao.sourceforge.net/",
+ "installs_365d": 1038,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "ancient"
+ ],
+ "why": "Disk-at-once CD recording exposes the raw optical track layout and needs a real burner, a physical hands-on curiosity.",
+ "brief": {
+  "what_it_is": "Cdrdao is a command-line tool for burning audio or data CD-Rs and CD-RWs in disk-at-once (DAO) mode, driven by a plain-text description of the disc contents called a toc-file. The toc-file specifies the tracks, pre-gaps, and sub-channel data, and cdrdao writes the whole disc (lead-in, tracks, lead-out) in one pass. The homepage describes accepting WAVE and raw audio files as input. It also supports reading and writing CD-TEXT on drives that support it, copying audio, data, and mixed-mode discs, and creating CD-TEXT from CDDB lookups. The executables listed in the brief (cdrdao, cue2toc, toc2cddb, toc2cue, toc2mp3) are not named on the homepage, so I did not confirm what the helper tools do.",
+  "why_it_exists": "The homepage argues that track-at-once recording cannot define the data written in pre-gaps, which makes features like hidden bonus tracks or track intros impossible, while disk-at-once recording gives full control of the disc. It also says DAO is the only way to write to the R-W sub-channels needed for CD-G or CD-TEXT.",
+  "how_it_works": "A toc-file describes the disc contents, and cdrdao writes the complete disc in a single step, including lead-in and lead-out, so pre-gaps can be omitted, filled, or lengthened. Sub-channel fields such as catalog number, ISRC, index marks, and copy/pre-emphasis flags are set from the description. The homepage does not explain the implementation beyond this.",
+  "commands_seen": [],
+  "install_notes": "Nothing beyond brew install appears on the homepage. Using it requires a CD recorder drive; the homepage links to Supported Drives and Available Drivers pages, which I did not fetch. The scout note's point that a real burner is needed is consistent with the homepage's focus on writing physical discs, but the homepage itself does not spell out hardware requirements.",
+  "standout": "Its approach gives direct, fine-grained control over the physical disc layout, including pre-gap contents and sub-channel data, where most burning tools hide that layout. It treats the disc as a textual, editable description rather than a list of files.",
+  "status": "unknown. The homepage shows no release date, version number, or last-updated note, and I did not reach the Download or Changelog pages to check.",
+  "caveats": "The homepage lists platforms that have 'reported to work' (FreeBSD, IRIX, Linux, Solaris, HP-UX, Win32, OS/2, UnixWare), which is weaker than a support guarantee. Writing to a disc is irreversible for CD-R media. The homepage does not state a license. The executables list in the brief may not match what the homepage describes, and I did not verify it.",
+  "quotes": [
+   "Cdrdao records audio or data CD-Rs in disk-at-once (DAO) mode based on a textual description of the CD contents (toc-file).",
+   "Recording in disk-at-once mode writes the complete disc, i.e. lead-in, one or more tracks and lead-out, in a single step.",
+   "DAO recording is the only way to write data to the unused R-W sub-channels for e.g. CD-G or CD-TEXT."
+  ],
+  "links": [
+   {
+    "label": "Cdrdao homepage",
+    "url": "https://cdrdao.sourceforge.net/"
+   }
+  ],
+  "fetch_log": [
+   "https://cdrdao.sourceforge.net/ : fetched successfully. It is a plain HTML page, not a GitHub README. It has navigation links to Application Examples, Available Drivers, Supported Drives, Download, and Changelog, but the page text gives no URLs for them, so I did not follow them."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "cdrdao makes a CD\u2019s hidden structure editable, letting you author pregaps and subchannel data\u2014an unusually hands-on way to explore optical-disc formats."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "cdrdao",
+  "tldr": "Burns CDs in disk-at-once mode from a plain-text description of the disc, giving control over pre-gaps and sub-channel data that most burners hide.",
+  "deeper_look": "Cdrdao records audio or data CD-Rs from a textual description of the disc called a toc-file. The file lists the tracks, pre-gaps and sub-channel fields such as catalog number, ISRC, index marks and copy or pre-emphasis flags. Cdrdao then writes the whole disc, lead-in, tracks and lead-out, in a single pass. The homepage says it accepts WAVE and raw audio files as input, and it can also copy audio, data and mixed-mode discs.\n\nThe reason it exists is the difference between two recording modes. According to the homepage, track-at-once recording cannot define what goes in the pre-gaps, which rules out things like hidden bonus tracks or track intros. Disk-at-once gives full control of the disc. In the project's words: \"DAO recording is the only way to write data to the unused R-W sub-channels for e.g. CD-G or CD-TEXT.\"\n\nThe idea underneath is that a CD is not a folder of files. It is a layout with a spiral of sectors, gaps between tracks, and hidden channels running alongside the audio. Here that layout is a text file you can edit, diff and keep in version control. It is a way to see what the disc format really contains.\n\nThe install also brings helper executables: cue2toc, toc2cddb, toc2cue and toc2mp3. Their names suggest conversions between toc-files, cue sheets, CDDB data and MP3, but the homepage does not describe them, so check each with its own help output.",
+  "install": "brew install cdrdao\n# Actually burning a disc needs a CD recorder drive and blank CD-R or CD-RW media.",
+  "try_this": [
+   {
+    "cmd": "cdrdao --help",
+    "what_happens": "Lists the commands and options, which shows what the tool can do before any disc is involved."
+   },
+   {
+    "cmd": "cue2toc --help",
+    "what_happens": "Shows usage for the helper installed alongside cdrdao. Its name suggests it converts cue sheets to toc-files, though the homepage does not confirm this."
+   },
+   {
+    "cmd": "toc2cue --help",
+    "what_happens": "Shows usage for the helper whose name suggests it converts toc-files to cue sheets."
+   }
+  ],
+  "whats_unique": "It treats the disc as an editable text description rather than a list of files, exposing pre-gap contents and sub-channel data that most burning tools hide.",
+  "caveats": "It needs a real CD recorder drive, writing to CD-R is irreversible, and the homepage shows no release date or version, so how actively it is maintained is unclear.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "ancient",
+   "cd",
+   "optical",
+   "burning",
+   "cd-text"
+  ],
+  "links": [
+   {
+    "label": "Cdrdao homepage",
+    "url": "https://cdrdao.sourceforge.net/"
+   }
+  ]
+ }
+}

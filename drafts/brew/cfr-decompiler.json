@@ -1,0 +1,118 @@
+{
+ "name": "cfr-decompiler",
+ "desc": "Yet Another Java Decompiler",
+ "homepage": "https://www.benf.org/other/cfr/",
+ "installs_365d": 1799,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "reverse-engineering",
+  "quick"
+ ],
+ "why": "A Java decompiler that turns compiled class files back into readable source, a satisfying way to take programs apart.",
+ "brief": {
+  "what_it_is": "CFR is a Java decompiler, which turns compiled .class files back into readable Java source. You give it either one or more class files (as a file path or as a fully qualified class name on your classpath) or a whole jar. With --outputdir it writes the source files to a directory, and it can also decompile a single class to the terminal. The author says it handles much of Java 9, 12 and 14 and makes a decent attempt at class files from other JVM languages. The project's own description calls it 'Yet Another Java Decompiler'.",
+  "why_it_exists": "The author's stated reason is simply that it's a satisfying way to take programs apart, and he says it is written entirely in Java 6 so that it will run on any Java. The site also collects his observations on how javac, ECJ, Kotlin and others compile common constructs like string concatenation, enums, lambdas, switch-on-string and try-with-resources.",
+  "how_it_works": "The README does not explain the internals beyond a high-level description. The site's observation pages describe the compiler patterns it recognises and reverses, such as StringBuilder vs StringConcatFactory, switch-on-enum, lambdas and the finally block. Recovery passes and optional aggressive modes are triggered by flags such as --aggressivesizethreshold and --antiobf. The author has also said the tool avoids relying on type tables because those can be faked by obfuscators.",
+  "commands_seen": [
+   {
+    "cmd": "--help",
+    "context": "Lists the available arguments. The site says to run the version jar with --help."
+   },
+   {
+    "cmd": "--outputdir /tmp/putithere",
+    "context": "Added when decompiling a whole jar, so the decompiled files are written to that directory instead of the terminal."
+   },
+   {
+    "cmd": "java org.benf.cfr.reader.Main java.lang.Object",
+    "context": "Run from target/classes after building from source with Maven, to test CFR by decompiling java.lang.Object."
+   },
+   {
+    "cmd": "mvn compile",
+    "context": "Run in the project root to build CFR from source. Requires Maven and a JDK that can still target Java 6, such as JDK 11."
+   },
+   {
+    "cmd": "git clone --recurse-submodules",
+    "context": "Needed to fetch the separate test-data repository used by the Maven decompilation tests."
+   }
+  ],
+  "install_notes": "Brew formula name cfr-decompiler, executable cfr-decompiler. The formula's own description says 'Yet Another Java Decompiler'. The brew-specific invocation of the executable was not seen in the sources read. Other ways to get CFR, according to the README: release jars on the benf.org site and GitHub releases, the org.benf:cfr artifact on Maven Central, and snapshot builds from GitHub Actions artifacts. Building from source needs Maven, and the JAVA_HOME should point to a JDK that still supports source/target 6 (JDK 8 to 11 suggested). A Java runtime is needed to run the jar. Nothing in the sources mentions accounts or configuration files, though an optional options file exists for the test setup.",
+  "standout": "It decompiles compiled code from the compiler's side. It recognises the compiler's own patterns, such as Java 14 record types, sealed classes and Java 21 pattern switches, so output reads like the original source rather than raw bytecode. It is also written in Java 6, so it runs on very old JVMs.",
+  "status": "Quiet. The most recent release on the site is 0.152, dated 2021-12-11, and the previous one is 0.151 from 2021-02-06. The homepage says that in March 2026 the author started tinkering again and that 'it's coming!', and suggests cloning the GitHub repo for a modern version in the meantime. The README says binaries are published on GitHub with release tags and to Maven Central. I did not see a last-commit date.",
+  "caveats": "The author calls it a work in progress and says 'It's got a lot of things missing'. The homepage keeps a 'To do' list. Decompilation of modern Java is only partial ('much of Java 9, 12 & 14'). Output is not guaranteed to be identical to the original source, and the README says the test expected output 'is not the gold standard'. Building from source can fail if JAVA_HOME points at a JDK that cannot target Java 6. Release cadence is slow, and the 0.152 release is over four years old at the time of the fetch. The license was not seen in the sources read. Issue reports must not include copyrighted material, according to the GitHub README.",
+  "quotes": [
+   "CFR will decompile modern Java features - up to and including much of Java 9, 12 & 14, but is written entirely in Java 6, so will work anywhere!",
+   "it's been a long while since I released CFR.",
+   "It's got a lot of things missing, which I'm messing with, as and when time makes itself available ;)",
+   "The expected output is not the gold standard, it merely describes the currently expected output."
+  ],
+  "links": [
+   {
+    "label": "CFR homepage (benf.org)",
+    "url": "https://www.benf.org/other/cfr/"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/leibnitz27/cfr"
+   },
+   {
+    "label": "FAQ",
+    "url": "https://www.benf.org/other/cfr/faq.html"
+   }
+  ],
+  "fetch_log": [
+   "https://www.benf.org/other/cfr/ \u2014 worked; returned the page text, truncated at 40000 characters (the release history was cut off)",
+   "https://github.com/leibnitz27/cfr \u2014 worked; returned the README"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "CFR is a notable Java decompiler that reconstructs readable source from bytecode, exposing how compilers transform familiar language features into executable code."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "CFR",
+  "tldr": "CFR turns compiled Java .class files and jars back into readable Java source, by recognising the patterns compilers leave behind.",
+  "deeper_look": "CFR is a Java decompiler. Give it a .class file, a fully qualified class name on your classpath, or a whole jar, and it prints Java source to the terminal. With `--outputdir` it writes the files to a directory instead. The author says it handles much of Java 9, 12 and 14, and makes a decent attempt at class files from other JVM languages.\n\nThe author's stated reason for building it is that it is a satisfying way to take programs apart. It is written entirely in Java 6, so it runs on almost any JVM.\n\nThe idea underneath is that a compiler is a set of habits. javac, ECJ and Kotlin each turn string concatenation, enums, lambdas, switch-on-string and try-with-resources into recognisable bytecode shapes. CFR works by spotting those shapes and reversing them, so the output reads like the original source rather than raw bytecode. The site collects the author's observations on how each compiler does this, and they are worth reading even if you never run the tool.\n\nThe author has also said CFR avoids relying on type tables, since an obfuscator can fake those. Flags such as `--antiobf` and `--aggressivesizethreshold` switch on extra recovery passes.",
+  "install": "brew install cfr-decompiler\n# needs a Java runtime; the formula depends on openjdk@21",
+  "try_this": [
+   {
+    "cmd": "cfr-decompiler --help",
+    "what_happens": "Lists every argument CFR accepts, including the recovery and anti-obfuscation options."
+   },
+   {
+    "cmd": "cfr-decompiler SomeLibrary.jar --outputdir /tmp/putithere",
+    "what_happens": "Decompiles every class in the jar and writes the Java source files into /tmp/putithere instead of the terminal."
+   }
+  ],
+  "whats_unique": "It decompiles from the compiler's side, recognising the idioms of javac, ECJ and Kotlin, including records, sealed classes and pattern switches, so output looks like source someone wrote.",
+  "caveats": "The author calls it a work in progress with 'a lot of things missing', output is not guaranteed to match the original source, and the latest release (0.152) dates from December 2021, though the homepage hints at new work in 2026.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "java",
+   "decompiler",
+   "reverse-engineering",
+   "jvm"
+  ],
+  "links": [
+   {
+    "label": "CFR homepage (benf.org)",
+    "url": "https://www.benf.org/other/cfr/"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/leibnitz27/cfr"
+   },
+   {
+    "label": "FAQ",
+    "url": "https://www.benf.org/other/cfr/faq.html"
+   }
+  ]
+ }
+}

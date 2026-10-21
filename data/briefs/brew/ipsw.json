@@ -1,0 +1,90 @@
+{
+ "name": "ipsw",
+ "desc": "Research tool for iOS & macOS devices",
+ "homepage": "https://blacktop.github.io/ipsw",
+ "installs_365d": 9494,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "needs-hardware"
+ ],
+ "why": "A research toolkit for Apple firmware and IPSW bundles, a real door into how iOS and macOS images are built and dissected.",
+ "brief": {
+  "what_it_is": "ipsw is a command-line toolkit for Apple firmware research and reverse engineering. It downloads and unpacks IPSW and OTA firmware files, Xcode, macOS installers and KDKs, and inspects the contents: Mach-O binaries, dyld shared caches, and kernelcaches. It can also work with a connected iOS device (listing devices and apps, file transfer over AFC, syslog). Output is terminal text, with --json on commands that support it, and an optional ipswd daemon exposes a REST API.",
+  "why_it_exists": "The README frames it as an iOS/macOS research Swiss Army knife for digging into Apple internals. The homepage says it was designed to be easy to install and use from an intuitive CLI, and credits Jonathan Levin's tools and iOS internals documentation.",
+  "how_it_works": "Each area is a subcommand group: ipsw download and ipsw extract for firmware, ipsw dyld for shared caches, ipsw macho for binaries, ipsw kernel for kernelcaches, and ipsw idev for devices. The README says the dyld cache can be used directly for Objective-C analysis, since extracted dylibs can still reference metadata stored elsewhere in the cache. Optional LLM decompilation sends disassembly to a configured provider when --dec is passed to macho disass or dyld disass.",
+  "commands_seen": [
+   {
+    "cmd": "brew install blacktop/tap/ipsw",
+    "context": "macOS install from the maintainer's Homebrew tap, which includes the extras build. The Homebrew core formula is also available as brew install ipsw."
+   },
+   {
+    "cmd": "sudo snap install ipsw",
+    "context": "Linux install via snap."
+   },
+   {
+    "cmd": "ipsw download ipsw --device iPhone16,1 --latest",
+    "context": "Downloads the latest IPSW for iPhone 15 Pro, per the README comment."
+   },
+   {
+    "cmd": "ipsw extract --kernel /path/to/firmware.ipsw",
+    "context": "Extracts the kernelcache from a local IPSW."
+   },
+   {
+    "cmd": "ipsw diff /path/to/old.ipsw /path/to/new.ipsw",
+    "context": "Compares two firmware builds."
+   },
+   {
+    "cmd": "ipsw dyld extract /path/to/dyld_shared_cache_arm64e Foundation",
+    "context": "Extracts the Foundation dylib from a dyld shared cache."
+   },
+   {
+    "cmd": "ipsw class-dump /path/to/dyld_shared_cache_arm64e SpringBoardServices --headers -o headers",
+    "context": "Dumps Objective-C headers for SpringBoardServices directly from the cache into a headers directory."
+   },
+   {
+    "cmd": "ipsw macho disass /path/to/binary --arch arm64e --symbol _main",
+    "context": "Disassembles the _main symbol of an arm64e binary; --arch selects a slice of a universal binary."
+   },
+   {
+    "cmd": "ipsw macho search /path/to/binaries --import 'CCCrypt'",
+    "context": "Searches a directory of binaries for any that import the CCCrypt symbol."
+   },
+   {
+    "cmd": "ipsw kernel extract /path/to/kernelcache com.apple.driver.ASIOKit -o kexts",
+    "context": "Extracts one KEXT by its full bundle ID into a kexts output directory; pair with ipsw kernel kexts to list them first."
+   }
+  ],
+  "install_notes": "Linux: sudo snap install ipsw. Windows: scoop bucket add blacktop https://github.com/blacktop/scoop-bucket.git, then scoop install blacktop/ipsw. Binaries are also on GitHub Releases. Building from source needs Go 1.26 or later and a C toolchain for CGO (git clone, cd ipsw, make build). Some commands depend on host OS or build variant; Frida support has a separate build. Optional config is read from ~/.config/ipsw/config.yaml (--config selects another file; see config.example.yml). LLM decompilation needs provider setup per the decompiler guide. The ipsw-skill agent plugin is a separate install via npx skills add.",
+  "standout": "It bundles a lot of Apple-internals work in one binary: firmware download and diffing, dyld cache class-dumping straight from the cache, KEXT extraction, device AFC access, and App Store Connect management. It also ships an agent skill (ipsw-skill) so tools like Claude Code can drive it in plain language.",
+  "status": "Not confirmed from dates. The fetched README shows CI and release badges but no dates, and I did not reach the releases or commits page. Signs of active development: a Go 1.26 build requirement, a companion ipsw-skill repo, a precomputed ipsw-diffs repo, GitHub Discussions, and a DeepWiki page.",
+  "caveats": "Platform and build variance: some commands depend on host OS or build variant, and Frida needs a separate build. Homebrew core and the maintainer's tap differ, since only the tap includes the extras build. Building from source needs Go 1.26+ and CGO. The README is research-oriented; it does not state any usage restrictions beyond the MIT license. The homepage is a thin landing page; the README carries nearly all the detail.",
+  "quotes": [
+   "iOS/macOS Research Swiss Army Knife",
+   "Simply the best tool to use when digging into Apple internals.",
+   "Use the cache directly for Objective-C analysis: extracted dylibs can still reference metadata stored elsewhere in the cache."
+  ],
+  "links": [
+   {
+    "label": "Homepage and docs",
+    "url": "https://blacktop.github.io/ipsw"
+   },
+   {
+    "label": "Installation guide",
+    "url": "https://blacktop.github.io/ipsw/docs/getting-started/installation"
+   },
+   {
+    "label": "Agent skill (ipsw-skill)",
+    "url": "https://github.com/blacktop/ipsw-skill"
+   }
+  ],
+  "fetch_log": [
+   "https://blacktop.github.io/ipsw: worked, but thin (landing page with three feature blurbs and no install or command detail)",
+   "https://github.com/blacktop/ipsw: worked, returned the full README (the main source for this brief)"
+  ]
+ }
+}

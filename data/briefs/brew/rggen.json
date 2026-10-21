@@ -1,0 +1,95 @@
+{
+ "name": "rggen",
+ "desc": "Code generation tool for control and status registers",
+ "homepage": "https://rggen.github.io/rggen-webui/",
+ "installs_365d": 77,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "library",
+  "visual"
+ ],
+ "why": "Generates hardware control and status register code from specs, a door into how chip register maps are made.",
+ "brief": {
+  "what_it_is": "RgGen is a command-line code generator for chip register maps (CSRs). You describe registers and bit fields in a human-readable spec (Ruby API, YAML, JSON, TOML, XLSX/ODS/CSV spreadsheets, or SystemRDL with a plugin), and it writes SystemVerilog RTL, a UVM register model (uvm_reg/RAL), a C header, and Markdown documentation. Verilog, Veryl, and VHDL RTL need extra plugins. A browser-based Web UI at rggen.github.io/rggen-webui does the same job without installing anything.",
+  "why_it_exists": "The README frames it as automation for ASIC, IP, FPGA, and RTL engineers, who otherwise hand-write the same register logic, UVM models, and software headers from one register map.",
+  "how_it_works": "The core tool reads the register map spec and a configuration file, then runs output writers for each target: SystemVerilog and the bus protocols (AMBA APB, AMBA AXI4-Lite, Avalon-MM, Wishbone), UVM RAL, C header, and Markdown. Other languages and input formats come in as plugins (rggen-verilog, rggen-veryl, rggen-vhdl, rggen-systemrdl), and the README says plugins can also add custom bit field types and host bus protocols. The README does not describe the internal pipeline in more detail.",
+  "commands_seen": [
+   {
+    "cmd": "gem install rggen",
+    "context": "Installs RgGen and its Ruby dependencies into the system gem root (the README's default route)."
+   },
+   {
+    "cmd": "brew install rggen",
+    "context": "Homebrew route on macOS or Linux; also pulls in Ruby if needed and the VHDL, Verilog, and Veryl plugins."
+   },
+   {
+    "cmd": "docker run -ti --rm -v ${PWD}:/work --user $(id -u):$(id -g) rggendev/rggen-docker:latest -c config.yml -o out block_0.yml",
+    "context": "Runs RgGen from the rggen-docker image, mounting the current directory as /work and writing output to out."
+   },
+   {
+    "cmd": "rggen -c config.yml -o out uart_csr.yml",
+    "context": "Main example from the sample repo: -c gives the configuration file, -o gives the output directory, and the last argument is the register map spec."
+   },
+   {
+    "cmd": "gem install rggen-verilog",
+    "context": "Installs the Verilog writer plugin."
+   },
+   {
+    "cmd": "gem install rggen-veryl",
+    "context": "Installs the Veryl writer plugin."
+   },
+   {
+    "cmd": "gem install rggen-vhdl",
+    "context": "Installs the VHDL writer plugin."
+   },
+   {
+    "cmd": "rggen -c config.yml --plugin rggen-verilog --plugin rggen-veryl --plugin rggen-vhdl uart_csr.yml",
+    "context": "Runs RgGen with the three RTL plugins loaded through --plugin."
+   },
+   {
+    "cmd": "gem install --install-dir /path/to/your/install/directory rggen",
+    "context": "Installs into a custom directory instead of the system root."
+   },
+   {
+    "cmd": "export GEM_PATH=/path/to/your/install/directory",
+    "context": "Points Ruby at the custom gem directory; the README also says to add $GEM_PATH/bin to PATH."
+   }
+  ],
+  "install_notes": "Needs Ruby 3.2 or later, installed first (the README links to the Ruby install page). Homebrew installs Ruby itself if needed. For a custom install location, set GEM_PATH and PATH as shown. If you have RgGen older than 0.9, gem install may fail with an executable conflict; the README points to a wiki page for three fixes. Verilog, Veryl, VHDL, and SystemRDL need their plugin gems installed and passed with --plugin. Docker is an alternative that avoids the Ruby setup. The sample config and UART register map are in the rggen-sample repository.",
+  "standout": "One spec, many outputs: a single register map feeds SystemVerilog, Verilog, Veryl, VHDL, UVM, C, and Markdown, and the input can be a spreadsheet, which many chip teams already use. The plugin system lets teams add their own bit field types and bus protocols, and an in-browser UI removes the install step entirely.",
+  "status": "unknown for release and commit dates: I did not see a release date or last-commit date in the README. Signs of active work: a 2026 copyright line, a CI badge, a Discord and mailing list, and a September 2026 DVCon Japan publication listed. Treat as actively developed, but verify the repo's recent activity yourself.",
+  "caveats": "Verilog RTL under Verilator needs the -Wno-unoptflat switch. Icarus Verilog handles Verilog RTL only. Verilog, Veryl, VHDL, and SystemRDL output each need a separate plugin gem. Requires Ruby 3.2+. Upgrading from pre-0.9 versions can hit an executable name conflict. The README has a few typos and a Veryl plugin link that looks mistyped ('rggen-very' in the Homebrew section). The README links to a wiki for usage and plugin docs, which I did not read. The homepage itself is a JavaScript app and returned no readable text to me.",
+  "quotes": [
+   "RgGen is a code generation tool for ASIC/IP/FPGA/RTL engineers.",
+   "No installation required \u2014 RgGen runs entirely in the browser.",
+   "Feedbacks, bug reports, questions and etc. are wellcome!"
+  ],
+  "links": [
+   {
+    "label": "Web UI (homepage)",
+    "url": "https://rggen.github.io/rggen-webui/"
+   },
+   {
+    "label": "DVCon Japan 2026 paper (PDF)",
+    "url": "https://raw.githubusercontent.com/rggen/publications/master/rggen_dvcon_paper.pdf"
+   },
+   {
+    "label": "Sample repo (UART register map)",
+    "url": "https://github.com/rggen/rggen-sample"
+   },
+   {
+    "label": "Wiki (usage and plugin docs)",
+    "url": "https://github.com/rggen/rggen/wiki"
+   }
+  ],
+  "fetch_log": [
+   "https://rggen.github.io/rggen-webui/ : fetched, but returned only an empty HTML shell with the title RgGen and no readable text (JavaScript app).",
+   "https://github.com/rggen/rggen : fetched, returned the README. I guessed this URL from the project name; it worked.",
+   "Not fetched: https://github.com/rggen/rggen/wiki (linked from README, outside the five-fetch budget's priority)."
+  ]
+ }
+}

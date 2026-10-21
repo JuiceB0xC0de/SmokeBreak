@@ -1,0 +1,81 @@
+{
+ "name": "audiowaveform",
+ "desc": "Generate waveform data and render waveform images from audio files",
+ "homepage": "https://codeberg.org/chrisn/audiowaveform",
+ "installs_365d": 731,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "audio",
+  "visual",
+  "quick"
+ ],
+ "why": "Turns audio into waveform data and images, a modest audio-to-visual transform that is close but not especially deep.",
+ "brief": {
+  "what_it_is": "audiowaveform is a C++ command-line program that reads MP3, WAV, FLAC, Ogg Vorbis or Opus audio and writes waveform data as binary .dat or JSON .json files. It can also render a PNG waveform image from a waveform data file, at a chosen time offset, zoom level, size and color scheme. Audio is first combined to mono, then the minimum and maximum sample values are computed over each group of N input samples, so each group produces one min/max pair in the output. It can also convert MP3 to WAV.",
+  "why_it_exists": "The README describes the output as data that 'can be used to produce a visual rendering of the audio, similar in appearance to audio editing applications.' The README also suggests generating data once and rendering many images from it, and mentions web use with Peaks.js.",
+  "how_it_works": "Input channels are mixed to mono, then min and max sample values are computed over every N input samples, where N is set by --zoom (default 256), giving one min/max pair per output point. The result is stored as .dat or .json, and a PNG is drawn from that data at a given zoom or pixels-per-second, with optional start and end times. The README advises building a .dat file first, because decoding long MP3 files can take significant time.",
+  "commands_seen": [
+   {
+    "cmd": "brew install audiowaveform",
+    "context": "Homebrew install on macOS, per the README's Mac OSX section."
+   },
+   {
+    "cmd": "audiowaveform -i test.mp3 -o test.dat -z 256 -b 8",
+    "context": "Creates a binary waveform data file from an MP3 at 256 samples per point with 8-bit resolution."
+   },
+   {
+    "cmd": "audiowaveform -i test.dat -o test.png -z 512",
+    "context": "Renders a PNG from an existing .dat file at 512 samples per pixel. The README notes zoom cannot be finer than the zoom used to create the .dat."
+   },
+   {
+    "cmd": "audiowaveform -i test.dat -o test.png --pixels-per-second 50 -s 5.0 -w 1000 -h 200",
+    "context": "Renders a 1000x200 PNG at 50 pixels per second, starting 5.0 seconds into the audio."
+   },
+   {
+    "cmd": "ffmpeg -i test.mp4 -f wav - | audiowaveform --input-format wav --output-format dat -b 8 > test.dat",
+    "context": "Pipes ffmpeg-decoded audio from a video file into audiowaveform over stdin and stdout to produce a .dat file."
+   },
+   {
+    "cmd": "audiowaveform -i test.dat -o test.json",
+    "context": "Converts a binary .dat waveform file to JSON."
+   },
+   {
+    "cmd": "audiowaveform -i test.mp3 -o test.wav",
+    "context": "Converts MP3 to WAV audio, which the README lists as a secondary use."
+   },
+   {
+    "cmd": "cmake -D BUILD_STATIC=1 ..",
+    "context": "Build option to statically link the library dependencies, run from the build directory."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the program to /usr/local/bin and man pages to /usr/local/share/man by default."
+   },
+   {
+    "cmd": "audiowaveform --help",
+    "context": "Shows the help message, which the README gives as the check that the build runs."
+   }
+  ],
+  "install_notes": "Homebrew works on macOS. Ubuntu users can use the PPA ppa:chris-needham/ppa. Debian .deb packages (amd64 and arm64) and RHEL/CentOS RPMs are on the Releases page. There is an AUR package for Arch, a Docker image (realies/audiowaveform, Alpine-based), and a flake.nix for Nix users. Windows binaries are on the Releases page. Building from source needs cmake 2.8.7 or later, g++ 4.6.3 or later, and Boost 1.46.0 or later, plus libmad, libid3tag, libsndfile, and gd. Unit tests use Google Test, which the README says to download and symlink by hand. The default build is Release and tests are on by default, and ENABLE_TESTS=0 turns them off.",
+  "standout": "It is a small, focused tool: decode once, store a compact min/max pyramid-style file, then render images or JSON from that file at any zoom without re-decoding. It is built for embedding in web players, with binary and JSON outputs and a bars style with rounded corners. The README describes it as an audio-editor-style waveform renderer, which is familiar territory, so the value is in the practical pipeline rather than new technique.",
+  "status": "Maintained. The Codeberg page shows a latest commit 'Fixed loadWaveformData()' dated 2026-07-29, a VERSION file and CHANGELOG at 1.11.1 dated 2026-05-17, 37 open issues, 2 open pull requests, 17 releases and 38 tags. The README was updated with flake.nix support on 2026-05-17.",
+  "caveats": "The README's install section still shows 1.10.2 Debian packages and a 1.10.1 Amazon Linux RPM, which lag the current 1.11.1 version. Piping into audiowaveform works only for MP3, WAV and raw input, not FLAC or Ogg Vorbis. Opus needs libsndfile 1.0.29 or later. Building from source needs several C and C++ libraries, and the Google Test download is manual. The Windows static build is a separate project (compile-static-audiowaveform). The source is hosted on Codeberg and the README points to git@codeberg.org for cloning. The page also shows a notice that Codeberg has changed its terms, which does not affect this project directly. The README does not state a license beyond 'See COPYING'; I did not open COPYING, so I cannot confirm the license name.",
+  "quotes": [
+   "audiowaveform is a C++ command-line application that generates waveform data from either MP3, WAV, FLAC, Ogg Vorbis, or Opus format audio files.",
+   "In general, you should use audiowaveform to create waveform data files (.dat) from input MP3 or WAV audio files, then create waveform images from the waveform data files.",
+   "It is also possible to create PNG images directly from either MP3 or WAV files, although if you want to render multiple images from the same audio file, it's generally preferable to first create a waveform data (.dat) file"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (Codeberg)",
+    "url": "https://codeberg.org/chrisn/audiowaveform"
+   }
+  ],
+  "fetch_log": [
+   "https://codeberg.org/chrisn/audiowaveform: fetched and worked. The page returned the repository view with the full README. No further links were fetched, because the README was complete and covered usage, formats and install steps. The 'Data Formats' section links to a page I did not open."
+  ]
+ }
+}

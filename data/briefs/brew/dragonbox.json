@@ -1,0 +1,81 @@
+{
+ "name": "dragonbox",
+ "desc": "Reference implementation of Dragonbox in C++",
+ "homepage": "https://github.com/jk-jeon/dragonbox",
+ "installs_365d": 91,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "math",
+  "library"
+ ],
+ "why": "Reference implementation of an elegant shortest float-to-string algorithm, a close call showing how numbers become text.",
+ "brief": {
+  "what_it_is": "Dragonbox is a C++ library that converts a floating-point number into the shortest decimal digits that will read back as the same number. Given a nonzero finite float or double, its to_decimal function returns a decimal significand, a decimal exponent, and optionally a sign flag. A separate to_chars function, shipped with the library, turns those integers into a text string such as 1.234E0 for the input 1.234. The core dragonbox.h header is header-only. The string-generation part adds dragonbox_to_chars.h and dragonbox_to_chars.cpp. The package is not a command-line tool and has no executables.",
+  "why_it_exists": "The README frames it as a successor to Schubfach, a float-to-string algorithm by Raffaello Giulietti, and as inspired by Grisu and Grisu-Exact. It promises three things: round-trip correctness, the shortest output length, and correct rounding among the shortest candidates. The name comes from the pigeonhole principle, which Schubfach calls the drawer principle and which is also known as Dirichlet's box principle. Dragonbox keeps the box idea and adds Grisu's dragon.",
+  "how_it_works": "Dragonbox does not produce the final string. It computes the decimal significand and exponent that a string generator then formats, and the README says the string step is not officially part of the algorithm. The README says the algorithm is explained in a paper at other_files/Dragonbox.pdf, which includes a mathematical proof. It also says the proof was checked with verification programs in the test and meta directories. The README does not describe the internal arithmetic in more detail.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/jk-jeon/dragonbox",
+    "context": "Clones the repository before building it from source with CMake."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Run from a build directory to generate platform-specific build files for the library."
+   },
+   {
+    "cmd": "cmake .. -DDRAGONBOX_INSTALL_TO_CHARS=OFF",
+    "context": "Configures the build so that only dragonbox.h is installed, without the string-generation files."
+   },
+   {
+    "cmd": "cmake --install .",
+    "context": "Installs the built headers, and the string-generation files if they were built, into the system."
+   },
+   {
+    "cmd": "cmake .. -DDRAGONBOX_ENABLE_SUBPROJECT=On",
+    "context": "Configures the build so that the test, benchmark, common, and meta subprojects are built from the root directory."
+   },
+   {
+    "cmd": "cmake --build .",
+    "context": "Builds the subproject, such as the tests, after configuring it with CMake."
+   },
+   {
+    "cmd": "ctest .",
+    "context": "Runs the test suite for the test subproject."
+   },
+   {
+    "cmd": "mkdir -p build/subproject/test",
+    "context": "Creates a separate build folder so that the test subproject can be built on its own."
+   }
+  ],
+  "install_notes": "Not a Homebrew-style CLI. The library is C++11 or later, and every function is constexpr since C++20. Header-only use needs only dragonbox.h. For string output, add dragonbox_to_chars.h and dragonbox_to_chars.cpp. Setup can be manual, or done through CMake with FetchContent_Declare and FetchContent_MakeAvailable, then target_link_libraries against dragonbox::dragonbox or dragonbox::dragonbox_to_chars. A system install can use find_package(dragonbox). The benchmark subproject runs MATLAB scripts and must have its working directory set to subproject/benchmark. Non-Visual Studio generators need that set by hand.",
+  "standout": "The output is guaranteed to be the shortest, correctly rounded string that round-trips, and the README presents this as a tie-break-aware refinement of Schubfach. The policy system is also unusual: sign handling, trailing-zero handling, rounding mode for parsing and for formatting, and the cache size are all compile-time choices. The README also says the fmt library uses an almost identical implementation.",
+  "status": "unknown. The README gives no release version or last-commit date. Its benchmarks are dated 03/30/2024, which is the only date evidence. I did not check the commit history or releases page.",
+  "caveats": "to_decimal is only defined for finite nonzero inputs. Behavior with infinities, NaN, or zeros is undefined, although to_chars and to_chars_n accept any input. Each policy combination creates a separate template instantiation, which can bloat binaries. The compact cache is about 20 percent slower, and the README says it has no effect on float. The README says the Schubfach comparison is not completely fair. The Clang and MSVC benchmark images are not described in text. Licensing is dual Apache 2.0 with LLVM exceptions or Boost 1.0, with third-party code in subproject/3rdparty excluded. The main implementation is described as hard to read, and the README points to a simpler version in subproject/simple for porting.",
+  "quotes": [
+   "Dragonbox is a float-to-string conversion algorithm based on a beautiful algorithm Schubfach, developed by Raffaello Giulietti in 2017-2018.",
+   "Since there are only three files, it should be not difficult to set up this library manually if you want, but you can also use it via CMake as explained below.",
+   "the main implementation is riddled with template indirections obscuring the core logic of the algorithm."
+  ],
+  "links": [
+   {
+    "label": "GitHub homepage and README",
+    "url": "https://github.com/jk-jeon/dragonbox"
+   },
+   {
+    "label": "Simpler reference implementation in subproject/simple",
+    "url": "https://github.com/jk-jeon/dragonbox/tree/master/subproject/simple"
+   },
+   {
+    "label": "Drachennest, a fairer benchmark cited by the author",
+    "url": "https://github.com/abolz/Drachennest"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/jk-jeon/dragonbox: fetched OK, README returned. The README links to the paper and docs by relative path, and I did not fetch them because the README was complete enough."
+  ]
+ }
+}

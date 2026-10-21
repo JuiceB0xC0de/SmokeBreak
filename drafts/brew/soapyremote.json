@@ -1,0 +1,152 @@
+{
+ "name": "soapyremote",
+ "desc": "Use any Soapy SDR remotely",
+ "homepage": "https://github.com/pothosware/SoapyRemote/wiki",
+ "installs_365d": 189,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "network",
+  "afternoon",
+  "radio"
+ ],
+ "why": "Lets one machine's SDR hardware be used across the network, a neat way into remote radio sensing.",
+ "brief": {
+  "what_it_is": "SoapyRemote is a SoapySDR plugin module plus a server executable that lets any SoapySDR-supported SDR be used over a network. You run SoapySDRServer on the machine that has the hardware, and the SoapyRemote client plugin on another machine finds and opens those devices through the standard SoapySDR API, SoapySDRUtil, and applications built on it. Device discovery and control go over a TCP RPC protocol, and sample streams go over UDP by default, with TCP available as an option. The client sees the remote radio as a local device.",
+  "why_it_exists": "The wiki pitches it as a way to turn any SDR into a network peripheral: sharing one device across a network, using it from several processes or hosts, adapting an IPv4-only SDR for an IPv6 network, aiding embedded-device development, or working around software issues.",
+  "how_it_works": "SoapyRemote has two parts: the server, which runs on the remote machine, and the client, which is an ordinary SoapySDR plugin. The server runs a simple RPC protocol over reliable TCP for discovery, creation, and configuration, and streams use a separate windowed-datagram protocol over UDP, with flow-control messages so the sender never sends more than the receiver's socket buffers can hold. Discovery of servers on the local network is automatic unless you name a host with the remote key.",
+  "commands_seen": [
+   {
+    "cmd": "SoapySDRServer --bind",
+    "context": "Run on the machine with the SDR hardware to start the server with default binding."
+   },
+   {
+    "cmd": "SoapySDRServer --bind=\"0.0.0.0:1234\"",
+    "context": "Start the server with a custom bind address and port."
+   },
+   {
+    "cmd": "sudo systemctl start SoapySDRServer",
+    "context": "Start the server in the background as a systemd service on Linux."
+   },
+   {
+    "cmd": "SoapySDRUtil --find=\"remote=myServer\"",
+    "context": "Find devices on a specific remote server by hostname or IP instead of relying on auto-discovery."
+   },
+   {
+    "cmd": "SoapySDRUtil --find=\"remote=myServer, remote:timeout=1000000\"",
+    "context": "Set a longer connection timeout, given in microseconds (default is 50 milliseconds)."
+   },
+   {
+    "cmd": "sudo sysctl -w net.core.rmem_max=104857600",
+    "context": "Raise the Linux maximum socket receive buffer, which the wiki recommends for large stream windows."
+   },
+   {
+    "cmd": "git clone https://github.com/pothosware/SoapyRemote.git",
+    "context": "First step of building SoapyRemote from source."
+   },
+   {
+    "cmd": "sudo apt-get install avahi-daemon libavahi-client-dev",
+    "context": "Install Avahi on Ubuntu, which the wiki says is used for device discovery."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Configure the build from the build directory; CMake finds the SoapySDR development files."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Install the plugin module into the SoapySDR modules directory and SoapySDRServer into bin/."
+   }
+  ],
+  "install_notes": "Pre-built installers are available through the Pothos SDR environment (downloads page on the PothosCore wiki). Otherwise, build from source with CMake, after installing SoapySDR; the SoapyRemote build must be installed on both the remote (hardware) and local (client) machines. On Ubuntu, avahi-daemon and libavahi-client-dev are recommended for discovery. No extra runtimes or accounts are needed. On Linux, optional tuning includes raising the socket buffer limits with sysctl and granting the user rtprio 99 in /etc/security/limits.conf so forwarding threads can get elevated priority. The server can run under systemd; enable it with sudo systemctl enable SoapySDRServer to start at boot.",
+  "standout": "The server is a transparent transport for the whole SoapySDR API, so existing SDR applications, UHD and GrOsmoSDR users included, can use a remote device with only extra device arguments. Stream tuning is exposed as per-stream keys such as remote:format (for example CS16 or CS8 on the wire), remote:scale, and remote:prot, and the wiki explains the reasoning behind each.",
+  "status": "Unknown. The wiki page was last edited by Josh Blum on Mar 2, 2019 (47 revisions). The repository README I fetched shows a CI build badge but no release or commit dates, so I could not confirm recent activity.",
+  "caveats": "Linux tuning is needed for good performance: larger socket buffers, possibly a jumbo MTU (the wiki says the default is just under 1500 bytes and that not all hardware supports jumbo frames), and elevated thread priority. The default UDP streams favour throughput over reliability, so packet loss is possible unless you set remote:prot to tcp. The default connection timeout is 50 ms, which the wiki says rarely needs changing. The wiki's ifconfig example is an older tool. Licensed under the Boost Software License 1.0. Platform notes beyond Linux are sparse in what I read.",
+  "quotes": [
+   "Use any SoapySDR supported device transparently over a local network link.",
+   "The remote support feature can turn any SDR into a network peripheral.",
+   "The server operates a simple RPC protocol over the reliable TCP socket layer."
+  ],
+  "links": [
+   {
+    "label": "Wiki (homepage)",
+    "url": "https://github.com/pothosware/SoapyRemote/wiki"
+   },
+   {
+    "label": "Repository",
+    "url": "https://github.com/pothosware/SoapyRemote"
+   },
+   {
+    "label": "Pothos SDR downloads (prebuilt installers)",
+    "url": "https://github.com/pothosware/PothosCore/wiki/Downloads"
+   },
+   {
+    "label": "SoapySDR wiki (dependency)",
+    "url": "https://github.com/pothosware/SoapySDR/wiki"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/pothosware/SoapyRemote/wiki - worked; the Home wiki page with full content, last edited Mar 2, 2019",
+   "https://github.com/pothosware/SoapyRemote - worked; short README with build badge, dependency and documentation links, and Boost license notice"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It makes an SDR behave like a local network device, exposing radio hardware to existing apps through a purpose-built control and high-throughput sample-streaming protocol."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "SoapyRemote",
+  "tldr": "Turns any SoapySDR-supported radio into a network device, so software on one machine can tune and stream from an SDR plugged into another.",
+  "deeper_look": "SoapyRemote has two halves. SoapySDRServer runs on the machine with the radio attached. A client plugin on another machine registers with SoapySDR, finds the server, and presents the remote radio as an ordinary local device. SoapySDRUtil and any application built on the SoapySDR API can then use it without changes.\n\nThe wiki pitches it this way: \"The remote support feature can turn any SDR into a network peripheral.\" Its listed uses include sharing one device across several processes or hosts, adapting an IPv4-only SDR to an IPv6 network, and helping with embedded-device development.\n\nThe interesting part is the transport. Discovery, creation and configuration run over a simple RPC protocol on TCP. Sample streams use a separate windowed-datagram protocol over UDP, with flow-control messages so the sender never sends more than the receiver's socket buffers can hold. TCP streaming is available as an option. Radio samples are a continuous, high-rate stream, so this is a small look at what it takes to move them across a network without dropping them.\n\nStream behaviour is tuned with per-stream keys such as remote:format (for example CS16 or CS8 on the wire), remote:scale and remote:prot. The wiki explains the reasoning behind each, which makes it a readable primer on the bandwidth versus fidelity trade-offs.",
+  "install": "brew install soapyremote\n# Needs SoapySDR (installed as a dependency) and an SDR that SoapySDR supports.\n# SoapyRemote must be installed on both the machine with the hardware and the client machine.\n# On Ubuntu, avahi-daemon and libavahi-client-dev are recommended for discovery.",
+  "try_this": [
+   {
+    "cmd": "SoapySDRServer --bind",
+    "what_happens": "Run on the machine with the radio. Starts the server with default binding so clients can discover and open the device."
+   },
+   {
+    "cmd": "SoapySDRUtil --find=\"remote=myServer\"",
+    "what_happens": "Run on the client. Lists the devices on a named server instead of relying on auto-discovery."
+   },
+   {
+    "cmd": "SoapySDRServer --bind=\"0.0.0.0:1234\"",
+    "what_happens": "Starts the server on a custom address and port."
+   }
+  ],
+  "whats_unique": "The server is a transparent transport for the whole SoapySDR API, so existing SDR applications can use a remote radio with only extra device arguments. The wiki also documents the stream protocol and its tuning knobs.",
+  "caveats": "Needs an SDR to be useful, and good performance on Linux takes tuning (larger socket buffers, possibly jumbo frames, thread priority); the wiki was last edited in 2019 and recent activity is unconfirmed.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "sdr",
+   "network",
+   "streaming",
+   "udp"
+  ],
+  "links": [
+   {
+    "label": "Wiki (homepage)",
+    "url": "https://github.com/pothosware/SoapyRemote/wiki"
+   },
+   {
+    "label": "Repository",
+    "url": "https://github.com/pothosware/SoapyRemote"
+   },
+   {
+    "label": "SoapySDR wiki (dependency)",
+    "url": "https://github.com/pothosware/SoapySDR/wiki"
+   },
+   {
+    "label": "Pothos SDR downloads (prebuilt installers)",
+    "url": "https://github.com/pothosware/PothosCore/wiki/Downloads"
+   }
+  ]
+ }
+}

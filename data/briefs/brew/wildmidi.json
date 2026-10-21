@@ -1,0 +1,57 @@
+{
+ "name": "wildmidi",
+ "desc": "Simple software midi player",
+ "homepage": "https://github.com/Mindwerks/wildmidi",
+ "installs_365d": 365,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "quick",
+  "audio",
+  "library"
+ ],
+ "why": "A software MIDI player that renders General MIDI from patch samples, a small door into how wavetable instruments are built.",
+ "brief": {
+  "what_it_is": "WildMIDI is a software MIDI player with a core softsynth library that other applications can embed. It takes MIDI-style files (MIDI, plus converted formats such as XMI, MUS, HMP and HMI) and renders them to audio using instrument sounds from patch or bank files. The library returns the rendered audio to the calling application, and the bundled command-line player plays it through the system's audio output. Per the README's changelog, 0.5.0 also reads a compressed HMP variant and Yamaha SMAF ringtone files are in an unreleased 0.5.1 section.",
+  "why_it_exists": "The README frames it as a simple player, with the library designed so that it is easy to include WildMIDI into applications that wish to include MIDI file playback.",
+  "how_it_works": "The library converts a MIDI file into audio samples, which it passes back to the caller rather than playing them itself. Instruments come from one of several sources: Gravis Ultrasound patch files, SoundFont2 (SF2) files, GENMIDI (OP2) FM banks, or the built-in OPL3 FM synthesizer. The README does not go deeper into the rendering internals.",
+  "commands_seen": [
+   {
+    "cmd": "./ci-local.sh --docker              compile jobs, in a container",
+    "context": "Runs the compile CI jobs in a container (from the README's TESTING YOUR CHANGES section, for contributors, not for playing music)."
+   },
+   {
+    "cmd": "./ci-local.sh --all                 those plus the BSD VMs",
+    "context": "Runs the compile jobs plus the BSD builds; the README notes the BSD VMs need qemu and /dev/kvm to run."
+   },
+   {
+    "cmd": "./ci-local.sh --docker native       run only named jobs",
+    "context": "Runs only the named CI job, here 'native', inside the Docker container."
+   },
+   {
+    "cmd": "./ci-local.sh --list                show all job names",
+    "context": "Lists the names of all CI jobs that ci-local.sh can run."
+   }
+  ],
+  "install_notes": "Building from source needs cmake (3.4 or newer per the 0.4.6 changelog) and a C compiler such as GCC or clang; Windows and other ports need MinGW, Visual Studio, DJGPP, OpenWatcom, devkitARM, devkitPPC, devkitA64 or Vitasdk depending on target. Optional features are chosen at cmake time: WANT_SF2=ON (on by default) enables SoundFont2 rendering, WANT_MAFM=ON enables SMAF FM synthesis in the unreleased 0.5.1, and the WANT_??? options select audio output backends. Playing SF2 music needs an .sf2 file, or a config file with a soundfont directive passed to WildMidi_Init(). GUS playback needs Gravis patch files and a config file. The OPL3 path needs no patch files: the GM voice bank is embedded in the library, and the player's -O/--opl3 switch uses it. An OP2 bank such as the one shipped with Doom can be passed to WildMidi_Init() in place of a config file.",
+  "standout": "One small library renders the same MIDI file through several very different instrument formats, including a built-in OPL3 FM emulator with an embedded General MIDI bank, so it needs no sample files at all. It also targets an unusually wide range of platforms, from Linux, macOS and Windows to DOS, OS/2, AmigaOS, Nintendo 3DS, Wii and Switch, and PS Vita.",
+  "status": "Maintained, by the evidence in the README: the 0.5.0 release is dated 2026-07-24 and an unreleased 0.5.1 section lists new features and a new ci-local.sh script. I did not check commit history, so the README is the only evidence.",
+  "caveats": "The SMAF support and the MA-series FM synthesis are listed under 0.5.1 (unreleased) and are gated behind WANT_MAFM=ON; the README points to docs/SMAF_FM.md for that. Eight hand-maintained makefiles sit alongside cmake, so a change can build under cmake and still break them. ci-local.sh's Docker mode builds a roughly 5GB image on first run, and macOS and Windows CI cannot run on a Linux host. The README lists GPLv3+ and LGPLv3 as the licenses. The homepage is the GitHub repository, and the README calls it the website.",
+  "quotes": [
+   "WildMIDI is a simple software midi player which has a core softsynth library that can be used in other applications.",
+   "The WildMIDI library converts MIDI files into audio which is then passed back to the calling application.",
+   "The library API is designed so that it is easy to include WildMIDI into applications that wish to include MIDI file playback."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage, README)",
+    "url": "https://github.com/Mindwerks/wildmidi"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/Mindwerks/wildmidi - fetched OK; returned the README, which was complete, so I did not follow further links (docs/SMAF_FM.md is referenced in the README but not fetched)."
+  ]
+ }
+}

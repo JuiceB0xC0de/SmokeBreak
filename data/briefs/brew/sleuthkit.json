@@ -1,0 +1,62 @@
+{
+ "name": "sleuthkit",
+ "desc": "Forensic toolkit",
+ "homepage": "https://www.sleuthkit.org/",
+ "installs_365d": 4246,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "reverse-engineering",
+  "afternoon",
+  "science"
+ ],
+ "why": "A forensic toolkit for dissecting disk images and file systems, a real door into how storage is structured.",
+ "brief": {
+  "what_it_is": "The Sleuth Kit (TSK) is an open source collection of command-line forensic tools and a C library for analyzing disk images and file systems. It takes a raw disk or file system image, such as one made with dd, and lets an investigator inspect partitions, file system structures, files, deleted content, and hashes, and recover evidence. The tools are low-level and each does one job, so they are chained together for a full analysis. It also powers Autopsy, a GUI front end.",
+  "why_it_exists": "The README says it lets investigators identify and recover evidence from images acquired during incident response or from live systems, and that being open source lets investigators verify what the tool does or customize it. It describes itself as independent of any commercial or academic organization.",
+  "how_it_works": "Tools are organized in layers, and each name's first letter shows its layer: f for file names (fls, ffind), i for metadata structures such as inodes (ils, istat, icat, ifind), and blk for content units (blkls, blkcat, blkcalc, blkstat). Its code descends from The Coroner's Toolkit file system tools, modified for platform independence, with added support for NTFS and FAT. Timelines come from fls and ils body files fed to mactime, and hfind does fast hash-set lookups including NSRL.",
+  "commands_seen": [
+   {
+    "cmd": "fls -rm dir",
+    "context": "From the README's timeline section: used to get data on allocated and unallocated file names for a mactime body file."
+   },
+   {
+    "cmd": "ils -m",
+    "context": "From the README's timeline section: used to get data on unallocated inodes for a mactime body file."
+   }
+  ],
+  "install_notes": "The README only says to see the INSTALL.txt document, which I did not fetch. Beyond brew install, I found no details on dependencies, hardware, accounts, or configuration.",
+  "standout": "Tool names carry their layer in the first letter, and each tool does one narrow job meant to be piped and combined, closer to Unix philosophy than to a single monolithic forensic suite. Its lineage runs back to Wietse Venema and Dan Farmer's Coroner's Toolkit.",
+  "status": "maintained. The homepage news lists Sleuth Kit 4.15.0 released Apr 15 2026 (bug fixes), 4.14.0 in Apr 2025, and 4.13.0 in Mar 2025 with BitLocker and experimental XFS and BtrFS support. I could not check the GitHub commit history, so the evidence is the homepage release list.",
+  "caveats": "Input must be a raw image or file system image; the README says the tools analyze images such as those made with dd. The README warns that results should be re-created with a second tool to verify the data. Its 'file' type identification relies mostly on the first bytes of a file, so it may miss types from middle blocks or clusters. Licensing is mixed: file system tools are under the IBM open source license and Common Public License, srch_strings and fiwalk are under the GPL, and the library uses MIT and BSD 3-clause code. Per the homepage, experimental XFS and BtrFS support was added in 4.13.0. The homepage promotes the closed-source Cyber Triage product alongside this one.",
+  "quotes": [
+   "The Sleuth Kit is an open source forensic toolkit for analyzing Microsoft and UNIX file systems and disks.",
+   "These tools are low-level and each performs a single task.  When used together, they can perform a full analysis.",
+   "As with any investigation tool, any results found with The Sleuth Kit should be be recreated with a second tool to verify the data."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.sleuthkit.org/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/sleuthkit/sleuthkit"
+   },
+   {
+    "label": "TSK wiki (tool overview and docs)",
+    "url": "http://wiki.sleuthkit.org/index.php?title=Main_Page"
+   },
+   {
+    "label": "Autopsy (GUI built on TSK)",
+    "url": "http://www.sleuthkit.org/autopsy"
+   }
+  ],
+  "fetch_log": [
+   "https://www.sleuthkit.org/ - worked; org homepage with release news and tool descriptions, no command examples.",
+   "https://github.com/sleuthkit/sleuthkit - worked; returned the README (introduction, overview, licenses, install pointer). INSTALL.txt and the wiki were not fetched."
+  ]
+ }
+}

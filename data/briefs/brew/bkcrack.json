@@ -1,0 +1,93 @@
+{
+ "name": "bkcrack",
+ "desc": "Crack legacy zip encryption with Biham and Kocher's known plaintext attack",
+ "homepage": "https://github.com/kimci86/bkcrack",
+ "installs_365d": 958,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "take-things-apart",
+ "tags": [
+  "reverse-engineering",
+  "afternoon",
+  "math"
+ ],
+ "why": "Implements the Biham and Kocher known-plaintext attack that cracks legacy zip encryption, a vivid lesson in how stream ciphers fail.",
+ "brief": {
+  "what_it_is": "bkcrack is a command-line tool that implements Biham and Kocher's known-plaintext attack against traditional PKWARE encryption (ZipCrypto) in ZIP archives. It takes a ciphertext entry plus 12 or more bytes of known plaintext, either from zip archives or plain files, and recovers the three 32-bit internal keys. From those keys it can decrypt the entry, strip or change the archive's password, or brute-force the original password.",
+  "why_it_exists": "The README frames it as a demonstration of a known weakness: legacy ZIP encryption can be broken with known plaintext, and the recovered internal state also decrypts other entries encrypted with the same password.",
+  "how_it_works": "The legacy cipher produces a keystream from a generator with three 32-bit state integers, initialized from the password and updated with the plaintext as encryption proceeds. Given ciphertext and at least 12 bytes of matching plaintext (at least 8 of them contiguous), the attack recovers that internal state. The README notes that more contiguous known plaintext makes the attack faster.",
+  "commands_seen": [
+   {
+    "cmd": "bkcrack -L archive.zip",
+    "context": "Lists entry names and metadata in a zip archive, showing which entries use ZipCrypto."
+   },
+   {
+    "cmd": "bkcrack -C encrypted.zip -c cipher -P plain.zip -p plain",
+    "context": "Loads ciphertext entry 'cipher' from encrypted.zip and known plaintext entry 'plain' from plain.zip, then runs the attack."
+   },
+   {
+    "cmd": "bkcrack -c cipherfile -p plainfile -d decipheredfile",
+    "context": "Runs the attack on raw files and saves the deciphered data to decipheredfile."
+   },
+   {
+    "cmd": "bkcrack -c cipherfile -k 12345678 23456789 34567890 -d decipheredfile",
+    "context": "Deciphers data using internal keys already recovered in an earlier attack."
+   },
+   {
+    "cmd": "bkcrack -C encrypted.zip -k 12345678 23456789 34567890 -D decrypted.zip",
+    "context": "Writes a copy of the archive with no encryption, assuming all entries share the same password."
+   },
+   {
+    "cmd": "bkcrack -C encrypted.zip -k 12345678 23456789 34567890 -U unlocked.zip new_password",
+    "context": "Writes a new archive encrypted with a password of your choice, using the recovered keys."
+   },
+   {
+    "cmd": "bkcrack -k 1ded830c 24454157 7213b8c5 -b ?p",
+    "context": "Brute-forces the original password from internal keys over printable ASCII characters."
+   },
+   {
+    "cmd": "bkcrack -k 1940e266 d3fd3d89 71ce9871 -m ?l?l?l?l?l?l?l?l-?d?d?d?d?d?d",
+    "context": "Mask-based recovery for a password of 8 lowercase letters, a hyphen, and 6 digits; the README says this runs in milliseconds."
+   },
+   {
+    "cmd": "bkcrack -c cipherfile -p plainfile -x 25 4b4f -x 30 21",
+    "context": "Supplies sparse known plaintext at specific offsets using -x, for when contiguous known bytes are too few."
+   },
+   {
+    "cmd": "python3 tools/inflate.py < decipheredfile > decompressedfile",
+    "context": "Decompresses deflate-compressed deciphered data with the Python 3 helper script in the tools folder."
+   },
+   {
+    "cmd": "cmake -S . -B build -DCMAKE_INSTALL_PREFIX=install",
+    "context": "Configures the CMake build from source, with the install prefix set to the install folder."
+   }
+  ],
+  "install_notes": "Precompiled packages for Ubuntu, MacOS and Windows are on the GitHub releases page; extract the archive anywhere. On Windows the Microsoft Visual C++ Redistributable must be installed if it is not already present. To build from source, run cmake -S . -B build -DCMAKE_INSTALL_PREFIX=install, then cmake --build build --config Release, then cmake --build build --config Release --target install. Packages are also available from third-party repositories tracked on Repology. No accounts or configuration are mentioned.",
+  "standout": "It turns a well-known 1994 cryptanalysis into a usable tool that can remove or change an archive's password without knowing the password, using only the recovered internal keys. Its mask-based recovery, which the README says runs in milliseconds where brute force takes hours, makes the weakness concrete.",
+  "status": "maintained, with limited evidence. The README has CI, coverage, release and license badges and a releases link, and it describes a complete feature set. It gives no release date or last-commit date, and I did not check the releases or commit pages.",
+  "caveats": "It only works against legacy ZipCrypto entries, not AES-encrypted ZIPs, and it needs at least 12 bytes of known plaintext, with at least 8 contiguous. Deflate-compressed output needs a separate Python 3 script to decompress. On Windows it needs the Microsoft runtime. Brute-force cost grows as n^(l-6) for charset size n and password length l, so long passwords without a mask are impractical. License is zlib/png.",
+  "quotes": [
+   "Crack legacy zip encryption with Biham and Kocher's known plaintext attack.",
+   "Given ciphertext and 12 or more bytes of the corresponding plaintext, the internal state of the keystream generator can be recovered.",
+   "This runs in milliseconds, whereas the bruteforce alternative takes hours."
+  ],
+  "links": [
+   {
+    "label": "Homepage / repository",
+    "url": "https://github.com/kimci86/bkcrack"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/kimci86/bkcrack/releases"
+   },
+   {
+    "label": "Biham and Kocher paper (A known plaintext attack on the PKZIP stream cipher)",
+    "url": "https://doi.org/10.1007/3-540-60590-8_12"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/kimci86/bkcrack: fetched OK, README returned (about 230 lines of content). Did not follow further links: the README is complete and points to docs and an example folder in the repo, which I did not fetch."
+  ]
+ }
+}

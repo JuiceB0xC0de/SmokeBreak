@@ -1,0 +1,70 @@
+{
+ "name": "micropython",
+ "desc": "Python implementation for microcontrollers and constrained systems",
+ "homepage": "https://www.micropython.org/",
+ "installs_365d": 9046,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "needs-hardware",
+  "afternoon"
+ ],
+ "why": "Python squeezed onto microcontrollers is a door into constrained systems and hardware hacking, though the language itself is familiar.",
+ "brief": {
+  "what_it_is": "MicroPython is an implementation of the Python 3 language built to run on microcontrollers and other constrained systems. It includes an interactive prompt (the REPL) and can run and import scripts from an on-device filesystem. It ships a subset of the standard library plus a 'machine' module and other MicroPython-specific modules for GPIO, timers, ADC, DAC, PWM, SPI, I2C, CAN, Bluetooth and USB. Source code goes in and a firmware image or Unix/Windows executable comes out; the Homebrew formula installs a 'micropython' executable and an 'mpy-cross' cross-compiler.",
+  "why_it_exists": "The homepage frames it as Python that is 'lean and efficient' and 'optimised to run on microcontrollers and in constrained environments', with the aim that 'if you know Python you already know MicroPython'. The README adds that the design values are minimalism, efficiency and consistency, and that the goal is a 'bare-metal feeling' where 'very little [is] between the programmer and the physical world'.",
+  "how_it_works": "The core is a compiler and runtime written in C99 with no external dependencies. Scripts can run as source (.py) or as precompiled bytecode (.mpy), and the mpy-cross tool produces the .mpy files, which can also be frozen into the firmware so they take no RAM. Ports for each target (ESP32, RP2040/RP2350, STM32, nRF, SAMD and others, plus Unix and Windows) supply the hardware-specific code.",
+  "commands_seen": [
+   {
+    "cmd": "$ cd mpy-cross",
+    "context": "From the MicroPython source checkout, change into the mpy-cross cross-compiler directory before building it."
+   },
+   {
+    "cmd": "$ make",
+    "context": "Run in mpy-cross/ to build the mpy-cross cross-compiler, which pre-compiles Python scripts to .mpy files. The README says most ports need this built first."
+   },
+   {
+    "cmd": "$ cd ports/name",
+    "context": "Change into a specific port directory (name is a placeholder for a port such as stm32 or esp32) before building it."
+   },
+   {
+    "cmd": "$ make submodules",
+    "context": "Run inside a port directory to initialise the third-party driver and vendor HAL submodules that the port needs before compiling."
+   }
+  ],
+  "install_notes": "Beyond brew install, the README says the core needs only bash, gcc and Python 3.3+ available as python3, and that 'make' is used (or 'gmake' on BSD). Some ports (rp2 and esp32) also need CMake. Building a port from source requires running 'make submodules' in that port's directory first. Mpy-cross must be built before most ports. Using the pyboard requires buying that hardware from the MicroPython store; the other microcontroller targets need their own boards. I did not verify the Homebrew formula's own notes.",
+  "standout": "It is a real Python interpreter, with a REPL, closures, generators, arbitrary-precision integers and exceptions, that fits in about 256k of code space and 16k of RAM. Its tests and coverage claims (over 590 test files, 99.2% core coverage) are stated on the homepage, and the README lists over twenty ports across three support tiers.",
+  "status": "Maintained, based on the evidence I saw: the README shows active CI badges for Unix, STM32 and docs, the project publishes a three-tier support policy, and the repository lists more than twenty ports. I did not see a last-release date or last-commit date, so I cannot give a precise timestamp.",
+  "caveats": "It implements only a subset of Python 3: the README says it supports the Python 3.4 syntax plus some later features, and only some core types and modules. Hardware modules differ by port, so code written for one board may not run unchanged on another. Multithreading and some networking are available only on certain ports. The pyboard is a commercial product sold by the project. The homepage's 'Test drive' and 'Use online' options were not examined.",
+  "quotes": [
+   "MicroPython is a lean and efficient implementation of the Python 3 programming language that includes a small subset of the Python standard library and is optimised to run on microcontrollers and in constrained environments.",
+   "MicroPython aims to be as compatible with normal Python as possible to allow you to transfer code with ease from the desktop to a microcontroller or embedded system.",
+   "In a hardware setting, MicroPython aims to give the user a bare-metal feeling: one should feel like they have complete control over the system, with very little between the programmer and the physical world."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.micropython.org/"
+   },
+   {
+    "label": "Online documentation",
+    "url": "https://docs.micropython.org/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/micropython/micropython"
+   },
+   {
+    "label": "MicroPython store (pyboard)",
+    "url": "https://store.micropython.org/pyb-features"
+   }
+  ],
+  "fetch_log": [
+   "https://www.micropython.org/ - worked, homepage text returned",
+   "https://github.com/micropython/micropython - worked, README returned"
+  ]
+ }
+}

@@ -1,0 +1,89 @@
+{
+ "name": "lucky-commit",
+ "desc": "Customize your git commit hashes!",
+ "homepage": "https://github.com/not-an-aardvark/lucky-commit",
+ "installs_365d": 70,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "visual"
+ ],
+ "why": "Brute-forces git commit hashes to match a pattern, a fun hash-collision toy that shows how hashes can be steered.",
+ "brief": {
+  "what_it_is": "A command-line tool called lucky_commit that rewrites the most recent git commit so its hash starts with a prefix you choose. It takes a hex prefix as an argument (default 0000000) and may include _ placeholders that match any hex character. It works by adding whitespace characters to the commit message and retrying until the resulting SHA1 hash matches. The output is the same commit with a new message and a hash beginning with the requested prefix.",
+  "why_it_exists": "The README gives the framing as 'Make your git commits lucky!' and 'With this simple tool, you can change the start of your git commit hashes to whatever you want.' It offers no deeper rationale; its Why section is just the shrug emoticon.",
+  "how_it_works": "lucky-commit amends the commit message by inserting a few characters of different whitespace types, then keeps trying new variants until the hash matches. Hashing runs on a GPU through OpenCL by default, with a multithreaded CPU fallback. For non-GPG-signed commits it caches the SHA1 buffer state so each attempt hashes only one 64-byte block; for GPG-signed commits the whitespace goes at the end of the signature, which makes each attempt slower.",
+  "commands_seen": [
+   {
+    "cmd": "lucky_commit",
+    "context": "Run with no arguments to rewrite the latest commit so its hash starts with 0000000 (the default prefix)."
+   },
+   {
+    "cmd": "lucky_commit 1010101",
+    "context": "Pass a desired hash prefix as a command-line argument; afterwards git log shows the commit hash beginning 1010101."
+   },
+   {
+    "cmd": "lucky_commit 00_111",
+    "context": "The _ placeholder means that slot may be any hex character, so the hash must start 00 then any character then 111."
+   },
+   {
+    "cmd": "cargo install lucky_commit --locked",
+    "context": "Standard install from crates.io via cargo; the README says this usually puts the binary on your PATH."
+   },
+   {
+    "cmd": "cargo install lucky_commit --locked --no-default-features",
+    "context": "Install without OpenCL, falling back to the multithreaded CPU implementation; the README's suggested fix for the '-lOpenCL' linker error."
+   },
+   {
+    "cmd": "cargo build --release",
+    "context": "Build from a cloned source tree; the binary appears at target/release/lucky_commit (lucky_commit.exe on Windows)."
+   },
+   {
+    "cmd": "time lucky_commit --benchmark",
+    "context": "Measures how fast the hashing runs on your machine so you can estimate the average search time."
+   },
+   {
+    "cmd": "git log",
+    "context": "Used before and after running the tool to see the commit hash change."
+   },
+   {
+    "cmd": "pacman -S lucky-commit",
+    "context": "Installs from the Arch Linux extra repository."
+   },
+   {
+    "cmd": "brew install lucky-commit",
+    "context": "Installs from the default Homebrew tap."
+   }
+  ],
+  "install_notes": "You need rustc and cargo, with install instructions linked from the README. By default it links against system OpenCL headers and expects a GPU; if the build fails with 'cannot find -lOpenCL', add --no-default-features to the cargo command. The README says this is the recommended route for a stable build if you don't need GPU speed. OpenCL driver installation varies by OS and only helps if you have a GPU. Distro packages exist for Arch (pacman), Funtoo (emerge dev-util/lucky-commit), and Homebrew. No accounts or first-run configuration are mentioned.",
+  "standout": "Instead of changing the commit's content, it searches over invisible whitespace in the message, so the hash changes while the visible text stays the same. The README also explains the speedup from caching SHA1 state over the 64-byte-aligned tail of the message, and gives a benchmark for estimating time on your machine.",
+  "status": "unknown. The README has no release dates, changelog, or last-commit information, and I did not fetch the repository's commit or release pages. The README does say the older Node.js, C, and pure-Rust branches are unmaintained, but says nothing about the current version. The Arch and Homebrew packaging suggests it is at least in distribution.",
+  "caveats": "It rewrites the latest commit, so it is a history rewrite; use it on commits you can amend. GPG-signed commits are much slower, and the README says the search time scales with commit message length. Without a GPU the CPU path is about 20x slower by the author's laptop measurement. The OpenCL build can fail to link on systems without OpenCL libraries. The sha256 repository mode is described as experimental. The scout note calls it a 'hash-collision toy', but the README describes prefix brute-forcing by whitespace padding, not collisions. The README's stated timing (about 0.18 s average on the author's 2021 MacBook Pro for 0000000) is the author's own estimate.",
+  "quotes": [
+   "Make your git commits lucky!",
+   "With this simple tool, you can change the start of your git commit hashes to whatever you want.",
+   "lucky-commit amends your commit messages by adding a few characters of various types of whitespace, and keeps trying new messages until it finds a good hash.",
+   "This is the recommended approach if you just want a stable build, and you don't need the extra performance from GPUs."
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repository",
+    "url": "https://github.com/not-an-aardvark/lucky-commit"
+   },
+   {
+    "label": "Arch Linux package (extra)",
+    "url": "https://archlinux.org/packages/extra/x86_64/lucky-commit/"
+   },
+   {
+    "label": "Related project: every-git-commit-shorthash",
+    "url": "https://github.com/not-an-aardvark/every-git-commit-shorthash"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/not-an-aardvark/lucky-commit \u2014 fetched OK; README returned in full, which was sufficient, so no further links were followed."
+  ]
+ }
+}

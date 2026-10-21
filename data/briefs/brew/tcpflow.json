@@ -1,0 +1,93 @@
+{
+ "name": "tcpflow",
+ "desc": "TCP/IP packet demultiplexer",
+ "homepage": "https://github.com/simsong/tcpflow",
+ "installs_365d": 659,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "Reassembles raw TCP streams into per-flow files, a useful look at the wire that is a close call against plenty of packet tools.",
+ "brief": {
+  "what_it_is": "tcpflow is a command-line program that captures or reads TCP traffic and reassembles each TCP connection into its own file, with one file per direction. It takes live packets from a network interface (via libpcap, with tcpdump-style filter expressions) or stored tcpdump captures, and writes out per-flow byte streams named after the source and destination IP and port. It can also write a DFXML summary report listing each flow's addresses, ports, byte and packet counts, and optionally an MD5 of each stream.",
+  "why_it_exists": "The README says Jeremy Elson wrote it to capture data from programs that use undocumented protocols so they could be reverse engineered, and it was later used for HTTP protocol analysis. Simson Garfinkel took over maintenance after leaving Sandstorm and used it as a flow-reassembly tool. The stated use is network forensics and protocol debugging, where you want to see many connections in context rather than individual packets.",
+  "how_it_works": "It tracks TCP sequence numbers so it can rebuild each byte stream correctly despite retransmissions or out-of-order delivery. Output file names follow a template that encodes an optional timestamp, source IP.port, destination IP.port, VLAN, and a connection counter; -F and -T change the template. With -a it post-processes HTTP responses into separate -HTTP and -HTTPBODY files, and a -GZIP file when the body is gzip-compressed. IP fragments are not handled.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt-get install tcpflow",
+    "context": "Installs tcpflow from Debian/Ubuntu repositories; the README's first-choice install path."
+   },
+   {
+    "cmd": "sudo dnf install tcpflow",
+    "context": "Installs tcpflow from Fedora/RedHat/CentOS repositories."
+   },
+   {
+    "cmd": "sudo bash CONFIGURE_<YOUROS>.sh",
+    "context": "Run first when building from source; the repo ships CONFIGURE_ARCH_17_8.sh, CONFIGURE_FEDORA_18.sh, CONFIGURE_FEDORA_26.sh and CONFIGURE_UBUNTU_16_04.sh to install prerequisites for those systems."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Autotools configure step in the source tree, run before make."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles tcpflow after configure."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the compiled tcpflow system-wide."
+   },
+   {
+    "cmd": "git clone --recursive https://github.com/simsong/tcpflow.git",
+    "context": "Gets the development tree; --recursive is required to pull submodules for a complete checkout."
+   },
+   {
+    "cmd": "bash bootstrap.sh",
+    "context": "Generates the configure script in a git checkout, run before ./configure."
+   },
+   {
+    "cmd": "rpmbuild -bb tcpflow.spec --build-in-place",
+    "context": "Builds an RPM from a clean repository, after ./bootstrap.sh and ./configure have generated the spec file."
+   },
+   {
+    "cmd": "rpmlint tcpflow.spec",
+    "context": "Checks the spec file, and the built RPM can be checked the same way with rpmlint."
+   }
+  ],
+  "install_notes": "Most Linux distributions package it, so apt or dnf is usually enough. Building from source needs libpcap, a C++ toolchain, and typically boost, cairo, openssl and zlib development headers; the README's Amazon Linux line lists boost-devel, cairo-devel, libpcap-devel, openssl-devel and zlib-devel. Building from git requires --recursive and bootstrap.sh. The README also covers a CMake route (cmake/README.md), an RPM build, and a mingw cross-build for Windows from Fedora. Packet capture usually needs root or capture privileges, which the README does not spell out.",
+  "standout": "Instead of showing packets or one connection at a time, as Wireshark does, it turns a capture into a directory of per-connection files that you can grep, hash, or feed to other tools. Its -a option also decodes HTTP into header and body files, which makes it a quick way to pull web pages or drive-by malware out of a capture.",
+  "status": "Maintained by one author, with a CI badge and a dated status note. The README is labeled TCPFLOW 1.5.0, and an October 18, 2020 status report says a 1.6 rewrite to C++17 is underway and roughly three quarters done. I did not see a release date or last commit date, so the exact activity level is unknown. Leaning quiet rather than active.",
+  "caveats": "Does not understand IP fragments, so flows that contain fragments are recorded incorrectly; the README calls this rare. The README's build instructions are tied to older distros (Ubuntu 16.04, Fedora 18 and 26, Arch 17.8). The autotools build is involved, and the README says it needs a complete recursive checkout and bootstrapping. Licensing was not stated in the README I read. Its statements on platform support are limited to Linux, Amazon AMI and Windows-via-mingw.",
+  "quotes": [
+   "tcpflow is a program that captures data transmitted as part of TCP connections (flows), and stores the data in a way that is convenient for protocol analysis and debugging.",
+   "tcpflow understands sequence numbers and will correctly reconstruct data streams regardless of retransmissions or out-of-order delivery.",
+   "Unlike programs such as WireShark, which show lots of packets or a single TCP connection, tcpflow can show hundreds, thousands, or hundreds of thousands of TCP connections in context."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/simsong/tcpflow"
+   },
+   {
+    "label": "Downloads directory (DigitalCorpora)",
+    "url": "http://digitalcorpora.org/downloads/tcpflow/"
+   },
+   {
+    "label": "Technical report: Passive TCP Reconstruction and Forensic Analysis with tcpflow (NPS-CS-13-003)",
+    "url": "https://calhoun.nps.edu/handle/10945/36026"
+   },
+   {
+    "label": "Open issues",
+    "url": "https://github.com/simsong/tcpflow/issues?state=open"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/simsong/tcpflow: fetched OK; returned the README, which was complete enough that I did not follow further links."
+  ]
+ }
+}

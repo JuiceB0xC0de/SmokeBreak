@@ -1,0 +1,115 @@
+{
+ "name": "avrdude",
+ "desc": "Atmel AVR MCU programmer",
+ "homepage": "https://www.nongnu.org/avrdude/",
+ "installs_365d": 5897,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "science"
+ ],
+ "why": "Programs Atmel AVR microcontrollers over serial and ISP, a real door into flashing physical chips.",
+ "brief": {
+  "what_it_is": "AVRDUDE (AVR Downloader Uploader) is a command-line program that reads and writes the on-chip memories of Atmel/Microchip AVR microcontrollers. It takes a compiled file (Intel Hex, Motorola S-Record, or raw binary, with format auto-detection on input) or memory values given directly on the command line, and sends them to a chip through a programmer over ISP. It can program Flash and EEPROM, and fuse and lock bits where the protocol supports them. A Qt-based GUI demonstrator, launched by a script named avrdude-gui, shipped starting with version 8.",
+  "why_it_exists": "The homepage says it began as Brian S. Dean's private in-system programmer for AVR chips, originally written for FreeBSD under the name avrprog and renamed to avoid confusion with Atmel's avrprog tool. The README says it was written in 2003 and has been maintained by J\u00f6rg Wunsch since 2006.",
+  "how_it_works": "It talks to the target over the AVR in-system programming (ISP) interface through a chosen programmer, selected with -c and a part with -p. Adapters range from bare parallel-port or serial-port ISP plugs to buffer-chip adapters, AVR910-style devices, STK500, and JTAG ICE mkII. Most common adapters are predefined, and new parallel-port adapters are added by editing a configuration file without recompiling. AVRDUDE also has a direct instruction mode that issues any programming instruction to the chip, even for features it does not implement for that part.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt-get install avrdude",
+    "context": "Installs the Debian/Ubuntu package on Linux, as given in the GitHub README."
+   },
+   {
+    "cmd": "avrdude -c <programmer> -p <part> -U flash:w:<file>:i",
+    "context": "The README's generic template for programming a HEX file: -c picks the programmer, -p the part, -U the memory operation on a file."
+   },
+   {
+    "cmd": "avrdude -c arduino -P COM1 -b 115200 -p atmega328p -D -U flash:w:objs/blink.hex:i",
+    "context": "Example that flashes blink.hex to an Arduino Uno (atmega328p) on serial port COM1 at 115200 baud; -D disables auto-erase."
+   }
+  ],
+  "install_notes": "On Windows, install the latest release from the GitHub Releases page. On Linux, install the avrdude package from your distribution. On macOS, install through MacPorts or Homebrew. Building from source is documented on the project wiki. The programmer hardware is needed to actually program a chip; the example uses an Arduino Uno on a serial port. The homepage's older notes say Windows parallel-port access needs the giveio.sys driver, and POSIX parallel-port access works through the OS driver without root.",
+  "standout": "It is a long-running, widely used open-source programmer that drives many adapter types from a plain text config file rather than code. Its direct instruction mode lets you send raw AVR programming commands to a chip, even for features the tool does not wrap.",
+  "status": "Maintained, with evidence from the GitHub README: active build-status and release badges, a docs site on GitHub Pages, a GUI added in version 8, and a maintainer listed since 2006. The homepage was last modified in 2010 and is out of date, so the GitHub README is the current source. I did not find a last-release or last-commit date, so the exact recency is unknown.",
+  "caveats": "The homepage is stale (last modified 2010) and still describes older history and Win32 parallel-port driver steps. Serial-port ISP adapters need extra circuitry. Git main is documented only by the avrdude.pdf in the repo, and online docs cover released versions. The README says there is little developer documentation. The GUI is labelled a demonstrator and needs Qt plus PySide2 or PySide6. Homebrew lists an elf2tag executable, but I did not see it described in the pages I read.",
+  "quotes": [
+   "AVRDUDE is a command-line application. Run the command `avrdude` without any arguments for a list of options.",
+   "AVRDUDE also supplies a direct instruction mode allowing one to issue any programming instruction to the AVR chip regardless of whether AVRDUDE implements that specific feature of a particular chip.",
+   "It can program the Flash and EEPROM, and where supported by the programming protocol, it can program fuse and lock bits."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (nongnu.org)",
+    "url": "https://www.nongnu.org/avrdude/"
+   },
+   {
+    "label": "Documentation (GitHub Pages)",
+    "url": "https://avrdudes.github.io/avrdude/"
+   },
+   {
+    "label": "Source repository (GitHub)",
+    "url": "https://github.com/avrdudes/avrdude"
+   }
+  ],
+  "fetch_log": [
+   "https://www.nongnu.org/avrdude/ - fetched OK; short page with history, feature list, and a stale 2010 last-modified line; points to docs and mailing lists",
+   "https://github.com/avrdudes/avrdude - fetched OK; README returned with install, usage, and GUI sections; no release or commit dates included"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A canonical AVR programmer that also exposes raw chip instructions and fuse bits, making it a hands-on way to explore microcontroller programming below the firmware layer."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "avrdude",
+  "tldr": "A command-line tool that writes compiled programs into the flash memory of AVR microcontrollers, the chips inside Arduino boards, through a physical programmer.",
+  "deeper_look": "AVRDUDE (AVR Downloader Uploader) reads and writes the on-chip memories of Atmel/Microchip AVR microcontrollers. You hand it a compiled file (Intel Hex, Motorola S-Record or raw binary, with the format detected automatically on input) or values typed on the command line, and it sends them to the chip through a programmer. It can program Flash and EEPROM, and fuse and lock bits where the protocol allows.\n\nIt began as Brian S. Dean's private in-system programmer for AVR chips, written for FreeBSD under the name avrprog and renamed to avoid confusion with Atmel's tool. The README says it dates from 2003 and has been maintained by J\u00f6rg Wunsch since 2006. Much of what Arduino-style toolchains do at the moment of upload is this program.\n\nThe idea underneath is that a chip is just memory behind a wire protocol. You pick a programmer with `-c` and a part with `-p`, and avrdude speaks AVR in-system programming (ISP) to the target. Supported adapters range from bare parallel-port or serial-port plugs to STK500, AVR910-style devices and JTAG ICE mkII. Adapters are described in a plain text config file, so new parallel-port ones can be added without recompiling.\n\nIt also has a direct instruction mode that issues any programming instruction to the chip, even for features avrdude does not wrap for that part. That makes it a way to learn how these chips are programmed and fused, and a way to recover one you have misconfigured.",
+  "install": "brew install avrdude\n# Needs real hardware to do anything useful: an AVR chip or board (an Arduino Uno works) and a programmer or serial connection.",
+  "try_this": [
+   {
+    "cmd": "avrdude",
+    "what_happens": "Run with no arguments, it prints the list of options, which is the quickest tour of what it can do."
+   },
+   {
+    "cmd": "avrdude -c <programmer> -p <part> -U flash:w:<file>:i",
+    "what_happens": "The README's template for writing a HEX file to flash: -c picks the programmer, -p the chip, -U the memory operation."
+   },
+   {
+    "cmd": "avrdude -c arduino -P COM1 -b 115200 -p atmega328p -D -U flash:w:objs/blink.hex:i",
+    "what_happens": "Flashes blink.hex to an Arduino Uno on a serial port at 115200 baud, with -D skipping auto-erase. Swap COM1 for your port name."
+   }
+  ],
+  "whats_unique": "It drives many kinds of programmer from a text config file rather than code. Its direct instruction mode lets you send raw AVR programming commands the tool itself does not implement.",
+  "caveats": "Needs a physical AVR chip and a programmer to do anything. The nongnu.org homepage was last modified in 2010 and is stale, so the GitHub README and docs are the current source.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "microcontrollers",
+   "avr",
+   "arduino",
+   "flashing"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (nongnu.org)",
+    "url": "https://www.nongnu.org/avrdude/"
+   },
+   {
+    "label": "Documentation (GitHub Pages)",
+    "url": "https://avrdudes.github.io/avrdude/"
+   },
+   {
+    "label": "Source repository (GitHub)",
+    "url": "https://github.com/avrdudes/avrdude"
+   }
+  ]
+ }
+}

@@ -1,0 +1,144 @@
+{
+ "name": "interface99",
+ "desc": "Full-featured interfaces for C99",
+ "homepage": "https://github.com/Hirrolot/interface99",
+ "installs_365d": 4,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "library",
+  "language",
+  "afternoon"
+ ],
+ "why": "Brings polymorphic interfaces to C99 via macros, a clever hack worth a look though it is a single library.",
+ "brief": {
+  "what_it_is": "Interface99 is a single C99 header (interface99.h) that adds polymorphic interfaces to plain C, in the style of Rust traits and Go interfaces. You declare an interface with a list of vfunc lines and call interface(Shape); the macros generate a vtable struct and an interface object struct holding a void *self and a const vptr. You then write ordinary functions for each concrete type, call impl(Shape, Rectangle); to generate the vtable, and build interface values with DYN_LIT or DYN and dispatch them with VCALL. It supports multiple inheritance, superinterfaces, marker interfaces, default implementations, and dynamic dispatch on self. It depends on the Metalang99 preprocessor library for its macro machinery.",
+  "why_it_exists": "The author wants interfaces with minimal boilerplate in pure C, without maintaining vtables by hand, and wants the generated layout to be predictable. The README says it is inspired by Rust and Golang, and that it is meant to stay small: it implements only the software interface concept, not wider OOP features like GObject or COS.",
+  "how_it_works": "Interface99 is built on Metalang99, a preprocessor metaprogramming library, so the interface and impl macros expand to C structs and vtable instances at compile time. An impl(Iface, T) expansion fills each vtable slot with T_func if the implementer defines it, otherwise falls back to a default Iface_func defined with vfuncDefault. VCALL(obj, func, args...) expands to obj.vptr->func(obj.self, args...), and VSELF(T) casts the untyped self parameter to a typed pointer inside the implementation.",
+  "commands_seen": [
+   {
+    "cmd": "-ftrack-macro-expansion=0",
+    "context": "GCC compiler flag the README requires to avoid useless macro expansion errors (Metalang99 backtraces). Clang equivalent is -fmacro-backtrace-limit=1."
+   },
+   {
+    "cmd": "-fmacro-backtrace-limit=1",
+    "context": "Clang compiler flag, the counterpart of GCC's -ftrack-macro-expansion=0, to avoid useless macro expansion errors."
+   },
+   {
+    "cmd": "interface(Shape);",
+    "context": "C macro line after a Shape_IFACE definition; expands to the ShapeVTable and Shape struct types. Not a shell command."
+   },
+   {
+    "cmd": "impl(Shape, Rectangle);",
+    "context": "C macro line placed right after the Rectangle method definitions; generates the static vtable Rectangle_Shape_impl. Not a shell command."
+   },
+   {
+    "cmd": "Shape r = DYN_LIT(Rectangle, Shape, {5, 7});",
+    "context": "C expression that builds a Shape interface object wrapping a compound literal Rectangle. Not a shell command."
+   },
+   {
+    "cmd": "VCALL(shape, perim)",
+    "context": "C macro call that does dynamic dispatch on the interface object, expanding to shape.vptr->perim(shape.self). Not a shell command."
+   },
+   {
+    "cmd": "VCALL(shape, scale, 5);",
+    "context": "Dynamic dispatch of a void method with one argument. Not a shell command."
+   },
+   {
+    "cmd": "VCALL_SUPER(my_airplane, Vehicle, move_forward, 10);",
+    "context": "Calls a superinterface method through the subinterface's vtable. Not a shell command."
+   },
+   {
+    "cmd": "#define Airplane_EXTENDS (Vehicle)",
+    "context": "Must appear before interface(Airplane); to declare that Airplane requires the Vehicle superinterface. Not a shell command."
+   },
+   {
+    "cmd": "#define R2_D2_turn_on_CUSTOM ()",
+    "context": "Tells Interface99 to use the custom R2_D2_turn_on instead of the default Droid_turn_on. The README says the empty-parens form () must be used, not an empty definition. Not a shell command."
+   }
+  ],
+  "install_notes": "No shell install command is given. Add interface99 and metalang99/include to the include directories and set -ftrack-macro-expansion=0 (GCC) or -fmacro-backtrace-limit=1 (Clang). With CMake, the recommended route is FetchContent_Declare pointing at the GitHub release tarball vx.y.z, then target_link_libraries(MyProject interface99). By default interface99/CMakeLists.txt downloads Metalang99 v1.13.5 from GitHub releases, and you can override that by declaring Metalang99 earlier. Precompiled headers are optional. Needs a standard C99 compiler; the README says no standard library, VLA, or compiler-specific features are required. The README lists GCC, Clang, MSVC, and TCC as tested, and says C++11 and later also works.",
+  "standout": "The clever part is that impl(Shape, Rectangle) takes no vtable body: the macro fills each slot by name lookup, using Rectangle_perim if it exists or a default Shape_perim otherwise, so adding an implementation is one line. The README also says it has formal code generation semantics, so the data layout is specified rather than left to the compiler. Its error messages are kept readable by building on Metalang99's resilient macro expansion, with the author saying nearly 95 percent of errors make sense.",
+  "status": "unknown. The README has a CI badge for C/C++ CI, a release procedure that mentions CHANGELOG.md and GitHub Releases, and a pinned Metalang99 v1.13.5, but it gives no release date, version number, or last-commit date. The fetched page was the GitHub repository view, which did not show those dates, so I could not confirm whether it is active.",
+  "caveats": "Needs Metalang99 as a second dependency, so it is not a single header on its own. Requires -ftrack-macro-expansion=0 on GCC or -fmacro-backtrace-limit=1 on Clang for readable errors. Multiple dispatch is listed as not implemented and unlikely to be. VCALL and its friends break go-to-definition in IDEs and do not highlight function signatures, which the author calls a deliberate trade for concision. Default implementations must follow a strict <iface>_<func> naming convention, and custom overrides need the odd *_CUSTOM () macro. The README does not state a license in the parts I read.",
+  "quotes": [
+   "Full-featured interfaces inspired by Rust and Golang. Multiple inheritance, superinterfaces, and default implementations supported. No external tools required, pure C99.",
+   "Minimum boilerplate. Forget about maintaining virtual tables -- just write impl(Shape, Rectangle) and Interface99 will do it for you!",
+   "Predictable. Interface99 comes with formal code generation semantics, meaning that the generated data layout is guaranteed to always be the same.",
+   "From my experience, nearly 95% of errors make sense."
+  ],
+  "links": [
+   {
+    "label": "Interface99 GitHub repository (homepage)",
+    "url": "https://github.com/Hirrolot/interface99"
+   },
+   {
+    "label": "Metalang99, the underlying preprocessor library",
+    "url": "https://github.com/hirrolot/metalang99"
+   },
+   {
+    "label": "Blog post: Macros on Steroids, Or: How Can Pure C Benefit From Metaprogramming",
+    "url": "https://hirrolot.github.io/posts/macros-on-steroids-or-how-can-pure-c-benefit-from-metaprogramming.html"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/Hirrolot/interface99 - fetched OK, returned the README in full (the README includes the tutorial, syntax and semantics, FAQ and design notes). Did not follow further links: the README was complete and the remaining links (examples/, docs) were not needed for the brief."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Its C99 preprocessor DSL generates predictable interface and vtable layouts from one-line implementations\u2014a genuinely unusual way to explore polymorphism in plain C."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Interface99",
+  "tldr": "A C99 header library that gives plain C Rust-style traits and Go-style interfaces, with vtables generated by preprocessor macros.",
+  "deeper_look": "Interface99 adds polymorphic interfaces to C. You list an interface's functions as vfunc lines, call `interface(Shape);`, and the macros expand into a vtable struct plus an interface object that holds a `void *self` and a const vtable pointer. For each concrete type you write ordinary functions, then `impl(Shape, Rectangle);` builds the vtable. You wrap a value with `DYN_LIT` or `DYN` and call methods with `VCALL`, which expands to `obj.vptr->func(obj.self, args...)`.\n\nThe author wanted interfaces without maintaining vtables by hand, and wanted the generated layout to be predictable. The README says it is inspired by Rust and Golang, and that it is deliberately small: it covers only the software interface concept, not wider object systems like GObject or COS. Supported features include multiple inheritance, superinterfaces, marker interfaces, default implementations, and dynamic dispatch on self.\n\nThe idea underneath is preprocessor metaprogramming. Interface99 is built on Metalang99, a library that turns the C preprocessor into something closer to a functional language. When `impl` runs, it looks up each slot by name: it uses `Rectangle_perim` if you defined it, and otherwise falls back to a default `Shape_perim`. That is why an implementation takes one line and no vtable body. The README claims formal code generation semantics, so the data layout is specified rather than left to chance.\n\nIt is a good door into what macros can do in C, and into how vtables work, since you can read the exact expansion of every macro.",
+  "install": "No brew executable and no shell install; the formula only provides headers and depends on metalang99. Add interface99 and metalang99/include to your include path. Compile with -ftrack-macro-expansion=0 on GCC or -fmacro-backtrace-limit=1 on Clang. With CMake, the README recommends FetchContent_Declare pointing at a GitHub release tarball, then target_link_libraries(MyProject interface99). Needs a standard C99 compiler.",
+  "try_this": [
+   {
+    "cmd": "interface(Shape);",
+    "what_happens": "After a Shape_IFACE definition listing its vfuncs, this C macro line expands into the ShapeVTable and Shape struct types."
+   },
+   {
+    "cmd": "impl(Shape, Rectangle);",
+    "what_happens": "Placed after the Rectangle method definitions, this generates the static vtable Rectangle_Shape_impl, filling slots by name."
+   },
+   {
+    "cmd": "VCALL(shape, perim)",
+    "what_happens": "Does dynamic dispatch on an interface object, expanding to shape.vptr->perim(shape.self)."
+   }
+  ],
+  "whats_unique": "impl(Shape, Rectangle) takes no vtable body: slots are filled by name lookup with default fallbacks. The data layout is specified by formal code generation semantics.",
+  "caveats": "It needs Metalang99 as a second dependency, wants special compiler flags for readable errors, breaks IDE go-to-definition, and the brief could not confirm whether the project is still active.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "c",
+   "c99",
+   "macros",
+   "metaprogramming",
+   "interfaces",
+   "library",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "Interface99 GitHub repository",
+    "url": "https://github.com/Hirrolot/interface99"
+   },
+   {
+    "label": "Metalang99, the underlying preprocessor library",
+    "url": "https://github.com/hirrolot/metalang99"
+   },
+   {
+    "label": "Blog post: Macros on Steroids, Or: How Can Pure C Benefit From Metaprogramming",
+    "url": "https://hirrolot.github.io/posts/macros-on-steroids-or-how-can-pure-c-benefit-from-metaprogramming.html"
+   }
+  ]
+ }
+}

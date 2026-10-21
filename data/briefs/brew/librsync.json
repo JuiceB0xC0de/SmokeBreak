@@ -1,0 +1,49 @@
+{
+ "name": "librsync",
+ "desc": "Library that implements the rsync remote-delta algorithm",
+ "homepage": "https://librsync.github.io/",
+ "installs_365d": 627,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "library",
+  "protocol"
+ ],
+ "why": "Implements rsync's rolling-checksum delta algorithm as a library, a clever idea hidden under a lot of everyday plumbing.",
+ "brief": {
+  "what_it_is": "librsync is a C library for calculating and applying network deltas, the rsync remote-delta algorithm packaged as an API for other programs. To compute a delta you need only a signature (per-block checksums) of the old file plus the new file, not both files together. The tree also builds an rdiff command-line tool that exposes the key operations: generating a file signature, generating a delta from a signature to a new file, and applying the delta to rebuild the new file from the old one. It works on byte streams only.",
+  "why_it_exists": "It is meant for building other programs that transfer files as efficiently as rsync, such as backup tools, binary patch distribution, or directory sync to a server or between peers. It was originally written for the rproxy experiment in delta-compression for HTTP. The README says Dropbox, rdiff-backup and Duplicity use it.",
+  "how_it_works": "The receiver computes a signature: a set of checksums over each block of one file. The sender then scans the other file, and blocks at any position whose checksum matches are likely identical, while the remaining bytes are the difference. The README says this lets differences be transferred without both files being on the same system. It uses BLAKE2 for hashing, which the README says is included in the tree.",
+  "commands_seen": [
+   {
+    "cmd": "rdiff",
+    "context": "Named in the README as the command-line tool that exposes librsync's signature, delta, and patch operations. The README gives no concrete invocation, and I saw no example command lines."
+   }
+  ],
+  "install_notes": "Nothing beyond the package manager was described on the homepage. The README's Installing section is only linked, not reproduced, so I could not confirm build dependencies or steps. No accounts, runtimes, or first-run configuration were mentioned.",
+  "standout": "The rsync algorithm needs only checksums of one file, not the file itself, so the two sides never have to share a filesystem. The project also makes the point that it is a library: it deliberately leaves out the rsync wire protocol, SSH, and file metadata, so it fits into other programs rather than replacing rsync.",
+  "status": "Unknown, leaning quiet. The page shows version 2.3.4 and says the documentation was generated on Sun Feb 19 2023. I did not see a last-commit date or release history, so I cannot say more than that.",
+  "caveats": "It does not talk to an rsync server; you have to shell out to rsync for that. It does not handle filenames, permissions, or directories, and it has no network code of its own. Licensing is LGPL v2.1: you can link it dynamically into non-GPL programs, but you must redistribute librsync source with any modifications. The BLAKE2 code in the tree is CC0.",
+  "quotes": [
+   "librsync is a library for calculating and applying network deltas, with an interface designed to ease integration into diverse network applications.",
+   "The rsync algorithm is different from most differencing algorithms because it does not require the presence of the two files to calculate the delta.",
+   "librsync does not implement the rsync wire protocol. If you want to talk to an rsync server to transfer files you'll need to shell out to rsync."
+  ],
+  "links": [
+   {
+    "label": "librsync homepage",
+    "url": "https://librsync.github.io/"
+   },
+   {
+    "label": "Original project site (sourcefrog)",
+    "url": "http://librsync.sourcefrog.net/"
+   }
+  ],
+  "fetch_log": [
+   "https://librsync.github.io/ \u2014 fetched OK; returned the rendered README (version 2.3.4). The README's Downloads, Installing, rdiff command and NEWS sections are linked but their contents were not included, so I did not follow them."
+  ]
+ }
+}

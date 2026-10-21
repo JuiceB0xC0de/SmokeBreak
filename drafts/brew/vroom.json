@@ -1,0 +1,103 @@
+{
+ "name": "vroom",
+ "desc": "Vehicle Routing Open-Source Optimization Machine",
+ "homepage": "http://vroom-project.org/",
+ "installs_365d": 125,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "math",
+  "library"
+ ],
+ "why": "Vehicle routing optimization is a real operations research problem, a legitimate door into combinatorial optimization.",
+ "brief": {
+  "what_it_is": "VROOM is an open-source route optimization engine written in C++20 that solves vehicle routing problems (VRP) in milliseconds. It models a problem as vehicles (resources), jobs (single-location pickup and/or delivery tasks), and shipments (pickup-and-delivery pairs on the same route), and it returns optimized routes. It runs on top of routing engines OSRM, Openrouteservice, or Valhalla, or on a custom cost matrix from any other source. It is maintained by Verso, which also sells a premium API built on it.",
+  "why_it_exists": "The README says VROOM is ideally suited to situations where route optimization has to be done quickly, to react to changes and new requests and to iterate on routes until the solution works best for all stakeholders. It frames the tool as supporting domain expertise rather than replacing it: 'Vroom doesn't replace domain expertise.'",
+  "how_it_works": "Vroom takes a description of vehicles, jobs, and shipments, each with constraints such as capacity on several metrics, skills, time windows, service durations, priorities, working hours, and driver breaks. It solves several VRP variants at once (TSP, CVRP, VRPTW, MDHVRPTW, PDPTW) and uses travel times from an external routing engine (OSRM, Openrouteservice, Valhalla) or a custom cost matrix. The README does not describe the search algorithm itself.",
+  "commands_seen": [],
+  "install_notes": "The README gives no install command. It lists three options for the solving engine: build from source following the wiki instructions (https://github.com/Vroom-Project/vroom/wiki/Building), or use vroom-docker (https://github.com/Vroom-Project/vroom-docker). Command-line usage is documented on a wiki page (https://github.com/Vroom-Project/vroom/wiki/Usage), which I did not fetch. The HTTP wrapper vroom-express is bundled in the vroom-docker setup. You also need a routing backend (OSRM, Openrouteservice, or Valhalla) or your own cost matrix. The homepage says it relies on OpenStreetMap data. The README says the project is ideal for teams with the technical expertise to run their own infrastructure and manage their own data integration.",
+  "standout": "One engine solves several well-known VRP variants together, including pickup-and-delivery with time windows, in milliseconds. It is BSD-licensed and open source, and it plugs into existing open routing engines instead of shipping its own road network. It can also be used as a C++ library (libvroom).",
+  "status": "Maintained. The project is maintained by Verso, the README has active GitHub Actions CI badges, and it says every new release is checked against all benchmark classes. The BibTeX citation names v1.14 with year 2024. I did not see a last-release or last-commit date, so I cannot give an exact date.",
+  "caveats": "Routing quality depends on the external engine or cost matrix you supply. The README says the free open-source version relies on OpenStreetMap data, and the paid Premium API is pitched for better ETA data and support. The homepage shows a demo hosted by SUPMICROTECH. Setup is mostly documented in the wiki, which I did not read, so build details and CLI usage are unverified. The README itself does not state a platform list.",
+  "quotes": [
+   "Vroom is an open-source route optimization engine written in C++20 that solves complex vehicle routing problems (VRP) in milliseconds.",
+   "Good solutions, fast.",
+   "Vroom doesn't replace domain expertise. It allows fleet managers and business owners to apply their domain knowledge and understanding of the company culture to larger, more complex optimization problems than they could manage manually.",
+   "Open source BSD license."
+  ],
+  "links": [
+   {
+    "label": "Homepage (Vroom by Verso)",
+    "url": "http://vroom-project.org/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/VROOM-Project/vroom"
+   },
+   {
+    "label": "Demo frontend",
+    "url": "http://map.vroom-project.org/"
+   }
+  ],
+  "fetch_log": [
+   "http://vroom-project.org/ : worked; returned the marketing page with feature copy and a link to the GitHub project page",
+   "https://github.com/VROOM-Project/vroom : worked; returned the README (used as the main source, since the homepage link URL was not shown in the text)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "VROOM makes a rich combinatorial optimization problem tangible: explore how capacity, time windows, skills, and pickups shape real-world routes."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "VROOM",
+  "tldr": "An open-source engine that takes vehicles, pickups and deliveries with time windows and capacities, and returns optimized routes in milliseconds.",
+  "deeper_look": "VROOM solves vehicle routing problems. You describe a fleet of vehicles and a set of jobs (single-location pickups or deliveries) and shipments (a pickup paired with a delivery that must ride on the same route). Constraints can include capacities on several metrics, skills, time windows, service durations, priorities, working hours and driver breaks. It returns a set of routes. It is written in C++20 and handles several well-known variants at once: TSP, CVRP, VRPTW, MDHVRPTW and PDPTW.\n\nIt does not ship its own road network. Travel times come from an external routing engine (OSRM, Openrouteservice or Valhalla), or from a custom cost matrix you build yourself. That split is the useful part: the optimizer only has to reason about a table of costs between places, and the map data lives elsewhere. The homepage says the free version relies on OpenStreetMap data.\n\nThe idea underneath is combinatorial optimization. Deciding which vehicle serves which stop, and in what order, blows up quickly as stops are added, so a good-enough answer found fast often beats a perfect answer found never. The project's own line is \"Good solutions, fast.\" The README does not describe the search algorithm, so that is the thing to go and read about.\n\nThe README also frames it as a tool for people, not a replacement: \"Vroom doesn't replace domain expertise.\" It is maintained by Verso, which also sells a premium API built on it. VROOM can also be used as a C++ library (libvroom).",
+  "install": "brew install vroom\n# You also need a routing backend (OSRM, Openrouteservice or Valhalla) or your own cost matrix.\n# The README points to building from source (wiki) or vroom-docker, which bundles the vroom-express HTTP wrapper.",
+  "try_this": [
+   {
+    "cmd": "vroom --help",
+    "what_happens": "Lists the command-line options, a quick way to see how problems and routing backends are passed in."
+   }
+  ],
+  "whats_unique": "One engine handles several classic routing variants together, including pickup-and-delivery with time windows, and plugs into open routing engines rather than bundling its own map data.",
+  "caveats": "Route quality depends on the routing engine or cost matrix you supply, and the README gives no install command or platform list, so setup details live in the wiki.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "math",
+   "optimization",
+   "routing",
+   "c++",
+   "operations-research"
+  ],
+  "links": [
+   {
+    "label": "Homepage (Vroom by Verso)",
+    "url": "http://vroom-project.org/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/VROOM-Project/vroom"
+   },
+   {
+    "label": "Demo frontend",
+    "url": "http://map.vroom-project.org/"
+   },
+   {
+    "label": "Usage wiki",
+    "url": "https://github.com/Vroom-Project/vroom/wiki/Usage"
+   },
+   {
+    "label": "vroom-docker",
+    "url": "https://github.com/Vroom-Project/vroom-docker"
+   }
+  ]
+ }
+}

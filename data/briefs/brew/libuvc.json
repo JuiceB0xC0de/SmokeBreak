@@ -1,0 +1,79 @@
+{
+ "name": "libuvc",
+ "desc": "Cross-platform library for USB video devices",
+ "homepage": "https://libuvc.github.io/",
+ "installs_365d": 513,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "library"
+ ],
+ "why": "A USB Video Class library lets you talk directly to webcams and microscopes, a real door into how USB devices expose streams.",
+ "brief": {
+  "what_it_is": "libuvc is a cross-platform C library for USB video devices, built on top of libusb. It talks to any device that exposes the standard USB Video Class (UVC) interface, giving fine-grained control over it. Developers can use it to write drivers for devices that aren't supported yet, or to access UVC devices in a generic way. The README describes USB video devices in general terms and does not mention webcams or microscopes by name.",
+  "why_it_exists": "The README frames it as a way to write drivers for previously unsupported UVC devices, or to reach any UVC device generically without a vendor-specific driver.",
+  "how_it_works": "libuvc sits on libusb and speaks the USB Video Class protocol to the device, so it can control the device and receive its streams. The README describes two stream-tuning knobs: LIBUVC_PACKETS_PER_TRANSFER_MAX sets the maximum number of isochronous packets in one USB transfer, and LIBUVC_NUM_TRANSFER_BUFS sets how many transfers are queued at once. The README does not explain the internals beyond this.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/libuvc/libuvc",
+    "context": "Fetches the source from GitHub."
+   },
+   {
+    "cmd": "mkdir build",
+    "context": "Creates an out-of-tree build directory inside the repo."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Configures the build from the build directory with default options."
+   },
+   {
+    "cmd": "make && sudo make install",
+    "context": "Compiles the library and installs it system-wide, which needs root."
+   },
+   {
+    "cmd": "cmake .. -DBUILD_TEST=ON -DBUILD_EXAMPLE=ON",
+    "context": "Reconfigures the build to also compile the example and uvc_test programs. The README notes uvc_test needs OpenCV."
+   },
+   {
+    "cmd": "./example",
+    "context": "Runs the example program after it has been built with BUILD_EXAMPLE."
+   },
+   {
+    "cmd": "./uvc_test",
+    "context": "Runs the uvc_test program after it has been built with BUILD_TEST. Needs OpenCV to build, per the README."
+   },
+   {
+    "cmd": "cmake .. -DLIBUVC_PACKETS_PER_TRANSFER_MAX=8",
+    "context": "Lowers the packets-per-transfer limit from its default of 32. The README suggests this if streaming fails with submiturb failed, errno=12 (ENOMEM), which it says is common on Android."
+   }
+  ],
+  "install_notes": "Prerequisites are libusb and CMake. Build from source with git clone, cmake, make, and sudo make install. Optional example and test programs need the BUILD_EXAMPLE and BUILD_TEST CMake flags, and uvc_test needs OpenCV. CMake cache options can be edited in CMakeCache.txt or through a CMake GUI. The README doesn't mention a Homebrew formula, so the brew install path isn't covered there. No accounts, hardware, or runtime setup are mentioned.",
+  "standout": "It gives direct, generic access to any USB Video Class device through a small C library, with no vendor-specific driver needed. The README also exposes buffer-tuning knobs that matter on constrained platforms.",
+  "status": "unknown. The README gives no release date, version number, or recent-activity note, and I did not check the repository's commit history or release page.",
+  "caveats": "The homepage https://libuvc.github.io/ returned no content when fetched, so the docs it points to could not be read. The README says the test program uvc_test needs OpenCV. Streaming can fail with errno=12 on Android, and the README suggests lowering LIBUVC_PACKETS_PER_TRANSFER_MAX as a workaround. The default number of queued transfers is 20 on macOS and 100 elsewhere. The README does not mention microscopes, which the scout note brings up. The licence was not stated in the text I read.",
+  "quotes": [
+   "libuvc is a cross-platform library for USB video devices, built atop libusb.",
+   "It enables fine-grained control over USB video devices exporting the standard USB Video Class (UVC) interface, enabling developers to write drivers for previously unsupported devices, or just access UVC devices in a generic fashion.",
+   "The documentation for libuvc can currently be found at https://libuvc.github.io/.",
+   "Happy hacking!"
+  ],
+  "links": [
+   {
+    "label": "Homepage and documentation",
+    "url": "https://libuvc.github.io/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/libuvc/libuvc"
+   }
+  ],
+  "fetch_log": [
+   "https://libuvc.github.io/ \u2014 fetched, returned no content (empty response).",
+   "https://github.com/libuvc/libuvc \u2014 fetched, README returned in full."
+  ]
+ }
+}

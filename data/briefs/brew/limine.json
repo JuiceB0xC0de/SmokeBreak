@@ -1,0 +1,91 @@
+{
+ "name": "limine",
+ "desc": "Modern, secure, portable, multiprotocol bootloader and boot manager",
+ "homepage": "https://github.com/Limine-Bootloader/Limine",
+ "installs_365d": 707,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "protocol"
+ ],
+ "why": "A multiprotocol bootloader that is a readable route into how machines hand off to a kernel, though boot tooling is plumbing.",
+ "brief": {
+  "what_it_is": "Limine is a bootloader and boot manager, the program that runs at power-on and loads an operating system kernel. You give it a limine.conf configuration file plus its boot files, which are copied onto a FAT EFI system partition for UEFI, written into an MBR or GPT BIOS boot partition for BIOS, or placed in a hybrid ISO or on a PXE server. It supports IA-32, x86-64, aarch64, riscv64 and loongarch64, and can start Linux, Multiboot 1 and 2, the Limine boot protocol, or chainload other loaders. A small host tool called 'limine' does installation work, such as 'limine bios-install'. The README also says it is the reference implementation of the Limine boot protocol.",
+  "why_it_exists": "The README describes it as a 'modern, secure, portable, multiprotocol bootloader and boot manager'. Its stated purpose is to be the reference implementation of the Limine boot protocol, a handoff interface for kernels. No further problem statement appears in the fetched pages.",
+  "how_it_works": "The README does not explain internals. USAGE.md describes the flow: on UEFI, the BOOT*.EFI files are copied to /EFI/BOOT on a FAT EFI system partition alongside a config file; on BIOS, 'limine bios-install' is run against a disk or image, and limine-bios.sys and limine.conf must sit on a supported filesystem. USAGE.md also documents opt-in Secure Boot enforcement (config hash enrollment, hashed file paths) and Measured Boot that extends TPM PCRs 8 and 9 with the loaded artifacts.",
+  "commands_seen": [
+   {
+    "cmd": "limine bios-install <path to device/image>",
+    "context": "USAGE.md: installs Limine onto an MBR device or raw image file for BIOS boot."
+   },
+   {
+    "cmd": "limine bios-install <path to device/image> <1-based stage 2 partition number>",
+    "context": "USAGE.md: BIOS install onto a GPT disk, pointing at a BIOS boot partition of at least 32KiB."
+   },
+   {
+    "cmd": "limine bios-install image.iso",
+    "context": "USAGE.md: run on the generated hybrid ISO after xorriso builds it."
+   },
+   {
+    "cmd": "xorriso -as mkisofs -R -r -J -b <relative path of limine-bios-cd.bin> \\",
+    "context": "USAGE.md: first line of the xorriso command that builds a BIOS/UEFI hybrid ISO; the full command spans several backslash-continued lines and includes -o image.iso."
+   },
+   {
+    "cmd": "b3sum --length 128 limine.conf",
+    "context": "USAGE.md: generates the 128-byte BLAKE3 hash used for Secure Boot config enrollment."
+   },
+   {
+    "cmd": "./configure",
+    "context": "INSTALL.md: configure step for a release tarball; builds no ports unless enabled with flags from ./configure --help."
+   },
+   {
+    "cmd": "./bootstrap",
+    "context": "INSTALL.md: run first only when building from a repository checkout, to fetch dependencies and generate configure."
+   },
+   {
+    "cmd": "make",
+    "context": "INSTALL.md: builds Limine (gmake where applicable). The README also says running make in an unpacked binary release rebuilds the host tool."
+   },
+   {
+    "cmd": "make install",
+    "context": "INSTALL.md: installs Limine files into share and bin under the prefix, default /usr/local."
+   }
+  ],
+  "install_notes": "Beyond brew install, the README says binary releases on GitHub (limine-binary-* assets) are available for point releases, and the host tool ships as portable source that can be rebuilt with make or any C99 compiler. Building from source needs common UNIX tools, GNU make, grep, sed, find, awk, nasm (for x86 ports), gcc or clang/llvm with binutils, and optionally mtools for limine-uefi-cd.bin. A repository checkout needs ./bootstrap, which requires git, patch, GNU autoconf 2.64+ and automake 1.13+. ./configure builds no ports by default, so the ports must be enabled explicitly. Building a hybrid ISO also needs xorriso. Setup requires writing a limine.conf (format in CONFIG.md, not fetched); no accounts or hardware beyond the target machine are mentioned.",
+  "standout": "Its install path is unusually detailed for a bootloader, covering BIOS, UEFI, hybrid ISO and PXE in one document. It also spells out a reproducible Measured Boot scheme: exact byte strings to hash for each TPM PCR extend, so an external verifier can recompute them, and an opt-in Secure Boot mode that enforces config and file hashes.",
+  "status": "unknown. The fetched pages show no release date or last-commit date. The README says releases since 7.x use Semantic Versioning and links a Repology packaging badge, which suggests active packaging, but I could not confirm recency.",
+  "caveats": "32-bit x86 support is only ensured for Pentium Pro (i686) class CPUs and above. Filesystem support is limited to FAT12/16/32 and ISO9660; others need the FAQ first. Building needs a set of toolchain prerequisites, and the README says ./configure builds no ports by default. With Secure Boot active, the config is unconditionally verified, and any hash mismatch or missing hash causes a panic. Any panic halts the system with no return to the menu. On IA-32 UEFI, modules must fit below 4 GiB. BIOS PXE needs a TFTP server that supports the tsize option. The fetched README does not state a license; the 3rd-party acknowledgments file was not fetched.",
+  "quotes": [
+   "Limine (pronounced as demonstrated here) is a modern, secure, portable, multiprotocol bootloader and boot manager, also used as the reference implementation for the Limine boot protocol.",
+   "All x86-64, aarch64, riscv64 and loongarch64 (UEFI) systems are supported.",
+   "Any panic halts the system unconditionally; there is no return to the menu, so a partially-extended PCR chain cannot be re-extended on a second attempt."
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repository",
+    "url": "https://github.com/Limine-Bootloader/Limine"
+   },
+   {
+    "label": "USAGE.md (install and deployment guide)",
+    "url": "https://github.com/Limine-Bootloader/Limine/blob/trunk/USAGE.md"
+   },
+   {
+    "label": "INSTALL.md (build and install)",
+    "url": "https://github.com/Limine-Bootloader/Limine/blob/trunk/INSTALL.md"
+   },
+   {
+    "label": "Limine boot protocol spec (PROTOCOL.md)",
+    "url": "https://github.com/Limine-Bootloader/limine-protocol/blob/trunk/PROTOCOL.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/Limine-Bootloader/Limine (homepage, GitHub README): worked",
+   "https://github.com/Limine-Bootloader/Limine/blob/trunk/USAGE.md (linked from README): worked, page text is GitHub chrome around the document",
+   "https://github.com/Limine-Bootloader/Limine/blob/trunk/INSTALL.md (linked from README): worked, page text is GitHub chrome around the document"
+  ]
+ }
+}

@@ -1,0 +1,141 @@
+{
+ "name": "rtl_433",
+ "desc": "Program to decode radio transmissions from devices",
+ "homepage": "https://github.com/merbanan/rtl_433",
+ "installs_365d": 2127,
+ "deprecated": false,
+ "source": "brew",
+ "score": 9,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "radio",
+  "afternoon"
+ ],
+ "why": "Decodes ISM-band sensor transmissions from your neighbourhood using a cheap SDR dongle.",
+ "brief": {
+  "what_it_is": "rtl_433 is a command-line program that decodes the data that radio devices send on the ISM bands, mainly 433.92 MHz, 868 MHz (SRD), 315 MHz, 345 MHz and 915 MHz. It takes radio samples from a software-defined radio (Realtek RTL2832 RTL-SDR dongles, or LimeSDR, PlutoSDR, HackRF and SoapyRemote through SoapySDR) or from a saved sample file. It prints decoded messages as log or key-value text, JSON, CSV, MQTT, InfluxDB, syslog, or through an HTTP API and UI. The decoder list covers weather and temperature sensors, remote controls, doorbells, car tyre pressure sensors (TPMS), energy and water meters, and more.",
+  "why_it_exists": "The README describes it as \"a generic data receiver\" and notes that despite the name it is not limited to RTL-SDR hardware or to one kind of device. It gives no separate problem statement. Its stated goals are portability and low resource use, so it can run on embedded hardware, and it aims to support older compilers.",
+  "how_it_works": "The SDR captures the radio signal and rtl_433 demodulates it into pulses, then matches those pulses against a large set of per-device decoders. You can pick which decoders run with -R, or define your own with -X using a flex spec that gives modulation type and pulse timings (for example OOK_PWM, OOK_PCM, FSK_PWM). The README also documents a pulse analyzer (-A) and raw I/Q saving (-S) for debugging and building test files.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt install rtl-433",
+    "context": "Debian/Ubuntu install from the distro package."
+   },
+   {
+    "cmd": "pkg install rtl-433",
+    "context": "FreeBSD install."
+   },
+   {
+    "cmd": "brew install rtl_433",
+    "context": "macOS install via Homebrew (the formula name uses an underscore)."
+   },
+   {
+    "cmd": "rtl_433 -h",
+    "context": "Prints the full usage help, including the supported device protocol list."
+   },
+   {
+    "cmd": "rtl_433 -C si",
+    "context": "Default receive mode, with output units converted to metric."
+   },
+   {
+    "cmd": "rtl_433 -f 868M -s 1024k",
+    "context": "Listens on 868 MHz at a 1024k sample rate."
+   },
+   {
+    "cmd": "rtl_433 -R 1 -R 8 -R 43",
+    "context": "Enables only the decoders for devices 1, 8 and 43."
+   },
+   {
+    "cmd": "rtl_433 -A",
+    "context": "Turns on the pulse analyzer, which summarises pulse, gap and period timings and tries a decode."
+   },
+   {
+    "cmd": "rtl_433 -S all -T 120",
+    "context": "Saves every detected signal as a file (g###_###M_###k.cu8) and stops after 2 minutes."
+   },
+   {
+    "cmd": "rtl_433 -F json -M utc \\| mosquitto_pub -t home/rtl_433 -l",
+    "context": "Pipes JSON output with UTC timestamps into mosquitto_pub as MQTT messages."
+   }
+  ],
+  "install_notes": "Besides brew install, the README lists apt (sudo apt install rtl-433), FreeBSD pkg, and Docker images from hertzg/rtl_433_docker. Building from source is covered in docs/BUILDING.md, which I did not open. Configuration can come from a rtl_433.conf file, searched in ./, $XDG_CONFIG_HOME/rtl_433/, and the sysconf directory, and command-line arguments are read in order. On Linux, if the kernel DVB driver has claimed the dongle, the README suggests blacklisting dvb_usb_rtl28xxu or unloading it with rmmod. Non-RTL hardware needs SoapySDR. Some decoders are disabled by default and must be turned on with -R n or a config file. The README suggests that sudo is unnecessary.",
+  "standout": "The protocol list is very long (several hundred numbered entries, many with the exact model or brand names), and the flex decoder (-X) lets you describe a new OOK or FSK device in one command-line string without writing C. The output is also unusually flexible, with MQTT topic templates, InfluxDB, syslog, a trigger file for GPIO, and an HTTP UI on port 8433.",
+  "status": "unknown. The README I fetched has no release date, last-commit date, or deprecation notice. It does describe a year.month version scheme and has a Releases section, and it names recent-looking hardware, but I did not check the releases or commit history.",
+  "caveats": "Linux users may hit the kernel driver conflict described above. Many decoders are disabled by default. The security section says the tool should not be assumed secure, that it reads and writes files without checks, that its output is unverified, and that network outputs such as MQTT can be fed by anyone with a transmitter, so it is meant for trusted local networks. The README does not state a licence in the part I read. Windows is listed as a supported platform for compilation, but the README gives no details on it.",
+  "quotes": [
+   "rtl_433 (despite the name) is a generic data receiver, mainly for the 433.92 MHz, 868 MHz (SRD), 315 MHz, 345 MHz, and 915 MHz ISM bands.",
+   "Low resource consumption and very few dependencies allow rtl_433 to run on embedded hardware.",
+   "The output is literally pulled from thin air, it's not to be trusted."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/merbanan/rtl_433"
+   },
+   {
+    "label": "Built with rtl_433 list (wiki)",
+    "url": "https://github.com/merbanan/rtl_433/wiki/Built-with-rtl_433!"
+   },
+   {
+    "label": "Related docs and projects (triq.org)",
+    "url": "https://triq.org/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/merbanan/rtl_433 \u2014 fetched OK; the README was returned and was thorough enough that I did not follow the linked docs (BUILDING.md, CONTRIBUTING.md, wiki, triq.org)."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "With a cheap SDR, rtl_433 turns nearby devices\u2019 invisible radio transmissions into decoded data and lets you inspect or describe unfamiliar protocols."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "rtl_433",
+  "tldr": "Decodes the radio chatter of weather stations, doorbells, tyre sensors and meters around you, using a cheap USB radio dongle and one command.",
+  "deeper_look": "rtl_433 is a command-line receiver for the license-free ISM bands, mainly 433.92 MHz, plus 868, 915, 315 and 345 MHz. It reads samples from a software-defined radio, either an RTL-SDR dongle or something like a HackRF, LimeSDR or PlutoSDR through SoapySDR, or from a saved sample file. It turns the signal into pulses and tries each one against several hundred per-device decoders. Matches print as text, JSON, CSV, MQTT, InfluxDB or syslog, or are served through an HTTP UI.\n\nThe README calls it \"a generic data receiver\" and says that, despite the name, it is not tied to RTL-SDR hardware or to one kind of device. Its stated goals are low resource use and few dependencies, so it can run on embedded hardware.\n\nThe idea underneath is that a lot of cheap wireless gear shouts unencrypted data into the air with simple modulation: temperature readings, remote button presses, tyre pressures, meter readings. Once you can see the pulses, you can learn how those devices talk. The pulse analyzer (-A) summarises pulse, gap and period timings. The flex decoder (-X) lets you describe an unknown OOK or FSK device in a single command-line string, with no C required.\n\nThe README is blunt about trust: \"The output is literally pulled from thin air, it's not to be trusted.\" Anyone with a transmitter can produce messages, so keep it on a trusted local network.",
+  "install": "brew install rtl_433\n# Needs hardware: an RTL-SDR USB dongle (or a SoapySDR-supported radio such as HackRF, LimeSDR or PlutoSDR) and an antenna.\n# On Linux, if the kernel DVB driver claims the dongle, blacklist dvb_usb_rtl28xxu or unload it with rmmod.",
+  "try_this": [
+   {
+    "cmd": "rtl_433 -h",
+    "what_happens": "Prints the full usage help, including the numbered list of supported device protocols."
+   },
+   {
+    "cmd": "rtl_433 -C si",
+    "what_happens": "Listens on the default band and prints decoded messages from nearby devices, with units converted to metric."
+   },
+   {
+    "cmd": "rtl_433 -A",
+    "what_happens": "Turns on the pulse analyzer, which summarises pulse, gap and period timings and attempts a decode of signals it cannot name."
+   }
+  ],
+  "whats_unique": "The protocol list is very long, with many entries naming exact brands and models, and the flex decoder lets you describe a new device without writing code. Output options cover MQTT, InfluxDB, syslog and a built-in HTTP UI.",
+  "caveats": "It needs an SDR dongle, Linux users may hit a kernel driver conflict, some decoders are off by default, and the README says not to trust the output.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "needs-hardware",
+   "radio",
+   "sdr",
+   "ism-band",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/merbanan/rtl_433"
+   },
+   {
+    "label": "Built with rtl_433 list (wiki)",
+    "url": "https://github.com/merbanan/rtl_433/wiki/Built-with-rtl_433!"
+   },
+   {
+    "label": "Related docs and projects (triq.org)",
+    "url": "https://triq.org/"
+   }
+  ]
+ }
+}

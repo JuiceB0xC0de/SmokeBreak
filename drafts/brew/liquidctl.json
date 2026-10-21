@@ -1,0 +1,144 @@
+{
+ "name": "liquidctl",
+ "desc": "Cross-platform tool and drivers for liquid coolers and other devices",
+ "homepage": "https://github.com/liquidctl/liquidctl",
+ "installs_365d": 804,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "reverse-engineering"
+ ],
+ "why": "Talks to USB HID liquid coolers and fans by poking at their undocumented protocols, a real door into hardware.",
+ "brief": {
+  "what_it_is": "liquidctl is a cross-platform command-line tool and Python library for monitoring and controlling liquid coolers and other PC hardware. You point it at a supported device and it reads status (fan speeds, pump speed, liquid temperature, noise level, DIMM temperature) or sets fan and pump speed curves, LED colours and lighting modes. Output is human-readable text, or JSON with --json for the list, initialize and status commands. The README lists supported AIO coolers, fan and LED controllers, PSUs, motherboard RGB, GPU RGB and DDR4 memory from Corsair, NZXT, ASUS, Aquacomputer, Gigabyte, Lian Li, MSI and others.",
+  "why_it_exists": "The README frames it as a single cross-platform tool and set of drivers for liquid coolers and other devices, so vendor control software is not needed on every operating system. It also points to Linux hwmon drivers and a GUI as sibling or related projects.",
+  "how_it_works": "Each supported device has a driver module that talks to it over USB HID (via hidapi), raw USB (via PyUSB and libusb 1.0), or SMBus on Linux for some memory and motherboard RGB parts. Some devices can also use the Linux hwmon driver, which the README marks with an 'h' note. Devices usually need an initialize step after each boot, and the README says so explicitly. Per-device details are in the docs/ directory, and the driver APIs are documented for use from Python.",
+  "commands_seen": [
+   {
+    "cmd": "liquidctl list",
+    "context": "Lists every recognised supported device with an index, for example 'Device #0: Corsair Vengeance RGB DIMM2'."
+   },
+   {
+    "cmd": "# liquidctl initialize all",
+    "context": "Initialises all detected devices. The README says devices usually need this before use, and it should run again after boot."
+   },
+   {
+    "cmd": "# liquidctl status",
+    "context": "Prints current readings for all devices, such as fan rpm, voltage, current, noise level, liquid temperature and pump speed."
+   },
+   {
+    "cmd": "# liquidctl --match kraken set fan speed  20 30  30 50  34 80  40 90  50 100",
+    "context": "Sets a Kraken fan speed curve as temperature/percentage pairs, so 30 degrees gives 50 percent. Note the double spaces in the original."
+   },
+   {
+    "cmd": "# liquidctl --match kraken set pump speed 70",
+    "context": "Sets the Kraken pump to a fixed 70 percent."
+   },
+   {
+    "cmd": "# liquidctl --match kraken set sync color fixed 0080ff",
+    "context": "Sets the Kraken's sync lighting to a fixed hex colour."
+   },
+   {
+    "cmd": "# liquidctl --match \"smart device\" set led color moving-alternating \"hsv(30,98,100)\" \"hsv(30,98,10)\" --speed slower",
+    "context": "Runs an alternating moving LED effect between two HSV colours on an NZXT Smart Device, at slower speed."
+   },
+   {
+    "cmd": "# liquidctl status --match vengeance --unsafe=smbus,vengeance_rgb",
+    "context": "Reads temperatures from Corsair Vengeance RGB DIMMs. This needs the --unsafe flag for the smbus and vengeance_rgb features."
+   },
+   {
+    "cmd": "brew install liquidctl",
+    "context": "Installs the latest stable release on macOS via Homebrew. The README also offers brew install liquidctl --HEAD for the development snapshot."
+   },
+   {
+    "cmd": "python -m pip install liquidctl",
+    "context": "Installs the latest stable release from PyPI, which also pulls in the Python libraries. Pin a version with ==1.16.0."
+   }
+  ],
+  "install_notes": "Requires Python 3.10 or later and LibUSB 1.0. On macOS, Homebrew is the easy route, and manual installs need brew install python libusb. On Windows, install Python with PATH enabled. A LibUSB DLL usually comes with liquidctl, but some devices need the WinUSB driver swapped in with Zadig, which the README warns can make a device inaccessible if it was not needed. On Linux, the device nodes are not accessible to normal users by default, so you either run with sudo or doas or install the udev rules at extra/linux/71-liquidctl.rules. FreeBSD and DragonFly have a ports package (pkg install py311-liquidctl). Distro packages exist for Alpine, Arch, Fedora, Nix and others. Autostart is covered by systemd units, Windows Task Scheduler batch files, or macOS Automator/launchctl. Some Linux systems also need the device rebound to usbhid, but this is only a troubleshooting step.",
+  "standout": "One CLI and one Python API cover coolers, fan hubs, PSUs, RAM, GPUs and motherboard RGB from many vendors, and the README's support table is candid about partial support, broken devices and devices that need unsafe flags. It can also feed the Linux hwmon driver family and includes a host-based fan control script (yoda.py) and a HWiNFO bridge. The scout note calls the protocols undocumented, but the README does not say that. It only says the protocols are reached through drivers, so treat that claim as the scout's own.",
+  "status": "Unknown exact date. The README cites releases up to 1.16.0 and 2024 hardware, has a test-status badge and a CII best-practices badge, and lists a GitHub Discord. I did not see a last-release or last-commit date in the fetched text, so I cannot confirm the cadence. It reads as actively maintained.",
+  "caveats": "Linux needs root or udev rules to reach devices. Windows may need driver replacement with Zadig for some devices, and that can break them for liquidctl. Many table entries carry notes: p means partially supported, B means broken in at least one significant way, U means it needs --unsafe features, L needs --legacy-690lc, and Z needs a Windows driver replacement. Some devices are only in git and not in a release yet. The README says the stability guarantee does not cover exact output keys, values and units, so scripts should check their output. The project is GPL-3.0-or-later. The README's copyright line reads 2018 to 2023, even though it cites 2024 devices. Only the homepage README was read, and the per-device docs were not opened.",
+  "quotes": [
+   "Cross-platform tool and drivers for liquid coolers and other devices",
+   "liquidctl \u2013 liquid cooler control",
+   "Devices will usually need to be initialized before they can be used, though each device has its own requirements and limitations.",
+   "The liquidctl driver APIs can be used to build Python programs that monitor or control the devices, and offer features beyond the ones provided by the CLI."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage, README fetched)",
+    "url": "https://github.com/liquidctl/liquidctl"
+   },
+   {
+    "label": "Per-device docs directory (linked from README, not fetched)",
+    "url": "https://github.com/liquidctl/liquidctl/tree/main/docs"
+   },
+   {
+    "label": "liquidtux, sibling Linux hwmon drivers (linked from README, not fetched)",
+    "url": "https://github.com/liquidctl/liquidtux"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/liquidctl/liquidctl: fetched OK, returned the full README. Did not follow further links, because the README was complete and covered install, CLI, API and troubleshooting."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It turns vendor-specific USB and SMBus hardware into inspectable, scriptable devices, making an ordinary PC\u2019s hidden control protocols a worthwhile thing to explore."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "liquidctl",
+  "tldr": "One command-line tool and Python library that reads and controls PC liquid coolers, fan hubs, RGB lighting and memory from many vendors, without their own software.",
+  "deeper_look": "liquidctl talks to PC hardware that normally ships with a vendor's own control app. Point it at a supported device and it reads status (fan and pump speed, liquid temperature, noise level, DIMM temperature) or sets fan curves, pump speed, LED colours and lighting modes. Output is plain text, or JSON with `--json` for the list, initialize and status commands.\n\nEach supported device has a driver module. Drivers reach hardware over USB HID (via hidapi), raw USB (via PyUSB and libusb), or SMBus on Linux for some memory and motherboard RGB parts. The README's support table covers coolers, fan and LED controllers, PSUs, GPUs and DDR4 memory from Corsair, NZXT, ASUS, Aquacomputer, Gigabyte, Lian Li, MSI and others.\n\nThe idea underneath is that a lot of consumer hardware is just a USB device speaking a small protocol, and a driver can replace the vendor app. That makes it a way into how HID and USB devices work, and how a cross-platform driver is organised. The driver APIs can also be used from Python: \"The liquidctl driver APIs can be used to build Python programs that monitor or control the devices, and offer features beyond the ones provided by the CLI.\"\n\nMost devices need an initialize step after each boot. The README says so explicitly, and covers autostart with systemd units, Windows Task Scheduler and macOS launchctl.",
+  "install": "brew install liquidctl\n# Needs a supported device plugged in to do anything useful. Also available via: python -m pip install liquidctl\n# On Linux, devices are not accessible to normal users by default: use sudo or install extra/linux/71-liquidctl.rules from the repo.",
+  "try_this": [
+   {
+    "cmd": "liquidctl --help",
+    "what_happens": "Shows the available commands and options, which works even with no supported device attached."
+   },
+   {
+    "cmd": "liquidctl list",
+    "what_happens": "Lists every recognised supported device with an index, for example 'Device #0: Corsair Vengeance RGB DIMM2'."
+   },
+   {
+    "cmd": "liquidctl status",
+    "what_happens": "Prints current readings for all devices, such as fan rpm, voltage, current, noise level, liquid temperature and pump speed."
+   }
+  ],
+  "whats_unique": "One CLI and one Python API cover coolers, fan hubs, PSUs, RAM, GPUs and motherboard RGB from many vendors. The README's support table is candid about partial support, broken devices and devices that need unsafe flags.",
+  "caveats": "It does nothing without a supported device, Linux needs root or udev rules, and on Windows some devices need a Zadig driver swap that can make them unusable if it was not needed.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "usb",
+   "hid",
+   "python",
+   "pc-hardware",
+   "rgb"
+  ],
+  "links": [
+   {
+    "label": "liquidctl on GitHub",
+    "url": "https://github.com/liquidctl/liquidctl"
+   },
+   {
+    "label": "Per-device docs",
+    "url": "https://github.com/liquidctl/liquidctl/tree/main/docs"
+   },
+   {
+    "label": "liquidtux, sibling Linux hwmon drivers",
+    "url": "https://github.com/liquidctl/liquidtux"
+   }
+  ]
+ }
+}

@@ -1,0 +1,86 @@
+{
+ "name": "soapyrtlsdr",
+ "desc": "SoapySDR RTL-SDR Support Module",
+ "homepage": "https://github.com/pothosware/SoapyRTLSDR/wiki",
+ "installs_365d": 1199,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "afternoon",
+  "audio"
+ ],
+ "why": "Plugs RTL-SDR dongles into the SoapySDR abstraction, a gateway into listening to radio spectrum yourself.",
+ "brief": {
+  "what_it_is": "SoapyRTLSDR is a plugin module that lets an RTL-SDR USB dongle be used through the SoapySDR abstraction API, so any software that speaks SoapySDR can drive the dongle. The wiki says it provides a plugin module to use the RTL-SDR dongle within the SoapySDR API and software that supports SoapySDR. The input is the RF signal received by the dongle, and the output is a stream of IQ samples in formats CS8, CS16 or CF32 for the host application. Device discovery and settings are exposed through the SoapySDRUtil tool.",
+  "why_it_exists": "The wiki frames it as a way to use the RTL-SDR dongle inside the SoapySDR API and the software that supports it, rather than through librtl-sdr directly. The scout notes describe it as a gateway into listening to radio spectrum yourself.",
+  "how_it_works": "The module is built with CMake, which locates librtl-sdr and the SoapySDR development files on the system, and it installs into the SoapySDR modules directory. At runtime SoapySDR loads it, so SoapySDRUtil --probe=\"driver=rtlsdr\" reports the device, its RX channel, tuning and gain ranges, sample rates, and driver settings such as direct sampling, offset tune, I/Q swap and digital AGC. The probe output lists stream arguments for buffer size, ring buffers and async buffers.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt-get install rtl-sdr librtlsdr-dev",
+    "context": "Wiki's Ubuntu route for installing the librtl-sdr runtime and development package."
+   },
+   {
+    "cmd": "git clone https://github.com/pothosware/SoapyRTLSDR.git",
+    "context": "Clones the source repository before building from source."
+   },
+   {
+    "cmd": "cd SoapyRTLSDR",
+    "context": "Enters the cloned source directory."
+   },
+   {
+    "cmd": "mkdir build",
+    "context": "Creates an out-of-tree build directory."
+   },
+   {
+    "cmd": "cd build",
+    "context": "Enters the build directory."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Configures the CMake build, finding librtl-sdr and SoapySDR dev files."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles the plugin module."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the plugin into the SoapySDR modules directory."
+   },
+   {
+    "cmd": "SoapySDRUtil --probe=\"driver=rtlsdr\"",
+    "context": "Checks whether SoapySDR detects the RTL-SDR and prints device, channel, gain, frequency and sample-rate details. The wiki shows it prefixed with a $ shell prompt, which is not part of the command."
+   }
+  ],
+  "install_notes": "Needs librtl-sdr and SoapySDR development files, installed either from source or, on Ubuntu, with the apt package names given in the wiki. Build with CMake and make, then sudo make install. No account is needed. The hardware is an RTL-SDR dongle; the wiki's sample probe shows an R820T tuner. Pre-built installers for various systems are available through the Pothos SDR environment's downloads page. The README does not describe any first-run configuration beyond the probe check.",
+  "standout": "The plugin exposes RTL-SDR-specific settings such as direct sampling, offset tune, I/Q swap and digital AGC through the generic SoapySDR interface, so one dongle works with many SDR applications. The wiki also lists a large set of downstream tools that already run on SoapySDR, such as SDR++, CubicSDR, Rx Tools and QSpectrumAnalyzer.",
+  "status": "Quiet, with thin evidence. The wiki's home page was last edited by Fabian P. Schmidt on Mar 15, 2020 (6 revisions). The repository README is short and I saw no release date or recent commit date. I could not confirm current maintenance.",
+  "caveats": "The repository README is brief and mostly points to the wiki. The wiki still links to the old Osmocom trac page for librtl-sdr. Build instructions assume CMake and development headers, and the Ubuntu apt line is the only distro-specific route shown. The sample probe output is from one machine and shows a dual tuner report, so expect different output. The license is MIT, copyright Charles J. Cliffe, 2015.",
+  "quotes": [
+   "The Soapy RTL-SDR project provides a plugin module to use the RTL-SDR dongle within the SoapySDR API and software that supports SoapySDR.",
+   "Use the SoapySDRUtil application to see if SoapySDR can detect your device.",
+   "Pre-built installers for various systems are available through the Pothos SDR environment."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub wiki)",
+    "url": "https://github.com/pothosware/SoapyRTLSDR/wiki"
+   },
+   {
+    "label": "Source repository and README",
+    "url": "https://github.com/pothosware/SoapyRTLSDR"
+   },
+   {
+    "label": "Pothos SDR downloads (pre-built installers)",
+    "url": "https://github.com/pothosware/PothosCore/wiki/Downloads"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/pothosware/SoapyRTLSDR/wiki (homepage, worked; wiki Home page with build and probe notes)",
+   "https://github.com/pothosware/SoapyRTLSDR (repository README, worked; short, mainly license and links, used to check status and license)"
+  ]
+ }
+}

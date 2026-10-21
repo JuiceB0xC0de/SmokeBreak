@@ -1,0 +1,92 @@
+{
+ "name": "vc4asm",
+ "desc": "Macro assembler for Broadcom VideoCore IV aka Raspberry Pi GPU",
+ "homepage": "https://maazl.de/project/vc4asm/doc/index.html",
+ "installs_365d": 24,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "hardware",
+  "library"
+ ],
+ "why": "An assembler for the Raspberry Pi's VideoCore IV GPU, a door into a closed, rarely-touched processor.",
+ "brief": {
+  "what_it_is": "vc4asm is a macro assembler and disassembler for the Broadcom VideoCore IV GPU found in the Raspberry Pi. The assembler vc4asm takes QPU assembly source files (.qasm) and outputs a raw little-endian binary, an ARM ELF object file for ld or gcc, or C/C++ source and header files. The disassembler vc4dis takes hexadecimal or binary QPU machine code and writes assembler source. The current version on the homepage is 0.3.",
+  "why_it_exists": "The author says the QPU area is highly undocumented in the public domain, so the project aims to be a full-featured macro assembler and disassembler with constraint checking. It builds on earlier work by Pete Warden (qpu-asm), Eman, and Herman H Hermitage, and goes further by adding macros and functions.",
+  "how_it_works": "The author used the code of the hello_fft sample as a Rosetta Stone to learn the instruction encoding, and says the tool tries to stay downwardly compatible with the Broadcom tools. The assembler accepts several .qasm files, which are concatenated in order rather than linked as separate modules, and can include platform definitions such as vc4.qinc. The -V option checks VideoCore IV constraints, such as reading a register file address right after writing it. The disassembler's -M option suppresses emulated mov instructions so that a disassemble-then-reassemble round trip gives the same binary.",
+  "commands_seen": [
+   {
+    "cmd": "vc4asm [<options> ...] <qasm-file> [<qasm-file2> ...]",
+    "context": "Usage line for the assembler, from the homepage."
+   },
+   {
+    "cmd": "vc4asm -o code.bin -i vc4.qinc gpu_fft_1k.qasm",
+    "context": "Example from the homepage: assembles gpu_fft_1k.qasm into code.bin, pulling in vc4.qinc through the include path."
+   },
+   {
+    "cmd": "vc4dis [-o <qasm-output>] [-x[<input-format>]] [-M] [-F] [-v] [-b <base-addr>] <input-file> [<input-file2> ...]",
+    "context": "Usage line for the disassembler, from the homepage."
+   },
+   {
+    "cmd": "makeRelease.Cmd",
+    "context": "Build script that the homepage says to run to build vc4asm and vc4dis (makeDebug.Cmd is the debug alternative)."
+   },
+   {
+    "cmd": "make install",
+    "context": "Optional step after building, to install the binaries on the system."
+   },
+   {
+    "cmd": "cmake .",
+    "context": "Run inside a sample folder before building the samples."
+   },
+   {
+    "cmd": "make",
+    "context": "Run inside a sample folder after cmake to build the sample programs."
+   },
+   {
+    "cmd": "sudo hello_fft ...",
+    "context": "How the homepage says to run the samples, with sudo, because there is no secure device driver for the GPU."
+   },
+   {
+    "cmd": "makeTest.Cmd",
+    "context": "Runs the test cases using make rules. Subset targets are test_qasm, test_cout, test_parser and test_validator."
+   },
+   {
+    "cmd": "runTest.Cmd",
+    "context": "Runs the test cases through CMake (ctest is also mentioned). Slower than makeTest.Cmd."
+   }
+  ],
+  "install_notes": "The source is on GitHub at github.com/maazl/vc4asm, and the homepage links to a Raspberry Pi 1 binary download. Building needs a C++11 compiler (the author says gcc 4.9 on current Raspbian works; Wheezy's gcc 4.7.2 fails on the disassembler, and gcc 4.8 can be installed on Wheezy) and CMake. The source should build on other platforms too. Running the test cases needs Perl. The sample programs only build and run on a Raspberry Pi model. They need the vc4 display driver to be off, since the GPU cannot be used while that driver runs. The author recommends installing the vcio2 driver so the samples do not need root, but vcio2 blocks direct hardware access, which makes small hello_fft transforms significantly slower.",
+  "standout": "It supports macros and functions, which the author says are poorly documented elsewhere. It also has constraint checking (-V) and a disassembler that can round-trip code. Its hello_fft shader was hand-optimized for this assembler, with about 40% less code and roughly 9% less run time than GPU_FFT 3.0, and the author says it will not build with another assembler.",
+  "status": "Unknown. The homepage gives version 0.3 and says to see the change log for details, but I saw no release date. The GitHub README shows no last-commit date, and the changelog link was not fetched. The homepage's Known problems section says there are too few test cases, so bugs are likely.",
+  "caveats": "The samples run only on Raspberry Pi hardware and need root or the vcio2 driver, and the vc4 display driver must be off. The author says there are insufficient test cases, so bugs are likely. The assembler is aimed at QPU code for a GPU that the author calls rarely documented. The hello_fft shader only builds with this assembler. In the benchmark table, the 214-point FFT is slower with the optimized code, and the author does not know why. Some timings are marked unstable. The build needs C++11 and CMake, and the scripts are .Cmd files. The page does not state a license. The homepage was reachable.",
+  "quotes": [
+   "The goal of the vc4asm project is a full featured macro assembler and disassembler with constraint checking.",
+   "Unfortunately this area is highly undocumented in the public domain. And so the work uses only the code from hello_fft which is available as source and binary as Rosetta Stone.",
+   "The code will no longer build with another assembler since it uses several special features for instruction packing and scheduling.",
+   "There are insufficient test cases so far. So likely there are still bugs in the assembler."
+  ],
+  "links": [
+   {
+    "label": "Homepage and documentation",
+    "url": "https://maazl.de/project/vc4asm/doc/index.html"
+   },
+   {
+    "label": "Source on GitHub",
+    "url": "https://github.com/maazl/vc4asm"
+   },
+   {
+    "label": "Changelog (linked from GitHub README, not fetched)",
+    "url": "http://www.maazl.de/project/vc4asm/doc/changelog.html"
+   }
+  ],
+  "fetch_log": [
+   "https://maazl.de/project/vc4asm/doc/index.html: worked, full documentation text returned",
+   "https://github.com/maazl/vc4asm: worked, README returned (short version of the homepage text, with no date or release info)"
+  ]
+ }
+}

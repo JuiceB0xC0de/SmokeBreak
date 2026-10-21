@@ -1,0 +1,94 @@
+{
+ "name": "ios-webkit-debug-proxy",
+ "desc": "DevTools proxy for iOS devices",
+ "homepage": "https://github.com/google/ios-webkit-debug-proxy",
+ "installs_365d": 5898,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "protocol",
+  "tui",
+  "quick"
+ ],
+ "why": "A door into the remote debugging protocol iOS exposes over USB, letting you talk to Safari's inspector from a desktop.",
+ "brief": {
+  "what_it_is": "ios_webkit_debug_proxy (iwdp) is a command-line proxy that takes in the debugging traffic iOS devices expose over USB through the usbmuxd daemon and re-exposes it over websocket. Developers can then send commands to MobileSafari and UIWebViews on real and simulated iOS devices. It serves a device list at localhost:9221, and each device's tabs on its own port (9222 onward). The output is a set of JSON endpoints and websocket URLs that DevTools-style frontends can connect to.",
+  "why_it_exists": "The README frames it as a way for developers to reach MobileSafari and UIWebViews on real and simulated iOS devices from a desktop. It notes that recent Chrome DevTools and Safari's WebKit inspector protocols have diverged, so newer Chrome DevTools no longer works with Safari directly.",
+  "how_it_works": "The proxy talks to usbmuxd, which handles the USB connection to each attached device, and bridges that to websocket clients. Each attached device gets its own port, assigned first-come-first-serve and preserved across detach and reattach until the proxy restarts. The -f flag selects which DevTools frontend HTML page is served, and -c sets the device-to-port mapping.",
+  "commands_seen": [
+   {
+    "cmd": "brew install ios-webkit-debug-proxy",
+    "context": "Recommended macOS install via Homebrew."
+   },
+   {
+    "cmd": "scoop install ios-webkit-debug-proxy",
+    "context": "Windows install via Scoop, after adding the extras bucket. The README also requires the latest iTunes on Windows."
+   },
+   {
+    "cmd": "sudo apt-get install autoconf automake libusb-dev libusb-1.0-0-dev libplist-dev libtool libssl-dev",
+    "context": "Linux build dependencies from the apt repository. Several other libraries must be built from source at newer versions."
+   },
+   {
+    "cmd": "sudo dnf install autoconf automake libusb1-devel libusb-compat-0.1-devel libtool openssl-devel",
+    "context": "Fedora build dependencies."
+   },
+   {
+    "cmd": "./autogen.sh",
+    "context": "Run inside the cloned repo before building from source on Linux or Fedora."
+   },
+   {
+    "cmd": "idevice_id -l",
+    "context": "Verifies that usbmuxd can see the attached device(s). Requires libimobiledevice-utils."
+   },
+   {
+    "cmd": "ios_webkit_debug_proxy",
+    "context": "Starts the proxy with default settings. Ctrl-C quits, and it can run in the background."
+   },
+   {
+    "cmd": "ios_webkit_debug_proxy -f chrome-devtools://devtools/bundled/inspector.html",
+    "context": "Example of pointing the proxy at a specific DevTools frontend with -f. The README notes that clicking links on localhost:9222 is blocked with this frontend, so the URL must be pasted into the address bar."
+   },
+   {
+    "cmd": "ios_webkit_debug_proxy -c null:9221,:9222-9322",
+    "context": "Shows the default port assignment rules set with -c, where null is the device list."
+   },
+   {
+    "cmd": "sudo ldconfig",
+    "context": "Troubleshooting fix for 'error while loading shared libraries: libimobiledevice.so.6'."
+   },
+   {
+    "cmd": "./configure LIBS=\"-lm\"",
+    "context": "Run before make to fix an undefined reference to log10 on Linux."
+   }
+  ],
+  "install_notes": "macOS: brew install is the easy path. Windows: install iTunes too, via Scoop. Linux: install apt packages, then build and install libplist, libimobiledevice-glue, libusbmuxd, libimobiledevice and usbmuxd from source. Then run ./autogen.sh, make, and sudo make install. A udev rule installed by that step starts usbmuxd when a device is attached. Fedora can use packaged libraries instead of building them. On the device, you must have at least one open browser tab and Settings > Safari > Advanced > Web Inspector set to ON. The iOS Simulator has to be started before the proxy. Some Rosetta builds on macOS need OpenSSL 1.1 paths exported before building.",
+  "standout": "It is a bridge rather than a debugger: it lets you attach standard DevTools-style frontends to iOS Safari, and the README points to Firefox DevTools via mozilla/valence as another route. Its port scheme, one port per device with a stable mapping across reconnects, is simple and scriptable through the /json endpoints.",
+  "status": "Unknown from the README alone. The fetched README has no release date, changelog, or last-commit info, and I did not check the repository's commit or release pages. Troubleshooting entries repeatedly say to use the latest version for iOS 12.2+ and iOS 10+ fixes, and the default frontend URL pins Chrome DevTools 27.0.1453.93, which suggests parts of the docs date from around 2013 to 2015.",
+  "caveats": "The Simulator must be started before the proxy. Windows needs iTunes. Linux requires building several libimobiledevice libraries from source, and the README lists a -lm link fix, a ldconfig fix, and a Rosetta-specific OpenSSL setup. The default frontend is an old pinned Chrome DevTools URL. https frontend URLs will not work without a shield-icon override. Newer Chrome DevTools is not compatible with Safari's inspector protocol, so you need a Safari-extracted inspector or Valence. Some iOS versions have reported empty tab lists or lockdownd errors. Licensing: Google BSD. Bundled libraries are older pinned versions (libplist 2.2.0, libusbmuxd 2.0.0, libimobiledevice 1.3.0). The README's websocket example link is empty, so use the documented paths instead.",
+  "quotes": [
+   "allowing developers to send commands to MobileSafari and UIWebViews on real and simulated iOS devices.",
+   "In recent versions of Chrome and Safari there're major discrepancies between Chrome Remote Debugging Protocol and Webkit Inspector Protocol, which means that newer versions of Chrome DevTools aren't compatible with Safari.",
+   "Lastly, always try replugging in the USB cable."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README (homepage)",
+    "url": "https://github.com/google/ios-webkit-debug-proxy"
+   },
+   {
+    "label": "Design document",
+    "url": "https://github.com/google/ios-webkit-debug-proxy/blob/master/design.md"
+   },
+   {
+    "label": "Example clients (examples/README.md)",
+    "url": "https://github.com/google/ios-webkit-debug-proxy/blob/master/examples/README.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/google/ios-webkit-debug-proxy - fetched OK, returned the README. It was detailed enough that I did not follow the design.md or examples links."
+  ]
+ }
+}

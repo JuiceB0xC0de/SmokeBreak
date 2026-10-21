@@ -1,0 +1,150 @@
+{
+ "name": "t2sz",
+ "desc": "Compress a file into a seekable zstd with per-file seeking for tar archives",
+ "homepage": "https://github.com/martinellimarco/t2sz",
+ "installs_365d": 50,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "library",
+  "science"
+ ],
+ "why": "Compresses tar archives into seekable zstd so you can jump into a single file without decompressing everything, a neat format trick worth a look.",
+ "brief": {
+  "what_it_is": "t2sz is a command-line tool that compresses a file into a seekable zstd archive by splitting the input into multiple zstd frames. Given a tar archive, its default mode gives each file in the archive its own independent frame, so one file can be pulled out without decompressing the whole archive. Given any other file, or with -r, it runs in raw mode and cuts the input into blocks. Output is a .zst file (for example archive.tar.zst), written to a path set with -o or to stdout. The README says any Zstandard tool, including zstd, can decompress the result.",
+  "why_it_exists": "The README frames it as tar 2 seekable zstd: the goal is fast seeking and extraction of a single file from a compressed archive without decompressing everything before it. The README does not give a longer origin story.",
+  "how_it_works": "In tar mode, each file in the archive becomes its own zstd frame, unless -s or -S changes the grouping. With -s SIZE, small files are packed into one frame until the block reaches at least SIZE, and a file is never split; with -S SIZE, large files are split into SIZE-length blocks. A seek table is written by default (-j turns it off). Seeking itself is done by separate reader projects that the README links: libzstd-seek (C/C++), indexed_zstd (Python), and ratarmount (FUSE mount).",
+  "commands_seen": [
+   {
+    "cmd": "t2sz -s 10M any.file",
+    "context": "Raw-mode example: compress any.file to any.file.zst with each input block 10M."
+   },
+   {
+    "cmd": "t2sz archive.tar",
+    "context": "Compress archive.tar to archive.tar.zst in default tar mode."
+   },
+   {
+    "cmd": "t2sz -o output.tar.zst archive.tar",
+    "context": "Compress archive.tar to a chosen output name, output.tar.zst."
+   },
+   {
+    "cmd": "t2sz -o - archive.tar",
+    "context": "Compress archive.tar and write the result to standard output."
+   },
+   {
+    "cmd": "t2sz -r -o out.zst -",
+    "context": "Read stdin in raw mode (-r) and write to out.zst."
+   },
+   {
+    "cmd": "t2sz -o out.tar.zst -",
+    "context": "Read a tar stream from stdin and write it to out.tar.zst in tar mode."
+   },
+   {
+    "cmd": "sudo apt install libzstd-dev",
+    "context": "Linux build prerequisite: install the zstd development library before the cmake build."
+   },
+   {
+    "cmd": "cmake .. -DCMAKE_BUILD_TYPE=\"Release\"",
+    "context": "Configure the source build from the build directory, as in the README's Linux and macOS steps."
+   },
+   {
+    "cmd": "brew install zstd",
+    "context": "macOS build prerequisite: install zstd from Homebrew before building from source."
+   },
+   {
+    "cmd": "brew install t2sz",
+    "context": "Install the packaged release via Homebrew on Linux or macOS."
+   }
+  ],
+  "install_notes": "Packaged on Homebrew, AUR (pamac build t2sz), and Snap, plus a .deb and source tarball on the GitHub release page. Source builds need CMake and libzstd-dev on Linux, or zstd from Homebrew on macOS, followed by make and sudo make install; cpack makes a .deb. The Snap build runs in strict mode and only reaches the home directory by default; removable media needs sudo snap connect t2sz:removable-media, and --devmode grants access to every file. Windows executables can be cross-compiled from macOS or Linux with a Docker command in the README, or downloaded from the release page. No accounts or runtime services are needed.",
+  "standout": "Each tar member is its own zstd frame with a seek table, so ordinary zstd tools still decompress the output while seeking-aware readers can jump straight to one file. The -s and -S options give a tunable tradeoff between archive size and seek granularity.",
+  "status": "unknown: the README shows a build-status badge and listings on Homebrew, AUR, and Snap, and it documents tests and fuzzing harnesses, but it gives no release date or last-commit date, and I did not check the releases or commits pages.",
+  "caveats": "Seeking needs a separate reader library or FUSE mount; t2sz alone only writes the seekable file. -S is ignored in raw mode. Multithreading (-T) needs libzstd 1.5.0 or newer, or an older compiler with ZSTD_MULTITHREAD. The Snap package is strict-confined by default. The README's license line only says 'See LICENSE', but the badge says GPLv3.",
+  "quotes": [
+   "It compresses a file into a seekable zstd splitting the file into multiple frames.",
+   "This allows fast seeking and extraction of a single file without decompressing the whole archive.",
+   "The compressed archive can be decompressed with any Zstandard tool, including zstd."
+  ],
+  "links": [
+   {
+    "label": "GitHub homepage and README",
+    "url": "https://github.com/martinellimarco/t2sz"
+   },
+   {
+    "label": "ratarmount (FUSE mount for seeking)",
+    "url": "https://github.com/mxmlnkn/ratarmount"
+   },
+   {
+    "label": "indexed_zstd (Python seeking library)",
+    "url": "https://github.com/martinellimarco/indexed_zstd"
+   },
+   {
+    "label": "libzstd-seek (C/C++ seeking library)",
+    "url": "https://github.com/martinellimarco/libzstd-seek"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/martinellimarco/t2sz - fetched OK, README returned in full (build, usage, packaging, testing, and fuzzing sections)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It turns ordinary tar members into independently seekable zstd frames, a useful and surprisingly simple bridge between archive structure and compressed-data access."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "t2sz",
+  "tldr": "Compresses a tar archive into a seekable zstd file, one frame per member, so a reader can pull out one file without unpacking the rest.",
+  "deeper_look": "t2sz writes ordinary zstd output, but it splits the input into many independent frames instead of one long stream. In its default tar mode, each file in the archive gets its own frame. For anything that is not a tar, or with `-r`, it runs in raw mode and cuts the input into fixed-size blocks.\n\nThe idea underneath is that a compressed stream does not have to be all-or-nothing. A normal `.tar.gz` or `.tar.zst` must be decompressed from the start to reach a file near the end. If the compressor ends a frame at each file boundary and writes a seek table, a reader can jump to the right frame and decompress only that. The README puts it this way: \"This allows fast seeking and extraction of a single file without decompressing the whole archive.\"\n\nThe output stays compatible. The README says any Zstandard tool, including `zstd`, can decompress it, so nothing is lost by using it. The `-s` and `-S` options tune the trade: pack small files together until a block reaches a size, or split large files into fixed-size blocks. Bigger frames usually compress better, smaller ones seek more finely.\n\nt2sz only writes the file. Seeking is done by separate projects the README links: libzstd-seek for C and C++, indexed_zstd for Python, and ratarmount, which mounts the archive through FUSE. Those are the next doors to open.",
+  "install": "brew install t2sz",
+  "try_this": [
+   {
+    "cmd": "t2sz archive.tar",
+    "what_happens": "Compresses archive.tar to archive.tar.zst in tar mode, with each member in its own frame."
+   },
+   {
+    "cmd": "t2sz -s 10M any.file",
+    "what_happens": "Raw mode: compresses any.file to any.file.zst in blocks of 10M."
+   },
+   {
+    "cmd": "t2sz -o - archive.tar",
+    "what_happens": "Writes the seekable compressed result to standard output so you can pipe it."
+   }
+  ],
+  "whats_unique": "Each tar member becomes its own zstd frame with a seek table, yet plain zstd tools still decompress the result. The -s and -S options let you tune archive size against seek granularity.",
+  "caveats": "t2sz alone only writes the seekable file; seeking needs a separate reader library or a FUSE mount like ratarmount, and the brief could not confirm how recently the project was updated.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "zstd",
+   "tar",
+   "compression",
+   "file-formats",
+   "seekable"
+  ],
+  "links": [
+   {
+    "label": "GitHub homepage and README",
+    "url": "https://github.com/martinellimarco/t2sz"
+   },
+   {
+    "label": "ratarmount (FUSE mount for seeking)",
+    "url": "https://github.com/mxmlnkn/ratarmount"
+   },
+   {
+    "label": "indexed_zstd (Python seeking library)",
+    "url": "https://github.com/martinellimarco/indexed_zstd"
+   },
+   {
+    "label": "libzstd-seek (C/C++ seeking library)",
+    "url": "https://github.com/martinellimarco/libzstd-seek"
+   }
+  ]
+ }
+}

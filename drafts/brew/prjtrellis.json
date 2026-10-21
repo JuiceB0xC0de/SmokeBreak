@@ -1,0 +1,131 @@
+{
+ "name": "prjtrellis",
+ "desc": "Documenting the Lattice ECP5 bit-stream format",
+ "homepage": "https://github.com/YosysHQ/prjtrellis",
+ "installs_365d": 385,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "reverse-engineering",
+  "needs-hardware",
+  "days-off",
+  "science"
+ ],
+ "why": "Documents the bitstream format of Lattice ECP5 FPGAs, a rare look inside how programmable chips are actually configured.",
+ "brief": {
+  "what_it_is": "Project Trellis is an open-source set of tools and a device database for Lattice ECP5 FPGAs. Its C++ library, libtrellis, reads and writes ECP5 bitstreams, tiles and the Project Trellis databases, with Python bindings via pybind11. The README says it provides the device database and tools for bitstream creation, and it sits between Yosys (Verilog synthesis) and nextpnr (place and route) in a fully open flow. The brew listing names five executables (ecpbram, ecpmulti, ecppack, ecppll, ecpunpack), but the README does not describe them individually, so their exact roles are unverified here.",
+  "why_it_exists": "The README says Project Trellis documents the Lattice ECP5 bit-stream format and internal architecture, enabling a fully open-source flow for ECP5 FPGAs. It says it follows the lead of Project X-Ray, which documents the bitstream format for Xilinx Series 7 devices.",
+  "how_it_works": "The README describes a black-box process: Lattice Diamond is asked to generate a large number of designs, which are turned into bitstreams. The bitstreams are then cross-correlated to discover what different bits do. These generator scripts are called fuzzers, after the software-testing idea of fuzzing. The resulting database can be downloaded precompiled (prjtrellis-db) or regenerated from scratch by running the fuzzers, which the README says takes several hours.",
+  "commands_seen": [
+   {
+    "cmd": "git clone --recursive https://github.com/YosysHQ/prjtrellis",
+    "context": "Clones the Project Trellis repository together with its submodules."
+   },
+   {
+    "cmd": "cd libtrellis\ncmake -DCMAKE_INSTALL_PREFIX=/usr/local .\nmake\nsudo make install",
+    "context": "Installs libtrellis and associated tools. The README says cmake must be run from the libtrellis directory, and out-of-tree builds are unsupported with nextpnr."
+   },
+   {
+    "cmd": "cmake -DARCH=ecp5 -DTRELLIS_INSTALL_PREFIX=/usr/local .",
+    "context": "Example nextpnr build configuration, pointing nextpnr at the prjtrellis install prefix to enable the ECP5 architecture."
+   },
+   {
+    "cmd": "source environment.sh",
+    "context": "Sets up the environment for a generic build; the README says user_environment.sh can be modified and the command rerun."
+   },
+   {
+    "cmd": "cd libtrellis\ncmake .\nmake",
+    "context": "Quickstart build of libtrellis from the Quickstart Guide."
+   },
+   {
+    "cmd": "cd fuzzers/ECP5/001-plc2_routing\nTRELLIS_JOBS=`nproc` python3 fuzzer.py",
+    "context": "Re-creates part of the database (LUT interconnect) by running a fuzzer in parallel, with the job count set to the number of CPUs."
+   },
+   {
+    "cmd": "./create-empty-db.sh",
+    "context": "Creates the empty reference bitstreams and tile layout from the metadata directory, as the first step of building the database from scratch."
+   }
+  ],
+  "install_notes": "Dependencies: Python 3.5 or later with development libraries (python3-dev on Ubuntu), a modern C++14 compiler (Clang recommended), CMake 3.5 or later, Boost, and Git. Recent OpenOCD is needed for device programming, and it must be built with --enable-ftdi if built from source. The Quickstart lists Lattice Diamond 3.10, but only for running fuzzers; end users and database explorers do not need it. Yosys and nextpnr must be latest git master, built according to their own instructions, with the ECP5 architecture enabled in nextpnr and pointed at the prjtrellis folder. Use the recursive clone so the database submodule comes along. The brew formula is not specified in the README and no brew-specific notes were given.",
+  "standout": "The bitstream format is reverse-engineered by generating huge numbers of designs in the vendor tool and correlating the resulting bitstreams, so the project documents a closed chip's configuration from the outside. It is also a sibling of Project X-Ray, and the README credits the original inspiration to the TinyFPGA project.",
+  "status": "unknown. The fetched README gives no release date or last-commit date. It does look dated: it mentions testing on Ubuntu 16.04 and 17.10, and insists on Yosys 0.8 being insufficient. Treat it as an older project whose current maintenance I could not confirm.",
+  "caveats": "Tested on Arch Linux and Ubuntu 16.04/17.10 only, per the README. The build needs latest git master of Yosys and nextpnr, and Yosys 0.8 is explicitly not sufficient. Out-of-tree cmake builds are unsupported when used with nextpnr. Regenerating the database takes several hours. Running the fuzzers needs Lattice Diamond 3.10, which is proprietary. Current support excludes DSP inference and advanced DSP features (only manual MULT18X18D instantiation works), and the README lists TinyFPGA Ex as 'coming soon'. Licensed under the permissive ISC licence. The README says all ECP5 devices should work, but only the boards it names have been confirmed.",
+  "quotes": [
+   "Project Trellis enables a fully open-source flow for ECP5 FPGAs using Yosys for Verilog synthesis and nextpnr for place and route.",
+   "Project Trellis documents the Lattice ECP5 bit-stream format and internal architecture.",
+   "Thanks to @tinyfpga for the original inspiration, and @mithro for the name and initial support."
+  ],
+  "links": [
+   {
+    "label": "Project Trellis homepage (GitHub)",
+    "url": "https://github.com/YosysHQ/prjtrellis"
+   },
+   {
+    "label": "prjtrellis-db (compiled device database)",
+    "url": "https://github.com/YosysHQ/prjtrellis-db"
+   },
+   {
+    "label": "Project Trellis ReadTheDocs documentation",
+    "url": "http://prjtrellis.readthedocs.io/en/latest/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/YosysHQ/prjtrellis: fetched OK, README returned (only fetch; README was complete enough that no further links were followed)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It reverse-engineers a closed FPGA\u2019s bitstream by correlating designs, opening a rare window into chip internals and enabling an open hardware flow."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Project Trellis",
+  "tldr": "Open documentation and tools for the bitstream format of Lattice ECP5 FPGAs, reverse-engineered by correlating thousands of vendor-generated designs.",
+  "deeper_look": "Project Trellis documents how a Lattice ECP5 FPGA is configured: which bits in the bitstream turn on which routing, logic and tile features. It ships a device database, a C++ library called libtrellis (with Python bindings via pybind11) that reads and writes bitstreams and tiles, and a handful of command-line tools. In an open flow it sits between Yosys, which synthesises Verilog, and nextpnr, which does place and route.\n\nThe interesting part is how the format was learned. The README describes a black-box process: Lattice's proprietary Diamond tool is asked to generate a large number of small designs, and the resulting bitstreams are cross-correlated to work out what each bit does. The scripts that drive this are called fuzzers, borrowing the name from software testing. The finished database can be downloaded precompiled (prjtrellis-db), or rebuilt from scratch, which the README says takes several hours.\n\nThe idea underneath is that a closed chip can be documented from the outside, by changing one thing at a time and watching what changes in the output. It follows Project X-Ray, which does the same for Xilinx Series 7 devices, and the README credits the TinyFPGA project for the original inspiration.\n\nThe brew formula installs five executables: ecpbram, ecpmulti, ecppack, ecppll and ecpunpack. The README does not describe them individually, so check each one's `--help` to see what it does.",
+  "install": "brew install prjtrellis\n# Pulls in boost, boost-python3 and python. To go beyond reading the tools' help you need Yosys and nextpnr (with the ECP5 architecture enabled), and an ECP5 board plus OpenOCD to program one.",
+  "try_this": [
+   {
+    "cmd": "ecppack --help",
+    "what_happens": "Prints the options of ecppack, one of the five installed tools."
+   },
+   {
+    "cmd": "ecpunpack --help",
+    "what_happens": "Shows the usage of ecpunpack, another tool in the set."
+   },
+   {
+    "cmd": "ecppll --help",
+    "what_happens": "Lists the options of ecppll, a further tool from the install."
+   }
+  ],
+  "whats_unique": "It documents a closed chip's configuration purely from the outside, by fuzzing the vendor tool and correlating bitstreams. It is a sibling of Project X-Ray, which does this for Xilinx parts.",
+  "caveats": "The README looks dated (it mentions Ubuntu 16.04 and 17.10), current maintenance is unconfirmed, and regenerating the database needs proprietary Lattice Diamond and several hours.",
+  "commitment": "days-off",
+  "category": "take-things-apart",
+  "tags": [
+   "days-off",
+   "fpga",
+   "reverse-engineering",
+   "bitstream",
+   "needs-hardware",
+   "yosys"
+  ],
+  "links": [
+   {
+    "label": "Project Trellis homepage (GitHub)",
+    "url": "https://github.com/YosysHQ/prjtrellis"
+   },
+   {
+    "label": "prjtrellis-db (compiled device database)",
+    "url": "https://github.com/YosysHQ/prjtrellis-db"
+   },
+   {
+    "label": "Project Trellis ReadTheDocs documentation",
+    "url": "http://prjtrellis.readthedocs.io/en/latest/"
+   }
+  ]
+ }
+}

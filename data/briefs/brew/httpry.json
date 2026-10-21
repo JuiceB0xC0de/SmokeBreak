@@ -1,0 +1,78 @@
+{
+ "name": "httpry",
+ "desc": "Packet sniffer for displaying and logging HTTP traffic",
+ "homepage": "https://github.com/jbittel/httpry",
+ "installs_365d": 43,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "A passive HTTP sniffer is a tidy way to watch the protocol that runs everything, though it is somewhat dated.",
+ "brief": {
+  "what_it_is": "httpry is a command-line tool for displaying and logging HTTP traffic. It listens on a network interface (or reads a saved capture file with -r) and parses each request and response line along with its header fields. Output goes to the console, to an output file with -o, or to syslog when run as a daemon with -d. It does not show raw HTTP bodies and does not analyze traffic itself. The distribution also includes Perl scripts for processing httpry log files.",
+  "why_it_exists": "The README says httpry is meant to capture, parse and/or log traffic for later analysis rather than analyze it directly, and that it is 'written to be as lightweight and flexible as possible, so that it can be easily adaptable to different applications.' Its listed uses include seeing what users on a network are browsing, checking server configuration, researching HTTP usage patterns, watching for dangerous downloaded files, and verifying HTTP policy enforcement.",
+  "how_it_works": "It uses libpcap to capture packets, optionally filtered by a BPF-style expression (default 'tcp port 80 or 8080'). It searches the start of each packet for HTTP request or response data and ignores packets where it finds none. Output fields are chosen with a comma-delimited format string (-f), and a rate mode (-s) shows requests per second per active host. The README says it does no reordering or reassembly of packets.",
+  "commands_seen": [
+   {
+    "cmd": "make",
+    "context": "Compiles httpry from the base source directory; run this first in the base httpry directory."
+   },
+   {
+    "cmd": "# make install",
+    "context": "Installs the binary and man page to their standard locations; the # prompt in the README suggests it needs root."
+   },
+   {
+    "cmd": "# make uninstall",
+    "context": "Removes the installed program; the README says to run it from the installation directory or delete the executable and man page by hand."
+   },
+   {
+    "cmd": "httpry [ -dFhpqs ] [ -b file ] [ -f format ] [ -i device ] [ -l threshold ] [ -m methods ] [ -n count ] [ -o file ] [ -P file ] [ -r file ] [ -S bytes ] [ -t seconds ] [ -u user ] [ 'expression' ]",
+    "context": "Usage synopsis from the README listing all options; running with no options listens on the first network device and prints to the console."
+   },
+   {
+    "cmd": "'tcp port 80 or 8080'",
+    "context": "Example BPF capture filter that captures web traffic in both directions on two common ports; this is also the default filter."
+   },
+   {
+    "cmd": "'tcp dst port 80'",
+    "context": "Example BPF filter that captures only requests made to port 80."
+   },
+   {
+    "cmd": "'tcp dst port 80 and src host 192.168.1.1'",
+    "context": "Example BPF filter that captures requests to port 80 from one particular host."
+   }
+  ],
+  "install_notes": "Needs a *nix system with a relatively recent libpcap; the README says it was tested against 1.1.1 and newer. Build with make, then make install, which needs root. You can also run the binary from the build directory without installing. Live capture needs privileges, since the README notes that -r (reading a file) does not require root. The -u option needs root to switch to another user after startup. No accounts or runtimes are needed.",
+  "standout": "Instead of trying to be a full analyzer, httpry is a small, parse-and-log tool that stays out of the way. It can run as a daemon writing to a log file, and it can save matched packets as pcap for later analysis. Its bundled Perl scripts are meant as a starting point for your own log-parsing tools.",
+  "status": "Looks quiet rather than actively maintained. The README shows version 0.1.8 with a copyright range of 2005-2014, and it has no release or commit dates I could see on the page, so the status is unclear. The scout note's 'somewhat dated' matches what is visible.",
+  "caveats": "The README says the parser is naive: it does no packet reordering or reassembly, so HTTP fragmented inside the request or response line is parsed only to the end of that packet, and headers in later packets are not parsed. It targets *nix systems only and needs libpcap, and it is built around Ethernet capture (the -S option exists for custom header offsets). Live capture usually requires elevated privileges. The README does not mention a license beyond pointing to a COPYING file, which I did not fetch.",
+  "quotes": [
+   "httpry is a tool designed for displaying and logging HTTP traffic.",
+   "It is not intended to perform analysis itself, but instead to capture, parse and/or log the traffic for later analysis.",
+   "It's just plain fun to watch in realtime"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/jbittel/httpry"
+   },
+   {
+    "label": "README (doc/README on GitHub)",
+    "url": "https://github.com/jbittel/httpry/blob/master/doc/README"
+   },
+   {
+    "label": "Author's httpry page (linked in README)",
+    "url": "http://dumpsterventures.com/jason/httpry"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/jbittel/httpry - worked, but returned only the text 'doc/README' rather than the README itself",
+   "https://github.com/jbittel/httpry/blob/master/doc/README - worked; this page contained the full README text, which I used for the brief"
+  ]
+ }
+}

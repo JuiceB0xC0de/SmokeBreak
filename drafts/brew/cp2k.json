@@ -1,0 +1,120 @@
+{
+ "name": "cp2k",
+ "desc": "Quantum chemistry and solid state physics software package",
+ "homepage": "https://www.cp2k.org/",
+ "installs_365d": 482,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "science",
+  "afternoon",
+  "simulation"
+ ],
+ "why": "Real quantum chemistry and solid-state simulation you can run at home, though it is heavy and specialised.",
+ "brief": {
+  "what_it_is": "CP2K is a quantum chemistry and solid state physics software package for atomistic simulation of solid, liquid, molecular, periodic, material, crystal and biological systems. Its main method is DFT using the mixed Gaussian and plane waves approaches GPW and GAPW, and it also supports MP2, RPA, GW, tight-binding (xTB, DFTB), semi-empirical methods (AM1, PM3, PM6, RM1, MNDO) and classical force fields (AMBER, CHARMM). You feed it an input file describing the system and the calculation, and it runs molecular dynamics, metadynamics, Monte Carlo, Ehrenfest dynamics, vibrational analysis, core level spectroscopy, energy minimization, and NEB or dimer transition state searches. The README does not spell out the exact output format beyond a REFERENCES section in the output.",
+  "why_it_exists": "The project is presented as a general framework for many atomistic modelling methods in one code, with the stated aim that it is free and open so people can try it and modify it as needed. The homepage says it is available under the GPL and comes without warranty or direct support.",
+  "how_it_works": "CP2K is written in Fortran 2008 and runs in parallel using a mix of multi-threading, MPI and GPU acceleration (CUDA for NVIDIA, HIP/ROCm for AMD, and OpenCL). The README names Quickstep, FIST and QM/MM as key parts of the code, and says the source is organised into src, data (basis sets and pseudopotentials), docs, tests, tools and benchmarks directories.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/cp2k/cp2k.git cp2k",
+    "context": "Clones the current development master branch of the source code into a folder called cp2k; the README says this is the preferred route for developers."
+   },
+   {
+    "cmd": "git clone -b support/vx.y --recursive https://github.com/cp2k/cp2k.git cp2k",
+    "context": "Template for cloning a numbered release branch (replace x.y with the version, e.g. support/v2025.1); --recursive pulls in submodules."
+   }
+  ],
+  "install_notes": "The README points to the CP2K manual's installation pages with three routes: build from source, build with Spack, or install from a distribution package. End users are told to download a versioned tarball (cp2k-X.Y.tar.bz2) from the GitHub Releases page; developers are told to fork and git clone. Package badges in the README show availability via Debian, Fedora, Ubuntu, Homebrew, Docker (cp2k/cp2k), Spack and conda-forge. Source builds need the dependency setup described in the manual, which I did not read. The Homebrew metadata lists executables including cp2k.psmp and cp2k.popt (MPI and OpenMP-hybrid builds per the naming), plus several unit-test and miniapp binaries; that list came from the package metadata, not the README.",
+  "standout": "It is one code that covers DFT, wavefunction methods, semi-empirical and classical force field work in one input-file-driven package, which is unusual. The Fortran 2008 codebase is also developed in the open on GitHub, and the README points to a public test dashboard for architectures.",
+  "status": "Maintained, based on the README and homepage: the homepage says active development happens on GitHub, the README links a release badge, a dashboard of tested architectures and packaging across many distributions, and the wiki page was last modified 2026/04/10. I did not see a release date or latest commit date, so treat this as likely current rather than confirmed.",
+  "caveats": "No warranty and no direct support, according to the homepage. The homepage calls it 'heavy and specialised' only in the scout notes, not in the project's own text, and the README does not say it runs on a laptop; it needs real compute for most systems, and its installs need compilers and MPI-style setup for parallel use. The README does not describe a graphical interface; work is driven by input files, and it expects users to understand the underlying theory. The licence is GPL per the homepage.",
+  "quotes": [
+   "CP2K is a quantum chemistry and solid state physics software package that can perform atomistic simulations of solid state, liquid, molecular, periodic, material, crystal, and biological systems.",
+   "CP2K is written in Fortran 2008 and can be run efficiently in parallel using a combination of multi-threading, MPI, and GPU acceleration",
+   "Please note that CP2K comes without any warranty or direct support."
+  ],
+  "links": [
+   {
+    "label": "CP2K homepage",
+    "url": "https://www.cp2k.org/"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/cp2k/cp2k"
+   },
+   {
+    "label": "CP2K manual (keyword reference and install guides)",
+    "url": "https://manual.cp2k.org/"
+   },
+   {
+    "label": "CP2K test dashboard",
+    "url": "https://dashboard.cp2k.org"
+   }
+  ],
+  "fetch_log": [
+   "https://www.cp2k.org/ - worked; DokuWiki 'about' page with feature overview, licence and citation guidance",
+   "https://github.com/cp2k/cp2k - worked; README returned with install routes, clone commands and directory layout"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "CP2K opens a substantial rabbit hole: one open scientific package simulates atoms with quantum chemistry, molecular dynamics, and solid-state methods."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "CP2K",
+  "tldr": "A Fortran package that simulates atoms and electrons from an input file, covering DFT, tight-binding and classical force fields in one code, free under the GPL.",
+  "deeper_look": "CP2K is a quantum chemistry and solid state physics package for atomistic simulation. In the project's words, it \"can perform atomistic simulations of solid state, liquid, molecular, periodic, material, crystal, and biological systems.\" Its main method is density functional theory using mixed Gaussian and plane waves approaches (GPW and GAPW). It also supports MP2, RPA, GW, tight-binding (xTB, DFTB), semi-empirical methods (AM1, PM3, PM6, RM1, MNDO) and classical force fields (AMBER, CHARMM).\n\nYou do not click anything. You write an input file describing the system and the calculation, then run the binary on it. The calculation can be molecular dynamics, metadynamics, Monte Carlo, Ehrenfest dynamics, vibrational analysis, core level spectroscopy, energy minimization, or a NEB or dimer search for transition states. The README does not spell out the output format beyond a REFERENCES section listing the papers to cite.\n\nThe idea underneath is that one framework can cover many levels of theory, from full electronic structure down to cheap classical models, so you can move between accuracy and cost without changing tools. The code is Fortran 2008 and runs in parallel with threads, MPI and GPU acceleration (CUDA, HIP/ROCm, OpenCL). The README names Quickstep, FIST and QM/MM as key parts, and the source tree includes the basis sets and pseudopotentials in a data directory.\n\nThe stated aim is that it is free and open so people can try it and modify it. The homepage says it comes without warranty or direct support.",
+  "install": "brew install cp2k\n# Installs MPI and OpenMP-hybrid builds (cp2k.psmp, cp2k.popt) plus unit-test and miniapp binaries. Pulls in gcc, open-mpi, openblas, fftw, libxc and others, so expect a large download.",
+  "try_this": [
+   {
+    "cmd": "cp2k.psmp --help",
+    "what_happens": "Prints the command-line usage of the MPI and OpenMP-hybrid build."
+   },
+   {
+    "cmd": "cp2k.popt --help",
+    "what_happens": "Prints usage for the MPI-only build, so you can compare the two."
+   },
+   {
+    "cmd": "git clone https://github.com/cp2k/cp2k.git cp2k",
+    "what_happens": "Fetches the development source, including the data directory of basis sets and pseudopotentials, and the tests directory to read for example inputs."
+   }
+  ],
+  "whats_unique": "One input-driven code spans DFT, wavefunction methods, semi-empirical methods and classical force fields. It is developed in the open, with a public test dashboard across architectures.",
+  "caveats": "It comes with no warranty or direct support, assumes you know the underlying theory, has no graphical interface, and most real systems need serious compute rather than a laptop.",
+  "commitment": "days-off",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "science",
+   "simulation",
+   "chemistry",
+   "physics",
+   "fortran",
+   "mpi",
+   "days-off"
+  ],
+  "links": [
+   {
+    "label": "CP2K homepage",
+    "url": "https://www.cp2k.org/"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/cp2k/cp2k"
+   },
+   {
+    "label": "CP2K manual (keyword reference and install guides)",
+    "url": "https://manual.cp2k.org/"
+   },
+   {
+    "label": "CP2K test dashboard",
+    "url": "https://dashboard.cp2k.org"
+   }
+  ]
+ }
+}

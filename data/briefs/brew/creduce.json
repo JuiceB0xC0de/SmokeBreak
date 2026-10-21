@@ -1,0 +1,90 @@
+{
+ "name": "creduce",
+ "desc": "Reduce a C/C++ program while keeping a property of interest",
+ "homepage": "https://github.com/csmith-project/creduce",
+ "installs_365d": 78,
+ "deprecated": true,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "language"
+ ],
+ "why": "Automatically shrinks a crashing C program to a minimal case, a fascinating look at test-case reduction, though deprecated.",
+ "brief": {
+  "what_it_is": "C-Reduce is a command-line tool for shrinking C or C++ source files. You give it a large program and a test script (the interestingness test) that says whether the program still has some property, such as triggering a compiler bug. It repeatedly tries smaller variants and keeps the ones that still pass the test, and it outputs a much smaller C/C++ program with the same property. The README says it also reduces programs in other languages such as JavaScript and Rust, though it is built for C/C++.",
+  "why_it_exists": "The README says it is intended for people who discover and report bugs in compilers and other tools that process C/C++ code, who need a minimal test case to report.",
+  "how_it_works": "The README describes the reduction loop only briefly: it searches for smaller versions of the input that keep the property of interest. Each run of the interestingness test happens in a fresh temporary directory containing a copy of the file being reduced. With more than one core it runs candidate compiler invocations in parallel and may kill them when they are no longer useful. The README does not explain the reduction passes in detail; INSTALL.md mentions an internal clang_delta tool built against LLVM/Clang.",
+  "commands_seen": [
+   {
+    "cmd": "brew install creduce",
+    "context": "Installs C-Reduce from Homebrew on macOS; INSTALL.md lists this as the package-manager route alongside Ubuntu, Debian, Gentoo and FreeBSD packages."
+   },
+   {
+    "cmd": "sudo apt-get install libexporter-lite-perl libfile-which-perl libgetopt-tabular-perl libregexp-common-perl flex build-essential zlib1g-dev",
+    "context": "Installs the non-LLVM prerequisites on Ubuntu or Mint before building from source."
+   },
+   {
+    "cmd": "sudo pkg install llvm90 flex p5-Exporter-Lite p5-File-Which p5-Getopt-Tabular p5-Regexp-Common",
+    "context": "Installs prerequisites on FreeBSD 12.1 for a source build."
+   },
+   {
+    "cmd": "cpan -i Exporter::Lite File::Which Getopt::Tabular Regexp::Common",
+    "context": "Installs the Perl modules needed for a source build, as an example of the cpan route."
+   },
+   {
+    "cmd": "configure --with-llvm=/opt/llvm",
+    "context": "Autoconf-style build option pointing the build at an LLVM/Clang tree that is not on the search path."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds C-Reduce after configure or cmake; GNU Make is required, not BSD Make."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the built C-Reduce."
+   },
+   {
+    "cmd": "cmake [source-dir] -DCMAKE_PREFIX_PATH=/opt/llvm",
+    "context": "CMake alternative to configure for pointing the build at an LLVM install."
+   },
+   {
+    "cmd": "configure --disable-trans-assert",
+    "context": "Disables assertions in the build; they are enabled by default."
+   },
+   {
+    "cmd": "creduce --n 1",
+    "context": "Written in the README as '--n 1' (no leading program name in the source text); runs C-Reduce on a single core so it never kills a running compiler instance, avoiding /tmp leakage."
+   }
+  ],
+  "install_notes": "INSTALL.md says to try a package manager first (brew, apt, and others). A source build needs Perl, C++ and C toolchains, Flex, zlib, and LLVM/Clang 9.0.0 (a pre-built binary package is enough; no need to compile LLVM). Perl modules needed are Exporter::Lite, File::Which, Getopt::Tabular and Regexp::Common; Term::ReadKey is optional. Build with configure and make, or with CMake, and build with clang++ if you hit C++ link errors. The master branch needs specific LLVM versions; a llvm-svn-compatible branch exists for newer LLVM. The README gives no first-run configuration.",
+  "standout": "Its own README says it does a good job on languages other than C/C++, such as JavaScript and Rust, which is an unusual claim for a tool built around C. The design choice of running each interestingness test in a fresh temporary directory keeps the test script simple.",
+  "status": "unknown. The README has no release date or deprecation notice. The INSTALL.md pins LLVM/Clang 9.0.0 and FreeBSD 12.1, which suggests the install docs have not been updated in a long time, but I could not confirm the last commit or release date from the pages I fetched. The scout note calls the project deprecated, which I could not verify from the README.",
+  "caveats": "The README warns that using more than one core can leak space in /tmp when compilers are killed mid-run, with suggested workarounds (--n 1, -pipe, TMPDIR). Source builds need Perl modules, Flex, zlib, and specific LLVM/Clang versions, and GNU Make specifically. GCC 5.x had link-time problems, so the docs recommend clang++. Your interestingness test must copy in or use absolute paths for any extra files it needs. The web page link in the README (embed.cs.utah.edu/creduce) did not return C-Reduce content when I fetched it, so the project docs could not be checked directly. The scout note's 'deprecated' label is not backed by the README I read.",
+  "quotes": [
+   "C-Reduce is a tool that takes a large C or C++ program that has a property of interest (such as triggering a compiler bug) and automatically produces a much smaller C/C++ program that has the same property.",
+   "C-Reduce happens to do a pretty good job reducing the size of programs in languages other than C/C++, such as JavaScript and Rust.",
+   "Each invocation of the interestingness test is performed in a fresh temporary directory containing a copy of the file that is being reduced."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/csmith-project/creduce"
+   },
+   {
+    "label": "INSTALL.md",
+    "url": "https://github.com/csmith-project/creduce/blob/master/INSTALL.md"
+   },
+   {
+    "label": "C-Reduce web page (README link; did not return C-Reduce content)",
+    "url": "http://embed.cs.utah.edu/creduce/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/csmith-project/creduce: worked; README returned.",
+   "https://github.com/csmith-project/creduce/blob/master/INSTALL.md: worked; install guide returned.",
+   "http://embed.cs.utah.edu/creduce/: loaded but returned the GitHub page for csmith-project/csmith (Csmith, a random C program generator), not C-Reduce docs; not used for facts about creduce."
+  ]
+ }
+}

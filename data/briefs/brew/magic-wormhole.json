@@ -1,0 +1,88 @@
+{
+ "name": "magic-wormhole",
+ "desc": "Securely transfers data between computers",
+ "homepage": "https://magic-wormhole.readthedocs.io/en/latest/",
+ "installs_365d": 15329,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol",
+  "cli"
+ ],
+ "why": "Its PAKE handshake over a short spoken code is a neat door into password-authenticated key exchange, though the tool is fairly well known.",
+ "brief": {
+  "what_it_is": "Magic Wormhole is a Python library plus a command-line tool, `wormhole`, for moving files, directories, short pieces of text, or other network streams from one computer to another. The sender runs a command that prints a short code, such as 7-crossover-clockwork, and the receiver types that code into a second command. The code is single-use and does not need to be memorized. Once the two peers have authenticated each other with the code, the data travels over an end-to-end encrypted connection, either direct or through a relay.",
+  "why_it_exists": "The docs frame it as a way to get things between two people's machines when the humans can talk to each other but the computers cannot. They contrast it with USB sticks, scp/ssh (which needs prior accounts), email, and Dropbox links, and say that secrets like passwords or SSH keys are the main use case. The name comes from the image of two wizards speaking the same phrase to open a connection between them.",
+  "how_it_works": "The two peers run SPAKE2, a password-authenticated key exchange, using the short code as the low-entropy password. The code's words also let the receiver tab-complete, and a mailbox server (a WebSocket relay) carries the initial messages so the codes do not need IP addresses. Peers exchange network hints and first try a direct connection on the LAN or public IP; if that fails, a Transit Relay glues the two TCP connections together, and all traffic is encrypted with keys derived from the PAKE secret.",
+  "commands_seen": [
+   {
+    "cmd": "wormhole send README.md",
+    "context": "Sender side from the Example: sends a file and prints the wormhole code for the receiver to type."
+   },
+   {
+    "cmd": "wormhole receive",
+    "context": "Receiver side from the Example: prompts for the code, then asks for confirmation before writing the file."
+   },
+   {
+    "cmd": "wormhole send [args] --text TEXT",
+    "context": "CLI synopsis: sends a text string instead of a file."
+   },
+   {
+    "cmd": "wormhole send [args] DIRNAME",
+    "context": "CLI synopsis: sends a directory. The FILENAME form sends one file."
+   },
+   {
+    "cmd": "wormhole receive [args]",
+    "context": "CLI synopsis: receive side, with optional arguments such as --code-length or --verify."
+   },
+   {
+    "cmd": "brew install magic-wormhole",
+    "context": "Installation section for macOS, after installing Homebrew."
+   },
+   {
+    "cmd": "pip install --user magic-wormhole",
+    "context": "Install from source as a per-user package, which puts the wormhole executable in ~/.local/bin."
+   },
+   {
+    "cmd": "sudo apt install magic-wormhole",
+    "context": "Debian/Ubuntu package install, available from Debian 9 and Ubuntu 17.04 onward."
+   },
+   {
+    "cmd": "trial wormhole",
+    "context": "Development: runs the full test suite inside the activated virtualenv."
+   }
+  ],
+  "install_notes": "Homebrew, apt, dnf (Fedora 36 and earlier only), zypper, snap (third-party 'snapcrafters' package), winget, and Chocolatey packages exist. Windows binaries come from a separate community project. Installing from source needs Python (3.10 to 3.13 are supported) and a virtualenv or a per-user pip install; avoid sudo with pip. On macOS you may need Xcode command line tools to compile libsodium. On Linux, a libsodium headers error can be worked around with SODIUM_INSTALL=bundled pip install magic-wormhole or by installing libsodium-dev. No account or server setup is needed: a public mailbox server and transit relay are built in. Both peers must use the same mailbox server, and the --relay-url option overrides the default.",
+  "standout": "The code is short and human-speakable, but PAKE means each code is single-use and a man-in-the-middle gets only one guess, so failed guesses show up as errors on the other side. Unlike most file-transfer tools, it needs no accounts, keys, or shared server, and it works as a PAKE building block for other apps. The docs also list Fowl, which uses a dilation feature to stream data, and the ecosystem page lists more clients.",
+  "status": "Unknown from the pages I read; leaning maintained. The docs show version 0.24.0+48 (48 commits past a tag), tests run on Python 3.10 to 3.13, and the Fedora packaging was removed in 37. I did not find a release date or last-commit date on these pages.",
+  "caveats": "The README says there are no built-in timeouts, and both clients must be run within about an hour of each other and left running until the transfer finishes. Peers must be online at the same time, so it does not do asynchronous delivery. The public mailbox and transit relay are provided on a best-effort basis and may be withdrawn if abused. Source installs can fail on libsodium or other compiled dependencies, and Windows install guidance mentions python2 and Visual C++. The docs describe the library's blocking/synchronous API as future work, with Twisted support available now. The page's asciinema demo is not screen-reader friendly. Licence is MIT. The cli.html page I tried returned 404, so I got CLI option details from the Welcome page instead.",
+  "quotes": [
+   "Get things from one computer to another, safely.",
+   "Each code is one-time use only, so attackers (e.g. a malicious Mailbox server) get only a single guess when attempting to subvert a connection.",
+   "The notion of a \"magic wormhole\" comes from the image of two distant wizards speaking the same enchanted phrase at the same time, and causing a mystical connection to pop into existence between them."
+  ],
+  "links": [
+   {
+    "label": "Documentation homepage",
+    "url": "https://magic-wormhole.readthedocs.io/en/latest/"
+   },
+   {
+    "label": "Welcome page with the Example and install details",
+    "url": "https://magic-wormhole.readthedocs.io/en/latest/welcome.html"
+   },
+   {
+    "label": "Source repository",
+    "url": "https://github.com/magic-wormhole/magic-wormhole"
+   }
+  ],
+  "fetch_log": [
+   "https://magic-wormhole.readthedocs.io/en/latest/ : worked (Sphinx docs homepage; thin, mostly a table of contents)",
+   "https://magic-wormhole.readthedocs.io/en/latest/welcome.html : worked (main overview, Example, installation, design, and CLI synopsis)",
+   "https://magic-wormhole.readthedocs.io/en/latest/cli.html : failed, HTTP 404"
+  ]
+ }
+}

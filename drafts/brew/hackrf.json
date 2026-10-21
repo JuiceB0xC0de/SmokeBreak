@@ -1,0 +1,111 @@
+{
+ "name": "hackrf",
+ "desc": "Low cost software radio platform",
+ "homepage": "https://greatscottgadgets.com/hackrf/",
+ "installs_365d": 3808,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "science"
+ ],
+ "why": "Software-defined radio tooling for a low-cost transceiver opens the entire spectrum to hands-on exploration.",
+ "brief": {
+  "what_it_is": "HackRF is an open-source software-defined radio platform: a low-cost board that connects to a computer and handles radio signals, with the signal processing done in host software. The GitHub repository holds the hardware designs, firmware, host software, tools, and documentation for it. The Homebrew formula installs nine command-line programs (hackrf_biast, hackrf_clock, hackrf_cpldjtag, hackrf_debug, hackrf_info, hackrf_operacake, hackrf_spiflash, hackrf_sweep, hackrf_transfer), which the brief takes from the package metadata rather than from the README. The README does not describe what each tool takes in or puts out.",
+  "why_it_exists": "The README calls HackRF \"a low cost, open source Software Defined Radio platform\" and the homepage describes it as \"Open source hardware for software-defined radio.\" The stated aim is affordable, openly licensed radio hardware.",
+  "how_it_works": "",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt install latexmk texlive-latex-extra",
+    "context": "README step for building the HackRF PDF documentation on Ubuntu; installs LaTeX tooling."
+   },
+   {
+    "cmd": "make latex",
+    "context": "Run from hackrf/docs; generates LaTeX sources for the documentation."
+   },
+   {
+    "cmd": "make latexpdf",
+    "context": "Run from hackrf/docs after make latex; builds the documentation PDF."
+   },
+   {
+    "cmd": "make html",
+    "context": "Mentioned in the README as the way to build the docs locally with Sphinx from the docs folder (written in prose as \"running make html\")."
+   }
+  ],
+  "install_notes": "Using HackRF needs the physical board, which the homepage sells as HackRF One or HackRF Pro (plus an Opera Cake accessory); the homepage has a Where to Buy page. The README gives no other install steps for the software. Building the PDF docs on Ubuntu needs the apt packages above; building HTML docs needs Sphinx. Documentation is on Read the Docs, and the README also says the raw doc sources live in the docs folder. Source and hardware design files are in the latest release or the git repository.",
+  "standout": "The whole stack is open: hardware designs, firmware, host code, and docs sit in one GPL-2.0 repository, and the board is sold as a low-cost product. The brew formula exposes it as nine separate single-purpose tools, such as a sweeper and a transfer tool, rather than one large application.",
+  "status": "Maintained, by inference. The homepage copyright runs to 2026, the GitHub repository shows 3,482 commits and about 8.2k stars, it has CI files (Jenkinsfile, .github), and the README promises a two-week response for issues labelled \"technical support\". The fetched page text did not show a last-commit date or latest release date, so I cannot confirm recent activity precisely.",
+  "caveats": "Requires purchased hardware to do anything useful. The README states there are no support staff on duty at all times, and only issues labelled \"technical support\" carry a two-week response target; other issues and PRs have no stated response time. The PDF build steps are Ubuntu-specific. The license is GPL-2.0. The Homebrew caveats field is empty. The fetched GitHub text did not show a release date.",
+  "quotes": [
+   "This repository contains hardware designs and software for HackRF, a low cost, open source Software Defined Radio platform.",
+   "Open source hardware for software-defined radio.",
+   "This is the preferred place to ask questions so that others may locate the answer to your question in the future."
+  ],
+  "links": [
+   {
+    "label": "Homepage (Great Scott Gadgets HackRF product page)",
+    "url": "https://greatscottgadgets.com/hackrf/"
+   },
+   {
+    "label": "GitHub repository (README, source, hardware designs)",
+    "url": "https://github.com/greatscottgadgets/hackrf"
+   }
+  ],
+  "fetch_log": [
+   "https://greatscottgadgets.com/hackrf/ \u2014 loaded, but it is a product page, not the README; it points to the GitHub repository and Read the Docs.",
+   "https://github.com/greatscottgadgets/hackrf \u2014 loaded; README text returned along with repo sidebar (About, license GPL-2.0, stats). Last commit date and latest release were not in the text."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "HackRF turns a computer into a hands-on radio lab, exposing a wide range of signals through open hardware and software; it\u2019s niche but genuinely revelatory."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "HackRF",
+  "tldr": "Command-line tools for HackRF, an open-source software-defined radio board that lets your computer transmit and receive across a wide slice of the radio spectrum.",
+  "deeper_look": "HackRF is a low-cost, open-source software-defined radio (SDR) platform. The board connects to a computer over USB, and the signal processing happens in software on the host rather than in fixed radio circuitry. The Homebrew formula installs the host-side tools, which come as nine small single-purpose programs instead of one big application.\n\nThe names hint at the split. `hackrf_info` is the obvious first call for identifying a connected board. `hackrf_sweep` and `hackrf_transfer` suggest scanning across frequencies and moving raw samples to or from the radio. Others, such as `hackrf_spiflash`, `hackrf_cpldjtag`, `hackrf_clock`, `hackrf_biast` and `hackrf_operacake`, point at firmware, the board's programmable logic, clocking, antenna power and an add-on switch board. The README does not describe what each tool takes in or puts out, so check each one's `--help`.\n\nThe idea underneath is that a radio becomes a program. Once a receiver is a stream of samples on your computer, tuning, demodulating and decoding are code you can read and change. The project describes itself as \"a low cost, open source Software Defined Radio platform,\" and the hardware designs, firmware, host software and docs all live in one GPL-2.0 repository, so you can follow the signal from the antenna down to the schematics.",
+  "install": "brew install hackrf\n# Needs the physical board (HackRF One or HackRF Pro, sold via the Great Scott Gadgets site). The software installs without it, but does nothing useful.",
+  "try_this": [
+   {
+    "cmd": "hackrf_info",
+    "what_happens": "Queries a connected HackRF board and reports on it. The brief does not show its output, so treat this as the first check that the board is found."
+   },
+   {
+    "cmd": "hackrf_sweep --help",
+    "what_happens": "Lists the options for the sweeping tool, which scans across frequency ranges."
+   },
+   {
+    "cmd": "hackrf_transfer --help",
+    "what_happens": "Lists the options for the tool that moves raw samples to and from the radio."
+   }
+  ],
+  "whats_unique": "Hardware designs, firmware, host code and docs all sit in one open repository, and the board is sold as an inexpensive product. The software is split into small single-purpose tools.",
+  "caveats": "Needs purchased hardware to do anything useful, and support is limited: only issues labelled \"technical support\" carry a stated two-week response target.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "sdr",
+   "radio",
+   "open-hardware",
+   "usb"
+  ],
+  "links": [
+   {
+    "label": "Homepage (Great Scott Gadgets HackRF product page)",
+    "url": "https://greatscottgadgets.com/hackrf/"
+   },
+   {
+    "label": "GitHub repository (README, source, hardware designs)",
+    "url": "https://github.com/greatscottgadgets/hackrf"
+   }
+  ]
+ }
+}

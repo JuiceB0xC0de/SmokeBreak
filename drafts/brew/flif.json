@@ -1,0 +1,143 @@
+{
+ "name": "flif",
+ "desc": "Free Loseless Image Format",
+ "homepage": "https://flif.info/",
+ "installs_365d": 125,
+ "deprecated": true,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "deprecated",
+  "visual",
+  "afternoon"
+ ],
+ "why": "A progressive lossless image format with interlacing tricks, a fascinating file format, but deprecated and no longer maintained.",
+ "brief": {
+  "what_it_is": "FLIF (Free Lossless Image Format) is a lossless raster image format and its reference implementation: an encoder (the flif command), a decoder library (libflif, and a decode-only libflif_dec), and an example viewer (viewflif). It takes ordinary pixel images (greyscale, RGB, RGBA, palette, up to 16 bits per channel) and writes .flif files that decode back to the identical pixels. It also has a lossy preprocessing option on the encoder side, and animation support. The package also ships apng2flif and gif2flif converters and a dflif tool. The homepage and README describe it as a format that compresses better than PNG and lossless WebP, BPG, JPEG 2000 and JPEG XR.",
+  "why_it_exists": "The homepage pitches FLIF as a single format that works well on any kind of image, so end users do not have to pick PNG for line art, JPEG 2000 for medical images, and so on. It also aims for progressive decoding, so a partial download gives a usable preview.",
+  "how_it_works": "FLIF is based on MANIAC (Meta-Adaptive Near-zero Integer Arithmetic Coding), a variant of CABAC in which the contexts are decision-tree nodes learned dynamically at encode time rather than a fixed multi-dimensional array of quantized local image information. Its interlacing generalizes PNG's Adam7, so any prefix of a compressed file can serve as a reasonable lossy version of the whole image, and the interlacing is accounted for in the pixel estimation and the context model, which keeps the overhead small.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt-get install libpng-dev",
+    "context": "Debian/Ubuntu: installs libpng headers needed to build the encoder/decoder (the README also lists make and pkg-config for Ubuntu)."
+   },
+   {
+    "cmd": "sudo apt-get install libsdl2-dev",
+    "context": "Debian/Ubuntu: installs SDL2 headers needed to build the viewer, viewflif."
+   },
+   {
+    "cmd": "sudo dnf install libpng-devel",
+    "context": "Fedora: installs libpng headers for the encoder/decoder build."
+   },
+   {
+    "cmd": "sudo dnf install SDL-devel",
+    "context": "Fedora: installs SDL headers for the viewer build."
+   },
+   {
+    "cmd": "brew install pkg-config libpng sdl2",
+    "context": "macOS: installs the build dependencies via Homebrew before building from source."
+   },
+   {
+    "cmd": "make",
+    "context": "Run in the FLIF/src directory to compile everything."
+   },
+   {
+    "cmd": "make flif",
+    "context": "Builds just the flif command-line tool."
+   },
+   {
+    "cmd": "make libflif.so",
+    "context": "Builds the LGPL-licensed shared library."
+   },
+   {
+    "cmd": "make libflif_dec.so",
+    "context": "Builds the Apache 2.0 decode-only shared library."
+   },
+   {
+    "cmd": "make viewflif",
+    "context": "Builds the example viewer, which depends on the decode library."
+   }
+  ],
+  "install_notes": "No hardware or accounts needed. Build from source in FLIF/src: install libpng (plus SDL2 for the viewer) with your OS package manager, then run make. Optionally sudo make install for a global install. On Windows the README points to Visual Studio (VS Community 2015 is free for open source), then running build\\MSVC\\dl_make_vs.bat, which downloads libraries and runs nmake (nmake libflif.dll, nmake viewflif.exe). Prebuilt binaries are listed on the GitHub Releases page, and there is a Snap package. The homepage also lists a third-party FLIF-GUI for Windows and a Phew viewer for macOS. Note that the brew formula's own install line is not in the README; the brew command shown is for build dependencies only.",
+  "standout": "Interlacing is treated as a model feature rather than a bolt-on. The encoder accounts for it in both pixel estimation and the MANIAC context model, so interlaced files are often no bigger, and sometimes smaller, than non-interlaced ones for photographs. It is also one of the few lossless formats built around a learned decision-tree context model instead of fixed contexts.",
+  "status": "Stopped. The homepage and GitHub README both open with an UPDATE saying FLIF development has stopped, since FLIF was superseded first by FUIF and then by JPEG XL (which combines Pik and FUIF). The homepage still calls FLIF16 the latest stable version. I did not see a release date or last-commit date in the pages I read, so I cannot give a precise date. The README links to a Travis CI badge and a Snap package, but I did not verify either is current.",
+  "caveats": "Development has stopped and the README redirects readers to JPEG XL (libjxl). The homepage TODO list says the format lacks CMYK and YCbCr color spaces, tiles, better lossy compression, native browser support, support in popular image tools and viewers, and a highly optimized implementation. Encoding and decoding speed is described as 'acceptable, but should be improved'. Build instructions are for Linux, macOS and Windows with MSVC; the Windows route is old (VS 2015). The reference implementation is LGPLv3+ (copyleft), while libflif_dec is Apache 2.0. The homepage says there are no known software patents, but the authors say they are not lawyers. The homepage's compression percentages come from older experiments and an early development version of FLIF.",
+  "quotes": [
+   "FLIF development has stopped since FLIF is superseded by FUIF and then again by JPEG XL, which is based on a combination of Pik and FUIF.",
+   "FLIF is a lossless image format based on MANIAC compression.",
+   "FLIF does away with knowing what image format performs the best at any given task."
+  ],
+  "links": [
+   {
+    "label": "FLIF homepage",
+    "url": "https://flif.info/"
+   },
+   {
+    "label": "FLIF source repository (GitHub README)",
+    "url": "https://github.com/FLIF-hub/FLIF"
+   },
+   {
+    "label": "JPEG XL reference implementation (libjxl), the successor",
+    "url": "https://github.com/libjxl/libjxl"
+   }
+  ],
+  "fetch_log": [
+   "https://flif.info/ - fetched OK; homepage text including the development-stopped UPDATE, format description, features, and build/download pointers. Contains no shell commands.",
+   "https://github.com/FLIF-hub/FLIF - fetched OK; README with build instructions, license, related projects, and the same development-stopped notice. This is the source of commands_seen."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "FLIF\u2019s progressive decoding and learned MANIAC context model make it a genuinely unusual image format worth exploring, despite its development having stopped."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "FLIF",
+  "tldr": "A dead but fascinating lossless image format whose files can be cut off at any byte and still decode into a usable, lower-quality picture.",
+  "deeper_look": "FLIF, the Free Lossless Image Format, stores ordinary pixel images (greyscale, RGB, RGBA, palette, up to 16 bits per channel) in .flif files that decode back to the identical pixels. The package ships an encoder and decoder (`flif`), an example viewer (`viewflif`), converters from GIF and APNG (`gif2flif`, `apng2flif`), and a `dflif` tool. It also supports animation and has a lossy preprocessing option on the encoder side.\n\nThe pitch on the homepage: \"FLIF does away with knowing what image format performs the best at any given task.\" The idea was one format that handles line art, photographs and everything between, instead of choosing PNG for one and JPEG 2000 for another. It was also built for progressive decoding, so a partial download gives a usable preview.\n\nThe interesting part is the model underneath. FLIF uses MANIAC (Meta-Adaptive Near-zero Integer Arithmetic Coding), a variant of CABAC in which the contexts are decision-tree nodes learned at encode time, rather than a fixed table of quantized local image information. Its interlacing generalizes PNG's Adam7 and is built into both the pixel estimation and the context model, so any prefix of a file works as a rough version of the whole image, with little size overhead.\n\nDevelopment has stopped. The project's own notice says FLIF was superseded by FUIF and then by JPEG XL. That makes FLIF a good specimen: a small, readable codec that shows ideas which carried forward into the format that replaced it.",
+  "install": "brew install flif\n# The brew formula is deprecated. The upstream README builds from source in FLIF/src: install libpng (plus SDL2 for the viewer), then run make. No hardware or accounts needed.",
+  "try_this": [
+   {
+    "cmd": "flif --help",
+    "what_happens": "Prints the encoder/decoder options, including interlacing and lossy settings."
+   },
+   {
+    "cmd": "viewflif --help",
+    "what_happens": "Shows how to use the example viewer, which displays .flif files, including partially loaded ones."
+   },
+   {
+    "cmd": "gif2flif --help",
+    "what_happens": "Shows how to convert an animated GIF into an animated FLIF file."
+   }
+  ],
+  "whats_unique": "Interlacing is part of the compression model rather than a bolt-on, and the context model is a decision tree learned per image instead of a fixed set of contexts.",
+  "caveats": "Development has stopped and the README points readers to JPEG XL; the brew formula is deprecated, speed is described as only 'acceptable', and the homepage's compression figures come from an early development version.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "image-format",
+   "compression",
+   "lossless",
+   "deprecated",
+   "file-format"
+  ],
+  "links": [
+   {
+    "label": "FLIF homepage",
+    "url": "https://flif.info/"
+   },
+   {
+    "label": "FLIF source repository (GitHub README)",
+    "url": "https://github.com/FLIF-hub/FLIF"
+   },
+   {
+    "label": "JPEG XL reference implementation (libjxl), the successor",
+    "url": "https://github.com/libjxl/libjxl"
+   }
+  ]
+ }
+}

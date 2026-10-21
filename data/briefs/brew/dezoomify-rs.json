@@ -1,0 +1,82 @@
+{
+ "name": "dezoomify-rs",
+ "desc": "Tiled image downloader",
+ "homepage": "https://dezoomify-rs.ophir.dev",
+ "installs_365d": 632,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "network",
+  "visual"
+ ],
+ "why": "Reassembles tiled gigapixel images from deep-zoom servers, a neat look at how zoomable viewers actually fetch pixels.",
+ "brief": {
+  "what_it_is": "dezoomify-rs is a desktop command-line and GUI tool, for Windows, macOS and Linux, that downloads tiled zoomable images from deep-zoom servers and stitches the tiles into one full-resolution file. You give it a viewer page, a metadata URL (such as an info.json, ImageProperties.xml, or .dzi file) or a tile URL, and it writes an image file whose format is chosen from the output file's extension. Output can be PNG, JPEG, other image-rs formats, or an IIIF folder with a viewer.html. It also supports bulk runs from a text file or a IIIF manifest.",
+  "why_it_exists": "The homepage says some sites show high-resolution zoomable images with no download option, and the only way to get them is to fetch every tile and reassemble them. The author adds that huge images can't be handled well in a browser, and that some sites block tile requests unless particular HTTP headers are set. The project says it is not meant to replace the online dezoomify.",
+  "how_it_works": "According to the homepage's technical section, dezoomify-rs first analyses the structure of the zoomable image to work out its tiling scheme, then downloads all the tiles and reassembles them into the full image. It detects the format automatically, or you can name a dezoomer. ICC colour profiles from tiles are carried over to the output, and EXIF is kept for PNG only. The PNG encoder streams to disk so it is not limited by RAM, while JPEG must hold the whole image in memory.",
+  "commands_seen": [
+   {
+    "cmd": "brew install dezoomify-rs",
+    "context": "Homebrew install, listed as an alternative to downloading a binary, on macOS and Linux."
+   },
+   {
+    "cmd": "dezoomify-rs http://example.com/ my_image.png",
+    "context": "Basic usage; the .png extension selects PNG output."
+   },
+   {
+    "cmd": "dezoomify-rs --tile-cache my_caching_folder http://myurl.com",
+    "context": "Saves each downloaded tile to a folder so an interrupted download can be resumed later or tiles can be stitched by hand."
+   },
+   {
+    "cmd": "dezoomify-rs --image-index 1 https://example.com/iiif/manifest.json",
+    "context": "Picks the second image (0-based) from a IIIF manifest without prompting."
+   },
+   {
+    "cmd": "dezoomify-rs --bulk urls.txt",
+    "context": "Processes each URL in a text file in sequence; the file may hold one URL per line with an optional title."
+   },
+   {
+    "cmd": "dezoomify-rs --image-index 2 https://library.example.edu/iiif/manuscript/manifest.json output.jpg",
+    "context": "Non-interactive download of the third image from a manifest, saved as output.jpg."
+   },
+   {
+    "cmd": "./dezoomify-rs --bulk urls.txt --outfile my_collection.jpg",
+    "context": "Bulk run where outputs are named my_collection_1.jpg, my_collection_2.jpg and so on."
+   },
+   {
+    "cmd": "./dezoomify-rs --bulk urls.txt --max-width 2000",
+    "context": "Bulk run that picks the largest zoom level no wider than 2000 pixels, instead of the default largest."
+   },
+   {
+    "cmd": "xargs -d '\\n' -n 1 ./dezoomify-rs < ./urls.txt",
+    "context": "Shell alternative for batch processing, one URL per invocation, from a file of URLs."
+   }
+  ],
+  "install_notes": "Download a binary for your OS from the latest GitHub release page and extract it. On some systems you must authorise the app before it will run; the homepage links to a macOS guide for this. Homebrew works on macOS and Linux. No accounts, runtimes or hardware are mentioned. Some dezoomers need a metadata URL found in the browser network inspector, or via the separate dezoomify-extension. The custom YAML dezoomer needs a hand-written tiles.yaml, and the homepage points to a tutorial for it.",
+  "standout": "Compared with the online dezoomify, it can write very large images with streaming PNG output and an IIIF folder with a local viewer, and it lets you set HTTP headers such as Referer. The custom YAML dezoomer lets users describe new tile layouts without changing code. The breadth is also notable: about twenty dezoomers, from Google Arts & Culture and Zoomify to WMTS, ArcGIS and krpano.",
+  "status": "Abandoned, according to the project's own notice at the top of its homepage: 'dezoomify-rs is not maintained anymore.' The notice says the codebase now lives on in the unified dezoomify v3, which has its own CLI. The homepage gives no release date or last-commit date, and I did not open the GitHub repository to check.",
+  "caveats": "The homepage itself says the project is unmaintained and points to dezoomify v3 beta. Homebrew is listed only for macOS and Linux. Some sites refuse tiles without particular headers, so you may have to supply them with -H. JPEG output is capped at 65,535 pixels per side and must fit in memory. EXIF is lost outside PNG. The generic dezoomer relies on failed tile loads to find image size. The homepage gives no licence, so check the repository before reuse. I found no caveats about the brew formula itself.",
+  "quotes": [
+   "dezoomify-rs is a tiled image downloader.",
+   "Some webpages present high-resolution zoomable images without a way to download them.",
+   "dezoomify-rs is not maintained anymore.",
+   "The goal of this project is not to replace the traditional dezoomify."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://dezoomify-rs.ophir.dev"
+   },
+   {
+    "label": "dezoomify v3 beta (successor, per the homepage notice)",
+    "url": "https://dezoomify.ophir.dev/beta/"
+   }
+  ],
+  "fetch_log": [
+   "https://dezoomify-rs.ophir.dev (homepage): fetched OK; full README-style content, including usage, dezoomers, CLI options and bulk mode. Did not follow the GitHub link, because its URL was not given in the page text."
+  ]
+ }
+}

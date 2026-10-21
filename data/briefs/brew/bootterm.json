@@ -1,0 +1,86 @@
+{
+ "name": "bootterm",
+ "desc": "Simple, reliable and powerful terminal to ease connection to serial ports",
+ "homepage": "https://github.com/wtarreau/bootterm",
+ "installs_365d": 34,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "quick",
+  "tui",
+  "needs-hardware",
+  "serial"
+ ],
+ "why": "A focused serial terminal for talking to boot loaders and embedded boards; useful and low-key, though the concept is familiar.",
+ "brief": {
+  "what_it_is": "BootTerm, invoked as `bt`, is a command-line serial terminal aimed at single board computers and USB serial adapters whose ports appear and disappear. It takes a serial device (auto-selected, named, or waited for) and a baud rate, and gives you an interactive console on that port. Captures can go to fixed or time-stamped files, and stdin/stdout can be used to inject or download data. It is a single C binary with no dependencies beyond libc.",
+  "why_it_exists": "The author wanted a serial tool that is simple, reliable and powerful for the board-bring-up phase, when the serial console is the only interface. He found existing tools either badly designed or incomplete: screen's key mappings, minicom disabling scrolling, cu's unclear usage, and fragile Python one-liners that crash or spin on disconnect.",
+  "how_it_works": "On start, bt lists serial ports with their driver and description, and connects to the most recently registered one unless told otherwise. Internal commands are reached through an escape character (default Ctrl-]) followed by a single key, such as q to quit, b to send a break, or D, R and F to toggle the DTR and RTS pins. Wait modes (-n for a new port, -a for a named or any port) poll until a suitable port appears, which suits USB boards that reconnect after reset. Captures are append-only, and timestamps can be added in several formats.",
+  "commands_seen": [
+   {
+    "cmd": "bt -l",
+    "context": "Lists currently available serial ports with age, device, driver and description; the starred port is the default."
+   },
+   {
+    "cmd": "bt -n",
+    "context": "Waits for a new serial port to be plugged in, then connects to it. Useful for catching a board's boot sequence from power-on."
+   },
+   {
+    "cmd": "bt -b 74880",
+    "context": "Opens the port at a non-standard baud rate, here the ESP8266 boot speed. The hardware may pick the nearest supported speed."
+   },
+   {
+    "cmd": "export BT_SCAN_WAIT_NEW=1",
+    "context": "Environment variable that makes wait-for-new-port the default mode for every bt invocation."
+   },
+   {
+    "cmd": "export BT_SCAN_EXCLUDE_PORTS=ttyS0,ttyS1",
+    "context": "Excludes named ports from automatic selection and waiting, so onboard UARTs are never picked."
+   },
+   {
+    "cmd": "PORT=$(bt -npq)",
+    "context": "Script pattern from the README: waits for a port and captures its name, to hand to a flashing tool."
+   },
+   {
+    "cmd": "bt /dev/ttyS0 > server-panic.log",
+    "context": "Redirects bt output to a file to capture a session without needing an interactive terminal."
+   },
+   {
+    "cmd": "bt -c fixed",
+    "context": "Starts an interactive session that writes its capture to one fixed file, with the name set at start."
+   },
+   {
+    "cmd": "bt -c timed -f \"server-%Y%m%d.log\"",
+    "context": "Starts a capture that rotates to a new dated file when the strftime-formatted name changes, for one log file per day."
+   },
+   {
+    "cmd": "make install PREFIX=~/.local",
+    "context": "Builds and installs bt into a user directory instead of the default /usr/local/bin."
+   }
+  ],
+  "install_notes": "Beyond brew install: the README gives git clone, then cd bootterm, then make install (default /usr/local/bin). Use PREFIX=~/.local for a user install, or sudo make install for a system-wide one. There are no other dependencies beyond a basic libc. Cross-compiling works by setting CROSS_COMPILE or CC, and the author suggests the makefile can be bypassed. No accounts or runtimes are needed, and no first-run configuration is described beyond optional environment variables.",
+  "standout": "It is built around ephemeral ports: waiting for a port to appear, surviving unplug and replug, and excluding onboard UARTs by name or driver. It also supports non-standard baud rates such as 74880 for ESP8266 and sends break or toggles DTR/RTS for resets, even at startup. The author has tested it on several Linux distros, macOS, FreeBSD and AIX.",
+  "status": "unknown. The fetched README mentions a Repology packaging badge and a broad list of tested platforms, but it shows no release version, release date, or last-commit date, and I did not check the repository's commit history.",
+  "caveats": "Automatic port detection is most precise on Linux and FreeBSD; elsewhere it falls back to scanning /dev, with macOS looking at cu.* nodes. Terminal timestamps break interactive full-screen apps, so the README says to turn them off there. The hardware may substitute the nearest supported baud rate, as with 74880 becoming 76800. Captures are append-only, so old files are never truncated. The README does not mention Windows. It is MIT licensed.",
+  "quotes": [
+   "BootTerm is a simple, reliable and powerful terminal designed to ease connection to ephemeral serial ports as found on various SBCs, and typically USB-based ones.",
+   "It is probably what most laptop users will want to do so as never to have to pass any argument and automatically connect to a USB serial port.",
+   "Then comes the myriad of Python 3-liners which do no error checking, resulting in spinning loops when a port is disconnected and the port being renumbered once reconnected, or conversely crashes and backtraces when facing binary character sequences that do not match UTF-8."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage, README)",
+    "url": "https://github.com/wtarreau/bootterm"
+   },
+   {
+    "label": "Repology packaging status",
+    "url": "https://repology.org/project/bootterm/versions"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/wtarreau/bootterm: fetched OK, README returned; README was complete enough that no further links were followed."
+  ]
+ }
+}

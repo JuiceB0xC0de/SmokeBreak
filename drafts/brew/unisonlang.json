@@ -1,0 +1,132 @@
+{
+ "name": "unisonlang",
+ "desc": "Friendly programming language from the future",
+ "homepage": "https://unison-lang.org/",
+ "installs_365d": 416,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "afternoon",
+  "library"
+ ],
+ "why": "Content-addressed functions and a distinctive codebase model make it a genuinely odd language, though it is somewhat mainstream in the functional niche.",
+ "brief": {
+  "what_it_is": "Unison is a statically-typed functional programming language with type inference, an effect system, and tooling built around a codebase manager. Instead of storing code as text files, it stores each definition as its AST in a database and identifies functions by a hash of their implementation rather than by name. Programs are written in the Unison Codebase Manager (ucm), a terminal REPL-style tool where you add, update, and run definitions. The homepage also advertises distributed computation via a Remote ability, with the README noting this is used in conjunction with Unison Cloud.",
+  "why_it_exists": "The README frames it around a big idea: content-addressed code, where functions are identified by hash rather than name, so builds, renames, test caching, and version control can work from the stored structure. The homepage pitches it as a friendly language from the future that removes encoder/decoder boilerplate at network and storage boundaries.",
+  "how_it_works": "Definitions are stored in a codebase database as ASTs and referenced by hash, which gives incremental compilation with a shared cache that is part of the codebase format, instant non-breaking renames, and caching of deterministic tests that reruns only when dependencies change. Effects are expressed as abilities (for example {IO, Exception} or {Remote}) and delayed computations are written with a leading apostrophe. The ucm process also starts a local codebase web server, on a random port with a token, that the Unison Local UI connects to.",
+  "commands_seen": [
+   {
+    "cmd": "brew update && brew install stack",
+    "context": "README hint for installing the Stack build tool, which the source build requires."
+   },
+   {
+    "cmd": "git clone https://github.com/unisonweb/unison.git",
+    "context": "Clones the Unison source repository to build from source."
+   },
+   {
+    "cmd": "cd unison",
+    "context": "Enters the cloned repository before building."
+   },
+   {
+    "cmd": "stack --version",
+    "context": "Prints the Stack version; the README asks you to record it when reporting trouble."
+   },
+   {
+    "cmd": "stack build --fast --test && stack exec unison",
+    "context": "Builds Unison from source with tests and then runs the unison executable."
+   },
+   {
+    "cmd": "/dev-ui-install.sh",
+    "context": "Downloads the latest unison-local-ui release into the location where the stack-built unison executable expects it."
+   }
+  ],
+  "install_notes": "Homebrew installs the ucm executable. Building from source needs Stack, which the README says to install via brew or the Stack install docs. The source build is stack build --fast --test followed by stack exec unison. For the Local UI, run /dev-ui-install.sh; when ucm starts it prints a URL where the UI runs. The codebase server honours optional environment variables UCM_PORT, UCM_HOST, and UCM_TOKEN. Configuration is documented in docs/configuration.md. The homepage also offers a companion desktop app download from GitHub.",
+  "standout": "Code is stored in a database and referenced by hash rather than by name, so renames are instant and non-breaking, dependency name collisions are largely removed, and version control works on semantic structure instead of text. Refactoring is done in structured sessions, so the codebase stays typecheckable mid-refactor.",
+  "status": "Likely maintained, but I could not confirm it. The GitHub README shows CI and pre-release status badges and a Repobeats analytics embed, and it points to a live website, Discord, and an ecosystem registry. I saw no release date or last commit date in the fetched text.",
+  "caveats": "Building from source requires the Haskell Stack toolchain, and the README says the instructions may be incomplete and to file an issue if they fail. The homepage's install command lines rendered empty in my fetch, so I only have the brew executable name plus the README commands. The distributed features on the homepage are tied to Unison Cloud according to the README. Licensing was not checked. The brew caveats field was empty.",
+  "quotes": [
+   "Unison is a friendly programming language from the future: statically-typed, functional, and a lot of fun.",
+   "No more writing encoders and decoders at every network boundary.",
+   "Other tools try to recover structure from text; Unison stores code in a database.",
+   "Since Unison references code by hash instead of by name, an entire class of conflicts can be eliminated."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/unisonweb/unison"
+   },
+   {
+    "label": "The big idea (content-addressed code)",
+    "url": "https://www.unison-lang.org/learn/the-big-idea/"
+   },
+   {
+    "label": "Learn Unison",
+    "url": "https://www.unison-lang.org/learn/"
+   },
+   {
+    "label": "Unison ecosystem registry",
+    "url": "https://share.unison-lang.org/"
+   }
+  ],
+  "fetch_log": [
+   "https://unison-lang.org/ - fetched OK; marketing page with feature blurbs and code samples, but the install command lines were empty in the extracted text.",
+   "https://github.com/unisonweb/unison - fetched OK; returned the README, which has the build instructions and the feature overview. No release or commit dates were shown.",
+   "Homebrew formula JSON (executable ucm, description, empty caveats) was supplied in the brief, not fetched."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Unison\u2019s hash-addressed codebase and structured refactoring make the language toolchain itself a genuine oddity, changing how builds, renames, and version control work."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Unison",
+  "tldr": "A statically-typed functional language that stores code as hashed syntax trees in a database instead of text files, so renames are instant and never break anything.",
+  "deeper_look": "Unison is a functional language with type inference and an effect system. What sets it apart is where the code lives. You do not edit source files. You work inside the Unison Codebase Manager, `ucm`, a terminal tool where you add, update and run definitions. Each definition is stored as its syntax tree in a codebase database.\n\nFunctions are identified by a hash of their implementation, not by their name. Names are just labels attached to hashes. That is why a rename is instant and cannot break callers, and why two libraries using the same name for different things do not collide. The project's own phrasing: \"Since Unison references code by hash instead of by name, an entire class of conflicts can be eliminated.\"\n\nThe same structure supports other things. Compilation is incremental with a shared cache that is part of the codebase format. Deterministic tests are cached and rerun only when something they depend on changes. Refactors happen in structured sessions, so the codebase stays typecheckable in the middle of one. Side effects are tracked as abilities, written like `{IO, Exception}`, and delayed computations are marked with a leading apostrophe.\n\nThe homepage also pitches distributed computation through a `Remote` ability, and says you no longer write encoders and decoders at every network boundary. According to the README, that part is used together with Unison Cloud. The language is worth a look even without it, mostly as a working answer to the question of what code would be if it were not text.",
+  "install": "brew install unisonlang\n# installs the `ucm` executable; building from source instead needs the Haskell Stack toolchain",
+  "try_this": [
+   {
+    "cmd": "ucm --help",
+    "what_happens": "Lists the options for the Unison Codebase Manager, the terminal tool where you write and run Unison code."
+   }
+  ],
+  "whats_unique": "Code is stored as hashed syntax trees in a database rather than as text, so renames are free, name collisions mostly vanish, and version control can work on structure instead of lines.",
+  "caveats": "The brief could not confirm recent activity or a last release date, and the distributed features are tied to Unison Cloud according to the README.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "language",
+   "functional",
+   "content-addressed",
+   "afternoon",
+   "repl"
+  ],
+  "links": [
+   {
+    "label": "Unison homepage",
+    "url": "https://unison-lang.org/"
+   },
+   {
+    "label": "The big idea (content-addressed code)",
+    "url": "https://www.unison-lang.org/learn/the-big-idea/"
+   },
+   {
+    "label": "Learn Unison",
+    "url": "https://www.unison-lang.org/learn/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/unisonweb/unison"
+   },
+   {
+    "label": "Unison ecosystem registry",
+    "url": "https://share.unison-lang.org/"
+   }
+  ]
+ }
+}

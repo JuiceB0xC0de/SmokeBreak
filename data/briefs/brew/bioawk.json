@@ -1,0 +1,78 @@
+{
+ "name": "bioawk",
+ "desc": "AWK modified for biological data",
+ "homepage": "https://github.com/lh3/bioawk",
+ "installs_365d": 78,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "science",
+  "language"
+ ],
+ "why": "AWK extended with understanding of biological file formats, a charming domain-specific twist on an old Unix classic.",
+ "brief": {
+  "what_it_is": "Bioawk is a modified version of Brian Kernighan's awk that understands common bioinformatics file formats. It reads optionally gzip'ed BED, GFF, SAM, VCF, FASTA/FASTQ, and tab-delimited files with column names. With the -c option it names the fields for you, so you can write things like $POS or $name instead of counting columns. It also adds a few built-in functions (the README's examples use revcomp and and) and a -t flag for tab-delimited input and output. The README says that when none of the new features are used, it should behave the same as the original BWK awk.",
+  "why_it_exists": "The README frames it as an extension of Kernighan's awk that adds support for several common biological data formats, so that field-based text processing works directly on those formats.",
+  "how_it_works": "With -c, bioawk replaces awk's line-reading module with one that parses FASTA and FASTQ and reads gzip'ed files through zlib. It then adds variables that name the fields, taken either from a named format (sam, vcf, bed, gff, fastx) or from the first line of the input when -c hdr is used. The -t option is shorthand for -F'\\t' -v OFS=\"\\t\". The README notes that without -c, awk falls back to the original line reader and does not handle gzip input.",
+  "commands_seen": [
+   {
+    "cmd": "bioawk -c help",
+    "context": "Lists the supported formats and the naming variables."
+   },
+   {
+    "cmd": "grep -v ^## in.vcf | bioawk -tc hdr '{print $_CHROM,$POS}'",
+    "context": "Strips VCF meta lines, then prints the CHROM and POS columns, which are named from the header line."
+   },
+   {
+    "cmd": "bioawk -c sam 'and($flag,4)' aln.sam.gz",
+    "context": "Extracts unmapped reads from a gzipped SAM file, without a header."
+   },
+   {
+    "cmd": "bioawk -Hc sam '!and($flag,4)'",
+    "context": "Extracts mapped reads from SAM input, keeping the header."
+   },
+   {
+    "cmd": "bioawk -c fastx '{print \">\"$name;print revcomp($seq)}' seq.fa.gz",
+    "context": "Reverse-complements each sequence in a gzipped FASTA file, using the name and seq fields."
+   },
+   {
+    "cmd": "grep -v ^## in.vcf | bioawk -tc hdr '{print $foo,$bar}'",
+    "context": "Prints the genotype columns for samples named foo and bar from a VCF file."
+   },
+   {
+    "cmd": "bioawk -F'\\t' -v OFS=\"\\t\"",
+    "context": "The README says the -t option is equivalent to this invocation."
+   }
+  ],
+  "install_notes": "The README gives no install steps beyond the formula. Building from source needs a YACC-compatible parser generator such as Byacc or Bison, and zlib for gzip support. No accounts, runtimes, or configuration are mentioned.",
+  "standout": "It stays a drop-in awk for everything except the opt-in -c mode, and it adds named columns for formats like VCF and SAM through the header line. Its built-ins, such as revcomp, mean a one-liner can do sequence work that would otherwise need a script.",
+  "status": "quiet. The GitHub releases page lists a single release, v1.0, marked Latest, and says the last change on that release was made on 2013-08-27. The README has no newer notes. I did not check the commit history directly.",
+  "caveats": "The README warns that the replacement line reader does not fully mimic the original, and that it may fail in corner cases, though the author says this has not happened yet. Without -c, gzip input is not supported. Several strings in the new reader are never freed, which valgrind reports as still reachable; the author says these are not really leaks. Building needs a YACC-compatible parser and zlib. I did not see a license in the fetched text.",
+  "quotes": [
+   "Bioawk is an extension to Brian Kernighan's awk, adding the support of several common biological data formats",
+   "When the new functionality is not used, bioawk is intended to behave exactly the same as the original BWK awk.",
+   "Special characters in the first are converted to underscore."
+  ],
+  "links": [
+   {
+    "label": "Bioawk on GitHub (homepage and README)",
+    "url": "https://github.com/lh3/bioawk"
+   },
+   {
+    "label": "Releases page",
+    "url": "https://github.com/lh3/bioawk/releases"
+   },
+   {
+    "label": "Original BWK awk source mirror cited by the README",
+    "url": "http://www.cs.princeton.edu/~bwk/btl.mirror/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/lh3/bioawk: worked, README returned in full",
+   "https://github.com/lh3/bioawk/releases: worked, but the page text was mostly navigation markup. It gave the v1.0 release and its 2013-08-27 last-change date."
+  ]
+ }
+}

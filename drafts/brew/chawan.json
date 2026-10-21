@@ -1,0 +1,139 @@
+{
+ "name": "chawan",
+ "desc": "TUI web browser with CSS, inline image and JavaScript support",
+ "homepage": "https://sr.ht/~bptato/chawan/",
+ "installs_365d": 2223,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "languages-and-oddities",
+ "tags": [
+  "tui",
+  "quick",
+  "visual"
+ ],
+ "why": "A terminal web browser with CSS and inline images, an unusual take on a familiar thing.",
+ "brief": {
+  "what_it_is": "Chawan is a terminal web browser (TUI) with its own browser engine, written from scratch, that renders HTML with CSS, inline images (Sixel or Kitty protocol), and optional JavaScript. Input is a URL or local file, and output is a rendered page in the terminal. It also supports (S)FTP, Gopher, Gemini, Finger and Spartan, and it can be used as a terminal pager. The executables are cha (the browser) and mancha (a man page viewer).",
+  "why_it_exists": "The README gives no explicit problem statement. It says w3m was the main inspiration, and the project aims to display many websites in a manner similar to major graphical browsers, from inside a terminal.",
+  "how_it_works": "The README says Chawan uses its own small browser engine developed from scratch, rather than shared code with w3m. It runs as multi-processing with incremental loading of documents, and it applies syscall filter sandboxing on FreeBSD, OpenBSD and Linux (capsicum, pledge and seccomp-bpf). Its layout engine supports flow, table and flexbox layout, and CJK double-width characters.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://git.sr.ht/~bptato/chawan && cd chawan",
+    "context": "Clones the Chawan repository and changes into it, the first step of building from source."
+   },
+   {
+    "cmd": "apt install libssh2-1-dev libssl-dev libbrotli-dev pkg-config make",
+    "context": "Quick copy-paste for installing build dependencies on Debian."
+   },
+   {
+    "cmd": "make",
+    "context": "Run make without arguments to build Chawan."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the built binaries; the README suggests sudo make install."
+   },
+   {
+    "cmd": "cha -V",
+    "context": "Opens cha in visual mode, which shows a list of default keybindings."
+   },
+   {
+    "cmd": "cha example.org",
+    "context": "Opens a website directly from the shell."
+   },
+   {
+    "cmd": "mancha cha",
+    "context": "Reads the cha(1) man page using mancha."
+   },
+   {
+    "cmd": "nim -v",
+    "context": "Displays the installed Nim compiler version, to check it is 2.0.0 or newer (ideally 2.2.12)."
+   },
+   {
+    "cmd": "export CFLAGS=-fpermissive",
+    "context": "Workaround for building with Nim 2.0 on a 32-bit system."
+   }
+  ],
+  "install_notes": "Requires a Unix-like OS; Windows needs WSL. You must install the Nim compiler, version 2.0.0 or newer, ideally 2.2.12; 1.6.14 onward may work but is not recommended. Dependencies are OpenSSL (or LibreSSL), libssh2, brotli, pkg-config and GNU make (gmake on non-GNU systems). Clone the repo, run make, then make install. Packages exist for Alpine, Arch, Debian testing, FreeBSD, Gentoo (guru), Guix, Homebrew, NetBSD (pkgsrc-wip), NixOS, Slackware, Void, and an AUR chawan-git package. JavaScript is disabled by default, and inline images need enabling per doc/image.md.",
+  "standout": "The browser engine is written from scratch in Nim rather than reusing an existing engine, yet the project claims it renders many sites similarly to graphical browsers. It also doubles as a pager and a man page viewer (mancha) and supports several non-web protocols alongside HTTP(S).",
+  "status": "Maintained. The homepage feed shows a commit (e58406c, select: check if builder is valid on item addition) pushed by ~bptato about 2 hours before the snapshot, and a mailing list reply from about 2 hours earlier. No release date was visible on the page.",
+  "caveats": "No native Windows support; WSL is required. Building needs Nim 2.0 or newer, and 32-bit systems may need Nim 2.2 or newer or the -fpermissive CFLAGS workaround. JavaScript and inline images are disabled by default. The README says static binaries from releases may have outdated dependencies, and it lists 'a lot more planned' features. The README also asks that tickets and patches not be generated with artificial neural networks.",
+  "quotes": [
+   "Chawan is a TUI web (and (S)FTP, Gopher, Gemini, ...) browser with CSS, inline image and JavaScript support.",
+   "It uses its own small browser engine developed from scratch, which can nevertheless display many websites in a manner similar to major graphical browsers.",
+   "It can also be used as a terminal pager."
+  ],
+  "links": [
+   {
+    "label": "Chawan homepage (SourceHut)",
+    "url": "https://sr.ht/~bptato/chawan/"
+   },
+   {
+    "label": "Homebrew formula",
+    "url": "https://formulae.brew.sh/formula/chawan"
+   },
+   {
+    "label": "Nim compiler install",
+    "url": "https://nim-lang.org/install.html"
+   }
+  ],
+  "fetch_log": [
+   "https://sr.ht/~bptato/chawan/ - fetched OK; page contained the full README text (features, build, packages, documentation index), so no further fetches were needed."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A terminal browser with its own CSS-capable Nim engine, inline images, and Gopher/Gemini support is genuinely unusual systems work, not just another wrapper."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Chawan",
+  "tldr": "A terminal web browser with its own from-scratch engine that renders CSS, inline images and optional JavaScript, and also reads Gopher, Gemini and man pages.",
+  "deeper_look": "Chawan is a text-mode browser that takes a URL or a local file and draws the page in your terminal. It lays out HTML with CSS, including flow, table and flexbox layouts, and it handles double-width CJK characters. Images can be shown inline through the Sixel or Kitty protocols if your terminal supports them. JavaScript is available but off by default.\n\nThe interesting part is the engine. The README says Chawan uses \"its own small browser engine developed from scratch\", written in Nim, which \"can nevertheless display many websites in a manner similar to major graphical browsers.\" It names w3m as its main inspiration but shares no code with it. Building a layout engine is normally a huge job, so this is a small, readable place to see how one works.\n\nIt runs as several processes, loads documents incrementally, and applies syscall sandboxing on Linux, FreeBSD and OpenBSD (seccomp-bpf, capsicum and pledge). Beyond HTTP(S) it speaks (S)FTP, Gopher, Gemini, Finger and Spartan, so it doubles as a way to visit the small-web corners of the internet. It can also act as a pager, and the second executable, mancha, is a man page viewer.",
+  "install": "brew install chawan\n# JavaScript is off by default, and inline images need enabling; see doc/image.md in the repo\n# Inline images need a terminal that supports Sixel or the Kitty protocol",
+  "try_this": [
+   {
+    "cmd": "cha example.org",
+    "what_happens": "Opens the site directly in the terminal, rendered with CSS."
+   },
+   {
+    "cmd": "cha -V",
+    "what_happens": "Opens in visual mode, which shows a list of the default keybindings."
+   },
+   {
+    "cmd": "mancha cha",
+    "what_happens": "Reads the cha(1) man page in mancha, the bundled man page viewer."
+   }
+  ],
+  "whats_unique": "It is a browser engine written from scratch in Nim, not a wrapper around an existing one, and it covers Gopher, Gemini and other small protocols alongside the web.",
+  "caveats": "No native Windows support (WSL needed), and JavaScript and inline images are both disabled until you turn them on.",
+  "commitment": "quick",
+  "category": "languages-and-oddities",
+  "tags": [
+   "quick",
+   "tui",
+   "browser",
+   "nim",
+   "gemini",
+   "gopher",
+   "terminal"
+  ],
+  "links": [
+   {
+    "label": "Chawan homepage (SourceHut)",
+    "url": "https://sr.ht/~bptato/chawan/"
+   },
+   {
+    "label": "Homebrew formula",
+    "url": "https://formulae.brew.sh/formula/chawan"
+   },
+   {
+    "label": "Nim compiler install",
+    "url": "https://nim-lang.org/install.html"
+   }
+  ]
+ }
+}

@@ -1,0 +1,58 @@
+{
+ "name": "ipapatch",
+ "desc": "CLI tool to patch iOS IPA files and their plugins",
+ "homepage": "https://github.com/asdfzxcvbn/ipapatch",
+ "installs_365d": 78,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "reverse-engineering",
+  "quick",
+  "gui"
+ ],
+ "why": "Patching iOS app packages and injecting plugins opens a real window into how app binaries are modified.",
+ "brief": {
+  "what_it_is": "ipapatch is a command-line tool written in Go that patches iOS IPA app packages and the plugins inside them. It takes an input IPA file and writes a patched IPA to an output path, or overwrites the input in place with --inplace. By default it injects zxPluginsInject, a rewrite of choco's original patch, and a --dylib flag can substitute a different dylib. The README says the patch fixes problems with the share sheet, widgets, VPNs, and more.",
+  "why_it_exists": "The README says it is a CLI tool to patch IPAs and their plugins, fixing problems with the share sheet, widgets, VPNs, and more. It credits Chocolate Fluffy's original IPA patcher tweak as the predecessor.",
+  "how_it_works": "It performs native load command injection, which the README says is possible thanks to blacktop's ipsw and go-macho libraries, so the dylib load command is added to the Mach-O binary directly rather than through an external tool. Since v2.0.0 it no longer shells out to the zip command and instead handles archives itself; --zip is an optional fallback. The --plugins-only flag limits injection to plugin binaries and leaves the main executable alone.",
+  "commands_seen": [
+   {
+    "cmd": "$ ipapatch --help",
+    "context": "Prints the usage text, which lists the flags. The README shows this as the way to see usage."
+   },
+   {
+    "cmd": "ipapatch [-h/--help] --input <path> [--output <path] [--dylib <path>] [--inplace] [--noconfirm] [--plugins-only] [--zip] [--version]",
+    "context": "Usage synopsis copied from the README. --input is the IPA to patch, --output names the patched file, --dylib swaps in a custom dylib, --inplace overwrites the input, --noconfirm skips prompts, --plugins-only patches only plugin binaries, --zip uses the system zip tool, and --version prints the version. The synopsis has a missing closing bracket after <path in the --output part."
+   }
+  ],
+  "install_notes": "The README gives no install steps beyond pointing to the release page at https://github.com/asdfzxcvbn/ipapatch/releases/latest for prebuilt binaries. Because it is a native Go binary, no runtime is needed. Since v2.0.0 no zip dependency is required. Nothing in the README mentions accounts, signing, or configuration. The brew formula's executable is ipapatch.",
+  "standout": "Load command injection is done natively in Go with no external tools, so one binary runs on macOS, Linux, and iOS. The author notes that dropping the zip dependency was a deliberate test of whether anything breaks.",
+  "status": "Maintained, as far as the evidence shows. The latest release is v2.1.3, which the release page shows as \"released this\" on 31 Aug, with the year not visible in the fetched page. The most recent commit listed on that page is a signed commit titled \"fix: signing some weird binaries\".",
+  "caveats": "Windows is untested according to the README, which says it should work from v2.1.0. The --zip flag is described as shouldn't be needed anymore. The README does not state a license, and I did not find one in the fetched pages. The README gives no info on how to install or sign the output IPA, which is left to the user. The --output usage line has a typo in its synopsis.",
+  "quotes": [
+   "a cli tool to patch IPAs and their plugins, fixing problems with the share sheet, widgets, VPNs, and more!",
+   "due to being written in go and having **native load command injection**, it's fully cross-compatible with macOS, linux, and iOS!",
+   "for now, ipapatch is a fully portable, native binary!"
+  ],
+  "links": [
+   {
+    "label": "GitHub homepage and README",
+    "url": "https://github.com/asdfzxcvbn/ipapatch"
+   },
+   {
+    "label": "Latest release binaries",
+    "url": "https://github.com/asdfzxcvbn/ipapatch/releases/latest"
+   },
+   {
+    "label": "zxPluginsInject (default embedded dylib)",
+    "url": "https://github.com/asdfzxcvbn/zxPluginsInject"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/asdfzxcvbn/ipapatch: worked, README returned",
+   "https://github.com/asdfzxcvbn/ipapatch/releases/latest: worked, rendered page showed release v2.1.3 and commit 2ccafe4, but the page text was heavily cluttered with page chrome"
+  ]
+ }
+}

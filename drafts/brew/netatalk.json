@@ -1,0 +1,100 @@
+{
+ "name": "netatalk",
+ "desc": "File server for Macs, compliant with Apple Filing Protocol (AFP)",
+ "homepage": "https://netatalk.io",
+ "installs_365d": 405,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "protocol",
+  "network",
+  "afternoon",
+  "deprecated"
+ ],
+ "why": "A door into the Apple Filing Protocol, the old AFP world that most people never see running on a network.",
+ "brief": {
+  "what_it_is": "Netatalk is a free and open source file server that speaks the Apple Filing Protocol (AFP). It runs on UNIX-like systems such as Linux, the BSDs and macOS. Any computer with an AFP client can connect to it and share files over a local network or the Internet. By default it shares each authorized user's home directory, using a secure authentication method for modern AFP clients. The page describes it as light-weight, performant and portable.",
+  "why_it_exists": "The project's framing is that AFP has a long history on Macs, and the page says millions of Macs and NAS devices, decades of archives, studios, labs and retro-computing setups still speak it. Its stated mission is to make AFP the best file sharing solution on any platform.",
+  "how_it_works": "The page does not explain the internals beyond saying that most macOS, Mac OS X and Classic Mac OS systems can connect out of the box because Netatalk conforms to the Apple Filing Protocol specification. Operation is through the operating system's init system, and custom setups go through afp.conf and the Configuration chapter of the manual.",
+  "commands_seen": [
+   {
+    "cmd": "sudo install -d -o $USER -g admin /usr/local/etc",
+    "context": "From the Homebrew caveats supplied with the project data, not the homepage: creates /usr/local/etc owned by the user, needed for the manual PAM setup that lets Netatalk authenticate system users."
+   },
+   {
+    "cmd": "mkdir -p /usr/local/etc/pam.d",
+    "context": "From the Homebrew caveats, not the homepage: creates the PAM directory before copying the config file into it."
+   },
+   {
+    "cmd": "cp $(brew --prefix)/etc/pam.d/netatalk /usr/local/etc/pam.d",
+    "context": "From the Homebrew caveats, not the homepage: copies the netatalk PAM config from the Homebrew prefix to the predetermined location. The caveats point to man pam.conf for more."
+   }
+  ],
+  "install_notes": "The homepage offers three routes and says basic system administration knowledge is required (installing packages, editing config files, starting and stopping services). 1) Install a binary package from your distribution's package manager, the recommended option for most users; Repology lists known packages. 2) Deploy a container image published on Docker Hub and GHCR with docker or podman; the container documentation covers configuration. 3) Build from source, which the page suggests when the other options don't fit or when you want a hardened deployment with only some features enabled; a getting started guide and the manual's dependencies section cover this. Homebrew users must also do the manual PAM setup shown in commands_seen to authenticate system users.",
+  "standout": "With release 4.6.0 the project also ships Netatalk Client 1.0.0, and the page says that for the first time Netatalk provides both sides of the AFP connection. The page also says macOS 27 Golden Gate, released 14 September 2026, is the first Apple OS in 35 years without an AFP client. The server ships a Webmin module as well.",
+  "status": "Maintained, by the homepage's own evidence. It lists Netatalk 4.6.1 as the latest release, dated 2 October 2026, described as a bugfix release. Before that it lists 4.6.0 (15 September 2026) and 4.5.2 (6 September 2026), and it has a news archive. I could not check the repository or release history myself.",
+  "caveats": "The homepage warns that Netatalk has a dizzying amount of options that can be daunting at first. Allowing very old AFP clients requires extra configuration. Setup assumes sysadmin skills. Homebrew installs need the manual PAM step to authenticate system users. The executables list includes many tools (afpd, cnid_dbd, cnid_metad, timelord, and others), so the package is larger than a simple file share. The release dates and CVE numbers on the page are as stated there and I did not verify them. The page does not say which platforms are supported for the Homebrew formula. Licence was not on the homepage.",
+  "quotes": [
+   "Netatalk has a dizzying amount of options which can be daunting initially.",
+   "Our mission is to make AFP the best file sharing solution on any platform.",
+   "This is the end of an era, but also a new beginning for AFP: millions of Macs and NAS devices, decades of archives, studios, labs, and retro-computing setups speak AFP every day."
+  ],
+  "links": [
+   {
+    "label": "Netatalk homepage",
+    "url": "https://netatalk.io"
+   }
+  ],
+  "fetch_log": [
+   "https://netatalk.io: fetched and loaded. The homepage was enough to write the brief, so I did not follow the manual or getting-started links. Those links appear on the page but I did not open them, and their URLs are not confirmed beyond the homepage."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Netatalk makes the mostly forgotten Apple Filing Protocol tangible, letting you explore legacy Mac networking and connect systems that modern file-sharing tools leave behind."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "netatalk",
+  "tldr": "A free file server that speaks Apple's old AFP protocol, so anything from Classic Mac OS to modern macOS can mount shares from it.",
+  "deeper_look": "Netatalk is a file server for the Apple Filing Protocol (AFP), the network file sharing protocol Macs used for decades. It runs on UNIX-like systems and by default shares each authorized user's home directory. Per the project, most macOS, Mac OS X and Classic Mac OS systems can connect without extra software because it follows the AFP specification.\n\nThe executables list shows the package is more than one daemon. Alongside `afpd` there are CNID database daemons (`cnid_dbd`, `cnid_metad`), test tools (`afp_speedtest`, `afp_logintest`), and a set of names such as `atalkd`, `nbplkup`, `papd` and `timelord`. They look like pieces of the older AppleTalk network stack and printing support, though the brief does not explain them, so treat that as a lead rather than a fact.\n\nThe project's stated reason to exist is that AFP is still in use: its homepage says millions of Macs and NAS devices, archives, studios, labs and retro-computing setups still speak it. The homepage also says macOS 27 is the first Apple OS in 35 years without an AFP client. Release 4.6.0 ships Netatalk Client 1.0.0, so the project now covers both ends of an AFP connection, according to the page.\n\nThe door here is a network protocol with a long history, one you can run yourself and watch work. The project's own warning applies: \"Netatalk has a dizzying amount of options which can be daunting initially.\"",
+  "install": "brew install netatalk\n# To authenticate as system users, set up PAM by hand (from the brew caveats):\nsudo install -d -o $USER -g admin /usr/local/etc\nmkdir -p /usr/local/etc/pam.d\ncp $(brew --prefix)/etc/pam.d/netatalk /usr/local/etc/pam.d\n# Basic sysadmin skills are assumed. Packages and Docker/Podman images are the project's other routes.",
+  "try_this": [
+   {
+    "cmd": "afpd --help",
+    "what_happens": "Prints the options of the main AFP file server daemon, a first look at what can be configured."
+   },
+   {
+    "cmd": "afp_speedtest --help",
+    "what_happens": "Shows the options of one of the bundled test tools for measuring AFP performance."
+   },
+   {
+    "cmd": "cp $(brew --prefix)/etc/pam.d/netatalk /usr/local/etc/pam.d",
+    "what_happens": "Installs the PAM config so Netatalk can authenticate system users. Run it after creating the directories from the install notes."
+   }
+  ],
+  "whats_unique": "It is a maintained, open source AFP server that also ships a matching AFP client, for a protocol Apple is dropping from macOS.",
+  "caveats": "Setup assumes sysadmin skills, the option set is large, very old AFP clients need extra configuration, and Homebrew installs need a manual PAM step to authenticate system users.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "protocol",
+   "network",
+   "afp",
+   "apple",
+   "file-server",
+   "retro"
+  ],
+  "links": [
+   {
+    "label": "Netatalk homepage",
+    "url": "https://netatalk.io"
+   }
+  ]
+ }
+}

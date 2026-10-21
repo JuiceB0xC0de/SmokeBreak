@@ -1,0 +1,85 @@
+{
+ "name": "scamper",
+ "desc": "Advanced traceroute and network measurement utility",
+ "homepage": "https://www.caida.org/catalog/software/scamper/",
+ "installs_365d": 364,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "afternoon"
+ ],
+ "why": "CAIDA's advanced traceroute and Internet measurement tool, a real door into how the internet's routing is probed and mapped.",
+ "brief": {
+  "what_it_is": "Scamper is a feature-rich active Internet probing tool from CAIDA, written by Matthew Luckie, that runs ping, traceroute and related measurements against lists of IPv4 or IPv6 addresses. It takes target addresses from the command line, from files, or from commands sent to a running scamper process over a control socket. Results are written in scamper's native warts format, or as text or JSON. The package also includes many sc_ driver programs and warts conversion tools, plus a Python module and C libraries.",
+  "why_it_exists": "The homepage says scamper is the successor to skitter and is built to analyze Internet topology and performance by actively probing at scale. It is the prober deployed in CAIDA's Macroscopic Topology Project. The paper cited on the page describes its motivation as a scalable and extensible packet prober.",
+  "how_it_works": "Scamper sends probes in parallel at a rate you set with -p, from 1 to 50000 packets per second, so bulk data can be collected in a reasonable time. Simple jobs are a single method applied to a list, such as traceroute over many IPs. Complex jobs use a driver program, written against the Python API or the libscamperctrl and libscamperfile C libraries, that connects to a running scamper and decides the next measurement from earlier results. Output is stored in warts files, which hold metadata about each measurement along with the response detail.",
+  "commands_seen": [
+   {
+    "cmd": "scamper [-?Dv] [-c command] [-p pps] [-w window] [-M monitorname] [-l listname] [-L listid] [-C cycleid] [-o outfile] [-O options] [-H holdtime] [-F firewall] [-e pidfile] [-g configfile] [-n nameserver] [-d debugfile] [-i IPs | -I cmds | -f file | -P [ip:]port | -R name:port | -U unix-dom]",
+    "context": "Usage synopsis from the homepage. Shows the main scamper binary's options; -c defaults to trace, -p caps packets per second, and -D starts it as a daemon."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Standard source build step, given as the first of three commands (configure, make, make install)."
+   },
+   {
+    "cmd": "make",
+    "context": "Standard source build step after configure."
+   },
+   {
+    "cmd": "make install",
+    "context": "Standard source build step that installs scamper after compiling."
+   },
+   {
+    "cmd": "./configure --help",
+    "context": "Lists the optional features that can be enabled or disabled at build time."
+   },
+   {
+    "cmd": "PYTHON=/path/to/python3 ./configure --with-python",
+    "context": "Example of pointing configure at a Python 3 binary so the Python interface gets built."
+   },
+   {
+    "cmd": "./configure --enable-sc_hoiho",
+    "context": "Enables the sc_hoiho build target; the page says it also needs --with-pcre or --with-pcre2."
+   },
+   {
+    "cmd": "./configure --enable-sc_rxifd",
+    "context": "Enables the sc_rxifd build target, which needs no extra library according to the page."
+   },
+   {
+    "cmd": "./configure --enable-sc_uptime",
+    "context": "Enables the sc_uptime build target; the page says it needs sqlite3 headers and library on the compiler path."
+   },
+   {
+    "cmd": "--disable-scamper-foo",
+    "context": "Pattern for turning off a single measurement primitive in the scamper binary, where foo is the primitive name. The libscamperfile library is not affected."
+   }
+  ],
+  "install_notes": "The homepage recommends installing a package where possible. Packages are listed for FreeBSD ports, OpenBSD ports, an Ubuntu PPA, a Homebrew formula, openSUSE, NetBSD pkgsrc, MacPorts, and Debian/Ubuntu. The Ubuntu PPA splits scamper into several packages, including python3-scamper, scamper-utils, scamper-remoted, libscamperfile13, and libscamperctrl4. To build from source, run ./configure, make, make install. The Python module requires Python 3 at build time. It is also on PyPI, and the page says that copy matches the one in the release, but installing it through pip requires the libscamperfile and libscamperctrl development environment. Optional sc_hoiho and sc_minrtt builds need PCRE or PCRE2, and sc_minrtt and sc_uptime need sqlite3. The sting and tbit modules require IPFW or PF on the host.",
+  "standout": "Scamper is built for bulk, rate-controlled Internet measurement rather than single-target troubleshooting, and it ships a control-socket and driver model so that a live process can be steered by follow-up logic. The warts format keeps detailed metadata with each result, and a large set of sc_ drivers implements published research methods such as Ally, Speedtrap, bdrmap and MIDAR-support primitives.",
+  "status": "Maintained, as far as the homepage shows. It gives the current source snapshot as cvs-20261019, released October 19th 2026, and says the FreeBSD, OpenBSD, Ubuntu PPA and openSUSE packages should be up to date. I did not check a repository commit history, so I cannot confirm activity beyond that page.",
+  "caveats": "Licensed under GPL v2. Not every module runs on every platform: the homepage lists FreeBSD, OpenBSD, NetBSD, Linux, macOS, Solaris, Windows and DragonFly as targets, but sting and tbit need IPFW or PF. Several optional drivers (sc_hoiho, sc_minrtt, sc_rxifd, sc_uptime) must be enabled at configure time and bring their own library needs. Probing at high rates against other people's networks is a responsibility the page does not discuss. The -O planetlab option is needed to use safe raw sockets on PlanetLab.",
+  "quotes": [
+   "Scamper is designed to actively probe destinations in the Internet in parallel (at a specified packets-per-second rate) so that bulk data can be collected in a timely fashion.",
+   "Like its predecessor skitter, scamper is a feature-rich tool that actively probes the Internet in order to analyze topology and performance.",
+   "Scamper is the prober deployed in CAIDA's Macroscopic Topology Project."
+  ],
+  "links": [
+   {
+    "label": "Scamper homepage (CAIDA catalog)",
+    "url": "https://www.caida.org/catalog/software/scamper/"
+   },
+   {
+    "label": "CAIDA Resource Catalog entry for scamper",
+    "url": "https://catalog.caida.org/software/scamper"
+   }
+  ],
+  "fetch_log": [
+   "https://www.caida.org/catalog/software/scamper/ - fetched, worked. The page is a full CAIDA catalog entry with the overview, usage text, build notes, paper list and download/package info. Man pages and the paper are referenced but not fetched; I did not follow them, since the homepage already had enough to write the brief."
+  ]
+ }
+}

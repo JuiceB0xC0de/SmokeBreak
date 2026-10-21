@@ -1,0 +1,86 @@
+{
+ "name": "cyphernetes",
+ "desc": "Kubernetes Query Language",
+ "homepage": "https://cyphernet.es",
+ "installs_365d": 125,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "language",
+  "network"
+ ],
+ "why": "A Cypher-style graph query language for Kubernetes resources, a neat idea that reframes cluster state as a graph.",
+ "brief": {
+  "what_it_is": "Cyphernetes is a query language for Kubernetes resources, written in a Cypher-like style. You write MATCH/WHERE/DELETE statements against cluster objects such as Pods, and it runs them against your cluster. The homepage describes a REPL, a web interface that draws the cluster as a graph, and a way to define reactive operators in query syntax. The homepage does not say the exact input or output formats beyond the example query.",
+  "why_it_exists": "The homepage pitches it as a simpler alternative to chaining kubectl, shell pipes, xargs and bash to do multi-step cluster operations. It frames relationships between resources as first-class graph citizens.",
+  "how_it_works": "The homepage says it automatically discovers all CRDs and understands resource relationships out of the box, with no configuration. It also claims multi-cluster querying with one syntax. The homepage does not explain the internals.",
+  "commands_seen": [
+   {
+    "cmd": "MATCH (p:Pod) WHERE p.status.phase != \"Running\" DELETE p;",
+    "context": "Cyphernetes query shown on the homepage as the one-line equivalent of the kubectl pipeline below it; it deletes all non-running pods. This is a query, not a shell command, and it is destructive. (Original was split over three lines on the page; joined here.)"
+   },
+   {
+    "cmd": "kubectl get pods --all-namespaces --field-selector 'status.phase!=Running' -o 'custom-columns=NAMESPACE:.metadata.namespace,NAME:.metadata.name' --no-headers | xargs -L1 -I {} bash -c 'set -- {}; kubectl delete pod $2 -n $1'",
+    "context": "The traditional kubectl pipeline shown on the homepage as the 'Complex' comparison, for deleting all non-running pods. Shown with a leading '$ ' prompt and split over lines on the page; joined here."
+   }
+  ],
+  "install_notes": "",
+  "standout": "It reframes cluster state as a graph and reuses Cypher, a graph query language, for Kubernetes, so one statement can span multiple resource types. The homepage claims it needs zero configuration and discovers CRDs automatically, which is a neat pitch if it holds up.",
+  "status": "unknown",
+  "caveats": "The homepage is marketing copy and gives no release date, version, or commit activity. I could not reach the GitHub README: the URL I guessed (github.com/cyphernet-es/cyphernetes) returned 404, and the homepage's 'View on GitHub' link target was not exposed in the page text. So install steps, licence, and docs were not verified. The claims about the web UI, the REPL, and reactive operators are unverified beyond the homepage copy. The featured example is a DELETE, so a writer should flag that it is destructive.",
+  "quotes": [
+   "Express complex multi-resource operations with elegant Cypher syntax. Relationships between resources become first-class citizens.",
+   "Works instantly with any cluster. Automatically discovers all your CRDs and understands resource relationships out of the box.",
+   "Define reactive workflows with Cyphernetes queries. Build production-ready operators without writing Go code."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://cyphernet.es"
+   }
+  ],
+  "fetch_log": [
+   "https://cyphernet.es - worked; marketing homepage with examples and feature list",
+   "https://github.com/cyphernet-es/cyphernetes - failed, HTTP 404 (guessed URL, not linked from the homepage text)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A Cypher-like language that treats Kubernetes resources and their relationships as a graph is an unusual, genuinely useful way to explore and operate clusters."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Cyphernetes",
+  "tldr": "A Cypher-style graph query language for Kubernetes: write MATCH and WHERE statements against cluster resources instead of chaining kubectl, xargs and bash.",
+  "deeper_look": "Cyphernetes lets you query a Kubernetes cluster the way you would query a graph database. You write statements with MATCH, WHERE and DELETE, borrowed from Cypher, and it runs them against the objects in your cluster, Pods included. The homepage also describes a REPL, a web interface that draws the cluster as a graph, and a way to define reactive operators using query syntax.\n\nThe reason it exists, per the homepage, is that multi-step cluster work in kubectl tends to become a pipeline of shell pipes, xargs and inline bash. The homepage's own example deletes every non-running pod. In kubectl that takes a long `get | xargs bash -c` pipeline. In Cyphernetes it is one line: `MATCH (p:Pod) WHERE p.status.phase != \"Running\" DELETE p;`.\n\nThe idea underneath is that cluster state is already a graph. Deployments own ReplicaSets, which own Pods, and Services select Pods. If the relationships are first-class, one statement can span several resource types. The homepage says it discovers CRDs automatically and understands those relationships with no configuration. It does not explain the internals, so treat that as a claim to test.",
+  "install": "brew install cyphernetes\n# Needs access to a Kubernetes cluster (a kubeconfig) to run queries against.",
+  "try_this": [
+   {
+    "cmd": "cyphernetes --help",
+    "what_happens": "Lists the available commands and options, a safe first look before pointing it at a cluster."
+   }
+  ],
+  "whats_unique": "It reuses Cypher, a graph database query language, for Kubernetes, so relationships between resources are part of the query rather than something you stitch together in shell.",
+  "caveats": "The homepage is marketing copy with no version or release date, and the GitHub README was not checked, so the REPL, web UI and operator claims are unverified; the homepage's example query is a destructive DELETE, so try it only on a throwaway cluster.",
+  "commitment": "quick",
+  "category": "languages-and-oddities",
+  "tags": [
+   "quick",
+   "language",
+   "kubernetes",
+   "query-language",
+   "graph"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://cyphernet.es"
+   }
+  ]
+ }
+}

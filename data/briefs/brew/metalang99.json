@@ -1,0 +1,62 @@
+{
+ "name": "metalang99",
+ "desc": "C99 preprocessor-based metaprogramming language",
+ "homepage": "https://metalang99.readthedocs.io/en/latest/",
+ "installs_365d": 6,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language",
+  "library"
+ ],
+ "why": "A metaprogramming language built entirely out of C99 preprocessor macros, a strange and fun exercise in what the preprocessor can do.",
+ "brief": {
+  "what_it_is": "Metalang99 is a header-only library for C99 (and C++11 onward) that runs a small functional language inside the C preprocessor. You include metalang99.h and write metaprograms as ML99_EVAL or ML99_call expressions, with ML99_ naming throughout. The interpreter takes those expressions at compile time and expands them into plain C text, such as static arrays, struct initializers, or overloaded macros. The standard library, documented on the readthedocs site, supplies lists, tuples, choice types, naturals, booleans, and assertions. The README says it offers algebraic data types, pattern matching, recursion, currying, and collections.",
+  "why_it_exists": "The author, Hirrolot, says C metaprogramming is crippled: the preprocessor cannot do control flow, integers, unbounded sequences, or compound data, and Boost/Preprocessor's recursion limits made his Poica project unmaintainable. Metalang99 was built to give pure C a proper paradigm for metaprograms. It also underpins Datatype99 and Interface99, and the README says it is used at OpenIPC as an indirect dependency.",
+  "how_it_works": "The README says preprocessor macro recursion is prohibited, so Metalang99 uses an ad-hoc recursion engine that defers expansions and passes continuations. On top of that, a continuation-passing-style interpreter reduces language expressions to final results. The standard library is ordinary metafunctions written in the core metalanguage and evaluated by that interpreter. The README also says a fixed number of reduction steps bounds each metaprogram, so it is not Turing-complete in practice.",
+  "commands_seen": [
+   {
+    "cmd": "gcc playground.c -Imetalang99/include -ftrack-macro-expansion=0",
+    "context": "FAQ example compiling a file of ML99_EVAL lines to show the built-in syntax checker's error messages. The flag disables GCC's macro expansion backtraces."
+   },
+   {
+    "cmd": "./scripts/bench.sh",
+    "context": "FAQ answer on compilation times: run from the repository root to execute the benchmarks."
+   }
+  ],
+  "install_notes": "No package manager or account is needed. Metalang99 is just header files: add metalang99/include to your include directories. Add -ftrack-macro-expansion=0 for GCC or -fmacro-backtrace-limit=1 for Clang to avoid useless macro-expansion errors. With CMake, the recommended route is FetchContent, pulling the release tarball from GitHub, then linking target metalang99 and setting the same flag per compiler. Precompiled headers are optional and speed up builds. The README lists GCC, Clang, MSVC, and TCC as tested compilers. The brew formula's executables list is empty, which fits a header-only library.",
+  "standout": "It treats the preprocessor as an interpreted FP language, with a real recursion engine, partial application, and ML99_abort/ML99_fatal for debugging macros. Most macro libraries like Boost/Preprocessor copy-paste recursive definitions up to a fixed depth. The built-in syntax checker turns many macro mistakes into readable static assertion messages, which is unusual for this kind of code.",
+  "status": "Probably maintained, but I could not confirm a date. The docs show version 1.13.5, the GitHub README has a CI badge and a documented release procedure, and it links to a book and a spec PDF. I saw no last-commit or release date in what I fetched.",
+  "caveats": "The README says it is for syntax transformation only and not CPU-bound work, since the preprocessor is slow and limited. Recursion is bounded by a reduction-step limit. Compile-time errors can still be obscure when code is awkward; the README shows one example. The flags -ftrack-macro-expansion=0 or -fmacro-backtrace-limit=1 are required for good diagnostics. IDEs show macro-generated code but do not highlight macro syntax. The license was not in the README text I fetched, so I could not confirm it. The homepage I first fetched is only the standard library reference, not the overview.",
+  "quotes": [
+   "Metalang99 is a firm foundation for writing reliable and maintainable metaprograms in pure C99.",
+   "Metalang99 is only about syntax transformations and not about CPU-bound tasks; the preprocessor is just too slow and limited for such kind of abuse.",
+   "Metalang99 is built for humans, not for macro monsters."
+  ],
+  "links": [
+   {
+    "label": "Homepage (standard library reference)",
+    "url": "https://metalang99.readthedocs.io/en/latest/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/Hirrolot/metalang99"
+   },
+   {
+    "label": "Tutorial book",
+    "url": "https://hirrolot.gitbook.io/metalang99/"
+   },
+   {
+    "label": "Specification PDF",
+    "url": "https://github.com/hirrolot/metalang99/blob/master/spec/spec.pdf"
+   }
+  ],
+  "fetch_log": [
+   "https://metalang99.readthedocs.io/en/latest/ : worked, returned the standard library reference page (version 1.13.5), not an overview",
+   "https://github.com/Hirrolot/metalang99 : worked, returned the README"
+  ]
+ }
+}

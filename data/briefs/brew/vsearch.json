@@ -1,0 +1,92 @@
+{
+ "name": "vsearch",
+ "desc": "Versatile open-source tool for microbiome analysis",
+ "homepage": "https://github.com/torognes/vsearch",
+ "installs_365d": 344,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "science",
+  "afternoon"
+ ],
+ "why": "Microbiome sequence clustering and chimera detection is real bioinformatics, a legitimate science tool to run at home, though niche.",
+ "brief": {
+  "what_it_is": "VSEARCH is an open-source command-line tool for sequence analysis, aimed mainly at microbiome and metagenomic amplicon work. It takes FASTA or FASTQ sequence files (plain or gzip/bzip2 compressed) and can cluster sequences, dereplicate them, detect chimeras de novo or against a reference, classify taxonomy with SINTAX, search queries against a database with global alignment, merge paired-end reads, filter and convert FASTQ, and subsample or shuffle files. Outputs include alignment text, user-defined tabular fields, BLAST-style tables, UC files, and OTU tables in biom, classic, or mothur formats. It is a free, open alternative to USEARCH.",
+  "why_it_exists": "The README says the aim is to create an alternative to USEARCH (Robert C. Edgar, 2010) that is open source under an appropriate license, free of charge, 64-bit for very large databases, and as accurate and as fast as USEARCH. Its name stands for 'vectorized search'.",
+  "how_it_works": "VSEARCH uses SIMD vectorization and multiple threads for speed. Its aligner is an optimal global aligner (full dynamic programming, Needleman-Wunsch), where USEARCH defaults to a heuristic seed-and-extend aligner, which the README says usually gives more accurate alignments and better recall, especially with gaps. Most nucleotide commands and option names follow USEARCH version 7 so it works as an almost drop-in replacement.",
+  "commands_seen": [
+   {
+    "cmd": "./vsearch --usearch_global queries.fsa --db database.fsa --id 0.9 --alnout alnout.txt",
+    "context": "The README's example: finds database sequences at least 90% identical on the plus strand to the queries and writes the alignments to alnout.txt."
+   },
+   {
+    "cmd": "./configure CFLAGS=\"-O3\" CXXFLAGS=\"-O3\"",
+    "context": "Source build step; the README recommends these optimisation flags before make."
+   },
+   {
+    "cmd": "make ARFLAGS=\"cr\"",
+    "context": "Compiles the source after configure."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the vsearch binary and, per the README, the man pages."
+   },
+   {
+    "cmd": "git clone https://github.com/torognes/vsearch.git",
+    "context": "Alternative to the release tarball: clones the repository for a source build."
+   },
+   {
+    "cmd": "./autogen.sh",
+    "context": "Needed only for a git checkout, to generate the autotools build system (autoconf 2.63 or later)."
+   },
+   {
+    "cmd": "man vsearch",
+    "context": "Opens the hub manual page listing every command."
+   },
+   {
+    "cmd": "man vsearch-usearch_global",
+    "context": "Opens the manual page for one command, the usearch_global search."
+   },
+   {
+    "cmd": "cp completion/vsearch ~/.local/share/bash-completion/completions/vsearch",
+    "context": "Enables bash tab completion for a single user from the binary distribution."
+   },
+   {
+    "cmd": "./configure --disable-completion",
+    "context": "Build option that skips installing the shell completion scripts."
+   }
+  ],
+  "install_notes": "Source builds need g++ (or clang) and make. On Debian/Ubuntu install autoconf, automake, g++, libbz2-dev, make, zlib1g-dev (add libsimde-dev for riscv64 or mips64el). On Fedora/RHEL install autoconf, automake, bzip2-devel, gcc-c++, make, zlib-devel. zlib and bzip2 are optional but enable reading .gz and .bz2 input. The release tarball ships generated build files, so autotools are not needed for it. Pre-built binaries come as tar.gz for Linux and macOS, and as a zip for Windows, which includes the needed DLLs. Unpacked binaries should be linked into your PATH, and the man pages copied into MANPATH. Shell completion is provided for bash, zsh and fish, with extra steps for zsh's fpath. Homebrew, Conda (bioconda), Debian, FreeBSD and pkgsrc packages exist, and the README lists QIIME 2 and Galaxy wrappers. No accounts or hardware are needed.",
+  "standout": "It is a drop-in-style alternative to USEARCH with an open license, and it uses a full Needleman-Wunsch global aligner where USEARCH uses a heuristic one. The README also says it runs on five Linux CPU architectures, including POWER8, RISC-V and MIPS, plus macOS and Windows.",
+  "status": "Maintained, judging by the README. It cites v2.32.0 as the current release, links a CI build-and-test badge, lists an API at version 0.17.0, and cites a 2026 bioRxiv paper about the Rsearch R interface. I did not see a commit or release date on the page itself, so the evidence is indirect.",
+  "caveats": "The README says VSEARCH is designed for rather short sequences and will be slow for sequences longer than about 5,000 bp, because it always performs optimal global alignment on selected sequences. It does not support amino acid sequences or local alignments, though these may be added later. Not every USEARCH 8 feature is supported. Support for MIPS is marked 'not tested' on GNU/Linux. The Windows build is 64-bit x86_64 only. The README says the source compiles with gcc 4.8.5 to 14.0 and clang 3.8 to 19.0. Licensing is dual: GPL version 3 or BSD 2-clause, at the user's choice. The Homebrew caveats field is empty. The scout's note calls it niche, which fits the README's own framing around short amplicon reads.",
+  "quotes": [
+   "The aim of this project is to create an alternative to the USEARCH tool developed by Robert C. Edgar (2010).",
+   "VSEARCH stands for vectorized search, as the tool takes advantage of parallelism in the form of SIMD vectorization as well as multiple threads to perform accurate alignments at high speed.",
+   "VSEARCH is designed for rather short sequences, and will be slow when sequences are longer than about 5,000 bp."
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repository",
+    "url": "https://github.com/torognes/vsearch"
+   },
+   {
+    "label": "Online documentation",
+    "url": "https://torognes.github.io/vsearch/"
+   },
+   {
+    "label": "Latest release binaries",
+    "url": "https://github.com/torognes/vsearch/releases/latest"
+   },
+   {
+    "label": "Citation paper: Rognes et al. 2016, PeerJ (doi:10.7717/peerj.2584)",
+    "url": "https://doi.org/10.7717/peerj.2584"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/torognes/vsearch: fetched OK, README returned in full (about 480 lines). Did not follow the docs link because the README was complete and self-contained."
+  ]
+ }
+}

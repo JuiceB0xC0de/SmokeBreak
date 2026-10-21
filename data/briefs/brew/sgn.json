@@ -1,0 +1,69 @@
+{
+ "name": "sgn",
+ "desc": "Shikata ga nai (\u4ed5\u65b9\u304c\u306a\u3044) encoder ported into go with several improvements",
+ "homepage": "https://github.com/EgeBalci/sgn",
+ "installs_365d": 85,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "afternoon"
+ ],
+ "why": "A polymorphic shellcode encoder that rewrites payloads to evade detection, a good window into how binaries get disguised.",
+ "brief": {
+  "what_it_is": "sgn is a command-line polymorphic binary encoder, the Rust port of the Shikata ga nai shellcode encoder. It takes a raw binary payload (for example shellcode in a file) and outputs an encoded binary that is wrapped in a runtime decoder stub. Each pass prepends random garbage instructions, enciphers the payload with an LFSR-style cipher, and can additionally encrypt the decoder stub itself. Options cover 32- or 64-bit architecture, number of encoding passes, bad-byte avoidance, ASCII-only output, and a register-preserving safe mode. It can also be used as a Rust library.",
+  "why_it_exists": "The author says the original Shikata ga nai is considered the best shellcode encoder, but researchers (cited via a FireEye article) found ways to statically detect its decoder stub. The stated goal is an encoder whose output is 'identical with totally random data and not possible to detect the presence of a decoder.'",
+  "how_it_works": "Each encoding pass optionally appends a register-restore suffix (safe mode), prepends random value-preserving garbage instructions, and ciphers the payload with the ADFL (additive feedback loop) cipher, prepending a loop-free decoder stub that reverses it at runtime. Unless --plain is given, the stub is itself encrypted with a random per-run schema cipher (XOR/ADD/SUB/ROL/ROR/NOT over DWORDs) and prepended with a self-locating schema decoder. The --enc option repeats this with fresh seeds, and safe mode may add a register-save prefix. The README describes the LFSR as a companion-matrix construction in Fibonacci configuration.",
+  "commands_seen": [
+   {
+    "cmd": "cargo install sgn",
+    "context": "Installs sgn from crates.io; the README's only install instruction besides pre-compiled binaries on the releases page."
+   },
+   {
+    "cmd": "sgn [OPTIONS]",
+    "context": "General usage line from the help output in the README."
+   },
+   {
+    "cmd": "sgn -i shellcode.bin -o encoded.bin -a 64 --badchars '\\x00\\x0a\\x0d'",
+    "context": "Example: encodes shellcode.bin for 64-bit, writes encoded.bin, and avoids the null, newline, and carriage-return bytes."
+   },
+   {
+    "cmd": "cargo test",
+    "context": "Runs the test suite, including cipher round-trip tests and in-process execution tests of encoded shellcode."
+   }
+  ],
+  "install_notes": "Install with cargo install sgn, or download pre-compiled binaries from the GitHub releases page. The README says the Rust port has no native library dependencies (it replaced keystone with the pure-Rust iced-x86 assembler) and builds with a plain cargo build. Running the x86 execution tests needs a 32-bit toolchain (cc -m32); they are skipped automatically if none is present. No accounts or runtime configuration are mentioned.",
+  "standout": "Instead of only encoding the payload, it encrypts the decoder stub with a per-run random schema cipher so the decoder itself looks like random data, and it has a stub that decodes itself without any loop condition. The author also documents the port's design changes openly, including dropping dead code and replacing keystone with iced-x86.",
+  "status": "unknown. The README shows version v2.0.2 in its banner and has CI build, release, and crates.io badges, and it documents a recent port to Rust. However, the fetched page carried no release date or last-commit date, so I cannot confirm how active it is.",
+  "caveats": "The Homebrew description says 'ported into go', but the README says the project was recently ported to Rust, and the Go version is only kept as a legacy branch (sgn-go). The brief's description therefore may be out of date. The README's claim of 'statically undetecable' payloads is the author's own framing and is not independently verified here. The tool is explicitly for offensive security, so it is aimed at users who already have a payload to disguise. x86 test coverage depends on a 32-bit toolchain. The --ascii option is noted as slow.",
+  "quotes": [
+   "SGN is a polymorphic binary encoder for offensive security purposes such as generating statically undetecable binary payloads.",
+   "The main motive for this project was to create a better encoder that encodes the given binary to the point it is identical with totally random data and not possible to detect the presence of a decoder.",
+   "Stub decodes itself WITHOUT using any loop conditions !!"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/EgeBalci/sgn"
+   },
+   {
+    "label": "Releases and pre-compiled binaries",
+    "url": "https://github.com/EgeBalci/sgn/releases"
+   },
+   {
+    "label": "crates.io package",
+    "url": "https://crates.io/crates/sgn"
+   },
+   {
+    "label": "FireEye article on Shikata ga nai",
+    "url": "https://www.fireeye.com/blog/threat-research/2019/10/shikata-ga-nai-encoder-still-going-strong.html"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/EgeBalci/sgn: fetched successfully, README returned. No other pages were fetched because the README was complete."
+  ]
+ }
+}

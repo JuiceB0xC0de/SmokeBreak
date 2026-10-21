@@ -1,0 +1,136 @@
+{
+ "name": "luaradio",
+ "desc": "Lightweight, embeddable flow graph signal processing framework for SDR",
+ "homepage": "https://luaradio.io/",
+ "installs_365d": 93,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "library",
+  "science"
+ ],
+ "why": "A flow-graph signal processing framework for SDR written in Lua, a lovely way to build radio pipelines and inspect the signals.",
+ "brief": {
+  "what_it_is": "LuaRadio is a lightweight, embeddable flow graph signal processing framework for software-defined radio. It ships a set of source, sink, and processing blocks, plus a Lua API for defining and running flow graphs, creating blocks, and creating data types. Flow graphs are written as Lua scripts that connect blocks such as an RTL-SDR source, a tuner, an FM discriminator, filters, and an audio sink, then call run(). It can also be run through built-in command-line receivers such as rx_wbfm and rx_ax25. It is built on LuaJIT, and its binary is under 750 KB including LuaJIT.",
+  "why_it_exists": "The README positions it for rapidly prototyping software radios, modulation and demodulation utilities, and signal processing experiments. It also says it can be embedded into existing radio applications as a user-scriptable signal processing engine.",
+  "how_it_works": "Blocks are written in pure Lua and connected into a flow graph with CompositeBlock():connect(...), then executed with :run(). Blocks can use LuaJIT's FFI to wrap optional external libraries such as VOLK and liquid-dsp for acceleration and for talking to SDR hardware. The README does not describe the scheduler in detail.",
+  "commands_seen": [
+   {
+    "cmd": "./luaradio --platform",
+    "context": "Dumps platform info, including LuaJIT version, CPU, and whether fftw3f, volk, and liquid features are available."
+   },
+   {
+    "cmd": "./luaradio examples/rtlsdr_wbfm_mono.lua 91.1e6",
+    "context": "Runs the wideband FM example script against an RTL-SDR dongle, tuned to 91.1 MHz."
+   },
+   {
+    "cmd": "git clone https://github.com/vsergeev/luaradio.git",
+    "context": "Clones the repository so LuaRadio can be run directly from source with LuaJIT installed."
+   },
+   {
+    "cmd": "sudo pacman -S liquid-dsp libvolk fftw",
+    "context": "Installs the optional acceleration libraries on Arch Linux."
+   },
+   {
+    "cmd": "brew install liquid-dsp fftw",
+    "context": "Installs the optional acceleration libraries on macOS via Homebrew."
+   },
+   {
+    "cmd": "sudo apt-get install libliquid-dev libvolk2-dev libfftw3-dev",
+    "context": "Installs the optional acceleration libraries on Ubuntu, Debian, or Raspbian."
+   },
+   {
+    "cmd": "sudo luarocks --lua-version=5.1 install busted",
+    "context": "Installs the busted test runner via LuaRocks, needed to run the unit tests."
+   },
+   {
+    "cmd": "busted",
+    "context": "Runs the LuaRadio unit tests from the repository root."
+   }
+  ],
+  "install_notes": "LuaJIT is required, and LuaRadio can run directly from a git clone with ./luaradio. Optional but recommended for real-time work: liquid-dsp, VOLK, and fftw, which you confirm with --platform showing them as true. Packages exist for Arch Linux (AUR package luaradio), macOS via Homebrew or MacPorts (package luaradio), and other methods are in docs/1.installation.md. Running the wideband FM example needs an RTL-SDR dongle, and its audio sink uses PulseAudio. Unit tests need busted installed through LuaRocks for Lua 5.1.",
+  "standout": "It is a small, dependency-light SDR flow graph engine where the whole signal chain is ordinary Lua, with the FFI used to reach native DSP libraries. The README says it runs on a Raspberry Pi 3, and it offers an embeddable C library so other applications can script their signal processing.",
+  "status": "Unknown as of this read, leaning quiet. The README shows a passing tests badge and an MIT license badge but gives no release date or recent-commit information, and the homepage copyright reads 2016-2021. I did not check the release page or commit history.",
+  "caveats": "Primarily supports Linux. FreeBSD and macOS are described as experimental for real-time and audio sink support. Real-time performance depends on the optional liquid-dsp, VOLK, and fftw libraries. The wideband FM example also needs specific hardware (an RTL-SDR) and PulseAudio. The README does not list a feature roadmap beyond a wiki link.",
+  "quotes": [
+   "LuaRadio is a lightweight, embeddable flow graph signal processing framework for software-defined radio.",
+   "LuaRadio blocks are written in pure Lua, but can use LuaJIT's FFI to wrap external libraries, like VOLK, liquid-dsp, and others, for computational acceleration, sophisticated processing, and interfacing with SDR hardware.",
+   "LuaRadio and all of its examples run great on the Raspberry Pi 3 with Arch Linux or Raspbian."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://luaradio.io/"
+   },
+   {
+    "label": "Reference Manual",
+    "url": "https://luaradio.io/docs/reference-manual.html"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/vsergeev/luaradio"
+   }
+  ],
+  "fetch_log": [
+   "https://luaradio.io/ : fetched OK, homepage text including example, quickstart, and platform output",
+   "https://github.com/vsergeev/luaradio : fetched OK, full README including built-in applications, install packages, project structure, and testing instructions"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "An obscure, embeddable SDR framework makes radio signal-processing pipelines ordinary Lua scripts, opening a hands-on path into software-defined radio."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "LuaRadio",
+  "tldr": "A tiny software-defined radio framework where you wire up receivers as plain Lua scripts: source, filters, demodulator, audio out, then run().",
+  "deeper_look": "LuaRadio is a flow graph signal processing framework for software-defined radio. A flow graph is a chain of blocks, each doing one job: read samples from an RTL-SDR, tune to a frequency, filter, demodulate FM, play audio. In LuaRadio you write that chain as an ordinary Lua script, connect the blocks with `CompositeBlock():connect(...)`, and call `:run()`.\n\nThe README pitches it for rapid prototyping of software radios, modulation and demodulation utilities, and signal processing experiments. It can also be embedded in existing radio applications as a user-scriptable processing engine. The whole thing, LuaJIT included, is under 750 KB.\n\nBlocks are written in pure Lua, but LuaJIT's FFI lets them wrap native libraries such as VOLK and liquid-dsp for speed and for talking to SDR hardware. That is the idea worth stealing: a radio receiver is just a small readable graph of stages, and you can reshape it by editing a few lines. It also ships built-in command-line receivers such as `rx_wbfm` and `rx_ax25` if you would rather listen than build.\n\nThe README says it runs well on a Raspberry Pi 3, which makes it a plausible base for a small dedicated radio box.",
+  "install": "brew install luaradio\n# Running the FM example needs an RTL-SDR dongle and PulseAudio for the audio sink. The brew formula pulls in luajit, fftw and liquid-dsp.",
+  "try_this": [
+   {
+    "cmd": "luaradio --platform",
+    "what_happens": "Prints platform info: LuaJIT version, CPU, and whether fftw3f, volk and liquid features are available."
+   },
+   {
+    "cmd": "luaradio examples/rtlsdr_wbfm_mono.lua 91.1e6",
+    "what_happens": "Runs the wideband FM example script against an RTL-SDR dongle tuned to 91.1 MHz. Run it from a clone of the repo."
+   },
+   {
+    "cmd": "luaradio --help",
+    "what_happens": "Lists the command-line options for the executable."
+   }
+  ],
+  "whats_unique": "The whole signal chain is ordinary Lua, in a binary small enough to embed, with the FFI reaching native DSP libraries only where speed matters.",
+  "caveats": "Primarily a Linux tool, with macOS described as experimental for real-time and audio output; project activity looked quiet, with the homepage copyright reading 2016-2021.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "sdr",
+   "lua",
+   "dsp",
+   "flow-graph"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://luaradio.io/"
+   },
+   {
+    "label": "Reference Manual",
+    "url": "https://luaradio.io/docs/reference-manual.html"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/vsergeev/luaradio"
+   }
+  ]
+ }
+}

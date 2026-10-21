@@ -1,0 +1,95 @@
+{
+ "name": "mcpsnoop",
+ "desc": "Transparent proxy and TUI for debugging MCP traffic",
+ "homepage": "https://github.com/kerlenton/mcpsnoop",
+ "installs_365d": 229,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "tui",
+  "network",
+  "protocol"
+ ],
+ "why": "A transparent proxy for watching MCP traffic opens a fresh, little-examined protocol to inspection.",
+ "brief": {
+  "what_it_is": "mcpsnoop is a transparent proxy and terminal UI for watching Model Context Protocol (MCP) traffic. You wrap your MCP server command with it, and it sits between your real AI client (Cursor, Claude Code, Codex, Claude Desktop) and the server, copying every JSON-RPC frame they exchange without changing either side. Captured frames can be watched live in a TUI, saved as session logs, checked in CI, or exported as json, html, text, har, or OpenTelemetry spans. It is written in Go and ships as a single binary, also available through npm and Homebrew.",
+  "why_it_exists": "The README argues that the official MCP Inspector connects as its own client, so it never sees what your client actually sends your server. Calls the model never made, or made with wrong arguments, and capability mismatches are invisible to it. mcpsnoop is meant to sit in the real data path so you can see what your real client and server actually say to each other.",
+  "how_it_works": "mcpsnoop runs as two roles in one binary. 'mcpsnoop -- <server>' is a transparent shim that your client spawns; it forwards bytes verbatim and ships a copy of every frame to a hub. Running 'mcpsnoop' with no arguments starts the hub and live TUI. The two find each other through a well-known socket and on-disk logs, so neither has to start first. For Streamable HTTP servers, 'mcpsnoop http' runs as a reverse proxy instead, and it records the HTTP status of every response, including 401, 403, 202 and 502 responses that carry no JSON-RPC message.",
+  "commands_seen": [
+   {
+    "cmd": "mcpsnoop demo",
+    "context": "Plays a scripted session, the README's no-setup way to see it working."
+   },
+   {
+    "cmd": "npx mcpsnoop -- node build/index.js",
+    "context": "Runs mcpsnoop from npm without a Go toolchain, wrapping a Node server."
+   },
+   {
+    "cmd": "mcpsnoop wrap my-server",
+    "context": "Routes one Claude Desktop server through mcpsnoop, editing only that server's entry in claude_desktop_config.json."
+   },
+   {
+    "cmd": "mcpsnoop unwrap my-server",
+    "context": "Restores that server's Claude Desktop entry to its original form."
+   },
+   {
+    "cmd": "mcpsnoop",
+    "context": "Opens the live TUI, which finds the running shims on its own and backfills past sessions from disk."
+   },
+   {
+    "cmd": "mcpsnoop http --target http://localhost:3000/mcp --listen :7000",
+    "context": "Runs mcpsnoop as a reverse proxy in front of a Streamable HTTP server."
+   },
+   {
+    "cmd": "mcpsnoop export -T otlp -o trace.json",
+    "context": "Renders spans from a saved capture into an OpenTelemetry trace file."
+   },
+   {
+    "cmd": "mcpsnoop --otlp-endpoint http://localhost:4318/v1/traces -- node build/index.js",
+    "context": "Wraps a server and streams OpenTelemetry spans to a collector as calls complete."
+   },
+   {
+    "cmd": "brew install mcpsnoop",
+    "context": "Homebrew install route."
+   },
+   {
+    "cmd": "go install github.com/kerlenton/mcpsnoop/cmd/mcpsnoop@latest",
+    "context": "Go install route, requires a Go toolchain."
+   }
+  ],
+  "install_notes": "Four routes are documented: npx mcpsnoop (no Go needed; the npm package ships six platform packages and installs only the one matching your machine, so nothing downloads at install time), npm i -g mcpsnoop, brew install mcpsnoop, or go install. Prebuilt binaries for every platform are on the Releases page. Shell completions exist for bash, zsh, fish and PowerShell, via 'mcpsnoop completion <shell> --help'. Wrapping a client requires editing its MCP config to put 'mcpsnoop' as the command with args ['--', <original command>], or using 'mcpsnoop wrap' for Claude Desktop, then restarting the client. For remote machines, 'mcpsnoop remote <user@host>' prints an SSH tunnel command. For CI, the GitHub Action needs 'security-events: write' permission to upload SARIF to code scanning. No accounts or API keys are mentioned; the README says no model or API key runs in CI.",
+  "standout": "It is positioned as Wireshark for MCP, sitting on the wire rather than being a client of its own. Two features stand out: it can replay a real client's recorded session against each new build of a server in CI, without calling a model, and it exports MCP traffic as OpenTelemetry spans following the MCP semantic conventions. Its 'wrap' command also edits Claude Desktop's config while keeping a backup and leaving other servers untouched.",
+  "status": "Maintained. The GitHub releases page shows v0.28.0 marked Latest, dated 17 Oct, preceded by v0.27.0 on 15 Oct, v0.26.1 on 7 Oct, v0.26.0 on 7 Oct, v0.25.0 on 4 Oct, and v0.24.0 on 3 Oct. Releases go back to v0.20.0 in late August, and the release notes show regular feature work and dependency bumps. The year is not shown on the release page text I read. I did not check the commit history.",
+  "caveats": "MIT licensed. The README warns that mcpsnoop runs the server command you wrap, so only wrap trusted servers, and run untrusted ones in a container. Captures can contain prompts, tool arguments, credentials and tool results, and the README points to docs/REDACTION.md for scrubbing. The project says it drops terminal escape sequences from captured frames before display. The GitHub Action pin is an exact release tag (v0.28.0 in the examples) with no floating v1 tag, by design. I saw no platform limits in the README beyond the Claude Desktop wrap feature being tied to that app's config file. Build pain is not discussed.",
+  "quotes": [
+   "Wireshark for MCP. mcpsnoop sits between your AI client and your MCP server and records every JSON-RPC frame they exchange, with no change to either side.",
+   "mcpsnoop sits in the real data path instead. Wrap your server command with it and watch every JSON-RPC frame live, as your real client and server talk.",
+   "A run that could not check fails the job whatever fail-on-findings says, because a pipeline that goes green having verified nothing is worse than one that fails."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repo and README)",
+    "url": "https://github.com/kerlenton/mcpsnoop"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/kerlenton/mcpsnoop/releases"
+   },
+   {
+    "label": "Checking sessions in CI (docs/CI.md)",
+    "url": "https://github.com/kerlenton/mcpsnoop/blob/main/docs/CI.md"
+   },
+   {
+    "label": "OpenTelemetry and Prometheus (docs/OPENTELEMETRY.md)",
+    "url": "https://github.com/kerlenton/mcpsnoop/blob/main/docs/OPENTELEMETRY.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/kerlenton/mcpsnoop: worked, README returned in full",
+   "https://github.com/kerlenton/mcpsnoop/releases: worked, release list and release notes for v0.20.0 through v0.28.0 returned; some widget text on the page showed load errors but the release entries were readable"
+  ]
+ }
+}

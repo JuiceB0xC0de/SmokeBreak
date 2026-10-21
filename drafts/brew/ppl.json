@@ -1,0 +1,102 @@
+{
+ "name": "ppl",
+ "desc": "Parma Polyhedra Library: numerical abstractions for analysis, verification",
+ "homepage": "https://www.bugseng.com/ppl",
+ "installs_365d": 226,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "days-off",
+  "math",
+  "library"
+ ],
+ "why": "Real polyhedra-based numerical abstraction for program verification, a genuine mathematical rabbit hole though it is mostly a library.",
+ "brief": {
+  "what_it_is": "The Parma Polyhedra Library (PPL) is a C++ library, per its README, for (not necessarily closed) convex polyhedra and other numerical abstractions. It can handle polyhedra given as intersections of rational linear equalities and strict or non-strict inequalities, plus boxes, bounded difference shapes, octagonal shapes, grids (sets of congruence relations), and finite powersets and products of these. It also solves linear programs with an exact-arithmetic primal simplex, solves parametric integer programming problems, and performs termination analysis by synthesizing linear ranking functions. The README does not describe input or output file formats. The brew package ships three executables: ppl-config, ppl_lcdd, and ppl_pips. The source tree has demos for ppl_lcdd, ppl_pips, and ppl_lpsol.",
+  "why_it_exists": "The README presents the library as a general set of numerical abstractions and does not give a verification motive. The 'program verification' framing comes from the brew description and scout notes, not from the README text I read.",
+  "how_it_works": "",
+  "commands_seen": [],
+  "install_notes": "The source distribution is autotools-based (configure, Makefile.am, INSTALL, README.configure). The m4 directory checks for GMP and for a C++11 compiler (ac_check_cxx11.m4). Optional interfaces are configured separately: C, Java, OCaml, and several Prolog systems (SWI, SICStus, XSB, YAP, Ciao, GNU). The README points to INSTALL and README.configure for build steps, which I did not read. I saw no install commands in the fetched text.",
+  "standout": "A single library covers a wide range of abstract domains (polyhedra, grids, boxes, octagons, powersets) together with exact LP, parametric integer programming, and ranking-function synthesis. The README says dimensions are limited only by available virtual memory, and it advertises that you write constraints the way you would on paper, such as x + 2*y + 5*z <= 7.",
+  "status": "Unknown. The fetched README is for release 1.2, and its copyright notices run through 2022. I saw no release date or last-commit date in the text I read.",
+  "caveats": "The homepage https://www.bugseng.com/ppl returned HTTP 403, so the brief rests on the GitHub-hosted README. The GitHub text was cut off at 40000 characters, so I did not see the full README, the INSTALL file, or the user manual. No runnable commands appeared in the fetched text. The README says the library is free software under the GNU GPL. The scout note calls it 'mostly a library', and the fetched README supports that: the executables are demos and utilities, not a main CLI product.",
+  "quotes": [
+   "you write `x + 2*y + 5*z <= 7' when you mean it;",
+   "fully dynamic: available virtual memory is the only limitation to the dimension of anything;",
+   "exception-safe: never leaks resources or leaves invalid object fragments around;"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (returned 403)",
+    "url": "https://www.bugseng.com/ppl"
+   },
+   {
+    "label": "Source repository (README fetched here)",
+    "url": "https://github.com/BUGSENG/ppl"
+   },
+   {
+    "label": "Product page cited in README (not fetched)",
+    "url": "http://bugseng.com/products/ppl/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.bugseng.com/ppl: failed, HTTP 403",
+   "https://github.com/BUGSENG/ppl: worked, README text returned but cut off at 40000 characters"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "An unusually rich mathematical toolkit: exact polyhedra, congruence domains, and ranking-function synthesis open a real rabbit hole beyond generic library plumbing."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "ppl",
+  "tldr": "A C++ library for convex polyhedra and other numerical abstractions, with exact linear programming and a few demo tools you can run from the shell.",
+  "deeper_look": "The Parma Polyhedra Library, or PPL, is a C++ library for working with (not necessarily closed) convex polyhedra. A polyhedron here is a set of points described by rational linear equalities and strict or non-strict inequalities. It also covers simpler shapes: boxes, bounded difference shapes, octagonal shapes, and grids, which are sets of congruence relations. Finite powersets and products of these can be built too.\n\nBeyond the shapes, the library solves linear programs with an exact-arithmetic primal simplex, solves parametric integer programming problems, and synthesizes linear ranking functions for termination analysis. The README does not give a motive. The program verification framing comes from the Homebrew description, not from the README text the brief was based on.\n\nThe idea underneath is the abstract domain. Instead of tracking every value a program variable can take, you track a simplified geometric shape that contains them all. Boxes are cheap and crude, octagons are tighter, and polyhedra are tighter still and more expensive. PPL puts these trade-offs in one library, so you can see how precision and cost move against each other.\n\nThe README says you write constraints the way you would on paper, such as `x + 2*y + 5*z <= 7`, and that dimensions are limited only by available virtual memory. The brew package installs `ppl-config` and two demo-style executables, `ppl_lcdd` and `ppl_pips`. The source tree also has a demo called `ppl_lpsol`. Most of the real use is through the library, with optional interfaces for C, Java, OCaml, and several Prolog systems.",
+  "install": "brew install ppl\n# depends on gmp, which brew pulls in. The executables are small utilities; the library itself is for C++ programs.",
+  "try_this": [
+   {
+    "cmd": "ppl-config --help",
+    "what_happens": "Prints the options for the config tool, which reports how the installed library was built and where it lives."
+   },
+   {
+    "cmd": "ppl_lcdd --help",
+    "what_happens": "Prints usage for the lcdd demo program."
+   },
+   {
+    "cmd": "ppl_pips --help",
+    "what_happens": "Prints usage for the parametric integer programming solver."
+   }
+  ],
+  "whats_unique": "One library covers many abstract domains (polyhedra, grids, boxes, octagons, powersets) alongside exact LP, parametric integer programming, and ranking-function synthesis.",
+  "caveats": "It is mostly a library, so the shipped executables are demos and utilities. The brief could not read the homepage (HTTP 403) or the full README, and found no runnable example commands.",
+  "commitment": "days-off",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "days-off",
+   "math",
+   "library",
+   "polyhedra",
+   "verification",
+   "c++"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (returned 403 when checked)",
+    "url": "https://www.bugseng.com/ppl"
+   },
+   {
+    "label": "Source repository and README",
+    "url": "https://github.com/BUGSENG/ppl"
+   },
+   {
+    "label": "Product page cited in the README",
+    "url": "http://bugseng.com/products/ppl/"
+   }
+  ]
+ }
+}

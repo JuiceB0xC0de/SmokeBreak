@@ -1,0 +1,146 @@
+{
+ "name": "xdelta",
+ "desc": "Binary diff, differential compression tools",
+ "homepage": "https://github.com/jmacd/xdelta",
+ "installs_365d": 2545,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "library"
+ ],
+ "why": "A binary diff and delta compression tool that reveals how files can be encoded as differences.",
+ "brief": {
+  "what_it_is": "Xdelta 3 is a C library and command-line tool for delta compression using the VCDIFF (RFC 3284) format. Given an old file and a new file, the encoder writes a small delta file that describes how to turn the old file into the new one. Given the old file and that delta, the decoder rebuilds the new file. The CLI resembles gzip, takes its input from files or stdin, and writes the delta or reconstructed file to a named output or stdout. The Homebrew executable is xdelta3.",
+  "why_it_exists": "The README frames it as a library and tool for delta compression using the VCDIFF/RFC 3284 standard, rather than giving a broader motivation. The scout note describes it as a tool that reveals how files can be encoded as differences.",
+  "how_it_works": "The encoder matches strings between the source and the target and emits VCDIFF instructions that copy from the source or insert literal bytes. An optional secondary compressor (LZMA, DJW, or FGK where compiled in) can then compress that output. Armor mode, on by default when compiled in, embeds BLAKE3 digests of the logical source and target and verifies them on decode. The inspection commands (printhdr, printhdrs, printdelta) dump the delta's headers, windows, and instructions as readable text.",
+  "commands_seen": [
+   {
+    "cmd": "xdelta3 -e -s old-file new-file update.vcdiff",
+    "context": "Create a delta from old-file to new-file (from the commandline reference page)."
+   },
+   {
+    "cmd": "xdelta3 -d -s old-file update.vcdiff reconstructed-file",
+    "context": "Apply the delta to old-file to reconstruct the new file."
+   },
+   {
+    "cmd": "xdelta3 -e -s old-file < new-file > update.vcdiff",
+    "context": "Same encode operation using stdin and stdout streams."
+   },
+   {
+    "cmd": "xdelta3 -J -d -s old-file update.vcdiff",
+    "context": "Decode and verify a delta without writing output, to validate it (-J suppresses output)."
+   },
+   {
+    "cmd": "xdelta3 < target > target.vcdiff",
+    "context": "With redirected stdin and no arguments, produces a VCDIFF encoding with no source, using only target copies and literal data."
+   },
+   {
+    "cmd": "cd xdelta3",
+    "context": "From the repository README: the CMake build lives in the xdelta3 directory."
+   },
+   {
+    "cmd": "cmake -B build -DCMAKE_BUILD_TYPE=Release",
+    "context": "From the repository README: configure a Release build in the build directory."
+   },
+   {
+    "cmd": "cmake --build build",
+    "context": "From the repository README: compile after configuring."
+   },
+   {
+    "cmd": "ctest --test-dir build",
+    "context": "From the repository README: run the test suite against the build."
+   }
+  ],
+  "install_notes": "Homebrew's formula is the simple path. Building from source uses CMake in the xdelta3 subdirectory (cmake -B build, cmake --build build, ctest), and xdelta3/README.md covers static and shared library builds, liblzma options, and regression testing. Prebuilt binaries for Linux, macOS, and Windows (x86, x86-64, ARM64) are attached to GitHub Releases. Xdelta 3 release binaries statically link liblzma and BLAKE3, so no separate runtime is needed. No accounts or runtimes are mentioned. Running xdelta3 config shows which features and compressors a given build has. The Homebrew caveats field was empty.",
+  "standout": "It is a standards-based format (VCDIFF/RFC 3284), not a private one, so deltas are meant to be decodable by other VCDIFF implementations. Armor mode adds whole-file BLAKE3 verification, and the merge command collapses an ordered chain of deltas (1\u21922, 2\u21923, 3\u21924) into a single 1\u21924 delta, checking digests along the way.",
+  "status": "unknown for exact dates: I did not see a last-release date or last-commit date. The README says the current release series is 3.2.x, shows a CI badge, describes a tag-driven release process with a RELEASING.md, and links a published documentation site. Those point to an active project, but I could not confirm recency.",
+  "caveats": "Licensing is split: the 3.0 and 3.1 APL branches and the main/3.2.x line are Apache 2.0, while the original GPL-licensed Xdelta lives in a separate repository. LZMA-compressed deltas need a decoder built with liblzma, so the docs recommend -S none for broad compatibility with older or reduced builds. Armor needs seekable source and target files during encode. Legacy builds may read armored name#digest fields as literal filenames, so explicit -s and output operands are recommended. External recompression may differ byte-for-byte across compressor versions. Exit status 2 means an armored patch was already applied, which scripts must handle separately. Xdelta 1 is a separate historical project in the same repository. I did not fetch the xdelta3/README.md build page, so build detail beyond the README summary is unverified.",
+  "quotes": [
+   "Xdelta version 3 is a C library and command-line tool for delta compression using VCDIFF/RFC 3284 streams.",
+   "Xdelta 3 binaries statically link liblzma (xz) and BLAKE3; Xdelta 1 Windows packages bundle their required runtime libraries.",
+   "Xdelta3 encodes and decodes binary differences in the VCDIFF (RFC 3284) format."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repository)",
+    "url": "https://github.com/jmacd/xdelta"
+   },
+   {
+    "label": "Full documentation",
+    "url": "https://jmacd.github.io/xdelta/"
+   },
+   {
+    "label": "Command-line reference",
+    "url": "https://jmacd.github.io/xdelta/commandline/"
+   },
+   {
+    "label": "GitHub Releases",
+    "url": "https://github.com/jmacd/xdelta/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/jmacd/xdelta (homepage, README returned, worked)",
+   "https://jmacd.github.io/xdelta/commandline/ (command-line reference, worked)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A lesser-known tool that exposes the clever idea of representing whole-file changes as portable VCDIFF copy-and-insert instructions."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "xdelta3",
+  "tldr": "A binary diff tool that writes the smallest recipe for turning one file into another, using the VCDIFF standard (RFC 3284).",
+  "deeper_look": "Given an old file and a new file, xdelta3 writes a small delta that describes how to rebuild the new one from the old. Given the old file and the delta, the decoder reproduces the new file. The command line is modelled on gzip, so it reads stdin, writes stdout, and takes a few flags.\n\nUnderneath, the encoder matches strings between source and target and emits two kinds of instruction: copy this range from the source, or insert these literal bytes. An optional secondary compressor (LZMA, DJW or FGK, where compiled in) can then squeeze the result. The idea is that an update is mostly the old version, so you only need to ship what changed. That is the principle behind software patches, game updates and backup systems.\n\nThe delta is not a black box. The printhdr, printhdrs and printdelta commands dump a delta's headers, windows and instructions as readable text, so you can see which parts of a file were copied and which were new. Armor mode, on by default when compiled in, embeds BLAKE3 digests of the source and target and checks them when decoding. The merge command collapses a chain of deltas (1 to 2, 2 to 3, 3 to 4) into a single 1 to 4 delta.",
+  "install": "brew install xdelta\n# the executable is xdelta3; prebuilt binaries for Linux, macOS and Windows are also on GitHub Releases",
+  "try_this": [
+   {
+    "cmd": "xdelta3 -e -s old-file new-file update.vcdiff",
+    "what_happens": "Writes a delta that turns old-file into new-file."
+   },
+   {
+    "cmd": "xdelta3 -d -s old-file update.vcdiff reconstructed-file",
+    "what_happens": "Applies the delta to old-file and rebuilds the new file."
+   },
+   {
+    "cmd": "xdelta3 -J -d -s old-file update.vcdiff",
+    "what_happens": "Decodes and verifies the delta without writing any output, to check that it is valid."
+   }
+  ],
+  "whats_unique": "It uses an open standard (VCDIFF, RFC 3284) rather than a private format, so other implementations can decode its deltas. Armor mode adds whole-file BLAKE3 verification, and deltas can be merged into one.",
+  "caveats": "LZMA-compressed deltas need a decoder built with liblzma, so the docs suggest -S none for compatibility with older or reduced builds, and in armor mode an already-applied patch exits with status 2, which scripts must handle.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "diff",
+   "compression",
+   "binary",
+   "vcdiff",
+   "patching"
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repository)",
+    "url": "https://github.com/jmacd/xdelta"
+   },
+   {
+    "label": "Full documentation",
+    "url": "https://jmacd.github.io/xdelta/"
+   },
+   {
+    "label": "Command-line reference",
+    "url": "https://jmacd.github.io/xdelta/commandline/"
+   },
+   {
+    "label": "GitHub Releases",
+    "url": "https://github.com/jmacd/xdelta/releases"
+   }
+  ]
+ }
+}

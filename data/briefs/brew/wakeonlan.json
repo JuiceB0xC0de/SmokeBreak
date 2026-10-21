@@ -1,0 +1,85 @@
+{
+ "name": "wakeonlan",
+ "desc": "Sends magic packets to wake up network-devices",
+ "homepage": "https://github.com/jpoliv/wakeonlan",
+ "installs_365d": 15357,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "Sending magic packets is a simple door into Wake-on-LAN, a link-layer protocol most people use without ever looking inside.",
+ "brief": {
+  "what_it_is": "wakeonlan is a Perl script that sends Wake-on-LAN 'magic packets' to network adapters so that a switched-off PC wakes up. You pass it a MAC address, and optionally a target IP address and UDP port. It sends one UDP packet containing the magic byte sequence and expects no reply, because the sleeping network card only listens. The README describes it as a script with a POD manual page (viewable via --help or perldoc).",
+  "why_it_exists": "The README says the script exists to send magic packets to wake-on-LAN-enabled ethernet adapters so that the called PC switches on. Its own section 3 gives a practical reason to exist: waking a machine across routers that do not forward subnet broadcasts requires a workaround.",
+  "how_it_works": "When a PC shuts down, its NIC stays powered and listens for a magic packet containing a specific byte sequence, which can be carried in any packet type. This script sends that packet over UDP. For a machine on the local subnet, use the subnet broadcast address. For a machine behind routers, the README suggests sending to the IP of another live host on the target subnet, since the listening NIC on that subnet will see the packet even though other hosts will ignore it.",
+  "commands_seen": [
+   {
+    "cmd": "wakeonlan 01:02:03:04:05:06",
+    "context": "Sends a magic packet to the MAC address using the limited broadcast address 255.255.255.255 (the default target)."
+   },
+   {
+    "cmd": "wakeonlan -i 192.168.1.255 01:02:03:04:05:06",
+    "context": "Sends the magic packet to a subnet broadcast address given with -i."
+   },
+   {
+    "cmd": "wakeonlan -i 192.168.1.255 -p 1234 01:02:03:04:05:06",
+    "context": "Same as above but sends to UDP port 1234 instead of the default discard port 9."
+   },
+   {
+    "cmd": "wakeonlan --help",
+    "context": "Shows the script's built-in help, which is its POD documentation."
+   },
+   {
+    "cmd": "perldoc wakeonlan",
+    "context": "Reads the script's POD documentation through perldoc."
+   },
+   {
+    "cmd": "perl Makefile.PL",
+    "context": "Tarball install step: generates the Makefile from the v0.50 source tree."
+   },
+   {
+    "cmd": "make && make install",
+    "context": "Tarball install steps written as separate lines in the README: make, then make install. Each is listed on its own line."
+   },
+   {
+    "cmd": "chmod a+x wakeonlan",
+    "context": "Standalone install: makes the downloaded script executable before running ./wakeonlan --help."
+   }
+  ],
+  "install_notes": "Two routes, both from the README. (1) Tarball: download v0.50 from GitHub releases, unpack, then run perl Makefile.PL, make, make install. (2) Standalone: download the single wakeonlan file from the master branch into a directory such as ~/.local/bin, chmod it executable, and run it. The standalone file has a hard-coded shebang of /usr/bin/perl, which may need editing on systems that only ship a versioned perl such as /usr/bin/perl5.38. No accounts or special hardware are needed to send packets, but the target machine's NIC and BIOS/firmware must have Wake-on-LAN enabled. The README lists known-working hardware and BIOS settings.",
+  "standout": "It is a small, readable Perl script with decades of history (copyright 2000 onward) and a long hardware-compatibility list written by users. The README also explains the routing trick for waking machines across routers, which is the part most people never see.",
+  "status": "unknown. The README is labelled 'premature documentation' and gives no release date or commit history. Evidence I saw: the copyright line runs to 2026, and the install instructions point to a v0.50 tarball. I did not check the GitHub releases or commit log, so I cannot confirm recent activity.",
+  "caveats": "The README calls its own documentation premature. The shebang uses an unversioned /usr/bin/perl, so it may need changes on some systems. Routing to remote subnets is unreliable: the README says many routers do not forward broadcasts, and the workaround depends on another host being alive. The script sends one packet and gives no confirmation that the machine woke. The license is Perl's Artistic License 2.0, and modified versions must be clearly marked as modified. The Homebrew caveats field is empty.",
+  "quotes": [
+   "This script sends 'magic packets' to wake-on-lan enabled ethernet adapters, in order to switch on the called PC.",
+   "When the PC shuts down, the NIC still gets power, and keeps listening on the network for a 'magic' packet to arrive.",
+   "The only goal of the script is to send this packet over the network. It expects no returning data, since the NIC only listens, and does not reply anything."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/jpoliv/wakeonlan"
+   },
+   {
+    "label": "AMD Magic Packet white paper",
+    "url": "https://www.amd.com/content/dam/amd/en/documents/archived-tech-docs/white-papers/20213.pdf"
+   },
+   {
+    "label": "Wikipedia: Wake-on-LAN",
+    "url": "https://en.wikipedia.org/wiki/Wake-on-LAN"
+   },
+   {
+    "label": "Wireshark wiki: WakeOnLan",
+    "url": "https://gitlab.com/wireshark/wireshark/-/wikis/WakeOnLan"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/jpoliv/wakeonlan \u2014 fetched OK, README returned. README was complete enough that I did not follow further links."
+  ]
+ }
+}

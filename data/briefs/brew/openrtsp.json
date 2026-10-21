@@ -1,0 +1,82 @@
+{
+ "name": "openrtsp",
+ "desc": "Command-line RTSP client",
+ "homepage": "http://www.live555.com/openRTSP",
+ "installs_365d": 1069,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol",
+  "visual"
+ ],
+ "why": "A command-line RTSP client is a door into camera streaming protocols, though the tool itself is fairly plain.",
+ "brief": {
+  "what_it_is": "openRTSP is a command-line program that opens, streams, receives, and optionally records media streams identified by an rtsp:// URL. It sends RTSP DESCRIBE to get the session's SDP description, then SETUPs and PLAYs each audio/video subsession whose RTP payload format it understands. Received data goes to files named by MIME type (for example audio-MPA-1 and video-MPV-2), to stdout with -a, -v, or -L, or to QuickTime .mov, MP4, or AVI output. A sibling program, playSIP, does the same job for SIP sessions.",
+  "why_it_exists": "The homepage presents it as a standalone tool for pulling RTSP streams from network cameras and servers into files or pipes, built on the LIVE555 streaming media library. Its own source notes say it was designed as a standalone application rather than as example code.",
+  "how_it_works": "It uses the liveMedia library's RTSPClient, MediaSession, FileSink, QuickTimeFileSink, and RTP source modules. Digest authentication is handled with -u, and -R can wait for a REGISTER command to learn the stream URL. Output is written per subsession as RTP packets arrive, and the program stops after the SDP duration, a -d limit, or an inter-packet gap set with -D.",
+  "commands_seen": [
+   {
+    "cmd": "openRTSP <url>",
+    "context": "Basic form: opens the rtsp:// URL, DESCRIBEs it, then SETUPs and PLAYs each supported subsession, writing one file per subsession."
+   },
+   {
+    "cmd": "-a",
+    "context": "Records only the audio stream, written to stdout unless -P is given."
+   },
+   {
+    "cmd": "-r",
+    "context": "Plays the session without receiving it, so a separate local application can receive the RTP; use with -p."
+   },
+   {
+    "cmd": "-p 6666",
+    "context": "Sets the starting client port for SETUP; with the example SDP, ports 6666 and 6667 go to audio and 6668 and 6669 to video."
+   },
+   {
+    "cmd": "-d 10",
+    "context": "Plays the stream for 10 seconds, then exits."
+   },
+   {
+    "cmd": "-c -d 10",
+    "context": "Plays continuously, repeating the PLAY requests every 10 seconds."
+   },
+   {
+    "cmd": "-u <username> <password>",
+    "context": "Authenticates with RTSP digest authentication for access-controlled sessions."
+   },
+   {
+    "cmd": "-S 0",
+    "context": "Receives an unsupported payload format by treating it as simple packed RTP data with a 0-byte extra header (example: PCM u-law)."
+   },
+   {
+    "cmd": "-S 4",
+    "context": "Same idea for MPEG audio (RFC 2250), skipping its 4-byte header."
+   },
+   {
+    "cmd": "-R <port-number>",
+    "context": "Listens on the given port for a REGISTER command that supplies the rtsp:// URL to play, instead of taking a URL on the command line."
+   }
+  ],
+  "install_notes": "The brew caveat says test executables were placed in $HOMEBREW_CELLAR/openrtsp/2026.10.17/libexec, so they may not be on PATH directly. The package installs ten tools: MPEG2TransportStreamIndexer, live555HLSProxy, live555MediaServer, live555ProxyServer, mikeyParse, openRTSP, playSIP, registerRTSPStream, sapWatch, and vobStreamer. The homepage says building from LIVE555 source follows the LIVE555 documentation; no hardware or account is needed for basic use.",
+  "standout": "Most of the tool's value is in its options for recording into .mov, .mp4, and .avi, plus TCP and RTSP-over-HTTP tunnelling, trick-play seeking, and a REGISTER mode for streams behind NAT. It is one of the few free command-line clients that exposes a wide set of RTSP behaviours directly.",
+  "status": "unknown. The homepage has no release date or changelog. The Homebrew caveat names version 2026.10.17, which suggests the formula is recent, but I did not check a repository or commit history.",
+  "caveats": "It cannot receive RealAudio or RealVideo sessions because those use RealNetworks' RDT protocol instead of RTP. Stopping .mov, .mp4, or .avi output with Ctrl-C leaves the file unwritten; use SIGHUP or SIGUSR1 instead. QuickTime and AVI codec support is limited, and unsupported codecs produce a disabled track that must be edited before playback. TCP (-t) cannot carry multicast. Putting a password in the URL sends it in the clear. The page says the source is not a good model for a custom client because of the many extra options. The homepage gives no build instructions beyond pointing to LIVE555 docs.",
+  "quotes": [
+   "\"openRTSP\" is a command-line program that can be used to open, stream, receive, and (optionally) record media streams that are specified by a RTSP URL",
+   "If you are outputting a \".mov\", \".mp4\", or \".avi\"-format file, you must let \"openRTSP\" run to completion, or else terminate it cleanly, by signalling it with SIGHUP or SIGUSR1.",
+   "You must not terminate it using <control>-C, otherwise the output file will not get written properly."
+  ],
+  "links": [
+   {
+    "label": "openRTSP homepage (LIVE555)",
+    "url": "http://www.live555.com/openRTSP"
+   }
+  ],
+  "fetch_log": [
+   "http://www.live555.com/openRTSP: fetched OK; the full README-style documentation with options summary was returned. I stopped after one fetch because the page was complete."
+  ]
+ }
+}

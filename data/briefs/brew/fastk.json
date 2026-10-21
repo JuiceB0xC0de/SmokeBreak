@@ -1,0 +1,93 @@
+{
+ "name": "fastk",
+ "desc": "K-mer counter for high-fidelity shotgun datasets",
+ "homepage": "https://github.com/thegenemyers/FASTK",
+ "installs_365d": 38,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "library"
+ ],
+ "why": "A k-mer counter from genomics research; real science to run at home, though a close call for a general audience.",
+ "brief": {
+  "what_it_is": "FastK is a k-mer counter from Gene Myers, written in C, aimed mainly at high-quality DNA data such as Illumina reads or PacBio HiFi reads. It takes CRAM, BAM, SAM, fasta, or fastq files (gzipped fasta/fastq allowed), or Dazzler databases, and the type is read from the file extension. For a chosen k (default 40), it always writes a .hist histogram of k-mer frequencies. With options it can also write a sorted table of canonical k-mers with counts (.ktab), a per-read count profile (.prof), or a profile of each read relative to another dataset's table. A suite of companion tools (Histex, Tabex, Profex, Logex, Symmex, KmerMap, Fastmerge, Fastcat and the Fastrm/Fastmv/Fastcp file tools) reads, merges, filters and converts these outputs.",
+  "why_it_exists": "The README says FastK is optimized for high-quality assembly datasets and handles arbitrarily large inputs on modest memory. It also says profiles can be produced during the underlying sort, which the author calls much more efficient than building a k-mer hash after the fact, as other counters require.",
+  "how_it_works": "FastK treats a k-mer and its reverse complement as one, storing the lexicographically smaller form as canonical, and sorts the k-mers to count them. Profiles are recorded during that sort in a compressed form (about 4.7 bits per base for a 50X HiFi assembly, per the README). Output is split into a stub file plus hidden per-thread part files, which Fastrm, Fastmv and Fastcp handle as a unit, and Fastmerge and Fastcat merge or splice slices for HPC runs.",
+  "commands_seen": [
+   {
+    "cmd": "FastK [-k<int(40)>] [-t[<int(1)>]] [-p[:<table>[.ktab]]] [-c] [-bc<int>] [-v] [-N<path_name>] [-P<dir($TMPDIR)>] [-M<int(12)>] [-T<int(4)>] <source>[.cram|.[bs]am|.db|.dam|.f[ast][aq][.gz]] ...",
+    "context": "Main usage line. Counts k-mers; -t writes a table, -p writes profiles, -k sets k, -M sets memory in GB (default 12), -T sets threads (default 4)."
+   },
+   {
+    "cmd": "FastK -k40 -t part1.fasta",
+    "context": "HPC example 1: build a k-mer table for one part of the input, with k=40. Run once per part in parallel."
+   },
+   {
+    "cmd": "Fastmerge -ht -P/tmp full part1 part2 part3 part4",
+    "context": "Merge the four part tables into one table named full, output a histogram (-h) and table (-t), and cache to local /tmp."
+   },
+   {
+    "cmd": "FastK -k40 -p:full part1",
+    "context": "Make a relative profile of the reads in part1 against the merged full table."
+   },
+   {
+    "cmd": "Fastcat -p full part1 part2 part3 part4",
+    "context": "Stitch the four relative profile parts into a single profile index named full."
+   },
+   {
+    "cmd": "Fastrm [-if] <source>[.hist|.ktab|.prof] ...",
+    "context": "Usage line for removing FastK outputs, including their hidden files, as one unit."
+   },
+   {
+    "cmd": "Histex [-1] [-kAG] [-h[<int(1)>:]<int(-G?1000:100)>] <source>[.hist]",
+    "context": "Usage line for viewing a .hist histogram; -G writes a variant suited to GeneScope2.0."
+   },
+   {
+    "cmd": "Tabex mytable aaaac-cacaca",
+    "context": "Example from the README: lists k-mers in mytable whose prefixes fall between aaaac and cacaca."
+   },
+   {
+    "cmd": "Logex 'AnB = A &. B' Tab1 Tab2",
+    "context": "Example from the README: writes AnB.ktab with the k-mers common to Tab1 and Tab2, using the . modulator to keep the left count."
+   },
+   {
+    "cmd": "Profex [-1Az] <source>[.prof] <read:int>[-(<read:int>|#)] ...",
+    "context": "Usage line for displaying read profiles by ordinal read number; the first read is 1."
+   },
+   {
+    "cmd": "Symmex [-v] [-T<int(4)>] [-P<dir(/tmp)] <source_root>[.ktab] <dest_root>[.ktab]",
+    "context": "Usage line: converts a canonical table into a symmetric table where each k-mer appears in both orientations."
+   }
+  ],
+  "install_notes": "The fetched README excerpt has no installation section. It mentions a makefile that builds Histex, Tabex and Profex, and a C library made of libfastk.c and libfastk.h. The output was cut off at 40,000 characters, so any install instructions further down were not seen. Runtime notes from the README: defaults are 4 threads and 12 GB memory; temp files go to $TMPDIR or /tmp; the author suggests 4 to 8 cores for a single-node run. No hardware, account or runtime requirements were stated beyond that.",
+  "standout": "Profiles of every read are built during the sort rather than from a separate hash, and Logex lets you combine whole k-mer tables with set-logic expressions and count modulators in one command. Tables can also be made symmetric so they can be streamed, which the README says is hundreds of times faster than looking up reverse complements in a canonical table.",
+  "status": "Unknown. The README header gives 'First: July 22, 2020' and 'Current: April 18, 2021', which is the only date I saw. I did not see a release tag or recent commit in the fetched portion. Three tools (Haplex, Homex, Vennex) are marked deprecated and 'no longer maintained'.",
+  "caveats": "The README lists these limits: FastK does not work when memory exceeds 128GB; it does not work for k greater than roughly 128; and all input files must be the same type. Haplex, Homex and Vennex are deprecated. The README says histograms cannot be merged directly and profiles cannot be merged at all, so profiles must be re-derived as relative profiles against a merged table. The k-mer size floor is k of at least 5. The README is a long single document, and the excerpt I read was truncated, so details of the C library and file formats were not checked. Licence and platform support were not seen.",
+  "quotes": [
+   "FastK is a k-mer counter that is optimized for processing high quality DNA assembly data sets such as those produced with an Illumina instrument or a PacBio run in HiFi mode.",
+   "a k-mer and its Watson Crick complement are considered to be the same k-mer by FastK, where the lexicograpahically smaller of the two alternatives is termed canonical.",
+   "Haplex ... Deprecated. Code is still available but no longer maintained."
+  ],
+  "links": [
+   {
+    "label": "FastK repository (README)",
+    "url": "https://github.com/thegenemyers/FASTK"
+   },
+   {
+    "label": "Dazzler DB (input format)",
+    "url": "https://github.com/thegenemyers/DAZZ_DB"
+   },
+   {
+    "label": "merfin (relative profile use case)",
+    "url": "https://github.com/arangrhie/merfin"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/thegenemyers/FASTK: fetched OK; README returned but cut off at 40,000 characters, so later sections (C library details, file encodings) were not read. No further fetches made."
+  ]
+ }
+}

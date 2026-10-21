@@ -1,0 +1,119 @@
+{
+ "name": "nauty",
+ "desc": "Automorphism groups of graphs and digraphs",
+ "homepage": "https://pallini.di.uniroma1.it/",
+ "installs_365d": 724,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "math",
+  "science",
+  "library"
+ ],
+ "why": "Brendan McKay's graph automorphism and canonical labelling suite is serious combinatorics you can run at home on real graphs.",
+ "brief": {
+  "what_it_is": "nauty and Traces are C programs that compute the automorphism groups of graphs and digraphs, and can also produce a canonical labelling. The input is a graph or digraph, and the output is its automorphism group or a canonical form. The package bundles gtools, a suite of about fifty command-line tools (listed in the executables field) for generating graphs (geng, genbg, gentreeg and others), manipulating them (addedgeg, deledgeg, complg, linegraphg), and converting between formats. The homepage was unreachable, so this description comes from a mirror of the README-level docs at users.cecs.anu.edu.au.",
+  "why_it_exists": "The README gives no separate motivation beyond computing automorphism groups and canonical labellings. The mirror cites McKay's 1981 paper 'Practical Graph Isomorphism' as the origin of the design.",
+  "how_it_works": "The mirror page does not describe the search algorithm in detail. It says the current algorithms are described in McKay and Piperno, 'Practical Graph Isomorphism, II' (J. Symbolic Computation, 2013), and that Traces builds on Piperno's work on search-space contraction in canonical labelling.",
+  "commands_seen": [
+   {
+    "cmd": "tar xvzf nauty2_9_3.tar.gz",
+    "context": "Unpacks the 2.9.3 source tarball."
+   },
+   {
+    "cmd": "cd nauty2_9_3",
+    "context": "Enter the unpacked source directory."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Standard GNU autoconf configuration step."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds all nauty executables into the source directory."
+   }
+  ],
+  "install_notes": "Build from source with the GNU autoconf steps above. After make, the executables sit in the source directory and can be moved anywhere. 'make install' places them in standard locations. The page says to read the README before compiling. Stated platforms are Linux, macOS, WSL, and Cygwin. Some tools, especially shortg, need a POSIX-like environment with pipes, and on Windows WSL is the most recommended route. The mirror's version-history section says 2.9.0 introduced a serious dreadnaut bug, so 2.9.0 through 2.9.1rc2 should be upgraded if dreadnaut is relied on. No accounts, hardware or runtimes are mentioned.",
+  "standout": "It is a serious research-grade canonical labelling and automorphism toolkit, not a toy, and the bundled gtools include geng, which the page says generates non-isomorphic graphs very quickly. Anyone can compile it at home and run it on real graphs.",
+  "status": "Appears active. The mirror lists 2.9.3 as the downloadable release and points to a current beta, 2.9.4b8, with a changes file. No release or commit dates appeared on the pages I read, so the exact date is unknown.",
+  "caveats": "The homepage pallini.di.uniroma1.it was unreachable (URLError), so the entry relies on the ANU mirror, which may be out of date. Licensing is not open-source in the usual sense: the page says Traces and dretodot are copyright Adolfo Piperno, planarity.[ch] belongs to the Magma project, watercluster2.c and genposetg.c to Gunnar Brinkmann, nautycliquer to Niskanen and \u00d6sterg\u00e5rd, parts of nauchromatic.c to Gordon Royle, and everything else to McKay, with 'minimal restrictions' in a COPYRIGHT file I did not read. The page also says 'Absolutely no guarantees or warranties' are made. Old or broken systems may not be supported. The 2.9.0 dreadnaut bug is noted above.",
+  "quotes": [
+   "nauty and Traces are programs for computing automorphism groups of graphs and digraphs.",
+   "There is a suite of programs called gtools included in the nauty package. For example, geng can generate non-isomorphic graphs very quickly.",
+   "Absolutely no guarantees or warranties are made concerning the suitability, correctness, or any other aspect of this program."
+  ],
+  "links": [
+   {
+    "label": "Homepage (unreachable during this fetch)",
+    "url": "https://pallini.di.uniroma1.it/"
+   },
+   {
+    "label": "ANU mirror of nauty and Traces docs",
+    "url": "https://users.cecs.anu.edu.au/~bdm/nauty/"
+   },
+   {
+    "label": "McKay and Piperno, Practical Graph Isomorphism II (2013)",
+    "url": "https://doi.org/10.1016/j.jsc.2013.09.003"
+   }
+  ],
+  "fetch_log": [
+   "https://pallini.di.uniroma1.it/ - failed (URLError); homepage unreachable",
+   "https://users.cecs.anu.edu.au/~bdm/nauty/ - worked; mirror of the nauty and Traces page, used as the substitute source"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A research-grade toolkit that finds graph symmetries and canonical forms, with fast generation of non-isomorphic graphs\u2014an intriguing door into computational combinatorics."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "nauty",
+  "tldr": "Research-grade software that finds the symmetries of graphs, plus about fifty tools that generate every non-isomorphic graph of a given size.",
+  "deeper_look": "nauty and Traces are C programs that compute the automorphism group of a graph or digraph, meaning every way of relabelling its vertices that leaves it unchanged. They can also produce a canonical labelling: a standard form of the graph, so two graphs are the same shape exactly when their canonical forms match. That is the practical route to the graph isomorphism problem.\n\nThe package also ships gtools, a suite of about fifty command-line programs. Some generate graphs (geng, genbg, gentreeg, gentourng), some change them (addedgeg, deledgeg, complg, linegraphg), and some convert or filter them (dimacs2g, listg, pickg, shortg, labelg). They pass graphs along as plain text, so they chain together in pipes. The project's own description: \"geng can generate non-isomorphic graphs very quickly.\" Interactive work happens in dreadnaut.\n\nThe design goes back to Brendan McKay's 1981 paper \"Practical Graph Isomorphism\". The current algorithms are described in McKay and Piperno, \"Practical Graph Isomorphism, II\" (J. Symbolic Computation, 2013). Traces builds on Piperno's work on contracting the search space during canonical labelling.\n\nThe door it opens is combinatorics: counting and listing graphs up to symmetry, checking whether two networks are secretly the same, and generating test cases for graph theory conjectures. The brief's description comes from a mirror of the docs, so details of the search algorithm are in the papers, not here.",
+  "install": "brew install nauty",
+  "try_this": [
+   {
+    "cmd": "geng --help",
+    "what_happens": "Prints the options for the fast generator of non-isomorphic graphs."
+   },
+   {
+    "cmd": "dreadnaut --help",
+    "what_happens": "Shows how to start the interactive program for automorphism groups and canonical labelling, if it supports that flag; otherwise run dreadnaut directly."
+   },
+   {
+    "cmd": "listg --help",
+    "what_happens": "Shows how to print graphs in a readable form, to inspect what geng produces."
+   }
+  ],
+  "whats_unique": "It is the long-standing research reference for graph automorphisms and canonical labelling, with a full set of pipeable graph generators and filters included.",
+  "caveats": "The official homepage was unreachable when this was written, the docs come from an ANU mirror, and the licence is a mix of authors' terms with 'absolutely no guarantees or warranties'.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "math",
+   "graphs",
+   "combinatorics",
+   "science"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://pallini.di.uniroma1.it/"
+   },
+   {
+    "label": "ANU mirror of nauty and Traces docs",
+    "url": "https://users.cecs.anu.edu.au/~bdm/nauty/"
+   },
+   {
+    "label": "McKay and Piperno, Practical Graph Isomorphism II (2013)",
+    "url": "https://doi.org/10.1016/j.jsc.2013.09.003"
+   }
+  ]
+ }
+}

@@ -1,0 +1,130 @@
+{
+ "name": "gerbv",
+ "desc": "Gerber (RS-274X) viewer",
+ "homepage": "https://gerbv.github.io/",
+ "installs_365d": 1062,
+ "deprecated": true,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "gui",
+  "afternoon",
+  "deprecated",
+  "visual"
+ ],
+ "why": "Gerber viewer for PCB fabrication files, a neat window into how circuit boards are described, but deprecated and the Gerber format is niche.",
+ "brief": {
+  "what_it_is": "Gerbv is a free, open-source desktop viewer for Gerber RS-274X files (the layer files PCB fabrication houses use), Excellon drill files, and CSV pick-and-place files. You open those files and it draws the layers on screen. It is a native Linux and Unix application with a Windows build. Its core parsing and rendering code is in a separate library, libgerbv, which other programs can use to parse, edit, export, and render Gerber data. The README does not call the project deprecated. The scout note's 'deprecated' label is not supported by the README, which describes an actively maintained project with a rewrite underway.",
+  "why_it_exists": "The homepage describes it as a free and open-source Gerber viewer, originally one of the utilities of the gEDA electronic design project and now separately maintained. The README also says the current focus is to 'provide a utility to view and manipulate trusted gerber files'.",
+  "how_it_works": "The README gives little detail on internals. It says the core functionality is in libgerbv, separate from the GUI, so developers can parse, edit, export, and render Gerber data in other programs. The README also notes that the GUI currently uses GTK-2.0 and that a planned port to GTK-3.0 will drop GDK, the fastest current drawing frontend.",
+  "commands_seen": [
+   {
+    "cmd": "cmake --preset linux-gnu-gcc",
+    "context": "Configures the Linux build; creates a build directory with the configuration. Needs gcc, gtk+-2.0 and glib-2.0 dev packages, cmake 3.28 or newer, and ninja."
+   },
+   {
+    "cmd": "cmake --build --preset linux-gnu-gcc",
+    "context": "Compiles the debug build, which is the default preset."
+   },
+   {
+    "cmd": "cmake --build --preset linux-gnu-gcc-release",
+    "context": "Compiles the release build instead of the debug build."
+   },
+   {
+    "cmd": "cmake --install build",
+    "context": "Installs the built program; the README says it is quite easy to install under /usr/local. It is described as usable but not fully documented yet."
+   },
+   {
+    "cmd": "cmake --preset mingw-w64-gcc",
+    "context": "Configures a Windows cross-compile from Fedora 43 using Mingw64 with GTK2 and Cairo; the README marks this status as 'compiles'."
+   },
+   {
+    "cmd": "cmake --build --preset mingw-w64-gcc",
+    "context": "Compiles the Mingw64 Windows build configured by the preset above."
+   }
+  ],
+  "install_notes": "Linux build needs gcc, gtk+-2.0 dev package, glib-2.0 dev package, cmake 3.28 or newer, and ninja, then the cmake preset commands in commands_seen. Official releases are on GitHub Releases, and CI binaries are on the homepage, though the README warns those are not manually verified. Packages exist for .deb, .rpm, and Windows (.exe or .zip). Windows cross-compiling uses Fedora 43 packages: mingw64-cairo-static, mingw64-gtk2.static, cmake, ninja, mingw64-gcc, mingw64-gcc-c++, and gettext. The README says the Windows binaries are not tested and may crash. Windows 7 is unsupported after release 2.8.0. The Windows build runs under Wine. No accounts or runtime configuration are mentioned.",
+  "standout": "The core is a separate embeddable library, libgerbv, with six documented example programs covering load, merge, export, filter, draw, and embed-in-a-window, which is unusual for a small viewer. The README is also unusually candid, with a 'fork of the fork' section in which the original creator returns to maintain the codebase and lists plans, some of which the author admits may upset people.",
+  "status": "Maintained. Evidence: the homepage lists CI build dates of 2026-08-13, the GitHub README shows a CI build badge and a coverage badge on the develop branch, and the README contains a dated plan with checked-off items (CMake modernisation, deb/rpm packaging, and bug fixes done; GTK-3 port, spec updates, and docs still open). The README also says the homepage download page is not updated properly at the moment. I did not see a last-commit date or release date.",
+  "caveats": "Not supported: RS-274D files. Gerber specs changed a lot; the README says the parser aims to avoid warnings on missing syntax but many fixes are still in progress. Still built on GTK-2.0 and planned to move to GTK-3.0 with a non-trivial port. Windows binaries are untested. Windows 7 is unsupported after 2.8.0. The homepage's CI binaries are not verified. The README warns against opening untrusted Gerber files without extra precautions, and recommends isolating libgerbv if it handles untrusted input. Licensed GPL-2.0; the bundled TinyScheme is BSD-3-Clause and bundled dxflib is GPL-2.0-or-later. Code style is described as broken and reformatting is still pending. Ubuntu 24.04 is not yet supported for the cross-compile toolchain; the README says 22.04 is the tested Ubuntu version.",
+  "quotes": [
+   "Gerbv is a viewer for Gerber RS-274X files, Excellon drill files, and CSV pick-and-place files.",
+   "The current focus of gerbv is to provide a utility to view and manipulate trusted gerber files.",
+   "This is basically a fork of the fork. There have been many chefs trying to fix this soup, but they have never gotten to the bottom of the problems.",
+   "I am not a graphics guy, I always liked the parsing part more."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://gerbv.github.io/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/gerbv/gerbv"
+   },
+   {
+    "label": "libgerbv API documentation",
+    "url": "https://gerbv.github.io/doc/"
+   },
+   {
+    "label": "BUILD.md (CMake build guide)",
+    "url": "https://github.com/gerbv/gerbv/blob/develop/BUILD.md"
+   }
+  ],
+  "fetch_log": [
+   "https://gerbv.github.io/ - worked; returned the project overview and download table, with a 'View on GitHub' button but no explicit repo URL in the text.",
+   "https://github.com/gerbv/gerbv - worked; returned the README. This URL was inferred from the homepage's 'View on GitHub' button and the gerbv name, not stated as a link in the homepage text."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Gerbv makes PCB fabrication layers and drill data directly inspectable, offering a hands-on window into how circuit boards are described and manufactured."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "gerbv",
+  "tldr": "A desktop viewer that draws the Gerber files PCB factories use, letting you see how a circuit board is described layer by layer.",
+  "deeper_look": "Gerbv opens Gerber RS-274X files, Excellon drill files and CSV pick-and-place files, and draws the layers on screen. Gerber is the format a PCB fabrication house receives: one file per copper layer, solder mask, silkscreen and so on, each a list of plotting instructions. Loading a board's files here shows how a finished design breaks down into those plain layers.\n\nIt began as one of the utilities of the gEDA electronic design project and is now maintained separately. The README is candid about its history: \"This is basically a fork of the fork. There have been many chefs trying to fix this soup, but they have never gotten to the bottom of the problems.\" The original creator has returned to maintain it, with a dated plan in which CMake modernisation, deb/rpm packaging and bug fixes are done, while the GTK-3 port and documentation are still open.\n\nThe core lives in a separate library, libgerbv, which other programs can use to parse, edit, export and render Gerber data. The project documents six example programs: load, merge, export, filter, draw, and embed in a window. For a small viewer that is a useful way into the format itself, not only into looking at boards.\n\nThe README states the current focus as \"to view and manipulate trusted gerber files\". It warns against opening untrusted files without precautions.",
+  "install": "brew install gerbv\n# Needs a desktop session: this is a GTK-2 GUI application. Homebrew marks the formula deprecated, but the README describes the project as maintained.",
+  "try_this": [
+   {
+    "cmd": "gerbv --help",
+    "what_happens": "Lists the command-line options, so you can see how to load layer files and export from the terminal."
+   }
+  ],
+  "whats_unique": "The viewer is built on libgerbv, a separate embeddable library with documented example programs. That makes it a way into the Gerber format as well as a way to look at boards.",
+  "caveats": "It is still built on GTK-2.0 with a non-trivial GTK-3 port planned, it does not support RS-274D files, and you should not open untrusted Gerber files without isolating it.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "gui",
+   "pcb",
+   "gerber",
+   "file-formats",
+   "visual",
+   "electronics"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://gerbv.github.io/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/gerbv/gerbv"
+   },
+   {
+    "label": "libgerbv API documentation",
+    "url": "https://gerbv.github.io/doc/"
+   },
+   {
+    "label": "BUILD.md (CMake build guide)",
+    "url": "https://github.com/gerbv/gerbv/blob/develop/BUILD.md"
+   }
+  ]
+ }
+}

@@ -1,0 +1,93 @@
+{
+ "name": "osmcoastline",
+ "desc": "Extracts coastline data from OpenStreetMap planet file",
+ "homepage": "https://osmcode.org/osmcoastline/",
+ "installs_365d": 457,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "geospatial",
+  "visual"
+ ],
+ "why": "Extracting coastlines from the full planet file is a real geospatial job, though a niche one worth a closer look.",
+ "brief": {
+  "what_it_is": "OSMCoastline is a command-line tool that reads an OpenStreetMap planet file (PBF or XML) and pulls out the ways tagged natural=coastline. It joins those ways into rings and assembles them into land and water polygons, plus error tables. By default the output is a SpatiaLite database, and GDAL can write other formats such as shapefiles or GPKG. Output is in WGS84 (EPSG:4326) by default, or Web Mercator (EPSG:3857) with --srs=3857.",
+  "why_it_exists": "The README says it exists to extract the coastline from an OSM planet file and assemble all the pieces into polygons for use in map renderers and similar tools.",
+  "how_it_works": "The README describes five steps: filter out coastline ways and their nodes; assemble the ways into rings, closing gaps smaller than --close-distance; build land polygons from the rings, with holes for water; split large polygons using --max-points and --bbox-overlap; and create water polygons as the inverse of the land polygons. Problems found in each step are written to the error_points and error_lines tables. osmcoastline_filter can pre-filter a planet file to under 1% of its size so the main tool can be rerun quickly.",
+  "commands_seen": [
+   {
+    "cmd": "osmcoastline -o DBFILE PLANET-FILE",
+    "context": "Basic run: writes a SpatiaLite database named DBFILE from the planet file."
+   },
+   {
+    "cmd": "osmcoastline -o coastline.db planet.osm.pbf",
+    "context": "README's worked example of the basic run."
+   },
+   {
+    "cmd": "osmcoastline_filter -o OUTFILE.osm.pbf INFILE.osm.pbf",
+    "context": "Pre-filters a planet file down to the nodes and ways needed for coastlines, so osmcoastline can be rerun cheaply."
+   },
+   {
+    "cmd": "ogr2ogr -f \"ESRI Shapefile\" land_polygons.shp coastline.db land_polygons",
+    "context": "Converts the land_polygons table from the SpatiaLite output to a shapefile using GDAL's ogr2ogr."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Configures the build from inside an empty build directory (CMake build)."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles after cmake; the README's build steps are mkdir build, cd build, cmake .., make."
+   },
+   {
+    "cmd": "make doc",
+    "context": "Builds the Doxygen API documentation into doc/html."
+   },
+   {
+    "cmd": "ctest",
+    "context": "Runs the shell-script tests from the build directory."
+   },
+   {
+    "cmd": "runtest.sh -v",
+    "context": "Runs the test data through the tool under Valgrind, per the README."
+   },
+   {
+    "cmd": "osmcoastline --help",
+    "context": "Lists all command-line options; the README points here for the full set."
+   }
+  ],
+  "install_notes": "Installing via brew install osmcoastline is the simple path. Building from source needs CMake and a C++ toolchain, plus libosmium (at least 2.16.0), protozero (at least 1.6.1), zlib, GDAL 2 or newer built with Spatialite and GEOS support, GEOS, and SpatiaLite. LZ4 and pandoc are optional; pandoc enables building the man pages. The README gives Debian/Ubuntu package names for these. No accounts or runtime services are mentioned. You need a planet or regional OSM extract as input, and the README warns that the full planet file is large.",
+  "standout": "The Antarctica handling is unusual: the coastline there is the only one allowed to stay open, so the tool finds the open ends near 180\u00b0 and joins them into a polygon that runs to the South Pole (EPSG:4326) or to the 85.0511\u00b0 line (EPSG:3857). The tool also deliberately separates warnings (fixed or small geometry problems) from errors (larger problems), and the README tells you to fix the OSM data if any errors remain.",
+  "status": "Appears maintained. The GitHub releases page lists version 2.5.0 as Latest, dated 18 Jan (the year is not shown in the fetched text), and the release history runs from 2.2.0 through 2.5.0 with dated entries. The repo has a CI build badge. The homepage has a STATUS section that I did not fetch.",
+  "caveats": "Generally it cannot run on regional extracts, because coastlines that are not closed cannot be assembled; the README says it may work only for an extract containing a single island. Output geometry is never simplified, so you need the separate simplify_and_split scripts for PostGIS or SpatiaLite. Only EPSG:4326 and EPSG:3857 are supported. The dependency list is long, and the README's Debian package names include libgdal1-dev, which is an old GDAL name. The README says the tool produces errors and warnings on its own test data by design. Licensed under GPL v3 or later.",
+  "quotes": [
+   "OSMCoastline extracts the coastline data from an OSM planet file and assembles all the pieces into polygons for use in map renderers etc.",
+   "It is normal for this program to create errors and warnings, because it is testing a rather broken input file.",
+   "The resulting file will be a lot smaller (less than 1%) than the original planet file, but it contains everything needed to assemble the coastline polygons.",
+   "If there were errors you probably do not want to use the generated data but fix the OSM data first."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://osmcode.org/osmcoastline/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/osmcode/osmcoastline"
+   },
+   {
+    "label": "GitHub releases",
+    "url": "https://github.com/osmcode/osmcoastline/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://osmcode.org/osmcoastline/ - worked; thin page with features, download and license info, and a link to the GitHub README",
+   "https://github.com/osmcode/osmcoastline - worked; full README returned",
+   "https://github.com/osmcode/osmcoastline/releases - worked, but the page text is noisy; used only for the release list and dates"
+  ]
+ }
+}

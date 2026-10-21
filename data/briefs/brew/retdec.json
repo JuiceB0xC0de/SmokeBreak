@@ -1,0 +1,89 @@
+{
+ "name": "retdec",
+ "desc": "Retargetable machine-code decompiler based on LLVM",
+ "homepage": "https://github.com/avast/retdec",
+ "installs_365d": 394,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "library"
+ ],
+ "why": "A retargetable machine-code decompiler from Avast that turns binaries back into readable C, a strong door into reverse engineering.",
+ "brief": {
+  "what_it_is": "RetDec is a retargetable machine-code decompiler built on LLVM. It takes an executable or raw machine code and produces readable high-level output, either C or a Python-like language. It handles ELF, PE, Mach-O, COFF, AR archives, Intel HEX, and raw code, for x86, ARM, MIPS, PIC32, PowerPC, x86-64, and ARM64 (AArch64). Beyond decompiling, it also offers static analysis, compiler and packer detection, a disassembler, call and control-flow graphs, and statistics.",
+  "why_it_exists": "The README presents it as a decompiler that is 'not limited to any particular target architecture, operating system, or executable file format', so one tool can cover many binary types. The project is from Avast, and the README credits research funding from TACR (Technology Agency of the Czech Republic).",
+  "how_it_works": "The README gives little detail on internals beyond the feature list. It mentions loading and instruction decoding, signature-based removal of statically linked library code, use of DWARF and PDB debug info, reconstruction of instruction idioms, and recovery of C++ class hierarchies from RTTI and vtables. It also lists C++ symbol demangling for GCC, MSVC, and Borland. Optional UPX unpacking runs in a preprocessing stage.",
+  "commands_seen": [
+   {
+    "cmd": "$RETDEC_INSTALL_DIR\\bin\\retdec-decompiler.exe test.exe",
+    "context": "Windows: decompile a binary named test.exe after installation."
+   },
+   {
+    "cmd": "$RETDEC_INSTALL_DIR/bin/retdec-decompiler test.exe",
+    "context": "Linux, macOS, and FreeBSD: decompile a binary named test.exe after installation."
+   },
+   {
+    "cmd": "sudo apt-get install build-essential cmake git openssl libssl-dev python3 autoconf automake libtool pkg-config m4 zlib1g-dev upx doxygen graphviz",
+    "context": "Debian/Ubuntu: install build dependencies (upx and graphviz are optional)."
+   },
+   {
+    "cmd": "cmake .. -DCMAKE_INSTALL_PREFIX=<path>",
+    "context": "Configure a source build in the build directory, installing to <path>. The README recommends a local prefix over system-wide installs."
+   },
+   {
+    "cmd": "make -jN",
+    "context": "Build with N parallel jobs (README suggests cores + 1)."
+   },
+   {
+    "cmd": "make install",
+    "context": "Install the built RetDec into the chosen prefix."
+   },
+   {
+    "cmd": "docker build -t retdec - < Dockerfile",
+    "context": "Build the Docker image from the repository's Dockerfile (community-maintained)."
+   },
+   {
+    "cmd": "docker build -t retdec:dev . -f Dockerfile.dev",
+    "context": "Build a Docker image from the local checkout instead of master."
+   },
+   {
+    "cmd": "chmod 0777 /path/to/local/directory",
+    "context": "Docker: make the input directory accessible when the host uid is not 1000."
+   },
+   {
+    "cmd": "docker run --rm -v /path/to/local/directory:/destination retdec retdec-decompiler /destination/binary",
+    "context": "Docker: run the decompiler on a binary mounted into the container; output lands in the host directory."
+   }
+  ],
+  "install_notes": "Either download a prebuilt package from the releases page or the nightly TeamCity/GitHub Actions builds, or build from source with CMake. Source builds on Linux need a C++17 compiler (GCC 7 or newer), CMake 3.6 or newer, OpenSSL 1.1.1 or newer, Python 3.4 or newer, autotools, pkg-config, m4, and zlib. Windows needs Visual Studio 2017 or newer and the Visual C++ Redistributable. macOS needs 10.15 or newer and full Xcode, not only the command-line tools. An installed copy needs about 5 to 6 GB of disk. UPX and Graphviz are optional. The README also documents many cmake flags, including -DRETDEC_TESTS=ON, -DRETDEC_ENABLE=<component list>, and -D<dep>_LOCAL_DIR for offline dependencies. The Homebrew formula is not mentioned in the README.",
+  "standout": "It is retargetable across many formats and architectures, and it outputs C, which is more readable than assembly-like pseudocode. It also reconstructs C++ class hierarchies from RTTI and vtables and can be driven from IDA and radare2 through separate plugins.",
+  "status": "Limited maintenance mode, per a warning at the top of the README: pull requests are reviewed with priority, issues may wait up to a quarter, and only basic maintenance continues with very limited development. I did not check the latest release or commit date, so I cannot give a date.",
+  "caveats": "The project is in limited maintenance mode. FreeBSD support is experimental and has no ports package. Docker support is community-maintained. Nightly builds come with no guarantees, and the README warns of possible regressions. The install is large (5 to 6 GB), and building from source needs a substantial toolchain. The wiki is marked 'in progress'. Some documentation and build-artifact links point to Avast's TeamCity server, which I did not test. The README does not describe the license beyond MIT for Avast code, with bundled PeLib under zlib/libpng and third-party licenses listed in a separate file.",
+  "quotes": [
+   "RetDec is a retargetable machine-code decompiler based on LLVM.",
+   "The decompiler is not limited to any particular target architecture, operating system, or executable file format",
+   "The RetDec project is currently in a limited maintenance mode due to a lack of resources"
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repository",
+    "url": "https://github.com/avast/retdec"
+   },
+   {
+    "label": "Project site",
+    "url": "https://retdec.com/"
+   },
+   {
+    "label": "Wiki (in progress)",
+    "url": "https://github.com/avast/retdec/wiki"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/avast/retdec - worked; the README was returned and it was thorough, so I did not follow further links."
+  ]
+ }
+}

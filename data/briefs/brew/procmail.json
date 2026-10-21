@@ -1,0 +1,79 @@
+{
+ "name": "procmail",
+ "desc": "Autonomous mail processor",
+ "homepage": "https://github.com/BuGlessRB/procmail",
+ "installs_365d": 291,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "ancient",
+  "language"
+ ],
+ "why": "An old mail filter driven by its own recipe syntax, a small surviving piece of Unix history.",
+ "brief": {
+  "what_it_is": "Procmail is a mail processing program written in C. It reads each incoming message and applies rules from a per-user .procmailrc file to sort it into folders or files, forward it, or start programs on arrival. The package also ships formail, which can generate autoreplies, split mailboxes or digests into single messages, and reformat or extract headers. It also includes lockfile, which makes NFS-safe lock files for shell scripts, and mailstat, an example shell script that summarizes procmail's logs.",
+  "why_it_exists": "The README frames it as a robust local delivery agent and mail filter: it can sort mail into folders when you subscribe to mailing lists, prioritise mail, build mailing lists or mail servers, or act as a drop-in replacement for /bin/mail. Its stated design goal is delivering mail even under the worst conditions, such as a full filesystem, no swap space, or missing executables.",
+  "how_it_works": "Procmail is event driven: it is invoked when mail arrives, typically through a .forward file in the user's home directory, and it follows the recipes in .procmailrc. The README says it uses standard egrep regular expressions, can make yes/no decisions based on message size, and supports weighted scoring of messages. It delivers to single-file folders, one-file-per-message directories, MH folders, Maildir, or /var/mail-style spools, and it writes a mail log file that records each arrival and where it went.",
+  "commands_seen": [
+   {
+    "cmd": "make install",
+    "context": "Standard build-and-install step from INSTALL. It runs make init, runs autoconf, builds procmail, lockfile, formail, mailstat and the man pages, then copies them to BINDIR and the man directories."
+   },
+   {
+    "cmd": "make BASENAME=$HOME install",
+    "context": "INSTALL's suggested alternative to editing the Makefile, for installing into your home directory as an unprivileged user."
+   },
+   {
+    "cmd": "make deinstall",
+    "context": "Removes the files that make install placed in BINDIR and the man page directories."
+   },
+   {
+    "cmd": "make recommend",
+    "context": "INSTALL says to run this to get specific instructions for the best installation, such as the suid root and sgid recommendations."
+   },
+   {
+    "cmd": "procmail VERBOSE=on",
+    "context": "Suggested first trial run with no rcfile: start procmail verbosely, then type in a pseudo mail message by hand."
+   },
+   {
+    "cmd": "kill pid",
+    "context": "INSTALL's advice when stopping a hand-run procmail. Lets procmail clean up the lockfiles it created."
+   },
+   {
+    "cmd": "kill -9 pid",
+    "context": "Named in INSTALL as what NOT to use when stopping procmail by hand, because it skips lockfile cleanup."
+   }
+  ],
+  "install_notes": "The README describes a source build, not a packaged install. Edit the Makefile and config.h as needed, then run make install; the build runs an autoconf step that checks the compiler and system, and it obeys the current umask. Per-user installs work without root. Each user who wants procmail needs a .forward file, which must be world readable, and a .procmailrc file, with examples in the examples directory and the procmail(1) man page. MMDF users need a .maildelivery file instead of .forward. On NFS, autoconf runs locking tests on directories you specify. For system-wide use, INSTALL says to consider making procmail suid root and lockfile sgid maildaemon, and to run make recommend for specifics. The brew formula installs the same four executables with no extra caveats.",
+  "standout": "It is deliberately frozen: the author says the program is 'supposed to be static' and that no extra features are meant to be added. It is also a single small C program that the README claims survives out-of-resource conditions, and it does NFS-safe mailbox locking, which the FEATURES file calls one of the few mailers to do.",
+  "status": "Unknown, leaning quiet. The README's version line reads 'v3.24 2022/03/02' and the copyright runs to 2022. I did not see a commit date or release page, so I could not confirm recent activity. The author's note that the program is meant to stay static also points toward a slow-moving project.",
+  "caveats": "The README says the project is meant to stay static, so do not expect new features. Build problems fall back to hand-editing Makefile and config.h and reading the autoconf sources. NFS locking depends on the locking tests run on your filesystems, and you may need to disable some locking methods by hand. The README 'highly recommends' suid root for system-wide installs, which is a security decision to weigh. Licensing is dual: GPL v2 or later, or the Artistic License. The README says no procmailrc script falls under the GPL unless its author puts it there. Debugging is harder because it runs without a terminal, so set a LOGFILE or VERBOSE=on.",
+  "quotes": [
+   "Please note that this program essentially is supposed to be static; that means no extra features (honouring the VNIX spirit) are supposed to be added",
+   "Procmail was designed to deliver the mail under the worst conditions (file system full, out of swap space, process table full, file table full, missing support files, unavailable executables; it all doesn't matter).",
+   "It has man pages (boy, does it have man pages)."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub repo)",
+    "url": "https://github.com/BuGlessRB/procmail"
+   },
+   {
+    "label": "INSTALL file",
+    "url": "https://github.com/BuGlessRB/procmail/blob/master/INSTALL"
+   },
+   {
+    "label": "FEATURES file",
+    "url": "https://github.com/BuGlessRB/procmail/blob/master/FEATURES"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/BuGlessRB/procmail - worked; returned README with system requirements, description, credits, and contacts, pointing to the INSTALL and FEATURES files",
+   "https://github.com/BuGlessRB/procmail/blob/master/INSTALL - worked; build, locking, debugging, and environment setup text, with GitHub page chrome",
+   "https://github.com/BuGlessRB/procmail/blob/master/FEATURES - worked; feature lists for procmail, formail, and lockfile, with GitHub page chrome"
+  ]
+ }
+}

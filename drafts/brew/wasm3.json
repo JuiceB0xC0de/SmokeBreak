@@ -1,0 +1,124 @@
+{
+ "name": "wasm3",
+ "desc": "High performance WebAssembly interpreter",
+ "homepage": "https://twitter.com/wasm3_engine",
+ "installs_365d": 154,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "language",
+  "library"
+ ],
+ "why": "A tiny WebAssembly interpreter that shows how portable bytecode actually executes, a good way to watch a VM run.",
+ "brief": {
+  "what_it_is": "Wasm3 is a WebAssembly interpreter written in C. It takes a WebAssembly module (portable bytecode) and executes it directly, without generating native machine code. It is also distributed as a library that other programs can embed, with bindings listed for Python, Rust, Go, Zig, .NET, Arduino and others. The README describes it as a fast interpreter and the most universal WASM runtime, and says it runs on Linux, Windows, macOS, the BSDs, Android, iOS, routers, single-board computers and microcontrollers. The README mentions a minimum footprint of about 64 KB of code and 10 KB of RAM.",
+  "why_it_exists": "The README frames it as a research project: it asks whether WebAssembly is a practical portable, sandboxed alternative to Lua, JS, Python or Lisp on microcontrollers, for uses like edge computing, plugin systems and IoT rules. It also argues that an interpreter is the better trade-off over a JIT when size, memory, startup latency, portability and security matter.",
+  "how_it_works": "The README says the interpreter approach gives small executables and low memory use, and that it avoids the need to generate executable code at runtime. This matters on platforms such as iOS and WebAssembly itself, where a JIT is unavailable. The README does not describe the internal design in detail; it points to docs/Interpreter.md for architecture.",
+  "commands_seen": [
+   {
+    "cmd": "chmod +x wasm3-linux-x64.elf",
+    "context": "From docs/Installation.md: makes the downloaded Linux prebuilt binary executable. Wasm3 ships as a static binary with nothing to install alongside it."
+   },
+   {
+    "cmd": "brew install wasm3",
+    "context": "From docs/Installation.md: the macOS install route, which uses Homebrew to build and install automatically."
+   },
+   {
+    "cmd": "pip3 install pywasm3",
+    "context": "From docs/Installation.md: installs the Python binding (pywasm3) so Wasm3 can be used as a library from Python."
+   }
+  ],
+  "install_notes": "Prebuilt static binaries are on the latest GitHub release page: wasm3-win-x64.exe or wasm3-win-x86.exe on Windows, wasm3-linux-x64.elf on Linux (needs chmod +x), and wasm3-linux-other.tar.gz for Arm, AArch64, MIPS, PowerPC, RISC-V, s390x, LoongArch, m68k, MicroBlaze and SH4, built against musl. There is also a Cosmopolitan Actually Portable Executable (wasm3-cosmopolitan.com) that runs across several OSes. Homebrew is available on macOS. Arduino, PlatformIO and Particle libraries are installed through their library managers, and OpenWRT has its own instructions. Embedding is done through the language bindings. The README itself contains no shell commands to run the interpreter; usage details are in docs/Cookbook.md and docs/Demos.md, which I did not fetch.",
+  "standout": "The same small C engine runs from a Linux prebuilt binary up to microcontrollers such as ATmega1284P with 16 KB RAM (per the author's tweet), and the README claims it can run itself (self-hosting) and can be compiled to WebAssembly for browsers. The feature list also includes gas metering, suspend and resume snapshots, a deterministic profile and structured execution tracing, which are unusual for a tiny interpreter.",
+  "status": "Minimal maintenance, per a note at the top of the README. The author says he cannot add new features but will review and merge pull requests. The pinned tweet announces v0.9.0 as the first major update in five years, and a v0.9.1-beta.1 followed on Sep 14 of the same year. The tweets are not dated with a year in the fetched page, and I did not see a last-commit date or latest-release date, so the exact recency is unclear.",
+  "caveats": "The README says the project is in minimal maintenance and that new features will not be added. It is an interpreter, so it is slower than JIT runtimes, which the README concedes ('Your mileage may vary'). JIT is unavailable on platforms such as iOS and in browsers. The feature list marks garbage collection, threads and fixed-width SIMD as not applicable, and threads are listed as atomics only. Linear memory is listed as limited to under 64 KiB under Extra features, which I read as a constraint but did not verify. The homepage listed in the metadata is an X/Twitter profile that requires login to view fully, not a project site. The license is MIT. The scout note calls it tiny, which fits the README's minimum-size claim but is not a measured figure.",
+  "quotes": [
+   "A fast WebAssembly interpreter and the most universal WASM runtime.",
+   "Wasm3 started as a research project and remains so by any means.",
+   "Your contributions to Wasm3 are now more valuable than ever."
+  ],
+  "links": [
+   {
+    "label": "Homepage (X profile)",
+    "url": "https://twitter.com/wasm3_engine"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/wasm3/wasm3"
+   },
+   {
+    "label": "Installation instructions",
+    "url": "https://github.com/wasm3/wasm3/blob/main/docs/Installation.md"
+   },
+   {
+    "label": "Interpreter architecture",
+    "url": "https://github.com/wasm3/wasm3/blob/main/docs/Interpreter.md"
+   }
+  ],
+  "fetch_log": [
+   "https://twitter.com/wasm3_engine - worked, but returned a login-walled X profile page with the pinned posts and recent tweets, not a project site",
+   "https://github.com/wasm3/wasm3 - worked, returned the README",
+   "https://github.com/wasm3/wasm3/blob/main/docs/Installation.md - worked, returned the installation doc"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A tiny, portable WebAssembly interpreter that brings sandboxed bytecode to microcontrollers is a distinctive way to explore how runtimes work."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "wasm3",
+  "tldr": "A WebAssembly interpreter in C, small enough for microcontrollers, that runs portable bytecode directly instead of compiling it to native code.",
+  "deeper_look": "Wasm3 takes a WebAssembly module and executes it directly, without generating machine code at runtime. It is written in C and also ships as a library, with bindings listed for Python, Rust, Go, Zig, .NET and Arduino. The README gives a minimum footprint of about 64 KB of code and 10 KB of RAM, and lists platforms from Linux and macOS to routers, single-board computers and microcontrollers.\n\nThe README calls it a research project. The question it asks is whether WebAssembly can be a portable, sandboxed alternative to Lua, JS, Python or Lisp on small devices, for things like plugin systems, edge computing and IoT rules. Its argument for an interpreter over a JIT is that size, memory, startup latency, portability and security often matter more than raw speed. A JIT also cannot run at all on some platforms, such as iOS or inside a browser.\n\nThe idea underneath is that bytecode is just a program for a small virtual machine, and this one is small enough to read. The architecture is described in docs/Interpreter.md. The feature list also includes gas metering, suspend and resume snapshots, a deterministic profile and structured execution tracing, which are unusual for an interpreter this size.",
+  "install": "brew install wasm3\n# Prebuilt static binaries are also on the GitHub releases page (on Linux, run chmod +x on the .elf file).\n# You need a .wasm module to run; the Homebrew formula depends on uvwasi.",
+  "try_this": [
+   {
+    "cmd": "wasm3 --help",
+    "what_happens": "Prints the interpreter's command-line options, which is the quickest way to see what it can do with a module."
+   },
+   {
+    "cmd": "pip3 install pywasm3",
+    "what_happens": "Installs the Python binding so you can load and call WebAssembly modules from a Python script."
+   },
+   {
+    "cmd": "chmod +x wasm3-linux-x64.elf",
+    "what_happens": "Makes the prebuilt Linux binary from the releases page executable, with nothing else to install."
+   }
+  ],
+  "whats_unique": "One small C engine spans desktop binaries down to microcontrollers with a few KB of RAM, and still offers gas metering, snapshots and execution tracing.",
+  "caveats": "The README says the project is in minimal maintenance with no new features planned, it is slower than JIT runtimes, and the listed homepage is a login-walled X profile rather than a project site.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "webassembly",
+   "interpreter",
+   "virtual-machine",
+   "embedded",
+   "c"
+  ],
+  "links": [
+   {
+    "label": "Homepage (X profile)",
+    "url": "https://twitter.com/wasm3_engine"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/wasm3/wasm3"
+   },
+   {
+    "label": "Installation instructions",
+    "url": "https://github.com/wasm3/wasm3/blob/main/docs/Installation.md"
+   },
+   {
+    "label": "Interpreter architecture",
+    "url": "https://github.com/wasm3/wasm3/blob/main/docs/Interpreter.md"
+   }
+  ]
+ }
+}

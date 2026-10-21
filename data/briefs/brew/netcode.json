@@ -1,0 +1,74 @@
+{
+ "name": "netcode",
+ "desc": "Secure client/server protocol for multiplayer games built on top of UDP",
+ "homepage": "https://github.com/mas-bandwidth/netcode",
+ "installs_365d": 150,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol",
+  "library"
+ ],
+ "why": "A secure UDP protocol for multiplayer games, an interesting look at connection handshakes and encryption design.",
+ "brief": {
+  "what_it_is": "netcode is a C library implementing a secure client/server connection protocol that runs on top of UDP. Your game code hands it a 32 byte private key and a server address, creates a server with a fixed number of client slots, and then your backend issues connect tokens that clients present to connect. Once connected, clients and server exchange unreliable, unordered packets that are encrypted and signed. The README lists it as a library with no executables, so nothing is installed as a command.",
+  "why_it_exists": "The README says real-time multiplayer games use UDP instead of TCP because TCP's head-of-line blocking delays newer packets while older dropped packets are resent, but UDP has no notion of a connection, so developers must build connection handling themselves, which the author calls 'a lot of work!'. netcode provides a minimal, secure, connection-oriented layer so developers can start exchanging packets sooner.",
+  "how_it_works": "A backend (for example a web matchmaker) issues a connect token to each authorized client, and only clients holding a valid token can connect. The server is created with the shared private key and a max_connect_token_lifetime, which it uses to refuse tokens that could have been issued before it started. Packets are encrypted and signed using libsodium, and the server assigns each connected client to one of its n slots, denying new clients quickly when all slots are full.",
+  "commands_seen": [
+   {
+    "cmd": "static uint8_t private_key[NETCODE_KEY_BYTES] = { 0x60, 0x6a, 0xbe, 0x6e, ... 0xa1 };",
+    "context": "A test private key shown in the README as a C array of 32 bytes. The README warns to generate a random key and never ship the private key inside a client executable."
+   },
+   {
+    "cmd": "netcode_default_server_config( &server_config );",
+    "context": "Fills the server config struct with defaults before the caller overrides fields."
+   },
+   {
+    "cmd": "server_config.max_connect_token_lifetime = 30;",
+    "context": "Sets the longest connect token lifetime in seconds, which must match what the backend issues."
+   },
+   {
+    "cmd": "struct netcode_server_t * server = netcode_server_create( server_address, &server_config, time );",
+    "context": "Creates the server bound to the address string \"127.0.0.1:40000\" using the config, and returns NULL on failure."
+   },
+   {
+    "cmd": "netcode_server_start( server, 16 );",
+    "context": "Starts the server with 16 client slots."
+   },
+   {
+    "cmd": "netcode_client_connect( client, connect_token );",
+    "context": "Client connects using a connect token obtained from the backend REST API. The README does not show client creation."
+   }
+  ],
+  "install_notes": "The README gives no package-manager or build instructions. It is a C codebase and you use it from source; the code is in client.c and server.c, which the README links to. Cryptography depends on the libsodium library, which the README links to but does not explicitly describe as a build dependency. Using it in a real game also needs a backend that issues connect tokens; the README points to an example matchmaker written in Go in the yojimbo repo. You must generate your own random 32 byte private key, and keep it off the client.",
+  "standout": "The connection design puts trust in the backend: a server accepts only clients holding tokens the backend issued with the shared key, so matchmaking and access control live in a web service rather than in the game server. The README also documents a replay-protection overflow and errata in IMPLEMENTERS.md, and many ports exist in other languages (C#, Go, Rust, Unity, UE4, TypeScript).",
+  "status": "unknown. The README has a CI badge pointing at a GitHub Actions workflow on main, but it shows no release dates, version numbers, last commit, or maintenance notes. It does reference a 'netcode 1.02 standard' document and multiple third-party implementations.",
+  "caveats": "The README does not state supported platforms, build steps, or a version. The test private key is for testing only. Connect tokens are issued only if you run your own backend, so the protocol alone does not handle matchmaking. The BSD 3-Clause license asks for credit in product credits ('netcode - Glenn Fiedler and Rowan Claude'), and the README says this is a request, not a license requirement. The README pushes support via a Patreon page.",
+  "quotes": [
+   "netcode fixes this by providing a minimal and secure connection-oriented protocol on top of UDP, so you can quickly get to exchanging unreliable unordered packets and get busy building the rest of your game network protocol.",
+   "Only clients you authorize can connect to your server. This is _perfect_ for a game where you perform matchmaking in a web backend then send clients to connect to a server.",
+   "Do not share your private key with _anybody_. Especially, **do not include your private key in your client executable!**"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/mas-bandwidth/netcode"
+   },
+   {
+    "label": "netcode 1.02 standard (STANDARD.md, linked from README, not fetched)",
+    "url": "https://github.com/mas-bandwidth/netcode/blob/main/STANDARD.md"
+   },
+   {
+    "label": "IMPLEMENTERS.md (linked from README, not fetched)",
+    "url": "https://github.com/mas-bandwidth/netcode/blob/main/IMPLEMENTERS.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/mas-bandwidth/netcode \u2014 fetched OK; README returned in full"
+  ]
+ }
+}

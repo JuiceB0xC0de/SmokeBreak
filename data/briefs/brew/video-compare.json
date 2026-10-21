@@ -1,0 +1,89 @@
+{
+ "name": "video-compare",
+ "desc": "Split screen video comparison tool using FFmpeg and SDL2",
+ "homepage": "https://github.com/pixop/video-compare",
+ "installs_365d": 1639,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "visual",
+  "gui"
+ ],
+ "why": "Split-screen video comparison via FFmpeg and SDL2 is a clever visual tool, but its purpose is practical rather than strange.",
+ "brief": {
+  "what_it_is": "video-compare is a split-screen video comparison tool written in C++14 that uses FFmpeg libraries and SDL2. You give it two video files (or a reference plus several renditions, or one video against itself) and it plays them in sync in a window, with a movable slider, vertical stacking, or subtraction views. It accepts videos with different resolutions, frame rates, scanning methods, color formats, dynamic ranges, containers, codecs, or durations, and it can also compare images and image sequences. The output is an interactive window, plus console metrics and PNG saves on key presses.",
+  "why_it_exists": "The README says it exists to visually compare the impact of codecs, resizing algorithms, and other modifications on two video files played in sync. It is aimed at people who need to see encoding or processing differences side by side.",
+  "how_it_works": "It decodes both inputs with FFmpeg, applying any FFmpeg video filters you pass on the command line to either or both sides, and draws them in an SDL2 window with a slider, stack, or subtraction view. Playback runs from an in-memory buffer, with frame stepping, zoom, and time-shift controls. Seeks resynchronize on the nearest keyframe (I-frame).",
+  "commands_seen": [
+   {
+    "cmd": "brew install video-compare",
+    "context": "Homebrew install of the tool; the README also suggests brew install ffmpeg-full for broader codec and format support, such as JPEG XL."
+   },
+   {
+    "cmd": "video-compare video1.mp4 video2.mp4",
+    "context": "Basic side-by-side slider comparison of two files, sized to the video's own dimensions and DPI setting."
+   },
+   {
+    "cmd": "video-compare -t 0.080 video1.mp4 video2.mp4",
+    "context": "Shifts the right video's presentation timestamps by 0.080 seconds to align two files that are slightly out of sync."
+   },
+   {
+    "cmd": "video-compare -m vstack video1.mp4 video2.mp4",
+    "context": "Shows the two videos stacked vertically at full size, with no slider."
+   },
+   {
+    "cmd": "video-compare some/very/long/and/complicated/video/path.mp4 __",
+    "context": "Uses the __ placeholder to compare a video against itself, for example against a time-shifted or filtered copy, without typing the path twice."
+   },
+   {
+    "cmd": "video-compare -l crop=iw:ih-240 -r format=gray,pad=iw+320:ih:160:0 video1.mp4 video2.mp4",
+    "context": "Applies FFmpeg filters to each side separately: -l for the left video and -r for the right. Here the left is cropped and the right is converted to grayscale and padded."
+   },
+   {
+    "cmd": "video-compare -R 850 sdr_video.mp4 hdr_video.mp4",
+    "context": "Sets the HDR-to-sRGB peak light level to 850 nits instead of the default 500 when converting HDR video for display."
+   },
+   {
+    "cmd": "video-compare reference.mp4 rendition1.mp4 rendition2.mp4",
+    "context": "Compares a reference (left) against multiple right-hand renditions; the active right video can be switched in the UI with Tab."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds from source in the repository root using GNU Make."
+   },
+   {
+    "cmd": "make install",
+    "context": "Performs a system-wide install of the built executable; the README notes root privileges are usually needed, for example via sudo."
+   }
+  ],
+  "install_notes": "Beyond brew install: Arch users can install from the AUR with git clone, makepkg -sic. Windows has pre-built Windows 10 x86 64-bit zip archives on the releases page, run as video-compare.exe from a command prompt. Building from source needs FFmpeg headers and dev libraries, SDL2 with libsdl2_ttf, and SDL2 2.0.10 or later, which may mean upgrading an existing SDL2. Debian needs build-essential and the libav*-dev, libswscale-dev, libswresample-dev, libsdl2-dev and libsdl2-ttf-dev packages; Fedora needs make, gcc-c++, ffmpeg-devel, SDL2-devel and SDL2_ttf-devel. There is no configuration file or account; the README describes no first-run steps beyond launching with no arguments to list the options.",
+  "standout": "The __ placeholder lets one command compare a video against a filtered or time-shifted copy of itself, and the per-side -l and -r filter flags take any FFmpeg filter chain. Per-video overrides with the :: separator and the multi-rendition mode make it a tool for comparing encoder outputs, not just a player with two panes.",
+  "status": "unknown. The README has a GitHub release badge but no version number, release date, or changelog date, and it gives no last-commit date. It was reachable and the documentation is detailed and current, mentioning SDL2 2.0.10 and Windows binaries, but I cannot confirm recent activity from the README alone.",
+  "caveats": "No audio playback, per the README. Time-shifts should stay under a few seconds for the best experience. Seeks land on the nearest keyframe, so they can be imprecise on sparse-GOP files. Some features depend on the FFmpeg build: the README recommends ffmpeg-full over the standard Homebrew FFmpeg, and hardware decoding options depend on the platform and the decoder. Pre-built binaries are only listed for Windows 10 x86 64-bit; other platforms must build from source. Licensed under GPLv2, and binary redistributors must include LICENSE.md, the third-party notices, and corresponding source. Some Windows Send To and frontend integrations are community-made, not part of the project.",
+  "quotes": [
+   "Split-screen video comparison tool written in C++14, utilizing FFmpeg libraries and SDL2.",
+   "The Swiss Army knife for cropping/padding (comparing videos with different aspect ratios), adjusting colors, deinterlacing, denoising, speeding up/slowing down, etc.",
+   "Thanks to FFmpeg's flexibility, `video-compare` is also capable of comparing images or image sequences."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README (homepage)",
+    "url": "https://github.com/pixop/video-compare"
+   },
+   {
+    "label": "Homebrew formula",
+    "url": "https://formulae.brew.sh/formula/video-compare"
+   },
+   {
+    "label": "Releases (Windows binaries)",
+    "url": "https://github.com/pixop/video-compare/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/pixop/video-compare (homepage, README returned, worked; no further fetches needed because the README is complete)"
+  ]
+ }
+}

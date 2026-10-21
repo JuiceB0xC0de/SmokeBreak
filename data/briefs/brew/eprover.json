@@ -1,0 +1,86 @@
+{
+ "name": "eprover",
+ "desc": "Theorem prover for full first-order logic with equality",
+ "homepage": "https://eprover.org/",
+ "installs_365d": 65,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "math",
+  "science"
+ ],
+ "why": "A serious first-order logic theorem prover you can drive from the terminal, a real window into automated reasoning.",
+ "brief": {
+  "what_it_is": "E is an automated theorem prover, written in C and distributed under the GNU GPL, for many-sorted first-order logic with equality. The README says it can also take polymorphic higher-order logic when built with --enable-ho. You feed it a problem file, a specification plus a conjecture, in formats it detects automatically (LOP, TPTP-2 or TPTP-3). It runs a search and, if it succeeds, reports a proof, optionally in a proof-object format that the bundled checkproof tool can verify. The package also ships helper programs for strategy scheduling, parallel runs, proof filtering, and a knowledge-base (ekb_*) toolset.",
+  "why_it_exists": "The README frames E as an equational theorem prover for stating a mathematical specification and a conjecture and letting the machine search for a proof. It is candid that this can run for a long time: 'which will then run forever, using up all of your machines resources. Very occasionally it will find a proof for the conjecture and tell you so ;-).'",
+  "how_it_works": "By default the prover runs a single strategy, or with --auto it picks a heuristic strategy based on the problem, pruning the axiom set for large inputs, which the README says may cost completeness. The --satauto variant keeps completeness. The --auto-schedule modes run a series of strategies in sequence, assuming a 300-second budget unless --cpu-limit says otherwise, and --auto-schedule=n spreads them across n cores. Proof objects can be written out and checked with checkproof.",
+  "commands_seen": [
+   {
+    "cmd": "eprover --auto --proof-object problem.p",
+    "context": "Recommended basic invocation: automatic strategy selection on problem.p, printing a proof object."
+   },
+   {
+    "cmd": "eprover --auto-schedule --proof-object problem.p",
+    "context": "Strategy-scheduling mode, described as usually stronger and especially recommended for higher-order problems."
+   },
+   {
+    "cmd": "eprover --auto-schedule=8 --proof-object problem.p",
+    "context": "Same scheduling mode, using 8 CPU cores."
+   },
+   {
+    "cmd": "eprover --satauto --memory-limit=<80%_of_your_main_memory> <problem-file>",
+    "context": "Complete (non-pruning) automatic mode with a memory cap, for when completeness matters on very large axiom sets."
+   },
+   {
+    "cmd": "eprover --auto-schedule --memory-limit=<80%_of_your_main_memory> <problem-file>",
+    "context": "Scheduled strategies with a memory limit; add --cpu-limit=XXX if the external time limit differs from 300 seconds."
+   },
+   {
+    "cmd": "./configure --enable-ho",
+    "context": "Build configuration that adds higher-order support, producing the eprover-ho binary."
+   },
+   {
+    "cmd": "make rebuild",
+    "context": "Rebuilds all objects and binaries after configuration changes, or after trouble, to the current configuration."
+   },
+   {
+    "cmd": "./eprover BOO001-1+rm_eq_rstfp.lop",
+    "context": "Suggested first run from the PROVER directory on a bundled example problem."
+   },
+   {
+    "cmd": "./eprover -h",
+    "context": "Prints usage information and the list of options."
+   },
+   {
+    "cmd": "checkproof",
+    "context": "Named in the README as the tool for checking PCL proof objects for correctness; it skips non-clausal parts."
+   }
+  ],
+  "install_notes": "Requires GNU tar, sh and gawk on the search path, per the README's quick-install section. Standard path: unpack E.tgz, cd E, run ./configure (optionally with --bindir=EXECDIR), then make and make install, which needs write permission to EXECDIR (sudo if outside your home). Alternatively build in place with ./configure, make rebuild, then run from the PROVER directory. Higher-order support needs --enable-ho and produces eprover-ho. Building the manual needs LaTeX2e, pdflatex, and the theorem, amssymb and epsfig packages, though a precompiled DOC/eprover.pdf is also included. For non-GNU compilers, the README points to editing Makefile.vars and to DOC/PORTING. No accounts or runtimes beyond a C toolchain and the shell utilities are mentioned.",
+  "standout": "It is a long-running, research-grade prover with a strategy-scheduling layer that tries many strategies in sequence or across cores, rather than a single search. It also has a proof-object format plus an independent checker (checkproof), so a claimed proof can be verified separately.",
+  "status": "Maintained, as far as the README shows. It is labelled version 3.5 'Countess Grey', credited to Stephan Schulz with several contributors, and the README says the canonical source is README.md. I could not see a release date or last-commit date in the fetched text, so recent activity is unconfirmed. The homepage returned no content, so I could not check its news or release notes.",
+  "caveats": "The homepage https://eprover.org/ returned an empty response, so this brief relies on the GitHub README alone. The brew description says first-order logic with equality, but higher-order support needs a separate build with --enable-ho. Auto mode may be incomplete on very large axiom sets, and checkproof cannot check the full first-order part. The README asks that bug reports go by email to the maintainer, and it notes that this is an unpaid volunteer service. Licence is GPL, which the README says comes with no warranty. The scout note's 'real window into automated reasoning' is an editorial phrase, not from the project.",
+  "quotes": [
+   "E is an equational theorem prover.",
+   "which will then run forever, using up all of your machines resources. Very occasionally it will find a proof for the conjecture and tell you so ;-).",
+   "This version of E is free software, see the file COPYING for details about the license and the fact that THERE IS NO WARRANTY!"
+  ],
+  "links": [
+   {
+    "label": "E homepage",
+    "url": "https://eprover.org/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/eprover/eprover"
+   }
+  ],
+  "fetch_log": [
+   "https://eprover.org/ (homepage): fetched, returned empty content, no usable text",
+   "https://github.com/eprover/eprover (GitHub repository, README): fetched OK, returned the README text"
+  ]
+ }
+}

@@ -1,0 +1,151 @@
+{
+ "name": "trealla-prolog",
+ "desc": "Compact and efficient ISO Prolog interpreter written in plain old C",
+ "homepage": "https://github.com/trealla-prolog/trealla-prolog",
+ "installs_365d": 89,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language",
+  "library"
+ ],
+ "why": "A compact ISO Prolog in plain C is a genuinely old-school logic language worth an afternoon of queries and backtracking.",
+ "brief": {
+  "what_it_is": "Trealla Prolog is a compact ISO Prolog interpreter written in plain C99 and built with a plain Makefile. You give it Prolog source files or queries, either on the command line with tpl or at its REPL, and it runs them and prints answers. The README also lists a C embedding API (libtrealla.a and trealla.h), a WebAssembly build, and a Python bridge marked experimental. The feature list covers unbounded integers and rationals, UTF-8 atoms and strings, DCGs, freeze/dif/when, CLP(B) and CLP(Z), tabling, threads, engines, actors, sockets, and SQLite via an FFI-backed module.",
+  "why_it_exists": "The README frames it as a compact, efficient ISO Prolog interpreter that runs on very many platforms, including bare boards and bare metal. It is also meant to be embeddable from C and usable in Jupyter notebooks.",
+  "how_it_works": "Trealla runs as a single tpl executable that loads files, consults .pl sources, and drops into a REPL with history when given no goal. Double-quoted text defaults to a packed UTF-8 byte array that behaves like a char list, and open/4 with mmap(Ls) gives a memory-mapped file view as a string. Tabling memoizes each call variant so left-recursive predicates terminate, and the table can be declared incremental or mode-directed (min/max).",
+  "commands_seen": [
+   {
+    "cmd": "tpl [options] [files] [-- args]",
+    "context": "Usage line from the README; options include -g goal, -l file, -t trace, -q quiet, -v version, --library path, and --nolimit."
+   },
+   {
+    "cmd": "tpl -g test2,halt samples/sieve",
+    "context": "Example from the README that runs goal test2,halt on the samples/sieve file, then exits."
+   },
+   {
+    "cmd": "brew install trealla-prolog",
+    "context": "Installs Trealla from Homebrew core on macOS and Linux; puts tpl on the path, the library under share/trealla, and the C API files."
+   },
+   {
+    "cmd": "sudo apt install build-essential git libedit-dev libffi-dev libssl-dev",
+    "context": "Debian-like system packages the README lists before building from source."
+   },
+   {
+    "cmd": "make",
+    "context": "Default source build from the cloned trealla repository."
+   },
+   {
+    "cmd": "make NOFFI=1",
+    "context": "Builds without the foreign function interface."
+   },
+   {
+    "cmd": "make test",
+    "context": "Runs the test suite; the README says there should be no errors."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the built binary locally."
+   },
+   {
+    "cmd": "make cosmo",
+    "context": "Builds the Cosmopolitan variant, which uses the bundled ISOCLINE line editor."
+   },
+   {
+    "cmd": "make CC=musl-gcc OPT=-static NOFFI=1 NOSSL=1 ISOCLINE=1",
+    "context": "Static MUSL build on Ubuntu after installing musl-tools."
+   },
+   {
+    "cmd": "make CC=/opt/wasi-sdk/bin/clang wasm",
+    "context": "Builds the WebAssembly (WASI) binary using wasi-sdk's clang."
+   },
+   {
+    "cmd": "make WIN=1 NOFFI=1 NOSSL=1",
+    "context": "Cross-compiles a Windows x86-64 tpl.exe on Linux with mingw-w64 installed."
+   }
+  ],
+  "install_notes": "On macOS and Linux, brew install trealla-prolog is enough; Apple Silicon and Linux (both architectures) get prebuilt bottles. An Intel Mac has no bottle and builds from source. Building from source needs a C99 compiler and make; on Debian-like systems the README lists build-essential, git, libedit-dev, libffi-dev and libssl-dev, and on macOS brew install libffi openssl coreutils. Optional make test wants a UTF-8 locale; the Makefile picks C.UTF-8 or en_US.UTF-8 if available. On first run tpl reads ~/.tplrc unless -f is given, and the library path defaults to a location relative to the executable or can be set with TPL_LIBRARY_PATH or --library.",
+  "standout": "The same binary covers a lot of ground for a small interpreter: tabling with incremental and mode-directed declarations, delimited continuations, engines and actors, and a freestanding profile that boots on a Raspberry Pi 4 and an Arduino Nano ESP32 with no operating system. Its strings are packed UTF-8 that behave like lists, and mmap'd files can be consumed as Prolog strings.",
+  "status": "The README says Trealla has reached a stable state and is feature-complete as far as planned, with only bug fixes and incremental improvements ongoing. The fetched text shows no release date or last commit, so current activity could not be verified from it.",
+  "caveats": "Unbounded integers are for arithmetic only and raise type_error when used elsewhere; the README also notes that printing very large bigints (100K+ digits) becomes exponentially slower because of the imath library. Several items are marked EXPERIMENTAL: rational trees, GSL and PLplot FFIs, and the bi-directional Python interface (Janus). The Raspberry Pi 4 port is described as a proof of concept with no interrupts, no filesystem, and no memory protection. Some tests differ under the C locale for accented text. Intel Macs have no bottle and must build from source. Windows and 32-bit Linux are cross-compiled rather than native. The README does not mention a licence in the fetched text, but the repository headline says MIT licensed.",
+  "quotes": [
+   "A compact, efficient ISO Prolog interpreter. Written in plain old C and using a plain old Makefile.",
+   "Trealla Prolog has reached a stable state and is feature-complete as much as is planned. Only bug fixes and incremental improvements are to remain ongoing.",
+   "Integers & Rationals are unbounded"
+  ],
+  "links": [
+   {
+    "label": "Homepage / README (GitHub)",
+    "url": "https://github.com/trealla-prolog/trealla-prolog"
+   },
+   {
+    "label": "Source repository for the interpreter (named in README as Available from)",
+    "url": "https://github.com/trealla-prolog/trealla"
+   },
+   {
+    "label": "Jupyter kernel for Logtalk (README says Trealla runs with it)",
+    "url": "https://github.com/LogtalkDotOrg/logtalk-jupyter-kernel#readme"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/trealla-prolog/trealla-prolog: fetched OK; README returned as text but was cut at 40000 characters partway through the predicate reference, so the tail was not read."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A compact Prolog interpreter makes logic programming easy to explore, with unusually rich features like tabling, actors, and even bare-metal targets."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Trealla Prolog",
+  "tldr": "A compact ISO Prolog interpreter in plain C that gives you logic programming, tabling and constraint solving from one small tpl binary.",
+  "deeper_look": "Trealla Prolog is an ISO Prolog interpreter written in C99 and built with a plain Makefile. You run `tpl` with source files or a goal, or start it with no goal and get a REPL with history. Prolog programs state facts and rules, then you ask questions and the engine searches for answers by backtracking.\n\nThe README describes it as a compact, efficient interpreter that runs on very many platforms, including bare boards and bare metal. The feature list is long for something small: unbounded integers and rationals, UTF-8 atoms and strings, DCGs, freeze/dif/when, CLP(B) and CLP(Z) constraint solvers, threads, engines, actors, sockets, and SQLite through an FFI-backed module. It can also be embedded in C programs, built to WebAssembly, and used from Jupyter.\n\nThe idea underneath is declarative programming. Tabling memoizes each call variant, so left-recursive predicates that would loop forever in plain Prolog terminate. Tables can be declared incremental or mode-directed (min/max). Double-quoted text is a packed UTF-8 byte array that behaves like a char list, and a file opened with mmap can be read as a Prolog string. This gives you a small, readable system for exploring how logic languages work.",
+  "install": "brew install trealla-prolog\n# Apple Silicon and Linux get prebuilt bottles; an Intel Mac builds from source.\n# Depends on openssl; building by hand needs a C99 compiler and make.",
+  "try_this": [
+   {
+    "cmd": "tpl --help",
+    "what_happens": "Prints the usage line and options such as -g goal, -l file, -t trace and -q quiet."
+   },
+   {
+    "cmd": "tpl",
+    "what_happens": "Starts the REPL with history, where you can consult files and type queries."
+   },
+   {
+    "cmd": "tpl -g test2,halt samples/sieve",
+    "what_happens": "Runs the goal test2 from the sieve sample in the source repository, then exits. You need a clone of the repository for the samples."
+   }
+  ],
+  "whats_unique": "One small C binary covers tabling, delimited continuations, engines, actors and constraint solving. It also has a freestanding profile that boots on a Raspberry Pi 4 and an Arduino Nano ESP32 with no operating system.",
+  "caveats": "Unbounded integers work for arithmetic only, rational trees, some FFIs and the Python bridge are marked experimental, and the Raspberry Pi bare-metal port is only a proof of concept.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "prolog",
+   "logic-programming",
+   "interpreter",
+   "c",
+   "constraints",
+   "embeddable"
+  ],
+  "links": [
+   {
+    "label": "Homepage / README (GitHub)",
+    "url": "https://github.com/trealla-prolog/trealla-prolog"
+   },
+   {
+    "label": "Source repository for the interpreter",
+    "url": "https://github.com/trealla-prolog/trealla"
+   },
+   {
+    "label": "Jupyter kernel for Logtalk (runs with Trealla)",
+    "url": "https://github.com/LogtalkDotOrg/logtalk-jupyter-kernel#readme"
+   }
+  ]
+ }
+}

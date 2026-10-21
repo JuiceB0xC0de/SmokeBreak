@@ -1,0 +1,143 @@
+{
+ "name": "pdfalyzer",
+ "desc": "PDF analysis toolkit",
+ "homepage": "https://github.com/michelcrypt4d4mus/pdfalyzer",
+ "installs_365d": 826,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "visual"
+ ],
+ "why": "Builds a tree and graph view of PDF internals for forensic poking; a decent way to see a file format's structure.",
+ "brief": {
+  "what_it_is": "A Python command-line tool, with a library API, for analysing the internal structure of a PDF file. It takes a PDF and produces Rich-rendered tree and graph views of its object structure (exportable as HTML, ANSI text, PNG or SVG), font details with character maps, and YARA-based scans of the embedded binary streams for suspicious byte patterns. It also ships three helper commands for combining PDFs, extracting page ranges, and extracting text with OCR on embedded images. It does not render or execute PDF content.",
+  "why_it_exists": "The author wanted a tool that combined visualisation and a usable data model with binary analysis. He found Didier Stevens's pdfid.py and pdf-parser.py strong but lacking in visualisation and in a data model for writing your own code, and found Peepdf buggy and out of date.",
+  "how_it_works": "The Pdfalyzer class wraps PyPDF's internal objects in AnyTree NodeMixin nodes to build a logical tree, with non-tree references drawn as symlink nodes. Font information is pulled together across several objects into FontInfo, and the BinaryScanner class searches embedded streams using YARA rules (via The Yaralyzer). Output is rendered with Rich.",
+  "commands_seen": [
+   {
+    "cmd": "pipx install pdfalyzer",
+    "context": "Preferred install for normal users, which keeps the package's requirements isolated. pip3 or pip also work."
+   },
+   {
+    "cmd": "pipx install pdfalyzer[extract]",
+    "context": "Adds the optional dependencies needed to open encrypted PDFs and to use extract_pdf_text."
+   },
+   {
+    "cmd": "pdfalyze martin_heidegger-being_illmatic.pdf",
+    "context": "Runs the default analyses on a PDF (tree, rich tree, fonts, YARA, and so on; the --streams scan is excluded by default)."
+   },
+   {
+    "cmd": "pdfalyze -h",
+    "context": "Shows the help screen listing the analysis-selection and output options."
+   },
+   {
+    "cmd": "extract_pdf_text martin_heidegger-being_illmatic.pdf",
+    "context": "Optional forced extraction of all text, including text from embedded images via OCR."
+   },
+   {
+    "cmd": "pdfalyze lacan_buys_the_dip.pdf -d -t -r -f -y -c",
+    "context": "Explicit flag set the README says is equivalent to running pdfalyze with no analysis flags, i.e. everything except --streams."
+   },
+   {
+    "cmd": "brew install pdfalyzer",
+    "context": "Homebrew install on macOS, via the formula listed on formulae.brew.sh."
+   },
+   {
+    "cmd": "python -m pdfalyzer",
+    "context": "Troubleshooting fallback for when the pdfalyze command is not found; the README calls it an equivalent, more portable form."
+   },
+   {
+    "cmd": "pdfalyzer_install_pdf_parser",
+    "context": "Downloads Didier Stevens's PDF analysis tools, which ship with Pdfalyzer as a helper script."
+   },
+   {
+    "cmd": "scripts/install_t1utils.sh",
+    "context": "Run from a repo checkout; installs the t1utils Type 1 font suite, including t1disasm."
+   }
+  ],
+  "install_notes": "Installs with pipx (preferred), pip, or Homebrew on macOS. Developers are told to use poetry. Use pipx install pdfalyzer[extract] for text extraction and encrypted PDFs, and pipx install pdfalyzer[img] for PNG export through CairoSVG. Inkscape is the recommended PNG route instead (brew install --cask inkscape). CairoSVG also needs its own native executable, and the README reports glitches and occasional crashes with it. Troubleshooting: if a YARA error appears, install yara-python; if cryptography fails to build, upgrade pip to 22.0 or newer; on Linux, building wheel or cffi may need sudo apt-get install build-essential libssl-dev libffi-dev rustc. Optional steps: run pdfalyzer_install_pdf_parser for Didier Stevens's tools, and scripts/install_t1utils.sh for t1utils. Configuration can be set in a .pdfalyzer file in the current directory or the home directory; .pdfalyzer.example documents the options. No account or hardware requirements were mentioned.",
+  "standout": "It combines a tree-visualisation view of PDF object relationships with YARA scanning and a Python data model, which the author says the existing tools lacked. It also flags things such as /OpenAction, /JavaScript and Type1 fonts in red, and its footnotes explain how the tree relates to the Adobe spec's 'logical structure'. The README is candid, with passages on the author's motives, the limits of the tool, and the rule that a discrepancy with Didier Stevens's output means Pdfalyzer is probably wrong.",
+  "status": "unknown. The README has GitHub, PyPI, last-commit and test-workflow badges, but the rendered text does not show their values, so I could not read a release date or last-commit date. A footnote is dated September 2022 and refers to a 2022 tweet, so the README dates from at least then. The repo has a Homebrew formula and a PyPI package, and the README says the code has been tested on many large PDFs. Nothing in the text says it is abandoned.",
+  "caveats": "The tool deliberately does not render or write PDFs. The README says it has not been extensively tested on edge cases and that some PDFs will fail to parse. Bug reports should attach a zipped PDF, because the author will not look at uncompressed files for security reasons. Safety: running pdfalyze on a malicious file is described as safe because embedded JavaScript and /OpenAction are not executed, but the author recommends dangerzone to sanitise a suspect file before opening it. PNG export depends on Inkscape or CairoSVG and may show rendering glitches. Installation can need native build tools on Linux. The author says the tool sits on several other libraries (PyPDF, AnyTree, Rich, YARA via The Yaralyzer). The README does not state a licence in the parts I read. The brew caveats field is empty.",
+  "quotes": [
+   "A PDF analysis tool for visualizing the inner tree-like data structure of a PDF in spectacularly large and colorful diagrams as well as scanning the binary streams embedded in the PDF for hidden potentially malicious content.",
+   "If you suspect you are dealing with a malcious PDF you can safely run `pdfalyze` on it. Embedded javascript and `/OpenAction` nodes etc. will not be executed.",
+   "If there is a discrepancy between the output of betweeen his tools and this one you should assume his tool is correct and Pdfalyzer is wrong until you conclusively prove otherwise."
+  ],
+  "links": [
+   {
+    "label": "GitHub repo and README (homepage)",
+    "url": "https://github.com/michelcrypt4d4mus/pdfalyzer"
+   },
+   {
+    "label": "Homebrew formula",
+    "url": "https://formulae.brew.sh/formula/pdfalyzer"
+   },
+   {
+    "label": "The Yaralyzer (YARA dependency)",
+    "url": "https://github.com/michelcrypt4d4mus/yaralyzer"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/michelcrypt4d4mus/pdfalyzer (homepage): fetched OK, README returned in full. No further fetches were needed because the README covers install, usage, and the library API."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Its visual tree of PDF object relationships, paired with font and YARA analysis, makes an opaque everyday file format unusually approachable to explore."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "pdfalyzer",
+  "tldr": "Draws a PDF's hidden object tree in colour and scans its embedded streams with YARA, without ever executing the file's content.",
+  "deeper_look": "A PDF is not a page of ink. It is a graph of numbered objects: dictionaries, streams, fonts and cross-references, all pointing at each other. pdfalyzer takes a file and renders that graph as a tree in the terminal, using Rich for the colour. Output can be exported as HTML, ANSI text, SVG or PNG. References that are not part of the tree show up as symlink-style nodes. Risky keys such as /OpenAction, /JavaScript and Type1 fonts are flagged in red.\n\nIt also pulls font information together from several objects, including character maps, and scans the embedded binary streams for suspicious byte patterns using YARA rules through the author's Yaralyzer library. It does not render or execute anything, so the README says it is safe to run on a malicious file. The author still suggests dangerzone for sanitising a suspect file before you open it.\n\nThe author built it because Didier Stevens's pdfid.py and pdf-parser.py are strong but lack visualisation and a data model you can write code against, and Peepdf was buggy and out of date. Under the hood, a Pdfalyzer class wraps PyPDF's objects in AnyTree nodes, so the same structure is available as a Python library. The README is candid: if its output disagrees with Stevens's tools, assume pdfalyzer is wrong.\n\nThree helper commands come along: combine_pdfs, extract_pdf_pages, and extract_pdf_text, which also runs OCR on embedded images.",
+  "install": "brew install pdfalyzer\n# or: pipx install pdfalyzer\n# optional extras for encrypted PDFs and text extraction: pipx install pdfalyzer[extract]",
+  "try_this": [
+   {
+    "cmd": "pdfalyze -h",
+    "what_happens": "Shows the help screen listing the analysis-selection and output options."
+   },
+   {
+    "cmd": "pdfalyze martin_heidegger-being_illmatic.pdf",
+    "what_happens": "Runs the default analyses on a PDF: tree, rich tree, fonts and YARA scan, with the --streams scan left out."
+   },
+   {
+    "cmd": "extract_pdf_text martin_heidegger-being_illmatic.pdf",
+    "what_happens": "Forces extraction of all text, including text from embedded images via OCR."
+   }
+  ],
+  "whats_unique": "It pairs a colourful tree view of PDF object relationships with YARA scanning and a Python data model, a combination the author found missing in older PDF forensics tools.",
+  "caveats": "The author says edge cases are not extensively tested and some PDFs will fail to parse; PNG export relies on Inkscape or CairoSVG and can glitch.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "pdf",
+   "reverse-engineering",
+   "forensics",
+   "yara",
+   "python",
+   "visual"
+  ],
+  "links": [
+   {
+    "label": "GitHub repo and README (homepage)",
+    "url": "https://github.com/michelcrypt4d4mus/pdfalyzer"
+   },
+   {
+    "label": "Homebrew formula",
+    "url": "https://formulae.brew.sh/formula/pdfalyzer"
+   },
+   {
+    "label": "The Yaralyzer (YARA dependency)",
+    "url": "https://github.com/michelcrypt4d4mus/yaralyzer"
+   }
+  ]
+ }
+}

@@ -1,0 +1,59 @@
+{
+ "name": "cxgo",
+ "desc": "Transpiling C to Go",
+ "homepage": "https://gotranspile.dev",
+ "installs_365d": 100,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "quick",
+  "library"
+ ],
+ "why": "Transpiles C to Go, an interesting translation idea that is a close call on whether it is more tool than curiosity.",
+ "brief": {
+  "what_it_is": "CxGo is a command-line source-to-source translator that reads C source code, including its headers, and writes Go code. The README calls it a transpiler. Its input is C files such as main.c, and its output is Go source. The homepage at gotranspile.dev is a small web demo: you paste C code and it shows a translation. The demo footer credits gotranspile/cxgo v0.4.1 and modernc.org/cc v3.41.0. The fetched homepage text shows only the sample input (a small C vec_add/vec_mul struct example), not the Go output.",
+  "why_it_exists": "The README's stated goals are to implement a practical C to Go translator, keep the output program code correct, make the generated code human-readable and as idiomatic as possible, and make it easy to use and customize. It also says C 'must compile' with cxgo, including headers, and that C++ is out of scope for now.",
+  "how_it_works": "cxgo uses modernc.org/cc v3 to preprocess and parse C, so no clang or gcc is needed. A custom type-checker and AST translation layer then produce the Go code. The README says cxgo 'uses a few tricks' to ease the conversion, and it names a config doc (docs/config.md) that covers options such as identsflatten for goto.",
+  "commands_seen": [
+   {
+    "cmd": "go install github.com/gotranspile/cxgo/cmd/cxgo@latest",
+    "context": "Installs the cxgo binary using the Go toolchain (the README's main installation command)."
+   },
+   {
+    "cmd": "cxgo file main.c",
+    "context": "The README's fastest way to try the tool: translates main.c to Go."
+   }
+  ],
+  "install_notes": "Install with the Go toolchain via go install, or download a binary from the latest GitHub release. The README mentions no C compiler requirement, since parsing is done by the pure-Go modernc.org/cc library. Beyond install, the README gives no first-run or configuration steps, and points to examples/README.md and FAQ.md for usage details. I did not read those files. Homebrew is not mentioned in the README.",
+  "standout": "It parses C with a pure-Go library (modernc.org/cc v3) instead of clang or gcc, and it aims for readable, idiomatic Go output, not just code that compiles. The README reports that it has been used on real projects: Potrace, G722, PortableGL, and Physac.",
+  "status": "Experimental, per the README. The README says the project is experimental and should not be used in production. I saw no release date or last-commit date in the fetched pages, so maintenance activity is unknown. The homepage footer cites v0.4.1 as the current version.",
+  "caveats": "The README says the project is experimental and may change program behavior because of unknown bugs. Compiler test results are TCC 62/89 (70%) and GCC 783/1236 (63%). Listed unsupported or partial features include: comments are not preserved; static, auto, bitfields, packed structs, asm, thread-local storage, and label variables are not handled or are incomplete; unions must match C data layout; goto is forbidden by Go, with a workaround; setjmp compiles but panics at runtime; some stdlib functions and types are missing; deep type inference for Go strings and slices is limited; and multiple #ifdef paths for OS or environment are under consideration. The license is MIT.",
+  "quotes": [
+   "The project is **experimental**! Do not rely on it in production and other sensitive environments!",
+   "Implement a practical C to Go translator ([no C++]",
+   "Make the generated code human-readable and as idiomatic as possible.",
+   "The only requirement is: C code **must compile** with `cxgo`, including headers."
+  ],
+  "links": [
+   {
+    "label": "Homepage (web demo)",
+    "url": "https://gotranspile.dev"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/gotranspile/cxgo"
+   },
+   {
+    "label": "Go package reference (pkg.go.dev)",
+    "url": "https://pkg.go.dev/github.com/gotranspile/cxgo"
+   }
+  ],
+  "fetch_log": [
+   "https://gotranspile.dev (worked; returned the demo page with sample C input and a version footer, but no Go output in the text)",
+   "https://github.com/gotranspile/cxgo (worked; returned the README, which was complete enough that I did not follow the examples or FAQ links)"
+  ]
+ }
+}

@@ -1,0 +1,94 @@
+{
+ "name": "verapdf",
+ "desc": "Open-source industry-supported PDF/A validation",
+ "homepage": "https://verapdf.org/home/",
+ "installs_365d": 1784,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "library",
+  "reverse-engineering"
+ ],
+ "why": "PDF/A validation digs into the internal structure of PDF files, a genuinely odd corner, though it is mainly an industry compliance tool.",
+ "brief": {
+  "what_it_is": "veraPDF is an open-source validator that checks PDF files against the PDF/A archival standard (all parts and conformance levels) and the PDF/UA accessibility standard (parts 1 and 2). It takes a PDF as input and produces machine-readable validation reports stating whether the file conforms. The suite also includes a metadata fixer that makes limited repairs, a policy checker that tests PDFs against institutional rules, and a reporter that converts reports into other formats. It ships as a command-line tool (verapdf) and a desktop GUI (verapdf-gui), and the Homebrew formula installs both executables.",
+  "why_it_exists": "The project was built for digital preservationists who need a definitive, permissively licensed checker for PDF/A files going into long-term archives. The homepage describes it as an industry-supported validator, developed by a consortium led by the Open Preservation Foundation and the PDF Association and funded by the EU's PREFORMA project.",
+  "how_it_works": "The Implementation Checker parses and analyzes a PDF, producing a report on the document and its metadata plus a Validation Report on conformance to PDF/A and PDF/UA flavours. The Policy Checker reads a PDF Features Report and compares it against a Policy Profile to produce a Policy Report, and can test qualities unrelated to PDF/A, such as the use of annotations. The Shell coordinates these components and is the layer users reach through the CLI, desktop GUI, or web GUI.",
+  "commands_seen": [
+   {
+    "cmd": "docker run --rm -it -v \"$(pwd):/data\" ghcr.io/verapdf/cli:latest a.pdf",
+    "context": "Runs the latest dev build of the CLI from the GitHub container registry against a.pdf in the current directory."
+   },
+   {
+    "cmd": "docker build -t verapdf .",
+    "context": "Builds a Docker image of the latest veraPDF CLI from the repository's Dockerfile."
+   },
+   {
+    "cmd": "docker run -it -v \"$(pwd):/data\" --name verapdf verapdf a.pdf",
+    "context": "Runs the image built locally against a.pdf."
+   },
+   {
+    "cmd": "docker build --build-arg VERAPDF_VERSION=1.22 --build-arg VERAPDF_MINOR_VERSION=3 -t verapdf .",
+    "context": "Builds an image pinned to a specific release, here 1.22.3."
+   },
+   {
+    "cmd": "wget http://downloads.verapdf.org/rel/verapdf-installer.zip",
+    "context": "Linux command-line download of the release installer zip."
+   },
+   {
+    "cmd": "./verapdf-install",
+    "context": "Runs the Linux/macOS installer script after unzipping and changing into the verapdf directory."
+   },
+   {
+    "cmd": "java -jar <path-to-installer-jar>/verapdf-izpack-installer-${project.version}.jar",
+    "context": "Runs the installer jar directly on any platform."
+   },
+   {
+    "cmd": "git clone https://github.com/veraPDF/veraPDF-apps",
+    "context": "Clones the source repository to build from source."
+   },
+   {
+    "cmd": "mvn clean install",
+    "context": "Builds the project from source with Maven."
+   },
+   {
+    "cmd": "java -jar gui/target/gui-${project.version}.jar",
+    "context": "Launches the GUI from the built jar to confirm the build worked."
+   }
+  ],
+  "install_notes": "The GUI installer needs Java 8, 11, 17 or 21 already installed. On Windows run verapdf-install.bat; on Linux and macOS run the verapdf-install shell script. Building from source needs Java 11, 17, 21 or 25 plus Maven 3+; Git is recommended. The Docker route builds a slim JRE into the image and downloads the installer rather than compiling. The JVM can be tuned through JAVA_OPTS in the startup script. Nothing beyond the Java runtime is needed for the CLI or GUI.",
+  "standout": "It covers PDF/UA accessibility validation alongside PDF/A, and the policy checker can enforce arbitrary institutional rules about PDF features, not just archival conformance. Most validators stop at a pass/fail verdict, while this one exposes a full structural features report.",
+  "status": "maintained. The README shows a Jenkins build badge for a 1.31 job, says development snapshots are released often, more than once a day, and the Docker default points at production 1.30.3. I did not see a release date or last-commit date, so I cannot confirm the exact recency.",
+  "caveats": "The homepage calls it permissively licensed, but the code is dual-licensed under GPLv3+ and MPLv2+, both copyleft, so the wording is loose. Development builds carry no guarantees. The Docker build pins versions through build arguments, so the default image may lag the latest release. The GUI installer depends on a preinstalled Java version that is not the newest, and the source build uses a different Java range. The homepage text is sparse on commands, and its own wording describes it as a compliance tool for the industry rather than a general-purpose PDF utility.",
+  "quotes": [
+   "Designed to meet the needs of digital preservationists, and supported by leading members of the PDF software developer community, veraPDF is a purpose-built, open source, permissively licensed file-format validator covering all PDF/A parts and conformance levels, as well as PDF/UA (parts 1 and 2) Machine checks.",
+   "Note that the Policy Checker can be used to check for almost any quality in a PDF; for example, the use of annotations, irrespective of PDF/A.",
+   "Command line and GUI industry supported PDF/A and PDF/UA Validation"
+  ],
+  "links": [
+   {
+    "label": "veraPDF homepage",
+    "url": "https://verapdf.org/home/"
+   },
+   {
+    "label": "veraPDF documentation site",
+    "url": "https://docs.verapdf.org/"
+   },
+   {
+    "label": "GitHub repository (veraPDF-apps)",
+    "url": "https://github.com/veraPDF/veraPDF-apps"
+   },
+   {
+    "label": "GUI manual (PDF)",
+    "url": "https://github.com/veraPDF/veraPDF-apps/raw/integration/veraPDFPDFAConformanceCheckerGUI.pdf"
+   }
+  ],
+  "fetch_log": [
+   "https://verapdf.org/home/ \u2014 worked; homepage text, no commands, no release dates",
+   "https://github.com/veraPDF/veraPDF-apps \u2014 worked; README returned, linked to docs.verapdf.org but I did not follow it"
+  ]
+ }
+}

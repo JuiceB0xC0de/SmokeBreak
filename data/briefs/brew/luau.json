@@ -1,0 +1,96 @@
+{
+ "name": "luau",
+ "desc": "Fast, safe, gradually typed embeddable scripting language derived from Lua",
+ "homepage": "https://luau.org",
+ "installs_365d": 3217,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "language",
+  "library"
+ ],
+ "why": "A sandboxed, gradually typed Lua derivative from Roblox, interesting as an embeddable language with a distinct design lineage.",
+ "brief": {
+  "what_it_is": "Luau is a small, fast, embeddable scripting language derived from Lua, with an optional gradual type system and a type inference engine. Its README says it is backwards compatible with Lua 5.1 and largely reimplemented from scratch, with a heavily modified 5.1 runtime and a rewritten interpreter. It takes Luau source, compiles it to bytecode, and runs it in a VM, or type-checks and lints it with luau-analyze. The project also ships luau, a sandboxed REPL that runs files. It was open-sourced by Roblox, which uses it for game scripting and parts of its own applications and editor.",
+  "why_it_exists": "Roblox open-sourced Luau to foster collaboration in the Roblox community and to let other companies and communities benefit from its language and runtime innovation. The homepage frames it as aiming for performance, safety, accessibility, and embeddability, with a sandbox that lets embedders run untrusted code.",
+  "how_it_works": "Source is compiled to bytecode by a separate compiler, and the VM loads that bytecode, so a deployed VM does not need the compiler. The embedder compiles source with luau_compile and loads it with luau_load, and the README says the sandbox limits the exposed API surface by default. The type checker and linter (luau-analyze) read types from annotations and from .luaurc or --! comments, and the homepage says its inference aims to rule out errors and provide autocomplete with minimal annotations.",
+  "commands_seen": [
+   {
+    "cmd": "mkdir cmake && cd cmake",
+    "context": "CMake build step: create and enter a build directory."
+   },
+   {
+    "cmd": "cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo",
+    "context": "Configure the CMake build with release-with-debug-info settings."
+   },
+   {
+    "cmd": "cmake --build . --target Luau.Repl.CLI --config RelWithDebInfo",
+    "context": "Build the luau command-line REPL target."
+   },
+   {
+    "cmd": "cmake --build . --target Luau.Analyze.CLI --config RelWithDebInfo",
+    "context": "Build the luau-analyze type checker and linter target."
+   },
+   {
+    "cmd": "make config=release luau luau-analyze",
+    "context": "Alternative build on Linux and macOS using make to produce both CLI binaries."
+   },
+   {
+    "cmd": "make test",
+    "context": "Makefile build target that runs the unit and conformance test suites together."
+   },
+   {
+    "cmd": "brew install luau",
+    "context": "Homebrew install on macOS, listed among packaged distributions that the Luau team does not maintain."
+   },
+   {
+    "cmd": "pacman -Syu luau",
+    "context": "Arch Linux install from the extra repository, listed as a packaged distribution."
+   },
+   {
+    "cmd": "apk add luau",
+    "context": "Alpine Linux install from the community repository, listed as a packaged distribution."
+   },
+   {
+    "cmd": "emerge dev-lang/luau",
+    "context": "Gentoo install of the officially packaged Gentoo ebuild; the README notes you may need --autounmask=y to unmask it."
+   }
+  ],
+  "install_notes": "Precompiled binaries come from the GitHub releases page. The luau and luau-analyze binaries must be put on PATH or copied to a directory such as /usr/local/bin on Linux and macOS. Packaged versions exist for Homebrew, Arch, Alpine, and Gentoo, but the README says the Luau team does not maintain these. After install, the README says to validate with the test case at luau.org/getting-started. Building from source needs CMake (or make on Linux and macOS) and a C++ compiler: the runtime needs C++11, and the compiler and analysis need C++17, with MSVC 2017 or later, gcc-7 or clang-7 or later. The library components have no external dependencies beyond the STL and CRT. The REPL uses isocline and the tests use doctest. Embedders should call luaL_sandbox on the global state and luaL_sandboxthread for each script thread to get the performance benefits of the safeenv feature. The C API differs from Lua 5.x: compile source separately, and use lua_newuserdatadtor instead of __gc.",
+  "standout": "It takes Lua 5.1 compatibility and a familiar embedding API and adds gradual typing with aggressive type inference, plus sandboxing designed in from the start for running untrusted code. The README also describes a tooling suite that goes beyond the language, including an analyzer, linter, and a community language server (luau-lsp).",
+  "status": "Maintained. The GitHub releases page showed a steady weekly cadence: 0.740 on 25 Sep, 0.741 on 2 Oct, 0.742 on 10 Oct, and 0.743 on 16 Oct marked Latest, with the year not shown in the fetched text. The repository has CI and codecov badges. The releases page fetch was truncated, so the list of releases below 0.740 was not seen.",
+  "caveats": "Several features are still experimental or flag-gated in the release notes: exact tables by default (RFC 11), if-local expressions, and user-defined classes that need DebugLuauUserDefinedClasses flags. The README says Luau is not a full superset of later Lua versions and does not always follow Lua's design decisions. Lua __gc is not supported, so embedders must use lua_newuserdatadtor. The REPL is sandboxed and cannot access the filesystem except through require. Packaged distributions are not maintained by the Luau team. The build needs a C++17 toolchain. The README documents the Roblox origin, but the homepage does not mention a standalone package manager, which it lists as a planned tool. No license caveat applies: the implementation is MIT-licensed, though the README asks users who embed it to include attribution in user-facing documentation.",
+  "quotes": [
+   "Luau (lowercase u, /\u02c8lu.a\u028a/) is a fast, small, safe, gradually typed embeddable scripting language derived from Lua.",
+   "Luau is an embeddable programming language, but it also comes with two command-line tools by default, `luau` and `luau-analyze`.",
+   "Note that REPL runs in a sandboxed environment and as such doesn't have access to the underlying file system except for ability to `require` modules.",
+   "Luau is used by Roblox game developers to write game code, and by Roblox engineers to implement large parts of the user-facing application code as well as portions of the editor (Roblox Studio) as plugins."
+  ],
+  "links": [
+   {
+    "label": "Luau homepage and docs",
+    "url": "https://luau.org"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/luau-lang/luau"
+   },
+   {
+    "label": "RFCs repository",
+    "url": "https://github.com/luau-lang/rfcs"
+   },
+   {
+    "label": "luau-lsp language server (community)",
+    "url": "https://github.com/JohnnyMorganz/luau-lsp"
+   }
+  ],
+  "fetch_log": [
+   "https://luau.org: worked. Marketing homepage with feature summaries; no install or command details.",
+   "https://github.com/luau-lang/luau: worked. README returned with usage, installation, build, testing, dependencies, and license.",
+   "https://github.com/luau-lang/luau/releases: loaded but truncated at 40000 characters. Used only for release dates and status; latest release seen was 0.743."
+  ]
+ }
+}

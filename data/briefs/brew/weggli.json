@@ -1,0 +1,89 @@
+{
+ "name": "weggli",
+ "desc": "Fast and robust semantic search tool for C and C++ codebases",
+ "homepage": "https://github.com/weggli-rs/weggli",
+ "installs_365d": 34,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "library",
+  "reverse-engineering"
+ ],
+ "why": "A semantic code search that matches C patterns by structure, a neat way to query code like syntax trees.",
+ "brief": {
+  "what_it_is": "weggli is a command-line search tool for C and C++ source code. You give it a query written in a C-like pattern language, plus a file or directory, and it reports the places where code matches that structure. It parses the source into abstract syntax trees and matches the query against them, so it finds code by shape rather than by plain text. Output shows matching snippets with configurable lines before and after each match.",
+  "why_it_exists": "The README says it is designed to help security researchers identify interesting functionality in large codebases. It is inspired by Semgrep, Coccinelle, joern and CodeQL but makes different design choices, mainly first-class C++ support, minimal setup, interactive speed, and greedy matching.",
+  "how_it_works": "weggli is built on the tree-sitter parsing library and its C and C++ grammars. Queries are parsed with an extended version of the grammar, and the resulting AST is transformed into a set of tree-sitter queries (in builder.rs). Matching is done by query.rs, a small wrapper around tree-sitter's query engine that adds weggli-specific features.",
+  "commands_seen": [
+   {
+    "cmd": "weggli '{\n    _ $buf[_];\n    memcpy($buf,_,_);\n}' ./target/src",
+    "context": "Finds calls to memcpy that write into a stack buffer (the README's first example)."
+   },
+   {
+    "cmd": "weggli '{\n   strict: foo(_);\n}' ./target/src",
+    "context": "Finds calls to foo whose return value is not checked, using strict matching."
+   },
+   {
+    "cmd": "weggli '{\n    $ret = snprintf($b,_,_);\n    $b[$ret] = _;\n}' ./target/src",
+    "context": "Finds potentially vulnerable snprintf() users, where the return value is used to index the buffer."
+   },
+   {
+    "cmd": "weggli --cpp '{\n$x = _.GetWeakPtr(); \nDCHECK($x); \n$x->_;}' ./target/src",
+    "context": "C++ example looking for potentially insecure WeakPtr usage, run with --cpp."
+   },
+   {
+    "cmd": "weggli -X 'DCHECK(_!=_.end());' ./target/src",
+    "context": "C++ example finding debug-only iterator validation, using the -X short flag for C++ mode."
+   },
+   {
+    "cmd": "weggli -R func=decode '_ $func(_) {_;}'",
+    "context": "Finds functions with 'decode' in their name, using --regex to constrain the $func variable."
+   },
+   {
+    "cmd": "weggli -R 'func=^mem' '$func(_);'",
+    "context": "From the --regex help: finds calls to functions whose names start with 'mem'."
+   },
+   {
+    "cmd": "cargo install weggli",
+    "context": "The primary install method given in the README."
+   },
+   {
+    "cmd": "git clone https://github.com/googleprojectzero/weggli.git\ncd weggli; cargo build --release\n./target/release/weggli",
+    "context": "Build-from-source steps in the README. Note the clone URL points to the googleprojectzero org, not weggli-rs."
+   },
+   {
+    "cmd": "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh",
+    "context": "Optional step in the build section to install Rust via rustup."
+   }
+  ],
+  "install_notes": "Install with cargo install weggli, which needs a Rust toolchain. Build from source with cargo build --release after cloning. Rust can be installed with rustup, shown as an optional step. No accounts, hardware, or extra runtimes are mentioned. The README does not describe configuration or first-run steps. The brew formula name and executable are both weggli.",
+  "standout": "Queries look like C code with a few extras: _ is a wildcard for any AST node, $var binds identifiers, _(..) matches subexpressions, and not: and strict: modify matching. Because it is greedy, $x = 10; matches both assignments and declarations, which makes query writing easier. It works on incomplete code and does not need the project to build.",
+  "status": "unknown. The README has no release date, version, or changelog. I did not check the commit history or releases page because I fetched only the README. The README says weggli is designed for interactive use and is maintained as a Google-linked project, but that is not evidence of current activity.",
+  "caveats": "The README says this is not an official Google project and is not supported by Google, with no warranties. Its build section clones googleprojectzero/weggli while the homepage is weggli-rs/weggli, so the org reference may be stale. Greedy matching increases false positives by design. Query language extras are documented only through the help text. Licensed under Apache 2.0. The README does not mention Windows or other platforms.",
+  "quotes": [
+   "weggli performs pattern matching on Abstract Syntax Trees based on user provided queries. Its query language resembles C and C++ code, making it easy to turn interesting code patterns into queries.",
+   "Minimal setup: weggli should work out-of-the box against most software you will encounter. weggli does not require the ability to build the software and can work with incomplete sources or missing dependencies.",
+   "Greedy: weggli's pattern matching is designed to find as many (useful) matches as possible for a specific query. While this increases the risk of false positives it simplifies query creation."
+  ],
+  "links": [
+   {
+    "label": "GitHub homepage and README",
+    "url": "https://github.com/weggli-rs/weggli"
+   },
+   {
+    "label": "CONTRIBUTING.md",
+    "url": "https://github.com/weggli-rs/weggli/blob/main/CONTRIBUTING.md"
+   },
+   {
+    "label": "tree-sitter",
+    "url": "https://tree-sitter.github.io/tree-sitter/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/weggli-rs/weggli (homepage, GitHub README): worked, returned full README. Did not follow further links, since the README covered usage, examples, and implementation."
+  ]
+ }
+}

@@ -1,0 +1,140 @@
+{
+ "name": "norm",
+ "desc": "NACK-Oriented Reliable Multicast",
+ "homepage": "https://www.nrl.navy.mil/itd/ncs/products/norm",
+ "installs_365d": 9,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol",
+  "library"
+ ],
+ "why": "NACK-oriented reliable multicast is an obscure transport protocol, and this is a real implementation to explore.",
+ "brief": {
+  "what_it_is": "NORM (NACK-Oriented Reliable Multicast) is a reliable multicast transport protocol from the US Naval Research Laboratory, shipped as a source release. The repo builds libnorm, a static C library with a NORM API (normApi.h) for Unix and a Norm.lib for Win32, plus a command-line demo app called norm, a simple normTest playground, and API examples. The norm demo is for file transfers, and for streaming on Unix. The README also describes a NORP proxy in a norp directory, and two NRL apps built on NORM: a GUI multicast chat with file and image sharing, and a tunnel for real-time UDP streams such as RTP. The README does not spell out the input and output formats in detail.",
+  "why_it_exists": "The README does not state a problem statement. It presents NORM as a reliable multicast protocol and the NRL source release that goes with it. The name says the design is NACK-oriented, meaning receivers ask for missing data rather than the sender acknowledging every packet, but the README does not expand on the reasoning.",
+  "how_it_works": "",
+  "commands_seen": [
+   {
+    "cmd": "git clone --recurse-submodules https://github.com/USNavalResearchLaboratory/norm.git",
+    "context": "Clones the repo and pulls in the protolib git submodule, which NORM depends on for building."
+   },
+   {
+    "cmd": "git submodule update --init",
+    "context": "Alternative to --recurse-submodules: run after a plain git clone to fetch the protolib submodule."
+   },
+   {
+    "cmd": "cd norm/protolib",
+    "context": "Moves into the protolib submodule so it can be treated as its own repository."
+   },
+   {
+    "cmd": "git checkout master",
+    "context": "Run inside norm/protolib to track protolib's master branch so you can git pull there."
+   },
+   {
+    "cmd": "docker build --build-arg platformName=centos --build-arg platformVersion=7 --build-arg=\"--build-java\" -t norm:centos-1.5.9 .",
+    "context": "Example Docker build of a CentOS 7 image of NORM. The README's example passes --build-java through the build argument."
+   },
+   {
+    "cmd": "docker run -it --rm --name norm-send <norm:image> normDataSend",
+    "context": "Starts the data send example in a container. Run in one terminal, with <norm:image> as a placeholder for the built image."
+   },
+   {
+    "cmd": "docker run -it --rm --name norm-recv <norm:image> normDataRecv",
+    "context": "Starts the data receive example in a second container, to receive what normDataSend sends."
+   }
+  ],
+  "install_notes": "Build from source with ./waf, which the README references through its Docker build args (the configure and build args are piped to ./waf configure and ./waf). The build depends on the protolib library, a separate NRL repo at github.com/USNavalResearchLaboratory/protolib, which is a git submodule, so the clone needs --recurse-submodules or a later git submodule update --init. Docker is an option: the Dockerfile defaults to the ubuntu base image, latest tag, and version v1.5.9. No accounts or hardware are mentioned. The README gives no more first-run steps.",
+  "standout": "It is an NRL-built transport protocol with a real C API, a demo CLI, and a Docker path, and the README mentions a chat app that needs no server, like IRC but for multicast. The NACK-oriented name points to a different design from the usual acknowledgment-based reliable transports.",
+  "status": "unknown. The README has no release date or changelog. It refers to VERSION.TXT for history and uses v1.5.9 as the Docker default tag, which is the only version evidence I saw. I could not read the NRL homepage (403), so I have no other signal. The GitHub repo itself loaded, but I did not see commit dates.",
+  "caveats": "The NRL homepage returned HTTP 403, so this brief relies on the GitHub README, which I reached by a guessed URL, not by a link from the homepage. The license is NRL's own authorization paragraph, not a standard open-source license name. It asks that source redistributions keep the paragraph, that binaries carry it in their docs, and that NRL and government names not be used for endorsement. The README does not name an SPDX license. The build needs the protolib submodule and a waf toolchain. The demo's streaming mode is described as Unix-only. Windows gets the library and demo but no streaming mention. The API docs are PDF and HTML guides in the repo, and the README says more tutorial material will come later.",
+  "quotes": [
+   "This is the NRL NORM source code repository.",
+   "A reliable multicast \"chat\" application (users can share files and images, too) with a GUI.  Like IRC with no server needed.",
+   "This demo application is useful for file transfers (and streaming on Unix)"
+  ],
+  "links": [
+   {
+    "label": "NRL NORM homepage (returned 403)",
+    "url": "https://www.nrl.navy.mil/itd/ncs/products/norm"
+   },
+   {
+    "label": "GitHub source repository",
+    "url": "https://github.com/USNavalResearchLaboratory/norm"
+   },
+   {
+    "label": "GitHub Discussions",
+    "url": "https://github.com/USNavalResearchLaboratory/norm/discussions"
+   },
+   {
+    "label": "NORP proxy website",
+    "url": "https://www.nrl.navy.mil/itd/ncs/products/norp"
+   }
+  ],
+  "fetch_log": [
+   "https://www.nrl.navy.mil/itd/ncs/products/norm: failed, HTTP 403. Homepage unreachable.",
+   "https://github.com/USNavalResearchLaboratory/norm: worked. Guessed URL, not linked from the homepage. Returned the README, which was substantive. Did not follow further links, since the README covered the brief."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A little-known NRL transport implementation makes reliable one-to-many delivery work through receiver NACKs, an unusual protocol design worth exploring."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "NORM",
+  "tldr": "A reliable multicast transport protocol from the US Naval Research Laboratory, where receivers ask for what they missed instead of acknowledging everything, with a C library and demo apps.",
+  "deeper_look": "NORM stands for NACK-Oriented Reliable Multicast. It is a transport protocol from the US Naval Research Laboratory, and the repository is its source release. The build produces libnorm, a static C library with an API in `normApi.h`, along with a command-line demo called `norm`, a small `normTest` playground, and API examples such as `normDataSend` and `normDataRecv`.\n\nThe name carries the central idea. In a typical reliable transport, the receiver acknowledges data and the sender tracks every receiver. With multicast, one sender may face a very large group, and per-packet acknowledgments from all of them would not work well. A NACK-oriented design flips it: receivers speak up only when they notice something missing. The README does not walk through this reasoning, so the details of how NORM does it are something to find in the code and the bundled guides.\n\nThe README also mentions two NRL applications built on NORM. One is a GUI multicast chat that shares files and images, described as \"Like IRC with no server needed.\" The other is a tunnel for real-time UDP streams such as RTP. A NORP proxy lives in a `norp` directory. The demo app is described as \"useful for file transfers (and streaming on Unix).\"\n\nThe brief does not cover first-run usage in detail, so expect to read the API guides in the repo (PDF and HTML) and the example sources to see how it behaves.",
+  "install": "No `brew install` line is confirmed by the brief, though a Homebrew formula named norm exists and installs no executables. To build from source: `git clone --recurse-submodules https://github.com/USNavalResearchLaboratory/norm.git`, then build with `./waf configure` and `./waf`. The protolib dependency is a git submodule; if you cloned without it, run `git submodule update --init`. Docker is an alternative, since the repo includes a Dockerfile. No accounts or hardware are mentioned.",
+  "try_this": [
+   {
+    "cmd": "git clone --recurse-submodules https://github.com/USNavalResearchLaboratory/norm.git",
+    "what_happens": "Fetches the NORM source along with the protolib submodule it needs to build."
+   },
+   {
+    "cmd": "docker run -it --rm --name norm-send <norm:image> normDataSend",
+    "what_happens": "Starts the data-send example in a container built from the repo's Dockerfile, with <norm:image> standing in for your built image."
+   },
+   {
+    "cmd": "docker run -it --rm --name norm-recv <norm:image> normDataRecv",
+    "what_happens": "Starts the matching receiver in a second terminal to pick up what normDataSend sends."
+   }
+  ],
+  "whats_unique": "It is a reliable multicast transport with a real C API and working demos, built on receivers requesting repairs rather than senders collecting acknowledgments. The server-free multicast chat app is an unusual showcase.",
+  "caveats": "Maintenance status is unclear from the brief (the Docker default tag is v1.5.9), the NRL homepage returned 403, the license is NRL's own paragraph rather than a standard one, and the README says more tutorial material is still to come.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "network",
+   "protocol",
+   "multicast",
+   "library",
+   "c"
+  ],
+  "links": [
+   {
+    "label": "NRL NORM homepage (returned 403 when checked)",
+    "url": "https://www.nrl.navy.mil/itd/ncs/products/norm"
+   },
+   {
+    "label": "GitHub source repository",
+    "url": "https://github.com/USNavalResearchLaboratory/norm"
+   },
+   {
+    "label": "GitHub Discussions",
+    "url": "https://github.com/USNavalResearchLaboratory/norm/discussions"
+   },
+   {
+    "label": "NORP proxy website",
+    "url": "https://www.nrl.navy.mil/itd/ncs/products/norp"
+   }
+  ]
+ }
+}

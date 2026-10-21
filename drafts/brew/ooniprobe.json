@@ -1,0 +1,125 @@
+{
+ "name": "ooniprobe",
+ "desc": "Network interference detection tool",
+ "homepage": "https://ooni.org/",
+ "installs_365d": 433,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "science",
+  "afternoon"
+ ],
+ "why": "Measures internet censorship and interference from your own connection, a real-world door into how blocking and DNS tampering actually work.",
+ "brief": {
+  "what_it_is": "OONI Probe is a free, open-source client that runs network measurement tests from your own internet connection. It tests whether websites and apps are blocked and measures the speed and performance of your network. Each run produces measurements that go to the Open Observatory of Network Interference, which publishes them as a public dataset covering more than 200 countries since 2012. The command-line client is `ooniprobe`, and the project also ships desktop, Android and iOS apps. The repository README says the CLI runs tests automatically every day once installed.",
+  "why_it_exists": "The Open Observatory of Network Interference describes itself as a non-profit free software project that aims to empower decentralized efforts in documenting Internet censorship around the world. The homepage frames it as a global community measuring Internet censorship since 2012.",
+  "how_it_works": "The README points to a measurement engine written in Go, a test helper server (oohelperd), and an experimental client (miniooni) alongside ooniprobe. The CLI also links a Rust static library (libuniffi_ooniprobe.a) from ooniprobe-rs, which the README says is used for user authentication. The install page says that once ooniprobe is installed it runs tests automatically every day. I did not find a detailed explanation of the individual test mechanisms in the pages I read; the docs site was rate-limited.",
+  "commands_seen": [
+   {
+    "cmd": "./script/go.bash build -v -ldflags '-s -w' ./cmd/ooniprobe",
+    "context": "Builds a stripped ooniprobe binary in the repository's top-level directory, using the Go version pinned in GOVERSION."
+   },
+   {
+    "cmd": "make USERAUTH_FROM_SOURCE=1 CLI/ooniprobe",
+    "context": "Builds ooniprobe with the Rust user-auth static library compiled from source, the way the project does when publishing, instead of downloading the prebuilt bundle."
+   },
+   {
+    "cmd": "sudo apt install golang build-essential ca-certificates git",
+    "context": "Installs the compilers, git and root CAs on Debian 12 or Ubuntu 22.04 for developing the repository."
+   },
+   {
+    "cmd": "sudo apt-get install ooniprobe-cli",
+    "context": "Installs the packaged OONI Probe CLI on Debian or Ubuntu after adding the OONI apt repository and its GPG key."
+   },
+   {
+    "cmd": "brew install ooniprobe",
+    "context": "Installs ooniprobe via Homebrew on macOS, per the official CLI install page."
+   },
+   {
+    "cmd": "ooniprobe autorun start",
+    "context": "Turns on the automatic daily run after installing via Homebrew, per the official install page."
+   }
+  ],
+  "install_notes": "Prebuilt binaries are available for Windows, macOS and Debian/Ubuntu, with instructions at ooni.org/install/cli. On Debian/Ubuntu you add the OONI GPG key and an apt source, using HTTP (recommended) or Tor as a fallback if the HTTP repository is unreachable; the Tor route requires running the tor daemon. On macOS, install Homebrew and then run brew install ooniprobe, followed by ooniprobe autorun start for daily runs. Building from source needs Go (the README pins a version in GOVERSION and recommends ./script/go.bash to fetch it), a C compiler such as GCC or Clang, and on Windows either WSL or the mingw-w64 cross-compiler. The first Homebrew step is installing Homebrew itself.",
+  "standout": "It is a real, long-running measurement network that lets an ordinary person see what is blocked on their own connection, and the results feed a public open dataset that anyone can explore. Its install page also sets up daily automatic runs, so it works as a background sensor rather than a one-off tool.",
+  "status": "Maintained. The GitHub repo (ooni/probe-cli) shows about 1,960 commits, 297 stars and 65 forks, with the license GPL-3.0-or-later. The homepage lists research posts dated as recently as 28 Jul 2026 and blog posts from 2026, including a launch of a new desktop app on 26 Jun 2026. I could not see a last-commit date or latest release tag from the pages fetched.",
+  "caveats": "The homepage is a marketing and research page, not documentation. The docs site (docs.ooni.org) returned HTTP 429 (rate limited), so I could not read the user guide. The Homebrew formula's caveats field is empty. Building from source is involved: it needs a pinned Go toolchain and a C compiler, a Rust static library that is glibc-based and cannot link into musl or cross-compiled builds without building from source, and mingw-w64 for Windows targets. The Tor apt route depends on running a tor daemon. Licence is GPL-3.0-or-later. I did not verify DNS-tampering tests specifically; the homepage describes testing blocking of websites and apps and network speed and performance.",
+  "quotes": [
+   "Global community measuring Internet censorship since 2012",
+   "The Open Observatory of Network Interference (OONI) is a non-profit free software project that aims to empower decentralized efforts in documenting Internet censorship around the world.",
+   "Once installed, OONI Probe runs tests automatically every day."
+  ],
+  "links": [
+   {
+    "label": "OONI homepage",
+    "url": "https://ooni.org/"
+   },
+   {
+    "label": "CLI install page",
+    "url": "https://ooni.org/install/cli"
+   },
+   {
+    "label": "GitHub repo: ooni/probe-cli",
+    "url": "https://github.com/ooni/probe-cli"
+   }
+  ],
+  "fetch_log": [
+   "https://ooni.org/ : worked (marketing homepage, no install commands)",
+   "https://github.com/ooni/probe-cli : worked (README returned)",
+   "https://docs.ooni.org/ : failed, HTTP 429 rate limited",
+   "https://ooni.org/install/cli : worked (Debian/Ubuntu and Homebrew install steps)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "OONI Probe turns your connection into a sensor for internet censorship, contributing real measurements to a long-running public dataset."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "ooniprobe",
+  "tldr": "A command-line client that tests what your own internet connection blocks or interferes with, and contributes the results to a public censorship dataset running since 2012.",
+  "deeper_look": "ooniprobe runs network measurement tests from wherever you are. It checks whether websites and apps are reachable, and it measures the speed and performance of your connection. Each run produces measurements that are sent to the Open Observatory of Network Interference (OONI), which publishes them as an open dataset covering more than 200 countries.\n\nThe project describes itself as \"a non-profit free software project that aims to empower decentralized efforts in documenting Internet censorship around the world.\" The idea is that censorship is hard to prove from the outside. Many people each measure their own connection, and the combined data shows what is blocked, where, and when.\n\nUnder the hood, the README describes a measurement engine written in Go, a test helper server called oohelperd, and an experimental client called miniooni. The CLI also links a Rust library used for user authentication. The brief did not cover the individual test mechanisms in detail, so the docs are the place to learn what each test does.\n\nThe CLI is one of several clients. The project also ships desktop, Android and iOS apps. Per the install page, once installed it runs tests automatically every day, so it can work as a quiet background sensor on your machine.",
+  "install": "brew install ooniprobe\n# the formula depends on tor, which brew installs for you\n# optional: turn on the daily automatic run\nooniprobe autorun start",
+  "try_this": [
+   {
+    "cmd": "ooniprobe --help",
+    "what_happens": "Lists the available subcommands and options for the client."
+   },
+   {
+    "cmd": "ooniprobe autorun start",
+    "what_happens": "Turns on the automatic daily test run after a Homebrew install."
+   }
+  ],
+  "whats_unique": "It is a real, long-running measurement network where an ordinary person can see what is blocked on their own connection. The results feed an open dataset anyone can explore.",
+  "caveats": "Measurements are published to a public dataset, so read the project's data policy before running tests, and note that the docs site was rate-limited when the brief was written, so test details are unverified.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "network",
+   "censorship",
+   "measurement",
+   "open-data",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "OONI homepage",
+    "url": "https://ooni.org/"
+   },
+   {
+    "label": "CLI install page",
+    "url": "https://ooni.org/install/cli"
+   },
+   {
+    "label": "GitHub repo: ooni/probe-cli",
+    "url": "https://github.com/ooni/probe-cli"
+   }
+  ]
+ }
+}

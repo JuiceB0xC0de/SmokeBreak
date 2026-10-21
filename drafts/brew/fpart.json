@@ -1,0 +1,152 @@
+{
+ "name": "fpart",
+ "desc": "Sorts file trees and packs them into bags",
+ "homepage": "https://www.fpart.org/",
+ "installs_365d": 212,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "tui"
+ ],
+ "why": "Packs file trees into equal-sized bags using bin-packing, a neat algorithmic trick for splitting backups onto media.",
+ "brief": {
+  "what_it_is": "Fpart is a UNIX command-line tool that crawls directories and file trees and splits them into a set number of partitions, aiming for similar sizes and file counts. It takes paths (or piped input such as find or du output) and writes partitions as file lists to stdout or to numbered output files, which other programs can consume. It never copies, splits, or modifies the data itself. It is written in C under a BSD license. A companion tool, fpsync, uses fpart's lists to run rsync, cpio, or tar jobs in parallel; the README says fpsync is provided in the tools/ directory as a demonstration.",
+  "why_it_exists": "The README frames fpart as a way to sort file trees and pack them into bags called partitions, so large trees can be handled in pieces. The changelog credits Jean-Baptiste Denis with suggesting the idea.",
+  "how_it_works": "Fpart uses a bin-packing algorithm to spread files or directories across partitions, with options for a number of partitions, a file count per partition, or a size limit per partition. In live mode (-L) it emits each partition as soon as it is complete, and hooks (-w before, -W after) run a shell command with variables such as FPART_PARTFILENAME, so a transfer can start while the crawl is still running. The README is explicit that fpart only reads the filesystem and never splits files, so a directory with one huge file cannot be balanced.",
+  "commands_seen": [
+   {
+    "cmd": "$ git clone https://github.com/martymac/fpart.git",
+    "context": "Source install: fetch the fpart source from GitHub."
+   },
+   {
+    "cmd": "$ autoreconf -i",
+    "context": "Source install: run only if there is no configure script in the directory; needs GNU autotools."
+   },
+   {
+    "cmd": "$ ./configure",
+    "context": "Source install: configure the build."
+   },
+   {
+    "cmd": "$ make",
+    "context": "Source install: build fpart."
+   },
+   {
+    "cmd": "# make install",
+    "context": "Source install: install fpart, run as root."
+   },
+   {
+    "cmd": "$ fpart -n 3 -o var-parts /var",
+    "context": "Example: produce 3 partitions of /var, written to files var-parts.1 to var-parts.3, with roughly equal size and file count."
+   },
+   {
+    "cmd": "$ fpart -s 4617089843 -o music-parts /path/to/my/music",
+    "context": "Example: produce partitions of about 4.3 GB each, sized for burning music to DVD."
+   },
+   {
+    "cmd": "$ find /usr ! -type d | fpart -f 10000 -i - /home | grep '^1 '",
+    "context": "Example: partitions of 10000 files each, reading a file list from stdin plus /home, showing only partition 1."
+   },
+   {
+    "cmd": "$ du * | fpart -n 2 -a",
+    "context": "Example: build two partitions from du output without re-crawling the filesystem (-a takes arbitrary values)."
+   },
+   {
+    "cmd": "$ fpart -L -f 1 -o /tmp/part.out -W 'echo == ${FPART_PARTFILENAME} == ; cat ${FPART_PARTFILENAME}' foo/",
+    "context": "Live-mode demo: one file per partition, with a post-partition hook that prints each partition's file name and contents."
+   }
+  ],
+  "install_notes": "Packages exist for FreeBSD, Debian, Ubuntu, CentOS/Fedora, NixOS, Homebrew on macOS, and Spack. For source builds you need git and GNU autotools (autoreconf -i is needed only when there is no configure script), then ./configure, make, and make install as root. The README says fpsync depends mostly on shell and common tools. Per the changelog, fpsync's -m pax option adds a pax dependency (1.7.0), -a adds tar, and -M adds mail(1). No accounts, licence keys, or first-run configuration are mentioned.",
+  "standout": "Fpart reads only and never rewrites data, and its live mode with hooks lets migration start before the filesystem crawl finishes. Fpsync builds on that to parallelise rsync, cpio, or tar jobs and to run the final rsync --delete pass in parallel, which the author says helped move over 400 TB at work. The scout note's framing as splitting backups onto media is only one of the examples; the README's emphasis is on data migration.",
+  "status": "Maintained, with a tentative reading. The latest tagged release is 1.7.0 dated 2025/01/25, and the changelog has an open 1.7.1 entry with a placeholder date ('2025/??/??') listing several changes. I could not see commit dates, so I cannot confirm recent commit activity.",
+  "caveats": "The README says fpart is primarily developed on FreeBSD, and it lists tested platforms including several Linux, Solaris, OpenIndiana, NetBSD, and macOS versions. Fpart cannot balance partitions containing a mix of very small and very large files. It does not deduplicate paths, so overlapping inputs produce repeated entries. Fpsync 1.7.0 changed the run layout, so runs from older versions cannot be resumed or replayed. The site's donation request is a PayPal or GitHub sponsorship link.",
+  "quotes": [
+   "Fpart does NOT split or modify your data in any way.",
+   "Fpart does magic, but not that much ;-)",
+   "That will help me not running out of tea :)"
+  ],
+  "links": [
+   {
+    "label": "Fpart.org homepage",
+    "url": "https://www.fpart.org/"
+   },
+   {
+    "label": "Fpart documentation (what it is, examples, live mode, migration)",
+    "url": "https://www.fpart.org/fpart/"
+   },
+   {
+    "label": "Changelog",
+    "url": "https://www.fpart.org/changelog/"
+   },
+   {
+    "label": "Source on GitHub",
+    "url": "https://github.com/martymac/fpart"
+   }
+  ],
+  "fetch_log": [
+   "https://www.fpart.org/ - worked; the homepage is not a GitHub repo, so no README was returned. It covers the about, key features, compatibility, install, and licence.",
+   "https://www.fpart.org/fpart/ - worked; fpart usage, examples, live mode, and limitations.",
+   "https://www.fpart.org/changelog/ - worked; release history from 0.1 to 1.7.0 with the 1.7.1 entry in progress."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Fpart turns a filesystem walk into balanced, streamable work batches, letting parallel transfers begin before scanning finishes\u2014a surprisingly useful trick for huge-tree migrations."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "fpart",
+  "tldr": "Crawls a file tree and sorts it into similar-sized bags, as lists of file names, so huge copies can be split and run in parallel.",
+  "deeper_look": "Fpart walks directories and divides what it finds into a set number of partitions. You can ask for a partition count, a maximum file count, or a maximum size per partition. It aims for partitions of similar size and file count, using bin packing. The output is just lists of paths, written to stdout or to numbered files, and other programs consume them. In the README's words: \"Fpart does NOT split or modify your data in any way.\"\n\nThe idea underneath is that moving a very large tree is a scheduling problem. If you can cut the tree into balanced pieces, you can hand each piece to its own rsync, tar, or cpio process. Live mode (`-L`) emits each partition as soon as it fills, and hooks (`-w` before, `-W` after) run a shell command with variables like `FPART_PARTFILENAME`. A transfer can therefore start while the crawl is still running.\n\nThe companion script fpsync, which the README calls a demonstration, builds on this. It runs the transfer jobs in parallel, including the final `rsync --delete` pass. The author says it helped move over 400 TB at work. Fpart also accepts piped input from `find` or `du`, so it can pack lists it did not crawl itself. The scout framed it as splitting backups onto media, which is one of the examples, but the README leans toward data migration.",
+  "install": "brew install fpart",
+  "try_this": [
+   {
+    "cmd": "fpart -n 3 -o var-parts /var",
+    "what_happens": "Splits /var into 3 partitions of roughly equal size and file count, written to var-parts.1 through var-parts.3."
+   },
+   {
+    "cmd": "du * | fpart -n 2 -a",
+    "what_happens": "Builds two partitions from du output without re-crawling the filesystem; -a accepts arbitrary values."
+   },
+   {
+    "cmd": "fpart -L -f 1 -o /tmp/part.out -W 'echo == ${FPART_PARTFILENAME} == ; cat ${FPART_PARTFILENAME}' foo/",
+    "what_happens": "Live mode with one file per partition; a hook prints each partition's file name and contents as it completes."
+   }
+  ],
+  "whats_unique": "It only reads the filesystem and emits lists, so it slots into any copy tool. Live mode with hooks lets a transfer begin before the crawl finishes.",
+  "caveats": "It never splits files, so a tree mixing tiny and huge files, or one giant file, cannot be balanced; it also does not deduplicate overlapping input paths.",
+  "commitment": "quick",
+  "category": "languages-and-oddities",
+  "tags": [
+   "quick",
+   "cli",
+   "bin-packing",
+   "backup",
+   "migration",
+   "rsync",
+   "c"
+  ],
+  "links": [
+   {
+    "label": "Fpart.org homepage",
+    "url": "https://www.fpart.org/"
+   },
+   {
+    "label": "Fpart documentation (what it is, examples, live mode, migration)",
+    "url": "https://www.fpart.org/fpart/"
+   },
+   {
+    "label": "Changelog",
+    "url": "https://www.fpart.org/changelog/"
+   },
+   {
+    "label": "Source on GitHub",
+    "url": "https://github.com/martymac/fpart"
+   }
+  ]
+ }
+}

@@ -1,0 +1,85 @@
+{
+ "name": "silk",
+ "desc": "Collection of traffic analysis tools",
+ "homepage": "https://tools.netsa.cert.org/silk/",
+ "installs_365d": 226,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "afternoon",
+  "science"
+ ],
+ "why": "CERT's flow-record traffic analysis suite opens a door into NetFlow-style network telemetry few developers have seen.",
+ "brief": {
+  "what_it_is": "SiLK (System for Internet-Level Knowledge) is a suite of command-line traffic analysis tools from CERT NetSA for querying large volumes of network flow data. Its packing system takes IPFIX, NetFlow v9, or NetFlow v5 input and converts it into a more space-efficient format, stored as service-specific binary flat files. The analysis suite reads those flat files and runs queries ranging from per-record filtering to statistical analysis of groups of records. The tools chain together through pipes. The homepage lists version 3.24.2 and about 70 executables, including rwfilter, rwcut, rwstats, rwuniq, rwsort and flowcap.",
+  "why_it_exists": "The homepage says SiLK exists to facilitate security analysis of large networks by supporting efficient collection, storage, and analysis of flow data, so analysts can rapidly query large historical traffic data sets. It is pitched as best suited to backbone or border traffic for a large distributed enterprise or mid-sized ISP.",
+  "how_it_works": "Flow records are collected and packed into compact binary flat files by the packing system. The analysis tools read those files and communicate through Unix pipes, so a simple query can be built up stage by stage. The homepage says most of the code is C, Perl, or Python.",
+  "commands_seen": [],
+  "install_notes": "The homepage gives no install steps. It offers downloads and a Documentation link, but I did not fetch those pages, so setup and configuration details are unknown from this brief. The tested platforms are Linux, Solaris, OpenBSD, Mac OS X, and Cygwin, and the homepage says it should be usable with little or no change on other Unix platforms.",
+  "standout": "Flow data is stored in a compact binary format and the tools are designed to be piped together like classic Unix utilities, which makes large historical NetFlow/IPFIX archives queryable from the shell. The tool names are terse rw-prefixed commands, and the executables list shows many of them.",
+  "status": "Unknown as to exact maintenance date. The homepage shows current version 3.24.2 and a copyright range running to 2026, which suggests active development, but no release date or last commit date was visible in what I fetched.",
+  "caveats": "The brief's install-notes and commands are thin because I did not follow the Documentation or Downloads links. The homepage shows no release date. Licensing is GNU General Public License v2. Brew caveats were empty. The tool is aimed at large networks, so it may be heavy for small setups.",
+  "quotes": [
+   "SiLK, the System for Internet-Level Knowledge, is a collection of traffic analysis tools developed by the CERT Network Situational Awareness Team (CERT NetSA) to facilitate security analysis of large networks.",
+   "The analysis tools interoperate using pipes, allowing a user to develop a relatively sophisticated query from a simple beginning.",
+   "SiLK is ideally suited for analyzing traffic on the backbone or border of a large, distributed enterprise or mid-sized ISP."
+  ],
+  "links": [
+   {
+    "label": "SiLK homepage",
+    "url": "https://tools.netsa.cert.org/silk/"
+   }
+  ],
+  "fetch_log": [
+   "https://tools.netsa.cert.org/silk/ - fetched OK; returned homepage text with version 3.24.2, description, and license. Navigation links (Documentation, Downloads, Release Notes, FAQ) were present but their URLs were not visible, so I did not follow them."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "SiLK makes large-scale network flow telemetry queryable through compact storage and composable Unix tools, opening an unfamiliar, substantive corner of security analysis."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "SiLK",
+  "tldr": "A suite of about 70 piped command-line tools from CERT for querying huge archives of network flow records, the NetFlow-style telemetry most developers never see.",
+  "deeper_look": "SiLK, the System for Internet-Level Knowledge, comes from the CERT Network Situational Awareness Team. It does not look at packets. It works on flow records, the summaries a router or probe emits for each conversation: who talked to whom, on which ports, how many bytes, and when. A packing system takes IPFIX, NetFlow v9, or NetFlow v5 input and converts it into compact binary flat files.\n\nThe analysis side is a family of terse `rw`-prefixed commands that read those files and talk to each other through Unix pipes. In the project's words, \"the analysis tools interoperate using pipes, allowing a user to develop a relatively sophisticated query from a simple beginning.\" `rwfilter` selects records, `rwcut` prints fields, `rwstats` and `rwuniq` summarize, and `rwsort` orders. The executables list also shows tools for building and combining IP sets and bags.\n\nThe idea underneath is that network history can be treated like a text corpus, searchable with the same stage-by-stage habits as grep and sort. It was built so analysts could rapidly query large historical traffic data sets for security work. The homepage says it is best suited to backbone or border traffic for a large distributed enterprise or mid-sized ISP.\n\nThe brief did not cover setup or configuration, so the Documentation link on the homepage is the place to learn how to get flow data in.",
+  "install": "brew install silk\n# No sample data ships with the formula as far as the brief shows. You need flow records (IPFIX, NetFlow v5/v9) packed by SiLK's own tools before the query commands have anything to read.",
+  "try_this": [
+   {
+    "cmd": "rwfilter --help",
+    "what_happens": "Prints the options for the main record-selection tool, which is where most SiLK queries begin."
+   },
+   {
+    "cmd": "rwcut --help",
+    "what_happens": "Shows how to choose and format the fields printed from flow records."
+   },
+   {
+    "cmd": "rwstats --help",
+    "what_happens": "Lists the options for computing top-N style statistics over flow data."
+   }
+  ],
+  "whats_unique": "Flow data is stored in a compact binary format and queried with classic Unix-style pipelines, so large NetFlow/IPFIX archives become something you can explore from the shell.",
+  "caveats": "It is aimed at large networks and needs real flow data to be interesting; the brief found no release date and no install walkthrough.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "network",
+   "netflow",
+   "ipfix",
+   "security",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "SiLK homepage",
+    "url": "https://tools.netsa.cert.org/silk/"
+   }
+  ]
+ }
+}

@@ -1,0 +1,90 @@
+{
+ "name": "sse2neon",
+ "desc": "Translator from Intel SSE intrinsics to Arm/Aarch64 NEON implementation",
+ "homepage": "https://github.com/DLTcollab/sse2neon",
+ "installs_365d": 135,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "library",
+  "afternoon",
+  "language"
+ ],
+ "why": "Translates Intel SSE intrinsics into ARM NEON, a neat look at how SIMD instructions map across architectures.",
+ "brief": {
+  "what_it_is": "sse2neon is a C/C++ header file, sse2neon.h, that provides NEON-based implementations of Intel SSE intrinsics. You copy the header into a project and replace the x86 includes (xmmintrin.h, emmintrin.h and so on) with it, so code written against SSE intrinsics compiles for little-endian Arm and AArch64. It covers MMX, SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2 and AES. Some intrinsics map to one NEON instruction, while others, such as _mm_maddubs_epi16 at 22 instructions, need several.",
+  "why_it_exists": "The README frames it as enabling rapid porting of x86 SIMD code to Arm platforms while preserving the original semantics of the SSE intrinsics.",
+  "how_it_works": "It is a single header that supplies its own versions of the SSE function names, built on Arm NEON intrinsics, so the calling code does not change. Some results differ from SSE because NEON trades IEEE-754 compliance for speed on denormals and NaNs. Compile-time macros such as SSE2NEON_PRECISE_MINMAX or SSE2NEON_PRECISE_SQRT, defined as 1 before the include, switch to slower and more precise implementations. The example given is _mm_rsqrt_ps, which returns NaN for 0.0 on NEON where SSE returns INF.",
+  "commands_seen": [
+   {
+    "cmd": "make check",
+    "context": "Runs the built-in test suite in the tests directory with a basic configuration."
+   },
+   {
+    "cmd": "make FEATURE=crypto+crc check",
+    "context": "Runs the test suite with crypto and CRC features enabled."
+   },
+   {
+    "cmd": "make ARCH_CFLAGS=\"-mcpu=cortex-a53 -mfpu=neon-vfpv4\" check",
+    "context": "Runs the test suite targeting a specific CPU and FPU."
+   },
+   {
+    "cmd": "make CROSS_COMPILE=aarch64-linux-gnu- check",
+    "context": "Cross-compiles and runs the tests for ARMv8-A AArch64; the README says QEMU is required on non-Arm hosts."
+   },
+   {
+    "cmd": "make CROSS_COMPILE=arm-linux-gnueabihf- check",
+    "context": "Cross-compiles and runs the tests for ARMv7-A."
+   },
+   {
+    "cmd": "make CROSS_COMPILE=arm-linux-gnueabihf- ARCH_CFLAGS=\"-mcpu=cortex-a32 -mfpu=neon-fp-armv8\" check",
+    "context": "Cross-compiles and runs the tests for ARMv8-A AArch32."
+   },
+   {
+    "cmd": "unifdef -DSSE2NEON_ARCH_AARCH64=1 -D__aarch64__=1\\ -D__ARM_FEATURE_DIRECTED_ROUNDING=1 -D__ARM_FEATURE_FMA=1 -D__ARM_FEATURE_CRYPTO=1 -D__ARM_FEATURE_CRC32=1 -U__ARM_FEATURE_FRINT sse2neon.h > sse2neon_aarch64.h",
+    "context": "Optional: uses the unifdef tool to strip unused conditional paths and produce a smaller AArch64-only header. The README's line breaks are not fully consistent, so the continuation after -D__ARM_FEATURE_FMA=1 is missing a backslash in the source."
+   },
+   {
+    "cmd": "-march=armv8-a+fp+simd+crypto+crc",
+    "context": "Compiler flag for ARMv8-A AArch64 targets; remove +crypto and/or +crc if unsupported."
+   },
+   {
+    "cmd": "-mfpu=neon-fp-armv8",
+    "context": "Compiler flag for ARMv8-A AArch32 targets."
+   },
+   {
+    "cmd": "-mfpu=neon",
+    "context": "Compiler flag for ARMv7-A targets."
+   }
+  ],
+  "install_notes": "There is no package-manager install in the README. Copy sse2neon.h into your source tree and include it in place of the SSE headers. Add the -march or -mfpu flag for your target. Requirements: little-endian ARM only (big-endian gives a compile-time error); GCC 10+, Clang 11+, MSVC 2019+ (v142) with ARM64 and ARM64EC targets, or Apple Clang 12+. Earlier GCC and Clang versions have vector codegen bugs. On Windows ARM64EC, the header skips <intrin.h> automatically. Testing needs make, and QEMU for cross-compiled runs on non-Arm hosts. Memory from _mm_malloc() must be freed with _mm_free().",
+  "standout": "It is a single drop-in header whose behaviour is tuned per use case: the README gives a table of which precision flags to enable for graphics, DSP, crypto, scientific, game physics and ML workloads, with the defaults chosen for speed. The README also documents the NEON-versus-SSE divergences openly, including the MONITOR/MWAIT policy, where _mm_monitor is a no-op and _mm_mwait maps to yield, wfe or wfi.",
+  "status": "unknown. The fetched README has GitHub Actions and coverage badges and a long list of adopters, but it shows no release version, release date or last commit date, so I could not confirm recent activity. I did not fetch the commit history or the releases page.",
+  "caveats": "Little-endian ARM only. Earlier GCC and Clang versions produce wrong vector code for some intrinsics. Default settings trade IEEE-754 accuracy for speed, so NaN, denormal and reciprocal results can differ from SSE unless the SSE2NEON_PRECISE_* flags are set. The README notes that some divergences (FTZ/DAZ, NaN payloads) cannot be fully removed. Optimization levels such as -O1 and -O2 may break code that changes rounding modes or calls _MM_SET_DENORMALS_ZERO_MODE() repeatedly. The __m128 type is not ABI-compatible with x64 code under ARM64EC. Memory from _mm_malloc must not be freed with free(), which corrupts the heap on Windows. Licensed under the MIT License.",
+  "quotes": [
+   "A C/C++ header file that converts Intel SSE intrinsics to Arm/Aarch64 NEON intrinsics.",
+   "NEON trades IEEE-754 compliance for performance when handling denormals and NaNs.",
+   "All precision flags are disabled by default to maximize performance.",
+   "Big-endian ARM is not supported and will produce a compile-time error."
+  ],
+  "links": [
+   {
+    "label": "sse2neon homepage (GitHub repository and README)",
+    "url": "https://github.com/DLTcollab/sse2neon"
+   },
+   {
+    "label": "Arm Neon Intrinsics Reference",
+    "url": "https://developer.arm.com/architectures/instruction-sets/simd-isas/neon/intrinsics"
+   },
+   {
+    "label": "Intel Intrinsics Guide",
+    "url": "https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/DLTcollab/sse2neon: fetched OK; the README was returned. The README links to perf-tier.md and tests/README.md, which I did not fetch."
+  ]
+ }
+}

@@ -1,0 +1,66 @@
+{
+ "name": "mpegdemux",
+ "desc": "MPEG1/2 system stream demultiplexer",
+ "homepage": "http://www.hampa.ch/mpegdemux/",
+ "installs_365d": 15,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "file-formats",
+  "video",
+  "reverse-engineering"
+ ],
+ "why": "Splits MPEG program streams into elementary streams, a clean way to see how video containers are actually packed.",
+ "brief": {
+  "what_it_is": "mpegdemux is a command-line demultiplexer for MPEG-1 and MPEG-2 system streams (program streams and the packetised container format). It takes an MPEG system stream file as input and can list its contents, report the first packet of each elementary stream, extract elementary streams into separate output files, or write a new MPEG system stream with selected elementary streams removed. The page describes it as a tool for getting an overview of what is inside an MPEG file.",
+  "why_it_exists": "The page says it can be used to list the contents of an MPEG system stream and to extract elementary streams. It does not give a longer motivation.",
+  "how_it_works": "It runs in one of four modes: scan reports the first packet of each elementary stream; list prints the contents textually; demux dissolves the system stream packet structure and typically writes each extracted stream to its own file; remux keeps the MPEG system stream structure intact so the output is still a system stream with the unwanted elementary streams removed. Streams are selected by ID values such as 0xe0 (video) and 0xc0-0xdf (audio), with options like -s all and -p all.",
+  "commands_seen": [
+   {
+    "cmd": "$ mpegdemux -c src.mpg",
+    "context": "List the elementary streams in an MPEG system stream."
+   },
+   {
+    "cmd": "$ mpegdemux -l -k -s all -p all src.mpg",
+    "context": "List all the packets contained in an MPEG system stream."
+   },
+   {
+    "cmd": "$ mpegdemux -d -s 0xe0 src.mpg dst.m1v",
+    "context": "Extract the first video stream."
+   },
+   {
+    "cmd": "$ mpegdemux -d -s 0xc0-0xdf -b audio_##.mpa src.mpg",
+    "context": "Extract all audio streams, with ## in the output name as a per-stream counter (-b pattern)."
+   },
+   {
+    "cmd": "$ mpegdemux -r -s all/-0xc1 -p all src.mpg dst.mpg",
+    "context": "Remove the second video stream (remux mode)."
+   }
+  ],
+  "install_notes": "The page offers source tarballs (mpegdemux-0.1.5.tar.gz and earlier versions), a Win32 zip, and a DOS zip. Sources can also be fetched with git clone git://git.hampa.ch/mpegdemux.git. The page gives no build instructions, dependencies, or configuration steps. The Homebrew formula's executable name is mpegdemux.",
+  "standout": "It is a small, focused tool that can either split streams out into separate files or remux the system stream with some streams removed, keeping the container intact. The demux and remux distinction makes it useful for seeing how video containers are packed.",
+  "status": "Maintained at a low tempo. The latest release is 0.1.5, dated 2023-09-20, and the page says it was last modified on the same date. Earlier releases are dated 2010-07-02 (0.1.4) and 2009-02-15 (0.1.3). The page does not mention a development status.",
+  "caveats": "The page does not state a license. It offers no Unix build instructions, so building from the tarball or git source is untested here. Only Win32 and DOS binaries are listed as prebuilt. The page does not describe supported stream types beyond MPEG-1 and MPEG-2 system streams. The git URL uses the git:// protocol.",
+  "quotes": [
+   "mpegdemux is an MPEG1/MPEG2 system stream demultiplexer.",
+   "The system stream packet structure is dissolved in the process.",
+   "This is like demux, except that the MPEG system stream structure is left intact."
+  ],
+  "links": [
+   {
+    "label": "mpegdemux homepage",
+    "url": "http://www.hampa.ch/mpegdemux/"
+   },
+   {
+    "label": "Git repository (git clone)",
+    "url": "git://git.hampa.ch/mpegdemux.git"
+   }
+  ],
+  "fetch_log": [
+   "http://www.hampa.ch/mpegdemux/ - fetched OK. Not a GitHub repo, so no README was returned; the homepage text served as the documentation. No further links followed."
+  ]
+ }
+}

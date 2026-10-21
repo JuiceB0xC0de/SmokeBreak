@@ -1,0 +1,134 @@
+{
+ "name": "hamlib",
+ "desc": "Ham radio control libraries",
+ "homepage": "http://www.hamlib.org/",
+ "installs_365d": 1681,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "library",
+  "radio"
+ ],
+ "why": "Control libraries for ham radio rigs open a real door into talking to physical transceivers over serial and CAT.",
+ "brief": {
+  "what_it_is": "Hamlib is a C library, with a command-line and network-daemon layer on top, that gives programs one consistent API for controlling amateur radio transceivers, rotators and amplifiers. The library's generic API (libhamlib.so) is what applications link against, and it contains the per-device backends. Control goes over serial (RS-232), USB-to-serial or, in later work, IP connections. The bundled executables (rigctl, rigctld, rotctl, rotctld and others) are front ends that let a user or script send control commands to a rig or rotator. The README also mentions distance, bearing and grid-square conversion helpers and bindings for Perl, Python and TCL.",
+  "why_it_exists": "The project exists so that application authors can write radio-control software once, against a shared API, instead of learning each manufacturer's serial protocol. The README says the goal is to provide \"stable, flexible, shared libraries that enable quicker development of amateur radio equipment control applications.\"",
+  "how_it_works": "A generic front-end API sits over per-model backends, one for each protocol family such as yaesu, and the library maps common calls onto each device's serial or network protocol. The network daemons (rigctld, rotctld) expose that control over a TCP socket, so any language that can open a socket can drive the hardware, and the README notes even netcat works. Contributors add support by writing backends and rig model definitions, and the supported-radio list is kept on the project wiki.",
+  "commands_seen": [
+   {
+    "cmd": "./configure",
+    "context": "First step of the source-tarball build from the README's Compiling section (the 'three step')."
+   },
+   {
+    "cmd": "make",
+    "context": "Second step of the source build, compiling the library and tools after configure."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Third step of the source build, installing Hamlib system-wide."
+   },
+   {
+    "cmd": "./configure CFLAGS=-g -O0 -fPIC --no-create --no-recursion",
+    "context": "Configure line the README gives for a debugging build (debug symbols, no optimisation, position-independent code)."
+   },
+   {
+    "cmd": "make clean",
+    "context": "Removes object files and binaries; the README says this is needed before a rebuild because otherwise make does nothing."
+   }
+  ],
+  "install_notes": "The README's documented route is the source tarball with ./configure, make and sudo make install, and it points to an INSTALL file for more detail. It says most Linux distributions carry Hamlib in their package managers, possibly in testing or alpha channels, so check your distro's version. Daily snapshots are offered as source tarballs and Windows 32- and 64-bit binary archives. For Windows, the library appears as libhamlib-4.dll. The README does not describe first-run configuration, and I saw no account requirement. Radio-specific wiring (serial port, baud rate, CAT cable) is outside what I read.",
+  "standout": "Hamlib is a long-running shared library that treats radios and rotators as one class of device behind a single API, and it is designed to be driven from any language via a plain TCP daemon. The maintainers also insist that protocol documentation be publicly available before they will support a device, which keeps the Free Software licensing clean.",
+  "status": "Maintained. The homepage lists Hamlib 4.7.2 as current stable, with a dated run of point releases through 4.5, and it offers daily snapshots of both master and the 4.7 branch. The GitHub README carries copyright notices through 2025. I did not see a last-commit date or release date on the pages I read, so the exact recency is unconfirmed.",
+  "caveats": "The README warns that major changes planned for Hamlib 5 on master will break compatibility with existing software, so it advises using the 4.7 branch until an application announces Hamlib 5 support. Some manufacturers withhold control protocol details or release them only under NDA, and the project will not support those devices. The README sets no release schedule (\"ready when it's ready\"). Serial-port hardware and per-radio setup are not covered in the pages I read. The brew package description is a bare 'Ham radio control libraries' and has no caveats.",
+  "quotes": [
+   "The purpose of this project is to provide stable, flexible, shared libraries that enable quicker development of amateur radio equipment control applications.",
+   "Many amateur radio transceivers come with serial (RS-232, USB, etc.) or Ethernet/WiFi/Bluetooth interfaces that allow software to control the radio.",
+   "A network daemon utility is also available for any programming language that supports network sockets (even netcat!).",
+   "Hamlib has a \"ready when it's ready\" philosophy. There is no set schedule"
+  ],
+  "links": [
+   {
+    "label": "Hamlib homepage",
+    "url": "http://www.hamlib.org/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/Hamlib/Hamlib"
+   },
+   {
+    "label": "API documentation (wiki)",
+    "url": "https://github.com/Hamlib/Hamlib/wiki/Documentation"
+   },
+   {
+    "label": "Supported radios (wiki)",
+    "url": "https://github.com/Hamlib/Hamlib/wiki"
+   }
+  ],
+  "fetch_log": [
+   "http://www.hamlib.org/ - worked; project homepage with release list, links and contributing notes, not a GitHub README.",
+   "https://github.com/Hamlib/Hamlib - worked; README with design, compiling, versioning and contributing sections. Followed as the homepage pointed to the GitHub repository."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It makes real transceivers and antenna rotators controllable through one API\u2014or even a plain TCP socket\u2014opening a hands-on door into radio hardware."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Hamlib",
+  "tldr": "One shared API and a set of command-line tools for controlling ham radio transceivers, rotators and amplifiers over serial, USB or a plain TCP socket.",
+  "deeper_look": "Hamlib is a C library that gives programs one consistent way to talk to amateur radio gear. Each manufacturer has its own control protocol, usually spoken over a serial port. Hamlib puts a generic front-end API over per-model backends, one per protocol family, and maps common calls like \"set frequency\" onto whatever the device expects. Control can go over RS-232, USB-to-serial, or network connections.\n\nThe executables that Homebrew installs are the front ends. `rigctl` sends commands to a radio, `rotctl` does the same for antenna rotators, and `ampctl` for amplifiers. `rigctld` and `rotctld` are daemons that expose the same control over a TCP socket. The README says the daemon works with any language that can open a socket, \"even netcat!\" So a radio can be driven from a shell script.\n\nThe project exists so application authors can write radio-control software once instead of learning every vendor's protocol. In its own words, the aim is \"stable, flexible, shared libraries that enable quicker development of amateur radio equipment control applications.\" The README also mentions distance, bearing and grid-square conversion helpers, and bindings for Perl, Python and TCL.\n\nThe idea underneath is that a radio is just a device with a serial protocol, and once that protocol is abstracted, a hobby becomes scriptable. The contributor model is part of the design too: support is added by writing backends and model definitions, and the project wants a device's protocol documentation to be public before it will support it.",
+  "install": "brew install hamlib\n# Controlling a real radio needs a supported transceiver, rotator or amplifier and a serial, USB or network connection to it.",
+  "try_this": [
+   {
+    "cmd": "rigctl --help",
+    "what_happens": "Prints the options for the command-line radio controller, including how to pick a rig model and port."
+   },
+   {
+    "cmd": "rigctld --help",
+    "what_happens": "Shows how to start the TCP daemon that lets any program or netcat talk to a radio."
+   },
+   {
+    "cmd": "rotctl --help",
+    "what_happens": "Lists the options for controlling antenna rotators from the command line."
+   }
+  ],
+  "whats_unique": "Radios, rotators and amplifiers sit behind a single API, and a plain TCP daemon makes them reachable from any language. The project also declines to support devices whose protocols are not publicly documented.",
+  "caveats": "The README warns that Hamlib 5 changes on master will break compatibility with existing software, so stick with the 4.x releases; you also need compatible radio hardware and per-radio serial setup to do anything real.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "radio",
+   "ham-radio",
+   "serial",
+   "library",
+   "tcp"
+  ],
+  "links": [
+   {
+    "label": "Hamlib homepage",
+    "url": "http://www.hamlib.org/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/Hamlib/Hamlib"
+   },
+   {
+    "label": "API documentation (wiki)",
+    "url": "https://github.com/Hamlib/Hamlib/wiki/Documentation"
+   },
+   {
+    "label": "Supported radios (wiki)",
+    "url": "https://github.com/Hamlib/Hamlib/wiki"
+   }
+  ]
+ }
+}

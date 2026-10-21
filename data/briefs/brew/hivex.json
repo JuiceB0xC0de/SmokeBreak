@@ -1,0 +1,75 @@
+{
+ "name": "hivex",
+ "desc": "Library and tools for extracting the contents of Windows Registry hive files",
+ "homepage": "https://libguestfs.org",
+ "installs_365d": 433,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "reverse-engineering",
+  "afternoon",
+  "library"
+ ],
+ "why": "Extracts contents from Windows Registry hive binaries, a genuine door into a binary format most developers never open.",
+ "brief": {
+  "what_it_is": "Hivex is a C library, with bindings for OCaml, Perl, Python and Ruby, that reads Windows Registry hive files, the binary files Windows keeps under C:\\WINDOWS\\SYSTEM32\\CONFIG. It takes a hive file on disk and gives you a handle for walking its tree of keys, subkeys and typed values. Three command-line tools sit on top: hivexget prints one subkey's values or a single named value, hivexml exports the hive as XML, and hivexsh is an interactive shell for navigating it. Reading is the default; writing needs an explicit open flag and an explicit commit.",
+  "why_it_exists": "The README says that, unlike other tools in this area, hivex does not use the textual .REG format, because parsing that is as much trouble as parsing the original binary format. Its stated aim is to be secure against buggy or malicious registry files. It is a subproject of libguestfs, where it lets you examine or merge changes into the Registry of Windows guests in disk images.",
+  "how_it_works": "You open a hive with hivex_open, which returns a handle, then move through nodes (keys) from hivex_root and read their (key, value) pairs by name or by listing them. Each value has a type such as REG_SZ, REG_DWORD or REG_BINARY, but the docs warn that the type field is often unrelated to the real contents. Writes are buffered: nothing reaches the file until hivex_commit is called, and new blocks are appended to the end of the file instead of reusing freed space.",
+  "commands_seen": [
+   {
+    "cmd": "hivexget hivefile '\\\\Path\\\\To\\\\SubKey'",
+    "context": "From the hivexget(1) SYNOPSIS: lists all the (key, value) pairs under that subkey in a format similar to regedit. The path is relative to the top of the hive, so HKEY_LOCAL_MACHINE\\SYSTEM is not valid."
+   },
+   {
+    "cmd": "hivexget hivefile '\\\\Path\\\\To\\\\SubKey' name",
+    "context": "From the hivexget(1) SYNOPSIS: prints one named value raw, with no escaping. Use @ for the default value. Strings are converted to UTF-8, multi-strings go one per line, and numbers print in decimal."
+   },
+   {
+    "cmd": "sudo yum install libguestfs-tools",
+    "context": "Homepage install line for Fedora or RHEL. The page does not say which of its packages contain hivex."
+   },
+   {
+    "cmd": "sudo apt-get install libguestfs-tools",
+    "context": "Homepage install line for Debian or Ubuntu."
+   },
+   {
+    "cmd": "guestfish --ro -i -a disk.img",
+    "context": "Homepage example for opening a disk image read-only in the libguestfs shell. This is libguestfs, not hivex, but it is the page's headline example."
+   }
+  ],
+  "install_notes": "The homepage gives no hivex-specific install steps. It lists sudo yum install libguestfs-tools on Fedora/RHEL and sudo apt-get install libguestfs-tools on Debian/Ubuntu, and says other distros should compile from source (git clone https://github.com/libguestfs/libguestfs). To link the C library, the hivex(3) page says to use -lhivex. I saw no notes on hardware, accounts, runtimes, configuration or first-run steps. I did not verify the brew formula, and the brew caveats field was empty.",
+  "standout": "It is a small, defensive parser for a format Microsoft has never documented, and the docs are unusually frank about what the author does not understand. Its write path avoids rewriting structures in place: it appends new blocks and leaves unreachable blocks behind rather than risk corrupting the hive.",
+  "status": "maintained. The libguestfs homepage lists latest development version 1.61.4, released 2026-10-02, plus stable branches 1.60.x, 1.58.x and 1.56.x, and hivex ships as part of that project. I did not see a hivex-specific last-commit date.",
+  "caveats": "The homepage is the libguestfs project page, not a hivex page; hivex details come from the hivex(3) and hivexget(1) pages on the same site. I did not read the hivexml or hivexsh pages. Write support is limited: you cannot create a hive from scratch or change the root node. The hivex(3) page lists modifying or deleting single values as unsupported, yet it also documents hivex_node_set_value, so treat writes as risky and back up hives first. Microsoft never documented the format, so reverse-engineered assumptions may be wrong. Errors come back through errno, and the docs say the list is not exhaustive. Licensing: the library is LGPL 2.1 only; hivexget is GPL 2 or later. I saw no Windows or macOS platform notes.",
+  "quotes": [
+   "Hivex is a library for extracting the contents of Windows Registry \"hive\" files. It is designed to be secure against buggy or malicious registry files.",
+   "Unlike other tools in this area, it doesn't use the textual .REG format, because parsing that is as much trouble as parsing the original binary format.",
+   "since Microsoft has never documented the hive format, and so it is possible there are nuances in the reverse-engineered format that we do not understand."
+  ],
+  "links": [
+   {
+    "label": "libguestfs homepage",
+    "url": "https://libguestfs.org"
+   },
+   {
+    "label": "hivex(3) library man page",
+    "url": "https://libguestfs.org/hivex.3.html"
+   },
+   {
+    "label": "hivexget(1) man page",
+    "url": "https://libguestfs.org/hivexget.1.html"
+   },
+   {
+    "label": "libguestfs source repository",
+    "url": "https://github.com/libguestfs/libguestfs"
+   }
+  ],
+  "fetch_log": [
+   "https://libguestfs.org: worked. This is the libguestfs project homepage. It mentions hivex as a subproject and lists hivex(3), hivexsh(1), hivexml(1) and hivexget(1) in its docs list, but has no hivex-specific install steps.",
+   "https://libguestfs.org/hivex.3.html: worked. Full C API reference and format notes.",
+   "https://libguestfs.org/hivexget.1.html: worked. SYNOPSIS, description and SEE ALSO for hivexget."
+  ]
+ }
+}

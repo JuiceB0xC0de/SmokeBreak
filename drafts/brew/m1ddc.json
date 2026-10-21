@@ -1,0 +1,142 @@
+{
+ "name": "m1ddc",
+ "desc": "Control external displays (USB-C/DisplayPort Alt Mode) using DDC/CI on M1 Macs",
+ "homepage": "https://github.com/waydabber/m1ddc",
+ "installs_365d": 2488,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "protocol",
+  "quick"
+ ],
+ "why": "Speaks DDC/CI to external monitors over USB-C, a neat door into the display control channel most people never\u77e5\u9053 exists.",
+ "brief": {
+  "what_it_is": "m1ddc is a small command-line tool for macOS that controls external monitors over DDC/CI on Apple Silicon Macs. It works with displays connected through USB-C/DisplayPort Alt Mode and with supported built-in HDMI ports. You pass it a verb such as set, get, chg, max or display list, plus a setting name such as luminance, contrast, volume, red, or input, and it either changes the display or prints the current value. The README says it is meant to be embedded in scripts.",
+  "why_it_exists": "The README says it is a 'little tool' for controlling external displays on Apple Silicon Macs, intended to be 'useful to embed in various scripts'. It points readers who want a much more advanced CLI to BetterDisplay's CLI.",
+  "how_it_works": "The README does not explain the mechanism in detail. It says the tool speaks DDC/CI to the display and exposes settings as VCP-style commands, with display selection by list number or by identifier such as UUID, EDID, or serial. The input and KVM values listed (for example input 15 for DisplayPort 1) are the raw codes sent to the monitor.",
+  "commands_seen": [
+   {
+    "cmd": "make",
+    "context": "Build step after downloading the source; the README says to run this in Terminal to build the m1ddc binary."
+   },
+   {
+    "cmd": "./m1ddc [options]",
+    "context": "How the README says to run the built app."
+   },
+   {
+    "cmd": "m1ddc set contrast 5",
+    "context": "Sets contrast to 5 on the default display."
+   },
+   {
+    "cmd": "m1ddc get luminance",
+    "context": "Returns the current luminance (brightness) on the default display."
+   },
+   {
+    "cmd": "m1ddc set red 90",
+    "context": "Sets the red color-channel gain to 90."
+   },
+   {
+    "cmd": "m1ddc chg volume -10",
+    "context": "Decreases volume by 10 on the default display."
+   },
+   {
+    "cmd": "m1ddc display list",
+    "context": "Lists connected displays."
+   },
+   {
+    "cmd": "m1ddc display 1 set volume 50",
+    "context": "Sets volume to 50 on display number 1 from the list."
+   },
+   {
+    "cmd": "m1ddc display 10ACB8A0-0000-0000-1419-0104A2435078 set input 15",
+    "context": "Selects a display by UUID and sets its input to DisplayPort 1 (value 15). The README example ends with a stray backtick, omitted here."
+   },
+   {
+    "cmd": "m1ddc display list detailed",
+    "context": "Lists displays and also prints extended attributes, which the README says you use to find identifier values for the other display-selection methods."
+   }
+  ],
+  "install_notes": "You need clang, which comes from Apple's Command Line Tools and installs automatically if missing. The README's install steps are: download the source, run make in Terminal, then run ./m1ddc. No accounts, runtimes, or config files are mentioned. The README does not mention brew; the Homebrew formula metadata lists m1ddc as the executable.",
+  "standout": "It is a tiny, scriptable door into the monitor's own control channel, exposing raw VCP codes such as input switching, Dell PBP/KVM, and ASUS KVM, with several ways to address a specific display. Its author also maintains the much larger BetterDisplay and a Swift DDC library, so this is a minimal companion rather than a full app.",
+  "status": "unknown. The README shows no release version, changelog, or date, and I did not check the commit history or releases page, so I cannot give a last-commit date from what I read. The README is current in tone and refers to recent tools, but that is not evidence of activity.",
+  "caveats": "Apple Silicon only; the README says it does not support Intel Macs and points to BetterDisplay for free DDC on all Macs and ports. Built-in HDMI is supported only on some ports. Many settings depend on the display supporting that VCP code, and the README's numeric values (input codes, Dell PBP values, ASUS KVM values) are described as common or known values, not guaranteed. The README does not state a license. Building requires Apple's Command Line Tools. The README notes that the Raycast GUI extension does not yet cover all features.",
+  "quotes": [
+   "This little tool controls external displays using DDC/CI on Apple Silicon Macs, including displays connected through USB-C/DisplayPort Alt Mode and supported built-in HDMI ports.",
+   "Useful to embed in various scripts.",
+   "Please note that this tool does not support Intel Macs."
+  ],
+  "links": [
+   {
+    "label": "m1ddc GitHub homepage and README",
+    "url": "https://github.com/waydabber/m1ddc"
+   },
+   {
+    "label": "BetterDisplay CLI integration docs",
+    "url": "https://github.com/waydabber/BetterDisplay/wiki/Integration-features,-CLI"
+   },
+   {
+    "label": "AppleSiliconDDC (Swift DDC library by the same author)",
+    "url": "https://github.com/waydabber/AppleSiliconDDC"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/waydabber/m1ddc - worked, README returned by the fetch tool. README was complete enough that I did not follow further links."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It makes the obscure DDC/CI channel on external monitors tangible, letting you inspect and control settings like brightness, input selection, and KVM from scripts."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "m1ddc",
+  "tldr": "A tiny command-line tool that talks DDC/CI to external monitors on Apple Silicon Macs, so you can set brightness, volume or input from a script.",
+  "deeper_look": "m1ddc sends commands to an external display over DDC/CI, the control channel built into most monitors. You give it a verb (`set`, `get`, `chg`, `max`, or `display list`) and a setting such as luminance, contrast, volume, red or input. It then changes the display or prints the current value. It works with displays on USB-C/DisplayPort Alt Mode and on some built-in HDMI ports.\n\nThe idea underneath is that your monitor has its own small control protocol, separate from the picture. The buttons on the bezel and the on-screen menu use the same kind of commands. Settings are exposed as VCP-style codes, and the README lists raw values such as input 15 for DisplayPort 1, plus known values for Dell PBP/KVM and ASUS KVM switching. Those numbers are sent to the monitor more or less as they are.\n\nYou can pick a display by its number in `display list`, or by identifiers such as UUID, EDID or serial. `display list detailed` prints the extra attributes you need to find those. The README calls it a \"little tool\" that is \"useful to embed in various scripts\", and points to BetterDisplay's CLI for anything more advanced. The same author maintains BetterDisplay and a Swift DDC library, so this is the minimal companion to those.",
+  "install": "brew install m1ddc\n# Needs an Apple Silicon Mac and an external display that supports DDC/CI. The README's own route is to download the source and run `make`, which needs clang from Apple's Command Line Tools.",
+  "try_this": [
+   {
+    "cmd": "m1ddc display list",
+    "what_happens": "Lists the connected external displays, with the numbers you use to address them."
+   },
+   {
+    "cmd": "m1ddc get luminance",
+    "what_happens": "Prints the current brightness of the default display."
+   },
+   {
+    "cmd": "m1ddc chg volume -10",
+    "what_happens": "Lowers the default display's speaker volume by 10."
+   }
+  ],
+  "whats_unique": "It is a very small, scriptable way into the monitor's own control channel on Apple Silicon. It exposes raw VCP codes, including input and KVM switching, and offers several ways to address a specific display.",
+  "caveats": "Apple Silicon only, with no Intel support. Built-in HDMI works on only some ports, and many settings depend on what your particular monitor supports.",
+  "commitment": "quick",
+  "category": "radio-and-hardware",
+  "tags": [
+   "quick",
+   "needs-hardware",
+   "ddc",
+   "monitors",
+   "macos",
+   "protocol"
+  ],
+  "links": [
+   {
+    "label": "m1ddc GitHub homepage and README",
+    "url": "https://github.com/waydabber/m1ddc"
+   },
+   {
+    "label": "BetterDisplay CLI integration docs",
+    "url": "https://github.com/waydabber/BetterDisplay/wiki/Integration-features,-CLI"
+   },
+   {
+    "label": "AppleSiliconDDC (Swift DDC library by the same author)",
+    "url": "https://github.com/waydabber/AppleSiliconDDC"
+   }
+  ]
+ }
+}

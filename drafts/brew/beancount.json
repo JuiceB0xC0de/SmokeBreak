@@ -1,0 +1,112 @@
+{
+ "name": "beancount",
+ "desc": "Double-entry accounting tool that works on plain text files",
+ "homepage": "https://beancount.github.io/",
+ "installs_365d": 896,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "library",
+  "afternoon",
+  "tui"
+ ],
+ "why": "A plain-text double-entry accounting language with a real compiler-like design, unusual enough to be worth an afternoon of reading its syntax.",
+ "brief": {
+  "what_it_is": "Beancount is a double-entry bookkeeping computer language. You write financial transaction records in a plain text file. Beancount reads that file into memory, which lets it generate a variety of reports and provides a web interface. The README describes it as a language plus tools, and the docs mention command-line tools such as bean-query. The homepage itself is only a pointer to the GitHub repository and the documentation.",
+  "why_it_exists": "The author, Martin Blais, says he built it to do his own accounting first and to keep it 'in the simplest, most durable manner', and that he has since polished it so others can use it. The docs frame the project as command-line accounting, with the double-entry method as its basis.",
+  "how_it_works": "Records are written as text in a ledger file, which Beancount parses and loads into memory as directives. Reports and the web interface are generated from that in-memory data. The docs also describe scripts and plugins that load the parsed directives and transform them. I did not read the design doc, so I cannot describe the internals beyond this.",
+  "commands_seen": [],
+  "install_notes": "The README points to the GitHub repository as the source (git clone of https://github.com/beancount/beancount/), with installation instructions at http://furius.ca/beancount/doc/install, which I did not fetch. The v3 docs list a separate 'Beancount V3: Dependencies' page and an 'Installing Beancount (v3)' page, neither of which I read. The brew formula installs five executables: bean-check, bean-doctor, bean-example, bean-format, and treeify. The docs say a C++ rewrite for v3 is underway, so the build may need a C++ toolchain, but I did not confirm this. I saw no hardware, account, or first-run requirements.",
+  "standout": "Ledger files are plain text that you can version with git and edit in any editor, and Beancount is a real parsed language with its own syntax rather than a spreadsheet or a database. The author also writes and comments on the docs in Google Docs, which is unusual for an open source project and is mirrored to Markdown on beancount.github.io.",
+  "status": "maintained. The README says v3 has been the current stable version since June 2024 and that v2 has been frozen and obsolete. The copyright line reads 2007-2025. I did not see a last-commit date or a release date, so the evidence is the README text alone.",
+  "caveats": "The GPLv2-only license is noted in the README. The README says v1 should not be used and v2 is obsolete. Version 3 is trimmed down, and most of the tools v2 included have moved to separate projects on GitHub (the docs mention beangulp as the ingestion framework). The main documentation lives on Google Docs, with a Markdown mirror that may lag behind. The homepage fetch was thin and only redirected to the repository. The brew caveats field is empty. I did not verify the 'compiler-like design' claim from the scout notes beyond the README's language description.",
+  "quotes": [
+   "A double-entry bookkeeping computer language that lets you define financial transaction records in a text file, read them in memory, generate a variety of reports from them, and provides a web interface.",
+   "The current stable version of Beancount since June 2024. Use this.",
+   "I never ask for money, as my intent with this project is to build something that is useful to me first, as well as for others, in the simplest, most durable manner"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://beancount.github.io/"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/beancount/beancount/"
+   },
+   {
+    "label": "User documentation (Markdown mirror)",
+    "url": "https://beancount.github.io/docs/"
+   },
+   {
+    "label": "Installation instructions",
+    "url": "http://furius.ca/beancount/doc/install"
+   }
+  ],
+  "fetch_log": [
+   "https://beancount.github.io/ : worked, but returned only the org-level page pointing to the GitHub repo and docs; no substantive content",
+   "https://github.com/beancount/beancount/ : worked, returned the README text",
+   "https://beancount.github.io/docs/ : worked, returned the User's Manual index with descriptions of each doc page; the linked pages themselves were not fetched",
+   "Not fetched: http://furius.ca/beancount/doc/install and the v3 install and dependencies docs, to stay within the five-fetch limit"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Beancount makes double-entry bookkeeping a validated, versionable text language, a durable and surprisingly programmable take on personal accounting."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Beancount",
+  "tldr": "A double-entry bookkeeping language: you write your finances as plain text, and it parses and checks them like a compiler would.",
+  "deeper_look": "Beancount treats a personal ledger as source code. You write transactions in a text file, and Beancount reads the file into memory as a list of directives. Reports and a web interface are generated from that parsed data. The docs also describe scripts and plugins that load the directives and transform them.\n\nThe author, Martin Blais, says he built it to do his own accounting first, \"in the simplest, most durable manner\", and polished it later so others could use it. Because the ledger is just text, you can edit it in any editor and keep its history in git, and it is not locked inside a spreadsheet or a database.\n\nThe idea underneath is double-entry bookkeeping, where every transaction moves value between accounts and everything has to balance. Once that rule is written down as a language, a file of your finances can be checked for errors the way a program is. It is a small way into how accounting actually works.\n\nThe brew formula installs a handful of small tools: a checker, a formatter, a diagnostic tool, an example-ledger generator, and a tree-printing helper. The docs also mention bean-query, but it is not in the brew executable list. In v3, most of the tools that v2 shipped have moved to separate projects.",
+  "install": "brew install beancount",
+  "try_this": [
+   {
+    "cmd": "bean-example",
+    "what_happens": "Prints a sample ledger file, which is a quick way to see what the syntax looks like."
+   },
+   {
+    "cmd": "bean-check --help",
+    "what_happens": "Shows the options for the checker, which parses a ledger file and reports errors."
+   },
+   {
+    "cmd": "bean-format --help",
+    "what_happens": "Shows the options for the formatter, which tidies the alignment of a ledger file."
+   }
+  ],
+  "whats_unique": "It is a real parsed language with its own syntax rather than a spreadsheet or database, and your ledger stays plain text you can version. The author also writes the docs in Google Docs and mirrors them to Markdown.",
+  "caveats": "Version 3 is the current stable release, v2 is obsolete, and many v2 tools now live in separate projects, so older tutorials may not match what you install.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "accounting",
+   "plain-text",
+   "language",
+   "python"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://beancount.github.io/"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/beancount/beancount/"
+   },
+   {
+    "label": "User documentation (Markdown mirror)",
+    "url": "https://beancount.github.io/docs/"
+   },
+   {
+    "label": "Installation instructions",
+    "url": "http://furius.ca/beancount/doc/install"
+   }
+  ]
+ }
+}

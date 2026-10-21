@@ -1,0 +1,75 @@
+{
+ "name": "cfitsio",
+ "desc": "C access to FITS data files with optional Fortran wrappers",
+ "homepage": "https://heasarc.gsfc.nasa.gov/docs/software/fitsio/fitsio.html",
+ "installs_365d": 64957,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "science",
+  "library",
+  "afternoon",
+  "astronomy"
+ ],
+ "why": "The FITS astronomy data format library; real science software, but mainly a library for astronomers rather than a toy to poke at.",
+ "brief": {
+  "what_it_is": "CFITSIO is a library of ANSI C routines for reading and writing files in FITS (Flexible Image Transport System), the data format widely used in astronomy. It takes FITS files in and gives programs a high-level API to read and write them, including filtering and manipulating their contents. A set of Fortran-callable wrappers is included for Fortran programmers. The package also ships the listed command-line utilities (fitscopy, fitsverify, fpack, funpack, imcopy, smem, speed); the homepage and README document only fpack/funpack and fitsverify directly, so the others were not confirmed from what I read.",
+  "why_it_exists": "It exists to give programmers simple, high-level routines for FITS files that hide the internal complexity of the format. The homepage describes it as 'a library of C and Fortran subroutines for reading and writing data files in FITS (Flexible Image Transport System) data format.'",
+  "how_it_works": "Programs link against the CFITSIO library and call its routines to open, read, write and filter FITS files, rather than parsing the format by hand. The homepage says it 'provides many advanced features for manipulating and filtering the information in FITS files.' The standalone utilities are built on the same library, and fpack/funpack are described as FITS image compression tools that compress more than gzip and run faster.",
+  "commands_seen": [
+   {
+    "cmd": "./configure --prefix=/target/installation/path",
+    "context": "Standard Unix configure step from the README, setting the install prefix."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the CFITSIO library after configure."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the built library to the prefix given to configure."
+   },
+   {
+    "cmd": "% make testprog",
+    "context": "README testing step: builds the testprog.c test program from the utilities folder."
+   },
+   {
+    "cmd": "% ./testprog > testprog.lis",
+    "context": "Runs the test program and pipes its diagnostic output to testprog.lis."
+   },
+   {
+    "cmd": "% diff testprog.lis testprog.out",
+    "context": "Compares the diagnostic listing against the expected testprog.out; no differences expected."
+   },
+   {
+    "cmd": "% cmp testprog.fit testprog.std",
+    "context": "Checks the generated testprog.fit is byte-identical to the included testprog.std; no differences expected."
+   }
+  ],
+  "install_notes": "On Unix-like systems the standard route is ./configure --prefix=..., make, make install, which needs a C compiler and a shell. INSTALL.md in the repo covers advanced Unix/Linux options (CMake, shared libraries) and macOS via Xcode, MacPorts, Homebrew or Conda, plus Windows via Visual Studio or CMake. The Windows source zip has a separate README.win for build instructions. The homepage also mentions an Android NDK cross-compilation route (Android.mk and build.sh). No accounts or hardware are needed.",
+  "standout": "It is the long-running reference implementation of FITS I/O, written and maintained by William Pence at HEASARC/NASA, and cited in the astronomy software literature. It also bundles fpack/funpack, which the homepage says compress FITS images better and faster than gzip.",
+  "status": "Maintained. The homepage lists version 4.7.0 as the latest source release, dated Aug 2026, following 4.6.4 in Apr 2026 and 4.6.3 in Sep 2025, with releases roughly every few months to a year. The GitHub README points to the HEASARC help desk for bug reports. I did not check commit history.",
+  "caveats": "It is a library for astronomers and science software developers, not a casual tool, so the value of poking at it depends on having FITS data to work with. The README's build instructions are Unix-first and point elsewhere (INSTALL.md, README.win) for other platforms. The homepage mentions past security fixes in several releases, so use a current version. The GitHub README ends with a note that the User's Guide in the docs folder is the most complete reference. The license was not checked.",
+  "quotes": [
+   "CFITSIO is a library of C and Fortran subroutines for reading and writing data files in FITS (Flexible Image Transport System) data format.",
+   "CFITSIO provides simple high-level routines for reading and writing FITS files that insulate the programmer from the internal complexities of the FITS format.",
+   "A set of Fortran-callable wrapper routines are also included for the convenience of Fortran programmers."
+  ],
+  "links": [
+   {
+    "label": "CFITSIO homepage (HEASARC)",
+    "url": "https://heasarc.gsfc.nasa.gov/docs/software/fitsio/fitsio.html"
+   },
+   {
+    "label": "CFITSIO GitHub repository (README)",
+    "url": "https://github.com/HEASARC/cfitsio"
+   }
+  ],
+  "fetch_log": [
+   "https://heasarc.gsfc.nasa.gov/docs/software/fitsio/fitsio.html - loaded (HEASARC homepage, used for what it is, status, and quotes)",
+   "https://github.com/HEASARC/cfitsio - loaded (README returned, used for build and test commands)"
+  ]
+ }
+}

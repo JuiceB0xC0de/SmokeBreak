@@ -1,0 +1,86 @@
+{
+ "name": "tinc",
+ "desc": "Virtual Private Network (VPN) tool",
+ "homepage": "https://www.tinc-vpn.org/",
+ "installs_365d": 239,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "A mesh VPN daemon with an unusual decentralised design, a fair door into tunnelling protocols.",
+ "brief": {
+  "what_it_is": "tinc is a Virtual Private Network daemon, named tincd. It uses tunnelling and encryption to create a private network between hosts on the Internet. The VPN appears to the IP-level network code as an ordinary network device, so existing software needs no changes. Encryption uses LibreSSL or OpenSSL, with message authentication codes and sequence numbers, and traffic can optionally be compressed with zlib or LZO. The homepage lists Linux, FreeBSD, OpenBSD, NetBSD, OS X, Solaris, and several Windows versions as supported platforms.",
+  "why_it_exists": "The homepage frames it as a way for sites to share information over the Internet without exposing that information to others. It also presents tinc as a way to link Ethernet segments so that LAN-only applications and games can run across the Internet.",
+  "how_it_works": "Nodes run the tincd daemon and connect to each other, and the homepage says VPN traffic is always sent directly to the destination when possible, without passing through intermediate hops. NAT traversal works as long as one node accepts incoming connections on a public IP address, even a dynamic one. Adding a node means adding a configuration file, with no new daemons, devices, or interfaces needed. The documentation contents list a UDP tunnel, a meta-connection, a meta-protocol, and an authentication protocol, but I did not read those sections.",
+  "commands_seen": [],
+  "install_notes": "The documentation table of contents lists these preparation steps: configure the kernel for your OS (Linux, FreeBSD, OpenBSD, NetBSD, Solaris, Darwin, Windows), install the LibreSSL or OpenSSL, zlib, and lzo libraries, then build and install tinc. Windows builds are described under Cygwin and MinGW environments, and Darwin has its own build environment section. Configuration covers main and host config files, generating keypairs, and network interface setup, with a worked example. I only saw section titles, not the steps themselves, so no commands were read.",
+  "standout": "Its design is a decentralised mesh in which every node can route directly to every other node, rather than funnelling traffic through a central hub. Adding a node means dropping in one config file, without starting new daemons or creating new devices.",
+  "status": "The homepage lists 1.0.37 as the latest stable release and 1.1pre18 as the latest prerelease from the 1.1 branch, and says 1.0.37 'will most likely be the last version of tinc 1.0'. No release date or commit date was visible, so recent activity is unknown, but the project is clearly still publishing news and releases.",
+  "caveats": "The supported-platforms list on the homepage names Windows 2000 through Windows 8, which looks dated. The 1.0.37 news item says Linux ethertap device support was dropped. Building from source needs kernel TUN/TAP configuration and three libraries, and Windows needs Cygwin or MinGW. I did not read the platform support page or the license text beyond the homepage's GPL v2-or-later statement.",
+  "quotes": [
+   "tinc is a Virtual Private Network (VPN) daemon that uses tunnelling and encryption to create a secure private network between hosts on the Internet.",
+   "Regardless of how you set up the tinc daemons to connect to each other, VPN traffic is always (if possible) sent directly to the destination, without going through intermediate hops.",
+   "When you want to add nodes to your VPN, all you have to do is add an extra configuration file, there is no need to start new daemons or create and configure new devices or network interfaces."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.tinc-vpn.org/"
+   },
+   {
+    "label": "Documentation (tinc Manual)",
+    "url": "https://www.tinc-vpn.org/documentation/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.tinc-vpn.org/ - worked, homepage text with news, description, features, and nav links",
+   "https://www.tinc-vpn.org/documentation/ - worked, but returned only the manual's table of contents; section bodies were not included, so no commands were read"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "tinc is a hands-on window into decentralized VPN design, with nodes forming a mesh and routing traffic directly instead of relying on a central hub."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "tinc",
+  "tldr": "A mesh VPN daemon where every node connects directly to every other, with no central hub and one config file per new node.",
+  "deeper_look": "tinc is a VPN daemon called tincd. It uses tunnelling and encryption to build a private network between hosts on the Internet. The VPN shows up to the operating system as an ordinary network device, so existing software needs no changes. Traffic is authenticated and encrypted with LibreSSL or OpenSSL, and can optionally be compressed with zlib or LZO.\n\nThe interesting part is the topology. Most VPNs are a hub with spokes, and every packet goes through the hub. In tinc, nodes form a mesh. In the project's words: \"VPN traffic is always (if possible) sent directly to the destination, without going through intermediate hops.\" NAT traversal works as long as one node accepts incoming connections on a public IP address, even a dynamic one.\n\nAdding a node means adding a configuration file. In the project's words, there is \"no need to start new daemons or create and configure new devices or network interfaces.\" The homepage also pitches it as a way to link Ethernet segments, so LAN-only applications and games can run across the Internet.\n\nThe manual's table of contents lists a UDP tunnel, a meta-connection, a meta-protocol, and an authentication protocol. That makes it a good door into how tunnelling VPNs are put together: a control channel for peers to find and authenticate each other, and a data channel for the packets.",
+  "install": "brew install tinc\n\nSetting it up needs a TUN/TAP device on your OS, and you generate a keypair and write main and host config files by hand. The manual covers this with a worked example.",
+  "try_this": [
+   {
+    "cmd": "tincd --help",
+    "what_happens": "Lists the daemon's command-line options, a starting point before reading the manual's configuration chapter."
+   }
+  ],
+  "whats_unique": "It is a decentralised mesh in which every node routes directly to every other, rather than funnelling traffic through a central server. Growing the network takes one config file.",
+  "caveats": "Setup is manual (TUN/TAP, keypairs, config files), the homepage's platform list still names Windows 2000 through 8, and 1.0.37 is described as likely the last 1.0 release.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "vpn",
+   "network",
+   "mesh",
+   "tunnelling",
+   "protocol"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.tinc-vpn.org/"
+   },
+   {
+    "label": "Documentation (tinc Manual)",
+    "url": "https://www.tinc-vpn.org/documentation/"
+   }
+  ]
+ }
+}

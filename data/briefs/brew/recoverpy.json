@@ -1,0 +1,69 @@
+{
+ "name": "recoverpy",
+ "desc": "TUI to recover overwritten or deleted data",
+ "homepage": "https://github.com/PabloLec/recoverpy",
+ "installs_365d": 23,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "tui",
+  "reverse-engineering"
+ ],
+ "why": "Scans raw disks for deleted file signatures, a door into how data survives deletion, though mostly a utility.",
+ "brief": {
+  "what_it_is": "RecoverPy is a terminal user interface (built on Textual) for scanning a raw partition or disk image for a byte string and inspecting the disk blocks where matches appear. You select a partition, enter a search string, and start a scan. You then open a match, move through neighbouring blocks, and select and save the content you want. It takes a block device or disk image as input and writes out whatever content you choose to save. It does not reconstruct files, infer file boundaries, interpret filesystem structures, or restore filenames.",
+  "why_it_exists": "The README's framing is that when a file is deleted its metadata disappears first, while the underlying disk blocks often remain intact until they are reused. RecoverPy exposes what remains on disk so you can find deleted content by its bytes.",
+  "how_it_works": "The selected partition is opened read-only and scanned sequentially in fixed-size chunks, with a small overlap between chunks so matches spanning a boundary are not missed. For each byte-level match it records the absolute offset within the device, and block inspection and navigation use explicit offsets rather than filesystem abstractions. The scan is streaming and memory-bounded, so the full partition is never loaded into memory.",
+  "commands_seen": [
+   {
+    "cmd": "sudo uvx recoverpy",
+    "context": "Run RecoverPy once without a permanent install, using uv; sudo is needed for raw block device access."
+   },
+   {
+    "cmd": "uv tool install recoverpy",
+    "context": "Install RecoverPy as a uv tool, the README's local-install route."
+   },
+   {
+    "cmd": "sudo recoverpy",
+    "context": "Start the TUI after installing; the README says raw block devices typically need sudo."
+   },
+   {
+    "cmd": "python -m pip install recoverpy",
+    "context": "Install from PyPI using pip instead of uv."
+   },
+   {
+    "cmd": "uv sync --dev",
+    "context": "Development setup: install project dependencies including dev tools."
+   },
+   {
+    "cmd": "sudo uv run recoverpy",
+    "context": "Run RecoverPy from a development checkout with sudo."
+   },
+   {
+    "cmd": "uv run pytest -q",
+    "context": "Run the unit and integration test suite quietly."
+   }
+  ],
+  "install_notes": "Requires Linux and Python 3.9+. Accessing raw block devices typically requires sudo. Install via uv (uvx or uv tool install) or pip. No accounts, hardware, or configuration steps are mentioned in the README.",
+  "standout": "Rather than parsing filesystems or carving files by known signatures, it searches the raw device for any distinctive string you type, then lets you walk the adjacent blocks around each hit to reassemble fragments by hand. The README stresses that a unique identifier or sentence fragment works far better than common words.",
+  "status": "Appears maintained, though the README gives no dates. It has a release badge, a license badge, a pytest CI badge on main, and a published PyPI package with a downloads badge. I could not see a last-release or last-commit date, so the evidence is indirect.",
+  "caveats": "Linux only. Needs sudo to read raw devices. Recovery is impossible once the blocks have been overwritten, and results may be partial or fragmented. It does not reconstruct files or restore names, so output is raw content you must interpret. The README advises avoiding writes to the target partition and unmounting it when possible. The scout note describes it as scanning for deleted file signatures, but the README describes searching for a user-supplied byte string, not signature-based carving.",
+  "quotes": [
+   "If the blocks are gone, recovery is impossible. If they are still there, RecoverPy helps you retrieve them.",
+   "RecoverPy does not attempt to interpret filesystem structures or restore filenames. It focuses on exposing what remains on disk and making it accessible.",
+   "Using a unique identifier, configuration key, or sentence fragment generally produces better results than common words."
+  ],
+  "links": [
+   {
+    "label": "Homepage and README (GitHub)",
+    "url": "https://github.com/PabloLec/recoverpy"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/PabloLec/recoverpy - fetched OK, README returned; it covers installation, usage, how it works, limitations and development, so no further links were followed."
+  ]
+ }
+}

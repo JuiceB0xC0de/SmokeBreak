@@ -1,0 +1,146 @@
+{
+ "name": "bulk_extractor",
+ "desc": "Stream-based forensics tool",
+ "homepage": "https://github.com/simsong/bulk_extractor/wiki",
+ "installs_365d": 486,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "science"
+ ],
+ "why": "A stream-based forensics scanner that carves emails, URLs and card numbers out of raw disk images, revealing what hides in bytes.",
+ "brief": {
+  "what_it_is": "bulk_extractor is a command-line digital forensics tool that scans disk images, individual files, or directories of files and pulls out structured evidence such as email addresses, credit card numbers, JPEGs and JSON snippets. It does not parse the file system. Results are written as text files that can be searched or fed into other forensic tools, and it also builds histograms of features it finds, such as email addresses and Google search terms. The repo describes it as a \"get evidence\" button for any kind of input. The Windows section also says it can read a raw physical disk or volume by device path.",
+  "why_it_exists": "The README frames it as a fast way to triage large amounts of data without depending on file-system structure, and says histograms of features like search terms and email addresses have proven useful in investigative and law enforcement work. The citation points to Garfinkel's 2013 paper \"Digital media triage with bulk data analysis and bulk_extractor\".",
+  "how_it_works": "It probes every byte of input to see whether it starts a sequence that can be decompressed or decoded, such as Base64 or compressed data. Anything decoded is recursively re-scanned, which is how it finds things like Base64-encoded JPEGs and compressed JSON that traditional carvers miss. It runs stream-based scanners over the data, and scanner modules can be loaded as scan_*.so, .dylib or .dll plugins from directories given with -P or in BE_PATH.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/simsong/bulk_extractor.git",
+    "context": "Clones the source repository to build from source (the README's recommended route)."
+   },
+   {
+    "cmd": "./bootstrap.sh",
+    "context": "First build step from the cloned source tree."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Configures the build before compiling."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles bulk_extractor."
+   },
+   {
+    "cmd": "make check",
+    "context": "Runs the test suite after building."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the built binary."
+   },
+   {
+    "cmd": "bulk_extractor64.exe -o output \\\\.\\PhysicalDrive0",
+    "context": "Windows example: scans a raw physical disk by DOS device path, writing to the output directory. Run from an elevated prompt with a separate output directory."
+   },
+   {
+    "cmd": "-xall",
+    "context": "Debug hint in the README: runs bulk_extractor with no scanners enabled."
+   },
+   {
+    "cmd": "-S jpeg_carve_mode=2",
+    "context": "From the 2.1.1 release notes: sets the jpeg carve mode through the -S option."
+   }
+  ],
+  "install_notes": "Build from source: git clone, then ./bootstrap.sh, ./configure, make, make check, make install. The README says the source tree builds 2.2.0 and recommends a tagged release from the GitHub releases page for production use. It requires C++17. Setup scripts in etc/ are described as possibly needing maintenance. Full install instructions are in doc/installation.md in the repo. Native Windows builds are not supported; the only Windows option is a cross-compiled, unsigned CI artifact built on Ubuntu with MinGW. A Docker image (Debian Bookworm, runs unprivileged) is provided for scanning regular image files, but it leaves out libewf and Lightgrep. Homebrew is the install path named in the brief, but no Homebrew-specific notes appeared in the README.",
+  "standout": "Its optimistic decoding is the distinctive part: it checks every byte for the start of encoded or compressed data and re-scans whatever it decodes, instead of relying on file headers or the file system. Output is plain text and histograms meant for downstream analysis, and loadable scanner plugins are supported.",
+  "status": "Maintained. The README says the 2.2.0 release is dated August 17, 2026, and the 2.1.1 release is dated April 26, 2024. The validation note is dated 2026-07-19. The wiki's Home page was last edited August 6, 2026 and now mostly points to the in-tree docs.",
+  "caveats": "Native Windows builds are not supported; only an unsigned cross-compiled CI artifact is available. Debian 10 is listed as unsupported. Tested configurations are Apple Silicon macOS and Ubuntu 22.04 and current macOS GitHub runners. The Docker image is not a privileged raw-device appliance and omits libewf and Lightgrep. The wiki is now only a navigation layer, and the README says it is not authoritative for current releases. The scout note's list of URLs is not in the README; it names emails, credit card numbers, JPEGs and JSON. The README says the source tree is not the same as a tested release.",
+  "quotes": [
+   "bulk_extractor is a high-performance digital forensics exploitation tool.",
+   "It is a \"get evidence\" button that rapidly scans any kind of input (disk images, files, directories of files, etc)",
+   "bulk_extractor probes every byte of data to see if it is the start of a sequence that can be decompressed or otherwise decoded."
+  ],
+  "links": [
+   {
+    "label": "Wiki homepage (given homepage, now a navigation layer)",
+    "url": "https://github.com/simsong/bulk_extractor/wiki"
+   },
+   {
+    "label": "Repository and README",
+    "url": "https://github.com/simsong/bulk_extractor"
+   },
+   {
+    "label": "Published manuals and docs (github.io)",
+    "url": "https://simsong.github.io/bulk_extractor/"
+   },
+   {
+    "label": "Releases and source archives",
+    "url": "https://github.com/simsong/bulk_extractor/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/simsong/bulk_extractor/wiki: worked. Returned the wiki Home page, which says the docs have moved into the source tree and links to the github.io docs.",
+   "https://github.com/simsong/bulk_extractor: worked. Returned the README with build steps, environment variables, Windows notes, Docker notes and release notes.",
+   "https://simsong.github.io/bulk_extractor/: worked. Returned the docs landing page with links to the user manual PDF, programmer's manual PDF and Scanner API."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It recursively decodes and rescans arbitrary byte streams to uncover embedded evidence without filesystem parsing, making forensic triage an unusually tangible way to explore hidden data."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "bulk_extractor",
+  "tldr": "A forensics scanner that reads raw bytes, decodes anything that looks encoded or compressed, and pulls out emails, card numbers and images without parsing a file system.",
+  "deeper_look": "bulk_extractor scans disk images, single files, or directories of files and writes out structured evidence: email addresses, credit card numbers, JPEGs, JSON snippets. It does not parse the file system at all. It treats the input as a stream of bytes and runs scanners over it. The README calls it a \"get evidence\" button for any kind of input.\n\nThe idea underneath is optimistic decoding. It probes every byte to see whether it starts a sequence that can be decompressed or decoded, such as Base64 or compressed data. Whatever it decodes is scanned again, recursively. That is how it finds a Base64-encoded JPEG or compressed JSON that a traditional carver, which looks for file headers, would walk straight past.\n\nIt was built for triage. With a large pile of data, you often cannot wait for a full file-system analysis, and the file system may be damaged or missing anyway. Results go into plain text files, and it also builds histograms of what it found, such as the most common email addresses or Google search terms. The README says these histograms have proven useful in investigative and law enforcement work. The cited reference is Garfinkel's 2013 paper, \"Digital media triage with bulk data analysis and bulk_extractor\".\n\nScanners are modules, and extra ones can be loaded as scan_*.so, .dylib or .dll plugins from directories given with -P or in BE_PATH. That makes it a reasonable place to read how a byte-stream pipeline is put together.",
+  "install": "brew install bulk_extractor\n# Alternative from source (the README's recommended route; needs a C++17 compiler): git clone https://github.com/simsong/bulk_extractor.git, then ./bootstrap.sh, ./configure, make, make check, make install",
+  "try_this": [
+   {
+    "cmd": "bulk_extractor --help",
+    "what_happens": "Lists the options, including how to choose an output directory and enable or disable scanners."
+   },
+   {
+    "cmd": "bulk_extractor -S jpeg_carve_mode=2",
+    "what_happens": "Shows the -S syntax for setting a scanner parameter, here the JPEG carve mode (from the 2.1.1 release notes). Add an output directory and an input to run it for real; check --help for the exact arguments."
+   },
+   {
+    "cmd": "bulk_extractor64.exe -o output \\\\.\\PhysicalDrive0",
+    "what_happens": "The README's Windows example: scans a raw physical disk and writes results to a separate output directory. Run it from an elevated prompt."
+   }
+  ],
+  "whats_unique": "It decodes first and asks questions later: every byte is a possible start of encoded or compressed data, and the decoded result is rescanned. That finds things header-based carvers miss.",
+  "caveats": "The README says the source tree is not the same as a tested release and recommends a tagged release for production use; native Windows builds are not supported, only an unsigned cross-compiled artifact.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "forensics",
+   "disk-images",
+   "carving",
+   "c++"
+  ],
+  "links": [
+   {
+    "label": "Wiki homepage (now a navigation layer)",
+    "url": "https://github.com/simsong/bulk_extractor/wiki"
+   },
+   {
+    "label": "Repository and README",
+    "url": "https://github.com/simsong/bulk_extractor"
+   },
+   {
+    "label": "Published manuals and docs",
+    "url": "https://simsong.github.io/bulk_extractor/"
+   },
+   {
+    "label": "Releases and source archives",
+    "url": "https://github.com/simsong/bulk_extractor/releases"
+   }
+  ]
+ }
+}

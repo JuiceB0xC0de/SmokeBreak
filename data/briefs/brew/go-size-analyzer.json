@@ -1,0 +1,86 @@
+{
+ "name": "go-size-analyzer",
+ "desc": "Analyzing the dependencies in compiled Golang binaries",
+ "homepage": "https://gsa.zxilly.dev/",
+ "installs_365d": 1267,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "tui",
+  "reverse-engineering"
+ ],
+ "why": "Breaks compiled Go binaries apart to show which dependencies take up space; a decent peek inside executables.",
+ "brief": {
+  "what_it_is": "go-size-analyzer (command name gsa) is a command-line tool that takes a compiled Go binary and breaks it down by package and by section to show how much space each dependency takes up. It reads ELF, Mach-O, PE and experimental WebAssembly binaries. Output can be plain text, JSON, HTML or SVG treemap, or you can explore interactively in a local web UI or a terminal UI. It can also diff two binaries, or two JSON results, to show which packages grew or shrank.",
+  "why_it_exists": "The README describes it as a simple tool to analyze the size of a Go compiled binary, and its CLI help frames it as determining the extent to which dependencies contribute to the bloated size of compiled Go binaries.",
+  "how_it_works": "The README does not explain the internals in detail. It mentions disassembly, symbol, and DWARF passes (each can be skipped with --no-disasm, --no-symbol or --no-dwarf), and it says sizes are attributed to packages and sections. The TODO list notes that symbol size itself is counted toward packages and that DWARF information is extracted.",
+  "commands_seen": [
+   {
+    "cmd": "brew install go-size-analyzer",
+    "context": "Homebrew install on macOS or Linux."
+   },
+   {
+    "cmd": "scoop install go-size-analyzer",
+    "context": "Windows install via scoop."
+   },
+   {
+    "cmd": "go install github.com/Zxilly/go-size-analyzer/cmd/gsa@latest",
+    "context": "Install from source with the Go toolchain."
+   },
+   {
+    "cmd": "gsa --web golang-compiled-binary",
+    "context": "Starts a web server at http://127.0.0.1:8080 to explore the report; add --listen 0.0.0.0:8080 for remote access."
+   },
+   {
+    "cmd": "gsa --tui golang-compiled-binary",
+    "context": "Opens the terminal UI for exploring package sizes interactively."
+   },
+   {
+    "cmd": "gsa docker-compose-linux-x86_64",
+    "context": "Default text mode: prints a table of packages and sections with percent and size, the example is docker-compose."
+   },
+   {
+    "cmd": "gsa bin-linux-1.21-amd64 bin-linux-1.22-amd64",
+    "context": "Diff mode: compares two binaries and shows old size, new size and difference per package and section."
+   },
+   {
+    "cmd": "gsa cockroach-darwin-amd64 -f svg -o data.svg --hide-sections",
+    "context": "Writes an SVG treemap to data.svg with sections hidden."
+   }
+  ],
+  "install_notes": "Homebrew and scoop are the package-manager routes; there is also a direct binary download from the GitHub releases page and a go install route. Building from source requires Go 1.27 or later, because the project uses encoding/json/v2. No accounts, API keys or runtime configuration are mentioned. The browser WebAssembly version at gsa.zxilly.dev needs no install at all.",
+  "standout": "A single binary covers text, JSON, HTML, SVG, a web treemap, a terminal UI and a WebAssembly build that runs entirely in the browser. It can also diff two builds, which is useful for tracking dependency bloat between Go versions or releases.",
+  "status": "Appears maintained, but the evidence is thin. The README has live Tests (GitHub Actions), Codecov, GitHub release and OpenSSF Scorecard badges, and a Repology packaging badge. I did not see a last release date or last commit date in the fetched text.",
+  "caveats": "The README warns that stripped binaries can be analyzed but may give inaccurate results. The WebAssembly version is much slower than native, about 10x by the README's estimate, and is only recommended for binaries under 30 MB. Building from source needs Go 1.27 or later. Several TODO items are still open: more disassembly patterns, flame and pie charts, and C++/Rust symbol demangling in cgo. The license is AGPL-3.0. The homepage itself returned only the title GSA TreeMap, so the README was the real source.",
+  "quotes": [
+   "A simple tool to analyze the size of a Go compiled binary.",
+   "Only recommended for analysing small applications (less than 30 MB in size)",
+   "The tool can work with stripped binaries, but it may lead to inaccurate results."
+  ],
+  "links": [
+   {
+    "label": "Homepage (WebAssembly treemap)",
+    "url": "https://gsa.zxilly.dev/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/Zxilly/go-size-analyzer"
+   },
+   {
+    "label": "Terminal UI demo (asciinema)",
+    "url": "https://asciinema.org/a/1074190"
+   },
+   {
+    "label": "Development guide",
+    "url": "https://github.com/Zxilly/go-size-analyzer/blob/master/DEVELOPMENT.md"
+   }
+  ],
+  "fetch_log": [
+   "https://gsa.zxilly.dev/ - worked, but returned only the page title GSA TreeMap with no description",
+   "https://github.com/Zxilly/go-size-analyzer - worked, returned the full README (this was my inferred repo link from the homepage's product name, since the homepage gave no link)"
+  ]
+ }
+}

@@ -1,0 +1,123 @@
+{
+ "name": "satellite-tracker",
+ "desc": "Terminal-based real-time satellite tracking and orbit prediction application",
+ "homepage": "https://github.com/ShenMian/tracker",
+ "installs_365d": 164,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "science",
+  "simulation",
+  "tui",
+  "afternoon"
+ ],
+ "why": "Terminal orbit prediction from TLE data is real astrodynamics you can run at home and watch overhead.",
+ "brief": {
+  "what_it_is": "tracker is a terminal application that tracks satellites in real time and predicts their orbits. It takes orbital element data (OMM, which the README says is sourced automatically from CelesTrak) and propagates each object with the SGP4 model to compute current positions and trajectories. It draws them on a scrolling world map with a day/night shading overlay, a polar sky view of azimuth and elevation, and a timeline for pass times. It is installed as the tracker binary; the Homebrew formula is named satellite-tracker.",
+  "why_it_exists": "The README gives no separate rationale; it describes itself only as a terminal-based real-time satellite tracking and orbit prediction application.",
+  "how_it_works": "Orbital elements are fetched automatically from CelesTrak and kept current by the app's auto-update feature. Each object is propagated with SGP4 to get its position at any time, and the time-shift control lets you move that calculation into the past or future. The sky view converts the computed positions into azimuth and elevation relative to the observer.",
+  "commands_seen": [
+   {
+    "cmd": "paru -S tracker",
+    "context": "Arch Linux install from the AUR, using the README's 'use your favorite AUR helper' note."
+   },
+   {
+    "cmd": "scoop bucket add extra",
+    "context": "Windows: adds the extra bucket to Scoop so the tracker package can be found."
+   },
+   {
+    "cmd": "scoop install tracker",
+    "context": "Windows: installs tracker through Scoop after the bucket is added."
+   },
+   {
+    "cmd": "brew install satellite-tracker",
+    "context": "macOS: installs the Homebrew formula, which is named satellite-tracker even though the binary is tracker."
+   },
+   {
+    "cmd": "cargo install --git https://github.com/ShenMian/tracker",
+    "context": "Build from source: installs the latest code straight from the GitHub repository using Cargo."
+   }
+  ],
+  "install_notes": "Beyond brew install satellite-tracker, the README lists AUR (Arch Linux), Scoop (Windows) and cargo install from git (any platform with a Rust toolchain). The README does not state a Rust version or any other build prerequisites. Nothing in the README mentions accounts, API keys, or first-run configuration. Configuration and keymap are documented separately in docs/configuration.md and docs/keymap.md, which I did not open.",
+  "standout": "It runs SGP4 orbit propagation from live CelesTrak data inside a terminal UI, with a sky view, time travel and object following in the same tool. The day/night shading is driven from the subsolar point, and the map scrolls horizontally without an edge.",
+  "status": "maintained. The releases page shows v0.2.1 marked Latest, dated 04 Oct, with the changelog heading giving 2026-10-04. The previous release, v0.2.0, is dated 29 Sep, and there are regular point releases throughout 2025 and 2026 (v0.1.13 through v0.1.20). The README has no explicit maintenance note.",
+  "caveats": "Auto-updates need network access to CelesTrak. Build from source is the only route on Linux outside the AUR, and the README gives no Rust version. The README does not name supported terminals or platforms beyond the package managers listed. The screenshot uses Cascadia Code NF, which is presented as a display choice rather than a requirement. The licence is Apache 2.0. The Homebrew formula name (satellite-tracker) differs from the executable name (tracker).",
+  "quotes": [
+   "A terminal-based real-time satellite tracking and orbit prediction application.",
+   "Orbit propagation: Real-time positions & trajectories using SGP4.",
+   "Day & night: Night side of the Earth shaded from the subsolar point.",
+   "Auto updates: Automatic OMM updates sourced from CelesTrak."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/ShenMian/tracker"
+   },
+   {
+    "label": "Configuration docs",
+    "url": "https://github.com/ShenMian/tracker/blob/main/docs/configuration.md"
+   },
+   {
+    "label": "Keymap docs",
+    "url": "https://github.com/ShenMian/tracker/blob/main/docs/keymap.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/ShenMian/tracker : worked, README returned.",
+   "https://github.com/ShenMian/tracker/releases : worked, used for release dates and status. Page text was heavily cluttered but the release list and changelogs were readable.",
+   "docs/configuration.md and docs/keymap.md : not fetched; linked from README only."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A terminal window into real satellite orbits, using SGP4 to explore live positions, future passes, and sky tracks\u2014hands-on astrodynamics, not merely a pretty display."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "satellite-tracker",
+  "tldr": "A terminal app that tracks satellites in real time on a scrolling world map, using live orbital data and the SGP4 model to predict where they go next.",
+  "deeper_look": "The binary is called `tracker`. It pulls orbital element data (OMM, sourced automatically from CelesTrak) and runs each object through SGP4, the standard model for turning those numbers into a position at a given moment. The results are drawn on a world map that scrolls horizontally with no edge, with the night side of the Earth shaded from the subsolar point.\n\nBesides the map, there is a polar sky view that converts positions into azimuth and elevation for an observer, and a timeline for pass times. A time-shift control moves the calculation into the past or future, so you can see where an object was or will be. You can also follow a single object.\n\nThe idea underneath is that a satellite's orbit is not a stored track. It is a handful of numbers (an element set) plus a propagation model, and the position falls out of the math at whatever time you ask. Element sets go stale as drag and manoeuvres change orbits, which is why the app keeps refreshing them. Watching the map and the sky view side by side is a good way to see how a ground track relates to what you would see looking up.\n\nThe README gives no separate rationale beyond describing it as a terminal-based real-time satellite tracking and orbit prediction application. Configuration and keymap are documented in separate files in the repository.",
+  "install": "brew install satellite-tracker\n# the executable is named `tracker`\n# other routes: paru -S tracker (Arch AUR), scoop bucket add extra && scoop install tracker (Windows), cargo install --git https://github.com/ShenMian/tracker (needs a Rust toolchain)\n# needs network access for the CelesTrak data updates",
+  "try_this": [
+   {
+    "cmd": "tracker --help",
+    "what_happens": "Lists the command-line options for the binary."
+   },
+   {
+    "cmd": "tracker",
+    "what_happens": "Opens the terminal UI with the scrolling world map, day/night shading, and satellite positions fetched from CelesTrak."
+   }
+  ],
+  "whats_unique": "It combines SGP4 propagation on live CelesTrak data, a sky view, time travel, and object following in one terminal UI, with day/night shading driven from the subsolar point.",
+  "caveats": "Auto-updates need network access to CelesTrak, and the README names no Rust version or supported terminals; the Homebrew formula (satellite-tracker) and executable (tracker) have different names.",
+  "commitment": "quick",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "quick",
+   "science",
+   "astrodynamics",
+   "satellites",
+   "tui",
+   "rust",
+   "sgp4"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/ShenMian/tracker"
+   },
+   {
+    "label": "Configuration docs",
+    "url": "https://github.com/ShenMian/tracker/blob/main/docs/configuration.md"
+   },
+   {
+    "label": "Keymap docs",
+    "url": "https://github.com/ShenMian/tracker/blob/main/docs/keymap.md"
+   }
+  ]
+ }
+}

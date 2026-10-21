@@ -1,0 +1,120 @@
+{
+ "name": "pythia",
+ "desc": "Monte Carlo event generator",
+ "homepage": "https://pythia.org",
+ "installs_365d": 54,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "days-off",
+  "science",
+  "math",
+  "simulation"
+ ],
+ "why": "Monte Carlo particle collision event generator used in real physics research, runnable at home and genuinely deep.",
+ "brief": {
+  "what_it_is": "PYTHIA is a program for generating simulated high-energy physics collision events, covering collisions between electrons, protons, photons and heavy nuclei. It contains theory and models for hard and soft interactions, parton distributions, initial- and final-state parton showers, multiparton interactions, fragmentation and decay. The homepage calls it a general-purpose Monte Carlo event generator. The homepage does not spell out the output format, so I did not confirm it beyond the phrase 'generation of high-energy physics collision events'. The current version on the homepage is PYTHIA 8.318, distributed as a source tarball (pythia8318.tgz) that is built with make.",
+  "why_it_exists": "The homepage describes it as a research-grade tool for describing high-energy collisions, built largely on original research and borrowing formulae from the literature. The page does not give a more specific motivation.",
+  "how_it_works": "The homepage describes the physics models it bundles rather than the internal mechanism. It covers hard and soft interactions, parton distributions, parton showers, multiparton interactions, fragmentation and decay. The page does not explain how these are sequenced or how events are sampled.",
+  "commands_seen": [
+   {
+    "cmd": "tar xvfz pythia8318.tgz",
+    "context": "Unpacks the PYTHIA 8.318 source tarball into a pythia8318 directory."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds PYTHIA; the homepage says this is all you need if you are not linking external libraries or have other special demands."
+   },
+   {
+    "cmd": "make mainNNN",
+    "context": "Builds one of the example programs in the examples subdirectory; NNN is a three-digit example number, which the homepage says is the example name."
+   },
+   {
+    "cmd": "./mainNNN > mainNNN.log",
+    "context": "Runs a built example program and writes its output to a log file named mainNNN.log."
+   }
+  ],
+  "install_notes": "The homepage gives these steps for Linux or Mac OS: download pythia8318.tgz, unpack it with tar, enter the pythia8318 directory, read its README for installation instructions, then run make. Run make in the examples subdirectory to build test programs. Linking external libraries requires extra steps described in the bundled README, which I did not read. The package is not a brew formula install here; brew's desc is only a one-line summary. The release is also on GitLab at gitlab.com/Pythia8/releases.",
+  "standout": "It is a real, research-grade collider event generator with a peer-reviewed manual, cited in SciPost Phys. Codebases, and it ships with a worksheet for summer schools and self-study. It is also used for validation through MCplots and Rivet, which is unusual for a tool a single person can build at home.",
+  "status": "Maintained, judging by the homepage: it names PYTHIA 8.318 as the current version, and the manual is for 8.3. I did not find a release date or last-commit date on either page. The GitLab releases page shows only a project creation date of May 15, 2019, so an exact last-release date is unknown.",
+  "caveats": "The homepage gives instructions only for Linux and Mac OS, and it does not mention Windows. The bundled manual is large and assumes physics background; the homepage says the manual is the main reference, not a quick-start guide. Optional external-library linking adds build steps I did not verify. This is a source-only distribution, and I did not check whether brew installs it. Licensing from the GitLab page is GPL-2.0-or-later.",
+  "quotes": [
+   "PYTHIA is a program for the generation of high-energy physics collision events",
+   "It is largely based on original research, but also borrows many formulae and other knowledge from the literature.",
+   "As such it is categorized as a general-purpose Monte Carlo event generator."
+  ],
+  "links": [
+   {
+    "label": "PYTHIA homepage",
+    "url": "https://pythia.org"
+   },
+   {
+    "label": "PYTHIA 8.3 manual (arXiv:2203.11601)",
+    "url": "https://arxiv.org/abs/2203.11601"
+   },
+   {
+    "label": "PYTHIA releases on GitLab",
+    "url": "https://gitlab.com/Pythia8/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://pythia.org: fetched OK; homepage with download, install steps and documentation links",
+   "https://gitlab.com/Pythia8/releases: fetched OK; project page with GPL-2.0-or-later license and creation date May 15, 2019, no README body"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "PYTHIA turns collider physics into simulated events, opening a genuinely distinctive, research-grade simulation you can build and explore at home."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "PYTHIA",
+  "tldr": "A research-grade Monte Carlo generator that simulates high-energy particle collisions, the same kind of tool collider physicists use, and you can build it at home.",
+  "deeper_look": "PYTHIA generates simulated collision events for electrons, protons, photons and heavy nuclei. It bundles the physics models needed to go from a hard collision to the particles that come out: hard and soft interactions, parton distributions, initial- and final-state parton showers, multiparton interactions, fragmentation and decay.\n\nThe homepage describes it as \"largely based on original research, but also borrows many formulae and other knowledge from the literature.\" It is categorized as \"a general-purpose Monte Carlo event generator.\" In plain terms, it plays out a collision many times with random sampling, so you can see what a detector might record. The homepage describes the models it contains rather than how events are sampled internally, so the manual is where that story lives.\n\nThe upstream distribution is a source tarball (currently 8.318) that you unpack and build with make. It ships with example programs in an examples directory, which you build one at a time and run. The only executable the brew formula lists is pythia8-config, a helper for building your own programs against the library. The real work happens in the C++ library and the examples.\n\nThe door here is Monte Carlo simulation as a way of doing physics. Quarks and gluons are never seen directly, so theory is tested by generating fake events and comparing them to real data. PYTHIA is also used for validation through MCplots and Rivet, and a worksheet for summer schools and self-study is available.",
+  "install": "brew install pythia\n# Upstream route: download pythia8318.tgz from pythia.org, then tar xvfz pythia8318.tgz, cd pythia8318, read the README, and run make. Requires a C++ toolchain. I did not verify what the brew formula puts on disk beyond pythia8-config.",
+  "try_this": [
+   {
+    "cmd": "pythia8-config --help",
+    "what_happens": "Shows the options of the config helper used to get compile and link flags for programs built against PYTHIA."
+   },
+   {
+    "cmd": "make mainNNN",
+    "what_happens": "From the examples directory of the source tree, builds one example program; NNN is the three-digit example number."
+   },
+   {
+    "cmd": "./mainNNN > mainNNN.log",
+    "what_happens": "Runs the built example and writes its output to a log file you can read."
+   }
+  ],
+  "whats_unique": "It is a real collider event generator with a peer-reviewed manual, used in actual physics research, that one person can build and run on a laptop. It also comes with a worksheet for learning.",
+  "caveats": "The manual is the main reference rather than a quick-start and assumes a physics background; the homepage gives instructions only for Linux and Mac, and I did not verify how the brew formula lays out the examples.",
+  "commitment": "days-off",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "days-off",
+   "science",
+   "physics",
+   "simulation",
+   "monte-carlo",
+   "c++"
+  ],
+  "links": [
+   {
+    "label": "PYTHIA homepage",
+    "url": "https://pythia.org"
+   },
+   {
+    "label": "PYTHIA 8.3 manual (arXiv:2203.11601)",
+    "url": "https://arxiv.org/abs/2203.11601"
+   },
+   {
+    "label": "PYTHIA releases on GitLab",
+    "url": "https://gitlab.com/Pythia8/releases"
+   }
+  ]
+ }
+}

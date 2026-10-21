@@ -1,0 +1,92 @@
+{
+ "name": "teip",
+ "desc": "Masking tape to help commands \"do one thing well\"",
+ "homepage": "https://github.com/greymd/teip",
+ "installs_365d": 48,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick"
+ ],
+ "why": "Masks parts of a stream so a command only touches selected regions, a clever pipeline trick that is close to plumbing.",
+ "brief": {
+  "what_it_is": "teip is a command-line filter written in Rust. It reads standard input, selects parts of it (by character, field, line number, regex match, or the output of another command), and passes only those selected parts, called holes, to a command you name after --. The targeted command's output replaces the holes, and the unselected text passes through unchanged. Input is text on stdin, and output is the same stream with the holes processed.",
+  "why_it_exists": "The README frames it as helping commands \"do one thing well\" by letting a command act on only a chosen part of a stream. The author's post on dev.to is linked as the origin story.",
+  "how_it_works": "teip marks the selected ranges on the input like masking tape, with each hole shown as [...] by default. It sends only the hole contents to the targeted command, line by line, and splices the command's output back into the original positions. With -s it runs the command once per hole, and with -e the selection comes from a shell pipeline that receives the same stdin, whose output gives line numbers to act on.",
+  "commands_seen": [
+   {
+    "cmd": "brew install teip",
+    "context": "Installs teip via Homebrew on macOS (x86_64, ARM64) and Linux (x86_64)."
+   },
+   {
+    "cmd": "cat /var/log/secure | teip -c 1-15 -- date -f- +%s",
+    "context": "Example that converts the first 15 characters of each line (timestamps) to UNIX time using date."
+   },
+   {
+    "cmd": "cat file | teip -g HELLO -- sed 's/WORLD/EARTH/'",
+    "context": "Replaces WORLD with EARTH only on lines that contain HELLO."
+   },
+   {
+    "cmd": "echo \"100 200 300 400\" | teip -f 3",
+    "context": "Basic demo with no targeted command; the 3rd whitespace-separated field is shown in [...] as a hole."
+   },
+   {
+    "cmd": "echo \"100 200 300 400\" | teip -f 3 -- awk '{print $1*2}'",
+    "context": "Doubles the 3rd field; the -- separates teip's options from the targeted command."
+   },
+   {
+    "cmd": "echo ABCDEFG | teip -c 1,3,5,7",
+    "context": "Selects characters 1, 3, 5 and 7 by position, shown as [A]B[C]D[E]F[G]."
+   },
+   {
+    "cmd": "echo \"100,200,300,400\" | teip -f 3 -d , -- sed 's/./@/g'",
+    "context": "CSV-style field selection using -d for a literal comma delimiter; the 3rd field becomes @@@."
+   },
+   {
+    "cmd": "echo -e \"ABC1\\nEFG2\\nHIJ3\" | teip -og '[GJ]\\d'",
+    "context": "With -og, selects only the regex-matched text, here G2 and J3, as holes."
+   },
+   {
+    "cmd": "echo ABCDEF | teip -s -og . -- grep '[ABC]'",
+    "context": "Solid mode (-s): runs grep once per hole so commands that print zero or many lines still work."
+   },
+   {
+    "cmd": "echo -e 'AAA\\nBBB\\nCCC\\nDDD\\nEEE\\nFFF' | teip -e 'grep -n -A 2 CCC'",
+    "context": "External-match mode (-e): grep prints line numbers for CCC and the two lines after it, and those lines become holes."
+   }
+  ],
+  "install_notes": "macOS and Linux: install Homebrew, then brew install teip. Linux also has .deb and .rpm packages on the GitHub releases page (dpkg, apt, dnf, yum examples given), and the README asks you to check the sha256 on the release page. Windows (x86_64) has an installer .exe from the releases page, with more detail in the wiki page 'Use on Windows'. Other architectures: use the release page or build from source with cargo install teip. For the -G Oniguruma regex option, build with cargo install teip --features oniguruma, which needs cargo, clang and libclang available (apt, dnf, or choco install llvm on Windows). Optional environment variables: TEIP_HIGHLIGHT, TEIP_GREP_PATH, TEIP_SED_PATH, TEIP_AWK_PATH. No accounts or hardware are needed.",
+  "standout": "Teip can chain with itself and with any other command, so one teip can select regions that a second teip selects inside. Its -e option hands the selection to an arbitrary shell pipeline that also gets the same stdin, so you can select with grep -n -A, sed '/A/,/B/=', or nl | tail. Compared with awk or sed, which apply one script to a whole stream, teip lets an ordinary tool like tr or sed run only on the chosen spans.",
+  "status": "Appears maintained. The README points to the v2.3.3 release, has a passing-test CI badge, and shows a crates.io version badge. I did not see a last commit or release date, so the exact recency is unknown. Small inconsistency: the deb/rpm filenames in the install commands say teip-2.3.2 while the URL path says v2.3.3.",
+  "caveats": "Some features have real costs. -s (solid mode) and -I spawn a process per hole, so the README says they are unsuitable for large files. The targeted command must print one output line per input line, or teip fails with 'Output of given command is exhausted'; grep is the usual example. With -z, commands that cannot handle NUL bytes can produce unintended output. The -A, -B, -C, --sed and --awk options are labelled experimental and may be discontinued. -G needs a libclang build. The logo is licensed CC BY-NC 4.0, which is non-commercial, while the code is MIT. Parts of the cut list code come from uutils/coreutils and parts of the CSV parser from BurntSushi/rust-csv, each under its own license, which the README notes.",
+  "quotes": [
+   "Masking tape to help commands \"do one thing well\"",
+   "Taping: Help the command \"do one thing well\"",
+   "`teip` allows a command to focus on its own task.",
+   "Note that `-og` is one of the most useful idioms and is frequently used in this manual."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README (homepage)",
+    "url": "https://github.com/greymd/teip"
+   },
+   {
+    "label": "Latest release",
+    "url": "https://github.com/greymd/teip/releases/latest"
+   },
+   {
+    "label": "Benchmark (wiki)",
+    "url": "https://github.com/greymd/teip/wiki/Benchmark"
+   },
+   {
+    "label": "Author's write-up (dev.to)",
+    "url": "https://dev.to/greymd/teip-masking-tape-for-shell-is-what-we-needed-5e05"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/greymd/teip (GitHub repository; fetched OK and the README was returned in full, which covered usage, examples, install notes and license, so no further fetches were needed)"
+  ]
+ }
+}

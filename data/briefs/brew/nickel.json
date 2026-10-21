@@ -1,0 +1,90 @@
+{
+ "name": "nickel",
+ "desc": "Better configuration for less",
+ "homepage": "https://nickel-lang.org/",
+ "installs_365d": 194,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language"
+ ],
+ "why": "A configuration language with contracts and lazy evaluation, a genuinely different take on generating config.",
+ "brief": {
+  "what_it_is": "Nickel is a configuration language, described by its authors as \"the universal configuration language.\" It is a small programming language meant to generate static configuration files such as JSON, YAML, or TOML, which another system then consumes. You write modular blocks of records and functions, merge them into one configuration, and export the result with the nickel export command. The README describes the core as \"in essence JSON with functions.\" It is lazily evaluated, has optional gradual static typing, and uses contracts as schemas for validation.",
+  "why_it_exists": "The README says the purpose is to automate generation of static configuration files, \"configuration templating, but done right.\" It positions Nickel as an evolution of the Nix language that overcomes some of Nix's limitations, aimed at complex config for apps, machines, infrastructure, and build systems.",
+  "how_it_works": "Records (JSON objects) are composed with a merge operator, which also combines metadata such as docs, defaults, and type contracts. Functions are first-class. Static types are opt-in via a sound gradual type system, so you can statically check functions but use runtime validation for data. Contracts act as schemas; you enforce correctness by adding type-like annotations to data.",
+  "commands_seen": [
+   {
+    "cmd": "nix run nixpkgs#nickel",
+    "context": "Runs Nickel directly with flake-enabled Nix, without installing it."
+   },
+   {
+    "cmd": "brew install nickel",
+    "context": "Installs the Nickel binary via Homebrew on macOS."
+   },
+   {
+    "cmd": "cargo run --bin nickel -- eval program.ncl",
+    "context": "Builds and runs the Nickel binary from source without Nix; arguments go after the extra --."
+   },
+   {
+    "cmd": "nickel eval <<< '[\"hello\", \"world\"] |> std.string.join \", \"'",
+    "context": "First-run example: evaluates an expression fed on stdin, printing \"hello, world\"."
+   },
+   {
+    "cmd": "echo 'let s = \"world\" in \"hello, %{s}\"' > program.ncl",
+    "context": "Creates a small source file to show string interpolation before evaluating it."
+   },
+   {
+    "cmd": "nickel repl",
+    "context": "Starts an interactive REPL; :help lists its commands."
+   },
+   {
+    "cmd": "nickel export --format json <<< '{content = \"hello, world\"}'",
+    "context": "Exports a Nickel record to JSON; the README also shows YAML and TOML as supported formats."
+   },
+   {
+    "cmd": "nickel format network.ncl container.ncl api.ncl",
+    "context": "Formats one or several Nickel source files, using Topiary under the hood."
+   },
+   {
+    "cmd": "cargo build -p nickel-lang-cli --release",
+    "context": "Builds the release binary from the repository; output lands in target/release."
+   },
+   {
+    "cmd": "cargo test",
+    "context": "Runs the test suite from the repository root."
+   }
+  ],
+  "install_notes": "Easiest routes per the README: Homebrew on macOS (brew install nickel), or flake-enabled Nix (nix run nixpkgs#nickel, or nix profile install nixpkgs#nickel). Without Nix, building from source needs Rust and Cargo, via cargo build -p nickel-lang-cli --release. Nix users can enter a dev shell with nix-shell or nix develop, and a Tweag Cachix binary cache (tweag-nickel.cachix.org) avoids rebuilding packages. Editor support is optional: Vim/Neovim, Emacs, and VSCode plugins exist, plus a Nickel Language Server (NLS) for diagnostics, type hints, completion, and formatting, set up via the LSP guide in the repo.",
+  "standout": "Its pitch is a middle path: lazy, Turing-complete, and functional like Nix, but with optional static typing and contracts for schemas, so you only annotate what needs checking. The README's comparison table lays this out against CUE, Dhall, Jsonnet, KCL, and Starlark, and it is explicitly built to be embeddable in other languages.",
+  "status": "Maintained, as far as the README shows: it is designed, developed, and maintained by Tweag (part of Modus Create), with CI and a published roadmap. It says version 1.0 shipped in May 2023 and the core language is stable. I did not see a last-release or last-commit date, so exact recency is unverified.",
+  "caveats": "The roadmap lists unfinished work: incremental evaluation and caching, a bytecode compiler and VM (RFC007) for performance, and custom merge functions. The README's comparison table says side effects are \"Yes (constrained, planned)\". Building from source needs Rust, and Nix is the smoothest path on Linux. I did not check the license or the release history beyond the README.",
+  "quotes": [
+   "Manage complex configurations. Modular, correct and boilerplate-free.",
+   "Nickel is the universal configuration language. Nickel is configuration templating, but done right.",
+   "It is designed to have a simple, well-understood core: it is in essence JSON with functions.",
+   "Great defaults, design for extensibility"
+  ],
+  "links": [
+   {
+    "label": "Nickel homepage",
+    "url": "https://nickel-lang.org/"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/tweag/nickel"
+   },
+   {
+    "label": "User manual",
+    "url": "https://nickel-lang.org/user-manual/introduction"
+   }
+  ],
+  "fetch_log": [
+   "https://nickel-lang.org/ \u2014 worked; marketing page with feature blurbs but no commands or install steps.",
+   "https://github.com/tweag/nickel \u2014 worked; full README with install, usage, build, roadmap, and comparison sections."
+  ]
+ }
+}

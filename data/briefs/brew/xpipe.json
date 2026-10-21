@@ -1,0 +1,44 @@
+{
+ "name": "xpipe",
+ "desc": "Split input and feed it into the given utility",
+ "homepage": "https://www.netmeister.org/apps/xpipe.html",
+ "installs_365d": 165,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "tui"
+ ],
+ "why": "Splits input into a utility with a clever pipeline trick, a small but genuine oddity in the Unix toolbox.",
+ "brief": {
+  "what_it_is": "xpipe is a Unix command-line utility that reads standard input and splits it into chunks, by a given number of bytes, a given number of lines, or wherever a given pattern matches. It then runs the utility you name once per chunk, feeding each chunk to that utility as its input. The chunks are fed to the command, so a tool that handles only one input at a time can process a multi-item file in one invocation. The page's example pipes a PEM bundle of x509 certificates through openssl x509 and gets subject and validity dates for every certificate.",
+  "why_it_exists": "The author describes it as a Unix love-child of split(1), tee(1), and xargs(1), built for the case where a tool accepts only one certificate at a time and you would otherwise have to split the file into pieces and loop over them. The page also jokes that you probably have to google how to use sed(1) or awk(1) to pull out blocks between patterns.",
+  "how_it_works": "xpipe reads stdin and cuts it into chunks at the boundary you specify (-p takes a regular expression pattern for splitting). For each chunk it invokes the trailing command, passing the chunk as input. The page shows only the pattern-split form and does not detail the byte-count and line-count options.",
+  "commands_seen": [
+   {
+    "cmd": "$ <certs.pem xpipe -p '^-----END CERTIFICATE-----$' \\ openssl x509 -noout -subject -dates",
+    "context": "Example from the page: reads certs.pem, splits it after each END CERTIFICATE line, and runs openssl x509 -noout -subject -dates on each certificate, printing notBefore, notAfter, and subject for each one."
+   }
+  ],
+  "install_notes": "",
+  "standout": "Most split-and-loop tasks need a shell loop or an awk flip-flop. xpipe folds the split, the repeated invocation, and the per-chunk pattern into one command line, and the example output shows it working on a real multi-certificate file.",
+  "status": "unknown. The homepage is a single man-page-style web page with no release date, version number, changelog, or commit history. It does have a contact link for the author, but that does not show whether the project is active.",
+  "caveats": "The page covers only the basic example and points to xpipe(1) for more detail, but no further docs link was visible on the page. The page gives no license, source repository, or install instructions. Homebrew's scout notes and caveats are empty, so nothing extra is known from that side. I did not follow any further links.",
+  "quotes": [
+   "You can think of it as a Unix love-child of the split(1), tee(1), and xargs(1) commands.",
+   "And, let's be honest, you probably have to google how to use sed(1) or awk(1) to extract subsequent blocks from a flip-flop pattern.",
+   "xpipe(1) can do the job for you in a single command:"
+  ],
+  "links": [
+   {
+    "label": "xpipe homepage (author's page)",
+    "url": "https://www.netmeister.org/apps/xpipe.html"
+   }
+  ],
+  "fetch_log": [
+   "https://www.netmeister.org/apps/xpipe.html: fetched OK, page text returned; it is the only page read"
+  ]
+ }
+}

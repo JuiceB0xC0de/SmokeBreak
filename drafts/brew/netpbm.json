@@ -1,0 +1,102 @@
+{
+ "name": "netpbm",
+ "desc": "Image manipulation",
+ "homepage": "https://netpbm.sourceforge.net/",
+ "installs_365d": 255895,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "visual",
+  "quick",
+  "library"
+ ],
+ "why": "Old-school Unix image filters that treat pictures as plain text pipelines, a classic toolkit well worth knowing.",
+ "brief": {
+  "what_it_is": "Netpbm is a toolkit of command-line image tools, with over 350 separate programs, including converters for about 100 graphics formats. Its homepage gives examples such as shrinking an image by 10%, cutting the top half off an image, making a mirror image, and creating a sequence of images that fade from one image to another. It has no interactive tools and no graphical interface. Most programs are run from a typed shell command, and many are also meant to be called by other programs. The homepage does not describe the tools as shell pipelines, though the programs are small single-purpose filters.",
+  "why_it_exists": "The stated goal is to be a single source for all the primitive graphics utilities, especially converters, one might need. The history section says Netpbm replaced the widely spread Pbmplus package (last released December 10, 1991) and collected the many filters that circulated on the net after it, hence the name.",
+  "how_it_works": "The homepage does not explain the internal mechanism in detail. It does say the programs are useful from a typed shell command but are mostly oriented toward being used internally by other programs. It also says the -version option on most programs reports the release in use.",
+  "commands_seen": [
+   {
+    "cmd": "$ apt-get install subversion make pkg-config gcc perl-modules flex \\\\ libjpeg-dev libtiff-dev libpng-dev libx11-dev libxml2-dev ghostscript gsfonts",
+    "context": "Debian prerequisite install line from the homepage, which says it should get everything needed to build Netpbm from source and that it worked on Debian 10. The line is wrapped with a trailing backslash on the page."
+   },
+   {
+    "cmd": "-version",
+    "context": "Option that, according to the homepage, most Netpbm programs accept to report which release is in use."
+   }
+  ],
+  "install_notes": "Debian includes Netpbm, so building from source is normally unnecessary. To build from source you need GNU Make and a Perl interpreter with core modules; there is no practical substitute for GNU Make. Any C89 compiler should work, and the C library must implement Single Unix Specification version 2 (glibc 2 or later is fine). MinGW may need header or source changes. Building needs about 9 MiB of disk space, plus 4 MiB for documentation, which is optional because a public copy is online. Build steps are in doc/INSTALL in the source tree. Netpbm distributes mainly through Subversion checkout. Some programs need external libraries, and the build skips those parts it cannot find. pstopnm requires Ghostscript installed as gs, built with the relevant PNM drivers.",
+  "standout": "Instead of one large program with many options, Netpbm is a set of single-purpose programs built on a few simple intermediate formats (PBM, PGM, PPM, PAM), which is what makes it attractive for building pipelines and for code reuse. The homepage says it has no equal among engineers who value modular design and building things from blocks.",
+  "status": "Maintained. The homepage says new releases come roughly every three months, usually with new features, and it was last checked 2026.02.22. The maintainer, Bryan Henderson, says he responds to bug reports by email quickly, usually with a fix in a new release within a few days. The homepage also says the project's popularity is mostly historical.",
+  "caveats": "No GUI and no interactive tools. There is no bug tracker or mailing list; bug reports and help requests go by email to the maintainer. Building needs GNU Make and Perl, and some older C libraries need changes. Most of the roughly 100 formats are seen only in museums today, and modern users tend to reach for Photoshop, GIMP, or ImageMagick. The homepage admits that its popularity figures are based on searching package files for program names, which overstates real use. Licensing is a mix of open-source licenses (GPL, BSD, MIT, and others) across contributed code, and the maintainer gives no warranty on licensing or patents. The homepage says there are no known active patents covering it.",
+  "quotes": [
+   "Netpbm is a toolkit for manipulation of graphic images, including conversion of images between a variety of different formats.",
+   "Netpbm does not contain interactive tools and doesn't have a graphical interface.",
+   "Among the niche of engineers who appreciate modular design, code reuse, and building things from building blocks, Netpbm has no equal."
+  ],
+  "links": [
+   {
+    "label": "Netpbm homepage",
+    "url": "https://netpbm.sourceforge.net/"
+   },
+   {
+    "label": "Change history (linked from homepage as change.html)",
+    "url": "https://netpbm.sourceforge.net/change.html"
+   }
+  ],
+  "fetch_log": [
+   "https://netpbm.sourceforge.net/ - fetched OK, homepage text read in full. The homepage refers to a user manual, Getting Netpbm, and doc/INSTALL in the source tree, but no fetch was made for them, so commands are limited to what the homepage shows."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Netpbm\u2019s hundreds of small image filters and shared PBM-family formats make image processing composable, while exposing a distinctive Unix approach beyond another all-in-one editor."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Netpbm",
+  "tldr": "Over 350 tiny command-line programs that convert and transform images through a few plain intermediate formats, a 1990s Unix toolbox that still ships everywhere.",
+  "deeper_look": "Netpbm is a toolkit of single-purpose image programs. Roughly 100 of them are converters between graphics formats, most of which are now museum pieces. The rest shrink, crop, flip, fade, and otherwise rework pictures. It has no GUI and no interactive tools. You type a command, or another program calls it for you.\n\nThe stated goal is to be a single source for all the primitive graphics utilities, especially converters, that one might need. It grew out of Pbmplus, whose last release was December 10, 1991. Netpbm collected the many filters that circulated on the net after that, hence the name.\n\nThe idea underneath is the interesting part. Instead of one big program with many options, Netpbm uses a few simple intermediate formats (PBM, PGM, PPM and PAM). Every converter reads its format and writes one of those, and every filter works on them. Any format can therefore reach any other through small steps. That is the modular design the homepage means when it says \"Among the niche of engineers who appreciate modular design, code reuse, and building things from building blocks, Netpbm has no equal.\"\n\nThe project is maintained, with releases roughly every three months. Bryan Henderson, the maintainer, answers bug reports by email.",
+  "install": "brew install netpbm",
+  "try_this": [
+   {
+    "cmd": "pnmfile --help",
+    "what_happens": "Shows usage for pnmfile, one of the small tools that reports what an image file contains."
+   },
+   {
+    "cmd": "pamscale --help",
+    "what_happens": "Lists the options of the scaling filter, a typical single-purpose tool in the set."
+   },
+   {
+    "cmd": "ppmforge --help",
+    "what_happens": "Shows how to use the generator that makes fractal-style images from scratch."
+   }
+  ],
+  "whats_unique": "It treats image work as a set of tiny filters around a few plain formats, rather than one big editor. The format converters double as a catalogue of old graphics history.",
+  "caveats": "There is no GUI, no bug tracker and no mailing list. Most of the roughly 100 formats are seen only in museums, and most people reach for GIMP or ImageMagick instead.",
+  "commitment": "quick",
+  "category": "quick-weird-payoffs",
+  "tags": [
+   "quick",
+   "images",
+   "unix-filters",
+   "converters",
+   "pipelines",
+   "classic"
+  ],
+  "links": [
+   {
+    "label": "Netpbm homepage",
+    "url": "https://netpbm.sourceforge.net/"
+   },
+   {
+    "label": "Change history",
+    "url": "https://netpbm.sourceforge.net/change.html"
+   }
+  ]
+ }
+}

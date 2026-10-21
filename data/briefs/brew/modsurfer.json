@@ -1,0 +1,82 @@
+{
+ "name": "modsurfer",
+ "desc": "Validate, audit and investigate WebAssembly binaries",
+ "homepage": "https://dylibso.com/products/modsurfer/",
+ "installs_365d": 41,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "reverse-engineering",
+  "quick",
+  "tui"
+ ],
+ "why": "Inspects and audits WebAssembly binaries, a useful way to take modules apart, though it leans toward commercial tooling.",
+ "brief": {
+  "what_it_is": "Modsurfer is a set of tools for inspecting and checking WebAssembly modules and components. Its CLI takes a compiled .wasm binary plus an optional YAML \"checkfile\" that declares requirements such as allowed imports and exports, maximum size, and cyclomatic complexity risk, then reports which properties pass or fail. Output is a table by default, or JSON with --output-format json. The CLI also acts as an HTTP client to a Modsurfer service, either the desktop app or an Enterprise deployment. A free desktop application provides a GUI for browsing module details such as code size, imports/exports, function names, and strings.",
+  "why_it_exists": "The README says Modsurfer gives ops and dev teams \"a system of record + diagnostics application to search, browse, and investigate modules\", so teams can see what WebAssembly code runs in their systems. The four listed use cases are at-a-glance insights, searching module details, auditing and tracking WebAssembly code, and debugging issues that are hard to pinpoint in the opaque binary format.",
+  "how_it_works": "You generate a checkfile with modsurfer generate, then run modsurfer validate against a binary and the checkfile. Validation compares the module's imports, exports, size, and complexity against the declared expectations and classifies each failure (for example ABI Compatibility, Security, or Resource Limit) with a severity. The checkfile can also be a remote URL, so requirements can be tracked centrally.",
+  "commands_seen": [
+   {
+    "cmd": "modsurfer generate -p path/to/my.wasm -o mod.yaml",
+    "context": "Creates a checkfile (mod.yaml) from an existing module; the README warns the result is very restrictive and should be edited."
+   },
+   {
+    "cmd": "modsurfer validate -p path/to/my.wasm -c path/to/mod.yaml",
+    "context": "Validates a .wasm binary against a checkfile and reports any unmet expectations."
+   },
+   {
+    "cmd": "modsurfer -h",
+    "context": "Lists the CLI's commands and options, per the README's pointer to the built-in help."
+   },
+   {
+    "cmd": "docker pull ghcr.io/dylibso/modsurfer:latest",
+    "context": "Pulls the CLI container image from the GitHub container registry for Docker environments."
+   },
+   {
+    "cmd": "make test-cli",
+    "context": "Run from the repo root to see a basic validation report while contributing."
+   },
+   {
+    "cmd": "make empty-cli",
+    "context": "Repo-root contributor target listed next to the other test-cli targets; the README does not say what it does."
+   },
+   {
+    "cmd": "make unknown-cli",
+    "context": "Repo-root contributor target listed next to the other test-cli targets; the README does not say what it does."
+   }
+  ],
+  "install_notes": "The CLI is available as a GitHub Release binary (the README links to the latest release) or as a Docker image at ghcr.io/dylibso/modsurfer. The brew formula installs the modsurfer executable. No accounts or runtimes are mentioned for the CLI's local validation. Using it as an HTTP client needs either the free desktop app (downloaded from dylibso.com/downloads/modsurfer) or an Enterprise deployment. Enterprise self-managed deployment requires contacting support@dylibso.com. The GitHub Action (modsurfer-validate-action) can run validation in CI with no purchase needed.",
+  "standout": "The checkfile is a declarative YAML policy for WebAssembly binaries. It can require specific imports with signatures, forbid namespaces such as wasi_snapshot_preview1, cap export counts, and set size and complexity limits in one file, and the same file can be fetched from a URL, as Fermyon's Spin project does. Results can be emitted as JSON for pipelines.",
+  "status": "unknown. The README and homepage I read show no release dates, last-commit dates, or version numbers, so I could not judge whether the project is actively maintained.",
+  "caveats": "The GitHub README is the only place that describes the CLI in detail; the homepage is mostly marketing and points to Enterprise sales. The desktop app is free, but the README says Enterprise has licensing terms and the pricing page lists hosting and search of module functions and strings as Enterprise-only features. The README does not state a license for the open-source code. The platform compatibility section ends mid-sentence with no list of supported targets beyond the names given. The README's sample table shows a long list of FAILs, which is an example output rather than a clean result. The brew scout note's concern about commercial tooling is partly borne out: the CLI validation is in the open repo, but the richer search and hosting features are sold as Enterprise.",
+  "quotes": [
+   "Modsurfer provides ops & dev teams with a system of record + diagnostics application to search, browse, and investigate modules.",
+   "Modsurfer CLI provides a novel feature to process and validate a WebAssembly module based on policy/properties of the module that you define.",
+   "Modsurfer runs validation tests on compiled .wasm binaries."
+  ],
+  "links": [
+   {
+    "label": "Homepage (Dylibso product page)",
+    "url": "https://dylibso.com/products/modsurfer/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/dylibso/modsurfer"
+   },
+   {
+    "label": "CLI documentation",
+    "url": "https://dev.dylib.so/docs/modsurfer/cli#commands"
+   },
+   {
+    "label": "GitHub Action for validation",
+    "url": "https://github.com/dylibso/modsurfer-validate-action"
+   }
+  ],
+  "fetch_log": [
+   "https://dylibso.com/products/modsurfer/ - loaded, but it is a marketing page with product copy and pricing, not a README or technical docs",
+   "https://github.com/dylibso/modsurfer - loaded, returned the repository README, which covered the CLI, checkfile format, and usage; I did not follow the docs link or the GitHub Action link"
+  ]
+ }
+}

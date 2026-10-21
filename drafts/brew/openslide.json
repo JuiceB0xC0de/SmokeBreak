@@ -1,0 +1,124 @@
+{
+ "name": "openslide",
+ "desc": "C library to read whole-slide images (a.k.a. virtual slides)",
+ "homepage": "https://openslide.org/",
+ "installs_365d": 29136,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "library"
+ ],
+ "why": "Reads gigapixel pathology whole-slide images, a real scientific format door into digital microscopy.",
+ "brief": {
+  "what_it_is": "OpenSlide is a C library that gives programmers one simple interface for reading whole-slide images, also called virtual slides, which are very large high-resolution pathology scans. It takes in vendor files in a range of formats (Aperio .svs, Hamamatsu .ndpi, Leica .scn, MIRAX .mrxs, Zeiss .czi, DICOM, generic tiled TIFF, and others) and lets callers read tiles and regions at chosen resolutions without loading the whole image into RAM. It also exposes ICC profiles, textual metadata, and associated images such as a label and thumbnail. Python and Java bindings are published separately; the Python binding includes a Deep Zoom generator and a simple web viewer, and the Java binding includes a simple image viewer.",
+  "why_it_exists": "Whole-slide images routinely exceed RAM and are stored in vendor-specific formats that are often undocumented and usually readable only with a vendor's own Windows tools. The homepage frames OpenSlide as a vendor-neutral foundation so doctors and researchers are not tied to one vendor's viewer, and so non-Windows platforms can read these files.",
+  "how_it_works": "The README does not explain the internals in detail. It describes a C API with a consistent interface over the many vendor formats, and points to the API reference and per-format pages on the website for specifics. The 2013 Journal of Pathology Informatics paper linked from the homepage describes the design and implementation.",
+  "commands_seen": [
+   {
+    "cmd": "meson setup builddir",
+    "context": "Configures a build directory for compiling OpenSlide from source; first step of the README's build instructions."
+   },
+   {
+    "cmd": "meson compile -C builddir",
+    "context": "Compiles the source in the build directory created by meson setup."
+   },
+   {
+    "cmd": "meson install -C builddir",
+    "context": "Installs the compiled OpenSlide from the build directory into the system."
+   }
+  ],
+  "install_notes": "Building from source needs GCC or Clang, Meson, cairo >= 1.2, glib >= 2.56, libdicom >= 1.3 (built automatically if missing), libjpeg-turbo >= 1.3 or libjpeg >= 9c, libpng, libtiff >= 4.0, libxml2, OpenJPEG >= 2.1, SQLite >= 3.14, zlib, and Zstandard. The homepage also links a Windows usage guide and offers binary builds (version 4.0.1.2 is the latest listed). No accounts or hardware are needed. The Homebrew entry lists four executables (openslide-quickhash1sum, openslide-show-properties, openslide-write-png, slidetool), but neither fetched page documents them, so their usage is unverified.",
+  "standout": "It is a real scientific-format door into digital microscopy: it reads gigapixel pathology scans that most image libraries cannot open, and it was built by reverse-engineering vendor formats that were never documented. It comes from Satyanarayanan's group at Carnegie Mellon, and the website also hosts a web-based demo that renders several slide formats.",
+  "status": "Maintained. The homepage lists OpenSlide 4.0.1 released 2026-06-07, with binary build 4.0.1.2 dated 2026-06-19, plus Python 1.4.6 and Java 0.13.3 releases on 2026-06-07. The news list shows steady releases through 2025 and 2026, and development happens on GitHub with separate issue trackers.",
+  "caveats": "Vendor support is not endorsed by the vendors and may be incomplete, per the homepage. The README says it reads brightfield slides only. The license is LGPL 2.1, so linking rules apply. Building from source requires many dependencies, and the build is heavier than a typical C library. The Homebrew entry has no caveats, and the executables it lists are not described in the fetched pages.",
+  "quotes": [
+   "OpenSlide is a C library for reading whole slide image files (also known as virtual slides).",
+   "It provides a consistent and simple API for reading files from multiple vendors.",
+   "Whole-slide images routinely exceed RAM sizes, often occupying tens of gigabytes when uncompressed.",
+   "Vendors typically do not document their formats."
+  ],
+  "links": [
+   {
+    "label": "OpenSlide homepage",
+    "url": "https://openslide.org/"
+   },
+   {
+    "label": "C API reference",
+    "url": "https://openslide.org/api/openslide_8h.html"
+   },
+   {
+    "label": "Supported formats",
+    "url": "https://openslide.org/formats/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/openslide/openslide"
+   }
+  ],
+  "fetch_log": [
+   "https://openslide.org/ - worked; website page, not a GitHub README, so it had release news, format list, and links but no commands or build steps",
+   "https://github.com/openslide/openslide - worked; README with features, documentation links, license, and Meson build instructions"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "OpenSlide opens a door into digital pathology, reading enormous vendor-specific slide formats as browsable regions without loading them into memory."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "OpenSlide",
+  "tldr": "A C library and small toolset for reading gigapixel pathology slide scans from many vendor formats without loading the whole image into memory.",
+  "deeper_look": "Whole-slide images are digitised microscope slides. Uncompressed, they often run to tens of gigabytes, which is more than most machines have in RAM. OpenSlide gives programs one consistent interface for reading them: ask for a region at a chosen resolution and get just those pixels back. It also exposes metadata, ICC profiles, and associated images such as the slide label and a thumbnail.\n\nThe harder problem is the formats. Per the project, \"Vendors typically do not document their formats,\" and the files were often readable only with the vendor's own Windows software. OpenSlide reads Aperio .svs, Hamamatsu .ndpi, Leica .scn, MIRAX .mrxs, Zeiss .czi, DICOM, and generic tiled TIFF, among others. The aim is that doctors and researchers are not tied to one vendor's viewer, and that non-Windows platforms can read these files too.\n\nThe door here is digital pathology and the quirks of huge tiled, multi-resolution images. Python and Java bindings are published separately. The Python one includes a Deep Zoom generator and a simple web viewer, which is an easy way to see how a gigapixel image is served as pyramids of tiles. The project comes from Satyanarayanan's group at Carnegie Mellon, and a 2013 Journal of Pathology Informatics paper linked from the homepage describes the design.",
+  "install": "brew install openslide\n# You need a whole-slide image file to do anything useful. Sample slides are linked from the formats page on the website.",
+  "try_this": [
+   {
+    "cmd": "slidetool --help",
+    "what_happens": "Prints usage for the bundled slide tool. The brief does not document it, so read the help text to see what it offers."
+   },
+   {
+    "cmd": "openslide-show-properties --help",
+    "what_happens": "Shows how to dump a slide's metadata properties. Usage is unverified in the brief, so check the help output."
+   },
+   {
+    "cmd": "openslide-write-png --help",
+    "what_happens": "Shows the options for writing a region of a slide out as a PNG. Usage is unverified in the brief, so check the help output."
+   }
+  ],
+  "whats_unique": "It reads gigapixel pathology scans that ordinary image libraries cannot open, using support built by reverse-engineering undocumented vendor formats. One API covers many of them.",
+  "caveats": "Vendors do not endorse the format support, which may be incomplete, and per the README it reads brightfield slides only. The four bundled executables are not documented in the pages the brief drew on.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "science",
+   "library",
+   "microscopy",
+   "image-formats",
+   "pathology"
+  ],
+  "links": [
+   {
+    "label": "OpenSlide homepage",
+    "url": "https://openslide.org/"
+   },
+   {
+    "label": "Supported formats",
+    "url": "https://openslide.org/formats/"
+   },
+   {
+    "label": "C API reference",
+    "url": "https://openslide.org/api/openslide_8h.html"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/openslide/openslide"
+   }
+  ]
+ }
+}

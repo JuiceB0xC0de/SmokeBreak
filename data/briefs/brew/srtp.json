@@ -1,0 +1,86 @@
+{
+ "name": "srtp",
+ "desc": "Implementation of the Secure Real-time Transport Protocol",
+ "homepage": "https://github.com/cisco/libsrtp",
+ "installs_365d": 24276,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "protocol",
+  "network",
+  "library"
+ ],
+ "why": "Reference SRTP implementation, the encrypted media layer under WebRTC and VoIP, a door into real-time media security.",
+ "brief": {
+  "what_it_is": "libSRTP is a C library from Cisco that implements the Secure Real-time Transport Protocol (SRTP), plus the Universal Security Transform and a supporting cryptographic kernel. The application takes plain RTP or RTCP packets and a policy (SSRC selection, crypto profile, master key and salt) and produces encrypted, authenticated SRTP packets with srtp_protect(). The reverse path, srtp_unprotect(), takes SRTP packets and returns verified RTP. The output is a library (libsrtp2.a) with an opaque API in include/srtp.h. The package also ships test drivers and a small rtpw demo app that sends dictionary words over SRTP.",
+  "why_it_exists": "The README frames it as an open source reference implementation of RFC 3711 for confidentiality and authentication of real-time media such as telephony, audio, and video, so that the RTP profile can be interoperable. It was written by David McGrew at Cisco to promote the use, understanding, and interoperability of Secure RTP.",
+  "how_it_works": "A session (srtp_t) is created with srtp_create() from a policy handle (srtp_policy_t) that sets the SSRC, the crypto profile such as srtp_profile_aes128_cm_sha1_80, and the key and salt. Each sending source gets a stream context, and srtp_protect() and srtp_unprotect() work per packet. The sequence number supplies the low 16 bits of the packet index, and replay protection lives in the crypto engine. The crypto backend is pluggable: an internal AES and SHA-1 is used by default, or OpenSSL or NSS can be selected.",
+  "commands_seen": [
+   {
+    "cmd": "./configure [ options ]",
+    "context": "Autotools configure script run in the libsrtp directory before make; accepts options such as --enable-openssl, --enable-nss, --enable-debug-logging, --enable-log-stdout."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the library after configure. The README says BSD make will not work and GNU make may be invoked as gmake."
+   },
+   {
+    "cmd": "brew install automake pkgconfig",
+    "context": "Installs the toolchain needed only if you change configure.in and need to regenerate ./configure on macOS."
+   },
+   {
+    "cmd": "meson setup --prefix=/path/to/prefix builddir",
+    "context": "Sets up a Meson build directory; the README says this works on all platforms including Windows."
+   },
+   {
+    "cmd": "meson compile -C builddir",
+    "context": "Compiles the Meson build in the builddir directory."
+   },
+   {
+    "cmd": "meson test -C builddir",
+    "context": "Runs the test suite of the Meson build."
+   },
+   {
+    "cmd": "cmake .. -G \"Visual Studio 15 2017\"",
+    "context": "Generates Visual Studio 2017 project files from a build subdirectory; the Win64 variant adds a 64-bit generator name."
+   },
+   {
+    "cmd": "test/rtpw -s -k $k -e 128 -a 0.0.0.0 9999",
+    "context": "Sender side of the demo: sends dictionary words over SRTP with a hex master key, AES-128 encryption, and message authentication to 0.0.0.0 port 9999. The receiver runs the same with -r."
+   },
+   {
+    "cmd": "function randhex() {\n   cat /dev/random | od --read-bytes=32 --width=32 -x | awk '{ print $2 $3 $4 $5 $6 $7 $8 $9 $10 $11 $12 $13 $14 $15 $16 }'\n}",
+    "context": "Bash helper from the README that formats /dev/random output as a hex key/salt for rtpw; the README says it works where that device is available."
+   }
+  ],
+  "install_notes": "The README points to GitHub releases as the install route, and Homebrew is the brew formula srtp. The build uses autoconf and make by default, and CMake (Visual Studio on Windows) or Meson are also documented. Optional third-party crypto backends are configured with --enable-openssl or --enable-nss, with --with-openssl-dir or --with-nss-dir for their locations. The internal crypto only supports AES-128 and AES-256, so AES-192 or AES-GCM needs OpenSSL or NSS. No accounts or runtimes are needed beyond a C toolchain.",
+  "standout": "It is the reference implementation of SRTP, the encryption layer under many WebRTC and VoIP stacks, and it includes the Universal Security Transform and AES-GCM from RFC 7714. The small, opaque, policy-driven API and the ready-made rtpw demo make the RTP protection model easy to see from the command line.",
+  "status": "The README shows active CI badges (CMake, Autotools, Meson, Coverity, and OSS-Fuzz), and the build docs cover current Meson and CMake flows. The copyright is 2001-2017 and the platform list is from the early 2000s, so parts of the README are dated. I did not see a release date or last commit date in what I fetched, so the status is best described as probably maintained, with dates unverified.",
+  "caveats": "The README says the library was tested on very old platforms (Mac OS X powerpc, RedHat 7.1 and 9, OpenBSD 2.7) and the Visual Studio instructions name VS 2017. The internal crypto lacks AES-192 and AES-GCM, so those need a third-party backend. srtp_protect() requires the buffer to have room for the authentication tag at the end, or memory is corrupted. Key derivation rates other than zero, the F8 cipher, and packet-index-based master key selection are unsupported. The README warns that misuse can leave security inadequate and points readers to RFC 3711 section 9. Licence is a BSD-style 3-clause with Cisco's name restriction. The rtpw demo reads /usr/dict/words, which may not exist on every system.",
+  "quotes": [
+   "This package provides an implementation of the Secure Real-time Transport Protocol (SRTP), the Universal Security Transform (UST), and a supporting cryptographic kernel.",
+   "The user should be aware that it is possible to misuse this library, and that the result may be that the security level it provides is inadequate.",
+   "It is possible to configure which 3rd party (ie openssl/nss/etc) crypto backend libSRTP will be built with."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/cisco/libsrtp"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/cisco/libsrtp/releases"
+   },
+   {
+    "label": "RFC 3711 (SRTP)",
+    "url": "https://tools.ietf.org/html/rfc3711"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/cisco/libsrtp (README returned, OK)"
+  ]
+ }
+}

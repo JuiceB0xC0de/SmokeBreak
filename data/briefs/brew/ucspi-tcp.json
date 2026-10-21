@@ -1,0 +1,92 @@
+{
+ "name": "ucspi-tcp",
+ "desc": "Tools for building TCP client-server applications",
+ "homepage": "https://cr.yp.to/ucspi-tcp.html",
+ "installs_365d": 133,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol",
+  "library"
+ ],
+ "why": "D. J. Bernstein's tcpserver and tcpclient toolkit is a sharp, strange door into how TCP servers are built from the shell.",
+ "brief": {
+  "what_it_is": "ucspi-tcp is a set of small command-line UNIX tools by D. J. Bernstein for building TCP client-server applications. tcpserver listens on a host and port and, for each incoming connection, runs a program of your choice with the network on its stdin and stdout, plus environment variables describing the local and remote host names, IP addresses and ports. tcpclient makes an outgoing TCP connection and runs a program the same way. The package also ships sample clients built on tcpclient (who@, date@, finger@, http@, tcpcat, mconnect), plus recordio for logging a server's input and output, and rules tools (tcprules, tcprulescheck) that compile access-control rules into a cdb hash file.",
+  "why_it_exists": "The homepage frames it as a replacement for inetd, which the author says is unreliable under high loads, has no effective resource management, and has a listen() backlog that is typically only 5 or 10. The stated aim is easy-to-use command-line TCP tools with a concurrency limit and fast, hashed access control.",
+  "how_it_works": "For each accepted connection, tcpserver forks the program given as prog, wiring descriptor 0 to read from the network and descriptor 1 to write to it. It defers accepting new connections once the concurrency limit (default 40, set with -c) is reached. Access rules compiled by tcprules into a cdb file (passed with -x) can reject sources or set environment variables, and can be recompiled while the server runs.",
+  "commands_seen": [
+   {
+    "cmd": "gunzip ucspi-tcp-0.88.tar",
+    "context": "Install step: decompress the downloaded 0.88 tarball (the page lists this as the latest published package)."
+   },
+   {
+    "cmd": "tar -xf ucspi-tcp-0.88.tar",
+    "context": "Install step: unpack the source tree."
+   },
+   {
+    "cmd": "cd ucspi-tcp-0.88",
+    "context": "Install step: enter the unpacked source directory."
+   },
+   {
+    "cmd": "make",
+    "context": "Install step: compile the ucspi-tcp programs."
+   },
+   {
+    "cmd": "make setup check",
+    "context": "Install step, run as root: installs the programs under /usr/local and runs checks."
+   },
+   {
+    "cmd": "tcpserver opts host port prog",
+    "context": "Interface summary from the tcpserver page: opts are getopt-style options, host is an IP or host name (0 for any local address), port is a name or number (0 picks a free port), and prog is the program to run per connection."
+   },
+   {
+    "cmd": "tcpserver -c n",
+    "context": "Option: cap simultaneous connections at n; new connections are deferred while n copies of prog are running. Default 40."
+   },
+   {
+    "cmd": "tcpserver -x cdb",
+    "context": "Option: follow access rules and environment settings compiled into cdb by tcprules; rules can be rerun while tcpserver runs."
+   },
+   {
+    "cmd": "tcpserver -B banner",
+    "context": "Option: write banner to the client immediately on connect, to cut latency for protocols where the client waits for a greeting."
+   },
+   {
+    "cmd": "tcpserver -t n",
+    "context": "Option: give up on the TCPREMOTEINFO lookup after n seconds (default 26)."
+   }
+  ],
+  "install_notes": "UNIX only. Download the ucspi-tcp package (latest listed as ucspi-tcp-0.88.tar.gz), unpack, run make, then as root run make setup check to install under /usr/local. The install page asks users who succeed to report it by piping their name and the SYSDEPS file to a mailing list address (djb-sysdeps@cr.yp.to). No accounts, runtimes or hardware are mentioned. Homebrew users get a packaged version with no brew-specific caveats recorded.",
+  "standout": "Access control is compiled into a cdb hash so the lookup stays fast even with thousands of host rules, and the tool passes connection metadata to an ordinary program through environment variables instead of requiring a server-side plugin model. The tool is a small, Unix-style alternative to inetd, xinetd, netcat and netpipes.",
+  "status": "Unknown. The homepage and install page are static pages on cr.yp.to with no release date or changelog date visible in what I read. The latest package named is 0.88. I did not check the repository or Homebrew for recent commits.",
+  "caveats": "Works only under UNIX, per the install page. The install page says the software comes with NO WARRANTY. Installing requires root for make setup check. The homepage did not state a license in the text I read. The tcpserver docs say that to avoid DNS loops, servers on TCP port 53 and 113 must use certain -H, -l and -R options. The homepage's scout note calls it strange, which is editorial; the page itself is terse and assumes Unix background.",
+  "quotes": [
+   "tcpserver and tcpclient are easy-to-use command-line tools for building TCP client-server applications.",
+   "tcpserver offers a concurrency limit to protect you from running out of processes and memory.",
+   "inetd is unreliable under high loads."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://cr.yp.to/ucspi-tcp.html"
+   },
+   {
+    "label": "Install page",
+    "url": "https://cr.yp.to/ucspi-tcp/install.html"
+   },
+   {
+    "label": "tcpserver man-style page",
+    "url": "https://cr.yp.to/ucspi-tcp/tcpserver.html"
+   }
+  ],
+  "fetch_log": [
+   "https://cr.yp.to/ucspi-tcp.html - worked; homepage text with overview and comparisons",
+   "https://cr.yp.to/ucspi-tcp/install.html - worked; install steps and system requirements (URL was taken from the site's install link pattern, not from a link I parsed)",
+   "https://cr.yp.to/ucspi-tcp/tcpserver.html - worked; full tcpserver interface and options"
+  ]
+ }
+}

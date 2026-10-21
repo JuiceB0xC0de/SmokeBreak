@@ -1,0 +1,97 @@
+{
+ "name": "cppad",
+ "desc": "Differentiation of C++ Algorithms",
+ "homepage": "https://cppad.readthedocs.io/latest/",
+ "installs_365d": 2088,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "math",
+  "library",
+  "afternoon"
+ ],
+ "why": "Automatic differentiation for C++ algorithms; a genuine math idea, though it is a library rather than something to play with.",
+ "brief": {
+  "what_it_is": "CppAD is a C++ template library that computes derivatives of any algorithm you can write in C++. You write your function using its AD scalar and vector types, and it records the operations and produces derivative values from them, with no hand-derived formulas. Input is ordinary C++ code that computes function values; output is function values plus derivatives of arbitrary order, Jacobians, Hessians, and sparsity patterns. It is a library for other programs to link against, not a command-line tool.",
+  "why_it_exists": "The README frames the core idea as Algorithmic Differentiation: automatically creating an algorithm that computes derivative values from an algorithm that computes function values. The docs point to autodiff.org for research and promotion of AD.",
+  "how_it_works": "CppAD uses operator overloading of a template class AD, so ordinary arithmetic on AD objects is recorded as a sequence of operations. That recording is stored in an ADFun object, which can then evaluate function values and derivatives of any order, and sparsity patterns, using the base type. The docs also describe optimizing the recorded sequence, dynamic parameters that are not differentiated, atomic functions for user-defined derivatives, and multi-threading support with OpenMP, Boost, and POSIX threads.",
+  "commands_seen": [],
+  "install_notes": "The README says the preferred way to test and install is with cmake; an autotools procedure exists but is deprecated and will eventually be removed. The docs have an Install page, and the user guide's install section lists get_optional.sh scripts (get_adolc.sh, get_cppadcg.sh, get_colpack.sh, get_fadbad.sh, get_ipopt.sh, get_sacado.sh) for optional third-party packages. These were seen only as file names in the navigation, not as commands. The docs also mention a cmake configuration step for choosing the test vector class, but I did not see a verbatim command. Homebrew installs no executables for this package, so you would be using it from C++ code.",
+  "standout": "It is a genuine math idea, not a toy: it differentiates whatever C++ code you already have by operator overloading, and the docs go further with sparsity-pattern-driven sparse Jacobians and Hessians, and atomic and checkpoint functions for user-defined derivatives. It is a library for building numerical programs, not something to play with at a prompt.",
+  "status": "Appears maintained. The docs show a current version string cppad-20261007 and a stable-2026 line with a release-2026 link, and the user guide lists a 2026 entry in whats_new. I did not see a last-commit date or a release date on the pages I fetched, so the exact activity level is not confirmed.",
+  "caveats": "It is a C++ library and has no executables to run, so there is nothing to try from a shell after a brew install. Licensing is dual: EPL-2.0 or GPL-2.0-or-later. The README says the autotools path is deprecated. Some features depend on optional third-party packages (Adol-C, CppADCodeGen, ColPack, FADBAD, Ipopt, Sacado), which are fetched by the get_optional.sh scripts. The homepage I fetched was the user guide rather than a README, and the brew description and the scout note were the only context I had for the package name.",
+  "quotes": [
+   "A Package for Differentiation of C++ Algorithms",
+   "We refer to the automatic creation of an algorithm that computes derivative values from an algorithm that computes function values as Algorithmic Differentiation",
+   "The preferred method to test and install CppAD uses cmake.",
+   "All of the examples are also correctness tests, which ensures that they work properly."
+  ],
+  "links": [
+   {
+    "label": "Homepage (User's Manual)",
+    "url": "https://cppad.readthedocs.io/latest/"
+   },
+   {
+    "label": "Git repository (coin-or/CppAD)",
+    "url": "https://github.com/coin-or/CppAD"
+   },
+   {
+    "label": "Get started example",
+    "url": "https://cppad.readthedocs.io/latest/get_started.cpp.html"
+   },
+   {
+    "label": "Install instructions",
+    "url": "https://cppad.readthedocs.io/latest/Install.html"
+   }
+  ],
+  "fetch_log": [
+   "https://cppad.readthedocs.io/latest/ - worked; returned the user_guide page of the CppAD User's Manual (not a README), with the features overview, navigation, and version links",
+   "https://github.com/coin-or/CppAD - worked; returned the README with the title, documentation link, license, install, and getting-started sections"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "CppAD turns ordinary C++ computations into recorded differentiable programs, exposing the surprising machinery behind arbitrary-order derivatives and sparse Jacobians and Hessians."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "CppAD",
+  "tldr": "A C++ template library that turns any function you can write in C++ into one that also gives exact derivatives, with no formulas worked out by hand.",
+  "deeper_look": "CppAD implements Algorithmic Differentiation. You write a function using its `AD` scalar type instead of `double`. As the function runs, operator overloading records each arithmetic operation. The recording is stored in an `ADFun` object, which can then report function values and derivatives of any order, plus Jacobians, Hessians, and sparsity patterns.\n\nThe docs describe the core idea as \"the automatic creation of an algorithm that computes derivative values from an algorithm that computes function values.\" This differs from symbolic algebra and from finite differences. The derivatives come from the exact sequence of operations your code performed, so they are not approximations.\n\nBeyond the basics, the docs describe optimizing the recorded sequence, dynamic parameters that are not differentiated, and atomic functions where you supply your own derivative. They also cover sparse Jacobians and Hessians driven by sparsity patterns, and multi-threading through OpenMP, Boost, or POSIX threads. The docs say all the examples double as correctness tests.\n\nThe idea underneath is the door: differentiation is a mechanical transformation of a program. The same idea sits behind optimization solvers and machine learning frameworks. CppAD is a place to see it in plain C++.",
+  "install": "brew install cppad\n# Library only: Homebrew installs no executables. You use it from your own C++ code.\n# From source, the README says the preferred build uses cmake; the autotools path is deprecated.",
+  "try_this": [],
+  "whats_unique": "It differentiates ordinary C++ you already have through operator overloading, and goes deep with sparse derivatives, user-defined atomic functions, and checkpointing.",
+  "caveats": "It is a library with no executables, so there is nothing to run from a shell after installing; you need to write C++ to use it.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "math",
+   "library",
+   "c++",
+   "automatic-differentiation",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "Homepage (User's Manual)",
+    "url": "https://cppad.readthedocs.io/latest/"
+   },
+   {
+    "label": "Get started example",
+    "url": "https://cppad.readthedocs.io/latest/get_started.cpp.html"
+   },
+   {
+    "label": "Install instructions",
+    "url": "https://cppad.readthedocs.io/latest/Install.html"
+   },
+   {
+    "label": "Git repository (coin-or/CppAD)",
+    "url": "https://github.com/coin-or/CppAD"
+   }
+  ]
+ }
+}

@@ -1,0 +1,88 @@
+{
+ "name": "apkeep",
+ "desc": "Command-line tool for downloading APK files from various sources",
+ "homepage": "https://github.com/EFForg/apkeep",
+ "installs_365d": 2955,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering"
+ ],
+ "why": "Downloads APKs from multiple app stores, opening a door into how mobile apps are sourced and inspected.",
+ "brief": {
+  "what_it_is": "apkeep is a command-line tool written in Rust that downloads Android APK files from several sources: the Google Play Store, APKPure, and F-Droid. You give it an app ID such as com.instagram.android, plus a source flag if you are not using Google Play, and it saves the APK to a directory you name. It can also take a CSV file of app IDs for batch downloads, list the available versions with -l, and fetch a specific version with an @version suffix. The README also describes Docker images and Termux installs on Android.",
+  "why_it_exists": "The README gives no explicit motivation beyond its description as a tool for downloading APK files from various sources. Its usage notes show the project is aimed at researchers, since APKPure downloads are restricted to research purposes.",
+  "how_it_works": "The README does not explain the internals. It describes per-source access: Google Play requires an email address and an AAS token obtained first (see USAGE-google-play.md), APKPure is a third-party site hosting Play Store APKs, and F-Droid downloads are checked to be signed by F-Droid maintainers, with an alert if verification fails.",
+  "commands_seen": [
+   {
+    "cmd": "apkeep -a com.instagram.android .",
+    "context": "Simplest example: downloads a single APK into the current directory."
+   },
+   {
+    "cmd": "apkeep -a com.instagram.android -e 'someone@gmail.com' -t aas_token .",
+    "context": "Downloads from the default source, Google Play, using an email address and AAS token."
+   },
+   {
+    "cmd": "apkeep -a org.mozilla.fennec_fdroid -d f-droid .",
+    "context": "Downloads an app from the F-Droid repository using -d f-droid."
+   },
+   {
+    "cmd": "apkeep -a com.instagram.android@1.2.3 .",
+    "context": "Downloads a specific version using the @version convention (possible for APKPure or F-Droid per the README)."
+   },
+   {
+    "cmd": "apkeep -l -a org.mozilla.fennec_fdroid -d f-droid",
+    "context": "Lists the versions available for an app on F-Droid."
+   },
+   {
+    "cmd": "docker run --rm -v output_path:/output ghcr.io/efforg/apkeep:stable -a com.instagram.android /output",
+    "context": "Runs the Docker image to download one APK into a chosen output directory. The README breaks this across two lines; it is joined here."
+   },
+   {
+    "cmd": "cargo install apkeep",
+    "context": "Installs the release from crates.io, after installing Rust."
+   },
+   {
+    "cmd": "cargo install --git https://github.com/EFForg/apkeep.git",
+    "context": "Installs from the latest commit in the repository instead of a release."
+   },
+   {
+    "cmd": "pkg install apkeep",
+    "context": "Installs from the Termux repository on Android, after running pkg update."
+   }
+  ],
+  "install_notes": "Precompiled binaries are on the GitHub releases page. The crates.io route needs a Rust toolchain. On Android, Termux must be installed first. Docker images are on the GitHub Container Registry with stable, latest (includes pre-releases), and edge tags. Google Play downloads need an AAS token obtained beforehand, linked from the README as USAGE-google-play.md, and a Google account. The README does not mention brew. The README mentions Tor, which can make downloads fail.",
+  "standout": "The tool deliberately spans several app sources behind one interface, and it checks F-Droid signatures. It is positioned for research and transparency, with clear notes on what it will not get (paid and DRM apps) and on the account risk of using Google Play.",
+  "status": "unknown. The README has no release date or changelog, and the crates.io badges are dynamic. It links to a releases page and a container registry with a floating edge tag. I did not fetch those pages, so I cannot confirm recent activity.",
+  "caveats": "The Google Play source requires an AAS token, and Google may terminate the account used. Paid and DRM apps are not available from Google Play. APKPure use is for research only, per the README. Using Tor makes download failures much more likely. Users are asked not to place unreasonable load on distributor infrastructure. The README says the MIT license applies.",
+  "quotes": [
+   "A command-line tool for downloading APK files from various sources",
+   "You can also download from APKPure, but this should be used *only* for research purposes.",
+   "Paid and DRM apps will not be available."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/EFForg/apkeep"
+   },
+   {
+    "label": "Precompiled releases",
+    "url": "https://github.com/EFForg/apkeep/releases"
+   },
+   {
+    "label": "Usage reference",
+    "url": "https://github.com/EFForg/apkeep/blob/master/USAGE"
+   },
+   {
+    "label": "crates.io package",
+    "url": "https://crates.io/crates/apkeep"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/EFForg/apkeep - fetched OK; returned README (rustdoc-generated). The README was complete enough that I did not follow further links."
+  ]
+ }
+}

@@ -1,0 +1,116 @@
+{
+ "name": "reposurgeon",
+ "desc": "Edit version-control repository history",
+ "homepage": "http://www.catb.org/esr/reposurgeon/",
+ "installs_365d": 235,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "language",
+  "reverse-engineering"
+ ],
+ "why": "A scriptable surgeon for version-control history that rewrites repositories as if they were dissectable specimens.",
+ "brief": {
+  "what_it_is": "reposurgeon is a command-line tool for editing version-control repository history. It reads a repository's history, lets you rewrite it (edit past comments and metadata, remove or merge commits, delete files or subtrees from history), and writes the result to another or the same VCS. It is driven by an interactive, debugger-like prompt or by scripts. The homepage lists five executables: repobench, repocutter, repomapper, reposurgeon and repotool. The homepage also describes conversion as its main use: Subversion to any VCS with write support.",
+  "why_it_exists": "The author says reposurgeon enables \"risky operations that version-control systems don't want to let you do, such as editing past comments and metadata and removing commits.\" The man page adds that a major use is helping a human produce higher-quality conversions between VCSes than fully automated converters can.",
+  "how_it_works": "Rather than reading and writing repositories itself, reposurgeon parses and emits git fast-import streams, so it works with any VCS that has fast-export and fast-import utilities. For systems without such tools it uses built-in extractor code that replays history into an internal stream; repositories read this way can be read but not modified. The man page says the git fast-import format also gives it a common language of primitive operations.",
+  "commands_seen": [
+   {
+    "cmd": "reposurgeon [command\u2026]",
+    "context": "Synopsis from the reposurgeon(1) man page. Invokes reposurgeon, optionally with a command to run."
+   }
+  ],
+  "install_notes": "The homepage links a source tarball (reposurgeon-5.12.tar.gz) with an MD5 checksum and an INSTALL.html document, which I did not fetch. The man page says reposurgeon bails out gracefully and names any missing helper tool it needs, such as git-fast-export or git-fast-import equivalents for the VCS you are converting. The GitLab page says the code is usually packaged as 'reposurgeon'. I saw no account, hardware or runtime requirements in the pages I read.",
+  "standout": "It treats history rewriting as surgery on a specimen: an interactive, symbolic-debugger-style interface that can also run scripted recipes. Its main trick is using git fast-import streams as a universal intermediate format, so it can rewrite history for many VCSes without a dedicated reader or writer for each.",
+  "status": "Maintained. The homepage shows release 5.12 with a page date of 05 Oct 2026, a 'Recent Changes' list (Unity Version Control read support, Software Heritage support, timezone fixes), and a man page last updated 2026-10-03. The project is at gitlab.com/esr/reposurgeon. I did not check commit dates.",
+  "caveats": "Support is uneven. The man page says full read and write support covers git, hg, bzr, brz, Fossil, darcs, RCS and SRC. SCCS, CVS, svn and Software Heritage are read-side only, and Unity Version Control read support is untested. CVS lifts can need serious hand-hacking. Metadata may not survive both import and export directions. The GitLab page's plugin wording for hg, SCCS, CVS, RCS and src differs from the man page, so trust the man page. The license is in a COPYING file that I did not open, so I cannot name it. Funding is via Patreon and SubscribeStar.",
+  "quotes": [
+   "reposurgeon enables risky operations that version-control systems don't want to let you do, such as editing past comments and metadata and removing commits.",
+   "The user interface of reposurgeon resembles a symbolic debugger.",
+   "In particular, this tool can be used to script the production of very high-quality conversions from Subversion to any VCS with write support."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "http://www.catb.org/esr/reposurgeon/"
+   },
+   {
+    "label": "Manual page (reposurgeon.html)",
+    "url": "http://www.catb.org/esr/reposurgeon/reposurgeon.html"
+   },
+   {
+    "label": "Source repository (GitLab)",
+    "url": "https://gitlab.com/esr/reposurgeon"
+   },
+   {
+    "label": "Repository Editing and Conversion With Reposurgeon",
+    "url": "http://www.catb.org/esr/reposurgeon/repository-editing.html"
+   }
+  ],
+  "fetch_log": [
+   "http://www.catb.org/esr/reposurgeon/ : worked (homepage, release 5.12 resource page)",
+   "http://www.catb.org/esr/reposurgeon/reposurgeon.html : worked (man page)",
+   "https://gitlab.com/esr/reposurgeon : worked but thin (GitLab project summary, no README text)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Its debugger-like surgery on repository history and use of fast-import streams to convert and rewrite across version-control systems make it unusually exploratory."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "reposurgeon",
+  "tldr": "A debugger-style tool that reads a repository's history, lets you rewrite it, and writes it back out, including into a different version-control system.",
+  "deeper_look": "reposurgeon reads a repository's history into memory and lets you operate on it: edit old commit comments and metadata, remove or merge commits, delete files or whole subtrees from the past. It then writes the result out to another VCS or back to the same one. You drive it from an interactive prompt or from scripts.\n\nThe author's pitch is that it enables \"risky operations that version-control systems don't want to let you do, such as editing past comments and metadata and removing commits.\" The man page describes a main use as helping a human produce higher-quality conversions between VCSes than fully automated converters manage. The homepage singles out scripted conversion from Subversion to any VCS with write support.\n\nThe idea underneath is git's fast-import stream. Instead of writing a reader and a writer for every pair of systems, reposurgeon parses and emits that stream, so anything with fast-export and fast-import tools can be handled. For systems without them, built-in extractor code replays history into an internal stream. Repositories read that way can be read but not modified. The stream format also gives the tool a common vocabulary of primitive operations.\n\nThe interface \"resembles a symbolic debugger\", and the package ships four helpers beside the main program: repocutter, repomapper, repotool and repobench.",
+  "install": "brew install reposurgeon\n# If a conversion needs a source VCS, its helper tools (for example fast-export equivalents) must be installed too. reposurgeon names any it is missing.",
+  "try_this": [
+   {
+    "cmd": "reposurgeon --help",
+    "what_happens": "Prints usage for the main program so you can see the entry point before opening the prompt."
+   },
+   {
+    "cmd": "reposurgeon",
+    "what_happens": "Starts the interactive, debugger-like prompt where you read in a repository and issue editing commands."
+   },
+   {
+    "cmd": "repotool --help",
+    "what_happens": "Shows the helper that handles repository chores around a conversion."
+   }
+  ],
+  "whats_unique": "It treats history as a specimen to be dissected, using a debugger-style prompt and git fast-import streams as a universal intermediate format. That lets one tool edit history across many VCSes.",
+  "caveats": "Support is uneven: full read and write works for git, hg, bzr, brz, Fossil, darcs, RCS and SRC, while SCCS, CVS, svn and Software Heritage are read-only, and CVS conversions can need serious hand-hacking.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "version-control",
+   "git",
+   "history",
+   "conversion",
+   "cli"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "http://www.catb.org/esr/reposurgeon/"
+   },
+   {
+    "label": "Manual page",
+    "url": "http://www.catb.org/esr/reposurgeon/reposurgeon.html"
+   },
+   {
+    "label": "Repository Editing and Conversion With Reposurgeon",
+    "url": "http://www.catb.org/esr/reposurgeon/repository-editing.html"
+   },
+   {
+    "label": "Source repository (GitLab)",
+    "url": "https://gitlab.com/esr/reposurgeon"
+   }
+  ]
+ }
+}

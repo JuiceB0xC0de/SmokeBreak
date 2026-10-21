@@ -1,0 +1,91 @@
+{
+ "name": "libgig",
+ "desc": "Library for Gigasampler and DLS (Downloadable Sounds) Level 1/2 files",
+ "homepage": "https://www.linuxsampler.org/libgig/",
+ "installs_365d": 211,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "afternoon",
+  "audio",
+  "library"
+ ],
+ "why": "Parses Gigasampler and DLS sample instrument files, a niche audio format door, though it is a library rather than a toy.",
+ "brief": {
+  "what_it_is": "libgig is a C++ library for loading, modifying, and creating GigaStudio/Gigasampler (.gig) files and DLS (Downloadable Sounds) Level 1/2 files. It also reads KORG sample instrument files (.KSF and .KMP), SoundFont v2 (.sf2) files, and AKAI sampler data. The source package includes command-line tools built on the library: gigextract, gigdump, gigmerge, gig2mono, gig2stereo, korgdump, korg2gig, sf2dump, sf2extract, akaidump, akaiextract, dlsdump, and rifftree. Input is a sample-instrument file or AKAI disk image, and output is extracted samples, converted or merged instrument files, or printed dumps of a file's structure.",
+  "why_it_exists": "The homepage gives no separate rationale. It describes libgig as a library for working with these sampler formats, and the tools as examples built on top of it.",
+  "how_it_works": "The homepage does not explain the internals beyond saying it is a C++ library with command-line tools on top. Since 3.0.0 it uses one small OS-dependent method to resize files, and since 4.3.0 it needs a UUID-generating function from the OS.",
+  "commands_seen": [
+   {
+    "cmd": "svn co https://svn.linuxsampler.org/svn/libgig/trunk libgig",
+    "context": "Checks out the latest development version of libgig from the LinuxSampler Subversion server, as given on the homepage."
+   }
+  ],
+  "install_notes": "Official distribution is a source tarball (.tar.bz2) with versions listed from 0.6.0 to 4.6.0. Building from source requires a C++11-compliant compiler (since 4.3.0) and an OS-provided UUID-generating function (since 4.3.0, a hard requirement). For Windows there is a precompiled DLL and example .exe tools in a zip. Debian packages (the 'gigtools' package carries the command-line tools), RPMs for Red Hat/Fedora, SuSE, and Mandrake are offered, and the homepage notes distributions often ship libgig already. No Homebrew instructions appear on the page, so the brew install route is not covered here.",
+  "standout": "It is a library first: one codebase reads and writes several sampler formats (Gigasampler, DLS, KORG, SoundFont, AKAI) and ships small conversion and dump tools on top. Its use by LinuxSampler and its front ends (qsampler, gigedit) is the main proof of use the page offers.",
+  "status": "Looks maintained. The release table lists 4.5.0 (Jun 2025), 4.5.1 (Nov 2025), 4.5.2 (Dec 2025), and 4.6.0, which is dated 05-Aug-2026 on the page. I could not check the current date, so that 4.6.0 date may be a typo or a future date. The page also has a note that the online API docs are auto-updated from SVN.",
+  "caveats": "Build needs C++11 and a UUID function from the OS. The page says it is optimized for POSIX systems (Linux, OSX) and works on Windows since 3.1.1; it claims to compile on any OS, but needs a small per-OS file-resize routine. Licensing is mixed: GPL for the library and tools, LGPL for the AKAI classes. The UML diagrams on the page are described as outdated. The old kick-start doc is an OpenOffice/PDF file. The README-style content is only on the homepage; the linked API docs and Subversion browser were not fetched.",
+  "quotes": [
+   "libgig is a C++ library for loading, modifying existing and creating new GigaStudio/Gigasampler (.gig) files and DLS (Downloadable Sounds) Level 1/2 files",
+   "The library and tools are released in source code format under the GNU General Public License, except the AKAI classes which are released under the GNU Lesser General Public License.",
+   "Besides LinuxSampler and its related programs (e.g. qsampler, gigedit), the following third party applications are also using libgig to access Gigasampler format files",
+   "Happy hacking!"
+  ],
+  "links": [
+   {
+    "label": "libgig homepage",
+    "url": "https://www.linuxsampler.org/libgig/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.linuxsampler.org/libgig/ - worked; returned the full homepage text including the tool list, release table, build requirements, and licensing. This was the only fetch; the page had enough detail that I did not follow the linked API docs or Subversion browser."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It opens up the internals of obscure sampler formats, with tools to inspect, extract, and convert instruments and sounds from legacy samplers."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "libgig",
+  "tldr": "A C++ library and a drawer of command-line tools for opening, dumping, converting and extracting samples from Gigasampler, DLS, SoundFont, KORG and AKAI sampler files.",
+  "deeper_look": "libgig loads, modifies and creates GigaStudio/Gigasampler (.gig) files and DLS (Downloadable Sounds) Level 1/2 files. It also reads KORG sample files (.KSF and .KMP), SoundFont v2 (.sf2) files and AKAI sampler data. The command-line tools are small programs built on the library, and the homepage presents them as examples of what it can do.\n\nThe tools take a sample-instrument file or an AKAI disk image and either print its structure or write something out. `gigdump`, `sf2dump`, `korgdump`, `akaidump` and `dlsdump` print what is inside a file. `gigextract`, `sf2extract` and `akaiextract` pull out the samples. `gigmerge`, `gig2mono`, `gig2stereo` and `korg2gig` merge or convert instrument files. `rifftree` is also in the set.\n\nThe idea underneath is that a sampled instrument is not just audio. It is a container holding recordings, plus the data that maps them across the keyboard, velocity layers and loop points. These formats are built on chunked file structures, and the dump tools let you look at how a real instrument is organised. Several of them are the kind of vendor sampler formats that are hard to inspect otherwise.\n\nThe library is used by LinuxSampler and its front ends such as qsampler and gigedit. The homepage gives no separate rationale beyond describing it as a library for these formats.",
+  "install": "brew install libgig\n# Homebrew installs the library and the command-line tools. The homepage itself distributes source tarballs, and building from source needs a C++11 compiler and an OS-provided UUID function.",
+  "try_this": [
+   {
+    "cmd": "gigdump --help",
+    "what_happens": "Shows how to point the dump tool at a .gig file to print its internal structure."
+   },
+   {
+    "cmd": "sf2dump --help",
+    "what_happens": "Shows usage for printing the contents of a SoundFont 2 file."
+   },
+   {
+    "cmd": "gigextract --help",
+    "what_happens": "Shows how to extract the samples from a Gigasampler file."
+   }
+  ],
+  "whats_unique": "One codebase reads and writes several different sampler formats (Gigasampler, DLS, KORG, SoundFont, AKAI) and ships small dump and conversion tools on top.",
+  "caveats": "It is a library first, so the tools are basic, and you need your own sampler files to do anything with them.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "audio",
+   "samplers",
+   "file-formats",
+   "soundfont",
+   "library"
+  ],
+  "links": [
+   {
+    "label": "libgig homepage",
+    "url": "https://www.linuxsampler.org/libgig/"
+   }
+  ]
+ }
+}

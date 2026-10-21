@@ -1,0 +1,96 @@
+{
+ "name": "openvdb",
+ "desc": "Sparse volumetric data processing toolkit",
+ "homepage": "https://www.openvdb.org/",
+ "installs_365d": 692,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "library",
+  "visual",
+  "simulation",
+  "math"
+ ],
+ "why": "Sparse volumetric data structures drive smoke and fluid effects in film, a real rabbit hole, though it's a heavy library toolkit.",
+ "brief": {
+  "what_it_is": "OpenVDB is an open-source C++ library for storing and manipulating sparse volumetric data on three-dimensional grids. It is built around a hierarchical data structure (the VDB tree) plus a large suite of tools for that structure. The project's own homepage says it won an Academy Award and is maintained by the Academy Software Foundation. The homepage and README do not say what the three listed executables (nanovdb_print, nanovdb_validate, vdb_print) do, and the README does not name them, so this brief does not describe them.",
+  "why_it_exists": "The README says it was developed by DreamWorks Animation for volumetric applications typically encountered in feature film production. The homepage describes it as a novel hierarchical data structure for efficient storage and manipulation of sparse volumetric data.",
+  "how_it_works": "",
+  "commands_seen": [
+   {
+    "cmd": "apt-get install -y libtbb-dev",
+    "context": "Linux dependency install for the core library (TBB)."
+   },
+   {
+    "cmd": "apt-get install -y libblosc-dev",
+    "context": "Linux dependency install for the core library (c-blosc)."
+   },
+   {
+    "cmd": "brew install tbb",
+    "context": "macOS dependency install for TBB, using Homebrew."
+   },
+   {
+    "cmd": "brew install c-blosc",
+    "context": "macOS dependency install for c-blosc, using Homebrew."
+   },
+   {
+    "cmd": "git clone git@github.com:AcademySoftwareFoundation/openvdb.git",
+    "context": "Clones the development repository over SSH before building from source."
+   },
+   {
+    "cmd": "mkdir build",
+    "context": "Creates an out-of-tree build directory inside the repo."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Configures the build from the build directory, with default options."
+   },
+   {
+    "cmd": "make -j4 && make install",
+    "context": "Compiles on four jobs and installs the core library."
+   },
+   {
+    "cmd": "vcpkg install zlib:x64-windows",
+    "context": "Windows: installs zlib as a 64-bit dependency through vcpkg."
+   },
+   {
+    "cmd": "cmake -DCMAKE_TOOLCHAIN_FILE=<PATH_TO_VCPKG>\\scripts\\buildsystems\\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows -A x64 ..",
+    "context": "Windows: configures CMake to use vcpkg dependencies with a 64-bit target. The README says this has only been tested for 64-bit."
+   }
+  ],
+  "install_notes": "Beyond brew install: the README's developer quick start is a source build with CMake. Core dependencies are TBB and c-blosc. On Linux, install them with apt-get, and the README suggests apt pinning if distro versions are too old. On Windows, you need Visual Studio (MSVC toolchain), CMake, and optionally vcpkg, which provides zlib, blosc and tbb. Optional components need extra flags at configure time: -D OPENVDB_BUILD_AX=ON for OpenVDB AX, -D OPENVDB_BUILD_NANOVDB=ON for NanoVDB, and -D NANOVDB_USE_OPENVDB=ON to use OpenVDB inside NanoVDB. The Python module and the executables may need additional dependencies. NanoVDB has its own build docs. The README does not describe a first-run or configuration step.",
+  "standout": "It is an Academy Award-winning library from a major studio's production tooling, now stewarded by the Academy Software Foundation. Its hierarchical sparse grid design is the core idea, and the project has gone further with NanoVDB, a GPU-oriented variant.",
+  "status": "Maintained, as far as the sources show. The homepage's newest entry is the OpenVDB 12.0.0 release on October 31, 2024, with earlier major releases in 2023, 2022 and 2021. The GitHub README mentions active CI badges and the ASWF stewardship, but I did not see a last-commit date or a releases page, so the exact recency is unverified.",
+  "caveats": "The README warns that the GitHub repository is the development trunk, which is the newest but less stable than the production releases. Licensing moved from MPL 2.0 to Apache 2.0, per RE-LICENSE_NOTE.txt. Windows instructions were only tested on 64-bit systems. Building from source with several dependencies can be heavy, and the README points to external build docs for many options. The brew_caveats field from the package listing was empty. The homepage was reachable.",
+  "quotes": [
+   "OpenVDB is an open source C++ library comprising a novel hierarchical data structure and a large suite of tools for the efficient storage and manipulation of sparse volumetric data discretized on three-dimensional grids.",
+   "This GitHub repository hosts the trunk of the OpenVDB development. This implies that it is the newest public version with the latest features and bug fixes.",
+   "However, it also means that it has not undergone a lot of testing and is generally less stable than the production releases."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.openvdb.org/"
+   },
+   {
+    "label": "Documentation (Doxygen)",
+    "url": "https://www.openvdb.org/documentation/doxygen"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/AcademySoftwareFoundation/openvdb/releases"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/AcademySoftwareFoundation/openvdb"
+   }
+  ],
+  "fetch_log": [
+   "https://www.openvdb.org/ - worked; homepage with welcome text and news list (10.0.0 through 12.0.0).",
+   "https://github.com/AcademySoftwareFoundation/openvdb - worked; README returned, including build instructions. Did not follow the separate build docs link."
+  ]
+ }
+}

@@ -1,0 +1,124 @@
+{
+ "name": "astrometry-net",
+ "desc": "Automatic identification of astronomical images",
+ "homepage": "https://github.com/dstndstn/astrometry.net",
+ "installs_365d": 701,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "science",
+  "afternoon",
+  "math",
+  "visual"
+ ],
+ "why": "Identifies where a photo points in the sky by matching star patterns, real astronomy you can run at home.",
+ "brief": {
+  "what_it_is": "Astrometry.net is an open-source program that takes an astronomical image with unknown sky coordinates and works out where in the sky it points. You give it a photo of the sky, and it returns astrometric calibration metadata (a standards-compliant WCS solution for the image) plus lists of known catalogue objects that fall inside the field of view. Its main command is solve-field, which is among roughly fifty executables the package installs, including build-astrometry-index for making index files and a range of FITS and table utilities. The project also runs a public web service at nova.astrometry.net.",
+  "why_it_exists": "The README says that if you have astronomical imaging with celestial coordinates you do not know or do not trust, Astrometry.net is for you. The authors frame the goal as creating correct, standards-compliant astrometric metadata for every useful astronomical image ever taken, so that the world's astronomical information can be organised, annotated and made searchable.",
+  "how_it_works": "The README does not explain the matching algorithm in detail. It describes a blind calibration: the image is solved without any prior pointing information, using index files that hold star patterns from a catalogue. The primary reference is the 2010 Lang et al. AJ paper, 'Astrometry.net: Blind astrometric calibration of arbitrary astronomical images', which the README cites for academic use. I did not read the paper, so the details are unverified.",
+  "commands_seen": [
+   {
+    "cmd": "docker run --volume \"$(pwd):$(pwd)\" -w \"$(pwd)\" astrometrynet/solver:0.98 solve-field image.jpg",
+    "context": "Runs the solver from the official Docker image on a local image.jpg, mounting the current directory into the container. This is the README's basic example of using Astrometry.net without a local install."
+   },
+   {
+    "cmd": "(cd /tmp; docker run --volume \"$(pwd):$(pwd)\" -w \"$(pwd)\" astrometrynet/solver:0.98 solve-field --dir . /src/astrometry/demo/apod5.jpg)",
+    "context": "Solves one of the bundled demo images (apod5.jpg) inside the container, writing results to /tmp. The README says the output appears as /tmp/apod5* files."
+   },
+   {
+    "cmd": "(cd /tmp; docker run --volume \"$(pwd):$(pwd)\" --volume /data/index/4100:/usr/local/data -w \"$(pwd)\" astrometrynet/solver:0.98 solve-field --dir . /src/astrometry/demo/apod4.jpg)",
+    "context": "Same idea, but mounts a downloaded index directory (/data/index/4100) at /usr/local/data so the solver can use index files that are not shipped with the image."
+   }
+  ],
+  "install_notes": "The README only shows a Docker route: the image astrometrynet/solver:0.98 ships with some index files and includes the demo images. For other installs, the README points to code snapshots and releases at astrometry.net/downloads, and the docs have a 'Building/installing the Astrometry.net code' page. I did not fetch that page, so I cannot say what the build needs. Solving real images needs index files, which the docs cover under 'Building Index Files for Astrometry.net'. I did not check where to download them. Note that brew was not mentioned in the README at all.",
+  "standout": "Blind solving: it needs no hint about where the camera is pointing, and it returns standards-compliant WCS metadata, not just a label. The stated aim is to calibrate every useful astronomical image ever taken, including archival ones.",
+  "status": "Partly verified. The README copyright runs to 2026, the Docker tag is 0.98, and the README has active build badges (Travis, CircleCI). I did not check the last release date or last commit, so I cannot give a firm date. The README also says 'We are NOT accepting LLM-generated PRs at this time.' Overall it looks maintained, but that is an inference.",
+  "caveats": "Licensing: the README says parts are 3-clause BSD, but because it links GPL libraries, the whole work must be distributed under GPL v3 or later. Index files are needed before anything solves. The README gives no platform list and does not describe the build. It does not accept LLM-generated pull requests. The docs install page and API pages were not read, so build pain is unknown.",
+  "quotes": [
+   "Input an image and we'll give you back astrometric calibration meta-data, plus lists of known objects falling inside the field of view.",
+   "We have built this astrometric calibration service to create correct, standards-compliant, astrometric meta-data for every useful astronomical image ever taken, past and future, in any state of archival disarray.",
+   "NOTE: We are NOT accepting LLM-generated PRs at this time."
+  ],
+  "links": [
+   {
+    "label": "GitHub homepage and README",
+    "url": "https://github.com/dstndstn/astrometry.net"
+   },
+   {
+    "label": "Documentation (Read the Docs)",
+    "url": "https://astrometrynet.readthedocs.io/en/latest/"
+   },
+   {
+    "label": "Lang et al. 2010 paper on arXiv",
+    "url": "http://arxiv.org/abs/0910.2233"
+   },
+   {
+    "label": "Public web service (nova.astrometry.net)",
+    "url": "http://nova.astrometry.net"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/dstndstn/astrometry.net: worked, README returned",
+   "https://astrometrynet.readthedocs.io/en/latest/: worked, but only the docs index page, with links and no content. I did not follow the sub-pages (install, index files), because the fetch budget and the page content did not give me enough to justify more."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Blindly matching star patterns to identify an image\u2019s sky coordinates\u2014and produce usable astronomical calibration\u2014opens a genuinely surprising door into astronomy."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Astrometry.net",
+  "tldr": "Give it a photo of the night sky with no location info and it works out where in the sky the camera was pointing.",
+  "deeper_look": "Astrometry.net takes an astronomical image whose sky coordinates are unknown or untrusted and solves it blind. The output is a standards-compliant WCS solution, the metadata that maps every pixel to a position on the sky, plus lists of known catalogue objects inside the field of view. The main command is `solve-field`. The package installs about fifty executables around it, including `build-astrometry-index` for making index files and a pile of FITS and table utilities.\n\nThe authors state the goal plainly: \"to create correct, standards-compliant, astrometric meta-data for every useful astronomical image ever taken, past and future, in any state of archival disarray.\" Old plates, phone snapshots and telescope frames with missing headers all count. If every image knows where it points, the world's astronomical images can be organised, annotated and searched.\n\nThe matching works from index files that hold star patterns taken from a catalogue. The solver looks for patterns in your image that match patterns in the index, with no prior pointing hint. The README cites the 2010 Lang et al. paper, \"Astrometry.net: Blind astrometric calibration of arbitrary astronomical images\", for the method and does not explain the algorithm itself. The idea underneath is turning a picture of stars into geometry you can look up.\n\nThere is also a public web service at nova.astrometry.net, so you can see what the output looks like before building anything.",
+  "install": "brew install astrometry-net\n# Solving real images needs index files, which are separate. The docs cover them under 'Building Index Files for Astrometry.net'. The README's own route is Docker: astrometrynet/solver:0.98 ships with some index files and the demo images.",
+  "try_this": [
+   {
+    "cmd": "solve-field --help",
+    "what_happens": "Lists the options of the main solver."
+   },
+   {
+    "cmd": "docker run --volume \"$(pwd):$(pwd)\" -w \"$(pwd)\" astrometrynet/solver:0.98 solve-field image.jpg",
+    "what_happens": "Runs the solver from the official Docker image on your own image.jpg, with the current directory mounted into the container."
+   },
+   {
+    "cmd": "(cd /tmp; docker run --volume \"$(pwd):$(pwd)\" -w \"$(pwd)\" astrometrynet/solver:0.98 solve-field --dir . /src/astrometry/demo/apod5.jpg)",
+    "what_happens": "Solves a bundled demo image and writes the results to /tmp as apod5* files."
+   }
+  ],
+  "whats_unique": "It solves blind, with no hint about where the camera pointed, and returns real WCS metadata rather than just a label. It is aimed at calibrating archival images as well as new ones.",
+  "caveats": "Nothing solves until you have index files, the README does not describe the build or list platforms, and the whole work is GPL v3 or later because it links GPL libraries.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "astronomy",
+   "science",
+   "math",
+   "visual",
+   "fits"
+  ],
+  "links": [
+   {
+    "label": "GitHub homepage and README",
+    "url": "https://github.com/dstndstn/astrometry.net"
+   },
+   {
+    "label": "Documentation (Read the Docs)",
+    "url": "https://astrometrynet.readthedocs.io/en/latest/"
+   },
+   {
+    "label": "Lang et al. 2010 paper on arXiv",
+    "url": "http://arxiv.org/abs/0910.2233"
+   },
+   {
+    "label": "Public web service (nova.astrometry.net)",
+    "url": "http://nova.astrometry.net"
+   }
+  ]
+ }
+}

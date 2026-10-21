@@ -1,0 +1,107 @@
+{
+ "name": "aspcud",
+ "desc": "Package dependency solver",
+ "homepage": "https://potassco.org/aspcud/",
+ "installs_365d": 79,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "math",
+  "library"
+ ],
+ "why": "Package dependency solving via answer set programming is a surprising use of logic programming that few people have seen.",
+ "brief": {
+  "what_it_is": "aspcud is a package dependency solver. It takes a CUDF problem file (a standard description of packages, versions, dependencies and conflicts) and produces a CUDF solution file that picks which packages to install, optimised against criteria given on the command line. Internally it converts the CUDF input into facts with the cudf2lp preprocessor, feeds those facts and an encoding to an answer set programming grounder and solver, and prints the result back in CUDF format. The homepage itself was an empty shell, so this description comes from the GitHub README.",
+  "why_it_exists": "The README frames it as a way to solve package problems in the CUDF format using ASP, with the CUDF specification and benchmark instances coming from the Mancoosi project.",
+  "how_it_works": "The cudf2lp converter translates a CUDF specification into a set of facts. Those facts, together with an encoding (misc2012.lp or specification.lp, selected with -e), are passed to the clingo grounder and clasp solver. The small C program aspcud calls these tools in sequence and writes the answer back as CUDF.",
+  "commands_seen": [
+   {
+    "cmd": "aspcud problem.cudf solution.cudf <criteria>",
+    "context": "Basic invocation from the README: reads a CUDF problem, writes a CUDF solution, with optimisation criteria passed as the third argument."
+   }
+  ],
+  "install_notes": "Beyond brew install, the README says clasp and gringo must be installed separately, linking to the potassco clasp and clingo repositories. It points to an INSTALL.md for details, which I did not fetch. It also mentions an examples folder to get started. No hardware, account or first-run configuration is mentioned.",
+  "standout": "It is a real use of answer set programming for a practical packaging problem, where the logic is written declaratively as an encoding and the solver does the search. The README says few people have seen this kind of use of logic programming, and the split into a converter, a small C driver, and swappable encodings is a tidy design.",
+  "status": "unknown. The README has no release dates, version history or maintenance notes, and I did not check the commit history or releases page. The brew metadata gives no version or date either.",
+  "caveats": "Requires separately installed clasp and gringo (clingo) binaries. The README offers two encodings with a tradeoff: misc2012.lp handles harder problems, while specification.lp is often faster on simpler instances. The README does not list supported platforms or the set of supported criteria beyond linking to the Mancoosi criteria page. Licence is MIT, per the README.",
+  "quotes": [
+   "The aspcud project provides the converter/preprocessor `cudf2lp` to translate a CUDF specification into a set of facts.",
+   "The small C program `aspcud` takes care of this, calling the necessary tools and printing the result in CUDF format.",
+   "The first encoding can typically solve harder problems than the second one. The second encoding is often faster on simpler instance though."
+  ],
+  "links": [
+   {
+    "label": "aspcud homepage (empty when fetched)",
+    "url": "https://potassco.org/aspcud/"
+   },
+   {
+    "label": "aspcud GitHub repository and README",
+    "url": "https://github.com/potassco/aspcud"
+   },
+   {
+    "label": "clingo (grounder)",
+    "url": "https://github.com/potassco/clingo"
+   }
+  ],
+  "fetch_log": [
+   "https://potassco.org/aspcud/ : fetched, but returned only an empty page shell with no readable text",
+   "https://github.com/potassco/aspcud : fetched OK, README returned"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It turns package dependency resolution into a declarative answer-set programming problem, offering a concrete, hands-on entry into an unusual style of logic-based optimization."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "aspcud",
+  "tldr": "A package dependency solver that hands the install-or-conflict puzzle to an answer set programming engine, so the logic is declared rather than coded.",
+  "deeper_look": "aspcud reads a CUDF problem file, a standard description of packages, versions, dependencies and conflicts, and writes a CUDF solution file saying which packages to install. Optimisation criteria go on the command line, so you can say what kind of solution you prefer. The CUDF format and benchmark instances come from the Mancoosi project.\n\nThe work is split into small pieces. The preprocessor `cudf2lp` turns the CUDF specification into a set of logic facts. Those facts, plus an encoding file, go to the clingo grounder and the clasp solver. A small C program, `aspcud`, calls these tools in order and prints the answer back as CUDF.\n\nThe idea underneath is answer set programming. You do not write a search algorithm. You write rules describing what a valid installation looks like, and a solver finds models that satisfy them. Dependency resolution is a good fit, because it is a pile of constraints with a preference for the best answer.\n\nTwo encodings ship with it, selectable with `-e`: `misc2012.lp` and `specification.lp`. Reading them is a compact way to see a real, practical problem written declaratively.",
+  "install": "brew install aspcud\nThe README says clasp and gringo must be installed separately (see the potassco clingo repository); brew pulls in clingo as a dependency. It also points to an INSTALL.md and an examples folder. No hardware or account needed.",
+  "try_this": [
+   {
+    "cmd": "aspcud --help",
+    "what_happens": "Prints the usage text, including the options such as the encoding selector."
+   },
+   {
+    "cmd": "aspcud problem.cudf solution.cudf <criteria>",
+    "what_happens": "Reads a CUDF problem, solves it with ASP, and writes a CUDF solution optimised against your criteria. Use a file from the repo's examples folder."
+   },
+   {
+    "cmd": "cudf2lp --help",
+    "what_happens": "Shows the converter that turns a CUDF problem into logic facts, so you can see what the solver actually receives."
+   }
+  ],
+  "whats_unique": "It applies answer set programming to a practical packaging problem, with the logic in swappable encodings and the solver doing the search. The split into converter, small driver and encodings is easy to read and modify.",
+  "caveats": "The README gives no release dates or platform list, so maintenance status is unclear, and the homepage returned an empty page when fetched.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "logic-programming",
+   "asp",
+   "solvers",
+   "packaging",
+   "cudf"
+  ],
+  "links": [
+   {
+    "label": "aspcud homepage (empty when fetched)",
+    "url": "https://potassco.org/aspcud/"
+   },
+   {
+    "label": "aspcud GitHub repository and README",
+    "url": "https://github.com/potassco/aspcud"
+   },
+   {
+    "label": "clingo (grounder)",
+    "url": "https://github.com/potassco/clingo"
+   }
+  ]
+ }
+}

@@ -1,0 +1,91 @@
+{
+ "name": "tup",
+ "desc": "File-based build system",
+ "homepage": "https://gittup.org/tup/",
+ "installs_365d": 1513,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "deprecated"
+ ],
+ "why": "A file-based build system that tracks real file access; an unusual design, though it is mostly build plumbing.",
+ "brief": {
+  "what_it_is": "Tup is a file-based build system for Linux, OSX, and Windows, written by Mike Shal. Per its homepage, it takes a list of file changes and a directed acyclic graph (DAG) of dependencies as input, then runs the commands needed to bring dependent files up to date. The homepage does not say what the build description looks like beyond the Tupfile name it links to, and it does not describe the output in detail.",
+  "why_it_exists": "The homepage pitches tup as a faster, lower-friction alternative to make and its derivatives: quick edit/compile/test cycles on large projects, running a build from any directory in the tree, and no clean builds or stale files to worry about. The author frames it humorously, and the README says it is 'so fast that your chair mounted jousting might suffer.'",
+  "how_it_works": "The homepage says tup's dependency arrows point up rather than down, in contrast to make, and credits this with its speed; it refers to the 'Build System Rules and Algorithms' paper for details. It also says tup automatically cleans up old files and detects build descriptions that are not parallel-safe. The homepage never explicitly says tup tracks real file access, though the macOS section's reliance on FUSE suggests it observes filesystem access.",
+  "commands_seen": [
+   {
+    "cmd": "git clone git://github.com/gittup/tup.git",
+    "context": "Gets the tup source from the git repository, the first install option on the homepage."
+   },
+   {
+    "cmd": "./bootstrap.sh",
+    "context": "Run inside the cloned tup directory to build tup from the git tree."
+   },
+   {
+    "cmd": "man ./tup.1",
+    "context": "Opens the man page shipped in the source tree."
+   },
+   {
+    "cmd": "sudo apt-add-repository 'deb http://ppa.launchpad.net/anatol/tup/ubuntu precise main'",
+    "context": "Adds the unofficial PPA for Debian-based systems such as Ubuntu 10.04+."
+   },
+   {
+    "cmd": "sudo apt-get install tup",
+    "context": "Installs tup from the PPA after apt-get update."
+   },
+   {
+    "cmd": "brew tap macos-fuse-t/homebrew-cask",
+    "context": "First step of the macOS route: taps the FUSE-T cask."
+   },
+   {
+    "cmd": "brew install fuse-t",
+    "context": "Installs FUSE-T, a user-space FUSE implementation that tup needs on macOS."
+   },
+   {
+    "cmd": "brew install pkg-config pcre2 cmake",
+    "context": "Installs build dependencies for the macOS build."
+   },
+   {
+    "cmd": "sudo port install tup",
+    "context": "Installs tup via MacPorts."
+   },
+   {
+    "cmd": "tup",
+    "context": "The homepage's usage example: run from anywhere in the tree, with no subdirectory needed."
+   }
+  ],
+  "install_notes": "Beyond brew, the homepage lists a git clone plus ./bootstrap.sh build, signed release tarballs, a Windows download, an Ubuntu PPA, and MacPorts. On macOS, tup needs a FUSE implementation: FUSE-T is recommended. The FUSE-T route requires cloning and building a patched libfuse from petemoore/libfuse (branch fix/recv-eof-on-unmount), running install_name_tool, copying libraries to /usr/local/lib and headers into /usr/local/include/fuse, and hand-writing a fuse.pc pkg-config file. Alternatively, macFUSE works if its kernel extension is enabled in System Settings > Privacy & Security, and tup will then use it automatically.",
+  "standout": "The 'arrows go up' dependency model is an unusual framing that the author ties to speed. The homepage also claims tup can handle file renames and flags non-parallel-safe build descriptions, which many build systems do not do.",
+  "status": "Unknown for release or commit dates. The homepage footer reads '\u00a9 2008-2024 Mike Shal', the GitHub README is short and has no release or commit information in the fetched text, and the site is still live. It does not look abandoned, but I could not confirm recent activity.",
+  "caveats": "macOS requires a FUSE implementation. The recommended FUSE-T path involves a lengthy manual libfuse patch-and-install process, and the macFUSE path requires a kernel extension. The homepage's Windows support is only mentioned with a download link and no details. The homepage is informal and jokey, so the claims about speed and features come from the author with no benchmarks shown. The GitHub README is brief and points back to the homepage. I did not check the license; the homepage shows only a copyright line.",
+  "quotes": [
+   "Tup is a file-based build system for Linux, OSX, and Windows.",
+   "It will detect if your build description isn't parallel-safe, and tell you.",
+   "Your version control lets you rename a file. Does your build system? tup",
+   "Fresh checkouts: gone. 'clean' builds: gone. Worries: gone. What remains: tup"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://gittup.org/tup/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/gittup/tup"
+   },
+   {
+    "label": "Build System Rules and Algorithms (PDF), linked from the homepage, not fetched",
+    "url": "https://gittup.org/tup/build_system_rules_and_algorithms.pdf"
+   }
+  ],
+  "fetch_log": [
+   "https://gittup.org/tup/ - worked; returned the homepage text with site navigation, install notes, and the pitch.",
+   "https://github.com/gittup/tup - worked; returned a short README with the project description and a link back to the homepage. Used only for cross-checking; it has no commands or release information.",
+   "Not fetched: the Manual, Getting Started, and Examples pages, as well as the PDF. The PDF URL in links is my guess from the homepage link label and I have not verified it."
+  ]
+ }
+}

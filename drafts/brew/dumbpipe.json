@@ -1,0 +1,152 @@
+{
+ "name": "dumbpipe",
+ "desc": "Unix pipes between devices",
+ "homepage": "https://dumbpipe.dev",
+ "installs_365d": 544,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "Pipes stdin and stdout between devices through peer connections, a clever revival of the Unix pipe across the network.",
+ "brief": {
+  "what_it_is": "Dumbpipe is a command-line tool that connects two machines directly and pipes data between them, like a Unix pipe that works across the network. You run `dumbpipe listen` on one machine, which prints a ticket (a long node identifier). On the other machine you run `dumbpipe connect <ticket>` and feed it stdin, and the bytes come out on the listener's stdout. It also has TCP and Unix-socket variants that forward local ports or sockets across the connection. Per the homepage there are no accounts and no configuration, and it works regardless of where the two machines are.",
+  "why_it_exists": "The homepage says that in 2023 it is hard to connect two devices directly, and dumbpipe is meant to solve that. The GitHub README frames it as a netcat-style tool that uses 256-bit endpoint IDs instead of IP addresses, so it is somewhat location transparent.",
+  "how_it_works": "It is a thin wrapper around the iroh Rust crate, which creates QUIC connections over a 'magic socket'. Iroh does NAT hole punching where it can and falls back to a meshed network of relay nodes that carry UDP traffic over HTTP when a direct connection is impossible (the homepage estimates this is 10-20% of connections). Connections are encrypted with TLS and can multiplex streams, and custom ALPN strings let you talk to other iroh protocols.",
+  "commands_seen": [
+   {
+    "cmd": "curl -sL https://www.dumbpipe.dev/install.sh | sh",
+    "context": "Homepage one-line installer for bash."
+   },
+   {
+    "cmd": "iwr https://www.dumbpipe.dev/install.ps1 -useb | iex",
+    "context": "Homepage one-line installer for Windows PowerShell."
+   },
+   {
+    "cmd": "cargo install dumbpipe",
+    "context": "Install from crates.io using Cargo."
+   },
+   {
+    "cmd": "brew install dumbpipe",
+    "context": "Install via Homebrew."
+   },
+   {
+    "cmd": "./dumbpipe listen",
+    "context": "Receiver side on the homepage; prints a secret key and a ./dumbpipe connect <node ticket> line to copy."
+   },
+   {
+    "cmd": "echo \"hello\" | ./dumbpipe connect nodeecsxraxjtqtneathgplh6d5nb2rsnxpfulmkec2rvhwv3hh6m4rdgaibamaeqwjaegplgayaycueiom6wmbqcjqaibavg5hiaaaaaaaaaaabaau7wmbq",
+    "context": "Sender side on the homepage; pipes stdin into the listener using the ticket."
+   },
+   {
+    "cmd": "ffmpeg -f avfoundation -r 30 -i \"0\" -pix_fmt yuv420p -f mpegts - | dumbpipe listen",
+    "context": "README video example, macOS sender: streams camera output to a dumbpipe listener, which prints a ticket."
+   },
+   {
+    "cmd": "dumbpipe connect endpointealvvv4nwa522qhznqrblv6jxcrgnvpapvakxw5i6mwltmm6ps2r4aicamaakdu5wtjasadei2qdfuqjadakqk3t2ieq | ffplay -f mpegts -fflags nobuffer -framedrop -",
+    "context": "README video example, receiver: connects with the ticket and pipes the stream into ffplay."
+   },
+   {
+    "cmd": "dumbpipe listen-tcp --host localhost:8000 &",
+    "context": "README terminal-sharing example: exposes a local TCP service (tty-share) through a dumbpipe listener."
+   },
+   {
+    "cmd": "dumbpipe connect-tcp --addr 0.0.0.0:3001 <ticket>",
+    "context": "README dev-server example: listens on local port 3001 and forwards connections to the remote ticket."
+   },
+   {
+    "cmd": "dumbpipe listen-unix --socket-path /tmp/zellij-0/0.42.2/remote-task-1234",
+    "context": "README Zellij example, remote host: exposes a Unix socket for a running Zellij session."
+   },
+   {
+    "cmd": "echo request1.bin | dumbpipe connect <ticket> --custom-alpn utf8:/iroh-bytes/2 > response1.bin",
+    "context": "README expert example: sends a request over a custom ALPN to the iroh-blobs protocol and saves the response."
+   }
+  ],
+  "install_notes": "Install with the curl or PowerShell one-liner from the homepage, or with cargo install dumbpipe, or brew install dumbpipe. The homepage says there are no accounts and no configuration. The listener generates a secret key on first run and prints it, and then prints the ticket to share. The README's video example needs ffmpeg and ffplay, and its capture device names vary by platform.",
+  "standout": "It uses a 256-bit node identifier instead of an IP address, so the peer is addressed by identity and can move across networks. It also handles NAT traversal and roaming with a relay fallback, and it is pitched as the 'dumb' pipe: anything more (pubsub, sync) is an opt-in addon that makes it no longer dumb.",
+  "status": "unknown. The homepage copy says 'In 2023', which suggests it has not been revised recently, but I found no release date, last-commit date, or version information in the pages I read. The GitHub README describes itself as 'an example' of using iroh and as 'also useful as a standalone tool'.",
+  "caveats": "Roughly 10-20% of connections fall back to relays, and the default relay network has capped bandwidth (per the homepage). Higher-throughput authenticated relays are offered through n0des. The tool is built on iroh, and the homepage says the design is 'a 200-line wrapper'. The GitHub README calls itself an example. The README gives no platform list beyond the ffmpeg notes and the PowerShell installer, and I did not check licensing.",
+  "quotes": [
+   "Easy, direct connections that punch through NATs & stay connected as network conditions change.",
+   "Get dumbpipe with a single command on two computers, connect them & pipe data from one machine to the other. No accounts. No configuration.",
+   "Sounds silly, but it works. And the magic socket handles all this under the hood.",
+   "But if you add these things, the pipe is no longer dumb. You decide how to feel about that."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://dumbpipe.dev"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/n0-computer/dumbpipe"
+   },
+   {
+    "label": "iroh on crates.io (the underlying library)",
+    "url": "https://crates.io/crates/iroh"
+   }
+  ],
+  "fetch_log": [
+   "https://dumbpipe.dev - worked; homepage text with install lines, usage, and marketing copy",
+   "https://github.com/n0-computer/dumbpipe - worked; README returned (URL was my guess from the project name, not a link from the homepage text)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It turns ordinary stdin/stdout into a location-independent, NAT-traversing pipe between devices\u2014a simple interface to a surprisingly intricate networking problem."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "dumbpipe",
+  "tldr": "A netcat-style tool that pipes stdin and stdout between two machines anywhere, addressed by a long key instead of an IP address.",
+  "deeper_look": "Dumbpipe connects two machines directly and moves bytes between them, like a Unix pipe that crosses the network. Run `dumbpipe listen` on one machine and it prints a ticket, a long node identifier. On the other machine, run `dumbpipe connect <ticket>` with something on stdin, and the bytes come out on the listener's stdout. There are also TCP and Unix-socket variants that forward a local port or socket across the same connection.\n\nThe idea underneath is addressing by identity. Instead of an IP address, the peer is a 256-bit endpoint ID, so it can move between networks and still be found. The tool is a thin wrapper around the iroh Rust crate, which makes QUIC connections over what it calls a magic socket. It tries NAT hole punching first. When a direct path is impossible, it falls back to a mesh of relay nodes that carry UDP traffic over HTTP. The homepage estimates this fallback applies to 10-20% of connections. Connections are encrypted with TLS and can multiplex streams.\n\nThe README shows how far a plain pipe stretches: streaming a camera feed from ffmpeg into ffplay, sharing a terminal session, forwarding a dev server port, or exposing a Zellij session's Unix socket. It also lets you set a custom ALPN string to talk to other iroh protocols. The project's stance is that anything more, such as pubsub or sync, makes the pipe no longer dumb: \"You decide how to feel about that.\"",
+  "install": "brew install dumbpipe\n# alternatives: cargo install dumbpipe, or curl -sL https://www.dumbpipe.dev/install.sh | sh\n# you need two machines (or two terminals) to see it work",
+  "try_this": [
+   {
+    "cmd": "dumbpipe listen",
+    "what_happens": "Generates a secret key on first run, then prints a ticket and a ready-to-copy `dumbpipe connect` line for the other machine."
+   },
+   {
+    "cmd": "echo \"hello\" | dumbpipe connect <ticket>",
+    "what_happens": "Sends the text to the listener using the ticket, and it appears on the listener's stdout."
+   },
+   {
+    "cmd": "dumbpipe connect-tcp --addr 0.0.0.0:3001 <ticket>",
+    "what_happens": "Listens on local port 3001 and forwards connections through the pipe to the service exposed by the remote listener."
+   }
+  ],
+  "whats_unique": "Peers are addressed by key rather than IP, with NAT traversal and relay fallback built in, so a netcat-like workflow works between machines on different networks with no accounts or config.",
+  "caveats": "The default relay network has capped bandwidth, and the README calls the project an example of what iroh can do; I found no release or last-commit date.",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "network",
+   "protocol",
+   "nat-traversal",
+   "quic",
+   "pipes"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://dumbpipe.dev"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/n0-computer/dumbpipe"
+   },
+   {
+    "label": "iroh on crates.io (the underlying library)",
+    "url": "https://crates.io/crates/iroh"
+   }
+  ]
+ }
+}

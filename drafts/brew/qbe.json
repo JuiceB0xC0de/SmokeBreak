@@ -1,0 +1,86 @@
+{
+ "name": "qbe",
+ "desc": "Compiler Backend",
+ "homepage": "https://c9x.me/compile/",
+ "installs_365d": 116,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "compiler",
+  "language",
+  "afternoon",
+  "library"
+ ],
+ "why": "A tiny, readable compiler backend that shows how real compilers lower code, a clean door into compiler internals.",
+ "brief": {
+  "what_it_is": "QBE is a compiler backend, written in C, that takes code in its own SSA-based intermediate language (IL) and emits assembly for amd64 (Linux and macOS), arm64, or riscv64. The homepage's example program is a small .ssa file that defines an add function, calls it, and calls printf. Compiling it with qbe produces assembly (out.s), which you then assemble and link with cc. The output is a normal binary that uses the local libc.",
+  "why_it_exists": "The author says QBE aims to provide 70% of the performance of industrial optimizing compilers in 10% of the code, to foster language innovation with a compact, user-friendly, and performant backend. The size limit is meant to keep it focused on the essentials and avoid endless diminishing returns.",
+  "how_it_works": "Front ends emit the QBE IL, which is the same IL used at all compilation stages. The backend then runs optimizations such as copy elimination, sparse conditional constant propagation, and dead instruction elimination, followed by register allocation. The page says the spiller and register allocator are split and use SSA form, which it calls simpler and faster than graph coloring, with a linear allocator that uses hinting and a loop-aware spilling heuristic.",
+  "commands_seen": [
+   {
+    "cmd": "qbe -o out.s file.ssa && cc out.s",
+    "context": "Compiles the QBE IL file file.ssa into assembly out.s, then uses the system cc to assemble and link it into a runnable binary. The page says to copy the example into a file and run this."
+   }
+  ],
+  "install_notes": "The homepage gives no installation steps beyond the compile line above, which needs a system C compiler (cc) and a local libc. It notes that compile time was about 2 seconds on a Core 2 Duo with CFLAGS=-O2, which suggests building from source with that flag. The brew formula's description is 'Compiler Backend'.",
+  "standout": "It is deliberately small and readable, with a stated size budget and a full C ABI implementation, so programs can call into C and be called from C. It is a good, compact door into how real compilers lower code, since the IL, optimizations, and register allocator are all in one small codebase.",
+  "status": "unknown. The homepage shows no release version, release date, or last-commit date, and it points to a mailing list (~mpu/qbe@lists.sr.ht) and an IRC channel for discussion. I fetched only the homepage and did not check a repository or changelog.",
+  "caveats": "The homepage lists only amd64 (Linux and macOS), arm64, and riscv64 as targets. The performance claims (70% of industrial compilers in 10% of the code) are the author's own framing and were not checked here. The 2-second compile figure is for old hardware. The homepage does not state a license. It also refers to a separate language documentation page, whose URL was not given in the text I read, so I did not follow it.",
+  "quotes": [
+   "QBE is a compiler backend that aims to provide 70% of the performance of industrial optimizing compilers in 10% of the code.",
+   "The C codebase of QBE is intended to remain hobby-scale and pleasant to hack on.",
+   "Super quick compile times (2 seconds on a Core 2 Duo with CFLAGS=-O2)."
+  ],
+  "links": [
+   {
+    "label": "QBE homepage",
+    "url": "https://c9x.me/compile/"
+   }
+  ],
+  "fetch_log": [
+   "https://c9x.me/compile/ - fetched successfully; contains the full overview, feature list, example, and community info. No further fetches made: the page names a language documentation page but gives no URL, and no repository link appeared."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "QBE makes real compiler backend design unusually approachable: its compact SSA-based IL, optimizations, and register allocator offer a hands-on look at lowering code."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "QBE",
+  "tldr": "A hobby-scale compiler backend that turns a small SSA intermediate language into assembly, showing in a few thousand lines of C how real compilers lower code.",
+  "deeper_look": "QBE is a compiler backend written in C. You give it code in its own intermediate language, a typed, SSA-based text format, and it emits assembly for amd64 (Linux and macOS), arm64, or riscv64. The homepage example is a short `.ssa` file that defines an add function, calls it, and calls `printf`. QBE turns that into `out.s`, and the system `cc` assembles and links it into an ordinary binary against the local libc.\n\nThe author's stated goal is to provide \"70% of the performance of industrial optimizing compilers in 10% of the code.\" The size budget is deliberate. It keeps the project focused on the essentials and away from endless diminishing returns. The page says the codebase is \"intended to remain hobby-scale and pleasant to hack on.\" Those performance figures are the author's framing and were not checked here.\n\nInside, the same IL is used at every stage. Front ends emit it, and the backend runs passes such as copy elimination, sparse conditional constant propagation, and dead instruction elimination, then register allocation. The page describes a split spiller and allocator working in SSA form, which it calls simpler and faster than graph coloring. It uses a linear allocator with hinting and a loop-aware spilling heuristic.\n\nThe idea underneath is that a new language does not need a huge toolchain. Write a front end that prints QBE IL, and you get native code and C interoperability. QBE implements the full C ABI, so your programs can call into C and be called from C. Reading the IL by hand is also a good way to see what a compiler does between source code and assembly.",
+  "install": "brew install qbe\n# the example also needs a system C compiler (cc) and libc to assemble and link the output",
+  "try_this": [
+   {
+    "cmd": "qbe -o out.s file.ssa && cc out.s",
+    "what_happens": "Compiles a QBE IL file (for example the add and printf example from the homepage) to assembly, then assembles and links it into a runnable binary."
+   },
+   {
+    "cmd": "qbe --help",
+    "what_happens": "Prints the command-line options QBE accepts."
+   }
+  ],
+  "whats_unique": "It is small on purpose, with a stated size budget, yet it implements the full C ABI. Its IL, optimizations, and register allocator can all be read in one compact codebase.",
+  "caveats": "Only amd64, arm64, and riscv64 are targeted, and the homepage shows no release version or date, so the project's current activity is unknown.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "compiler",
+   "intermediate-language",
+   "ssa",
+   "backend",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "QBE homepage",
+    "url": "https://c9x.me/compile/"
+   }
+  ]
+ }
+}

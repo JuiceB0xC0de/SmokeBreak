@@ -1,0 +1,148 @@
+{
+ "name": "picotool",
+ "desc": "Tool for interacting with RP2040/RP2350 devices and binaries",
+ "homepage": "https://github.com/raspberrypi/picotool",
+ "installs_365d": 2247,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "reverse-engineering"
+ ],
+ "why": "Talks to RP2040/RP2350 boards over USB and inspects binaries, a genuine door into low-level microcontroller internals.",
+ "brief": {
+  "what_it_is": "picotool is a command-line tool from Raspberry Pi for working with RP2040 and RP2350 microcontroller binaries, and for talking to the chips themselves over USB. Against a device in BOOTSEL mode it can show info, load, save, verify, erase, reboot, and read or write config and OTP memory. Against a file (ELF, UF2 or BIN) it can show binary info, convert ELF/BIN to UF2, seal or encrypt RP2350 images, build partition tables, and link binaries. Input is a board or a file; output is printed info, progress bars, or new files.",
+  "why_it_exists": "The README frames it as 'a tool for working with RP2040/RP2350 binaries, and interacting with RP2040/RP2350 devices when they are in BOOTSEL mode.' It also replaces tooling that used to live in the Pico SDK, such as the elf2uf2 functionality, which the README says the uf2 convert command replaces.",
+  "how_it_works": "The README describes Binary Information support in the Pico SDK: compact metadata embedded in a binary that picotool can read back, from a device or a file. Device commands talk to the RP2040/RP2350 over USB while the chip is in BOOTSEL mode; from picotool 1.1 onward, the -f flag can reset a board running SDK USB stdio firmware so the command can run. Seal and encrypt add RP2350 metadata blocks, optional hashes and signatures, and OTP key material. The README does not explain the USB protocol in detail.",
+  "commands_seen": [
+   {
+    "cmd": "picotool help",
+    "context": "Shows general help; the README's synopsis block is the output of this command."
+   },
+   {
+    "cmd": "picotool info -a",
+    "context": "Displays all info (program, pins, build, device) from a connected device in BOOTSEL mode."
+   },
+   {
+    "cmd": "picotool info -a lcd_1602_i2c.uf2",
+    "context": "Same -a info view, but read from a UF2 file instead of a device."
+   },
+   {
+    "cmd": "picotool config -s name Jane",
+    "context": "Changes a binary-info config value (name) on the device, from the README's example of a configurable program setting."
+   },
+   {
+    "cmd": "picotool load blink.uf2",
+    "context": "Writes a UF2 file into flash on a device in BOOTSEL mode; the example output shows a progress bar."
+   },
+   {
+    "cmd": "picotool save spoon.uf2",
+    "context": "Saves the installed program from device flash to a UF2 file."
+   },
+   {
+    "cmd": "picotool erase -p 1",
+    "context": "Erases RP2350 partition 1 on the device; the README shows the before and after info output."
+   },
+   {
+    "cmd": "picotool reboot --vid 0x32ac --pid 0x001f -f -u",
+    "context": "From the v1.1.0 release notes, not the README body: force-reboots a board with a third-party VID/PID from application firmware into BOOTSEL mode."
+   },
+   {
+    "cmd": "openssl ecparam -name secp256k1 -genkey -out private.pem",
+    "context": "Creates the secp256k1 PEM signing key that picotool seal expects, as shown in the README."
+   },
+   {
+    "cmd": "cmake --install .",
+    "context": "Installs picotool so the Pico SDK can find it. The README says copying the binary into PATH is not enough."
+   },
+   {
+    "cmd": "picotool otp dump otp.json --output otp.bin",
+    "context": "From the v2.2.0 release notes: converts an OTP JSON file to a BIN file."
+   }
+  ],
+  "install_notes": "Pre-built executables for Windows, macOS and Linux are in the raspberrypi/pico-sdk-tools releases. Extract the archive, then set the picotool_DIR environment variable (or pass -Dpicotool_DIR to cmake, or set it in CMakeLists.txt) to point at the picotool folder. To build from source, see BUILDING.md in the repo, then run cmake --install . The README says: 'You cannot just copy the binary into your PATH, else the Pico SDK will not be able to locate it.' Hardware: the target board must be in BOOTSEL mode for most commands, or running SDK USB stdio firmware with -f or -F. Per v1.1.2 and v1.1.0 notes, Linux and macOS connection failures print a sudo suggestion. A Windows RP2040 with a custom VID/PID needs the --rp2040 flag, according to the README.",
+  "standout": "Picotool reads and writes RP2350 internals that most people never see: OTP fuses, secure-boot partition tables, seal and encrypt metadata, and the bootrom's block loop. The README also shows a self-decrypting binary option (encrypt --embed) and a SHA/signature path for secp256k1 keys.",
+  "status": "Maintained, as far as I can tell. The releases page lists 2.3.1 as Latest (dated 05 Sep; the year is not shown on the page), with 2.3.0 on 03 Jul. Release notes say the versions coincide with Pico SDK releases (2.3.1, 2.3.0, 2.2.0, and so on). I did not check the last commit date.",
+  "caveats": "The README was cut off at about 40,000 characters, so I did not read the otp, bdev, link, or BUILDING.md sections in detail. Device commands need a board in BOOTSEL mode, or SDK USB stdio firmware with -f. The README says the binary cannot simply be copied onto PATH, so the install goes through cmake. Signing needs secp256k1 keys specifically. I did not check the license.",
+  "quotes": [
+   "picotool is a tool for working with RP2040/RP2350 binaries, and interacting with RP2040/RP2350 devices when they are in BOOTSEL mode.",
+   "Note commands that aren't acting on files require a device in BOOTSEL mode to be connected.",
+   "You cannot just copy the binary into your PATH, else the Pico SDK will not be able to locate it."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/raspberrypi/picotool"
+   },
+   {
+    "label": "Get started docs",
+    "url": "https://rptl.io/pico-get-started"
+   },
+   {
+    "label": "pico-sdk-tools releases (pre-built binaries)",
+    "url": "https://github.com/raspberrypi/pico-sdk-tools/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/raspberrypi/picotool: worked. README returned, truncated at 40000 characters.",
+   "https://github.com/raspberrypi/picotool/releases: worked, but the page is noisy HTML. Used it only for release versions and dates and release notes."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Beyond flashing boards, it exposes RP2350 OTP, partition, and secure-boot internals, making a common microcontroller\u2019s hidden machinery explorable."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "picotool",
+  "tldr": "Raspberry Pi's official command-line tool for inspecting, flashing and reading back RP2040/RP2350 microcontroller binaries and the chips running them, over USB.",
+  "deeper_look": "picotool does two jobs. Pointed at a file (ELF, UF2 or BIN), it prints what is inside, converts between formats, and for the RP2350 can seal, encrypt, build partition tables and link binaries. Pointed at a board in BOOTSEL mode, it can show info, load, save, verify, erase and reboot the chip, and read or write config and OTP memory.\n\nThe interesting idea is Binary Information. The Pico SDK can embed compact metadata in a firmware image: program name, build details, pin assignments. picotool reads it back, either from a .uf2 on disk or from a device that is plugged in. A firmware file stops being an opaque blob and becomes something that describes itself.\n\nThe RP2350 side goes further. The tool can touch OTP fuses, secure-boot partition tables, signature and hash metadata, and a self-decrypting binary option (`encrypt --embed`). That is a gentle way into how a microcontroller boots and decides what code to trust. It also replaces older SDK tooling: the README says `uf2 convert` takes over from the elf2uf2 functionality.",
+  "install": "brew install picotool\n# Needs a Raspberry Pi RP2040 or RP2350 board for device commands (BOOTSEL mode, or SDK USB stdio firmware with -f).\n# File-only commands such as `info` on a .uf2 need no hardware.",
+  "try_this": [
+   {
+    "cmd": "picotool help",
+    "what_happens": "Prints the general help and the list of commands."
+   },
+   {
+    "cmd": "picotool info -a lcd_1602_i2c.uf2",
+    "what_happens": "Reads a UF2 file you already have and shows its program, pin, and build info, with no board needed."
+   },
+   {
+    "cmd": "picotool save spoon.uf2",
+    "what_happens": "With a board in BOOTSEL mode, saves the installed program from its flash to a UF2 file."
+   }
+  ],
+  "whats_unique": "It is the official tool, so it reads the SDK's embedded Binary Information and reaches RP2350 internals such as OTP, partition tables and signing that most people never see.",
+  "caveats": "Most device commands need a board in BOOTSEL mode, and the README says the binary must be installed through cmake rather than copied onto PATH for the Pico SDK to find it.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "microcontroller",
+   "usb",
+   "firmware",
+   "rp2040",
+   "rp2350"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/raspberrypi/picotool"
+   },
+   {
+    "label": "Get started docs",
+    "url": "https://rptl.io/pico-get-started"
+   },
+   {
+    "label": "pico-sdk-tools releases (pre-built binaries)",
+    "url": "https://github.com/raspberrypi/pico-sdk-tools/releases"
+   }
+  ]
+ }
+}

@@ -1,0 +1,51 @@
+{
+ "name": "miniupnpc",
+ "desc": "UPnP IGD client library and daemon",
+ "homepage": "http://miniupnp.free.fr/",
+ "installs_365d": 34168,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "quick",
+  "library"
+ ],
+ "why": "The key to UPnP on your router; a perfect door into how devices quietly open ports.",
+ "brief": {
+  "what_it_is": "MiniUPnP is a pair of small C libraries and daemons for UPnP Internet Gateway Device (IGD) support, the protocol that lets a machine on a home network ask its router to open a port. MiniUPnPc is the client side: a control point that discovers a gateway on the LAN and sends it port-mapping requests. MiniUPnPd is the server side: a daemon that runs on a Linux or BSD box acting as the gateway and answers those requests by writing firewall rules (pf, ipfw, ipf, netfilter or nftables). MiniSSDPd is a companion SSDP daemon that listens for discovery traffic so several UPnP services can share one machine. The README's commands section is empty, so the tools are described here only by their roles.",
+  "why_it_exists": "The author wanted a free, minimal UPnP IGD implementation because libupnp was 'too heavy' for him, and he wanted 'the simplest library possible, with the smallest footprint and no dependencies to other libraries such as XML parsers or HTTP implementations.' The stated goal is to let applications that must accept incoming connections, such as P2P clients, games and servers, open ports on a NAT router automatically.",
+  "how_it_works": "The client discovers the router with SSDP, either by its own multicast search or by asking MiniSSDPd, which listens for SSDP traffic so clients can skip discovery and set up a redirection faster. The client then talks to the gateway's UPnP SOAP/HTTP services to add or remove port mappings. The daemon is described as a single process with no extra threads, and it does not call system() or exec(), which the author presents as a reason it is light enough for low-memory routers.",
+  "commands_seen": [],
+  "install_notes": "The README and homepage give no build or install commands. Homebrew reports the executables external-ip, upnp-listdevices and upnpc, but I did not see their usage in the pages I read. Building the daemon requires a supported firewall backend (pf, ipfw, ipf, netfilter or nftables), and the README says MiniUPnPc and MiniSSDPd are portable to any POSIX system and also work on MS Windows and AmigaOS. The README points to the Forum and to a compatibility list for router testing, but I did not open either.",
+  "standout": "It is a tiny, dependency-free C implementation, with the client library described as under 50KB of x86 code. It pairs the client with a daemon for the gateway side, and it doubles as a readable example of how the UPnP IGD protocol works on both sides of the connection. The homepage calls out the security risk directly: SSDP and HTTP/SOAP ports should be reachable only from the LAN.",
+  "status": "Probably maintained, but I could not confirm it. The homepage says 'Last modified on August 30th 2024', and the GitHub repository README is live and lists active subprojects. I did not see a release date or recent commit timestamps, so the exact maintenance cadence is unknown.",
+  "caveats": "The homepage notes that the ipf implementation is 'not maintained' and that the ipfw port for FreeBSD has had no feedback. The README warns that 'In the past, several vulnerabilities have been found in MiniUPnPd, so it is very important to update your code to the last version.' The author also says that for some uses 'it may be not the good solution for you to use the code from the MiniUPnP project directly.' Console compatibility 'may need a fine configuration tuning.' The README does not cover licensing, so I did not verify it.",
+  "quotes": [
+   "The aim of the MiniUPnP project is to bring a free software solution to support the \"Internet Gateway Device\" part of the protocol.",
+   "I want the simplest library possible, with the smallest footprint and no dependencies to other libraries such as XML parsers or HTTP implementations. All the code is pure ANSI C.",
+   "It also uses only ONE process and no additional thread, does not use any system() or exec() call, and therefore keeps system resources usage very low.",
+   "A common problem is to let SSDP or HTTP/SOAP ports open to the internet : they should be only reachable from the LAN."
+  ],
+  "links": [
+   {
+    "label": "MiniUPnP project homepage",
+    "url": "http://miniupnp.free.fr/"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/miniupnp/miniupnp"
+   },
+   {
+    "label": "Primary Git host (Framagit)",
+    "url": "https://framagit.org/miniupnp/miniupnp/"
+   }
+  ],
+  "fetch_log": [
+   "http://miniupnp.free.fr/ - worked, homepage text returned; no commands on the page",
+   "https://github.com/miniupnp/miniupnp - worked, README returned; no command lines in it"
+  ]
+ }
+}

@@ -1,0 +1,67 @@
+{
+ "name": "distcc",
+ "desc": "Distributed compiler client and server",
+ "homepage": "https://github.com/distcc/distcc/",
+ "installs_365d": 368,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "afternoon",
+  "ancient"
+ ],
+ "why": "A distributed compile protocol that farms compiler jobs across machines, an old networked idea worth a look.",
+ "brief": {
+  "what_it_is": "distcc is a free distributed C/C++ compiler front-end. It takes a normal build command, usually make -j with CC=distcc, and sends each compile job across the network to volunteer machines running the distccd daemon. Each job travels as complete preprocessed source, and the compiled object comes back to the client. It is not a compiler itself; it hands work to gcc or clang on the servers. In pump mode, preprocessing is also moved to the servers, which requires matching system headers on client and server. It is licensed under GPL v2.",
+  "why_it_exists": "The README says distcc should always generate the same results as a local compile, be simple to install and use, and often be two or more times faster than a local compile. Its author contrasts it with other distributed build systems that need a shared filesystem, synchronized clocks, or identical libraries and headers on every machine.",
+  "how_it_works": "The client runs the preprocessor locally and ships the preprocessed source for each job to a distccd server, which runs the compiler and returns the object file. Shipping work takes network time but little client CPU, so remote jobs are essentially free for the client when used with make -j. In pump mode (added in distcc 3.0), the preprocessing step also runs on the servers, so the client does not preprocess at all.",
+  "commands_seen": [
+   {
+    "cmd": "./configure && make && sudo make install",
+    "context": "Build and install distcc on each machine (from the docs site 60-second instructions)."
+   },
+   {
+    "cmd": "distccd --daemon",
+    "context": "Start the distcc server on each server machine; the docs say to use --allow options to restrict access."
+   },
+   {
+    "cmd": "export DISTCC_POTENTIAL_HOSTS='localhost red green blue'",
+    "context": "Client-side environment variable listing the servers to use (example host names)."
+   },
+   {
+    "cmd": "cd ~/work/myproject; pump make -j8 CC=distcc",
+    "context": "Run the build through the pump wrapper with distcc as the C compiler, parallelised with -j8."
+   }
+  ],
+  "install_notes": "Beyond brew install: the upstream route is download, then ./configure && make && sudo make install on each machine. Each server runs distccd --daemon, ideally with --allow options to restrict access. The client needs DISTCC_POTENTIAL_HOSTS set to the list of servers, and the build is wrapped with pump and CC=distcc. Servers need an appropriate compiler installed. For pump mode, client and server need the same system headers. The docs point to an INSTALL file for detailed steps, which I did not fetch. No accounts or special hardware are mentioned.",
+  "standout": "Most distributed build systems need shared filesystems, synchronized clocks, or matched toolchains. distcc sends the preprocessed source over the wire, so any volunteer machine with a compiler can join. The pump mode goes further by moving preprocessing off the client as well. It is an early-2000s design that still shows up in the 'related tools' lists of its own site.",
+  "status": "Unknown. The README gives no release date or last-commit date that I could see. The docs site has a copyright of 2002\u20132004, 2006 and says the project has been under development since early 2002. The README says it is 'now reasonably stable' and cites distcc 3.0 for pump. Neither page shows recent activity, so I would call it quiet rather than maintained, but I could not confirm that.",
+  "caveats": "The README and docs describe gcc as the main focus, with clang support and only preliminary support for other compilers. Pump mode requires matching system headers on client and server. The docs list building on FreeBSD, NetBSD, Darwin, Solaris, HP-UX, IRIX, Cygwin and BSD/OS as 'reported to work', and development was on GNU/Linux. The docs' benchmark (Linux 2.4.19, 2.6x on three machines) is old. The homepage is under the GitHub org but also points to an older distcc.org and distcc.github.io, so the documentation is split across sites. Licence is GPL v2.",
+  "quotes": [
+   "distcc is a program to distribute compilation of C or C++ code across several machines on a network.",
+   "Unlike other distributed build systems, distcc does not require all machines to share a filesystem, have synchronized clocks, or to have the same libraries or header files installed.",
+   "Shipping files across the network takes time, but few cycles on the client machine."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/distcc/distcc/"
+   },
+   {
+    "label": "Documentation site",
+    "url": "https://distcc.github.io/"
+   },
+   {
+    "label": "Stack Overflow tag",
+    "url": "http://stackoverflow.com/questions/tagged/distcc"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/distcc/distcc/ - fetched OK (README returned)",
+   "https://distcc.github.io/ - fetched OK (docs homepage; source of the 60-second instructions and the related-tools list)"
+  ]
+ }
+}

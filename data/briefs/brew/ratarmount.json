@@ -1,0 +1,90 @@
+{
+ "name": "ratarmount",
+ "desc": "Mount and efficiently access archives as filesystems",
+ "homepage": "https://github.com/mxmlnkn/ratarmount",
+ "installs_365d": 40,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "tui",
+  "library"
+ ],
+ "why": "Mounts archives like tar, zip and rar as random-access filesystems, a clever trick with some depth in its indexing.",
+ "brief": {
+  "what_it_is": "Ratarmount is a command-line tool that mounts archives such as TAR (including compressed TAR), ZIP, RAR, 7z, SquashFS/AppImage, and many others as a read-only FUSE filesystem, so you can browse and read files inside without extracting them. It takes an archive (or a folder, or a remote URI) as input and produces a mount point whose contents are the archive's files. It builds an index of file offsets, stored as a SQLite sidecar, so later mounts are fast and reads can seek directly to a file's position. The README also describes a write overlay that tracks changes and can apply them back to the archive.",
+  "why_it_exists": "The README's problem statement is a large TAR such as the 1.31TB ImageNet set: you may lack the disk space, time, or a fast enough filesystem to extract all 14.2 million files. Earlier tools (archivemount, tarindexer) were slow to mount, did not support recursion or random access well, or needed a database setup.",
+  "how_it_works": "On first mount, ratarmount scans the archive and records every file's name, ownership, permissions, and offset in an SQLite index, stored next to the archive as <archive>.index.sqlite or in ~/.ratarmount/. For compressed streams (bzip2, gzip, xz, zstd) it also stores seek points so decompression can resume near the requested offset, and it uses parallel decoders where available. FUSE exposes the indexed tree to other programs, and nested archives can be mounted recursively into folders of the same name.",
+  "commands_seen": [
+   {
+    "cmd": "pip install ratarmount",
+    "context": "Installs ratarmount from PyPI, the primary install route in the README."
+   },
+   {
+    "cmd": "pip install ratarmount[full]",
+    "context": "Installs with all optional features, which the README says may fail to install on some systems."
+   },
+   {
+    "cmd": "ratarmount archive.tar.gz",
+    "context": "Mounts a compressed archive at a folder named after it so its contents can be browsed."
+   },
+   {
+    "cmd": "ratarmount --recursive archive.tar mountpoint",
+    "context": "Mounts the archive and all archives it contains under mountpoint, recursively."
+   },
+   {
+    "cmd": "ratarmount folder mountpoint",
+    "context": "Bind-mounts a folder read-only at mountpoint, similar to bindfs or mount --bind."
+   },
+   {
+    "cmd": "ratarmount folder1 folder2 mountpoint",
+    "context": "Union-mounts two folders so both appear under mountpoint; the rightmost source wins on conflicts."
+   },
+   {
+    "cmd": "ratarmount -o modules=subdir,subdir=/var/log/apt/ ...",
+    "context": "Uses the FUSE subdir module to strip a path prefix so the chosen folder inside the archive becomes the mount root. The README gives this as the prefix-removal example, abbreviated here."
+   },
+   {
+    "cmd": "ratarmount ssh://hostname:22/relativefolder/ mountpoint",
+    "context": "Mounts a remote folder hierarchy over SSH via the fsspec backend."
+   },
+   {
+    "cmd": "ls -la mountpoint/foo.versions/",
+    "context": "Lists the hidden older versions of foo when the same file appears multiple times in the archive or sources."
+   },
+   {
+    "cmd": "cat mountpoint/foo.versions/1",
+    "context": "Reads the oldest version of foo, numbered the same way as tar's --occurrence=N."
+   }
+  ],
+  "install_notes": "Requires Python and FUSE (macFUSE on macOS, fuse on Debian-like Linux). Plain pip is usually enough; the README says pip may need extra system packages (fuse, sqlite3, gcc, liblzo2-dev, libarchive-dev, zlib1g-dev, libzstd-dev, liblzma-dev) when no manylinux wheel exists. On macOS the README suggests brew install macfuse unar libarchive lrzip lzop lzo. Alternatives are a portable AppImage from the releases page (chmod u+x, then run) and conda install -c conda-forge ratarmount. Argument completion needs argcomplete, which is optional. Ratarmount works without the compression backends if installed with --no-deps. There is also a work-in-progress Qt GUI on the gui branch.",
+  "standout": "Random access to files inside compressed TARs: it stores seek points for bzip2, gzip, xz, and zstd, so reading one file in a huge archive does not require decompressing from the start. Its index is a reusable SQLite sidecar, so the same archive can be remounted in under a second, and it can mount TARs inside TARs recursively and union multiple archives and folders under one mountpoint.",
+  "status": "Maintained. The GitHub releases page shows ratarmount 1.3.0 marked Latest, built 2026-05-10, following 1.2.3 (2026-04-19), 1.2.2 (2026-03-13), and 1.2.1 (2025-11-19). The README still shows older 0.15.x examples and install commands, so parts of the docs lag behind the 1.x releases.",
+  "caveats": "Read-only by default; the write overlay is the only write path described. Random access for xz and zstd works only on block or frame boundaries, so ordinary xz and zstd files are not truly seekable. The README says some remote backends (Samba, Dropbox, etc.) are very experimental and may be slow. Libarchive-backed formats are not random access and must be parsed from the start. Gzip indexes grow with archive size. The README's install examples reference 0.15.x AppImages even though the latest release is 1.3.0. Platform support is Linux and macOS via FUSE; the README does not mention Windows. Licensed MIT. The README says Python 3.6+, but the 1.2.0 release notes say Python 3.7 and 3.8 support was dropped.",
+  "quotes": [
+   "Ratarmount collects all file positions inside a TAR so that it can easily jump to and read from any file without extracting it.",
+   "Getting file contents of a mounted archive is generally vastly faster than archivemount and fuse-archive and does not increase with the archive size or file count resulting in the largest observed speedups to be around 5 orders of magnitude!",
+   "Ratarmount takes ~15min to create a ~150MB index and <1ms for opening an already created index (SQLite database) and mounting the TAR."
+  ],
+  "links": [
+   {
+    "label": "Homepage / README (GitHub)",
+    "url": "https://github.com/mxmlnkn/ratarmount"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/mxmlnkn/ratarmount/releases"
+   },
+   {
+    "label": "Command-line help text",
+    "url": "https://raw.githubusercontent.com/mxmlnkn/ratarmount/master/tests/ratarmount-help.txt"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/mxmlnkn/ratarmount: worked; README returned but truncated at 40000 characters, so the remote-files section and the end of the document were not read.",
+   "https://github.com/mxmlnkn/ratarmount/releases: worked; page was mostly UI chrome, but the release notes for 1.3.0 through 1.0.0 were readable and were used for status. Truncated at 40000 characters after the 1.0.0 entry."
+  ]
+ }
+}

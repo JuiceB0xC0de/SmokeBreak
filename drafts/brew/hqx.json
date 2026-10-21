@@ -1,0 +1,112 @@
+{
+ "name": "hqx",
+ "desc": "Magnification filter designed for pixel art",
+ "homepage": "https://github.com/grom358/hqx",
+ "installs_365d": 76,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "visual"
+ ],
+ "why": "A pixel-art magnification filter based on hand-tuned lookup rules, turning small images into clean enlargements with a pleasing transform.",
+ "brief": {
+  "what_it_is": "hqx is a C library and command-line tool that enlarges pixel art by a factor of 2, 3, or 4 (hq2x, hq3x, hq4x). It takes a source bitmap and writes a larger image with smoothed diagonal edges. The CLI reads an image file such as a PNG and writes the scaled result to another file. The library version works on 32-bit RGB buffers that the caller allocates. The README describes the filter as built for line graphics and cartoon sprites rather than photographs.",
+  "why_it_exists": "The README frames hqx as one of Maxim Stepin's pixel-art scaling algorithms, the kind used in emulators such as Nestopia, bsnes, ZSNES, Snes9x and FCE Ultra. The filter was meant to be fast enough to process 256x256 images in real time.",
+  "how_it_works": "For each source pixel, the filter examines its 3x3 neighbourhood and compares the centre with its 8 neighbours in YUV colour space, with more tolerance on brightness (Y) than on chroma (U and V). Each neighbour is labelled 'close' or 'distant', which gives 256 possible patterns. A 256-entry lookup table maps each pattern to a precomputed way of blending the source pixels into the output. The table was built by determining the most probable edge geometry for each pattern and rasterising it at 3x resolution with anti-aliasing.",
+  "commands_seen": [
+   {
+    "cmd": "autoreconf -vi",
+    "context": "Build step: regenerates the autotools configure script before compiling."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Install step: configures the build; the README says DevIL and its headers must be present."
+   },
+   {
+    "cmd": "make && make install",
+    "context": "Install step: compiles the project and installs it."
+   },
+   {
+    "cmd": "hqx -s scaleBy input output",
+    "context": "Usage template from the README, where scaleBy is 2, 3 or 4."
+   },
+   {
+    "cmd": "hqx -s 4 test.png out.png",
+    "context": "Example: scales test.png by 4x and writes out.png."
+   }
+  ],
+  "install_notes": "Build from source: run autoreconf -vi, then ./configure, then make && make install. The README says the DevIL image library (http://openil.sf.net/) and its development headers are required, and it points to an INSTALL file for more detail. I did not see a Homebrew-specific note, and the README does not mention any accounts, hardware, or runtime configuration.",
+  "standout": "The filter is a fixed lookup table, not a parametric resampler. The table was hand-derived per 3x3 pattern, and colour distance uses a perceptual YUV threshold weighted toward brightness. It is aimed at sharp-edged artwork, so it avoids the blur of general-purpose upscaling.",
+  "status": "unknown. The fetched README has no release date, version number, or recent-commit information, and I did not fetch the repository's commit or release pages to check.",
+  "caveats": "The filter is explicitly not designed for photographs. Building from source needs autotools and the DevIL library, and the README does not mention a Homebrew formula's requirements. The README's implementation notes refer to 16-bit pixel formats and MMX instructions, which may be dated. The README has no licence section that I saw.",
+  "quotes": [
+   "hqx (\"hq\" stands for \"high quality\" and \"x\" stands for magnification) is one of the pixel art scaling algorithms developed by Maxim Stepin",
+   "The filter was not designed for photographs, but for images with clear sharp edges, like line graphics or cartoon sprites.",
+   "It was also designed to be fast enough to process 256x256 images in real-time."
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repository",
+    "url": "https://github.com/grom358/hqx"
+   },
+   {
+    "label": "DevIL image library (required dependency)",
+    "url": "http://openil.sf.net/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/grom358/hqx: fetched OK, README returned (the README is titled 'hqx Library README'). No further links were followed because the README covered usage, build and implementation."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Its 256-pattern lookup infers pixel-art edge shapes in perceptual color space, making a distinctive, hands-on image transform rather than generic upscaling."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "hqx",
+  "tldr": "A command-line pixel-art enlarger that scales sprites 2x, 3x or 4x using a hand-built lookup table, the way classic console emulators smoothed their graphics.",
+  "deeper_look": "hqx is a C library and command-line tool that enlarges pixel art by a factor of 2, 3 or 4 (hq2x, hq3x, hq4x). It reads an image such as a PNG and writes a bigger one with smoothed diagonal edges instead of the chunky blocks plain scaling gives you. The library form works on 32-bit RGB buffers that the caller allocates.\n\nThe algorithm is one of Maxim Stepin's pixel-art scalers, the family used in emulators such as Nestopia, bsnes, ZSNES, Snes9x and FCE Ultra. It was designed to be fast enough to process 256x256 images in real time, which is why it is built around a table and not around heavy maths.\n\nFor each source pixel, the filter looks at the 3x3 neighbourhood and compares the centre with its 8 neighbours in YUV colour space, tolerating more difference in brightness than in colour. Each neighbour is marked 'close' or 'distant', which yields 256 possible patterns. A 256-entry lookup table maps each pattern to a precomputed way of blending the source pixels into the output. The table was made by working out the most probable edge shape for each pattern and rasterising it at 3x resolution with anti-aliasing.\n\nThat is the idea worth taking away: upscaling does not have to be interpolation. It can be pattern recognition, a small fixed set of guesses about what the artist meant. The README says the filter was made for \"images with clear sharp edges, like line graphics or cartoon sprites.\"",
+  "install": "brew install hqx\n# depends on the DevIL image library, which brew installs for you",
+  "try_this": [
+   {
+    "cmd": "hqx --help",
+    "what_happens": "Prints the usage text so you can see the options before running anything."
+   },
+   {
+    "cmd": "hqx -s 4 test.png out.png",
+    "what_happens": "Scales test.png by 4x with hq4x and writes the result to out.png."
+   },
+   {
+    "cmd": "hqx -s 2 test.png out.png",
+    "what_happens": "Does the same at 2x, so you can compare the smoothing at different magnifications."
+   }
+  ],
+  "whats_unique": "It is a fixed, hand-derived lookup table over 3x3 pixel patterns, not a parametric resampler, so sharp sprite edges stay crisp where general-purpose upscalers blur them.",
+  "caveats": "It is not meant for photographs, and the brief could not confirm release dates or recent maintenance; the README's notes on 16-bit pixels and MMX look dated.",
+  "commitment": "quick",
+  "category": "quick-weird-payoffs",
+  "tags": [
+   "quick",
+   "pixel-art",
+   "image",
+   "upscaling",
+   "emulators"
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repository",
+    "url": "https://github.com/grom358/hqx"
+   },
+   {
+    "label": "DevIL image library (required dependency)",
+    "url": "http://openil.sf.net/"
+   }
+  ]
+ }
+}

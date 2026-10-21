@@ -1,0 +1,90 @@
+{
+ "name": "snapcast",
+ "desc": "Synchronous multiroom audio player",
+ "homepage": "https://github.com/snapcast/snapcast",
+ "installs_365d": 832,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "afternoon",
+  "audio",
+  "network",
+  "library"
+ ],
+ "why": "Synchronised multiroom audio over the network is a clever timing problem, though the core is fairly conventional.",
+ "brief": {
+  "what_it_is": "Snapcast is a client-server audio system that plays the same audio in several rooms at once, with all clients time-synchronized to the server. It is not a standalone player. It extends an existing player: the server reads PCM audio from stream sources such as a named pipe (/tmp/snapfifo), ALSA capture, TCP, or a process's stdout. It encodes the audio (PCM, FLAC by default, Vorbis, or Opus), tags each chunk with local time, and sends it over TCP to the snapclient programs, which play it through the OS audio API. Binaries are snapserver and snapclient. A bundled web app (Snapweb) and a JSON-RPC API control volume, mute, naming, streams, and groups.",
+  "why_it_exists": "The README frames it as a way to turn an existing audio player, such as MPD or Mopidy, into a Sonos-like multiroom system without buying proprietary hardware. The README's own framing is 'Synchronous audio player' and a multiroom solution that stays generic across players.",
+  "how_it_works": "The server reads PCM chunks from a configured source, encodes them, and stamps each with the local time. Each client continuously synchronizes its clock with the server, decodes incoming chunks into a buffer, and plays each one at the correct server-time moment through a low-level audio API such as ALSA. Clock drift is corrected by playing slightly faster or slower, by removing or duplicating single samples, and the README claims typical deviation stays below 0.2 ms.",
+  "commands_seen": [
+   {
+    "cmd": "brew install snapcast",
+    "context": "Homebrew install on macOS and Linux, as the README's recommended package route besides Linux distro packages."
+   },
+   {
+    "cmd": "cat /dev/urandom > /tmp/snapfifo",
+    "context": "Test step: pipes random noise into the server's fifo so connected clients should play noise, confirming the chain works."
+   },
+   {
+    "cmd": "amixer cset numid=3 1",
+    "context": "Raspberry Pi only: switches audio output to the 3.5mm jack (the README notes 2 is HDMI and 0 is auto)."
+   },
+   {
+    "cmd": "man snapserver",
+    "context": "Points to the man page for the server's command-line options."
+   },
+   {
+    "cmd": "man snapclient",
+    "context": "Points to the man page for the client's command-line options."
+   },
+   {
+    "cmd": "--player <name>:?",
+    "context": "Client option pattern to list the parameters available for a given audio backend. Shown as a template in the README, not a full literal command."
+   },
+   {
+    "cmd": "--sampleformat 48000:16:*",
+    "context": "Example from the README: lets snapclient resample audio, for a sound card that only supports 48000 Hz (for example, shairport-sync output at 44100)."
+   },
+   {
+    "cmd": "source = pipe:///tmp/snapfifo?name=Radio&sampleformat=48000:16:2&codec=flac",
+    "context": "Example /etc/snapserver.conf [stream] line configuring a named-pipe source with a name, sample format, and codec."
+   },
+   {
+    "cmd": "source = file:///home/user/Musik/Some%20wave%20file.wav?name=test",
+    "context": "Example /etc/snapserver.conf [stream] line that makes the server play a WAV file, used as an alternative test."
+   }
+  ],
+  "install_notes": "Linux packages exist for Debian, OpenWrt, Alpine, Arch, and Void. macOS and Linux users can use Homebrew. Building from source has separate guides for Linux, FreeBSD, macOS, Android, OpenWrt, Buildroot, Raspberry Pi, webOS, and Windows (vcpkg). Configuration: after install, snapserver and snapclient read their options from /etc/default/snapserver and /etc/default/snapclient, and the server config lives in /etc/snapserver.conf. You must feed it audio: point a player (MPD, Mopidy, mpv, VLC, Spotify, AirPlay, and so on) at the fifo. The client needs an audio backend chosen with --player, and you can list ALSA/PulseAudio devices with -l or --list and pick one with -s or --soundcard. Accounts and runtimes beyond the OS audio stack are not mentioned in the README.",
+  "standout": "The sync trick is distinctive: instead of resampling, the client corrects clock drift by dropping or duplicating individual samples, which is inaudible at 48 kHz. The server also aggregates many input types (fifo, ALSA, TCP, process stdout, librespot, AirPlay, PipeWire, JACK) and a large ecosystem of third-party controllers (Home Assistant, Music Assistant, Android app, ESP32 client).",
+  "status": "unknown. The README has a CI badge and a roadmap with most v1.0 items checked, and it links to a current Snapweb and Android client. However, the fetched text gave no release date, last-commit date, or version number, so I could not confirm recent activity. I did not fetch the releases page.",
+  "caveats": "Not a standalone player: it needs an upstream player feeding the fifo or another source. Client audio backends are OS-specific (ALSA and PulseAudio on Linux, CoreAudio on macOS, WASAPI on Windows, Oboe and OpenSL on Android). Building from source requires per-platform guides, which signals some build effort. The roadmap still has two unchecked items: adding, removing, and renaming streams over JSON-RPC, and a published protocol specification. The README does not state a license. The README's 0.2 ms sync figure is the author's claim and I did not verify it. Mixed inputs and some integrations are third-party and labeled unofficial.",
+  "quotes": [
+   "Snapcast is a multiroom client-server audio player, where all clients are time synchronized with the server to play perfectly synced audio.",
+   "It's not a standalone player, but an extension that turns your existing audio player into a Sonos-like multiroom solution.",
+   "Typically the deviation is below 0.2ms."
+  ],
+  "links": [
+   {
+    "label": "GitHub homepage and README",
+    "url": "https://github.com/snapcast/snapcast"
+   },
+   {
+    "label": "Configuration docs",
+    "url": "https://github.com/snapcast/snapcast/blob/master/doc/configuration.md"
+   },
+   {
+    "label": "Player setup guide (MPD, Mopidy, and others)",
+    "url": "https://github.com/snapcast/snapcast/blob/master/doc/player_setup.md"
+   },
+   {
+    "label": "JSON-RPC control API",
+    "url": "https://github.com/snapcast/snapcast/blob/master/doc/json_rpc_api/control.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/snapcast/snapcast: fetched OK, returned README text. It was complete enough that I did not follow the linked docs."
+  ]
+ }
+}

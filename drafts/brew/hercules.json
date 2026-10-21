@@ -1,0 +1,103 @@
+{
+ "name": "hercules",
+ "desc": "System/370, ESA/390 and z/Architecture Emulator",
+ "homepage": "https://sdl-hercules-390.github.io/html/",
+ "installs_365d": 434,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "simulation",
+  "ancient"
+ ],
+ "why": "An emulator for System/370 and z/Architecture mainframes, letting you boot period operating systems on a machine that never existed.",
+ "brief": {
+  "what_it_is": "Hercules is an open source software emulator of IBM System/370 and ESA/390 mainframes, plus the 64-bit z/Architecture. The SDL 4.x 'Hyperion' build covered here runs on Linux, Windows, Solaris, FreeBSD and Mac OS X. The emulated machine is driven by a Hercules Configuration File, and the project documents a 3270 console and emulated devices. Its companion utilities, listed in the brew metadata, handle DASD disk and tape image files (for example dasdinit, maketape, tapecopy, hetinit). What comes out is an emulated mainframe console on which period operating systems such as MVS, VM or DOS/VS can be booted.",
+  "why_it_exists": "The project exists so people can run period mainframe operating systems and software on ordinary PCs without IBM hardware. The homepage frames it as a tool for systems programmers and hobbyists, and quotes users describing the nostalgia and learning value of running MVS on a personal machine.",
+  "how_it_works": "Hercules emulates the processor and I/O of the System/370, ESA/390 and z/Architecture machines in software, using a configuration file to define the virtual hardware. Devices are backed by host files that the bundled dasd and tape utilities create and convert. The README points to a separate Overview install page and a Configuration File page for the details, which I did not open.",
+  "commands_seen": [],
+  "install_notes": "Install is from source: the README says build instructions are in the source files BUILDING and INSTALL (Unix) or README.WIN64 (Windows), and the README links to a separate 'Building External Packages' step described as important. The repo README also links platform-specific build notes for AIX, BSD, OS X, MinGW, MSVC and Solaris, and some Windows notes are marked obsolete. Windows pre-built zip binaries from SoftDevLabs contain only the Hercules binaries, so the user must install the Microsoft Visual C++ 2008 runtime manually or use a SoftDevLabs installer that bundles it. The README also covers running Hercules in a no-UI daemon mode and building as setuid root for HercIFC. A Hercules Configuration File is needed to define the machine before an operating system can be IPLed; the README does not spell out first-run steps in what I read.",
+  "standout": "It is a long-running open source emulator that spans three generations of IBM mainframe architecture, and the SDL fork adds its own fixes and features (QDIO/OSA networking, a redesigned I/O subsystem) on top of the original code base. It also includes a built-in 3270 console, so the experience is a real mainframe operator console rather than a simplified simulator.",
+  "status": "Maintained, by the project's own account: the README says this SDL 4.x version is 'currently the only actively maintained version' and the homepage says a dedicated crew is constantly working on it. I did not find a release date or last-commit date in the pages I read, so I cannot confirm recency from the evidence. The repo README's Travis CI badge points to travis-ci.org, a service that has since been retired, which may suggest the CI setup is dated.",
+  "caveats": "The homepage states this SDL version is not created, owned, maintained or copyrighted by Software Development Laboratories, despite the 'SDL' name. The git repository is described as bleeding edge and may contain bugs and experimental code. Minimum Windows is Windows Vista, and Non-Windows host support is listed only as '(varies)'. Building from source is needed for most platforms, and Windows users must handle the VC++ 2008 runtime themselves. Documentation is the project's web pages, which the homepage calls the only accurate source; some pages, such as System Messages, are marked obsolete. Licensing is the Q Public Licence, which the README says is OSI approved open source. IBM, System/370, ESA/390 and z/Architecture are IBM trademarks, as noted on the homepage.",
+  "quotes": [
+   "Never in my wildest dreams did I expect to see MVS running on a machine that I personally own.",
+   "Hercules is a systems programmer's dream come true.",
+   "Such simulators have been available for a long time. One of the most complete (up to modern 64-bit z/Architecture) is hercules."
+  ],
+  "links": [
+   {
+    "label": "SDL Hercules 4.x Hyperion homepage",
+    "url": "https://sdl-hercules-390.github.io/html/"
+   },
+   {
+    "label": "Source code repository on GitHub (SDL Hyperion)",
+    "url": "https://github.com/sdl-hercules-390/hyperion"
+   },
+   {
+    "label": "Hercules Installation and Operation (overview of building)",
+    "url": "http://sdl-hercules-390.github.io/html/hercinst.html#install"
+   }
+  ],
+  "fetch_log": [
+   "https://sdl-hercules-390.github.io/html/ - worked; returned the SDL 4.x Hyperion homepage text",
+   "https://github.com/sdl-hercules-390/hyperion - worked; returned the repository README (About, Find out more, and an index of additional README files, but no shell commands)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A software-emulated IBM mainframe that boots real operating systems and exposes its 3270 console and virtual hardware makes an otherwise inaccessible computing world explorable."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Hercules",
+  "tldr": "A software emulator of IBM System/370, ESA/390 and z/Architecture mainframes, so you can boot period operating systems like MVS or VM on an ordinary computer.",
+  "deeper_look": "Hercules emulates the processor and I/O of IBM mainframes in software. You describe the virtual machine in a Hercules Configuration File, then start the emulator and operate it through an emulated console, including a built-in 3270 terminal. The result is a mainframe operator's console rather than a simplified simulator.\n\nDisks and tapes are ordinary host files. The bundled utilities create and convert them: `dasdinit` makes emulated disk volumes, `maketape` and `hetinit` make tape images, and `tapecopy` and `dasdcopy` move data between formats. That is why the formula installs around fifty executables. Most are small tools for handling these image formats.\n\nThe project exists so hobbyists and systems programmers can run period mainframe software without IBM hardware. Its homepage quotes users on the nostalgia and learning value: \"Never in my wildest dreams did I expect to see MVS running on a machine that I personally own.\" The door it opens is how a mainframe works. Channels, DASD volumes, tape datasets and operator consoles all work differently from a modern PC.\n\nThis SDL 4.x \"Hyperion\" build is a fork that describes itself as the only actively maintained version. It adds fixes and features such as QDIO/OSA networking and a redesigned I/O subsystem.",
+  "install": "brew install hercules\n# You still need a Hercules Configuration File and an operating system image to IPL. The README does not spell out first-run steps; see the Installation and Operation page.",
+  "try_this": [
+   {
+    "cmd": "hercules --help",
+    "what_happens": "Prints the emulator's command-line options, a first look at how it is started."
+   },
+   {
+    "cmd": "dasdinit --help",
+    "what_happens": "Shows how to create an emulated DASD disk image file, the first step in building a virtual machine's storage."
+   },
+   {
+    "cmd": "maketape --help",
+    "what_happens": "Shows the options for creating a tape image file for the emulated machine."
+   }
+  ],
+  "whats_unique": "It covers three generations of IBM mainframe architecture, from System/370 to 64-bit z/Architecture, and gives you a real 3270 operator console instead of a toy simulator.",
+  "caveats": "You need to supply your own configuration file and operating system media, and the README gives no first-run walkthrough. The brief also could not confirm a recent release date.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "emulator",
+   "mainframe",
+   "ibm",
+   "retro",
+   "operating-systems"
+  ],
+  "links": [
+   {
+    "label": "SDL Hercules 4.x Hyperion homepage",
+    "url": "https://sdl-hercules-390.github.io/html/"
+   },
+   {
+    "label": "Source code repository on GitHub (SDL Hyperion)",
+    "url": "https://github.com/sdl-hercules-390/hyperion"
+   },
+   {
+    "label": "Hercules Installation and Operation (overview of building)",
+    "url": "http://sdl-hercules-390.github.io/html/hercinst.html#install"
+   }
+  ]
+ }
+}

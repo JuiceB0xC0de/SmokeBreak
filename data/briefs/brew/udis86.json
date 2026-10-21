@@ -1,0 +1,64 @@
+{
+ "name": "udis86",
+ "desc": "Minimalistic disassembler library for x86",
+ "homepage": "https://sourceforge.net/projects/udis86/",
+ "installs_365d": 20,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "library",
+  "reverse-engineering",
+  "afternoon",
+  "deprecated"
+ ],
+ "why": "A small x86 disassembler library, a fascinating door into decoding machine code but largely unmaintained.",
+ "brief": {
+  "what_it_is": "Udis86 is a disassembler for x86 and x86-64 instruction sets. Its core is a C library, libudis86, that decodes a stream of raw binary bytes and exposes each instruction in a structured form. Input can come from files, memory buffers, or function callback hooks, and output is assembly text in Intel (NASM) or AT&T (GNU as) syntax. It also ships udcli, a small command-line tool that reads hex bytes from stdin and prints address, raw bytes, and disassembly for each instruction.",
+  "why_it_exists": "The README frames it as a tool for software projects that analyse binary code: 'The primary intent of the design and development of udis86 is to aid software development projects that entail binary code analysis.' The SourceForge listing calls it an 'easy-to-use minimalistic disassembler library'.",
+  "how_it_works": "Instructions are defined in an XML document, and the opcode decoding tables are generated from it for performance. The library is re-entrant and performs no dynamic memory allocation. A caller initialises a ud_t object, sets input, mode (32 or 64) and syntax, then loops on ud_disassemble and reads the text with ud_insn_asm.",
+  "commands_seen": [
+   {
+    "cmd": "echo \"65 67 89 87 76 65 54 56 78 89 09 00 90\" | udcli -32 -x",
+    "context": "README example: pipes hex bytes into udcli in 32-bit mode with -x, which prints address, raw bytes and the disassembled instruction (e.g. 'mov [gs:bx+0x6576], eax')."
+   },
+   {
+    "cmd": "make install-info",
+    "context": "README says the Texinfo API documentation can be installed by invoking this from the source distribution."
+   },
+   {
+    "cmd": "autogen.sh",
+    "context": "Wrapper script in the source tree that generates the autotools build system; the README says it is needed only when building from version control or regenerating the build system."
+   }
+  ],
+  "install_notes": "Beyond brew install, the README describes a source build with autotools. If you build from a version-control clone rather than a release tarball, run the autogen.sh wrapper first to generate configure. Full API docs are optional and installed with make install-info. No accounts, runtimes or hardware are needed.",
+  "standout": "The instruction set is described in XML and the decoder tables are generated from it, and the library avoids dynamic allocation entirely, which makes it easy to embed in tools that need predictable behaviour. It is a small, BSD-licensed alternative to larger decoders.",
+  "status": "Quiet. The SourceForge page's last update is 2013-09-02 and it has 4 reviews, the newest from 2014-12-31. The GitHub README (github.com/vmt/udis86, which I reached by guessing the upstream repo and did not verify from the homepage) describes the project without any sign of recent activity. I did not see a last-commit date or a newer release, so this is an inference from age, not a confirmed status. The scout note also calls it largely unmaintained.",
+  "caveats": "The SourceForge page is a stale listing and the README contains no dated release notes. The README's ISA extension list stops at SSE4.2, AES, AMD-V, Intel VMX and SMX and does not mention AVX or later extensions. The online docs link (udis86.sourceforge.net) was not fetched, so I cannot say whether it still works. One reviewer on SourceForge said it is not a ready-to-run program for beginners, so it suits developers who are comfortable building from source.",
+  "quotes": [
+   "Udis86 is an easy-to-use minimalistic disassembler library for the x86 and x86-64 instruction set architectures.",
+   "udcli is a small command-line tool for your quick disassembly needs.",
+   "Re-entrant, no dynamic memory allocation."
+  ],
+  "links": [
+   {
+    "label": "SourceForge project page",
+    "url": "https://sourceforge.net/projects/udis86/"
+   },
+   {
+    "label": "GitHub repository (README source)",
+    "url": "https://github.com/vmt/udis86"
+   },
+   {
+    "label": "Online API documentation",
+    "url": "http://udis86.sourceforge.net/"
+   }
+  ],
+  "fetch_log": [
+   "https://sourceforge.net/projects/udis86/ - loaded, but it is the SourceForge listing page with no README text; gave description, license (BSD), platforms, last update 2013-09-02, and reviews.",
+   "https://github.com/vmt/udis86 - loaded, returned the README. This URL was my guess at the upstream repository, not a link I saw on the homepage. Its README was used for the commands, install notes, ISA list and example.",
+   "http://udis86.sourceforge.net/ - not fetched (fetch limit and not needed for the core facts)."
+  ]
+ }
+}

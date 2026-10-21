@@ -1,0 +1,150 @@
+{
+ "name": "baresip",
+ "desc": "Modular SIP useragent",
+ "homepage": "https://github.com/baresip/baresip",
+ "installs_365d": 1366,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "protocol",
+  "network",
+  "audio",
+  "tui"
+ ],
+ "why": "A modular SIP softphone that opens a door into how VoIP calls are actually set up and carried.",
+ "brief": {
+  "what_it_is": "Baresip is a portable, modular SIP user agent, a softphone-style VoIP client, with audio and video support. It registers SIP accounts and places, receives, and manages calls, taking in network signaling and microphone, camera, or media input and sending out call audio and video over RTP. It is built as a C library of protocol modules plus a front end, and the README lists a command-line console, a menu UI, an embedded HTTP server, and a TCP/UDP control console among its interfaces.",
+  "why_it_exists": "The README frames it as a minimalistic and modular VoIP client with a focus on RFC compliance, robustness, low footprint, and portable C99/C11 code. Its design goals list SIP, SDP, RTP/RTCP, and STUN/TURN/ICE as the core stack.",
+  "how_it_works": "Functionality lives in plug-in modules, such as codecs (g711, opus, h264-style video codecs), audio drivers (alsa, pulse, coreaudio, pipewire), NAT traversal (stun, turn, ice, natpmp, pcp), security (dtls_srtp, srtp, gzrtp), and UIs (menu, cons, httpd, gtk). The build selects which modules to compile, and modules are only built when their external dependencies are installed.",
+  "commands_seen": [
+   {
+    "cmd": "cmake -B build",
+    "context": "Configure a build directory with CMake (the README's default, debug-style build step)."
+   },
+   {
+    "cmd": "cmake --build build -j",
+    "context": "Compile the configured project in parallel."
+   },
+   {
+    "cmd": "cmake --install build",
+    "context": "Install the built binaries after the debug-style build."
+   },
+   {
+    "cmd": "cmake -B build -DCMAKE_BUILD_TYPE=Release",
+    "context": "Configure a release build."
+   },
+   {
+    "cmd": "cmake -B build -DMODULES=\"menu;account;g711\"",
+    "context": "Configure a build that includes only the named modules."
+   },
+   {
+    "cmd": "cmake -B build -DSTATIC=ON",
+    "context": "Configure a static build."
+   },
+   {
+    "cmd": "build/baresip",
+    "context": "Start baresip from the build directory; config files in $HOME/.baresip are generated on first run."
+   },
+   {
+    "cmd": "doxygen mk/Doxyfile",
+    "context": "Generate the API documentation with doxygen; by default written to ../baresip-dox."
+   },
+   {
+    "cmd": "cmake -B build -DAPP_MODULES_DIR=../baresip-apps/modules -DAPP_MODULES=\"auloop;vidloop\"",
+    "context": "Configure a build that adds custom app modules from an external directory."
+   },
+   {
+    "cmd": "cmake -B build -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++",
+    "context": "Configure a build to use the clang compilers."
+   }
+  ],
+  "install_notes": "Beyond brew install: building from source requires the libre library (baresip fork at github.com/baresip/re, or upstream creytiv/re) and OpenSSL, with CMake as the build system. The README points to the project wiki for install guides for the stable release and the git version. Config files are auto-generated in $HOME/.baresip on first run, and the wiki covers configuration. Supported platforms per the README are Linux (kernel 4.0+, glibc 2.31+), macOS 11+, iOS 10+, Android 8+, and Windows 10+ (mingw or VS2022); OpenSSL 3.x or LibreSSL 3.x are listed.",
+  "standout": "It is a SIP softphone whose feature surface is unusually broad for a small C project: video calls, conferencing, TLS and SRTP/ZRTP/DTLS-SRTP, ICE/TURN, and even MQTT and a JSON TCP control interface, all as optional modules. The modular build lets you compile in only the codecs and drivers you need.",
+  "status": "Appears maintained. The README shows a copyright range running through 2026 and CI badges for build, lint, OpenSSL/LibreSSL, and valgrind, but I did not see a release date or last commit date in the fetched README.",
+  "caveats": "The README does not state a version number or release date. Building needs libre and OpenSSL installed first, so it is not a single-step install. Many codecs and drivers are optional and only built when their dependencies exist. The README's build heading 'Build with debug enabled' is paired with a plain cmake command that does not set a debug flag, so the heading may be imprecise. The README does not discuss patent or licensing terms for the listed codecs such as AAC, AMR, and aptX; it does say the project itself is BSD 3-clause.",
+  "quotes": [
+   "Baresip is a portable and modular SIP User-Agent with audio and video support.",
+   "Minimalistic and modular VoIP client",
+   "The config files in `$HOME/.baresip` are automatically generated the first time you run baresip.",
+   "Modules will be built if external dependencies are installed."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/baresip/baresip"
+   },
+   {
+    "label": "Configuration wiki",
+    "url": "https://github.com/baresip/baresip/wiki/Configuration"
+   },
+   {
+    "label": "Configuration examples",
+    "url": "https://github.com/baresip/baresip/tree/master/docs/examples"
+   },
+   {
+    "label": "Mailing list",
+    "url": "https://groups.google.com/g/baresip"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/baresip/baresip (homepage, GitHub repo, README returned successfully; no further fetches made because the README was complete)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A lesser-known, modular softphone makes SIP, RTP, codecs, and NAT traversal tangible, offering a hands-on way to explore the plumbing behind everyday VoIP calls."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "baresip",
+  "tldr": "A small, modular SIP softphone in C that lets you watch a VoIP call get set up, negotiated and carried, all from a terminal.",
+  "deeper_look": "Baresip is a SIP user agent: a softphone without the phone. It registers an account with a SIP server, places and receives calls, and carries audio and video over RTP. It is a C library of protocol modules plus a thin front end, and the README lists a console, a menu UI, an embedded HTTP server and a TCP/UDP control console among its interfaces.\n\nThe project describes itself as a \"Minimalistic and modular VoIP client\", with a focus on RFC compliance, robustness, low footprint and portable C99/C11 code. The core stack is SIP for signaling, SDP for describing media, RTP/RTCP for carrying it, and STUN/TURN/ICE for getting through NAT.\n\nThat split is the door into something larger. A phone call on the internet is two conversations: one that says who is calling whom and what formats each side can handle, and another that moves the actual sound. Baresip keeps those layers visible. Codecs (g711, opus), audio drivers (alsa, pulse, coreaudio, pipewire), NAT traversal, and encryption (srtp, dtls_srtp, gzrtp) are each a separate plug-in module. The build only compiles the ones you ask for, and only when their dependencies are installed.\n\nConfig files are generated in `$HOME/.baresip` on first run, so you can read them to see what the client assumes by default. You will need a SIP account or server to place a real call.",
+  "install": "brew install baresip\n# You need a SIP account (from a provider or your own server) to place real calls.\n# Config files are generated in $HOME/.baresip on first run.",
+  "try_this": [
+   {
+    "cmd": "baresip --help",
+    "what_happens": "Lists the command-line options, a quick view of what the client can be told to do."
+   },
+   {
+    "cmd": "baresip",
+    "what_happens": "Starts the client; on first run it generates its config files in $HOME/.baresip, which you can open and read."
+   }
+  ],
+  "whats_unique": "The feature surface is unusually broad for a small C project: video, conferencing, TLS/SRTP/ZRTP/DTLS-SRTP, ICE/TURN, even MQTT and a JSON TCP control interface, all as optional modules.",
+  "caveats": "It needs a SIP account to do anything interesting, and the README gives no version or release date, so the config wiki is the real starting point.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "sip",
+   "voip",
+   "protocol",
+   "network",
+   "audio",
+   "tui"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/baresip/baresip"
+   },
+   {
+    "label": "Configuration wiki",
+    "url": "https://github.com/baresip/baresip/wiki/Configuration"
+   },
+   {
+    "label": "Configuration examples",
+    "url": "https://github.com/baresip/baresip/tree/master/docs/examples"
+   },
+   {
+    "label": "Mailing list",
+    "url": "https://groups.google.com/g/baresip"
+   }
+  ]
+ }
+}

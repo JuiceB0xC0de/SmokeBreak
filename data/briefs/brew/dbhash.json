@@ -1,0 +1,61 @@
+{
+ "name": "dbhash",
+ "desc": "Computes the SHA1 hash of schema and content of a SQLite database",
+ "homepage": "https://www.sqlite.org/dbhash.html",
+ "installs_365d": 435,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "library"
+ ],
+ "why": "SQLite's own tool for hashing schema and content, a neat way to fingerprint the internals of a database file.",
+ "brief": {
+  "what_it_is": "dbhash is a command-line utility from SQLite that computes the SHA1 hash of the schema and content of one or more SQLite database files. You run it with the database file names as arguments, and it prints one hash per file to standard output. It ignores physical layout, so the hash reflects what the database holds rather than how the file is laid out on disk. It is built from a single C file, dbhash.c, linked against the SQLite library.",
+  "why_it_exists": "A raw SHA1 of a database file changes whenever the file is rewritten, even when the stored data is identical. Operations such as VACUUM, changing page_size or journal_mode, REINDEX, ANALYZE, or copying with the backup API can all alter the bytes without altering the content. dbhash gives a fingerprint that stays the same across those operations, so two databases can be compared for equivalence.",
+  "how_it_works": "The tool hashes the database schema and table content while ignoring extraneous formatting details, so the result depends only on logical content. Command-line options can restrict hashing to particular tables, or to only the schema or only the content. The page also suggests it could verify a remote database without transmitting the whole file over a slow link, though it does not describe how that would be done.",
+  "commands_seen": [
+   {
+    "cmd": "dbhash ~/Fossils/sqlite.fossil",
+    "context": "Example from the overview: hashes one database file and prints the SHA1 followed by the file path. The sample output begins with 8d3da9ff87196312aaa33076627ccb7943ef79e3."
+   },
+   {
+    "cmd": "dbhash --help",
+    "context": "Shows the full list of options, including table filtering and schema-only or content-only hashing."
+   },
+   {
+    "cmd": "./configure",
+    "context": "First step of a unix build from the canonical SQLite source tree."
+   },
+   {
+    "cmd": "make dbhash",
+    "context": "Builds the dbhash program on unix after configure has run."
+   },
+   {
+    "cmd": "nmake /f makefile.msc dbhash.exe",
+    "context": "Builds dbhash.exe on Windows."
+   }
+  ],
+  "install_notes": "There is no standalone download described on the page. The build requires a copy of the canonical SQLite source tree, which you configure and make on unix, or build with nmake and makefile.msc on Windows. You can also compile dbhash.c by hand and link it against the SQLite library. The page mentions no runtime, account, or configuration beyond that. The Homebrew formula's caveats field is empty.",
+  "standout": "It is a small tool written by the SQLite project itself, and it defines equivalence by logical content instead of file bytes. That makes it a practical way to compare databases that differ on disk but hold the same data.",
+  "status": "maintained. The homepage says it was last updated on 2025-05-31. I did not check release tags or the commit history, so that date is the only evidence I have.",
+  "caveats": "The page does not say what license covers dbhash, and I did not open the License page. Building it requires the SQLite source tree rather than a standalone source file, and the Windows path uses nmake with makefile.msc. The page does not discuss SHA1's collision resistance, so do not treat the hash as a security guarantee. The remote-verification idea is only suggested, not documented.",
+  "quotes": [
+   "Dbhash ignores extraneous formatting details and hashes only the database schema and content.",
+   "Hence the hash is constant even if the database file is modified by:",
+   "Dbhash can be used to compare two databases to confirm that they are equivalent, even though their representation on disk is quite different."
+  ],
+  "links": [
+   {
+    "label": "dbhash.exe Utility Program (SQLite homepage)",
+    "url": "https://www.sqlite.org/dbhash.html"
+   }
+  ],
+  "fetch_log": [
+   "https://www.sqlite.org/dbhash.html: fetched successfully. This is the full documentation page, so I did not follow further links."
+  ]
+ }
+}

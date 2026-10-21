@@ -1,0 +1,87 @@
+{
+ "name": "ccm",
+ "desc": "Create and destroy an Apache Cassandra cluster on localhost",
+ "homepage": "https://github.com/apache/cassandra-ccm",
+ "installs_365d": 224,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "network",
+  "science"
+ ],
+ "why": "Spinning up a local Cassandra cluster lets you watch distributed database behaviour and consensus firsthand.",
+ "brief": {
+  "what_it_is": "CCM (Cassandra Cluster Manager) is a command-line script and Python library that creates, starts, and removes a small Apache Cassandra cluster on your own machine. You give it a Cassandra version, such as ccm create test -v 2.0.5 -n 3 -s, and it downloads that release (or uses a source tree you already built), then runs the requested number of nodes on loopback addresses like 127.0.0.1 through 127.0.0.3. Output is a running local cluster, plus per-node commands for flushing, reading logs, running ring, and adding nodes. The same functions are exposed as the ccmlib Python package for scripted tests.",
+  "why_it_exists": "The README says the goal of ccm and ccmlib is to make it easy to create, manage and destroy a small Cassandra cluster on a local box, and that it is meant for testing a Cassandra cluster. The scout note's framing about watching consensus is not stated in the README; the stated purpose is testing.",
+  "how_it_works": "ccm keeps each cluster's node data and configuration under ~/.ccm/cluster_name/ by default. For released versions it downloads the binary from archive.apache.org into ~/.ccm/repository/ and reuses it on later clusters, and it can alternatively build from a source tree, a git branch, or a GitHub fork. Nodes are assigned sequential loopback IPs and ports, and ccm start launches them; ccm remove stops the nodes and deletes their data.",
+  "commands_seen": [
+   {
+    "cmd": "ccm create test -v 2.0.5 -n 3 -s",
+    "context": "Short version: creates a cluster named test using Cassandra 2.0.5 with 3 nodes and starts it (-s)."
+   },
+   {
+    "cmd": "ccm create test --install-dir=<path/to/cassandra-sources>",
+    "context": "Creates a cluster from a Cassandra source tree you have already downloaded and compiled instead of a released binary."
+   },
+   {
+    "cmd": "ccm populate -n 3",
+    "context": "Adds 3 nodes to the cluster after create, on 127.0.0.1 through 127.0.0.3."
+   },
+   {
+    "cmd": "sudo ifconfig lo0 alias 127.0.0.2",
+    "context": "macOS only: adds a loopback alias so node 2 has its own address. Repeat for each extra node; aliases vanish on reboot."
+   },
+   {
+    "cmd": "ccm start",
+    "context": "Starts all nodes. Thrift on 9160, internal communication on 7000, JMX on 7100, 7200, 7300 per the README."
+   },
+   {
+    "cmd": "ccm node1 ring",
+    "context": "Runs nodetool-style ring output against node1 to check the cluster is set up."
+   },
+   {
+    "cmd": "ccm add node4 -i 127.0.0.4 -j 7400 -b",
+    "context": "Bootstraps a fourth node with IP 127.0.0.4 and JMX port 7400 into the running cluster."
+   },
+   {
+    "cmd": "ccm flush",
+    "context": "Flushes memtables on all nodes in the cluster."
+   },
+   {
+    "cmd": "ccm node1 showlog",
+    "context": "Prints the log file for node1."
+   },
+   {
+    "cmd": "ccm remove",
+    "context": "Stops the cluster's nodes and deletes all their data."
+   }
+  ],
+  "install_notes": "Beyond brew install ccm, the README and INSTALL.md list: pip install ccm from PyPI, or from a clone run sudo ./setup.py install. For development, INSTALL.md suggests pyenv with Python 3.9.16, a venv (python3 -m venv --prompt ccm venv), then pip install -e <path_to_ccm_repo> and pip install mock pytest requests; there is no build step. Building Cassandra from source needs Java 8 or 11 and ant (brew install ant on macOS). Paramiko is optional, for remote execution via pip install paramiko. Multi-node clusters need loopback aliases on macOS. No accounts are needed; a first run that fetches a release needs network access to archive.apache.org.",
+  "standout": "It is a thin wrapper that turns a multi-node Cassandra setup into one command, with per-node subcommands and a documented ccmlib API for scripted tests. It also handles version selection: a release number, a source tree, git:branch, or github:user/branch, plus a fallback to building from git if the Apache mirrors are unreachable.",
+  "status": "unknown. The fetched GitHub README and INSTALL.md show no release date or last-commit date. The project is hosted under the apache org and is published on PyPI and Homebrew, and the README mentions CCM 2.0 support for DSE and HCD. But the examples use Cassandra 2.0.5 and INSTALL.md recommends Python 3.9.16 while noting 2.7 was tested, so parts of the docs look dated.",
+  "caveats": "macOS needs loopback aliases for multi-node clusters, and AirPlay Receiver must be disabled because it listens on port 7000. Cassandra 4.0 and below ship a JNA jar that does not work on Apple Silicon, per INSTALL.md. Windows has several known issues, including node start opening a window, cqlsh prompt problems, and needing ant.bat on PATH. Remote execution has limits: cqlsh does not start properly over SSH, and --config-dir and --install-dir may not work with create. The examples mention Thrift, an older protocol. The README gives no license text, but the badge shows Apache 2.0. Scope is local testing, not production.",
+  "quotes": [
+   "A script/library to create, launch and remove an Apache Cassandra cluster on localhost.",
+   "The goal of ccm and ccmlib is to make it easy to create, manage and destroy a small Cassandra cluster on a local box. It is meant for testing a Cassandra cluster.",
+   "There is no build or package step because you are editing the Python files being run every time you invoke CCM."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/apache/cassandra-ccm"
+   },
+   {
+    "label": "INSTALL.md",
+    "url": "https://github.com/apache/cassandra-ccm/blob/master/INSTALL.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/apache/cassandra-ccm - worked, README returned",
+   "https://github.com/apache/cassandra-ccm/blob/master/INSTALL.md - worked, rendered page with INSTALL.md text; the page had heavy GitHub chrome but the content was readable",
+   "Not fetched: NETWORK_ALIASES.md, linked from the README for permanent macOS aliases"
+  ]
+ }
+}

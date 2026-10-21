@@ -1,0 +1,156 @@
+{
+ "name": "dynamips",
+ "desc": "Cisco 7200/3600/3725/3745/2600/1700 Router Emulator",
+ "homepage": "https://github.com/GNS3/dynamips",
+ "installs_365d": 118,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "fundamentals",
+ "tags": [
+  "emulation",
+  "network",
+  "afternoon",
+  "protocol",
+  "ancient"
+ ],
+ "why": "Emulates real Cisco routers so you can run actual IOS images and watch routing protocols run on your laptop.",
+ "brief": {
+  "what_it_is": "Dynamips is a command-line emulator of Cisco routers (the README lists the 7200, 3600, 3725, 3745, 2600 and 1700 families). It takes a Cisco IOS router image file as input and runs it as a virtual router, so the IOS software itself executes on your machine. The README does not describe the output in detail beyond running the emulated router. The project is a community continuation of the original Dynamips, based on the last development version plus patches from contributors.",
+  "why_it_exists": "The README gives no explicit motivation. It presents the project as a continuation of Dynamips that carries forward community patches, and it was renamed from Dynamips-community back to Dynamips at 0.2.9.",
+  "how_it_works": "The README does not explain the internals. It says the code can be built in two variants, selected by the DYNAMIPS_CODE CMake flag: 'unstable', which holds most development code, and 'stable', which omits some mips64 optimisations and tcb code that the author says cause instability on some platforms. The README recommends stable. The ARM64 section mentions a JIT, so the stable build includes a JIT on ARM64.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/GNS3/dynamips.git",
+    "context": "Clones the source repository for a Linux or Mac build."
+   },
+   {
+    "cmd": "mkdir build",
+    "context": "Creates an out-of-tree build directory inside the checkout."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Configures the build and generates Makefiles from the parent directory (run inside build/)."
+   },
+   {
+    "cmd": "cmake ..  -DCMAKE_C_COMPILER=/usr/local/bin/gcc-4.9",
+    "context": "Configuration step the README gives for OS X Yosemite to force GCC 4.9."
+   },
+   {
+    "cmd": "cmake .. -DDYNAMIPS_CODE=stable  -DCMAKE_C_COMPILER=/usr/local/bin/gcc-4.9",
+    "context": "Configuration step for a stable release build on OS X Yosemite with GCC 4.9."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds Dynamips after cmake has generated the Makefiles."
+   },
+   {
+    "cmd": "make install",
+    "context": "Builds and installs Dynamips."
+   },
+   {
+    "cmd": "cmake -DCMAKE_INSTALL_PREFIX=/target/path ..",
+    "context": "Sets a non-default installation location (the README's text says 'differant', as written)."
+   },
+   {
+    "cmd": "./scripts/run-arm64.sh /absolute/path/to/ios-images",
+    "context": "Launches an Ubuntu ARM64 Docker container that builds the current checkout with the ARM64 JIT and opens a Bash shell. The IOS directory must already exist and is mounted read-only at /ios."
+   },
+   {
+    "cmd": "dynamips -P 7200 /ios/your-c7200-image.bin",
+    "context": "Run inside the container shell to start a 7200-platform IOS image. The README's example image name is a placeholder."
+   },
+   {
+    "cmd": "./scripts/run-arm64.sh /absolute/path/to/ios-images dynamips -e",
+    "context": "Runs a single command in the container instead of opening a shell. The README does not say what -e does."
+   }
+  ],
+  "install_notes": "Linux: install CMake and a GCC or Clang compiler, plus libelf-dev and libpcap0.8-dev on Debian-based systems or elfutils-libelf-devel and libpcap-devel on Red Hat-based systems. Mac: the README lists libelf and cmake (MacPorts or Homebrew). Windows: Cygwin 32-bit with make, cmake, gcc-core, git and libelf0 installed. It also requires WinPcap, which the README links, and a manually compiled libelf 0.8.13. The Windows binary is dynamips.exe, which needs cygwin1.dll beside it to run outside a Cygwin terminal. Running an actual IOS image requires you to supply your own image file; the README says no IOS images are included or downloaded. The Docker path needs Docker, and on non-ARM64 hosts it needs QEMU/binfmt emulation for linux/arm64 containers. Dependencies are rebuilt on every launch of that script.",
+  "standout": "The README's ARM64 section adds a Docker script that builds and runs Dynamips with a JIT in an ARM64 container and mounts your IOS images read-only, so a non-ARM64 host can use it via emulation. It also describes a deliberate stable/unstable split in one codebase, with a clear recommendation to use stable.",
+  "status": "Maintained. The GitHub releases page lists v0.2.25 as the latest release, dated 12 Sep (the year is not shown in the fetched page). Earlier releases include v0.2.24 on 19 Apr and v0.2.23 on 02 Jan. Recent release notes include Actions workflow updates and a TLB exception fix for ppc32. The README links an active bugtracker and forum.",
+  "caveats": "The README says the unstable build works on 64-bit Mac but 'has proved to be unstable on other platforms', and recommends stable. Windows instructions depend on WinPcap and Cygwin 32-bit, which are old. The README's OS X Yosemite instructions reference GCC 4.9, which is also dated. Users must bring their own legally obtained Cisco IOS images. The project is GPLv2 only. The usage details are in a separate README file that the fetched page does not include, so this brief does not cover usage beyond the examples shown.",
+  "quotes": [
+   "Dynamips now uses the CMake build system.",
+   "Unstable is the code which contains most of the development code, and is in particular suitable for use on a 64 bit Mac. Unfortunately this has proved to be unstable on other platforms.",
+   "You should probably use stable unless you have a very good reason."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/GNS3/dynamips"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/GNS3/dynamips/releases"
+   },
+   {
+    "label": "Issue tracker",
+    "url": "https://github.com/GNS3/dynamips/issues"
+   },
+   {
+    "label": "GNS3 community forum",
+    "url": "https://gns3.com/community"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/GNS3/dynamips: fetched OK, README returned.",
+   "https://github.com/GNS3/dynamips/releases: fetched OK, page returned with release list; the latest release is v0.2.25."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Dynamips runs real Cisco IOS images on emulated router hardware, making routing protocols and legacy network appliances inspectable on a laptop\u2014a worthwhile networking rabbit hole."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Dynamips",
+  "tldr": "Dynamips emulates whole Cisco routers, so a real IOS image boots as a virtual router on your laptop and you can poke at routing from the inside.",
+  "deeper_look": "Dynamips is a command-line emulator for Cisco router hardware. The README lists the 7200, 3600, 3725, 3745, 2600 and 1700 families. You give it a Cisco IOS image file and it runs that software as a virtual router. The real IOS code executes on your machine instead of a imitation of its behaviour.\n\nThis project is a community continuation of the original Dynamips. It is based on the last development version plus patches from contributors, and it was renamed from Dynamips-community back to Dynamips at 0.2.9. The README gives no explicit motivation beyond that, but the GNS3 organisation hosts it and the project is still releasing.\n\nThe idea underneath is hardware emulation as a way to study network gear. A router is a computer with a particular CPU and set of interface cards. If you emulate those faithfully enough, the vendor's own firmware can't tell the difference, and you get a lab where you can break routing protocols without buying a rack.\n\nThe code builds in two variants, chosen with the DYNAMIPS_CODE CMake flag. 'Unstable' holds most of the development code. 'Stable' leaves out some mips64 optimisations and tcb code that the author says cause instability on some platforms. The README is blunt: \"You should probably use stable unless you have a very good reason.\"",
+  "install": "brew install dynamips\n# You must supply your own legally obtained Cisco IOS image. None is included or downloaded.",
+  "try_this": [
+   {
+    "cmd": "dynamips --help",
+    "what_happens": "Prints the list of options so you can see what the emulator can configure."
+   },
+   {
+    "cmd": "dynamips -P 7200 /ios/your-c7200-image.bin",
+    "what_happens": "Starts an emulated 7200-platform router from your IOS image. The README's image name is a placeholder, so substitute your own file."
+   },
+   {
+    "cmd": "nvram_export --help",
+    "what_happens": "Shows usage for the bundled helper that handles router NVRAM data."
+   }
+  ],
+  "whats_unique": "It runs genuine Cisco IOS images rather than a lookalike, and it is the emulator underneath GNS3. The README also documents an ARM64 Docker script that builds it with a JIT.",
+  "caveats": "You need your own Cisco IOS image, the README warns the unstable build has proved unstable outside 64-bit Mac, and its Windows and OS X instructions rely on old tooling such as WinPcap and GCC 4.9.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "emulation",
+   "network",
+   "cisco",
+   "routing",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/GNS3/dynamips"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/GNS3/dynamips/releases"
+   },
+   {
+    "label": "Issue tracker",
+    "url": "https://github.com/GNS3/dynamips/issues"
+   },
+   {
+    "label": "GNS3 community forum",
+    "url": "https://gns3.com/community"
+   }
+  ]
+ }
+}

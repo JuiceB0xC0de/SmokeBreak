@@ -1,0 +1,144 @@
+{
+ "name": "switch-lan-play",
+ "desc": "Make you and your friends play games like in a LAN",
+ "homepage": "https://github.com/spacemeowx2/switch-lan-play",
+ "installs_365d": 82,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol",
+  "game"
+ ],
+ "why": "Tunnels LAN game discovery over the internet, a clever look at broadcast protocols that games assume.",
+ "brief": {
+  "what_it_is": "A client and server pair that connects Nintendo Switch consoles and friends' PCs so that online games behave as if everyone were on one local network. The lan-play client runs on a PC connected to the same router as the Switch. It takes ARP and IPv4 traffic from the Switch, wraps it in UDP packets, and sends them to a shared relay Server on the internet. The Server forwards them to the other players' clients, which deliver them to their own consoles. The README also describes an optional SOCKS5 proxy in front of the client.",
+  "why_it_exists": "The README's pitch is \"Enjoy games with your friends as if you were on a LAN.\" It targets games that expect a local network, so players can join each other without being on the same physical LAN.",
+  "how_it_works": "The client sits between the Switch and the Server, as the README's diagram shows: Switch to PC (lan-play) over ARP and IPv4, then PC to Server over UDP, optionally through a SOCKS5 proxy. The Server reads source and target IP addresses from each payload and keeps a cache mapping source IP to LAN IP. If a packet's target IP is not in the cache, the Server broadcasts it to the whole room, which is how LAN-style discovery reaches the other players. The protocol is a one-byte type field followed by the payload, with types KEEPALIVE, IPV4, PING and IPV4_FRAG.",
+  "commands_seen": [
+   {
+    "cmd": "lan-play --socks5-server-addr example.com:1080",
+    "context": "Runs the client through a SOCKS5 proxy. The README notes that data sent to the relay server does not pass through the proxy."
+   },
+   {
+    "cmd": "sudo apt install libpcap0.8-dev git gcc g++ cmake",
+    "context": "Installs libpcap and build tools on Ubuntu or Debian before compiling."
+   },
+   {
+    "cmd": "mkdir build\ncd build\ncmake ..\nmake",
+    "context": "Standard out-of-tree CMake build on Linux or macOS, shown in the README as a four-line block."
+   },
+   {
+    "cmd": "brew install cmake",
+    "context": "macOS build prerequisite, as listed under the Mac OS section."
+   },
+   {
+    "cmd": "pacman -S make \\\n    mingw-w64-x86_64-cmake \\\n    mingw-w64-x86_64-gcc",
+    "context": "Installs the MSYS2 64-bit toolchain for building on Windows."
+   },
+   {
+    "cmd": "cmake -G \"MSYS Makefiles\" ..",
+    "context": "Configures the Windows build from inside the MSYS2 MinGW shell."
+   },
+   {
+    "cmd": "docker run -d -p 11451:11451/udp -p 11451:11451/tcp spacemeowx2/switch-lan-play",
+    "context": "Runs the relay Server in Docker, exposing UDP for traffic and TCP for the monitor endpoint on port 11451."
+   },
+   {
+    "cmd": "npm install",
+    "context": "Installs dependencies for the Node server in the server/ directory."
+   },
+   {
+    "cmd": "npm run build",
+    "context": "Compiles the server's TypeScript to JavaScript. The README says to rerun it after code changes."
+   },
+   {
+    "cmd": "npm start -- --port 10086 --simpleAuth username:password",
+    "context": "Starts the Node server on port 10086 with a single username and password for authentication."
+   }
+  ],
+  "install_notes": "Beyond brew install, the README describes building from source with CMake. Linux needs libpcap development headers. Windows needs MSYS2 with MinGW-w64 and the CMake build run from the MSYS2 MinGW shell. Setup also requires a relay Server, either the Docker image or the Node server. Players must set a static IP on the Switch and connect the PC and Switch to the same router. The README sends users to lan-play.com for the Switch setup steps.",
+  "standout": "It targets the broadcast-based discovery that LAN games rely on and carries it over the internet, using a relay that rebroadcasts unknown-target packets to the whole room. It is a tunnel built to fool games into thinking the other players are on the same subnet.",
+  "status": "unknown. The README has a build status badge and a Discord link, but it shows no release version, date, or recent-activity note. I did not fetch the commit or release pages, so I cannot confirm whether it is actively maintained.",
+  "caveats": "Every player must run the client and connect to the same Server, and the Switch needs a manually set static IP. The PC and Switch must be on the same router. Data sent to the relay does not go through the optional SOCKS5 proxy. The Server needs authentication flags to be set up deliberately, since the README says there is none by default. Windows builds need MSYS2, and the README gives no packaged binaries beyond the brew formula. The README does not name a license in the fetched text. The scout note's broadcast framing is supported by the README's rebroadcast-to-room rule, but the README does not use the word discovery.",
+  "quotes": [
+   "Enjoy games with your friends as if you were on a LAN.",
+   "Your PC and Switch **must** be connected to the same router.",
+   "If the target IP address shown in the payload doesn't match the cache, the packet is broadcast to the entire room."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/spacemeowx2/switch-lan-play"
+   },
+   {
+    "label": "Setup instructions for Switch",
+    "url": "http://lan-play.com/install-switch"
+   },
+   {
+    "label": "lan-play.com",
+    "url": "https://www.lan-play.com/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/spacemeowx2/switch-lan-play: fetched OK, README returned in full. No further fetches needed, since the README covered build, server, and protocol."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A focused UDP relay that recreates subnet discovery for Switch games is a neat workaround revealing how LAN matchmaking depends on broadcasts."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "switch-lan-play",
+  "tldr": "Tunnels a Nintendo Switch's local-network traffic through a relay on the internet, so games that expect a LAN think distant friends are next door.",
+  "deeper_look": "Some games only look for opponents on the local network. They send ARP requests and broadcasts and expect neighbours to answer. switch-lan-play is a client and relay server pair that carries that traffic across the internet instead.\n\nThe `lan-play` client runs on a PC connected to the same router as the Switch. It picks up the Switch's ARP and IPv4 packets, wraps them in UDP, and sends them to a shared relay Server. The Server passes them on to the other players' clients, which hand them to their own consoles. An optional SOCKS5 proxy can sit in front of the client.\n\nThe interesting part is how the Server behaves like a very small network switch. It reads the source and target IP addresses from each payload and keeps a cache mapping source IP to LAN IP. When a packet's target is not in the cache, it does what a LAN does and broadcasts it. In the README's words: \"If the target IP address shown in the payload doesn't match the cache, the packet is broadcast to the entire room.\" That one rule is how LAN-style discovery reaches everyone.\n\nThe wire protocol is just as small: a one-byte type field followed by the payload, with types KEEPALIVE, IPV4, PING and IPV4_FRAG. It is a readable example of faking a shared subnet with a relay and a cache.",
+  "install": "brew install switch-lan-play\n# You also need a relay Server (the Docker image or the Node server in the repo's server/ directory).\n# The Switch needs a static IP set by hand, and the PC and Switch must be on the same router.",
+  "try_this": [
+   {
+    "cmd": "lan-play --help",
+    "what_happens": "Lists the client's options, so you can see what it expects before pointing it at a server."
+   },
+   {
+    "cmd": "lan-play --socks5-server-addr example.com:1080",
+    "what_happens": "Runs the client through a SOCKS5 proxy. Traffic to the relay server does not go through the proxy."
+   },
+   {
+    "cmd": "docker run -d -p 11451:11451/udp -p 11451:11451/tcp spacemeowx2/switch-lan-play",
+    "what_happens": "Starts a relay Server in Docker, with UDP for game traffic and TCP for the monitor endpoint on port 11451."
+   }
+  ],
+  "whats_unique": "It targets the broadcast-based discovery that LAN games rely on and carries it over the internet, using a relay that rebroadcasts unknown-target packets to the whole room.",
+  "caveats": "Maintenance status is unclear from the README, and it needs a Switch with a manually set static IP, a PC on the same router, and a relay server that everyone connects to.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "network",
+   "protocol",
+   "arp",
+   "udp",
+   "game",
+   "tunnel"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/spacemeowx2/switch-lan-play"
+   },
+   {
+    "label": "Setup instructions for Switch",
+    "url": "http://lan-play.com/install-switch"
+   },
+   {
+    "label": "lan-play.com",
+    "url": "https://www.lan-play.com/"
+   }
+  ]
+ }
+}

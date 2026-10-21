@@ -1,0 +1,95 @@
+{
+ "name": "cmigemo",
+ "desc": "Migemo is a tool that supports Japanese incremental search with Romaji",
+ "homepage": "https://www.kaoriya.net/software/cmigemo",
+ "installs_365d": 223,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "library"
+ ],
+ "why": "Romaji-to-Japanese incremental search via regex expansion is a clever transform of how text gets matched.",
+ "brief": {
+  "what_it_is": "C/Migemo is a C-language library and command-line tool that turns romaji input into a regular expression matching Japanese text. Typing 'ai' produces a pattern covering \u611b, \u76f8, \u85cd and \u5408, and 'koi' covers \u9bc9, \u6fc3 and \u604b, so a plain search tool can find Japanese words typed in romaji. It takes a romaji query and a dictionary, and outputs a regexp pattern. Source is on GitHub under koron/cmigemo, and the homepage (in Japanese) offers prebuilt binaries for Windows, Linux, macOS arm64 and WebAssembly. The homepage describes it in Japanese as \u65e5\u672c\u8a9e\u691c\u7d22\u306e\u305f\u3081\u306e\u6b63\u898f\u8868\u73fe\u751f\u6210\u30a8\u30f3\u30b8\u30f3, a regex generation engine for Japanese search.",
+  "why_it_exists": "The README says the original Migemo, by Satoru Takabayashi, was written in Ruby and Emacs Lisp so Emacs users could search Japanese text incrementally while typing romaji. The author's homepage says C/Migemo was a from-scratch C rewrite made so the tool could be used from Vim, and the README adds that C makes it easier to integrate with the large body of C software.",
+  "how_it_works": "The engine expands a romaji query into a regular expression whose character classes cover the kanji and kana the romaji could stand for, using a SKK-JISYO.L-derived dictionary. The README also describes a precompiled 'sdict' binary dictionary format that the author says cuts startup from about 50ms to about 4ms and memory from about 18MB to about 8MB, though these figures are the author's and were not measured here.",
+  "commands_seen": [
+   {
+    "cmd": "cmake -B build",
+    "context": "Configure the build directory (needs CMake 3.21 or newer, a C11 compiler, and for the dictionary curl, iconv, gzip and perl)."
+   },
+   {
+    "cmd": "cmake --build build",
+    "context": "Compile the library and cmigemo binary into build/."
+   },
+   {
+    "cmd": "cmake --build build --target test",
+    "context": "Run the project's test suite."
+   },
+   {
+    "cmd": "cmake --build build --target profile",
+    "context": "Run profiling; the README says the result goes to build/profile.log (profiling needs gprof)."
+   },
+   {
+    "cmd": "cmake -B build -DBUILD_DICT=OFF",
+    "context": "Configure without dictionary generation, dropping the perl, iconv and gzip dependencies (for distro packagers)."
+   },
+   {
+    "cmd": "cmake --build build --target dictionaries",
+    "context": "Build all dictionary encodings at once."
+   },
+   {
+    "cmd": "cmake --install build --component core",
+    "context": "Install only the binary, library and headers."
+   },
+   {
+    "cmd": "cmake --install build --component dict",
+    "context": "Install only the generated dictionary files."
+   },
+   {
+    "cmd": "./build/bin/cmigemo --save build/dict/utf-8/migemo-sdict -w ''",
+    "context": "Convert the dictionary to sdict format, save it to the given path, and exit immediately because of the empty -w argument."
+   },
+   {
+    "cmd": "./build/bin/cmigemo --sdict build/dict/utf-8/migemo-sdict",
+    "context": "Launch cmigemo using the saved precompiled sdict file instead of loading dynamic dictionaries."
+   }
+  ],
+  "install_notes": "The homepage says the release binaries bundle their dictionary files. Building from source needs CMake 3.21 or newer and a C11 compiler, plus curl, iconv, gzip and perl to fetch and build the SKK-JISYO.L-based dictionary during the build; BUILD_DICT=OFF skips that. Platform archives are .zip for Windows (MSVC or UCRT64), .tar.gz for MSYS2, Linux x86_64 and aarch64, and macOS arm64, plus a WebAssembly zip. The Homebrew caveats (not from the README) say that to use it with Emacs you should get emacs-jp/migemo, save its file as migemo.el, and put it on your load-path. The README says the Vim-only route is haya14busa/vim-migemo.",
+  "standout": "It is a from-scratch C rewrite of a Ruby/Emacs Lisp tool, so C software can use it directly. It also precompiles the dictionary into a memory-mapped-style sdict format, which the author says sharply reduces startup time and memory.",
+  "status": "Unknown. The README and homepage show no release date, version number or last-commit date, and the homepage links to a releases page with versioned file names (X.Y.Z) without giving any version. The project appears to be actively documented, with CMake targets, sdict, and CI-style build options, but I could not confirm recent activity.",
+  "caveats": "The dictionary is GPL because it comes from SKK-JISYO.L, although the library is MIT. Building from source needs the external tools listed above, and the dictionary build pulls in SKK-JISYO.L over the network. The README has no Homebrew-specific instructions, and its Emacs guidance is missing; that comes from the Homebrew caveats. The Homebrew caveat on migemo.el refers to a separate project, not this one. The README's performance figures were not verified. The README gives no macOS x86_64 binary, only arm64, and Windows has several variants to pick from.",
+  "quotes": [
+   "C/Migemo is regexp pattern generator/expander.",
+   "Software utilizing the C/Migemo library gains the ability to perform incremental Japanese searches using Romaji input.",
+   "The built dictionary is subject to the GPL, in accordance with the license of the source SKK-JISYO.L.",
+   "ai \u2192 [\u611b\u76f8\u85cd\u5408]"
+  ],
+  "links": [
+   {
+    "label": "Homepage (KaoriYa, Japanese)",
+    "url": "https://www.kaoriya.net/software/cmigemo"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/koron/cmigemo"
+   },
+   {
+    "label": "Latest releases",
+    "url": "https://github.com/koron/cmigemo/releases/latest/"
+   },
+   {
+    "label": "vim-migemo (Vim plugin)",
+    "url": "https://github.com/haya14busa/vim-migemo"
+   }
+  ],
+  "fetch_log": [
+   "https://www.kaoriya.net/software/cmigemo: worked, but the page is in Japanese; the summary above is my English translation.",
+   "https://github.com/koron/cmigemo: worked, README returned; the README links to SKK-JISYO.L but I did not fetch it.",
+   "No other pages fetched; the brew description and scout notes were given in the request and not checked against the source."
+  ]
+ }
+}

@@ -1,0 +1,87 @@
+{
+ "name": "unshield",
+ "desc": "Extract files from InstallShield cabinet files",
+ "homepage": "https://github.com/twogood/unshield",
+ "installs_365d": 1276,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "ancient"
+ ],
+ "why": "Extracts files from InstallShield cabinets, a satisfying look into a forgotten Windows installer format.",
+ "brief": {
+  "what_it_is": "Unshield is a command-line tool and C library that lists and extracts files from InstallShield cabinet files (.cab archives that InstallShield installers use to store the files they install). You give it an InstallShield cabinet such as data1.cab and it either prints the archive's contents or writes the extracted files to a directory you name. The README says it extracts the Microsoft Cabinet Files nested inside the InstallShield cabinets, so the output is ordinary files you can then use on any OS. It is a from-scratch reimplementation rather than a wrapper around InstallShield's own code.",
+  "why_it_exists": "The author wanted to install Pocket PC applications from InstallShield installers on Linux or FreeBSD without needing Windows. The format is not officially documented, and the existing Windows tools (i5comp and i6comp) depended on InstallShield decompression code that was not open source.",
+  "how_it_works": "The README says the author used the existing i5comp and i6comp tools as a reference for the format, and found by running 'strings' over InstallShield's decompression code that it relied on zlib. Decompression therefore uses the open source zlib library, and the parsing logic is a clean reimplementation. The stated goals are MIT licensing, support for both little-endian and big-endian systems, a split between tool and library, support for InstallShield version 5 and later, and listing as well as extraction.",
+  "commands_seen": [
+   {
+    "cmd": "unshield l data1.cab",
+    "context": "Lists the files inside an InstallShield cabinet without extracting them."
+   },
+   {
+    "cmd": "unshield -d extracted x data1.cab",
+    "context": "Extracts the cabinet's contents into the directory 'extracted' (-d sets the output directory, x means extract)."
+   },
+   {
+    "cmd": "unshield -D 3 -d extracted-debug x data1.cab",
+    "context": "Troubleshooting step: reruns extraction with debug logging at level 3 into a new directory."
+   },
+   {
+    "cmd": "unshield -O -d extracted-old x data1.cab",
+    "context": "Retries with the -O old-compression option for older InstallShield cabinets that fail otherwise."
+   },
+   {
+    "cmd": "unshield -V",
+    "context": "Prints the Unshield version; the README asks for this in bug reports."
+   },
+   {
+    "cmd": "unshield -h",
+    "context": "Shows usage help; the README also points to the manual page for more options."
+   },
+   {
+    "cmd": "cmake .",
+    "context": "First step of the build from source: configures the build with CMake in the current directory."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles after the CMake configure step."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the built unshield binary and library."
+   }
+  ],
+  "install_notes": "Homebrew installs it directly. To build from source the README asks for the standard CMake flow: cmake ., make, make install. No accounts, runtimes or configuration are mentioned. The 1.6.0 release notes mention a Windows build in GitHub Actions and MinGW and MSVC fixes, so Windows builds appear to be supported, but the README does not document them.",
+  "standout": "Unlike most extraction tools, this one exists because of a deliberately clean-room route: it reverse-engineers an undocumented 1990s Windows installer format by reading the older Windows tools and the strings in InstallShield's binaries. It is a small, focused C project with MIT licensing, and the README is candid about its history and limits.",
+  "status": "Appears maintained. The GitHub releases page lists 1.6.2 as Latest, dated 03 Apr (the year is not shown in the fetched text), with 1.6.1 on 02 Apr and 1.6.0 on 24 Mar. The 1.6.0 notes list a long run of CI, CMake and cleanup pull requests. The README itself has no staleness note.",
+  "caveats": "Old InstallShield cabinets may need the -O flag, and the README warns that -O selects a compression method, not a repair mode for damaged or unsupported cabinets. A failed run can still leave some files behind, so the exit status and error output must be checked. Support starts at InstallShield version 5, and the format is undocumented, so the tool may not handle every cabinet. The README also asks for a new output directory on each attempt. A PayPal donation link appears in the README. Licensed MIT, and the README's own summary is 'do as you like, but don't blame me if anything goes wrong'.",
+  "quotes": [
+   "The format of InstallShield Cabinet Files is not officially documented but there are two tools available for Microsoft Windows that extracts files from InstallShield installers",
+   "I could have modified i5comp and i6comp to run on other operating systems than Microsoft Windows, but I preferred to use them as a reference for this implementation.",
+   "Unshield uses the MIT license. The short version is \"do as you like, but don't blame me if anything goes wrong\"."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README (homepage)",
+    "url": "https://github.com/twogood/unshield"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/twogood/unshield/releases"
+   },
+   {
+    "label": "Manual page (man/unshield.1 in the repo; the README gives the relative path)",
+    "url": "https://github.com/twogood/unshield"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/twogood/unshield (homepage, fetched as README): worked",
+   "https://github.com/twogood/unshield/releases: worked, release list and notes read; the year on release dates is not shown in the fetched text",
+   "man/unshield.1 linked from the README: not fetched; the brief uses the README's usage text instead"
+  ]
+ }
+}

@@ -1,0 +1,91 @@
+{
+ "name": "notcurses",
+ "desc": "Blingful character graphics/TUI library",
+ "homepage": "https://nick-black.com/dankwiki/index.php/Notcurses",
+ "installs_365d": 655,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "tui",
+  "library",
+  "visual",
+  "quick"
+ ],
+ "why": "A character graphics library that pushes terminals to render images, video, and effects far beyond normal expectations.",
+ "brief": {
+  "what_it_is": "Notcurses is a C library, with C++-safe headers and Rust, C++, and Python wrappers, for building text user interfaces on modern terminal emulators. Programs draw into stacked rectangular planes (ncplane objects) using 24-bit color, Unicode, and transparency, and the library renders the composed result to the terminal, quantizing color for limited terminals. It can show still images and video, decoded through ffmpeg or OpenImageIO, using character blitters or pixel protocols such as Sixel and Kitty. It installs nine small tools, including ncls (an ls that displays media), ncplayer, notcurses-demo, and nctetris. It is not an X/Open Curses implementation and not a drop-in ncurses replacement.",
+  "why_it_exists": "The author says Curses assumes the minimum and lets you step up with effort, whereas Notcurses assumes the maximum and steps down by itself when necessary. The stated goal is vivid color, multimedia, thread safety, and full Unicode in terminal apps that ncurses was not designed for.",
+  "how_it_works": "Each screen cell is resolved by descending the plane stack from the topmost plane until a glyph and foreground/background colors are locked in, then the resulting frame is blitted to the terminal as UTF-8 characters and escape codes. Each plane cell has two alpha bits per color channel (opaque, blend, transparent, or high-contrast) that control how lower planes show through, and glyph choice is independent of alpha. Terminal capabilities come from terminfo plus queries the library sends to the terminal at startup.",
+  "commands_seen": [
+   {
+    "cmd": "notcurses-demo",
+    "context": "Runs the demo program, which the README says covers most of the library's functionality. From a source checkout it needs the data directory passed with -p, and -d scales the delay."
+   },
+   {
+    "cmd": "ncplayer -bpixel ../data/notcursesIII.mkv -d0 -t0 -q",
+    "context": "From the dankwiki performance section: a benchmark run of ncplayer with the pixel blitter on a sample video, used to time different terminal emulators."
+   },
+   {
+    "cmd": "make test",
+    "context": "Runs the test suite from a source checkout, which runs notcurses-tester; that needs the data directory via -p."
+   },
+   {
+    "cmd": "notcurses-info",
+    "context": "Diagnostic tool that prints terminal capabilities and lets you inspect how your font renders the drawing characters."
+   },
+   {
+    "cmd": "pkg-config --static --libs notcurses",
+    "context": "FAQ answer for static-link errors: prints the libraries you need to link."
+   },
+   {
+    "cmd": "cmake -DCMAKE_REQUIRED_INCLUDES=/usr/local/include",
+    "context": "FAQ fix for not finding qrcodegen on BSD after installing it from ports."
+   },
+   {
+    "cmd": "-DUSE_MULTIMEDIA=none",
+    "context": "CMake option (passed to cmake) to build without the ffmpeg and OpenImageIO multimedia stack."
+   },
+   {
+    "cmd": "-DUSE_CXX=off",
+    "context": "CMake option (passed to cmake) for builds without a C++ compiler; skips the C++ wrappers and some executables."
+   },
+   {
+    "cmd": "dpkg-reconfigure locales",
+    "context": "Debian approach for generating a UTF-8 locale, which the README says is needed so Unicode works."
+   }
+  ],
+  "install_notes": "Homebrew is the path in this brief. Building from source needs CMake 3.21+ and a C17 compiler, plus terminfo 6.1+ from NCURSES and GNU libunistring 0.9.10+. Optional extras are libgpm, libqrcodegen, FFmpeg libraries, OpenImageIO 2.15+ (requires C++), doctest, and pandoc. Supported runtimes are Linux 2.6+, FreeBSD 11+, DragonFly BSD 5.9+, Windows 10 1093+, and macOS 11.4+. At runtime, TERM must match your terminal and have an up-to-date terminfo entry, or Notcurses refuses to start. LANG should be a generated UTF-8 locale. Optionally set COLORTERM to truecolor or 24bit when the terminal supports 24-bit color but does not advertise it. Docker users are directed to the README's Environment notes section.",
+  "standout": "It treats pixel graphics as a first-class part of a text UI: one API covers Sixel, the Kitty graphics protocol, and the Linux framebuffer, with several cell-based blitters as fallbacks. Its plane model adds z-order, per-channel alpha, and sprites to a character grid, which is unusual for terminal libraries.",
+  "status": "unknown. The GitHub README I fetched has no release date or commit date. The dankwiki release table ends at 3.0.0 (2021-12-01), and the README mentions Unicode 16 octant support, which suggests work after that. I did not check the releases or commit history, so I cannot confirm recent activity. The repository has CI badges for Linux, macOS, and Windows.",
+  "caveats": "Not a drop-in replacement for ncurses, and it expects a current terminfo database and UTF-8 locale. Output quality depends on the terminal and font: the README says Windows Terminal needs particular fonts and settings, and screen and mosh render poorly. The Linux console supports only a limited glyph set. Some features need optional dependencies, and the full multimedia stack is heavy. Direct Mode is substantially slower and less capable than rendered mode. The dankwiki benchmarks date from 2019 and 2021. The README says the tool list includes notcurses-tester, which the Homebrew executables list omits. Source is Apache-2.0.",
+  "quotes": [
+   "Notcurses abandons the X/Open Curses API bundled as part of the Single UNIX Specification.",
+   "Notcurses assumes the maximum and steps down (by itself) when necessary.",
+   "It's Apache2-licensed in its entirety, as opposed to the drama in several acts that is the NCURSES license"
+  ],
+  "links": [
+   {
+    "label": "Homepage (dankwiki)",
+    "url": "https://nick-black.com/dankwiki/index.php/Notcurses"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/dankamongmen/notcurses"
+   },
+   {
+    "label": "Man pages and docs",
+    "url": "https://notcurses.com"
+   },
+   {
+    "label": "Free guidebook PDF (Hacking the Planet! with Notcurses)",
+    "url": "https://nick-black.com/htp-notcurses.pdf"
+   }
+  ],
+  "fetch_log": [
+   "https://nick-black.com/dankwiki/index.php/Notcurses: fetched OK (dankwiki page, used as homepage)",
+   "https://github.com/dankamongmen/notcurses: fetched OK, returned the README. I inferred this URL from the project name and the dankwiki's link to its source; it was not given in the brew metadata."
+  ]
+ }
+}

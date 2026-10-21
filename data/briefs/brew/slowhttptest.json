@@ -1,0 +1,62 @@
+{
+ "name": "slowhttptest",
+ "desc": "Simulates application layer denial of service attacks",
+ "homepage": "https://github.com/shekyan/slowhttptest",
+ "installs_365d": 277,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "afternoon"
+ ],
+ "why": "Slowloris-style attacks reveal how HTTP servers handle partial requests, a useful and slightly unsettling look at a protocol weakness.",
+ "brief": {
+  "what_it_is": "SlowHTTPTest is a command-line tool that simulates Application Layer denial-of-service attacks by holding HTTP connections open for as long as possible, in several different ways. You point it at a web server with a target and tuning options (the README mentions connection counts and per-connection behaviour), and it reports on how the server copes. The README also lists a companion beta, slowhttptest-ng, a C++ rewrite that installs alongside the classic binary and adds HTTP/2 attacks and a JSON availability verdict. The README's own description of the classic tool is that it simulates some Application Layer DoS attacks by prolonging HTTP connections in different ways.",
+  "why_it_exists": "The README says it is for testing your own web server for DoS vulnerabilities, or for finding out how many concurrent connections it can handle. It frames the work as defensive: availability testing, capacity planning, and checking that HTTP-layer DoS mitigations do what you think they do.",
+  "how_it_works": "The README does not explain the internals of the classic tool beyond saying it prolongs HTTP connections in different ways. The ng README table names the techniques: slow headers (-H), slow body (-B), range (-R), and slow read (-X) for the classic tool, plus HTTP/2 slow read, rapid reset, and CONTINUATION flood in ng. The classic report is a CSV of socket states, and ng's report is a verdict (served, slow, or denied) with a list of other possible explanations.",
+  "commands_seen": [
+   {
+    "cmd": "docker pull shekyan/slowhttptest:latest",
+    "context": "Fetches the latest official classic image from Docker Hub, the README's suggested way to try the tool without building it."
+   },
+   {
+    "cmd": "docker run --rm --entrypoint slowhttptest-ng shekyan/slowhttptest:ng -u https://target/ -c 1000 -H",
+    "context": "Example run of the beta slowhttptest-ng binary from the ng image against a placeholder target, with 1000 connections (-c 1000) and the slow-headers mode (-H)."
+   }
+  ],
+  "install_notes": "The README points to the Wiki for installation and usage details, which I did not fetch. It says the tool works on most Linux distributions, OS X, and Cygwin, and it ships a Dockerfile. The Docker Hub image is the simplest route. The v1.10.0 release notes (fetched from the releases page) mention ./configure, an OpenSSL requirement, and a --with-openssl=DIR option for non-standard OpenSSL locations, so building from source needs OpenSSL development headers. Those release-note details are not from the README.",
+  "standout": "The beta ng report is built around availability rather than socket counts. It states whether service was actually denied, lists what else could explain the result, and uses distinct exit codes so an unreachable host does not look like a clean run in CI. Its HTML report is self-contained inline SVG, while the classic report loads Google Charts from the web at view time.",
+  "status": "Maintained, with evidence. The latest release is v1.10.0, dated 28 Aug on the releases page (the year is not in the fetched text). Its notes say it is the first release since v1.9.0 (July 2022), and the page shows 71 commits on master since that release. The README shows CI badges for the classic and ng workflows plus CodeQL, and it describes ng as a beta.",
+  "caveats": "The README carries a prominent disclaimer: run it only against systems you own or have explicit written permission to test, and misuse can be a crime. Platform support is Linux, OS X, and Cygwin, not native Windows. The classic HTML report needs internet access at view time to render properly. The ng rewrite is labelled beta, and its flags and output differ from the classic tool (CSV becomes JSON, exit codes change from -1 to 2/3/4). I did not check the licence, and the README does not state one in the parts I read.",
+  "quotes": [
+   "SlowHTTPTest is a highly configurable tool that simulates some Application Layer Denial of Service attacks by prolonging HTTP connections in different ways.",
+   "It is built for defensive work \u2014 availability testing, capacity planning, and checking that HTTP-layer DoS mitigations do what you think they do.",
+   "a report that misdescribes a run is the worst bug this tool can have, and that is exactly what a beta is for."
+  ],
+  "links": [
+   {
+    "label": "GitHub homepage (README)",
+    "url": "https://github.com/shekyan/slowhttptest"
+   },
+   {
+    "label": "Wiki: installation and usage",
+    "url": "https://github.com/shekyan/slowhttptest/wiki"
+   },
+   {
+    "label": "Docker Hub image",
+    "url": "https://hub.docker.com/repository/docker/shekyan/slowhttptest"
+   },
+   {
+    "label": "Latest release notes (v1.10.0)",
+    "url": "https://github.com/shekyan/slowhttptest/releases/latest"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/shekyan/slowhttptest: worked, README returned with disclaimer, classic and ng sections, and install pointers.",
+   "https://github.com/shekyan/slowhttptest/releases/latest: worked, but the text came back as raw page markup; the v1.10.0 release notes and the 28 Aug date were readable within it. The Wiki was linked but not fetched."
+  ]
+ }
+}

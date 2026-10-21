@@ -1,0 +1,85 @@
+{
+ "name": "stone",
+ "desc": "TCP/IP packet repeater in the application layer",
+ "homepage": "https://www.gcd.org/sengoku/stone/",
+ "installs_365d": 4,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "afternoon"
+ ],
+ "why": "An application-layer TCP/IP packet repeater, an obscure and unusual door into how packets can be relayed at the application layer.",
+ "brief": {
+  "what_it_is": "Stone is a small TCP/IP repeater that runs at the application layer, relaying TCP and UDP traffic from inside a firewall to outside, or from outside to inside. You run it with a listen spec and a destination spec (for example, stone outer:telnet 10023), and it forwards the connection between them. The page also describes it as a tiny http proxy, an SSL wrapper that can encrypt a plain service, a POP-to-APOP bridge, and an IPv4/IPv6 converter.",
+  "why_it_exists": "The author frames it for firewalls: UNIX machines used to be the usual firewalls, but Windows NT machines are now used too, so Stone was written to run on Windows as well as Unix-like systems. He also stresses that it is simple, at about 10000 lines of C, so the risk of security holes is minimized.",
+  "how_it_works": "Stone listens on a local or named port and opens a connection to the target you name, then copies data between the two sides. Optional wrappers are added per endpoint with suffixes such as /udp, /ssl, /http, /proxy, and /apop, which change how that side speaks. SSL uses OpenSSL and can verify client and server certificates, and it can pass a substring of the certificate subject to the destination.",
+  "commands_seen": [
+   {
+    "cmd": "stone outer:telnet 10023",
+    "context": "Repeats telnet to the machine named outer; on the inner machine you then run telnet fwall 10023."
+   },
+   {
+    "cmd": "stone outer:domain/udp domain/udp",
+    "context": "Repeats DNS queries over UDP to outer; the inner side uses nslookup - fwall."
+   },
+   {
+    "cmd": "stone outer:ntp/udp ntp/udp",
+    "context": "Repeats NTP over UDP to outer; the inner side runs ntpdate fwall."
+   },
+   {
+    "cmd": "stone localhost:http 443/ssl",
+    "context": "Makes a WWW server that speaks https on port 443 by wrapping the local http port in SSL; reach it at https://fwall/."
+   },
+   {
+    "cmd": "stone localhost:telnet 10023/ssl",
+    "context": "Makes a telnet server that supports SSL; the inner client connects with SSLtelnet -z ssl fwall 10023."
+   },
+   {
+    "cmd": "stone proxy 8080",
+    "context": "Runs Stone as a tiny http proxy listening on port 8080."
+   },
+   {
+    "cmd": "stone outer:pop/apop pop",
+    "context": "Lets a mailer that lacks APOP reach an APOP POP server: it connects to inner:pop through the converter."
+   },
+   {
+    "cmd": "stone fwall:8080/http 10023 'POST http://outer:8023 HTTP/1.0'",
+    "context": "Tunnels a stream through an http proxy on fwall port 8080, using the quoted POST line as the request; paired with a second stone run on outer."
+   },
+   {
+    "cmd": "stone localhost:telnet 8023/http",
+    "context": "The outer-side half of the http tunnel example; run on the outside machine to accept the relayed stream."
+   },
+   {
+    "cmd": "stone fwall:8080/proxy 9080 'Proxy-Authorization: Basic c2VuZ29rdTpoaXJvYWtp'",
+    "context": "Local listener on 9080 that adds a Proxy-Authorization header, for a browser that cannot send proxy credentials itself."
+   }
+  ],
+  "install_notes": "Pre-built Windows binaries are listed for version 2.3e (Win64, Win32, WinXP, WinNT/2000, Win98), and there is an official 2.4 release and a 2.4 source snapshot. Source is C, built from stone.c; the page mentions a CVS repository on SourceForge.JP. SSL needs OpenSSL. POP-to-APOP conversion needs an MD5 program installed. Mailing list sign-up is by email to stone-subscribe@gcd.org. The page does not give explicit build steps.",
+  "standout": "It is an old, self-described 'Simple Repeater' that bundles a TCP/UDP relay, SSL termination, http tunneling, a proxy, POP-to-APOP conversion, and IPv4/IPv6 translation into one small C program. The http tunnel example, which carries a stream inside HTTP POST through an ordinary proxy, is a neat trick for getting past restrictive firewalls.",
+  "status": "quiet. The latest official release, version 2.4, is dated 02/15/19. The page says it was last modified 08/14/21 and carries a 1995-2021 copyright. The author mentions a development diary and a CVS repository, but I saw no recent release or commit date.",
+  "caveats": "The page is dated and the Windows binaries are for 2.3e, not 2.4. It is a firewall-era tool, so think carefully before exposing it. The text is in English but the articles and diary are in Japanese. The page does not state a license. Build and SSL setup details are thin, and the examples assume you can reach both sides of a firewall. Homebrew's caveats field is empty.",
+  "quotes": [
+   "Stone is a TCP/IP repeater in the application layer.",
+   "Stone's source code is only 10000 lines long (written in C language), so you can minimize the risk of security holes.",
+   "Stone can also be a tiny http proxy."
+  ],
+  "links": [
+   {
+    "label": "Stone homepage",
+    "url": "https://www.gcd.org/sengoku/stone/"
+   },
+   {
+    "label": "Author's home page (Hiroaki Sengoku)",
+    "url": "https://www.gcd.org/sengoku/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.gcd.org/sengoku/stone/ - fetched OK; README-style page with features, examples, releases, and mailing list info"
+  ]
+ }
+}

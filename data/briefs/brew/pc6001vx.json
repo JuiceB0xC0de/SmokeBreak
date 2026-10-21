@@ -1,0 +1,74 @@
+{
+ "name": "pc6001vx",
+ "desc": "PC-6001 emulator",
+ "homepage": "https://github.com/eighttails/PC6001VX",
+ "installs_365d": 317,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "visual",
+  "ancient",
+  "reverse-engineering"
+ ],
+ "why": "Emulator for the obscure NEC PC-6001 home computer, a window into a forgotten early-1980s Japanese machine.",
+ "brief": {
+  "what_it_is": "PC6001VX is a cross-platform emulator for the NEC PC-6001 home computer and related PC-6001 series models, including the PC-6001A, PC-6001mk2, PC-6601, and SR variants. It is a modified port of Yumitaro's PC6001V emulator, aimed at Linux and Android, with a Windows binary offered as a secondary target. It takes ROM images dumped from real machines, or a built-in compatible ROM, plus optional tape (P6T, P6, CAS), disk (d88), and expansion ROM images, and outputs a running emulated machine with video and sound. It also has save states (\u3069\u3053\u3067\u3082SAVE), replay recording and playback, WebM video capture, a monitor/debugger mode, and a joke TILT mode that tilts the screen. The README is a Japanese-language manual.",
+  "why_it_exists": "The README says the program is a modification of Yumitaro's PC-6001 emulator PC6001V so that it runs on Linux and similar systems. The 'X' in the name stands for cross-platform.",
+  "how_it_works": "The README does not explain emulation internals. It describes a Qt-based GUI, with rendering moved to QML/Qt Quick in version 4.5.0. Its 'Boost Up' tape feature watches the BASIC work area and sends the next tape data as soon as the machine enters a wait, which the README says speeds tape loading by about 9x on N60 and 5x on N60m.",
+  "commands_seen": [
+   {
+    "cmd": "apt install build-essential cmake ninja-build libx11-dev libsdl2-dev qtcreator qt6-base-dev qt6-multimedia-dev qt6-declarative-dev libavformat-dev libavcodec-dev libswscale-dev",
+    "context": "Debian-family package install for building on Linux, covering Qt6, SDL2, and FFmpeg development packages."
+   },
+   {
+    "cmd": "cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release",
+    "context": "Configures a Release build in the ./build directory with Ninja, run from the source root without an IDE."
+   },
+   {
+    "cmd": "cmake --build build",
+    "context": "Builds the project after configuration."
+   },
+   {
+    "cmd": "cd PC6001VX/win32",
+    "context": "Windows MSYS2 step: change into the win32 folder of the source tree."
+   },
+   {
+    "cmd": "bash ./release.sh",
+    "context": "Windows MSYS2 step: installs required tools, builds static Qt and FFmpeg, runs the CMake Release build, and creates the distribution folder."
+   },
+   {
+    "cmd": "pacman -Sy",
+    "context": "Mentioned as something to avoid: the README recommends pinning MSYS2 package versions rather than running a package update."
+   },
+   {
+    "cmd": "PKG_CONFIG_PATH=$MINGW_PREFIX/local/lib/pkgconfig",
+    "context": "Environment variable the README says is needed to build on Windows MSYS2."
+   },
+   {
+    "cmd": "talk\"f41.\"",
+    "context": "BASIC statement run on a real PC-6001 mk2 in mode 5 or 6. The README says to record its speech as f41.wav, and f42 to f44 the same way, for fixed TALK phrases."
+   }
+  ],
+  "install_notes": "You need ROM files dumped from a real PC-6001 series machine, placed in a folder the emulator is pointed to. They are case-sensitive on non-Windows systems. Alternatively, choose the built-in compatible ROM by Akikawa Hisashi, which is embedded in the binary and needs no extra files. On first launch an error appears, and you can either point to a ROM folder or accept the built-in ROM. An optional CRC check warns on mismatches. For mk2 and later, the TALK fixed phrases need f41.wav to f44.wav in the wave folder (the author tested 44kHz mono). Config lives in an .ini file next to the exe on Windows and in ~/.pc6001vx4 on Linux. Linux builds need Qt 6.4.0 or later, and the README notes some distributions lack Qt6 packages, in which case the official Qt installer is needed. Android builds need Qt 6.5.0 or later. Windows builds use MSYS2 UCRT64 and a release.sh script. Homebrew installs the PC6001VX executable, but the ROM setup above still applies.",
+  "standout": "It ships a built-in compatible ROM, so it can boot without any original ROM dumps. Its 'Boost Up' tape acceleration and TILT mode, which is inspired by the 3DS Space Harrier, are unusual features for a retro emulator.",
+  "status": "Appears maintained. The changelog's newest entries are 4.5.1 dated 2026/10/02, 4.5.0 dated 2026/09/09, and 4.4.0 dated 2026/08/15, as written in the README. The repo shows 1,464 commits, 54 stars, and 11 forks. I did not see a last-commit date on the page.",
+  "caveats": "Licensing is mixed. The project is LGPL-2.1, but the README says the FMGEN sound component is licensed by CISC for freeware use only. Original ROMs are not included. The built-in compatible ROM does not implement every feature of the genuine ROMs, so some behaviour and graphics differ. The mk2/6601 compatible BASIC does not support BASIC mode 6. Video capture writes WebM only (MP4 was skipped over licensing) and runs very slowly while recording, around 1/10 speed on the author's machine. Boost Up can drop data on tight loaders and does not work with custom loaders. The README warns that the save state feature is still very incomplete and can corrupt TAPE or DISK images if used during a write. The README says Windows 11 has kana-switching problems, with PAUSE or CTRL+F12 as workarounds. The Windows binary is described as mostly an afterthought. Android has limits, such as no keyboard-dependent function keys and no direct file export outside the sandbox. The fetched manual is in Japanese only.",
+  "quotes": [
+   "PC6001VX\u306e\u672b\u5c3e\u306eX\u306f\u30af\u30ed\u30b9\u30d7\u30e9\u30c3\u30c8\u30d5\u30a9\u30fc\u30e0\u306eX\u3067\u3059\u3002(^^;",
+   "\u672c\u30d7\u30ed\u30b0\u30e9\u30e0\u306f\u3001\u3086\u307f\u305f\u308d\u69d8\u4f5c\u306ePC-6001\u30a8\u30df\u30e5\u30ec\u30fc\u30bfPC6001V\u3092Linux\u7b49\u3067\u52d5\u4f5c\u3059\u308b\u3088\u3046\u6539\u5909\u3057\u305f\u3082\u306e\u3067\u3059\u3002",
+   "3DS\u7248\u306e\u30b9\u30da\u30fc\u30b9\u30cf\u30ea\u30a2\u30fc\u306b\u89e6\u767a\u3055\u308c\u3066\u4f5c\u3063\u305f\u30b8\u30e7\u30fc\u30af\u6a5f\u80fd\u3067\u3059\u3002(\u7b11"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage, README manual)",
+    "url": "https://github.com/eighttails/PC6001VX"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/eighttails/PC6001VX - fetched OK; the tool returned the README.adoc, which is the full Japanese manual covering install, usage, build, known issues, and changelog. I did not follow other links because the README was complete."
+  ]
+ }
+}

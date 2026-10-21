@@ -1,0 +1,129 @@
+{
+ "name": "fastani",
+ "desc": "Fast whole-genome similarity (ANI) estimation",
+ "homepage": "https://github.com/ParBLiSS/FastANI",
+ "installs_365d": 63,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "library"
+ ],
+ "why": "Real genomics software estimating whole-genome similarity, a legitimate science rabbit hole though a bit specialised.",
+ "brief": {
+  "what_it_is": "FastANI is a command-line tool that estimates whole-genome Average Nucleotide Identity between genome assemblies without doing expensive sequence alignment. It takes FASTA or multi-FASTA genome files (gzip-compressed is fine), either one query against one reference, one query against a list of references, or many queries against many references. It writes tab-delimited rows giving query, reference, ANI value, count of bidirectional fragment mappings, and total query fragments. An optional --matrix flag also writes a PHYLIP-style lower-triangular ANI matrix.",
+  "why_it_exists": "The README says it was built for fast, alignment-free ANI computation, so that large numbers of genome pairs can be compared. It follows the workflow of Goris et al. 2007 but is much faster, and the authors point to a 90K prokaryotic genome study as evidence for its use in finding species boundaries.",
+  "how_it_works": "Rather than running BLAST-style alignments, FastANI uses Mashmap, a MinHash-based sequence mapping engine, to find orthologous mappings between genomes and estimate alignment identity. It then averages identity over bidirectional fragment mappings to produce the ANI value. The README reports accuracy on par with the BLAST-based ANI solver and a two to three orders of magnitude speedup.",
+  "commands_seen": [
+   {
+    "cmd": "./fastANI -h",
+    "context": "Prints the help page with usage and command-line options."
+   },
+   {
+    "cmd": "./fastANI -q [QUERY_GENOME] -r [REFERENCE_GENOME] -o [OUTPUT_FILE]",
+    "context": "One-to-one: ANI between a single query genome and a single reference genome."
+   },
+   {
+    "cmd": "./fastANI -q [QUERY_GENOME] --rl [REFERENCE_LIST] -o [OUTPUT_FILE]",
+    "context": "One-to-many: one query against a list file of reference genome paths, one per line."
+   },
+   {
+    "cmd": "./fastANI --ql [QUERY_LIST] --rl [REFERENCE_LIST] -o [OUTPUT_FILE]",
+    "context": "Many-to-many: query list and reference list files, each with one genome path per line."
+   },
+   {
+    "cmd": "./fastANI -q data/Shigella_flexneri_2a_01.fna -r data/Escherichia_coli_str_K12_MG1655.fna -o fastani.out",
+    "context": "Example run from the README using the bundled test genomes; the README's sample output is an ANI of 97.7507 with 1303 of 1608 fragments mapped."
+   },
+   {
+    "cmd": "./fastANI -q B_quintana.fna -r B_henselae.fna --visualize -o fastani.out",
+    "context": "One-to-one run with --visualize, which also writes a .visual file of reciprocal mappings."
+   },
+   {
+    "cmd": "Rscript scripts/visualize.R B_quintana.fna B_henselae.fna fastani.out.visual",
+    "context": "Plots the .visual mappings with an R script that uses the genoPlotR package."
+   }
+  ],
+  "install_notes": "Clone the GitHub repository and follow INSTALL.txt to compile from source. Alternatively, download a dependency-free binary for Linux or macOS from the latest GitHub release. The README does not mention accounts or special hardware. Multi-threading is supported from v1.1 onward; the thread count is set through the help page options. The visualization step needs R with the genoPlotR package. The repo includes a script to randomly split a reference database into chunks for running parallel processes across nodes.",
+  "standout": "It replaces alignment-based ANI with a MinHash mapping step borrowed from Mashmap, and the README claims BLAST-level accuracy at two to three orders of magnitude more speed. It also documents its own asymmetry: A-to-B and B-to-A ANI can differ slightly, and the --matrix option averages the two values.",
+  "status": "unknown. The README shows BioConda and codecov badges and refers to v1.1 onward, but it gives no release date, last-commit date, or maintenance note, and I did not check the releases page or commit history.",
+  "caveats": "Pairs with ANI much below 80% get no output, and the README says those should be compared at the amino acid level instead (a separate AAI tool is linked). The README asks users to check input quality, especially an N50 of at least 10 Kbp for reference and query. Asymmetry: the two directions can give different values. Building from source requires following INSTALL.txt. Prebuilt binaries are only offered for Linux and OSX. The visualization needs an R install with genoPlotR. The codecov badge points to srirampc/FastANI, a different owner path from the main repo.",
+  "quotes": [
+   "FastANI is developed for fast alignment-free computation of whole-genome Average Nucleotide Identity (ANI).",
+   "it avoids expensive sequence alignments and uses Mashmap as its MinHash based sequence mapping engine to compute the orthologous mappings and alignment identity estimates.",
+   "NOTE: No ANI output is reported for a genome pair if ANI value is much below 80%."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/ParBLiSS/FastANI"
+   },
+   {
+    "label": "Latest releases (binaries)",
+    "url": "https://github.com/ParBLiSS/FastANI/releases"
+   },
+   {
+    "label": "Paper: High Throughput ANI Analysis of 90K Prokaryotic Genomes Reveals Clear Species Boundaries",
+    "url": "https://doi.org/10.1038/s41467-018-07641-9"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/ParBLiSS/FastANI: fetched OK, README returned in full. No further fetches needed."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "FastANI makes genome-scale similarity comparisons practical by estimating ANI through MinHash-based mappings instead of costly alignments, opening a useful window into computational genomics."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "FastANI",
+  "tldr": "Estimates how similar two bacterial genomes are in seconds, using MinHash mapping instead of alignment, and shows where species boundaries fall.",
+  "deeper_look": "FastANI takes whole-genome assemblies in FASTA format (gzip is fine) and reports their Average Nucleotide Identity. You can compare one genome to one, one to a list, or a list to a list. Each result is a tab-delimited row: query, reference, ANI value, the number of bidirectional fragment mappings, and the total number of query fragments. An optional `--matrix` flag also writes a PHYLIP-style lower-triangular matrix.\n\nANI is a standard yardstick for asking whether two microbes belong to the same species. The classic method, following Goris et al. 2007, aligns fragments of one genome against another with BLAST, which is slow when you have thousands of genomes. FastANI follows the same workflow but swaps the alignment step for Mashmap, a MinHash-based mapping engine. It finds orthologous mappings, estimates identity from them, and averages over the fragments that map in both directions. The README reports accuracy on par with the BLAST-based solver and a two to three orders of magnitude speedup.\n\nThe underlying idea is that sketching, which means keeping a small hashed summary of a sequence, can stand in for exhaustive comparison. That is why a paper could run this over 90,000 prokaryotic genomes and look for clear species boundaries. The README's bundled example compares a Shigella flexneri genome to E. coli K-12 and reports an ANI of 97.7507, with 1303 of 1608 fragments mapped.",
+  "install": "brew install fastani\n# Input: genome assemblies in FASTA format. The optional --visualize step needs R with the genoPlotR package.",
+  "try_this": [
+   {
+    "cmd": "fastANI -h",
+    "what_happens": "Prints the help page with usage and all command-line options, including thread count."
+   },
+   {
+    "cmd": "fastANI -q data/Shigella_flexneri_2a_01.fna -r data/Escherichia_coli_str_K12_MG1655.fna -o fastani.out",
+    "what_happens": "Compares the two bundled test genomes from the repo and writes one result row. The README's sample output is an ANI of 97.7507 with 1303 of 1608 fragments mapped."
+   },
+   {
+    "cmd": "fastANI --ql [QUERY_LIST] --rl [REFERENCE_LIST] -o [OUTPUT_FILE]",
+    "what_happens": "Runs many-to-many comparison, where each list file holds one genome path per line."
+   }
+  ],
+  "whats_unique": "It swaps BLAST-style alignment for a Mashmap MinHash mapping step and claims comparable accuracy at far higher speed. It also documents its own asymmetry: A-to-B and B-to-A can differ slightly, and `--matrix` averages the two.",
+  "caveats": "Pairs with ANI much below 80% produce no output (the README suggests amino-acid comparison instead), and the README asks for inputs with an N50 of at least 10 Kbp.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "science",
+   "genomics",
+   "bioinformatics",
+   "minhash"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/ParBLiSS/FastANI"
+   },
+   {
+    "label": "Latest releases (binaries)",
+    "url": "https://github.com/ParBLiSS/FastANI/releases"
+   },
+   {
+    "label": "Paper: High Throughput ANI Analysis of 90K Prokaryotic Genomes Reveals Clear Species Boundaries",
+    "url": "https://doi.org/10.1038/s41467-018-07641-9"
+   }
+  ]
+ }
+}

@@ -1,0 +1,90 @@
+{
+ "name": "joker",
+ "desc": "Small Clojure interpreter, linter and formatter",
+ "homepage": "https://joker-lang.org/",
+ "installs_365d": 950,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "language",
+  "library"
+ ],
+ "why": "A small Clojure interpreter with linter and formatter; an unusual lisp dialect worth an afternoon of poking.",
+ "brief": {
+  "what_it_is": "Joker is a small interpreted dialect of Clojure, written in Go, that also works as a Clojure and ClojureScript linter and formatter. You can run scripts written in its .joke files, use it as a REPL, or pipe source in on stdin. Linter mode takes a source file and prints warnings and errors as file:line:column messages. Format mode reads Clojure source and writes pretty-printed code to standard output. A task runner reads public functions from a tasks.joke file and runs them by name.",
+  "why_it_exists": "The author wants a Clojure-flavoured language that is suitable for scripting, with lightweight, fast startup, because Clojure itself is not good at that. The README also states a goal of good error messages and stack traces, and of providing tooling for Clojure and its dialects.",
+  "how_it_works": "Joker is an interpreter. The README says it executes bytecode by default and has a VM, documented in VM.md. Lint mode reads and parses every form in a file and reports Read error, Read warning, Parse error, Parse warning or Exception. Settings go in a .joker config file that is found by walking up the directory tree, and it can list known macros, ignored namespaces and rules. The core namespaces are built in, and the README says a gen_code step pre-builds them into the executable to speed up startup.",
+  "commands_seen": [
+   {
+    "cmd": "brew install candid82/brew/joker",
+    "context": "Homebrew install on macOS, also works on Linux with Homebrew on Linux (README's stated easiest path)."
+   },
+   {
+    "cmd": "nix-env -i joker",
+    "context": "Nix install, listed in the README as an alternative to Homebrew."
+   },
+   {
+    "cmd": "joker -e '(println \"Hello, world!\")'",
+    "context": "Runs a single expression with -e (also --eval) and exits."
+   },
+   {
+    "cmd": "joker --lint test.clj",
+    "context": "Lints one file; the README's example input is (let [a 1]) and it reports a Parse warning about an empty let body."
+   },
+   {
+    "cmd": "joker --lint --working-dir my-project",
+    "context": "Recursively lints all Clojure files under a directory."
+   },
+   {
+    "cmd": "joker --format <filename>",
+    "context": "Formats a source file and writes the result to standard output."
+   },
+   {
+    "cmd": "joker --task greet Alice Bob",
+    "context": "Runs the greet task from tasks.joke with two string arguments, as given in the README's task runner example."
+   },
+   {
+    "cmd": "joker --hashmap-threshold -1 -e \"(pprint (read))\"",
+    "context": "Pretty-prints an EDN data structure read from stdin, from the project goals section."
+   },
+   {
+    "cmd": "./run.sh --version && go install",
+    "context": "Build-from-source steps given in the README: clone the repo, cd into it, then run this."
+   },
+   {
+    "cmd": "joker --lint --dialect cljs -",
+    "context": "Lints ClojureScript read from standard input, from the linter mode section."
+   }
+  ],
+  "install_notes": "Homebrew via the candid82/brew tap is the README's first option. The AUR package joker-bin is available for Arch Linux, and Nix is supported. Other platforms can use a precompiled binary from the GitHub releases page placed on PATH. Building from source needs Go, and the README says Go v1.27.0 or later, which is worth checking since that version number is unusual. Cross-building between 32-bit and 64-bit is flagged as problematic. No accounts are needed. Optional configuration lives in a .joker file in the project and in ~/.jokerd/linter.* files in the home directory.",
+  "standout": "It is a real, separate Clojure-dialect implementation in Go, not a wrapper around the JVM. It bundles lint, format and a task runner with stdlib modules for JSON, HTTP, filesystem, OS and base64. The linter has a fine-grained config for macros, identifier character sets and rule toggles, and it aims for few false positives.",
+  "status": "unknown. The README I fetched has no release date, no changelog section and no last-commit date. It links to a CircleCI badge, a standard library reference site, and a VM.md and DEVELOPER.md, which suggests active development, but I did not verify any of that. The homepage gave no date either.",
+  "caveats": "Single-threaded, with no refs, agents, futures or promises. Many Clojure features are missing, including protocols, records, transducers, sorted maps and sets, and tagged literals. Interop is limited to a fixed set of Go types, with no Java-style method calls. The linter checks one file at a time and does not resolve external namespaces, so you may need to add macros to .joker by hand. By default identifiers are linted against an ASCII core character set. Cross-compiling between word sizes is problematic. Performance is a stated non-goal. The license is Eclipse Public License 1.0, and it includes parts of Clojure's clojure.core, which is also EPL-1.0.",
+  "quotes": [
+   "Joker is a small interpreted dialect of Clojure written in Go. It is also a Clojure(Script) linter.",
+   "Good error messages and stack traces are absolutely critical for programmer's happiness and productivity.",
+   "Joker should truly be a dialect of Clojure, not a language inspired by Clojure."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://joker-lang.org/"
+   },
+   {
+    "label": "GitHub repository (README source)",
+    "url": "https://github.com/candid82/joker"
+   },
+   {
+    "label": "Standard library reference",
+    "url": "https://candid82.github.io/joker/"
+   }
+  ],
+  "fetch_log": [
+   "https://joker-lang.org/ - worked, but thin: a short marketing summary with no install, command or docs links.",
+   "https://github.com/candid82/joker - worked, returned the full README, which was used as the main source. Not fetched: DEVELOPER.md, VM.md, LIBRARIES.md, or the standard library reference site."
+  ]
+ }
+}

@@ -1,0 +1,152 @@
+{
+ "name": "miniprot",
+ "desc": "Align proteins to genomes with splicing and frameshift",
+ "homepage": "https://lh3.github.io/miniprot/",
+ "installs_365d": 57,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "library"
+ ],
+ "why": "Aligns proteins to genomes across introns and frameshifts, a real bioinformatics tool that reveals how genes are spliced.",
+ "brief": {
+  "what_it_is": "miniprot is a command-line tool that aligns protein sequences against a genome, allowing for introns (splicing) and frameshifts. You give it a genome FASTA (optionally gzipped, or a prebuilt index) and a protein FASTA. It writes protein-style PAF alignments by default, or GFF3 with --gff, and GFF3 embeds the PAF lines. Its stated main use is annotating protein-coding genes in a new species using known proteins from other species.",
+  "why_it_exists": "The README says miniprot is primarily intended for annotating protein-coding genes in a new species using known genes from other species. It positions itself against GeneWise and Exonerate: similar in function, but able to map proteins to whole genomes and much faster at the residue alignment step.",
+  "how_it_works": "Per the README's algorithm overview: the genome is translated in six frames and ORFs under 45bp are dropped; amino acids are reduced to 13 classes and open syncmers of 6 amino acids are indexed in a dense hash table. For a query protein, seed matches are found and chained minimap2-style, then a second round of chaining uses reduced 5-mers within each chain. The top 100 chains (see -N) are kept, anchors around potential introns or long gaps are filtered, and striped dynamic programming between the remaining anchors gives the final alignment. Optional minisplice splice scores can be fed in with --spsc.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/lh3/miniprot && cd miniprot && make",
+    "context": "Download the source and compile; make produces the standalone miniprot executable."
+   },
+   {
+    "cmd": "./miniprot test/DPP3-hs.gen.fa.gz test/DPP3-mm.pep.fa.gz > aln.paf",
+    "context": "Test run on bundled test files, writing PAF output."
+   },
+   {
+    "cmd": "./miniprot --gff test/DPP3-hs.gen.fa.gz test/DPP3-mm.pep.fa.gz > aln.gff",
+    "context": "Same test run with GFF3 output (GFF3 plus embedded PAF)."
+   },
+   {
+    "cmd": "./miniprot -Iut16 --gff genome.fna protein.faa > aln.gff",
+    "context": "General one-step usage: index and align together; -I sets max intron size from genome size, -t16 uses 16 threads."
+   },
+   {
+    "cmd": "./miniprot -t16 -d genome.mpi genome.fna",
+    "context": "Build the index first (README calls this the recommended route); -d names the index file."
+   },
+   {
+    "cmd": "./miniprot -Iut16 --gff genome.mpi protein.faa > aln.gff",
+    "context": "Align proteins against a prebuilt index and write GFF3."
+   },
+   {
+    "cmd": "miniprot -t8 ref-file protein.faa > output.paf",
+    "context": "Usage form from the Usage section: ref-file can be a FASTA genome or a prebuilt index; output is protein PAF."
+   },
+   {
+    "cmd": "miniprot -t8 --gff -d ref.mpi ref.fna > out.gff",
+    "context": "Build an index and write GFF3 output in one invocation, per the Usage section."
+   },
+   {
+    "cmd": "minisplice predict -t16 -c vi2-7k.kan.cali vi2-7k.kan genome.fa.gz > score.tsv",
+    "context": "Compute splice scores with minisplice using the pre-trained vertebrate/insect model."
+   },
+   {
+    "cmd": "miniprot -Iut16 --gff -j2 --spsc=score.tsv genome.fa.gz proteins.faa > align.gff",
+    "context": "Align proteins to the genome using the minisplice splice scores via --spsc."
+   }
+  ],
+  "install_notes": "Build from source: git clone, cd into the directory, run make; the result is a single standalone miniprot executable. It needs SSE2 or NEON instructions and runs only on x86_64 or ARM CPUs. It depends on zlib for reading gzipped input. The README advises a newer gcc (it reports gcc-10.3.0 performing more stably than gcc-4.8.5 on CentOS 7). The optional minisplice splice-score feature needs a separate model download from Zenodo (vi2-7k.tgz, pre-trained for vertebrate and insect); the README's wget line is written as 'wget -O URL | tar zxf -', which omits a file argument for -O and would need fixing before use. No accounts are needed. The brew formula is listed as miniprot with executable miniprot.",
+  "standout": "Unlike exon-by-exon tools that work on a small region, it searches a whole genome for a protein and reports introns and frameshifts as CIGAR operators in a protein-PAF format, with a GFF3 option. The seed-and-chain design (syncmers on a reduced alphabet, then minimap2-style chaining) is borrowed from long-read nucleotide mapping.",
+  "status": "maintained. The GitHub releases page lists Miniprot-0.18 (r281) as Latest, released 11 July (2025 per the release text), after 0.17 in June 2025, 0.16 in May 2025, and 0.15 in April 2025. The repo has a CI build badge and a Bioconda badge. I did not check the commit log directly.",
+  "caveats": "Only x86_64 and ARM CPUs are supported (SSE2 or NEON required). Indexing is slow and memory intensive, so the README recommends prebuilding the index. The README says it is not optimized for mapping distant homologs, though seeding parameters can be tuned for more sensitivity at a performance cost. Known limitations listed in the README: initial conditions of dynamic programming are 'not technically correct', which may cause suboptimal residue alignment in rare cases, and support for non-splicing alignment 'needs to be improved'. The README says the published paper evaluated miniprot-0.7 and newer versions may report different numbers. Old gcc builds can be very slow on some sequences. The minisplice splice-score feature was marked EXPERIMENTAL in the 0.14 release notes. I did not check the license.",
+  "quotes": [
+   "Miniprot aligns a protein sequence against a genome with affine gap penalty, splicing and frameshift.",
+   "Because miniprot indexing is slow and memory intensive, it is recommended to pre-build the index.",
+   "Miniprot is not optimized for mapping distant homologs because distant homologs are less informative to gene annotations."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (docs index)",
+    "url": "https://lh3.github.io/miniprot/"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/lh3/miniprot"
+   },
+   {
+    "label": "Manpage",
+    "url": "https://lh3.github.io/miniprot/miniprot.html"
+   },
+   {
+    "label": "Paper (Bioinformatics 2023)",
+    "url": "https://doi.org/10.1093/bioinformatics/btad014"
+   }
+  ],
+  "fetch_log": [
+   "https://lh3.github.io/miniprot/ : worked, but it is a docs index page (getting help, install via git clone), not the README; it pointed to the GitHub repo and manpage",
+   "https://github.com/lh3/miniprot : worked, README returned and used as the main source",
+   "https://github.com/lh3/miniprot/releases : worked, used for release dates and status (latest v0.18)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A specialized genome mapper with a real biological \u201chuh\u201d: it finds protein-coding genes across whole genomes while modeling introns and frameshifts."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "miniprot",
+  "tldr": "Aligns a protein sequence to a whole genome, finding the introns and frameshifts in between, which is how new genomes get their genes marked.",
+  "deeper_look": "miniprot takes a genome FASTA and a protein FASTA and finds where in the genome that protein is encoded. Genes in most animals and plants are chopped into exons separated by long introns, so a protein does not map to DNA as one continuous stretch. miniprot handles that by allowing splice gaps and frameshifts in the alignment. Output is protein-flavoured PAF by default, or GFF3 with `--gff`, where introns and frameshifts show up as CIGAR operators.\n\nIts stated main use is annotating protein-coding genes in a newly sequenced species, using known proteins from other species. It sits in the same space as GeneWise and Exonerate, but maps against whole genomes and is much faster at the residue alignment step.\n\nThe design borrows from long-read DNA mapping. The genome is translated in six frames, short ORFs are dropped, amino acids are squashed into 13 classes, and open syncmers of 6 residues are indexed. Seed hits are chained minimap2-style, refined with a second chaining round, and then filled in with striped dynamic programming. Reading the README alongside the output is a good way to see how a gene gets located and spliced in a genome.\n\nThere is a bundled test: a human genome region and a mouse protein (DPP3). Running it shows a real cross-species gene alignment in seconds.",
+  "install": "brew install miniprot\n# Needs an x86_64 or ARM CPU (SSE2 or NEON). Reads gzipped FASTA via zlib.\n# Or build from source: git clone https://github.com/lh3/miniprot && cd miniprot && make",
+  "try_this": [
+   {
+    "cmd": "miniprot --help",
+    "what_happens": "Lists the options, including -I for intron size, -t for threads and --gff for output format."
+   },
+   {
+    "cmd": "./miniprot test/DPP3-hs.gen.fa.gz test/DPP3-mm.pep.fa.gz > aln.paf",
+    "what_happens": "Aligns a mouse protein to a human genomic region from the repo's test files and writes protein PAF."
+   },
+   {
+    "cmd": "./miniprot --gff test/DPP3-hs.gen.fa.gz test/DPP3-mm.pep.fa.gz > aln.gff",
+    "what_happens": "Runs the same alignment but writes GFF3, with the PAF lines embedded, so you can see exons and introns as gene features."
+   }
+  ],
+  "whats_unique": "It searches a whole genome for a protein and reports introns and frameshifts directly, using a seed-and-chain approach borrowed from long-read DNA mappers rather than working exon by exon on a small region.",
+  "caveats": "Only runs on x86_64 or ARM CPUs, indexing is slow and memory hungry (the README advises prebuilding the index), and it is not tuned for distant homologs.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "bioinformatics",
+   "genomics",
+   "proteins",
+   "alignment",
+   "science"
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://lh3.github.io/miniprot/"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/lh3/miniprot"
+   },
+   {
+    "label": "Manpage",
+    "url": "https://lh3.github.io/miniprot/miniprot.html"
+   },
+   {
+    "label": "Paper (Bioinformatics 2023)",
+    "url": "https://doi.org/10.1093/bioinformatics/btad014"
+   }
+  ]
+ }
+}

@@ -1,0 +1,83 @@
+{
+ "name": "liblouis",
+ "desc": "Open-source braille translator and back-translator",
+ "homepage": "https://liblouis.io",
+ "installs_365d": 281,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "fundamentals",
+ "tags": [
+  "library",
+  "accessibility",
+  "language",
+  "afternoon"
+ ],
+ "why": "Braille translation and back-translation is a fascinating transform between text and tactile code, with a rich table-driven design behind it.",
+ "brief": {
+  "what_it_is": "Liblouis is an open-source braille translator and back-translator, a C library that converts text into braille and braille back into text. It supports computer and literary braille, contracted and uncontracted translation for many languages, hyphenation, and math braille (Nemeth and Marburg). Translation rules live in table files, and the library is distributed as a shared library on Linux and macOS and as a DLL on Windows. The package also includes command-line tools (lou_allround, lou_checkhyphens, lou_checktable, lou_debug, lou_translate, lou_trace) for testing and debugging translation tables. A companion project, Liblouisutdml, adds a formatter that turns XML or plain text into embosser-ready braille.",
+  "why_it_exists": "The project is named in honor of Louis Braille and aims to provide braille translation for many languages and braille codes as a free library that applications can embed. The README says it is based on the translation routines in the BRLTTY screenreader and has 'gone far beyond these routines'. Its screen-reader support is a stated purpose: it is used by NVDA and Orca and in commercial products such as ViewPlus.",
+  "how_it_works": "Translation is table-driven: new languages are added through tables that support rule-based or dictionary-based approaches, and the repository ships tables for many languages (en-us-g2.ctb and en-us-g1.ctb are named as examples). The library is written in C so it needs no runtime and can be called from Python, Java, and JavaScript bindings. Back-translation uses the same tables in reverse, and the included tools test and trace those translations.",
+  "commands_seen": [
+   {
+    "cmd": "./configure",
+    "context": "Build step from the unpacked source tarball; run before make."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles liblouis after configure."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the library and programs system-wide."
+   },
+   {
+    "cmd": "sudo ldconfig",
+    "context": "Refreshes the shared library cache; the README says you might have to run this as a final step."
+   },
+   {
+    "cmd": "configure --enable-ucs4",
+    "context": "Option to build for 32-bit Unicode; the default is 16-bit."
+   },
+   {
+    "cmd": "make check",
+    "context": "Runs the test suite; installing libyaml enables extensive table tests."
+   },
+   {
+    "cmd": "configure --without-yaml",
+    "context": "Skips the libyaml-based table tests when running the test suite."
+   }
+  ],
+  "install_notes": "Not a brew-only install. The README describes unpacking the release tarball from GitHub Releases, then running ./configure, make, and sudo make install, with sudo ldconfig possibly needed afterwards. Optional extras are help2man for man pages and libyaml for the extended test suite. Other installation routes are described in the HACKING file, which the README points to. Windows builds are a DLL, and the README does not give a Windows install walkthrough.",
+  "standout": "Translation rules are data in table files rather than hard-coded logic, so one engine covers many languages and braille codes, and new languages can be added through tables. It also ships back-translation and a set of table-testing and tracing tools, which is less common than forward translation alone. The library's clean C interface means it can be called from many language bindings and is embedded in screen readers and in Bookshare's book production.",
+  "status": "maintained. The homepage lists Liblouis Release 3.39.0 dated 01 Sep 2026 and 3.38.0 dated 01 Jun 2026, and a louis-rs 0.3.0 Rust reimplementation dated 22 Sep 2026. The README links a release schedule on the wiki. I did not check the repository commit history.",
+  "caveats": "The library is licensed under LGPLv2.1+, but the command-line tools are GPLv3+, which the README states separately. Building from source is the documented route, with a 16-bit Unicode default and a configure option for 32-bit. The homepage's 3.39.0 notes say the spacing parameter of the translation functions has been deprecated. The README mentions that the tool-side documentation lives on the separate liblouis.io site, and I did not fetch it. The brew entry has no caveats.",
+  "quotes": [
+   "Liblouis is an open-source braille translator and back-translator named in honor of Louis Braille.",
+   "It is written in C so that it does not require a runtime environment and hence can be used in applications written in high-level languages such as Java and Python.",
+   "New languages can easily be added through tables that support a rule- or dictionary based approach."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://liblouis.io"
+   },
+   {
+    "label": "Documentation",
+    "url": "http://www.liblouis.io/documentation/liblouis.html"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/liblouis/liblouis"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/liblouis/liblouis/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://liblouis.io: fetched OK, homepage text with news and project description.",
+   "https://github.com/liblouis/liblouis: fetched OK, README returned. The liblouis.io documentation page was linked but not fetched, to stay within the fetch budget and because the README covers the install commands."
+  ]
+ }
+}

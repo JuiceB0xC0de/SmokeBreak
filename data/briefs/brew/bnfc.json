@@ -1,0 +1,89 @@
+{
+ "name": "bnfc",
+ "desc": "BNF Converter",
+ "homepage": "https://github.com/BNFC/bnfc",
+ "installs_365d": 246,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "language",
+  "library"
+ ],
+ "why": "Generates parsers, printers and interpreters from BNF grammars, a neat window into how languages are built from notation.",
+ "brief": {
+  "what_it_is": "The BNF Converter (bnfc) is a command-line compiler-construction tool. It takes a Labelled BNF (LBNF) grammar file, such as Sum.cf, and generates a compiler front-end from it. Output is an abstract syntax implementation, a case skeleton for that syntax, a lexer file for Alex, Ocamllex, JLex or Flex, a parser file for Happy, Ocamlyacc, Menhir, ANTLR, CUP or Bison, a pretty-printer module, and a LaTeX file with a readable specification of the language. The README says it can target Haskell, Agda, C, C++, Java and OCaml, and also XML representations.",
+  "why_it_exists": "The README describes bnfc as a compiler construction tool that generates a compiler front-end from a grammar, so authors don't have to hand-write the parser, syntax types and printer for each language. The README does not spell out a broader motivation beyond that.",
+  "how_it_works": "You write the grammar once in LBNF. bnfc reads it and emits source files for your chosen target language, wiring a lexer generator and a parser generator to a generated abstract syntax and pretty-printer. The README's tutorial then builds the generated code with make, and the resulting test binary parses stdin. The README does not describe the internal pipeline in more detail.",
+  "commands_seen": [
+   {
+    "cmd": "stack install BNFC",
+    "context": "Installs the latest bnfc from Stackage (the README's recommended route; needs stack)."
+   },
+   {
+    "cmd": "bnfc --help",
+    "context": "Prints bnfc's help after installation; the README pairs it with each install method."
+   },
+   {
+    "cmd": "cabal install BNFC",
+    "context": "Installs bnfc from Hackage using cabal, given a working GHC and Cabal."
+   },
+   {
+    "cmd": "git clone https://github.com/BNFC/bnfc.git",
+    "context": "Fetches the development version of the source to build the latest bugfixes."
+   },
+   {
+    "cmd": "stack install --stack-yaml stack-9.12.yaml",
+    "context": "Builds the development version with stack; the README says to swap 9.12 for your GHC major version."
+   },
+   {
+    "cmd": "bnfc -d -m Sum.cf  &&  make",
+    "context": "Tutorial step: generates a Haskell parser from the Sum.cf grammar and builds it with make."
+   },
+   {
+    "cmd": "echo \"1 + 2 + 3\" | Sum/Test",
+    "context": "Tutorial step: runs the generated Haskell test binary on a sample expression."
+   },
+   {
+    "cmd": "bnfc --c   -m -o sum-c   Sum.cf  &&  make -C sum-c    &&  echo \"1 + 2 + 3\" | sum-c/TestSum",
+    "context": "Generates the C backend into sum-c, builds it, and runs the test on a sample input."
+   },
+   {
+    "cmd": "bnfc --cpp -m -o sum-cpp Sum.cf  &&  make -C sum-cpp  &&  echo \"1 + 2 + 3\" | sum-cpp/TestSum",
+    "context": "Same flow as the C example, using the C++ backend."
+   }
+  ],
+  "install_notes": "Pre-built binaries are on the GitHub releases page. From source, the README recommends stack (stack install BNFC) and also supports cabal (cabal install BNFC), with GHC and Cabal, which it suggests getting through GHCup. Building the generated Haskell parser needs GHC, alex and happy, which the README says come with the GHC installation. The C-family backends need gcc or g++, flex and bison. Java needs Java plus JLex or JFlex and CUP; --java-antlr needs ANTLR; OCaml needs ocamllex and ocamlyacc, or menhir with --ocaml-menhir. Agda bindings wrap the Haskell parser. The README lists a Pygments lexer option too.",
+  "standout": "The same LBNF grammar produces a parser, printer, syntax types and a LaTeX spec across many languages and parser generators, which makes it a practical way to see how a language's grammar drives its implementation. The README also lists research and teaching uses, including NASA's OGMA and a Chalmers course.",
+  "status": "maintained (inferred, not confirmed): the README shows a live Haskell CI badge, a Hackage badge, and a Stackage LTS table that runs to LTS 24.3 with BNFC 2.9.5. The README gives no release date or last-commit date, and I did not check the releases page or commit history.",
+  "caveats": "The README lists no runtime limits, but it points to an issue tracker for current limitations. Building from source needs a Haskell toolchain, and most backends also need external lexer and parser generators installed. The license is BSD 3-clause, but versions up to 2.8.4 were GPL. The scout note describes the tool as generating 'interpreters'; the README does not say that, and it describes a front-end (parser, printer, abstract syntax) instead.",
+  "quotes": [
+   "The BNF Converter (bnfc) is a compiler construction tool generating a compiler front-end from a Labelled BNF (LBNF) grammar.",
+   "Installation from the Haskell sources is possible via `stack` or `cabal`.",
+   "Document, document, document!  (See style guide)"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/BNFC/bnfc"
+   },
+   {
+    "label": "Documentation (Read the Docs)",
+    "url": "https://bnfc.readthedocs.org/en/latest/"
+   },
+   {
+    "label": "Project site",
+    "url": "http://bnfc.digitalgrammars.com/"
+   },
+   {
+    "label": "Hackage package",
+    "url": "https://hackage.haskell.org/package/BNFC"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/BNFC/bnfc (homepage, GitHub repository): fetched OK, README returned. Docs site not fetched because the README was complete enough for this brief."
+  ]
+ }
+}

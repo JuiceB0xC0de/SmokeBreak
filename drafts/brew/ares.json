@@ -1,0 +1,156 @@
+{
+ "name": "ares",
+ "desc": "Automated decoding of encrypted text",
+ "homepage": "https://github.com/bee-san/Ares",
+ "installs_365d": 176,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "afternoon"
+ ],
+ "why": "Automatically chains through encodings and ciphers to decode text, a fun puzzle-solving transform for exploring classical crypto.",
+ "brief": {
+  "what_it_is": "Ciphey is a command-line tool and Rust library that takes encoded or encrypted text and works out the chain of decoders needed to recover the plaintext, with no key, cipher name, or hint supplied. It searches through combinations of encodings and classical ciphers such as Base64, hex, Caesar/ROT13, Vigenere, and Morse, several layers deep. Input is text pasted or read from a file, and the output is the candidate plaintext, the decoder path used (for example Base64 \u2192 Hexadecimal \u2192 caesar), and any key it found. It runs under a time limit, five seconds by default.",
+  "why_it_exists": "The README presents it as the next generation of Ciphey, a Python decoding tool that the same author plans to replace. The pitch is speed: Ciphey is 'very fast', and the old tool 'could run forever' with no answer and no signal that it had given up.",
+  "how_it_works": "An A* search tries chains of decoders, running fast ones like Base64 first and ordering the rest with a heuristic from the cipher_identifier crate. Candidate outputs are checked for plaintext by an English checker (trigram and dictionary based), LemmeKnow (a Rust port of pyWhat that recognises more than 120 formats), and a common-password check, and the search stops at the first candidate that passes. Decoders run in parallel with Rayon, and results are cached in ~/.ciphey/database.sqlite.",
+  "commands_seen": [
+   {
+    "cmd": "cargo install ciphey",
+    "context": "Primary install route from crates.io, which the README calls the second-best way to use it (the best is the Discord bot)."
+   },
+   {
+    "cmd": "ciphey -t 'aGVsbG8gdGhlcmUgZ2VuZXJhbA=='",
+    "context": "Basic decode of a Base64 string via the -t text flag; prompts y/N to confirm the candidate and reports 'hello there general'."
+   },
+   {
+    "cmd": "ciphey -t 'NTA3NjYzNzU3MjZjMjA3NjY2MjA2OTcyNjU2YzIwNzM2ZTY2Njc='",
+    "context": "Example of a three-layer chain (ROT13 \u2192 hex \u2192 Base64) decoded with no other arguments."
+   },
+   {
+    "cmd": "ciphey -d -t '...'",
+    "context": "Disables the y/N prompt and takes the first plaintext found, for use in scripts."
+   },
+   {
+    "cmd": "ciphey -c 15 -t '...'",
+    "context": "Raises the search timeout to 15 seconds (default is 5)."
+   },
+   {
+    "cmd": "ciphey -r 'flag\\{' -t '...'",
+    "context": "Crib mode: accepts only plaintext matching the regex flag\\{, useful for CTF flag formats."
+   },
+   {
+    "cmd": "ciphey --wordlist words.txt -t '...'",
+    "context": "Also accepts any candidate that exactly matches a line in the given wordlist file."
+   },
+   {
+    "cmd": "cargo install ciphey --features mcp --bin ciphey-mcp",
+    "context": "Builds the MCP server so AI assistants such as Claude Desktop or Kiro can call the decoder; not in a crates.io release yet, so the README suggests installing from git."
+   },
+   {
+    "cmd": "kiro-cli mcp add --name ciphey --command ciphey-mcp",
+    "context": "Registers the ciphey-mcp server with the Kiro CLI."
+   },
+   {
+    "cmd": "cargo build --release",
+    "context": "Builds from a git clone; the binary lands at target/release/ciphey."
+   },
+   {
+    "cmd": "cargo run --example decode",
+    "context": "Runs the library example that tours the single-decoder and detection APIs; 'cargo run --example decode -- list' lists decoders."
+   }
+  ],
+  "install_notes": "cargo install ciphey is the main route. Prebuilt binaries for Linux x86_64, macOS (Intel and Apple silicon), and Windows x86_64 are on the GitHub releases page, each with a .sha256 checksum. Building from source needs a Rust toolchain. On first run, a short setup asks for a colour theme, how results are shown, and whether to use a wordlist, then writes ~/.ciphey/config.toml. The Ares-era README also mentions a BERT-based 'enhanced detection' option that needs a one-time download of a roughly 500MB model and a free Hugging Face account, enabled with 'ciphey --enable-enhanced-detection'; the current README does not mention it. A Dockerfile exists per the older README (git clone, then docker build .). The brew formula gives no extra install steps.",
+  "standout": "Most decoders need you to name the cipher, or they brute-force one at a time. This tool searches chains of decoders with no key or hint, and its crib mode (-r with a regex like flag\\{) suits CTF work. It also reports what the plaintext is (for example an IP address, a TOTP URI, or a password in a mount command), not just the decoded string.",
+  "status": "Unknown as to exact dates: neither page shows a last-commit or release date. Evidence of ongoing work: the current README mentions an MCP server and a crates.io 0.12.0 release that is behind master, plus a Notion doc and a Discord bot. The Ares-named page carries an older README (Dec 2022 screenshot, 16 decoders), so the two pages are at different points in the project's history.",
+  "caveats": "Name mismatch: the brew formula is named 'ares' with executable 'ares', but the README describes the 'ciphey' crate and binary, and says Ares was the old name. Check the binary name after install. The bee-san/Ares URL serves an older README for the same project, and the current README lives at bee-san/Ciphey. Plaintext detection is imperfect: very short phrases, non-English text, JSON, and unusual flag formats can be missed or misidentified. The default timeout is 5 seconds. The library API on master differs from the crates.io 0.12.0 release (a git dependency is needed for the newer functions). The MCP feature is not in a crates.io release yet. Licence is MIT. The homepage fetch did not fail, but the content may not match what the brew formula's description implies. The decoder count differs between sources: 16 in the Ares-era README, 24 in the current one.",
+  "quotes": [
+   "ciphey is the next generation of decoding tools, built by the same people that brought you Ciphey.",
+   "Paste in text that's been encoded or encrypted. Ciphey works out how and hands you the plaintext.",
+   "No key, no cipher name, no hints.",
+   "One of the big issues with Ciphey is that it could run forever. If it couldn't decode your text, you'd never know!"
+  ],
+  "links": [
+   {
+    "label": "Homepage (bee-san/Ares, serves Ciphey README)",
+    "url": "https://github.com/bee-san/Ares"
+   },
+   {
+    "label": "Current repository (bee-san/Ciphey)",
+    "url": "https://github.com/bee-san/Ciphey"
+   },
+   {
+    "label": "API docs on docs.rs",
+    "url": "https://docs.rs/ciphey"
+   },
+   {
+    "label": "Blog post: Introducing Ares",
+    "url": "https://skerritt.blog/introducing-ares/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/bee-san/Ares: worked; returned the README, which is for the Ciphey project (older text, mentions Ares as the former name in links only).",
+   "https://github.com/bee-san/ciphey: worked; returned the current Ciphey README with install, CLI, MCP, and library sections. No further fetches made."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A chain-searching decoder that infers stacked encodings and classical ciphers from plaintext signals is a worthwhile hands-on transform, despite its limits to weak and classical schemes."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "ares",
+  "tldr": "Paste in encoded or encrypted text and it searches chains of decoders, with no key or hint, until plaintext falls out.",
+  "deeper_look": "Ares takes a blob of text and works out how to undo it. It tries combinations of encodings and classical ciphers, such as Base64, hex, Caesar/ROT13, Vigenere and Morse, several layers deep. The output is the candidate plaintext, the path it took (for example Base64 \u2192 Hexadecimal \u2192 caesar), and any key it found. It runs under a time limit, five seconds by default, so it gives up instead of running forever.\n\nThe project is the Rust successor to a Python tool called Ciphey, and the README says the old one \"could run forever\" with no sign it had failed. The rewrite is about speed and a clear stopping point. Names are tangled: Ares was the earlier name, and the current README describes the binary as `ciphey`. After installing, check which executable you actually got.\n\nUnderneath is a search problem. An A* search tries chains of decoders, runs cheap ones like Base64 first, and orders the rest with a heuristic from the cipher_identifier crate. The hard part is knowing when to stop, so each candidate is checked by an English checker (trigrams and a dictionary), LemmeKnow (a Rust port of pyWhat that recognises 120+ formats), and a common-password check. It can also say what the plaintext is, such as an IP address or a TOTP URI, rather than just printing it.\n\nThat makes it a small door into classical crypto, encodings, and CTF-style puzzles. You can watch which layers it peels and think about why some chains are easy to detect and others are not.",
+  "install": "brew install ares\n# The README's own route is `cargo install ciphey` (needs a Rust toolchain); prebuilt binaries for Linux, macOS and Windows are on the GitHub releases page.\n# First run asks a few setup questions (colour theme, result display, wordlist) and writes ~/.ciphey/config.toml.",
+  "try_this": [
+   {
+    "cmd": "ciphey -t 'aGVsbG8gdGhlcmUgZ2VuZXJhbA=='",
+    "what_happens": "Decodes a Base64 string, asks you to confirm with y/N, and reports 'hello there general'."
+   },
+   {
+    "cmd": "ciphey -c 15 -t 'NTA3NjYzNzU3MjZjMjA3NjY2MjA2OTcyNjU2YzIwNzM2ZTY2Njc='",
+    "what_happens": "Unwinds a three-layer chain (ROT13 \u2192 hex \u2192 Base64) with the timeout raised from 5 to 15 seconds."
+   },
+   {
+    "cmd": "ciphey -r 'flag\\{' -t '...'",
+    "what_happens": "Crib mode: only accepts plaintext matching the regex, handy for CTF flag formats."
+   }
+  ],
+  "whats_unique": "Most decoders make you name the cipher or brute-force one at a time. This one searches chains of decoders with no hint and tells you what kind of thing the plaintext is.",
+  "caveats": "The brew formula is named ares but the README documents a ciphey binary, plaintext detection misses short phrases, non-English text and odd flag formats, and no release dates were visible.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "crypto",
+   "ciphers",
+   "encodings",
+   "ctf",
+   "rust",
+   "puzzles"
+  ],
+  "links": [
+   {
+    "label": "Homepage (bee-san/Ares)",
+    "url": "https://github.com/bee-san/Ares"
+   },
+   {
+    "label": "Current repository (bee-san/Ciphey)",
+    "url": "https://github.com/bee-san/Ciphey"
+   },
+   {
+    "label": "API docs on docs.rs",
+    "url": "https://docs.rs/ciphey"
+   },
+   {
+    "label": "Blog post: Introducing Ares",
+    "url": "https://skerritt.blog/introducing-ares/"
+   }
+  ]
+ }
+}

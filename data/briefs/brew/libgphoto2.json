@@ -1,0 +1,91 @@
+{
+ "name": "libgphoto2",
+ "desc": "Gphoto2 digital camera library",
+ "homepage": "http://www.gphoto.org/proj/libgphoto2/",
+ "installs_365d": 6518,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "quick",
+  "library"
+ ],
+ "why": "A door into talking to digital cameras over USB and PTP, though it is mostly a library underneath other tools.",
+ "brief": {
+  "what_it_is": "libgphoto2 is a C library that lets other programs talk to digital cameras over USB and similar links. It takes in camera requests from a calling application (list files, fetch images, change settings) and sends them to the camera using protocols it understands, mainly PTP, with MTP also covered. It has no window of its own. The project describes it as a backend that frontends such as the gphoto2 command-line tool, digiKam, gThumb and Darktable build on.",
+  "why_it_exists": "The homepage describes it as the core library designed to allow access to digital cameras by external programs. The README frames it as the successor to the original gphoto, with more features and additional camera drivers.",
+  "how_it_works": "The homepage says it abstracts communication ports from camera protocol, so a new physical link can be added as a port in libgphoto2_port and a new camera family as a camlib with the required callbacks. Client programs stay unaware of these details. The README adds that cameras using USB Mass Storage need no libgphoto2 because the OS already mounts them, while PTP cameras unknown to the library fall back to a generic PTP driver that usually works without configuration.",
+  "commands_seen": [
+   {
+    "cmd": "autoreconf -is  # if using a git clone",
+    "context": "Regenerates the build scripts; the README says to run it only when building from a git clone."
+   },
+   {
+    "cmd": "./configure PKG_CONFIG_PATH=\"$HOME/.local/lib/pkgconfig${PKG_CONFIG_PATH+\":${PKG_CONFIG_PATH}\"}\" --prefix=\"$HOME/.local\"",
+    "context": "Configures the build to install into $HOME/.local; the README says to adapt or remove these arguments if you want a different prefix."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles the library after configure."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the built library to the configured prefix."
+   },
+   {
+    "cmd": "meson setup builddir && cd builddir",
+    "context": "Alternative Meson build: creates a build directory from the source root and enters it."
+   },
+   {
+    "cmd": "meson compile",
+    "context": "Compiles the Meson build inside builddir."
+   },
+   {
+    "cmd": "meson test",
+    "context": "Runs the test suite of the Meson build."
+   },
+   {
+    "cmd": "env LC_ALL=C gphoto2 --debug-logfile=logfile.log --debug <options>",
+    "context": "Reproduces a bug with English messages and debug output written to logfile.log, for use in bug reports; this runs the separate gphoto2 frontend."
+   },
+   {
+    "cmd": "env LC_ALL=C gtkam",
+    "context": "Same English-language debug reproduction, but for the gtkam GUI frontend."
+   }
+  ],
+  "install_notes": "Build from source with autoreconf/configure/make/make install, or with Meson (meson setup builddir, meson compile, meson test). The README suggests installing into $HOME/.local by setting PKG_CONFIG_PATH and --prefix. Out-of-tree builds are supported. The gphoto2 manual covers setting up USB hotplugging, which the README says to consult if problems arise. Homebrew's executables listed are gphoto2-config and gphoto2-port-config. I did not see their usage in the pages I read.",
+  "standout": "It is a backend with a pluggable split: ports for physical links and camlibs for camera protocols, so new hardware can be added without changing client programs. It also falls back to a generic PTP driver for unknown cameras, so many models work with no configuration.",
+  "status": "unknown. Neither the homepage nor the GitHub README shows a release date, last commit, or version number, so I cannot judge recency. The GitHub README does describe a current Meson build and a mailing list for reports. Its gtkam frontend is described as unmaintained, but that applies to gtkam, not libgphoto2.",
+  "caveats": "The README says it is designed for Unix-like platforms, and Microsoft operating systems are not currently supported. It cannot talk to cameras that use proprietary protocols that are undocumented or not reverse-engineered. It is not a standalone GUI, so you need a frontend such as gphoto2 or digiKam. USB hotplug setup is a separate step described in the manual. The homepage's camera support list is only linked, not read.",
+  "quotes": [
+   "libgphoto2 is a library that can be used by applications to access various digital cameras.",
+   "Unlike the original gphoto, libgphoto2 is not a standalone graphical user interface (GUI) application. Instead, it is a backend library.",
+   "Every piece of software contains errors and flaws. So does libgphoto2."
+  ],
+  "links": [
+   {
+    "label": "libgphoto2 homepage",
+    "url": "http://www.gphoto.org/proj/libgphoto2/"
+   },
+   {
+    "label": "Supported camera list with protocol status",
+    "url": "https://gphoto.sourceforge.io/proj/libgphoto2/support.php"
+   },
+   {
+    "label": "gphoto2 Manual",
+    "url": "http://www.gphoto.com/doc/manual/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/gphoto/libgphoto2"
+   }
+  ],
+  "fetch_log": [
+   "http://www.gphoto.org/proj/libgphoto2/ (homepage): loaded, but thin. It gives an overview and points to a manual chapter and a supported-cameras list, but the link targets were not in the returned text.",
+   "https://github.com/gphoto/libgphoto2 (GitHub README, followed from the project's own README references): loaded, full README with build commands and protocol notes.",
+   "Not fetched: gphoto2 Manual and the camera support list. The manual is linked from the README and the camera list from both pages, but I stopped at two fetches."
+  ]
+ }
+}

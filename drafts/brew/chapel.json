@@ -1,0 +1,151 @@
+{
+ "name": "chapel",
+ "desc": "Programming language for productive parallel computing at scale",
+ "homepage": "https://chapel-lang.org/",
+ "installs_365d": 846,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language"
+ ],
+ "why": "A parallel programming language from Cray with a global-view model that is a strange and rarely explored corner of language design.",
+ "brief": {
+  "what_it_is": "Chapel is a compiled, open-source programming language for parallel computing, aimed at code that runs from a laptop up to clusters and supercomputers. You write one program using Chapel's parallel constructs (such as coforall, forall, and on loc) and the compiler turns it into machine code. The same language features also cover GPU execution and running across multiple compute nodes ('locales'). The homepage shows small examples: Hello World, Distributed Hello World, parallel file IO, a 1D heat diffusion solver, and a GPU kernel. The brew caveats describe running multi-locale programs locally and simulating a GPU with --gpu=cpu.",
+  "why_it_exists": "The README says Chapel is designed for productive parallel computing at scale and is meant to run on the CPUs and GPUs of laptops, desktops, commodity clusters, and the cloud, as well as the high-end supercomputers it was built for. The homepage tagline is 'Productive parallel computing at every scale.'",
+  "how_it_works": "The homepage says Chapel is a compiled language that generates efficient machine code. Parallelism is expressed with language constructs: coforall creates a task per core, forall runs iterations in parallel, and on loc moves work to a compute node. The homepage says GPU programming uses the same language features as distributed execution, with no separate API. Beyond that, the pages I read did not explain the internals.",
+  "commands_seen": [
+   {
+    "cmd": "brew install chapel",
+    "context": "Homebrew install of the Chapel formula, from the download page."
+   },
+   {
+    "cmd": "brew update",
+    "context": "Download page advice to update Homebrew before installing the formula."
+   },
+   {
+    "cmd": "chpl --print-chpl-home",
+    "context": "Download page: with a Homebrew install, this prints the CHPL_HOME path."
+   },
+   {
+    "cmd": "chpl --comm=gasnet --comm-substrate=udp",
+    "context": "From the brew caveats in the package metadata (not a fetched page): compiles a Chapel program for local multi-locale runs."
+   },
+   {
+    "cmd": "chplrun-udp ./your_program_name",
+    "context": "From the brew caveats (not a fetched page): runs a multi-locale program compiled with the gasnet/udp settings."
+   },
+   {
+    "cmd": "chpl --locale-model=gpu --gpu=cpu",
+    "context": "From the brew caveats (not a fetched page): compiles a program to simulate GPU execution on the CPU."
+   },
+   {
+    "cmd": "spack install chapel+chpldoc",
+    "context": "Download page: Spack install that also includes the chpldoc documentation tool."
+   },
+   {
+    "cmd": "docker pull chapel/chapel",
+    "context": "Download page: pulls the official Chapel Docker image."
+   },
+   {
+    "cmd": "dnf install ./<chapel package name>",
+    "context": "Download page: installs a downloaded Chapel RPM on Fedora, RHEL, and similar distributions."
+   },
+   {
+    "cmd": "apt install ./<chapel package name>",
+    "context": "Download page: installs a downloaded Chapel .deb on Debian and Ubuntu."
+   }
+  ],
+  "install_notes": "Homebrew is one of several routes: brew update, then brew install chapel, and CHPL_HOME can be found with chpl --print-chpl-home. The download page also lists building from source (chapel-2.10.0.tar.gz on GitHub, then the Quickstart instructions), Spack (variants replace the usual CHPL_* environment settings), a Docker image, prebuilt Linux packages for many distributions (RHEL-family systems need EPEL first), and 'module load chapel' on HPE Cray EX systems. No accounts or licences are needed beyond the open-source install. Multi-locale and GPU runs need the extra compile flags in the brew caveats.",
+  "standout": "Most languages with a parallel story use a library or a separate GPU API; Chapel tries to express distributed multi-node execution and GPU kernels with the same language constructs, using a global-view style where you write over whole arrays and domains and the 'on' clauses decide placement. The homepage example for distributed array iteration uses blockDist, and the GPU example uses here.gpus with on gpu. The scout note calls it a rarely explored corner of language design, and the homepage claims code that is shorter than C/OpenMP predecessors (the CHAMPS case).",
+  "status": "Maintained. The homepage's latest news item is 'Announcing Chapel 2.10!' dated September 24, 2026, and the download page names 2.10.0 as the current version. The homepage also lists news posts from April to September 2026, and the download page links prebuilt packages for many distributions. I did not check commit history or the release page.",
+  "caveats": "By default, compiled Chapel programs run only on a single locale; multi-locale and GPU simulation need the extra compile flags from the brew caveats. Download page caveats: BigInteger performance and the bundled GASNet multi-locale builds need a source build for best results, and the bundled libfabric multi-locale configuration is experimental and was known to work only with the tcp and efa providers. The HPE page says that only HPE Cray EX systems get the module load route, and other HPE or Cray systems need a source build. The README says third-party packages are under their own licences. The scout note's claim that Chapel comes from Cray is not confirmed by the pages I fetched, although the HPE Cray material is consistent with it. The homepage was reachable, so this is not an outage case.",
+  "quotes": [
+   "Chapel is a modern programming language designed for productive parallel computing at scale.",
+   "Productive parallel computing at every scale.",
+   "Entirely open-source using the Apache 2.0 license. Built by a great community of developers. Join us!"
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://chapel-lang.org/"
+   },
+   {
+    "label": "Chapel documentation",
+    "url": "https://chapel-lang.org/docs/"
+   },
+   {
+    "label": "Sample computations / examples",
+    "url": "https://chapel-lang.org/docs/examples/"
+   },
+   {
+    "label": "Try Chapel online",
+    "url": "https://chapel-lang.org/tryit/"
+   }
+  ],
+  "fetch_log": [
+   "https://chapel-lang.org/ - worked; homepage with the tagline, code examples, feature list, showcase projects, and news.",
+   "https://github.com/chapel-lang/chapel - worked; returned the README (reStructuredText). It is short and points to the website for docs and install instructions.",
+   "https://chapel-lang.org/download/ - worked; install methods for source, Spack, Docker, Homebrew, HPE systems, and Linux packages. I did not follow the Quickstart or docs links."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Chapel is an unusual parallel language where one global-view model spans local computation, distributed arrays, multi-node execution, and GPUs."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Chapel",
+  "tldr": "A compiled parallel programming language where threads, multiple machines and GPUs are all written with the same few language constructs, and it runs on a laptop.",
+  "deeper_look": "Chapel is a compiled, open-source language for parallel computing. You write one program using constructs such as `coforall` (a task per core), `forall` (iterations in parallel) and `on loc` (move work to another compute node, called a locale). The compiler, `chpl`, turns that into machine code. The homepage shows small examples: Hello World, a distributed Hello World, parallel file IO, a 1D heat diffusion solver and a GPU kernel.\n\nThe project's own line is \"Productive parallel computing at every scale.\" It was built for high-end supercomputers, and the README says it is also meant for the CPUs and GPUs of laptops, desktops, commodity clusters and the cloud.\n\nThe idea underneath is a global-view style. Most languages bolt parallelism on through a library or a separate GPU API. Chapel instead has you write over whole arrays and domains, and `on` clauses decide where the work lands. The homepage says GPU programming uses the same language features as distributed execution, with no separate API. The distributed array example uses `blockDist`, and the GPU example uses `here.gpus` with `on gpu`.\n\nThe brew install also provides `mason` (a package manager), `chpldoc`, `chplcheck` (a linter), a language server and `c2chapel`. Those make it feel like a complete toolchain rather than a research toy.",
+  "install": "brew install chapel\n# Programs compile single-locale by default. For local multi-locale runs or simulated GPUs, use the extra flags in the first two try_this commands below.",
+  "try_this": [
+   {
+    "cmd": "chpl --comm=gasnet --comm-substrate=udp",
+    "what_happens": "Compiles a Chapel program for multi-locale execution, so you can simulate several nodes on your own machine. Add your source file name."
+   },
+   {
+    "cmd": "chplrun-udp ./your_program_name",
+    "what_happens": "Runs the program you compiled with the gasnet/udp settings across local locales."
+   },
+   {
+    "cmd": "chpl --locale-model=gpu --gpu=cpu",
+    "what_happens": "Compiles a program with GPU kernels but simulates the GPU on the CPU, so no graphics card is needed."
+   }
+  ],
+  "whats_unique": "Distributed multi-node execution and GPU kernels use the same language constructs, with no separate API, and you can try both on a laptop.",
+  "caveats": "Compiled programs are single-locale by default, multi-locale and simulated GPU runs need extra compile flags, and the bundled libfabric multi-locale setup is experimental.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "language",
+   "parallel",
+   "gpu",
+   "compiler",
+   "hpc"
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://chapel-lang.org/"
+   },
+   {
+    "label": "Chapel documentation",
+    "url": "https://chapel-lang.org/docs/"
+   },
+   {
+    "label": "Sample computations / examples",
+    "url": "https://chapel-lang.org/docs/examples/"
+   },
+   {
+    "label": "Try Chapel online",
+    "url": "https://chapel-lang.org/tryit/"
+   }
+  ]
+ }
+}

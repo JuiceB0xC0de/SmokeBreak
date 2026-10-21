@@ -1,0 +1,94 @@
+{
+ "name": "monocle",
+ "desc": "See through all BGP data with a monocle",
+ "homepage": "https://github.com/bgpkit/monocle",
+ "installs_365d": 303,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "A BGP data explorer that lets you watch the internet's routing tables, a real window into a protocol almost nobody looks at.",
+ "brief": {
+  "what_it_is": "Monocle is a command-line tool, written in Rust and also usable as a library, for searching and inspecting BGP routing data. It takes public BGP sources (MRT archives from RIPE RIS and Route Views found through the BGPKit Broker, local or remote MRT files, and the live RIPE RIS Live stream) plus supporting datasets such as RPKI, prefix-to-AS mappings, AS relationships, and AS registration info. It outputs filtered BGP messages or reconstructed routing tables as table, markdown, JSON, JSON lines, PSV, or SQLite. It also has an HTTP/SSE server mode.",
+  "why_it_exists": "The README says it is a way to \"See through all Border Gateway Protocol (BGP) data with a monocle.\" It is aimed at turning the large, scattered public BGP archives into something you can query from a shell, with one filter syntax shared across parse, search, and watch.",
+  "how_it_works": "Subcommands read MRT files (parse), query the BGPKit Broker for matching public archive files (search), subscribe to RIS Live (watch), or load a RIB at or before a timestamp and replay updates up to the requested time (rib). Filters such as origin ASN, prefix, peer, community, and AS-path regex apply to each BGP element. For watch, host, prefix, peer IP, and elem type are pushed down to the RIS Live subscription, and the rest are checked client-side. Results go to the chosen formatter, or to SQLite or MRT files.",
+  "commands_seen": [
+   {
+    "cmd": "cargo install monocle",
+    "context": "Install from crates.io using Cargo (the Rust toolchain)."
+   },
+   {
+    "cmd": "brew install monocle",
+    "context": "Install via Homebrew on macOS."
+   },
+   {
+    "cmd": "docker run --rm bgpkit/monocle:latest watch --host rrc00 --origin-asn 13335",
+    "context": "Run the Docker image to stream live RIS Live messages for origin AS13335 from collector rrc00."
+   },
+   {
+    "cmd": "monocle parse file.mrt -o 13335,15169,8075",
+    "context": "Parse a local MRT file and keep elements whose origin is any of the three listed ASNs (OR logic)."
+   },
+   {
+    "cmd": "monocle parse -o 64496 rib.gz | cut -d'|' -f5 | sort -u > prefixes.txt",
+    "context": "Extract a unique prefix list for origin AS64496 from a RIB dump, as the first step of the filter-file workflow."
+   },
+   {
+    "cmd": "monocle search -t 2024-01-01 -d 1h -p 1.1.1.0/24 --use-cache",
+    "context": "Search public MRT archives for one hour of data touching 1.1.1.0/24, caching downloaded files under the XDG cache directory."
+   },
+   {
+    "cmd": "monocle watch --host rrc00 --prefix 45.57.60.0/24 -S --record incident.mrt.bz2",
+    "context": "Watch one collector for a prefix and its sub-prefixes, and record the filtered stream to an MRT file for later replay."
+   },
+   {
+    "cmd": "monocle watch --origin-asn 13335 --json | jq -c 'select(.prefix|contains(\"2400:cb00\"))'",
+    "context": "Stream live messages as JSON and filter them with jq."
+   },
+   {
+    "cmd": "monocle rib 2025-09-01T12:00:00Z -c rrc00 -o 13335",
+    "context": "Print the reconstructed routing table for collector rrc00 at the given time, limited to origin AS13335, to stdout."
+   },
+   {
+    "cmd": "monocle time 1704067200",
+    "context": "Convert a Unix timestamp to RFC 3339 and a human-readable form."
+   }
+  ],
+  "install_notes": "Install with cargo install monocle, cargo binstall monocle (after installing cargo-binstall), brew install monocle on macOS, or the Docker image (docker build -t bgpkit/monocle:latest . or docker compose build). The Docker image defaults to server mode; docker compose up -d starts the server, and the README shows a health check at http://localhost:8080/health. Config defaults to $XDG_CONFIG_HOME/monocle/monocle.toml, with environment variables prefixed MONOCLE_ and an optional --config flag. Data and cache paths follow XDG as well. Automatic database updates run unless --no-update is given. No accounts or special hardware are mentioned in the README. Server auth is optional, using a token.",
+  "standout": "Watch and parse share one filter vocabulary, and a live watch can be recorded as an MRT file and then replayed offline through parse with the same filters. The rib command rebuilds the routing table at an arbitrary timestamp from the nearest earlier RIB plus updates, instead of only offering raw archive files.",
+  "status": "Maintained. The GitHub releases page lists v1.6.0 as Latest, dated 11 Sep (the year is not shown in the fetched text; the README's example dates suggest 2025). Earlier releases appear roughly monthly through 2025 (v1.5.0 on 17 Aug, v1.4.0 on 21 Jul, v1.3.0 on 27 May, v1.2.0 on 28 Feb, v1.1.0 on 10 Feb). The README has a CI badge and a CHANGELOG, and recent releases have detailed notes.",
+  "caveats": "Live data from watch comes only from RIPE RIS collectors, not global visibility. An unfiltered watch needs --firehose because it is about 5k messages per second. The rib command aborts if any selected collector lacks a RIB at or before the requested time, so it will not return partial results. Search and parse depend on large public archive downloads. The README was truncated at 40,000 characters, so the inspect, country, as2rel, pfx2as, rpki, ip, config, and server sections were not read in full. The crates.io license badge points to a LICENSE file, and the license name was not seen. The Rust-only library API is documented separately, not in the README. Data source choices, such as RPKI historical sources, have changed between releases.",
+  "quotes": [
+   "See through all Border Gateway Protocol (BGP) data with a monocle.",
+   "Live vantage is RIS collectors only, not global visibility.",
+   "A commandline application to search, parse, and process BGP information in public sources."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repository)",
+    "url": "https://github.com/bgpkit/monocle"
+   },
+   {
+    "label": "API documentation (docs.rs)",
+    "url": "https://docs.rs/monocle"
+   },
+   {
+    "label": "crates.io package",
+    "url": "https://crates.io/crates/monocle"
+   },
+   {
+    "label": "BGPKit Broker (data source used by search)",
+    "url": "https://github.com/bgpkit/bgpkit-broker"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/bgpkit/monocle: worked. README returned but cut off at 40,000 characters, so later sections (inspect, country, as2rel, pfx2as, rpki, ip, config, server) were not read.",
+   "https://github.com/bgpkit/monocle/releases: worked. Release list and notes for v1.6.0 down to v1.1.0 were visible; the text was also cut off at 40,000 characters, and the year on the release dates is not shown."
+  ]
+ }
+}

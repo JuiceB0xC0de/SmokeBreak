@@ -1,0 +1,105 @@
+{
+ "name": "gpsd",
+ "desc": "Global Positioning System (GPS) daemon",
+ "homepage": "https://gpsd.gitlab.io/gpsd/",
+ "installs_365d": 1301,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "network",
+  "protocol"
+ ],
+ "why": "A daemon that multiplexes GPS receivers over a simple protocol, a real door into talking to satellite hardware.",
+ "brief": {
+  "what_it_is": "gpsd is a service daemon that monitors one or more GPS (or AIS) receivers attached to a host computer through serial or USB ports. It reads the raw receiver output and makes location, course and velocity data available to query over TCP port 2947, in a format the project says is much easier to parse than the NMEA 0183 sentences most GPS receivers emit. The distribution also includes a linkable C service library, a C++ wrapper, a Python module, and auxiliary diagnostic tools such as cgps, gpsmon, gpspipe and gpsdecode.",
+  "why_it_exists": "The README says that with gpsd, multiple location-aware applications can share access to one sensor without contention or loss of data, and that it replaces the NMEA 0183 parsing each client would otherwise do. The project also points to a long-running critique of GPS standards and vendors, and argues for a simpler protocol.",
+  "how_it_works": "The daemon watches the attached serial or USB receivers and, under Linux, binary packages install hotplug scripts that start gpsd and tell it which device to read when a USB device appears. gpsd then deduces the baud rate and whether the device is GPS or AIS by inspecting the data stream. Clients connect to TCP 2947 and exchange JSON requests and responses, described in the gpsd_json(5) man page.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt-get install gpsd",
+    "context": "From the project homepage: the suggested way to install gpsd on Debian-based distributions, including Ubuntu, through the regular package manager."
+   },
+   {
+    "cmd": "GPSD_SOCKET=\"$HOMEBREW_PREFIX/var/gpsd.sock\" $HOMEBREW_CELLAR/gpsd/3.27.5/sbin/gpsdctl add /dev/tty.usbserial-XYZ",
+    "context": "Not from the project pages. This is the Homebrew formula caveat text supplied with the package metadata. It tells the user to manually add a GPS device to the running daemon via gpsdctl, because gpsd does not auto-detect device addresses on macOS."
+   }
+  ],
+  "install_notes": "The project does not release binary packages; the INSTALL page is for people running distributions with binary package systems, and BUILD covers building from source. Release tarballs are on the Releases page. On Debian/Ubuntu, apt install gpsd is suggested. On Homebrew, after starting the daemon you must force-add your GPS device with gpsdctl, as shown in the commands list. No accounts or special hardware are required to install, though you need a GPS or AIS receiver to get any data.",
+  "standout": "Under Linux it normally runs with zero configuration: plugging in a USB receiver triggers hotplug scripts that launch the daemon and feed it the device, and it works out baud rate and receiver type on its own. It is also very widely deployed, with the homepage saying it underlies the Android map location service and appears in drones, marine navigation and driverless-car stacks.",
+  "status": "maintained. The homepage says it was last updated on Wed Oct 14 2026, and it reflects the repository tip rather than the latest release. The Homebrew formula is at version 3.27.5. The GitLab project page is live with a BSD 2-Clause license and a CHANGELOG. The GitLab page does not show a release date, so the exact date of the latest release is unknown from what I fetched.",
+  "caveats": "Platform: Linux, OpenBSD and NetBSD are directly supported. Apple OS X is supported only in a limited way, and some older OS X drivers prevent reading from some USB-serial devices. The README says flatly: No, we don't support Windows. Bluetooth: the README warns of serious firmware problems in at least one family of Holux Bluetooth receivers that may brick the GPS. The GitLab page warns that the repository Tags are NOT the project's releases. The man pages on the site describe the development tip, not the stable version. Documentation is spread over many pages, and the README itself is thin; the homepage is the main source.",
+  "quotes": [
+   "gpsd is a service daemon that monitors one or more GPSes or AIS receivers attached to a host computer through serial or USB ports, making all data on the location/course/velocity of the sensors available to be queried on TCP port 2947 of the host computer.",
+   "Under Linux, gpsd normally runs with zero configuration.",
+   "No, we don't support Windows \u2014 get a better operating system."
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://gpsd.gitlab.io/gpsd/"
+   },
+   {
+    "label": "GitLab repository",
+    "url": "https://gitlab.com/gpsd/gpsd"
+   }
+  ],
+  "fetch_log": [
+   "https://gpsd.gitlab.io/gpsd/ \u2014 loaded (project homepage, serves as the documentation index; no README body)",
+   "https://gitlab.com/gpsd/gpsd \u2014 loaded (repository landing page; used for license and project description)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Its receiver autodetection and live interface to GPS and AIS hardware make satellite positioning protocols tangible and worth exploring."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "gpsd",
+  "tldr": "A daemon that reads GPS receivers on serial or USB and serves position, course and velocity as JSON on TCP port 2947, so many programs can share one sensor.",
+  "deeper_look": "gpsd sits between a GPS (or AIS) receiver and the programs that want its data. It reads the raw output from receivers attached over serial or USB and makes location, course and velocity available to query on TCP port 2947. Clients exchange JSON with it, described in the gpsd_json(5) man page. The project says this is much easier to parse than the NMEA 0183 sentences most receivers emit.\n\nThe reason it exists is sharing. With gpsd, several location-aware applications can use one sensor without contention or lost data, and none of them has to write its own NMEA parser. gpsd works out the baud rate and whether the device is GPS or AIS by inspecting the data stream. The project also carries a long-running critique of GPS standards and vendors, and argues for a simpler protocol.\n\nThe idea underneath is that a satellite receiver is just a chatty serial device, and a small daemon turns it into a network service. The package ships diagnostic tools such as cgps, gpsmon, gpspipe and gpsdecode, which let you watch the stream at different levels. It also includes a C library, a C++ wrapper and a Python module. The homepage says it underlies the Android map location service and appears in drones, marine navigation and driverless-car stacks.",
+  "install": "brew install gpsd\n# Homebrew caveat: gpsd does not auto-detect devices. Once started, add your receiver manually:\nGPSD_SOCKET=\"$HOMEBREW_PREFIX/var/gpsd.sock\" $HOMEBREW_CELLAR/gpsd/3.27.5/sbin/gpsdctl add /dev/tty.usbserial-XYZ\n# Needs a GPS or AIS receiver on serial or USB to produce any data. On Debian/Ubuntu: sudo apt-get install gpsd",
+  "try_this": [
+   {
+    "cmd": "gpsd --help",
+    "what_happens": "Lists the daemon's options, including how to point it at a device."
+   },
+   {
+    "cmd": "gpsmon --help",
+    "what_happens": "Shows the options for the monitor that displays raw receiver data."
+   },
+   {
+    "cmd": "gpspipe --help",
+    "what_happens": "Shows how to stream gpsd's data to standard output, for example as JSON."
+   }
+  ],
+  "whats_unique": "It turns any attached GPS receiver into a shared network service with a JSON protocol, and under Linux it runs with zero configuration. It is also very widely deployed.",
+  "caveats": "You need a GPS or AIS receiver to see any data, macOS support is limited, and the README says flatly that Windows is not supported.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "gps",
+   "network",
+   "protocol",
+   "daemon",
+   "serial"
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://gpsd.gitlab.io/gpsd/"
+   },
+   {
+    "label": "GitLab repository",
+    "url": "https://gitlab.com/gpsd/gpsd"
+   }
+  ]
+ }
+}

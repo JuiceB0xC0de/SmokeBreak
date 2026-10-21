@@ -1,0 +1,105 @@
+{
+ "name": "cc65",
+ "desc": "6502 C compiler",
+ "homepage": "https://cc65.github.io/cc65/",
+ "installs_365d": 925,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "ancient",
+  "afternoon"
+ ],
+ "why": "A C compiler targeting the 6502 processor, a real retro toolchain for running code on vintage hardware.",
+ "brief": {
+  "what_it_is": "cc65 is a cross-development suite for 6502-family (65(C)02) systems. It bundles a C compiler (cc65) with a macro assembler (ca65), linker (ld65), archiver (ar65), object-file tools (co65, od65, da65), a simulator (sim65), and other utilities such as chrcvt65, grc65, sp65 and cl65. You feed it C or assembly source and it produces machine code and binaries for old 6502 machines. It ships C and runtime library support for many of those machines.",
+  "why_it_exists": "The README frames it as a complete cross-development package for 65(C)02 systems, giving developers a real C toolchain for vintage hardware. It is originally based on Ron Cain's Small C compiler, enhanced by James E. Hendrix, and was later moved to modern systems and largely rewritten by Ullrich von Bassewitz.",
+  "how_it_works": "The README does not explain the internal mechanism. It says the package has a compiler, assembler, linker, archiver and simulator, and that a generic configuration exists for adapting it to new targets. Target machines are supported through per-machine libraries and configuration.",
+  "commands_seen": [],
+  "install_notes": "Homebrew's caveat says library files are installed to $HOMEBREW_CELLAR/cc65/2.19/share/cc65, so the runtime libraries live in that share directory. The README lists Windows 64-bit and 32-bit snapshot zips on SourceForge and a Linux snapshot DEB/RPM via openSUSE Build Service. No accounts or extra runtimes are mentioned. Target machines like the C64 or NES need their own emulator or hardware to run output.",
+  "standout": "It is a full retro toolchain rather than a single compiler, covering many 8-bit machines from Apple II and Atari to NES, C64, PC Engine and Commander X16 in one package. The target table in the README is long and specific, and the project still has active targets such as the RP6502 Picocomputer.",
+  "status": "Probably maintained, though the evidence is indirect. The Homebrew formula is at version 2.19. The README has a live GitHub Actions snapshot-build badge on master, a named core team, and an active discussions board and IRC channel. I did not see a release date or last-commit date, so this is not confirmed.",
+  "caveats": "The homepage fetch returned almost no content (only a title and a host name), so most of this brief comes from the GitHub README. Output is for retro hardware, so you need an emulator or real machine to run it. The README links Windows and Linux snapshots rather than tagged releases in the text I read, and the Windows zips point to SourceForge. Some target support is marked as contributed by individuals and may vary in completeness. The README says its team list is incomplete.",
+  "quotes": [
+   "cc65 is a complete cross-development package for 65(C)02 systems, including a powerful macro assembler, a C compiler, linker, archiver, simulator and several other tools.",
+   "cc65 has C and runtime library support for many of the old 6502 machines.",
+   "A generic configuration to adapt cc65 to new targets is also around."
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://cc65.github.io/cc65/"
+   },
+   {
+    "label": "User and developer documentation",
+    "url": "https://cc65.github.io/doc"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/cc65/cc65"
+   }
+  ],
+  "fetch_log": [
+   "https://cc65.github.io/cc65/ : fetched, but returned only a page title and host name with no body content",
+   "https://github.com/cc65/cc65 : fetched OK, README returned in full; used as the main source",
+   "https://cc65.github.io/doc : not fetched (fetch budget was not needed after README was complete)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A mature cross-development suite that brings C to 6502 machines like the NES and C64, opening a hands-on window into programming severe 8-bit constraints."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "cc65",
+  "tldr": "A full C compiler and assembler toolchain for the 6502 chip, letting you write C that runs on the C64, NES, Apple II and other 8-bit machines.",
+  "deeper_look": "cc65 is a cross-development suite for 6502-family systems. You write C or assembly on a modern computer and it produces machine code for old hardware. The package bundles a C compiler (cc65), a macro assembler (ca65), a linker (ld65), an archiver (ar65), a simulator (sim65), and object-file tools such as co65, od65 and da65. It also includes utilities like chrcvt65, grc65 and sp65. The cl65 driver wraps the steps together.\n\nThe project descends from Ron Cain's Small C compiler, enhanced by James E. Hendrix, and was later moved to modern systems and largely rewritten by Ullrich von Bassewitz. Its README describes it as \"a complete cross-development package for 65(C)02 systems.\"\n\nThe door it opens is the idea of a target. The same C source can be built for different machines by swapping the per-machine library and linker configuration. The README says \"cc65 has C and runtime library support for many of the old 6502 machines,\" and that \"a generic configuration to adapt cc65 to new targets is also around.\" Reading how a C runtime gets squeezed onto a chip with an 8-bit accumulator and a tiny stack is a good way to see what C quietly assumes about the machine underneath.\n\nThe Homebrew install puts the runtime libraries in the share/cc65 directory under the formula's Cellar path. To run what you build, you need an emulator for the target machine, or the real hardware.",
+  "install": "brew install cc65\n# Output targets old machines: you need an emulator (e.g. for C64 or NES) or real hardware to run what you build.",
+  "try_this": [
+   {
+    "cmd": "cc65 --help",
+    "what_happens": "Lists the C compiler's options, including how it selects a target and optimization level."
+   },
+   {
+    "cmd": "cl65 --help",
+    "what_happens": "Shows the all-in-one driver that compiles, assembles and links in a single step."
+   },
+   {
+    "cmd": "sim65 --help",
+    "what_happens": "Shows the bundled 6502 simulator, which runs programs without a target emulator."
+   }
+  ],
+  "whats_unique": "It is a whole retro toolchain rather than a lone compiler, covering targets from Apple II and Atari to NES, C64, PC Engine and Commander X16 in one package. It still gains new targets, such as the RP6502 Picocomputer.",
+  "caveats": "Output only runs on retro hardware or an emulator, some contributed targets may be incomplete, and I could not confirm a recent release date.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "c",
+   "6502",
+   "retro",
+   "compiler",
+   "assembler",
+   "cross-compiler",
+   "8-bit"
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://cc65.github.io/cc65/"
+   },
+   {
+    "label": "User and developer documentation",
+    "url": "https://cc65.github.io/doc"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/cc65/cc65"
+   }
+  ]
+ }
+}

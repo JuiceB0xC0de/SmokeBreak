@@ -1,0 +1,69 @@
+{
+ "name": "mat2",
+ "desc": "Metadata anonymization toolkit",
+ "homepage": "https://github.com/jvoisin/mat2",
+ "installs_365d": 1620,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering"
+ ],
+ "why": "Stripping metadata means looking hard at file internals, and seeing what hides in your own files is a genuine eye-opener.",
+ "brief": {
+  "what_it_is": "mat2 is a metadata anonymization toolkit that strips hidden metadata from files such as images, PDFs, Office documents, audio, video, archives and SVGs. It ships as a Python library called libmat2, a command line tool called mat2, and a service menu for the Dolphin file manager. You give it files; it writes cleaned copies alongside the originals, and with --show it lists the metadata it can detect without removing it.",
+  "why_it_exists": "The README says files carry metadata that can reveal who made them and when: cameras record when and with what a picture was taken, and Office and PDF tools add author and company information. The stated job is 'getting rid, as much as possible, of metadata.'",
+  "how_it_works": "mat2 dispatches each file to a format-specific cleaner, relying on helpers such as ExifTool, FFmpeg, mutagen and GObject-introspection bindings for Poppler, GdkPixbuf and librsvg, depending on the format. By default it may re-encode or alter content to strip more metadata. The -L (lightweight) flag removes only some metadata and promises not to modify the file's data.",
+  "commands_seen": [
+   {
+    "cmd": "brew install exiftool cairo pygobject3 poppler gdk-pixbuf librsvg ffmpeg",
+    "context": "macOS (Homebrew) setup of the external requirements mat2 depends on for PDF, image, SVG and video support."
+   },
+   {
+    "cmd": "python3 -m unittest discover -v",
+    "context": "Runs the mat2 test suite with verbose output."
+   },
+   {
+    "cmd": "python3-coverage run --branch -m unittest discover -s tests/",
+    "context": "Runs the test suite under branch coverage, as the README's optional coverage step."
+   },
+   {
+    "cmd": "python3-coverage report --include -m --include /libmat2/*'",
+    "context": "Prints the coverage report for the libmat2 package. The line is copied verbatim from the README, including its stray trailing quote."
+   }
+  ],
+  "install_notes": "The README requires python3.11 or newer. Debian-style packages named in the requirements list are python3-mutagen (audio), python3-gi-cairo and gir1.2-poppler-0.18 (PDF), gir1.2-gdkpixbuf-2.0 (images), gir1.2-rsvg-2.0 (SVG), FFmpeg (optional, video), and libimage-exiftool-perl (everything else). The stated baseline is current Debian oldstable, or Debian stable if oldstable is end-of-life. The README gives a macOS Homebrew line, but no PyPI or Homebrew-specific install steps beyond that. Nothing is said about accounts or first-run configuration.",
+  "standout": "mat2 is candid that it cannot prove a file is clean: the README says there is no reliable way to detect every possible metadata field, so an empty --show result should not be trusted. It also offers an explicit trade-off between thorough stripping, which may alter content (for example, PDF text may stop being selectable), and a lightweight mode that leaves the data alone.",
+  "status": "unknown. The README has no release dates, changelog or last-commit information, and I did not fetch the releases or commits pages. It is an active-looking project: it targets python3.11 and recent formats such as AVIF and JPEG XL, and it links a companion web service and a GTK GUI. Those are inferences, not confirmed activity.",
+  "caveats": "Cleaning is best effort; the README warns that detection and removal are not guaranteed complete. The default mode can change the content of files, and -L trades some metadata removal for data preservation. mat2 never cleans in place; it writes a .cleaned copy, and --inplace is the only way to overwrite, without backup. The --unknown-members flag defaults to abort for archive-style files. Several dependencies are needed for full format coverage, and the README gives package lists only for Debian and Homebrew. The README's license section mixes LGPL-3.0 wording in the header with GPL text in the body, so check the LICENSE file before relying on it. The homepage is a GitHub repository, and I read the README directly, so no install from source was tested.",
+  "quotes": [
+   "Keep your data, trash your meta!",
+   "This is precisely the job of mat2: getting rid, as much as possible, of metadata.",
+   "There is no reliable way to detect every single possible metadata for complex file formats.",
+   "mat2 **will not** clean files in-place, but will produce, for example, with a file named \"myfile.png\" a cleaned version named \"myfile.cleaned.png\"."
+  ],
+  "links": [
+   {
+    "label": "mat2 GitHub repository (homepage)",
+    "url": "https://github.com/jvoisin/mat2"
+   },
+   {
+    "label": "Metadata Cleaner (GTK GUI built on mat2)",
+    "url": "https://gitlab.com/metadatacleaner/metadatacleaner"
+   },
+   {
+    "label": "mat2-web (web interface)",
+    "url": "https://0xacab.org/jvoisin/mat2-web"
+   },
+   {
+    "label": "Issues",
+    "url": "https://github.com/jvoisin/mat2/issues"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/jvoisin/mat2 - worked; returned the README (about 230 lines, not thin, so no further fetches)."
+  ]
+ }
+}

@@ -1,0 +1,130 @@
+{
+ "name": "dovi_convert",
+ "desc": "Dolby Vision Profile 7 to 8.1 MKV converter",
+ "homepage": "https://docs.doviconvert.com",
+ "installs_365d": 530,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "visual"
+ ],
+ "why": "Rewrites Dolby Vision metadata between profiles, a peek into how HDR layers are structured in files.",
+ "brief": {
+  "what_it_is": "dovi_convert is a command-line tool that converts Dolby Vision Profile 7 MKV files, typically UHD Blu-ray rips, into Profile 8.1 MKV files. You point it at a file or a directory. It first scans and analyzes the files, flags Complex FEL files, and skips them by default. For the rest, it removes the Profile 7 Enhancement Layer and keeps the dynamic metadata (RPU), without re-encoding the video. It needs ffmpeg, mkvtoolnix, mediainfo and dovi_tool, and it can install missing ones itself.",
+  "why_it_exists": "Many streaming devices, including Apple TV, Nvidia Shield, Amazon Fire, Zidoo players and Plex clients, cannot process the Profile 7 Enhancement Layer. They either fall back to HDR10 or strip the layer blindly and damage the picture. The README says the tool analyzes files first, converts only what is safe, and keeps the dynamic metadata so Dolby Vision still plays correctly. The author's personal need for this conversion was the driver behind the project.",
+  "how_it_works": "The tool scans each file to identify the video format and the FEL type. Files with Complex FEL, where the enhancement layer carries brightness expansion, are skipped unless you force the conversion. Converted files keep the RPU dynamic metadata and drop the enhancement layer. Originals are backed up automatically, and the --delete flag removes them permanently.",
+  "commands_seen": [
+   {
+    "cmd": "brew install dovi_convert",
+    "context": "Homebrew install for macOS or Linux, the primary terminal install route in the README."
+   },
+   {
+    "cmd": "curl -sSLO https://github.com/cryptochrome/dovi_convert/releases/latest/download/dovi_convert.py",
+    "context": "Manual install: downloads the latest dovi_convert.py script from the GitHub releases page."
+   },
+   {
+    "cmd": "chmod +x dovi_convert.py && sudo mv dovi_convert.py /usr/local/bin/dovi_convert",
+    "context": "Manual install, continued: makes the script executable and moves it into /usr/local/bin under the name dovi_convert."
+   },
+   {
+    "cmd": "docker run -d --name=dovi_convert -e PUID=1000 -e PGID=1000 -e TZ=Europe/Berlin -p 7681:7681 -v /path/to/media:/data --restart unless-stopped cryptochrome/dovi_convert:latest",
+    "context": "Docker route: starts the container detached, maps port 7681 for the web terminal, and mounts your media folder at /data. Written as one line here; the README splits it with backslash continuations."
+   },
+   {
+    "cmd": "dovi_convert scan",
+    "context": "Analyzes files in the current directory before any conversion."
+   },
+   {
+    "cmd": "dovi_convert convert Movie.mkv",
+    "context": "Converts a single Profile 7 MKV file to Profile 8.1."
+   },
+   {
+    "cmd": "dovi_convert convert /path/to/media",
+    "context": "Batch converts every file in a directory."
+   }
+  ],
+  "install_notes": "Requires Python 3.8 or newer, plus ffmpeg, mkvtoolnix, mediainfo and dovi_tool. The README says missing dependencies are detected and can be installed automatically. The Docker route is an alternative: the image runs a web terminal on port 7681, and you set PUID, PGID and TZ and mount your media at /data. The manual route downloads a single Python script and moves it into /usr/local/bin. Windows is supported only through WSL2 or Docker.",
+  "standout": "It analyzes before it converts and refuses files whose enhancement layer carries real picture information, instead of stripping every Profile 7 file. It also avoids re-encoding: the work is metadata extraction and remuxing. The README credits dovi_scripts as the earlier tool that inspired it.",
+  "status": "quiet. The README opens with 'Development is paused for now' and says further development, including bug fixes, has ceased, while the repo stays open for use and forks. The latest release mentioned is v8.2. I did not check the release dates or the last commit date, so the exact age is unknown.",
+  "caveats": "Development is paused and bug fixes have stopped, per the README. The README and docs disagree on Backup & Restore: the README says v8.2 introduces it, but the docs page says it is coming soon. The docs say Windows runs via WSL, while the README says WSL2 or Docker. Complex FEL files are skipped by default, and --force is risky. Film grain and other FEL data are dropped, because keeping them would require re-encoding. The tool is not for devices that handle Profile 7 FEL, which is the premise of the new players the author cites. The tested platform is macOS 26.",
+  "quotes": [
+   "Development is paused for now.",
+   "Most streaming devices (Apple TV, Shield, Amazon Fire*, etc.) don't support Profile 7's Enhancement Layer.",
+   "Missing dependencies are detected and can be installed automatically."
+  ],
+  "links": [
+   {
+    "label": "Documentation homepage",
+    "url": "https://docs.doviconvert.com"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/cryptochrome/dovi_convert"
+   },
+   {
+    "label": "Development pause announcement (GitHub discussion)",
+    "url": "https://github.com/cryptochrome/dovi_convert/discussions/54"
+   }
+  ],
+  "fetch_log": [
+   "https://docs.doviconvert.com: worked. It returned the Mintlify docs introduction page, not a README. It links to the GitHub repository.",
+   "https://github.com/cryptochrome/dovi_convert: worked. It returned the README, which contains the commands and the development-paused notice. Not fetched: the docs Command Reference, the Before You Start page and the CHANGELOG, which the README links to."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A niche, useful window into Dolby Vision\u2019s layered video structure: it preserves dynamic metadata while safely handling enhancement layers without re-encoding."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "dovi_convert",
+  "tldr": "Converts Dolby Vision Profile 7 MKV rips to Profile 8.1 without re-encoding, after scanning each file to decide whether that is safe.",
+  "deeper_look": "dovi_convert takes UHD Blu-ray style MKV files and rewrites their Dolby Vision structure. Profile 7 carries a base layer, an Enhancement Layer and dynamic metadata (the RPU). Profile 8.1 keeps the base layer and the RPU, and drops the Enhancement Layer. The tool does this by extracting and remuxing, so the video is never re-encoded.\n\nThe reason it exists is device support. Per the README, \"Most streaming devices (Apple TV, Shield, Amazon Fire*, etc.) don't support Profile 7's Enhancement Layer.\" They either fall back to plain HDR10 or strip the layer blindly and damage the picture. The author wanted a conversion that keeps the dynamic metadata so Dolby Vision still plays properly.\n\nThe interesting part is the scan step. Some Profile 7 files have a Complex FEL, where the enhancement layer carries real brightness expansion rather than being nearly empty. The tool flags these and skips them by default, since dropping that layer changes the picture. It is a small look at how HDR video is layered inside a container, and at why \"just strip the extra layer\" is not always harmless.\n\nOriginals are backed up automatically. A `--delete` flag removes them permanently. It leans on dovi_tool, ffmpeg, mkvtoolnix and mediainfo, and credits dovi_scripts as the earlier tool that inspired it.",
+  "install": "brew install dovi_convert\n# Needs Python 3 plus ffmpeg, mkvtoolnix, mediainfo and dovi_tool; the README says missing ones are detected and can be installed automatically.\n# Windows is supported only through WSL2 or Docker.",
+  "try_this": [
+   {
+    "cmd": "dovi_convert --help",
+    "what_happens": "Lists the available commands and options."
+   },
+   {
+    "cmd": "dovi_convert scan",
+    "what_happens": "Analyzes the files in the current directory and reports which are Profile 7 and which have a Complex FEL, without changing anything."
+   },
+   {
+    "cmd": "dovi_convert convert Movie.mkv",
+    "what_happens": "Converts one Profile 7 MKV to Profile 8.1, keeping the dynamic metadata and backing up the original."
+   }
+  ],
+  "whats_unique": "It analyzes before converting and refuses files whose enhancement layer carries real picture information, instead of stripping every Profile 7 file. The work is metadata extraction and remuxing, with no re-encoding.",
+  "caveats": "The README opens with \"Development is paused for now\" and says bug fixes have ceased; film grain and other FEL data are dropped, and it only makes sense if your player cannot handle Profile 7 FEL.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "video",
+   "hdr",
+   "dolby-vision",
+   "mkv",
+   "remux"
+  ],
+  "links": [
+   {
+    "label": "Documentation homepage",
+    "url": "https://docs.doviconvert.com"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/cryptochrome/dovi_convert"
+   },
+   {
+    "label": "Development pause announcement (GitHub discussion)",
+    "url": "https://github.com/cryptochrome/dovi_convert/discussions/54"
+   }
+  ]
+ }
+}

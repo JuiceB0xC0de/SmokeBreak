@@ -1,0 +1,134 @@
+{
+ "name": "rbspy",
+ "desc": "Sampling profiler for Ruby",
+ "homepage": "https://rbspy.github.io/",
+ "installs_365d": 1711,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "library"
+ ],
+ "why": "Samples a running Ruby process from outside without modifying it, a neat way to watch a program execute.",
+ "brief": {
+  "what_it_is": "rbspy is a sampling CPU profiler for Ruby, written in Rust. You give it the PID of a Ruby process that is already running, or have it launch a Ruby script, and it periodically samples the call stack to show which functions the program spends its time in. It prints a live summary of the top functions, and it can save the raw profiling data to disk and produce a flamegraph for later analysis.",
+  "why_it_exists": "The README frames it as a way to see what functions a Ruby program is calling without restarting it: \"Have a running Ruby program that you want to profile without restarting it? Want to profile a Ruby command line program really easily? You want rbspy!\"",
+  "how_it_works": "rbspy is a sampling profiler: it takes periodic snapshots of the running program rather than instrumenting every call, which the README says makes it low overhead and safe to run in production. The README does not explain the sampling mechanism in more detail. The tool attaches to an existing process by PID; the README does not say what OS permissions that requires.",
+  "commands_seen": [
+   {
+    "cmd": "brew install rbspy",
+    "context": "Installs rbspy on macOS via Homebrew; the README's quick-start path for Mac."
+   },
+   {
+    "cmd": "cargo install rbspy --locked",
+    "context": "Installs rbspy from crates.io with Cargo, for users with a Rust toolchain 1.56 or newer."
+   },
+   {
+    "cmd": "rbspy record --pid $PID",
+    "context": "Profiles an already-running Ruby process, given its process ID."
+   },
+   {
+    "cmd": "rbspy record -- bundle exec ruby my-script.rb",
+    "context": "Profiles a Ruby script by launching it; the README says this works both with and without bundle exec."
+   },
+   {
+    "cmd": "cargo build",
+    "context": "Builds rbspy from source; the binary ends up at target/debug/rbspy."
+   },
+   {
+    "cmd": "cargo test",
+    "context": "Runs the test suite when building rbspy from source."
+   }
+  ],
+  "install_notes": "On Linux, download a recent release from the GitHub releases page, unpack it, and move the rbspy binary to /usr/local/bin. Builds tagged musl are statically linked and work on most systems; builds tagged gnu are dynamically linked against GNU libc, which must be installed. Installing via cargo needs a Rust toolchain 1.56 or newer. The README also covers building from source with cargo. No accounts, hardware, or runtime configuration are mentioned, and the README does not describe first-run steps or required permissions for attaching to a PID.",
+  "standout": "It attaches to a Ruby process that is already running, by PID, so you can profile production-style workloads without restarting them or changing the code. It also records raw data that can be analysed in several ways later, plus a flamegraph, rather than only a live view.",
+  "status": "unknown. The GitHub README shows a crates.io version badge and a CI badge but no release date, last commit date, or maintenance note. The README pins the Rust crate example to version 0.8. I could not confirm recent activity from the pages I read.",
+  "caveats": "The README says Linux needs kernel 3.2 or newer, and that Ubuntu means 12.04 or newer. The Rust crate API is explicitly unstable: \"The rbspy crate's API is not stable yet\" and it will follow semantic versioning only after reaching 1.0. Linux binaries come in musl and gnu variants with different linking requirements. The README does not describe a licence in the parts I read, and it does not list features that are missing.",
+  "quotes": [
+   "It's a sampling profiler, which means it's low overhead and safe to run in production.",
+   "You give it a PID, and it starts profiling.",
+   "rbspy can profile any Ruby program just by running 1 simple command."
+  ],
+  "links": [
+   {
+    "label": "rbspy homepage",
+    "url": "https://rbspy.github.io/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/rbspy/rbspy"
+   },
+   {
+    "label": "Installing rbspy (docs)",
+    "url": "https://rbspy.github.io/installing.html"
+   },
+   {
+    "label": "crates.io package",
+    "url": "https://crates.io/crates/rbspy"
+   }
+  ],
+  "fetch_log": [
+   "https://rbspy.github.io/ - worked; returned the documentation introduction page with quick start, profiling examples, and a Rubocop screenshot description, but no install details beyond brew and cargo.",
+   "https://github.com/rbspy/rbspy - worked; returned the README with requirements, installing, and building sections."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Attaching to a live Ruby process and reconstructing its call stacks without instrumentation offers a useful, surprisingly hands-off way to inspect a running program."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "rbspy",
+  "tldr": "A sampling profiler that attaches to a running Ruby process by PID and shows which functions eat the time, with no restart or code changes.",
+  "deeper_look": "rbspy is a CPU profiler for Ruby, written in Rust. Point it at the PID of a Ruby process that is already running, or have it launch a script, and it periodically samples the call stack. It prints a live summary of the top functions, and it can save the raw samples to disk and turn them into a flamegraph.\n\nThe README frames the problem plainly: \"Have a running Ruby program that you want to profile without restarting it?\" Most profilers need to be loaded into the program or wrapped around it. rbspy works from outside, so the target program does not need to know it is being watched.\n\nThe idea underneath is sampling versus instrumentation. Instead of hooking every function call, a sampling profiler takes snapshots at intervals and counts where the program was. The README says this keeps overhead low and makes it \"safe to run in production\". The raw data is kept so it can be analysed in several ways later, not only viewed live.\n\nIt is a small, concrete way to see how a profiler can look inside another process, and a door into flamegraphs and stack sampling generally.",
+  "install": "brew install rbspy\n# Linux: download a release from the GitHub releases page and move the binary to /usr/local/bin (musl builds are statically linked; gnu builds need GNU libc)\n# or, with Rust 1.56+: cargo install rbspy --locked",
+  "try_this": [
+   {
+    "cmd": "rbspy record --pid $PID",
+    "what_happens": "Attaches to an already-running Ruby process and starts profiling it."
+   },
+   {
+    "cmd": "rbspy record -- bundle exec ruby my-script.rb",
+    "what_happens": "Launches the script under the profiler and reports where it spent its time."
+   },
+   {
+    "cmd": "rbspy --help",
+    "what_happens": "Lists the subcommands and options."
+   }
+  ],
+  "whats_unique": "It attaches to a Ruby process that is already running, so you can profile a live workload without restarting it or touching its code. It also keeps raw data for later analysis plus a flamegraph.",
+  "caveats": "The brief could not confirm recent activity, the README does not say what permissions attaching to a PID needs, and the Rust crate API is explicitly unstable.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "ruby",
+   "profiler",
+   "rust",
+   "flamegraph"
+  ],
+  "links": [
+   {
+    "label": "rbspy homepage",
+    "url": "https://rbspy.github.io/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/rbspy/rbspy"
+   },
+   {
+    "label": "Installing rbspy (docs)",
+    "url": "https://rbspy.github.io/installing.html"
+   },
+   {
+    "label": "crates.io package",
+    "url": "https://crates.io/crates/rbspy"
+   }
+  ]
+ }
+}

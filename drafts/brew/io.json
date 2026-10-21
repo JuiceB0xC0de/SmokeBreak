@@ -1,0 +1,143 @@
+{
+ "name": "io",
+ "desc": "Small prototype-based programming language",
+ "homepage": "http://iolanguage.com/",
+ "installs_365d": 122,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "language",
+  "ancient"
+ ],
+ "why": "A small prototype-based language with everything as objects; a compact, strange window into a different model of programming.",
+ "brief": {
+  "what_it_is": "Io is a dynamic, prototype-based programming language. The README places it in the same family as Smalltalk and Self and says that everything is a message send from one object to another. You type Io expressions into a REPL or pass it a script file, and it prints evaluated values back, for example 1 + 1 gives ==> 2 and List clone append(30, 10, 5, 20) sort gives list(5, 10, 20, 30). The README's examples build objects by cloning other objects and adding slots at runtime, with no classes involved. The current master branch compiles to a single WASI binary (io_static) that runs under wasmtime, Node, or browsers, and there is a browser REPL.",
+  "why_it_exists": "The README gives no explicit motivation beyond describing Io as a dynamic prototype-based language in the Smalltalk and Self family, where objects are created by cloning and extending other objects rather than from classes. The homepage calls it a small prototype-based language with everything as objects.",
+  "how_it_works": "Every operation is a message sent from one object to another, and new objects are made with clone and then extended by setting slots, as in Contact := Object clone and Contact fullAddress := method(...). On the current master branch, Io targets WebAssembly; the native addon system (DynLib, AddonLoader, Eerie) is not available there, and host integration goes through a bidirectional JavaScript bridge in which Io code can call JS functions and JS can call Io methods.",
+  "commands_seen": [
+   {
+    "cmd": "make",
+    "context": "Builds build/bin/io_static, the WASI CLI binary, from the cloned repository."
+   },
+   {
+    "cmd": "make WASI_SDK=/opt/wasi-sdk",
+    "context": "Builds the same way when wasi-sdk is not at ~/wasi-sdk; points WASI_SDK at the install location."
+   },
+   {
+    "cmd": "wasmtime build/bin/io_static -e '\"hello\" println'",
+    "context": "Runs a one-line Io expression under wasmtime using the -e flag."
+   },
+   {
+    "cmd": "wasmtime --dir=. build/bin/io_static path/to/script.io",
+    "context": "Runs an Io script file; --dir=. grants the WASI sandbox access to the file."
+   },
+   {
+    "cmd": "wasmtime build/bin/io_static",
+    "context": "Starts the Io REPL under wasmtime."
+   },
+   {
+    "cmd": "make serve",
+    "context": "Serves the browser REPL at http://localhost:8000 (after make browser)."
+   },
+   {
+    "cmd": "make check",
+    "context": "Runs both test suites under wasmtime."
+   },
+   {
+    "cmd": "wasmtime --dir=. --dir=/tmp build/bin/io_static libs/iovm/tests/correctness/run.io",
+    "context": "Runs the correctness test suite individually; IO_TEST_VERBOSE=1 gives per-test output."
+   }
+  ],
+  "install_notes": "Not a plain brew install of the current code. The README's build needs wasi-sdk (default location ~/wasi-sdk, overridable with WASI_SDK) and wasmtime. Clone recursively with git clone --recursive https://github.com/IoLanguage/io.git, then run make. Browser REPL work needs make browser and make serve, and the browser tests use Playwright. The brew formula's executables (io and io_static) suggest the packaged build may be the older native one, which the README describes as CMake-based and tied to the Eerie package manager; the README says that path lives on the native branch or the 2026.04.20-native-final tag.",
+  "standout": "Io is a small, dynamic, prototype-based language where objects are created by cloning and extending, not from classes. Its current build is a WebAssembly/WASI binary with a bidirectional JavaScript bridge and a browser REPL, which is an unusual target for a language of this kind.",
+  "status": "Unknown. The README says new development lands on master, that the native branch only accepts bug fixes, and that the native build is at tag 2026.04.20-native-final. I did not see a last commit date or release date on the pages I read, so I cannot say how recently master changed.",
+  "caveats": "The README describes two builds, and the brew formula may point at the older native one, so check which build you are getting. The current build needs wasi-sdk and wasmtime, and it has no native addon system (DynLib, AddonLoader, Eerie are unavailable on WebAssembly). The homepage I fetched (iolanguage.com) is a bare menu with no content; the README points to iolanguage.org for the guide and docs. I fetched the repository under github.com/stevedekorte/io, which returned the README, but the README's clone URL is github.com/IoLanguage/io. No license was mentioned in what I read.",
+  "quotes": [
+   "Io is a dynamic prototype-based programming language in the same family as Smalltalk and Self. Everything is a message send from one object to another.",
+   "Io targets WebAssembly. A single WASI binary runs under any WASI host (wasmtime, Node, browsers via WASI shims) and ships with a browser REPL and a bidirectional Io\u2194JavaScript bridge.",
+   "The native addon system (`DynLib`, `AddonLoader`, Eerie) is not available on WebAssembly. Host integration goes through the JavaScript bridge instead"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "http://iolanguage.com/"
+   },
+   {
+    "label": "Repository (README source)",
+    "url": "https://github.com/IoLanguage/io"
+   },
+   {
+    "label": "Guide (linked from README)",
+    "url": "https://iolanguage.org/docs/Guide"
+   },
+   {
+    "label": "Wikipedia overview",
+    "url": "https://en.wikipedia.org/wiki/Io_(programming_language)"
+   }
+  ],
+  "fetch_log": [
+   "http://iolanguage.com/ : worked, but only returned site navigation (about, guide, tutorial, reference, packages, binaries, source, twitter, links) with no body text; no links were followed from it because the URLs were not exposed.",
+   "https://github.com/stevedekorte/io : worked, returned the README for the Io repository. I guessed this URL as the source link; the README itself names github.com/IoLanguage/io as the repo."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Io\u2019s prototype-based, message-send-everywhere model offers a genuinely different way to think about objects, and its WASI build makes it easy to explore."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Io",
+  "tldr": "A small prototype-based language where everything is a message send and objects are made by cloning, in the Smalltalk and Self family.",
+  "deeper_look": "Io is a dynamic, prototype-based programming language. The README places it alongside Smalltalk and Self and puts the whole model in one line: \"Everything is a message send from one object to another.\" You type expressions into a REPL or run a script, and it prints values back, so `1 + 1` gives `==> 2` and `List clone append(30, 10, 5, 20) sort` gives `list(5, 10, 20, 30)`.\n\nThere are no classes. You make a new object by cloning an existing one, then add slots at runtime, as in `Contact := Object clone` followed by `Contact fullAddress := method(...)`. That is the idea underneath it: if objects, methods and data are all slots on cloned objects, a lot of what other languages treat as separate machinery falls away. It is a compact way to see a different model of programming.\n\nThe current master branch targets WebAssembly. It builds a single WASI binary, `io_static`, that runs under wasmtime, Node or browsers, and it ships with a browser REPL. A bidirectional bridge lets Io code call JavaScript functions and JavaScript call Io methods. The older native build, with its addon system, now lives on a separate branch.",
+  "install": "brew install io\n# The brew formula installs `io` and `io_static`. It may be the older native build rather than the WASI build the current README describes, so check which one you get.\n# To build current master from source: git clone --recursive https://github.com/IoLanguage/io.git && cd io && make\n# The source build needs wasi-sdk (default ~/wasi-sdk, override with WASI_SDK=/path) and wasmtime.",
+  "try_this": [
+   {
+    "cmd": "wasmtime build/bin/io_static -e '\"hello\" println'",
+    "what_happens": "Runs a one-line Io expression under wasmtime, after building from source."
+   },
+   {
+    "cmd": "wasmtime build/bin/io_static",
+    "what_happens": "Starts the Io REPL, where you can try cloning objects and adding slots."
+   },
+   {
+    "cmd": "io --help",
+    "what_happens": "Shows the options of the installed executable."
+   }
+  ],
+  "whats_unique": "Io pushes the prototype idea to its minimum: no classes, only messages and clones. Its current build targets WebAssembly with a JavaScript bridge and a browser REPL, an unusual home for a language like this.",
+  "caveats": "The README describes two builds and the brew formula may point at the older native one; the current build needs wasi-sdk and wasmtime, has no native addon system, and I could not confirm how recently master changed.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "language",
+   "prototype-based",
+   "smalltalk",
+   "webassembly",
+   "repl"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "http://iolanguage.com/"
+   },
+   {
+    "label": "Repository",
+    "url": "https://github.com/IoLanguage/io"
+   },
+   {
+    "label": "Guide",
+    "url": "https://iolanguage.org/docs/Guide"
+   },
+   {
+    "label": "Wikipedia overview",
+    "url": "https://en.wikipedia.org/wiki/Io_(programming_language)"
+   }
+  ]
+ }
+}

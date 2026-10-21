@@ -1,0 +1,87 @@
+{
+ "name": "airspyhf",
+ "desc": "Driver and tools for a software-defined radio",
+ "homepage": "https://airspy.com/",
+ "installs_365d": 243,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "afternoon",
+  "audio"
+ ],
+ "why": "Driver and tools for the Airspy HF+ SDR, a real door into listening to the HF radio spectrum.",
+ "brief": {
+  "what_it_is": "airspyhf is the user-mode host driver and tools for the Airspy HF+, a software-defined radio receiver for the HF and VHF bands. The README describes it as host software for Linux and Windows, and says macOS builds use the same CMake steps without the udev rules. The package installs five command-line programs: airspyhf_rx, airspyhf_info, airspyhf_calibrate, airspyhf_gpio and airspyhf_lib_version. The README does not describe what each program does, so their roles are inferred from their names. The input is the radio hardware over USB, and the output is the driver library plus those tools on the host machine.",
+  "why_it_exists": "The README gives no stated motive. The homepage frames the Airspy line as high-performance, affordable SDR receivers that work with the free SDR# software, and its HF+ page says \"There is a whole world below 30 MHz.\"",
+  "how_it_works": "The README does not explain the internal mechanism. It says the Airspy HF+ driver is based on the Airspy R2 driver, which is itself based on the HackRF project. Host access to the device goes through libusb, and on Linux the install step can add udev rules that control which users can open the device.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt-get install build-essential cmake libusb-1.0-0-dev pkg-config",
+    "context": "Installs the Linux build prerequisites on Debian, Ubuntu or Raspbian."
+   },
+   {
+    "cmd": "git clone https://github.com/airspy/airspyhf.git host",
+    "context": "Windows instructions: clones the repository into a folder called host. The Linux steps use a zip download instead."
+   },
+   {
+    "cmd": "cmake ../ -DINSTALL_UDEV_RULES=ON",
+    "context": "Linux configure step that installs udev rules using the MODE/GROUP scheme, which gives access to the logged-in user and the plugdev group. This is the README's default for networked or SpyServer setups."
+   },
+   {
+    "cmd": "cmake ../ -USE_UACCESS_RULES=ON",
+    "context": "Linux configure step for stand-alone non-Debian systems, to use uaccess udev rules. The README writes a single dash here, which looks like a typo for -D, but the line is copied as printed."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the host software after cmake has configured the build directory."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the built binaries and libraries system-wide."
+   },
+   {
+    "cmd": "sudo ldconfig",
+    "context": "Refreshes the shared library cache after install on Linux."
+   },
+   {
+    "cmd": "cmake ../ -G \"MSYS Makefiles\" -DLIBUSB_INCLUDE_DIR=/usr/local/include/libusb-1.0/",
+    "context": "Windows MinGW configure step for the normal build. The README also gives a Debug variant that adds -DCMAKE_BUILD_TYPE=Debug."
+   },
+   {
+    "cmd": "rm -rf *",
+    "context": "Run inside airspyhf-master/build to clear CMake temporary files before a clean rebuild."
+   }
+  ],
+  "install_notes": "On Linux, install build-essential, cmake, libusb-1.0-0-dev and pkg-config, then run cmake from a build directory and choose one udev option. The default install is meant for networked systems such as SpyServers and grants access only to the logged-in user and the plugdev group, which the admin must populate. For a stand-alone desktop, the README suggests the uaccess option. On Windows you need Visual Studio 2013 or later with libusb-1.0.20 and pthreads-win32 2.9.1 extracted into the source tree, or MinGW with CMake and libusb headers. No brew-specific notes or first-run steps were given beyond the README.",
+  "standout": "The driver is a descendant of the Airspy R2 driver, which is itself based on HackRF, so the lineage crosses several SDR projects. The udev choice is also unusual: the default install is tuned for shared SpyServer-style access, not just a single desktop user.",
+  "status": "unknown. The README has no release date, version, or changelog, and I did not check the commit history. The homepage is marked Copyright 2026, but that refers to the company site, not this repository.",
+  "caveats": "The Windows instructions point to old dependencies: libusb-1.0.20 and pthreads-win32 2.9.1, the latter downloaded from an ftp:// mirror. The Linux build depends on a udev choice that can block device access if chosen wrong. The README does not state a license, and I did not see one in the fetched content. The Linux install steps are the only ones given for macOS, and they are minimal.",
+  "quotes": [
+   "This repository contains host software (Linux/Windows) for Airspy HF+, a high performance software defined radio for the HF and VHF bands.",
+   "The default installation is designed for networked systems, such as SpyServers, that require an extra level of security to access their device.",
+   "MacOS deals with communicating with USB devices much differently than Linux. Therefore none of these udev options are required when running `cmake` on Macs.",
+   "There is a whole world below 30 MHz."
+  ],
+  "links": [
+   {
+    "label": "Airspy homepage",
+    "url": "https://airspy.com/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/airspy/airspyhf"
+   },
+   {
+    "label": "Airspy HF+ product page (linked from README)",
+    "url": "http://www.airspy.com/airspy-hf-plus"
+   }
+  ],
+  "fetch_log": [
+   "https://airspy.com/ - worked; marketing page only, with product blurbs and an overview of the Airspy line, but no install steps, commands or docs links",
+   "https://github.com/airspy/airspyhf - worked; returned the README with build instructions for Windows, Linux and macOS"
+  ]
+ }
+}

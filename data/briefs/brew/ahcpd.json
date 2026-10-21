@@ -1,0 +1,82 @@
+{
+ "name": "ahcpd",
+ "desc": "Autoconfiguration protocol for IPv6 and IPv6/IPv4 networks",
+ "homepage": "https://www.irif.fr/~jch/software/ahcp/",
+ "installs_365d": 90,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "Autoconfiguration protocol for IPv6 addressing, a rarely examined door into how networks configure themselves without DHCP.",
+ "brief": {
+  "what_it_is": "ahcpd is a daemon that automatically configures IPv4 and IPv6 addresses, name servers and NTP servers on a network. It is an implementation of the Ad-Hoc Configuration Protocol (AHCP), an autoconfiguration protocol for IPv6 and dual-stack IPv6/IPv4 networks. It does not set default routes, because it is meant to run alongside a routing protocol such as Babel or OLSR. One or more servers hold the configuration (prefixes, name servers, NTP servers, leases in a lease database), and clients on the link ask for it. Output is addresses and settings handed to client interfaces.",
+  "why_it_exists": "The homepage says AHCP is meant to replace router discovery and DHCP where it is difficult or impossible to configure a server in every link-layer broadcast domain, for example mobile ad-hoc networks. The GitHub README says DHCP and IPv6 autoconfiguration do not work in wireless mesh networks, though the protocol could also be used on wired networks.",
+  "how_it_works": "A server is started with a configuration file that lists IPv6 and IPv4 prefixes, a lease directory, name servers and an NTP server, and it hands out leases from those prefixes. Clients run ahcpd as root with no config file and receive IPv4 and IPv6 addresses within seconds. The server checks the kernel for time synchronisation, and without it hands out only short leases and is very conservative about releasing them. For redundancy, several servers can share one network if they serve disjoint IPv4 address ranges.",
+  "commands_seen": [
+   {
+    "cmd": "apt-get install ahcpd",
+    "context": "Installs the Debian/Ubuntu package from the mainstream repository (the homepage says the package ships without init scripts)."
+   },
+   {
+    "cmd": "git clone git://git.wifi.pps.univ-paris-diderot.fr/ahcpd",
+    "context": "Clones the latest, possibly unstable, sources from the author's git server; the homepage also mentions a GitHub mirror."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds ahcpd from source in the repository root."
+   },
+   {
+    "cmd": "# make install",
+    "context": "Installs the built binary, run as root."
+   },
+   {
+    "cmd": "make LDLIBS=''",
+    "context": "Build variant for BSD, where linking with -lrt is probably unnecessary."
+   },
+   {
+    "cmd": "make CC=mipsel-linux-gcc PLATFORM_DEFINES='-march=mips32'",
+    "context": "Example cross-compile for OpenWRT; the README says the exact flags will vary."
+   },
+   {
+    "cmd": "make EXTRA_DEFINES=-DNO_SERVER",
+    "context": "Builds a smaller ahcpd binary with server functionality left out."
+   },
+   {
+    "cmd": "ahcpd -c /etc/ahcpd.conf wlan0",
+    "context": "Runs ahcpd as an authoritative server on wlan0 using the given configuration file."
+   },
+   {
+    "cmd": "# ahcpd wlan0",
+    "context": "Runs ahcpd as a client on wlan0 with no configuration file; it must run as root and should yield IPv4 and IPv6 addresses in a few seconds."
+   }
+  ],
+  "install_notes": "Beyond apt-get or brew, you can build from source with make and make install (run as root). Building for BSD or OpenWRT needs different make variables. A server needs a configuration file at /etc/ahcpd.conf that sets mode server, one or more prefix lines (IPv6 and/or IPv4), lease-dir, name-server and ntp-server, plus a lease directory the server can write. The server does not have to run as root if it can write the lease database and pidfile. The server's clock should be synchronised with Mills' NTP implementation, since SNTP clients usually won't satisfy the kernel time-sync check. Clients need no config file. Packages are also listed for Fedora Extras, Arch Linux and OpenWRT.",
+  "standout": "Instead of a central DHCP server on every link, it lets a few servers in a mesh hand out IPv4, IPv6, DNS and NTP settings without router advertisements, and it leaves routing to a separate protocol. Its requirement that servers prove time synchronisation through the kernel before handing out long leases is a distinctive design choice.",
+  "status": "Unknown from the pages read. The homepage describes a stable tarball, an unstable git branch and packages in Debian/Ubuntu, Fedora, Arch and OpenWRT, but gives no release date or last-commit date. The README is brief and no changelog date was seen. The homepage says AHCP is used on the PPS network and that the author hopes to replace it with an extended HNCP protocol, which suggests quiet rather than active development, but I have no dated evidence.",
+  "caveats": "It does not configure default routes, so a routing protocol such as Babel or OLSR is required alongside it. The protocol is a draft specification and the homepage says it is what the PPS network uses for now, with replacement by HNCP planned. Servers only issue long leases when the kernel reports NTP time sync, and the README says SNTP clients will probably not work for that. Redundant servers must serve disjoint IPv4 ranges. Clients must run as root. Building for BSD or OpenWRT needs extra make flags. The README is terse and points to the spec and manual page for details, which I did not fetch.",
+  "quotes": [
+   "AHCP is an autoconfiguration protocol for IPv6 and dual-stack IPv6/IPv4 networks designed to be used in place of router discovery and DHCP on networks where it is difficult or impossible to configure a server within every link-layer broadcast domain, for example mobile ad-hoc networks.",
+   "It will not configure default routes, since it is designed to be run together with a routing protocol (such as Babel or OLSR).",
+   "Unlike the server, the client needs to run ahcpd as root. No configuration file is needed, just run"
+  ],
+  "links": [
+   {
+    "label": "AHCP homepage (author's software page)",
+    "url": "https://www.irif.fr/~jch/software/ahcp/"
+   },
+   {
+    "label": "ahcpd source on GitHub (README read)",
+    "url": "https://github.com/jech/ahcpd"
+   }
+  ],
+  "fetch_log": [
+   "https://www.irif.fr/~jch/software/ahcp/ \u2014 worked; project description, download and packaging notes, linked spec and manpage not followed.",
+   "https://github.com/jech/ahcpd \u2014 worked; README with build, server and client setup."
+  ]
+ }
+}

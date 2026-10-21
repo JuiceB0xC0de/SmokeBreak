@@ -1,0 +1,82 @@
+{
+ "name": "libaribcaption",
+ "desc": "Portable ARIB STD-B24 Caption Decoder/Renderer",
+ "homepage": "https://github.com/xqq/libaribcaption",
+ "installs_365d": 197,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "library",
+  "protocol",
+  "science"
+ ],
+ "why": "Decodes ARIB Japanese broadcast captions from transport streams, a real door into obscure broadcast standards.",
+ "brief": {
+  "what_it_is": "libaribcaption is a portable C++17 library, with a C API, that decodes and renders ARIB STD-B24 captions, the closed-caption system used in Japanese ISDB TV broadcasting. It is meant to be embedded in video players. The README does not name its input format explicitly. It points to a sample with ffmpeg, which suggests caption data is taken from a demuxed broadcast stream. Output is rendered caption graphics, and the README says the goal is to match or beat how a television displays these captions. It supports Japanese (ARIB JIS), Latin (ABNT NBR 15606-1) and Philippine UTF-8 caption variants.",
+  "why_it_exists": "The README says ARIB captions are still poorly supported by general video players even though ISDB broadcasting has run for about 20 years. The library aims to let those players render ARIB captions with the same effect as a TV, or better.",
+  "how_it_works": "The README does not describe the internal pipeline in detail. It says the library provides a decoder and a renderer, with pluggable text backends: DirectWrite on Windows, CoreText on macOS and iOS, and FreeType or Fontconfig elsewhere. It also includes built-in font fallback, support for ARIB gaiji (additional symbols) and DRCS characters, and a built-in table that maps known DRCS characters to alternative Unicode. Graphics rendering is SSE2-optimised on x86/x64.",
+  "commands_seen": [
+   {
+    "cmd": "cd libaribcaption",
+    "context": "Enter the cloned source directory before building."
+   },
+   {
+    "cmd": "mkdir build",
+    "context": "Create an out-of-tree build directory."
+   },
+   {
+    "cmd": "cmake .. -DCMAKE_BUILD_TYPE=Release",
+    "context": "Configure a Release build from inside build/."
+   },
+   {
+    "cmd": "cmake --build . -j8",
+    "context": "Compile the library using 8 parallel jobs."
+   },
+   {
+    "cmd": "cmake --install .      # Optional",
+    "context": "Install the built library system-wide; the README marks this step as optional."
+   },
+   {
+    "cmd": "cmake .. -DCMAKE_BUILD_TYPE=Release -DARIBCC_SHARED_LIBRARY:BOOL=ON",
+    "context": "Configure a build that produces a shared library instead of the default static one. The README also lists -DBUILD_SHARED_LIBS:BOOL=ON as an alternative."
+   },
+   {
+    "cmd": "cmake .. -DCMAKE_BUILD_TYPE=Release -ARIBCC_USE_DIRECTWRITE:BOOL=OFF -DARIBCC_USE_GDI_FONT:BOOL=ON -DARIBCC_USE_FREETYPE:BOOL=ON",
+    "context": "Windows XP configuration from the README. Note that the first option is written as -A rather than -D in the source, so it may be a typo. Copied verbatim as published."
+   },
+   {
+    "cmd": "gcc main.c -o main `pkg-config --cflags --libs --static libaribcaption`",
+    "context": "Link a C program against the static library through pkg-config. The README also shows a version without --static for the shared library."
+   }
+  ],
+  "install_notes": "Requires CMake 3.28 or newer and a C++17 compiler. The default build is static. Options include ARIBCC_BUILD_TESTS, ARIBCC_NO_RENDERER (decoder only), ARIBCC_USE_FREETYPE, ARIBCC_USE_EMBEDDED_FREETYPE (fetches and builds a static FreeType automatically, for environments like Android NDK or Windows), and ARIBCC_USE_FONTCONFIG. On Windows and macOS the library needs no third-party dependencies by default. On Linux it needs libfreetype and libfontconfig. Consumers can use find_package(aribcaption), add_subdirectory(), or pkg-config. The README also recommends installing one of several Japanese fonts for good results: Windows TV MaruGothic, Hiragino Maru Gothic ProN on macOS, Rounded M+ 1m for ARIB, or \u548c\u7530\u7814\u4e2d\u4e38\u30b4\u30b7\u30c3\u30af2004ARIB.",
+  "standout": "It is one of the few portable, MIT-licensed ARIB decoders with a renderer, and it can run with no third-party dependencies on Windows and macOS. It also handles gaiji and DRCS glyphs and maps known DRCS characters to Unicode with a built-in table. Its README says it was heavily inspired by aribb24, aribb24.js and TVCaptionMod2.",
+  "status": "unknown. The README has no release dates, version numbers, changelog or commit information, and the fetch returned only the README. It is a reasonably complete project page, but I could not confirm recent activity.",
+  "caveats": "Requires CMake 3.28+ and C++17. The README says Windows XP support needs DirectWrite turned off, 'which will result in a crash', and this path also needs GDI and FreeType. Android 2.x support requires FreeType. The recommended Japanese fonts are third-party downloads and not bundled, and some are community projects. The README is written in English with a Japanese translation, and I did not fetch the Japanese version. The input container format is not stated in the README.",
+  "quotes": [
+   "A portable caption decoder / renderer for handling ARIB STD-B24 based TV broadcast captions.",
+   "making it possible for general players to render ARIB captions with the same effect (or even better) as Television.",
+   "Though ISDB-based TV broadcasting has been operating for about 20 years, ARIB based caption is still lacking support in general players."
+  ],
+  "links": [
+   {
+    "label": "libaribcaption GitHub repository (homepage)",
+    "url": "https://github.com/xqq/libaribcaption"
+   },
+   {
+    "label": "ARIB STD-B24 specification (English page)",
+    "url": "https://www.arib.or.jp/english/std_tr/broadcasting/std-b24.html"
+   },
+   {
+    "label": "aribb24 (an inspiration cited in the README)",
+    "url": "https://github.com/nkoriyama/aribb24"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/xqq/libaribcaption (homepage, GitHub README): fetched successfully. Full README returned. Linked docs in include/aribcaption and test/ffmpeg were not fetched. I stopped after one fetch because the README was complete."
+  ]
+ }
+}

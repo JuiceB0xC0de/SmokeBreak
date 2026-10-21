@@ -1,0 +1,117 @@
+{
+ "name": "lci",
+ "desc": "Interpreter for the lambda calculus",
+ "homepage": "https://www.chatzi.org/lci/",
+ "installs_365d": 21,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language",
+  "math"
+ ],
+ "why": "An interpreter for the untyped lambda calculus, a minimal language where all computation reduces to functions.",
+ "brief": {
+  "what_it_is": "LCI is a command-line interpreter for the untyped lambda calculus, written in C and distributed as free software under the GPL. You give it lambda terms, aliases, and user-defined operators, usually in a file or interactively, and it reduces them and prints the result. Results are displayed in readable form, so Church numerals appear as numbers and lists as [a,b,c]. The homepage also says it can run in a browser via WebAssembly.",
+  "why_it_exists": "The homepage presents LCI as a way to explore the pure lambda calculus, where all computation reduces to functions, and as a small but capable functional programming language built on that base. It includes an N-Queens example (queens.lci) written in a Haskell-like style to show what the calculus can do.",
+  "how_it_works": "The homepage describes reduction under two evaluation strategies, call-by-name and call-by-value, which can coexist in one program. Integers are encoded in Church by default (set in .lcirc), with Scott encoding available. Recursion works by expanding self-referencing aliases at run time, or by converting recursive terms to non-recursive ones with a fixed-point combinator. A let x = M in N form is parsed as (\\x.N) M, and tracing of execution is supported.",
+  "commands_seen": [
+   {
+    "cmd": "cmake -B build",
+    "context": "Configure the from-source build in a new build directory."
+   },
+   {
+    "cmd": "cd build && make",
+    "context": "Enter the build directory and compile lci."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Install lci to /usr/local/bin, with .lcirc and queens.lci placed in /usr/local/share/lci."
+   },
+   {
+    "cmd": "brew install lci",
+    "context": "Install via Homebrew on macOS (the homepage says 'Using Homebrew on OSX')."
+   },
+   {
+    "cmd": "mkdir build && cd build",
+    "context": "WebAssembly build: create and enter the build directory."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "WebAssembly build: configure a normal build so make_dparser can be built first."
+   },
+   {
+    "cmd": "make make_dparser",
+    "context": "WebAssembly build: build the make_dparser tool with a normal build before the emscripten build."
+   },
+   {
+    "cmd": "rm CMakeCache.txt",
+    "context": "WebAssembly build: clear the normal build's cache before reconfiguring with emscripten."
+   },
+   {
+    "cmd": "emcmake cmake ..",
+    "context": "WebAssembly build: configure with emscripten's cmake wrapper."
+   },
+   {
+    "cmd": "emmake make",
+    "context": "WebAssembly build: compile; output lands in build/html/dist."
+   }
+  ],
+  "install_notes": "From source: extract the release archive (or check out the GitHub repo), then run cmake -B build, cd build && make, and sudo make install. The default prefix is /usr/local; pass -DCMAKE_INSTALL_PREFIX=<dir> to cmake to change it. Homebrew: brew install lci. Windows: download the prebuilt binaries from the linked page, extract, and run lci.exe. WebAssembly: needs emscripten, and make_dparser must be built with a normal build first. No accounts or runtime services are mentioned. The homepage does not describe first-run configuration beyond the .lcirc library file.",
+  "standout": "Everything, including integers, lists, and operators, is built from pure lambda calculus in a bundled .lcirc library, rather than being primitives in the interpreter. It also lets users redefine the integer encoding and the operators, so the same interpreter can be used to study different encodings.",
+  "status": "unknown. The homepage has no release date or changelog, and I did not reach the GitHub repository or documentation, so I could not check last release or last commit. The site is live and describes a current build process.",
+  "caveats": "I read only the homepage, not the README or the full documentation, so details are limited to what that page says. Windows binaries and the documentation are behind links whose URLs were not in the fetched text, so I did not follow them. The WebAssembly build is involved (emscripten plus a two-stage make_dparser build). The homepage text contains typos (for example 'interpeter', 'powerfull', 'licenced'). License is GPL.",
+  "quotes": [
+   "It supports many advanced features such as recursion, user-defined operators and multiple evaluation strategies, all based on the pure calculus.",
+   "All features are implemented in the pure lambda calculus.",
+   "Self-references of aliases are expanded during execution."
+  ],
+  "links": [
+   {
+    "label": "LCI homepage",
+    "url": "https://www.chatzi.org/lci/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.chatzi.org/lci/ : fetched OK, homepage text only. The 'View On GitHub' button, the Windows binaries link, the documentation link, and the fullpage demo link had no URLs in the returned text, so I did not follow them."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A runnable untyped lambda calculus where integers, lists, and operators are encoded in the calculus itself makes a compact, hands-on way to explore computation from first principles."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "lci",
+  "tldr": "A command-line interpreter for the untyped lambda calculus, where integers, lists and operators are all built from nothing but functions.",
+  "deeper_look": "LCI reads lambda terms, aliases and user-defined operators from a file or an interactive prompt, reduces them, and prints the result in readable form. Church numerals come back as plain numbers and lists as `[a,b,c]`, so you are not left squinting at nested lambdas.\n\nThe idea underneath is that the lambda calculus is a complete model of computation made from one thing: functions applied to functions. LCI does not add integers or lists as built-in primitives. A bundled `.lcirc` library defines them in pure lambda calculus. Integers use Church encoding by default, with Scott encoding available, and you can redefine the encoding or the operators to see how different choices change the system.\n\nThe homepage describes two evaluation strategies, call-by-name and call-by-value, which can coexist in one program. Recursion works by expanding self-referencing aliases while the program runs, or you can convert a recursive term into a non-recursive one with a fixed-point combinator. A `let x = M in N` form is parsed as `(\\x.N) M`, and execution can be traced. An N-Queens example, `queens.lci`, is written in a Haskell-like style to show how far the bare calculus stretches.\n\nThe homepage also mentions running LCI in a browser through WebAssembly.",
+  "install": "brew install lci",
+  "try_this": [
+   {
+    "cmd": "lci --help",
+    "what_happens": "Prints the interpreter's usage and options, a starting point for running files or the interactive prompt."
+   }
+  ],
+  "whats_unique": "Integers, lists and operators are not primitives. They are defined in pure lambda calculus in a library file you can edit, so the interpreter doubles as a lab for comparing encodings.",
+  "caveats": "The homepage gives no release date or changelog, so how actively it is maintained is unknown, and its documentation was not checked.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "language",
+   "math",
+   "lambda-calculus",
+   "functional"
+  ],
+  "links": [
+   {
+    "label": "LCI homepage",
+    "url": "https://www.chatzi.org/lci/"
+   }
+  ]
+ }
+}

@@ -1,0 +1,90 @@
+{
+ "name": "aespipe",
+ "desc": "AES encryption or decryption for pipes",
+ "homepage": "https://loop-aes.sourceforge.net/",
+ "installs_365d": 128,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "cryptography",
+  "pipes"
+ ],
+ "why": "Old-school AES over pipes with a loop-AES lineage, a small curio that opens a window onto Linux disk encryption history.",
+ "brief": {
+  "what_it_is": "aespipe is a command-line filter that reads data from standard input, encrypts or decrypts it with AES, and writes the result to standard output. Its README says it can create and restore encrypted tar or cpio archives, and it can encrypt and decrypt loop-AES compatible encrypted disk images. Keys can come from a passphrase or from a gpg-encrypted key file passed with -K. The README's example usage is aespipe -d -K mykey1.gpg <archive.aes | bzip2 -d -q | tar xvpf -.",
+  "why_it_exists": "The README gives no explicit motivation beyond its role in the loop-AES ecosystem: it is the pipe-based AES tool that lets you encrypt archives and images that loop-AES can also mount. The author is Jari Ruusu, and the package is copyright 2002-2025.",
+  "how_it_works": "aespipe sits in a shell pipeline between a producer and a consumer, so tar, bzip2, dd, or mkisofs feed it data and the output goes to a file or device. Its AES code is derived from Brian Gladman's implementation, with optimized assembly for x86, amd64, arm, and aarch64, and it can use VIA padlock, Intel AES, or ARM CE hardware with a software fallback. The README also describes a bz2aespipe wrapper script that uses a seeded, iterated key setup to slow dictionary attacks.",
+  "commands_seen": [
+   {
+    "cmd": "./configure",
+    "context": "Generates the Makefile; run first when building from source. Options include --enable-asm=amd64 and --enable-intelaes."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds aespipe after configure."
+   },
+   {
+    "cmd": "make tests",
+    "context": "Runs the test suite, which uses the bundled gpgkey[123].asc key files."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs to /usr/local/bin by default; --bindir=/usr/bin can change this."
+   },
+   {
+    "cmd": "tar cvf archive.aes --use-compress-program=bz2aespipe files...",
+    "context": "Example 1: writes a bzip2-compressed, encrypted tar archive using the bz2aespipe wrapper script."
+   },
+   {
+    "cmd": "tar cvf - files... | bzip2 | aespipe -w 10 -K mykey1.gpg >archive.aes",
+    "context": "Example 2: writes an encrypted archive using a gpg-encrypted key file; the -w 10 flag is used with that key file."
+   },
+   {
+    "cmd": "aespipe -d -K mykey1.gpg <archive.aes | bzip2 -d -q | tar xvpf -",
+    "context": "Example 2: restores the archive, prompting for the passphrase that decrypts the key file."
+   },
+   {
+    "cmd": "mkisofs -quiet -r directory-tree | aespipe -K image.iso -O 16 >>image.iso",
+    "context": "Example 3: appends an encrypted ISO9660 image after the key file stored in the first 8192 bytes."
+   },
+   {
+    "cmd": "dd if=/dev/fd0 bs=64k | aespipe -K /etc/fskey1.gpg | dd of=/dev/fd0 bs=64k conv=notrunc",
+    "context": "Example 4: adds loop-AES compatible encryption in place to a 1.44 MB floppy."
+   },
+   {
+    "cmd": "dd if=/dev/fd0 bs=64k | aespipe -d -K /etc/fskey1.gpg | dd of=/dev/fd0 bs=64k conv=notrunc",
+    "context": "Example 4: removes that encryption from the same floppy."
+   }
+  ],
+  "install_notes": "The README says to build from source with ./configure, make, make tests, and make install. Assembly code needs a GNU toolchain, and if configure detects it wrongly, --disable-asm may be needed. Building on the Homebrew side is not covered in the README. The gpg-based key-file examples need gpg installed, and gpg version 1 versus 2 changes a build-time workaround, so reconfigure if you switch versions. Reading /dev/random can block until entropy is available. Mounting loop-AES images on Linux requires the loop-AES package, version 3.0a or later.",
+  "standout": "Instead of a password-only archive, it can use a gpg-encrypted key file made of 65 random keys and can encrypt an existing floppy or CD image in place, staying compatible with the loop-AES on-disk format. It is a small, Unix-pipeline-first tool that fits into dd, tar, and mkisofs.",
+  "status": "maintained, with some uncertainty. The README is dated 2025-04-29, the aespipe-latest.tar.bz2 tarball is dated 2025-09-02, and the directory index shows an updates/ folder modified 2026-09-26. The README itself has no release history, so the ChangeLog is the place to confirm.",
+  "caveats": "The README warns that gpg may let keys leak to swap: 'gpg appears to prevent its own keys from being leaked to swap, but does not appear to prevent data handled by it from being leaked to swap,' so gpg-encrypted key files depend on encrypted swap. Assembly support needs the GNU toolchain, and configure can misdetect it. The Homebrew formula's caveats are empty. The README file is under the GNU GPL, but I did not verify the license of the aespipe source code itself. The homepage is a bare SourceForge-style directory listing, not a project landing page.",
+  "quotes": [
+   "aespipe program is AES encrypting or decrypting pipe. It reads from standard input and writes to standard output.",
+   "A random password seed and password iteration count are used to slow down dictionary attacks.",
+   "gpg appears to prevent its own keys from being leaked to swap, but does not appear to prevent data handled by it from being leaked to swap."
+  ],
+  "links": [
+   {
+    "label": "Homepage (directory index)",
+    "url": "https://loop-aes.sourceforge.net/"
+   },
+   {
+    "label": "aespipe README (full docs, examples)",
+    "url": "https://loop-aes.sourceforge.net/aespipe.README"
+   },
+   {
+    "label": "SourceForge aespipe downloads",
+    "url": "https://sourceforge.net/projects/loop-aes/files/aespipe/"
+   }
+  ],
+  "fetch_log": [
+   "https://loop-aes.sourceforge.net/ - worked, but returned a directory index listing rather than a landing page; it links to aespipe.README, which I then fetched.",
+   "https://loop-aes.sourceforge.net/aespipe.README - worked; this is the full README, with build instructions, examples, and file list."
+  ]
+ }
+}

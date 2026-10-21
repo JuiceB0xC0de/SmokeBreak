@@ -1,0 +1,86 @@
+{
+ "name": "c10t",
+ "desc": "Minecraft cartography tool",
+ "homepage": "https://github.com/udoprog/c10t",
+ "installs_365d": 191,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "visual"
+ ],
+ "why": "Turns Minecraft world save files into maps, a satisfying look into the internal format of a game world.",
+ "brief": {
+  "what_it_is": "c10t is a command-line cartography tool that renders Minecraft world save data into map images. It reads the world directory's data files (the README describes NBT data files and mcr region files) and produces rendered maps. Rendering is pipelined with image compositing and can run multithreaded, and the README says it can cap memory use and spill caching to disk. The README does not spell out the exact output format, but it lists libpng as a requirement. A separate GUI wrapper, c10t-swt, exists.",
+  "why_it_exists": "The author wrote it because they liked the Cartograph tool by ZomBuster but disliked some aspects of how it performed rendering. The README credits Cartograph and the Linux port by Firemark as the inspiration.",
+  "how_it_works": "Rendering runs as a pipeline that composites images, which lets it use multiple threads. A configurable memory limit makes it switch caching to files when that limit is reached. The README also ships small inspection tools, nbt-inspect (dumps NBT data files from the world directory) and region-inspect (dumps mcr region files), which are useful for anyone writing their own tools against the format.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt-get install build-essential cmake libpng-dev zlib1g-dev libboost-all-dev libfreetype6-dev",
+    "context": "Ubuntu step 1: installs the build tools and libraries (cmake, libpng, zlib, boost, freetype)."
+   },
+   {
+    "cmd": "git clone git://github.com/udoprog/c10t.git",
+    "context": "Ubuntu step 2: clones the repository. The README says this is required because the next steps depend on the git submodules."
+   },
+   {
+    "cmd": "git submodule init",
+    "context": "Ubuntu step 3: initialises the submodules that hold the required dependencies in ./libs."
+   },
+   {
+    "cmd": "git submodule update",
+    "context": "Ubuntu step 3: fetches the contents of the submodules into ./libs."
+   },
+   {
+    "cmd": "mkdir build",
+    "context": "Ubuntu step 4: creates a build directory."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Ubuntu step 4: configures the build from inside build/ using cmake; per the README this generates src/config.h."
+   },
+   {
+    "cmd": "make c10t",
+    "context": "Ubuntu step 4: builds the c10t target. The executable ends up in the current directory."
+   },
+   {
+    "cmd": "c10t --debug",
+    "context": "Issues section: runs c10t in debug mode to print useful information. The README warns this is much slower."
+   },
+   {
+    "cmd": "c10t --version",
+    "context": "Issues section: prints the version, which the README says to include in every bug report."
+   }
+  ],
+  "install_notes": "Homebrew installs the c10t executable. The README documents only a source build, using cmake and Ubuntu package names. The build needs libpng, zlib, freetype, and Boost (thread, filesystem, system, test) at 1.46 or newer. If the packaged Boost is too old, you must build Boost from source with bootstrap and b2. The build also needs the git submodules under ./libs initialised and updated. No accounts or runtimes are mentioned, and the README shows no first-run setup or rendering command.",
+  "standout": "It is a clean-room alternative to Cartograph that targets the same job with a different, multithreaded and memory-limited pipeline. It also ships standalone NBT and region inspectors that expose the internal Minecraft save format, which is the satisfying part of the project.",
+  "status": "quiet. The most recent commit on master is from Jul 11, 2024 ('Fixed deprecated boost use #313'). Before that, the commit history shows a 2022 README update, a 2020 palette overhaul that replaced hardcoded numeric block IDs with namespaced palettes loaded from JSON, and mostly 2017 to 2019 work. The README has no release notes or version history I could see.",
+  "caveats": "The README's requirements look dated. It lists libz with a question mark and Boost >= 1.46. Build instructions are for Ubuntu only, and the source build needs submodules, so it is not a one-liner. The README gives no example of rendering a world, and the only flags it names are --debug and --version. It does not state a license in the text I read. The Homebrew formula's caveats field is empty.",
+  "quotes": [
+   "I wrote c10t entirely because i liked the tool Cartograph by ZomBuster, but I wasn't too fond of a couple of aspects about how rendering was performed.",
+   "Pipelined rendering process (using image compositioning) which allows for multithreaded rendering.",
+   "Very memory friendly, you can specify a memory limit and it will switch caching to file."
+  ],
+  "links": [
+   {
+    "label": "c10t GitHub repository (homepage)",
+    "url": "https://github.com/udoprog/c10t"
+   },
+   {
+    "label": "Commit history on master",
+    "url": "https://github.com/udoprog/c10t/commits/master"
+   },
+   {
+    "label": "c10t-swt (GUI wrapper, native GUI with Java bindings)",
+    "url": "http://github.com/udoprog/c10t-swt"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/udoprog/c10t: worked, returned the README",
+   "https://github.com/udoprog/c10t/commits/master: worked, but the page came back as mostly raw HTML; used only to date the most recent commits"
+  ]
+ }
+}

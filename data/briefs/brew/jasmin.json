@@ -1,0 +1,89 @@
+{
+ "name": "jasmin",
+ "desc": "Assembler for the Java Virtual Machine",
+ "homepage": "https://jasmin.sourceforge.net/",
+ "installs_365d": 148,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "language",
+  "reverse-engineering",
+  "afternoon",
+  "ancient"
+ ],
+ "why": "Writing JVM bytecode by hand exposes the machine beneath Java, a strange and instructive way to see how programs really run.",
+ "brief": {
+  "what_it_is": "Jasmin is an assembler for the Java Virtual Machine. It takes ASCII source files written in a simple assembler-like syntax that uses JVM instruction mnemonics, and converts them into binary Java .class files that a Java runtime can load. The source file's .class directive decides where the output class file goes. The assembler does little checking: it does not verify that referenced classes exist or that type descriptors are well formed.",
+  "why_it_exists": "Jasmin was created by Jon Meyer as a companion to his O'Reilly book 'Java Virtual Machine', so readers could try out JVM features directly. The homepage says it has since become the de-facto standard assembly format for Java and is used in dozens of compiler classes around the world.",
+  "how_it_works": "Source is tokenized on whitespace into directives (names starting with '.'), instructions (standard JVM opcode mnemonics), and labels. Class and method names use class-file conventions, so java/lang/String rather than java.lang.String, and methods are written as one token such as java/io/PrintStream/println(Ljava/lang/String;)V. The assembler emits a class file; with -g it adds line-number information for debuggers.",
+  "commands_seen": [
+   {
+    "cmd": "java -jar jasmin.jar myfile.j",
+    "context": "Runs Jasmin on a source file using the executable JAR; output goes to the directory implied by the .class directive."
+   },
+   {
+    "cmd": "java Jasmin myfile.j",
+    "context": "Alternative form if jasmin.jar is already on the classpath."
+   },
+   {
+    "cmd": "java -jar jasmin.jar -d /tmp myfile.j",
+    "context": "Uses -d to write the output class file under /tmp instead of the current directory, e.g. /tmp/mypackage/MyClass.class."
+   },
+   {
+    "cmd": ".class mypackage/MyClass",
+    "context": "Directive at the top of a source file; names the class and determines the output path."
+   },
+   {
+    "cmd": ".limit stack 10",
+    "context": "Method directive setting the maximum operand stack size."
+   },
+   {
+    "cmd": "iinc 1 -3",
+    "context": "Instruction example from the guide, commented as decrementing local variable 1 by 3."
+   },
+   {
+    "cmd": "bipush 10",
+    "context": "Instruction that pushes the integer 10 onto the stack."
+   },
+   {
+    "cmd": "ldc \"Hello World\"",
+    "context": "Instruction example loading a string constant."
+   },
+   {
+    "cmd": ".catch java/io/IOException from L1 to L2 using IO_Handler",
+    "context": "Method directive adding an exception-table entry that jumps to IO_Handler for IOException thrown between labels L1 and L2."
+   },
+   {
+    "cmd": ".var 0 is Count I from Label1 to Label2",
+    "context": "Method directive giving local variable 0 the name Count, type int, and a scope between two labels, for debugger use."
+   }
+  ],
+  "install_notes": "Download is from SourceForge; the homepage gives no other install steps. Running requires a Java runtime, invoked as java -jar jasmin.jar or java Jasmin with the jar on the classpath. The guide says nothing about configuration or accounts. No Homebrew-specific notes were in the brew data.",
+  "standout": "Jasmin is a thin, literal assembler: it maps almost one-to-one onto class-file structure and deliberately skips verification, so you can hand-write bytecode that a compiler would never emit and see what the JVM does with it. The guide is candid that it is a teaching and experimentation tool, not a macro assembler.",
+  "status": "Quiet by the evidence available. The homepage was last dated Dec 2005 (Daniel Reynaud), the user guide is dated July 1996, and the page mentions version 2.1 enhancements and JasminXT since 2.0. I saw no release date or commit history, so I cannot confirm recent maintenance.",
+  "caveats": "The assembler does no compile-time checking of class references or descriptors, so mistakes show up only at runtime or in the verifier. Numeric support is limited: no scientific notation, character literals, or octal. String escape support is basic, with only \\n and \\t documented. Labels cannot start with a digit or contain = : . \" -. Methods get no implicit return and must end with one. The guide doesn't cover every instruction; the JVM spec is needed for that. The homepage's 'Download' link to SourceForge was not followed, so I have no version number or licence statement. The homepage's copyright line is 2004, Jonathan Meyer.",
+  "quotes": [
+   "Jasmin is an assembler for the Java Virtual Machine.",
+   "Since then, it has become the de-facto standard assembly format for Java.",
+   "Jasmin remains the oldest and the original Java assembler.",
+   "The Jasmin assembler does little compile-time processing or checking of the input code."
+  ],
+  "links": [
+   {
+    "label": "Jasmin homepage",
+    "url": "https://jasmin.sourceforge.net/"
+   },
+   {
+    "label": "Jasmin User Guide (July 1996)",
+    "url": "https://jasmin.sourceforge.net/guide.html"
+   }
+  ],
+  "fetch_log": [
+   "https://jasmin.sourceforge.net/ : fetched OK, README-style homepage with links to the user guide, instructions, JasminXT syntax, and SourceForge download.",
+   "https://jasmin.sourceforge.net/guide.html : fetched OK. This URL was guessed from the homepage's link labels, since the fetched text did not include hrefs. It returned the User Guide.",
+   "Not fetched: the Jasmin Instructions page, the JasminXT syntax page, and the SourceForge download page. Not needed for the brief, and the five-fetch limit was not reached."
+  ]
+ }
+}

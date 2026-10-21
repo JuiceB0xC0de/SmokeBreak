@@ -1,0 +1,93 @@
+{
+ "name": "ncmdump",
+ "desc": "Convert Netease Cloud Music ncm files to mp3/flac files",
+ "homepage": "https://github.com/taurusxin/ncmdump",
+ "installs_365d": 840,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "audio"
+ ],
+ "why": "Decodes Netease's encrypted ncm container format back into plain audio, a small but real file-format puzzle.",
+ "brief": {
+  "what_it_is": "A command-line tool that converts Netease Cloud Music cached downloads (.ncm files) into ordinary .mp3 or .flac audio. You give it one or more .ncm files, or a folder (optionally recursive), and it writes decoded audio files next to the originals or into an output directory. It also ships a libncmdump shared library (DLL on Windows) so other programs in C#, Python, Java and similar languages can call it. The README is in Chinese; this brief is translated from it.",
+  "why_it_exists": "The author says that before this project there was little for converting ncm files, and that this C++ version is the earliest one, built on the author's own earlier work. It is a fork of anonymous5l/ncmdump, which the README says was deleted by its author on 2021-10-06, and it adds cross-platform builds and memory-overflow fixes.",
+  "how_it_works": "The README does not explain the decoding mechanism; it only says the tool decodes the ncm container back to mp3 or flac. It uses TagLib to handle audio metadata, and the README asks for TagLib 2.x when building. Some Netease 3.0+ downloads do not embed album cover art, and the README says the cover must then be fetched from the network. This tool does not do that; the author points to ncmdump-go or the GUI for it.",
+  "commands_seen": [
+   {
+    "cmd": "ncmdump -h",
+    "context": "Prints help. The README also allows --help."
+   },
+   {
+    "cmd": "ncmdump -v",
+    "context": "Prints the version. The README also allows --version."
+   },
+   {
+    "cmd": "ncmdump 1.ncm 2.ncm...",
+    "context": "Converts one or more individual .ncm files."
+   },
+   {
+    "cmd": "ncmdump -d source_dir",
+    "context": "Batch-converts every .ncm file in the given folder, without recursing into subfolders."
+   },
+   {
+    "cmd": "ncmdump -d source_dir -r",
+    "context": "Batch-converts .ncm files in the folder and all its subfolders recursively (-r is used together with -d)."
+   },
+   {
+    "cmd": "ncmdump -m",
+    "context": "Per the README, deletes the source file after it has been processed correctly. The README gives this flag with no file example."
+   },
+   {
+    "cmd": "ncmdump 1.ncm 2.ncm -o output_dir",
+    "context": "Converts individual files and writes the results to output_dir."
+   },
+   {
+    "cmd": "ncmdump -d source_dir -o output_dir -r",
+    "context": "Recursively converts a folder and keeps the directory structure under output_dir."
+   },
+   {
+    "cmd": "brew install taglib",
+    "context": "macOS build step: installs the TagLib library through Homebrew before compiling."
+   },
+   {
+    "cmd": "cmake -DCMAKE_BUILD_TYPE=Release -B build",
+    "context": "Configures the project for a Release build in the build directory (used on macOS and Linux)."
+   }
+  ],
+  "install_notes": "The README's main route is to download a prebuilt binary from the GitHub Releases page. To build from source, first run git clone https://github.com/taurusxin/ncmdump.git. On Windows you need Visual Studio 2022 with CMake and the C++ desktop workload, plus vcpkg with a static TagLib (x64-windows-static triplet). On macOS, install TagLib with Homebrew, then configure and build with CMake. On Linux, Ubuntu 24.04's TagLib is 1.x and does not support CMake, so the README tells you to download and build TagLib 2.1.1 from source and install it to /usr/local. The built binaries end up in build/. The shared library is Windows-only, and the Windows DLL needs file names encoded as UTF-8. No accounts or runtime setup are mentioned.",
+  "standout": "It is the original C++ port of a tool that was deleted upstream, and the 1.3.0 release says it now handles file names with any UTF-8 characters (Chinese, Japanese, Korean, emoji), a bug the author says earlier issues reported. It also ships a C-callable shared library so the decoder can be used from other languages, not just as a CLI.",
+  "status": "Unknown from the README alone. It mentions version 1.3.0, a GitHub Actions Linux build, and TagLib 2.1.1 as current. I did not check the Releases page or commit history for dates, so I cannot confirm recent activity.",
+  "caveats": "The README is in Chinese. Cover art is not embedded for some newer Netease downloads; this tool does not fetch it, so use ncmdump-go or ncmdump-gui for that. Building on Windows needs VS 2022 and vcpkg; on Linux you have to build TagLib 2.x by hand. The shared library is Windows-only. The Windows DLL needs UTF-8 file names or it throws a runtime error. The README gives no license information. The brief has no brew caveats, and Homebrew's formula is not the README's main install route. The README does not describe the ncm format itself.",
+  "quotes": [
+   "\u4f7f\u7528\u672c\u7a0b\u5e8f\u53ef\u5c06\u4e0b\u8f7d\u7684\u7f51\u6613\u4e91\u97f3\u4e50\u7f13\u5b58\u6587\u4ef6\uff08ncm\uff09\u8f6c\u6362\u4e3a mp3 \u6216 flac \u683c\u5f0f",
+   "\u8be5\u7248\u672c\u4e3a\u6700\u65e9\u7684 C++ \u7248\u672c\uff0c\u4e5f\u662f\u4f5c\u8005\u5f00\u53d1\u7684\u5e02\u9762\u4e0a\u7b2c\u4e00\u4e2a\u652f\u6301 ncm \u8f6c\u6362\u7684\u7a0b\u5e8f",
+   "\u6240\u6709\u7684 UTF-8 \u5b57\u7b26\u90fd\u53ef\u4ee5\u6b63\u5e38\u89e3\u5bc6\u3002\u5e76\u4e14\u8fd8\u81ea\u5e26\u4e86 dll \u7684\u6784\u5efa\uff0c\u53ef\u4ee5\u4f9b\u5176\u4ed6\u5e94\u7528\u7a0b\u5e8f\uff08C#\u3001Python\u3001Java\u7b49\uff09\u8c03\u7528\u3002"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/taurusxin/ncmdump"
+   },
+   {
+    "label": "Releases (prebuilt binaries)",
+    "url": "https://github.com/taurusxin/ncmdump/releases"
+   },
+   {
+    "label": "ncmdump-go (Go rewrite, fetches cover art)",
+    "url": "https://git.taurusxin.com/taurusxin/ncmdump-go"
+   },
+   {
+    "label": "ncmdump-gui (GUI built on ncmdump-go)",
+    "url": "https://git.taurusxin.com/taurusxin/ncmdump-gui"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/taurusxin/ncmdump (homepage, GitHub repository README): fetched successfully; README is in Chinese and fairly complete, so no further links were followed"
+  ]
+ }
+}

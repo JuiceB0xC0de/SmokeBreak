@@ -1,0 +1,65 @@
+{
+ "name": "dex2jar",
+ "desc": "Tools to work with Android .dex and Java .class files",
+ "homepage": "https://github.com/pxb1988/dex2jar",
+ "installs_365d": 1811,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering"
+ ],
+ "why": "Converts Android dex bytecode into Java jars, opening up APKs for inspection and poking.",
+ "brief": {
+  "what_it_is": "dex2jar is a set of command-line tools for Android .dex (Dalvik Executable) and Java .class files. The main tool, d2j-dex2jar, takes an APK or dex file and converts its bytecode into .class files packed as a jar, so the app can be read with ordinary Java decompilers. The toolkit also includes a dex reader/writer library with an ASM-like API, smali/baksmali disassembly and assembly, and d2j-decrypt-string for recovering obfuscated strings. The published executable list is longer and includes d2j-jar2dex, d2j-apk-sign, d2j-std-apk, d2j-jasmin2jar and others.",
+  "why_it_exists": "The README frames it simply as tools to work with android .dex and java .class files. Its entry point is turning an APK into a jar that can be inspected.",
+  "how_it_works": "The README gives little detail on internals. It describes a dex reader/writer with a light-weight API similar to ASM, and a converter that writes .class files zipped as a jar. It also describes its smali/baksmali implementation as compatible in syntax with the original smali, with one extension: escapes in type descriptors such as \"Lcom/dex2jar\\t\\u1234;\".",
+  "commands_seen": [
+   {
+    "cmd": "./gradlew distZip",
+    "context": "Run from the repository root to build the distribution zip (the README says this produces dex-tools-2.1-SNAPSHOT.zip, about 5 MB)."
+   },
+   {
+    "cmd": "cd dex-tools/build/distributions",
+    "context": "Change into the build output directory that holds the distribution zip, before unzipping it."
+   },
+   {
+    "cmd": "sh d2j-dex2jar.sh -f ~/path/to/apk_to_decompile.apk",
+    "context": "Example usage from the README: converts the given APK. The output is written as apk_to_decompile-dex2jar.jar."
+   }
+  ],
+  "install_notes": "Not via brew alone. The README's documented route is to build from source: clone the repo, run ./gradlew distZip from the root (this needs a Java toolchain and the bundled Gradle wrapper), unzip dex-tools-*.zip from dex-tools/build/distributions, then run the d2j-*.sh scripts inside. Prebuilt downloads are on the GitHub Releases page. The brew formula lists 17 executables, which suggests a packaged install, but the README does not mention brew. No accounts or API keys are mentioned.",
+  "standout": "A reverse-engineering staple that pairs a dex-to-jar converter with the smali/baksmali assembler and a string decryptor, so one toolkit covers APK-to-Java inspection, patching the dex, and repacking. Its output is standard jars, so any Java decompiler can open the result.",
+  "status": "Maintained, with caveats. The GitHub Releases page lists v2.4 as Latest (tagged 'bugfix', published 03 Oct; the year is not shown in the fetched text), v2.3 (31 Aug, support for dex038 and dex039), and a v2.2 snapshot dated 2021-10-31. The README still says 2.1-SNAPSHOT, so it is out of date. The project moved from SourceForge, Bitbucket and Google Code to GitHub, and the old mirrors are marked 'old'.",
+  "caveats": "The README is short and partly stale: the usage section refers to dex-tools-2.1-SNAPSHOT and to running d2j-dex2jar.sh, while the release list is at 2.4. Output is a decompiled approximation, not original source, and the README does not discuss its limits. The README says the project is licensed under Apache 2.0. Installing from source needs a working Gradle/Java build. Sign-in and other navigation noise showed up in the releases page, but the release data was readable.",
+  "quotes": [
+   "Tools to work with android .dex and java .class files",
+   "Convert .dex file to .class files (zipped as jar)",
+   "smali/baksmali: disassemble dex to smali files and assemble dex from smali files. different implementation to smali/baksmali, same syntax, but we support escape in type desc"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/pxb1988/dex2jar"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/pxb1988/dex2jar/releases"
+   },
+   {
+    "label": "Wiki",
+    "url": "https://github.com/pxb1988/dex2jar/wiki"
+   },
+   {
+    "label": "DecryptStrings wiki page (d2j-decrypt-string)",
+    "url": "https://sourceforge.net/p/dex2jar/wiki/DecryptStrings"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/pxb1988/dex2jar: worked, README returned (includes the project move notice, mirror table, usage, and Apache 2.0 license).",
+   "https://github.com/pxb1988/dex2jar/releases: worked, but the text is mostly page chrome; release names, dates, and notes were readable (v2.4 latest, v2.3, v2.2-SNAPSHOT-2021-10-31, v2.1, nightly builds from 2015 to 2018, dex2jar-2.0)."
+  ]
+ }
+}

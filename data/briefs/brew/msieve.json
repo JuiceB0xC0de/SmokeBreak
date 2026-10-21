@@ -1,0 +1,58 @@
+{
+ "name": "msieve",
+ "desc": "C library for factoring large integers",
+ "homepage": "https://sourceforge.net/projects/msieve/",
+ "installs_365d": 179,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "math"
+ ],
+ "why": "Runnable number field sieve for factoring large integers, a real piece of computational number theory you can drive from the shell.",
+ "brief": {
+  "what_it_is": "Msieve is a C library, with a small demo command-line program also called msieve, for factoring large integers. You give it an integer (or a text file of integers, one per line, or an arithmetic expression such as (10^53 - 1) / 9) and it returns the prime factors. Internally it runs trial division and Pollard rho, then P-1, P+1 and ECM through GMP-ECM if that is installed, then the self-initializing quadratic sieve by default. The number field sieve is also included for much larger inputs, but the README says it is for users who know what they are doing. Output goes to a logfile, with a summary on screen.",
+  "why_it_exists": "The author, Jason Papadopoulos, says it is the result of his efforts to understand and optimize how integers are factored using the most powerful modern algorithms. It is a learning and optimization project, and it is released as a public-domain 'hobby' effort.",
+  "how_it_works": "The library runs cheap methods first and escalates. Trial division and Pollard rho run on every input, and inputs under about 25 digits use small custom routines. Larger inputs go to GMP-ECM's P-1, P+1 and ECM with user-set effort. If those fail, the self-initializing quadratic sieve runs, and the README says failure there would indicate a library bug. Savefiles let an interrupted factorization restart. The README notes that the sieving stage is the expensive part and that its own multiple-precision library replaces GMP.",
+  "commands_seen": [
+   {
+    "cmd": "msieve -h",
+    "context": "Shows the full list of command-line options for the demo application, according to the README."
+   },
+   {
+    "cmd": "(10^53 - 1) / 9",
+    "context": "Example of an arithmetic expression the demo accepts as input (from v1.08 on). It evaluates to 11111111111111111111111111111111111111111111111111111. This is an input example, not a shell command."
+   }
+  ],
+  "install_notes": "Build from source with the included unix Makefile, which produces a static library libmsieve.a and a msieve demo binary. Precompiled Windows binaries are on the author's web page (www.boo.net/~jasonp). Visual Studio 2007 build files (from Brian Gladman) are included, and there are also build.vc9 and build.cuda.vc9 folders. The README says the only requirement is a compiler with a native 64-bit integer type. ECM support needs the external GMP-ECM library. Memory use grows with input size: a 100-digit quadratic sieve job needs roughly 55-130 MB, while completing a 512-bit RSA-sized number by NFS needs 2-3 GB. The README does not mention Homebrew specifically; the brew install is the one listed in the catalogue data.",
+  "standout": "It is a complete factoring pipeline in one small, self-contained C library with no required dependencies, and it is public domain. The author's FAQ says large jobs should use GGNFS for the first stage and msieve for the last part. The scout note calls it a runnable number field sieve, but the README says the default path is the quadratic sieve and the NFS code is for advanced use.",
+  "status": "Unknown, with mixed evidence. The SourceForge page shows 'Last Update: 2026-10-12', 127 downloads this week, and a 5.0 rating from 4 reviews, with the project registered in 2009. The GitHub mirror (radii/msieve) shows 163 commits, 282 stars and 57 forks, but I did not see a release date or last-commit date. The README documents version 1.46 and reads like a finished, long-stable project, so it is probably low-activity rather than actively developed, but I could not confirm this.",
+  "caveats": "The README says the code can take numbers up to 275 digits, but the author does not expect it to complete factorizations above about 120 digits on its own. Above roughly 110 digits, the README says the quadratic sieve is 'not appropriate' and the NFS implementation 'isn't even close to done' (its wording). Multithreading only covers the linear-algebra and final stages, not sieving. The multiple-precision library is described by the author as one that 'sucks', and GMP is not used. The license is public domain (SourceForge lists 'Public Domain'). The scout note's description of 'runnable number field sieve' overstates how the tool defaults. The SourceForge page's 'Last Update' date is in the future relative to typical catalogue dates, so treat it cautiously.",
+  "quotes": [
+   "Msieve is the result of my efforts to understand and optimize how integers are factored using the most powerful modern algorithms.",
+   "The only input is the integer to be factored. Everything else happens automatically.",
+   "To be free (as in beer). The entire code base is released into the public domain.",
+   "Do not expect to become a factoring expert just by reading it."
+  ],
+  "links": [
+   {
+    "label": "Homepage (SourceForge)",
+    "url": "https://sourceforge.net/projects/msieve/"
+   },
+   {
+    "label": "Source repository (GitHub mirror, with README)",
+    "url": "https://github.com/radii/msieve"
+   },
+   {
+    "label": "Author's web page (listed as project site in the repo About section)",
+    "url": "http://www.boo.net/~jasonp/qs.html"
+   }
+  ],
+  "fetch_log": [
+   "https://sourceforge.net/projects/msieve/ - loaded, but the page is mostly site chrome. It gave the one-line description, license (Public Domain), last-update date, categories and ratings, but no README text.",
+   "https://github.com/radii/msieve - loaded, full README returned, including the FAQ, references and credits. The author's page www.boo.net/~jasonp was not fetched."
+  ]
+ }
+}

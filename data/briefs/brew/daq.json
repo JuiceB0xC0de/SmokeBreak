@@ -1,0 +1,66 @@
+{
+ "name": "daq",
+ "desc": "Network intrusion prevention and detection system",
+ "homepage": "https://www.snort.org/",
+ "installs_365d": 1023,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "The Snort DAQ packet acquisition layer, a door into how intrusion detection grabs packets, though it is mostly plumbing.",
+ "brief": {
+  "what_it_is": "LibDAQ is a C library, the Data AcQuisition layer used by Snort 3, that sits between an application and a packet source. Applications load and configure pluggable DAQ modules through the API in daq.h, then receive batches of DAQ messages (each a type, a header, and data, usually a packet) and return a verdict for each one. The packet source is traditionally a network interface or a network data plane. The README doesn't describe the daqtest executables listed by Homebrew, so their role is unconfirmed.",
+  "why_it_exists": "The README frames LibDAQ as a pluggable abstraction layer for interacting with a data source, traditionally a network interface or network data plane, so applications don't have to be tied to one capture mechanism. The homepage it links to is Snort's general site, which calls Snort the foremost open source intrusion prevention system.",
+  "how_it_works": "A DAQ instance is one base module plus zero or more wrapper modules stacked LIFO, with overrides resolved from the top down. Its lifecycle is instantiate, start, stop, destroy. The application calls daq_instance_msg_receive to get a batch of messages, then daq_instance_msg_finalize on each with a verdict, and unlike LibDAQ 2.x (which used a per-packet callback) messages can be finalized in any order, even many receive calls later.",
+  "commands_seen": [
+   {
+    "cmd": "./configure",
+    "context": "Standard autotools configure step to build and install LibDAQ, which also builds the modules when their headers and libraries are present."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles LibDAQ after configure, per the README's autotools build sequence."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the library and modules after make."
+   },
+   {
+    "cmd": "./bootstrap",
+    "context": "Generates the configure script when building from git, before the configure, make, make install steps."
+   },
+   {
+    "cmd": "./configure --help",
+    "context": "Lists the full set of configure options, including those that disable individual DAQ modules."
+   }
+  ],
+  "install_notes": "Standard autotools build: run ./bootstrap first if building from git, then ./configure, make, make install. Both static and dynamic libraries are generated. Individual DAQ modules are built only if their requisite headers and libraries are available, and can be disabled through configure options. The README doesn't mention runtime dependencies, privileges, or first-run steps. The Homebrew formula is named daq, and its homepage is snort.org rather than the LibDAQ repository.",
+  "standout": "Instead of a per-packet callback whose return value is the verdict, LibDAQ hands the application batches of messages that it can finalize at its own pace, in any order, which the README says gives the application far more control. Its IOCTL mechanism is a semi-generic control channel, with first-class commands such as CREATE_EXPECTED_FLOW and custom IDs from 1025 to 65535.",
+  "status": "unknown. The homepage and README show no release date, last commit, or maintenance note. The README describes the new message-based API as a large departure from 2.x, which suggests active development, but I didn't confirm that.",
+  "caveats": "The formula description, 'Network intrusion prevention and detection system', describes Snort, not LibDAQ. LibDAQ is the packet acquisition plumbing underneath it. The homepage I fetched is Snort marketing and gives no DAQ-specific information. The README doesn't explain daqtest or daqtest-static, and it doesn't cover platform support or licensing. The API changed significantly from 2.x, so older code needs porting.",
+  "quotes": [
+   "LibDAQ is a pluggable abstraction layer for interacting with a data source (traditionally a network interface or network data plane).",
+   "At its core, LibDAQ is about receiving and processing data.",
+   "DAQ messages may be finalized in any order and even finalized many receive calls later."
+  ],
+  "links": [
+   {
+    "label": "Snort homepage (formula homepage)",
+    "url": "https://www.snort.org/"
+   },
+   {
+    "label": "LibDAQ repository and README",
+    "url": "https://github.com/snort3/libdaq"
+   }
+  ],
+  "fetch_log": [
+   "https://www.snort.org/ - fetched, loaded. Snort marketing and documentation index; no DAQ-specific content.",
+   "https://github.com/snort3/libdaq - fetched, loaded. README returned, covering the LibDAQ overview, API, and build instructions."
+  ]
+ }
+}

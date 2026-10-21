@@ -1,0 +1,144 @@
+{
+ "name": "ssldump",
+ "desc": "SSLv3/TLS network protocol analyzer",
+ "homepage": "https://adulau.github.io/ssldump/",
+ "installs_365d": 214,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol",
+  "tui"
+ ],
+ "why": "A door into TLS handshakes on the wire, though the tool is old and the protocol view is fairly standard.",
+ "brief": {
+  "what_it_is": "ssldump is an SSLv3/TLS network protocol analyzer. It watches TCP connections on a chosen network interface, or reads a saved pcap file, and tries to interpret them as SSLv3/TLS traffic. It decodes the records and prints them as text to stdout, or as JSON with -j. With the appropriate keying material it can also decrypt the connections and show the application data. The JSON output includes JA3 and FAN/1 fingerprints, and the tool supports IPv6.",
+  "why_it_exists": "The maintainer says the repository exists because the original ssldump is old, unmaintained free software and its maintenance was chaotic: 'Because it\\u2019s a mess. The software maintenance process for old free (unmaintained) software like ssldump is a complete chaotic process. I do this to ease my pain and this could help other too (but this is just a collateral damage).' The repo gathers the original SSLDUMP 0.9b3 with patches from Debian and other distributions plus pull-request contributions.",
+  "how_it_works": "It passively captures packets and identifies TCP connections that look like SSLv3/TLS, then decodes the handshake and record layers. For ClientHello and ServerHello messages it derives JA3/JA3S data and FAN/1 TLS feature strings, skipping GREASE values. For certificates it derives FAN/1 X.509 feature strings from metadata such as version, issuer, subject, validity, public-key details and extension OIDs. Those fingerprints are emitted automatically in JSON output when the handshake data is present.",
+  "commands_seen": [
+   {
+    "cmd": "./ssldump -j -ANH -n -i any | jq",
+    "context": "Homepage example: runs ssldump on all interfaces and pipes JSON output (including JA3 and FAN/1 fingerprints) to jq."
+   },
+   {
+    "cmd": "./ssldump -r yourcapture.pcap -j | jq 'select(.fan1_tls_fp != null or .cert_chain != null) | {handshake_type, fan1_tls_features, fan1_tls_fp, cert_chain}'",
+    "context": "Homepage example: reads a saved pcap and extracts the TLS and certificate FAN/1 fields with jq."
+   },
+   {
+    "cmd": "./ssldump -r yourcapture.pcap -j | jq -r 'select(.ja3_fp != null) | .ja3_fp' | parallel 'curl -s -X GET 'https://ja3er.com/search/{}' | jq .'",
+    "context": "Homepage example: lists JA3 hashes from a pcap and queries the ja3er.com service for known matches."
+   },
+   {
+    "cmd": "brew install cmake ninja openssl@3 libpcap libnet json-c",
+    "context": "Homepage build instructions for macOS: installs build dependencies with Homebrew (run as root per the page, which is odd for brew)."
+   },
+   {
+    "cmd": "git clone https://github.com/adulau/ssldump.git",
+    "context": "Source build: clones the repository."
+   },
+   {
+    "cmd": "cmake -G Ninja -B build",
+    "context": "Source build: configures the project in ./build using the Ninja generator."
+   },
+   {
+    "cmd": "ninja -C build",
+    "context": "Source build: compiles the project in ./build."
+   },
+   {
+    "cmd": "./build/ssldump -v",
+    "context": "Source build: checks the freshly built binary's version."
+   },
+   {
+    "cmd": "ninja -C build install",
+    "context": "Optional install step, run as root."
+   },
+   {
+    "cmd": "ctest --test-dir build --output-on-failure",
+    "context": "Runs the CMake/CTest regression tests after building, when Python 3 is available."
+   }
+  ],
+  "install_notes": "The homepage lists package-manager installs for Alpine, Arch, CentOS/RHEL/Rocky (via EPEL), Debian, Fedora, Kali and Ubuntu, and gives source build steps. Source build dependencies: on Debian/Ubuntu, build-essential git cmake ninja-build libssl-dev libpcap-dev libnet1-dev libjson-c-dev; on Fedora/RHEL, git cmake ninja-build gcc openssl-devel libpcap-devel libnet-devel json-c-devel; on OpenBSD, git cmake ninja json-c libnet; on FreeBSD, git cmake ninja json-c libnet. Build with cmake -G Ninja -B build, then ninja -C build. Python 3 is optional and enables the CTest regression tests, which can be disabled with -DBUILD_TESTING=OFF. Live capture needs sufficient privileges, and the page says to install as root. No accounts or hardware are mentioned. The ja3er.com lookup needs network access to that service.",
+  "standout": "Unlike the classic ssldump, this fork passively fingerprints both TLS handshakes (JA3/JA3S and FAN/1) and X.509 certificates, and emits them straight into JSON, so you can pipe a capture into jq and look up client fingerprints. It is one of the few tools that gives a readable record-level view and fingerprint data in one pass.",
+  "status": "Maintained, per the homepage: current version v1.9 was released 2024-11-03, and the README describes CI that runs the regression tests under AddressSanitizer. I did not check the GitHub commit history, so I cannot confirm recent commits beyond the release date.",
+  "caveats": "The tool is old and its protocol view is fairly standard; it is a passive analyzer, not a live interception proxy. It is based on SSLDUMP 0.9b3 plus patches, and the maintainer describes the upkeep as messy. Build steps differ by OS and require libpcap, libnet, json-c and OpenSSL dev packages. The ja3er.com example's shell quoting looks broken as written, since the nested single quotes around the curl URL will not parse as intended. Decryption needs keying material you must supply. The licence was not stated on the homepage, so check the GitHub repo before reuse. The homepage also does not explicitly document a Homebrew formula, so the brew line is the page's macOS build recipe rather than a confirmed install path.",
+  "quotes": [
+   "ssldump is an SSLv3/TLS network protocol analyzer.",
+   "Because it\\u2019s a mess. The software maintenance process for old free (unmaintained) software like ssldump is a complete chaotic process.",
+   "The contributing policy is simple. If you have a patch to propose, make a pull-request via the interface. If the patch works for me, it\\u2019s merged."
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://adulau.github.io/ssldump/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/adulau/ssldump"
+   },
+   {
+    "label": "ja3er.com (JA3 hash lookup used in the homepage example)",
+    "url": "https://ja3er.com"
+   }
+  ],
+  "fetch_log": [
+   "https://adulau.github.io/ssldump/ - fetched OK; full README-style content returned, including release info, usage examples, build instructions and contributing notes. No further fetches needed."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A compact way to inspect TLS handshakes and derive JA3/FAN/1 fingerprints from live traffic or pcaps makes familiar encrypted connections newly legible."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "ssldump",
+  "tldr": "A passive TLS analyzer that reads live traffic or a pcap and prints every handshake and record as text or JSON, with fingerprints included.",
+  "deeper_look": "ssldump watches TCP connections on a network interface, or reads a saved pcap file, and tries to interpret them as SSLv3/TLS. It decodes the record layer and the handshake and prints what it sees to stdout. With the right keying material it can also decrypt the sessions and show application data. It never sits in the middle of a connection. It only listens.\n\nThis repository is a maintained fork of the original SSLDUMP 0.9b3, which is old and was left unmaintained. The maintainer gathers Debian and other distribution patches plus pull requests into one place. In the maintainer's words: \"Because it's a mess. The software maintenance process for old free (unmaintained) software like ssldump is a complete chaotic process.\" The contributing policy is just as short: if a patch works for the maintainer, it is merged.\n\nThe fork adds a JSON output mode (-j). In that mode it computes JA3 and JA3S fingerprints from ClientHello and ServerHello messages, skipping GREASE values. It also computes FAN/1 feature strings for TLS handshakes and for X.509 certificates. A TLS fingerprint is a compact summary of how a client or server chooses to talk: which versions, ciphers and extensions it offers, and in what order. That is why a pcap can tell you which software made a connection even though the payload is encrypted. The JSON pipes straight into jq, so the handshake becomes something you can filter and query.",
+  "install": "brew install ssldump\n# live capture needs elevated privileges, so run it with sudo; reading a pcap file does not",
+  "try_this": [
+   {
+    "cmd": "ssldump --help",
+    "what_happens": "Lists the capture, decryption and output options."
+   },
+   {
+    "cmd": "./ssldump -j -ANH -n -i any | jq",
+    "what_happens": "Captures on all interfaces and pretty-prints each handshake as JSON, with JA3 and FAN/1 fingerprints where present."
+   },
+   {
+    "cmd": "./ssldump -r yourcapture.pcap -j | jq 'select(.fan1_tls_fp != null or .cert_chain != null) | {handshake_type, fan1_tls_features, fan1_tls_fp, cert_chain}'",
+    "what_happens": "Reads a saved pcap and pulls out just the TLS and certificate fingerprint fields."
+   }
+  ],
+  "whats_unique": "Most TLS tools show a decoded handshake or compute a fingerprint, not both. This fork gives a record-level view and JA3/FAN/1 fingerprints in one pass, as JSON.",
+  "caveats": "It is old code (SSLDUMP 0.9b3 plus patches) and the homepage's own brew line is a build recipe, not a documented formula. The homepage's ja3er.com example has nested single quotes that will not parse as written, and decrypting traffic needs keying material you supply.",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "tls",
+   "network",
+   "protocol",
+   "pcap",
+   "fingerprinting",
+   "json"
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://adulau.github.io/ssldump/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/adulau/ssldump"
+   },
+   {
+    "label": "ja3er.com (JA3 hash lookup used in the homepage example)",
+    "url": "https://ja3er.com"
+   }
+  ]
+ }
+}

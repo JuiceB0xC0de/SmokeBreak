@@ -1,0 +1,117 @@
+{
+ "name": "kuto",
+ "desc": "Reverse JS bundler",
+ "homepage": "https://github.com/samthor/kuto",
+ "installs_365d": 203,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "reverse-engineering",
+  "quick"
+ ],
+ "why": "A reverse JavaScript bundler unpacks minified web apps back into source, a satisfying way of taking something apart.",
+ "brief": {
+  "what_it_is": "Kuto is a command-line tool that takes a large ES module JavaScript bundle and splits it into a 'main' file plus a 'corpus' of static chunks. Its output is the main file and the corpus directory, and running it again on a rebuilt bundle reuses existing corpus files where possible and deletes unused ones. It also has a 'kuto info' command that gives basic information about an ES module. Correction to the scout note: Kuto does not unpack minified apps back into source. It splits a bundle, and it works best on output from another bundler.",
+  "why_it_exists": "The README says Kuto makes updating your site's JS smaller by re-using code you've already shipped. The author says the tool started as a way to learn about side-effects through 'kuto info': \"This is the origin of the tool; I wanted something that could inform me about side-effects.\"",
+  "how_it_works": "Kuto parses the input with acorn and works at the statement level, moving large enough statements into static parts that have no side-effects. Clients can cache those parts forever, and Chromium also caches the bytecode of previously shipped files. Kuto needs the previously generated output to be kept around so the next run can reuse the existing corpus.",
+  "commands_seen": [
+   {
+    "cmd": "npx kuto",
+    "context": "Run after installing to learn more about the tool (per the README's Usage section)."
+   },
+   {
+    "cmd": "kuto split yourbundle.js out/",
+    "context": "Splits a JS bundle into a 'main' part and a corpus of code written to out/."
+   },
+   {
+    "cmd": "kuto info",
+    "context": "Mentioned inline in the Notes section as giving basic information about an ES Module; no full example given."
+   },
+   {
+    "cmd": "./release.sh",
+    "context": "Best Practice section: builds Kuto itself by bundling with esbuild, splitting with kuto, then minifying with esbuild."
+   }
+  ],
+  "install_notes": "Requires Node 16+. The README says to install via \"kuto\" and then run npx kuto, without giving an exact install command. esbuild is optional: if it is installed, split and info will transparently compile TS and similar files, but it is not a peerDependency. To get reuse across builds, keep the old generated output in the output dir or point to it with the -c flag, which can be a directory, a local main file, or a URL fetched with fetch().",
+  "standout": "Kuto moves code-splitting to the end of the build instead of the start. It takes an already-bundled file and reuses previously shipped chunks across deploys, so returning visitors download less. The author describes it as \"Think of it as doing code-splitting 'last', rather than first.\"",
+  "status": "unknown. The fetched README has no release date, last-commit date, or maintenance note. The only signal is a GitHub Actions Tests badge.",
+  "caveats": "Kuto works best on large (>1mb) single ESM bundles. The README says an IIFE or webpack output is one giant statement, so it gives little benefit there. Old generated output must be kept, or the -c flag must point to it, or the reuse step does not work. The -d dedup flag is off by default because the README calls it dangerous. The -k flag's author says it 'will probably evolve over time'. The README does not state a license. The scout note's claim that it unpacks minified apps back into source is inaccurate.",
+  "quotes": [
+   "It reduces your download size by re-using code you've already shipped.",
+   "Ideally, Kuto operates on a large output bundle from another tool.",
+   "Think of it as doing code-splitting 'last', rather than first."
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repo",
+    "url": "https://github.com/samthor/kuto"
+   },
+   {
+    "label": "Author's blog post on Kuto",
+    "url": "https://samthor.au/2024/kuto/"
+   },
+   {
+    "label": "Theo.gg video about Kuto",
+    "url": "https://www.youtube.com/watch?v=_sxwQBWJQHA"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/samthor/kuto: worked; returned the README text. The README was complete enough that I did not follow the blog or video links."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Post-bundle splitting reuses shipped code across deploys and can preserve browser bytecode caches\u2014a genuinely unusual twist on ordinary code splitting."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "kuto",
+  "tldr": "Kuto splits a finished JavaScript bundle into a main file plus cached chunks, so returning visitors only download the code that changed.",
+  "deeper_look": "Kuto takes a large ES module bundle and splits it into two parts: a small 'main' file and a 'corpus' directory of static chunks. It parses the input with acorn and works statement by statement, moving large statements that have no side-effects into the corpus. Those chunks never change once shipped, so browsers can cache them indefinitely, and Chromium can also cache the bytecode for files it has seen before.\n\nThe interesting part is what happens on the next build. Run Kuto again on a rebuilt bundle with the old output still in place, and it reuses existing corpus files where it can and deletes the ones no longer needed. The README puts the goal this way: \"It reduces your download size by re-using code you've already shipped.\" The author's phrase for it is \"Think of it as doing code-splitting 'last', rather than first.\"\n\nThe tool began as a way to learn about side-effects. The author wanted something that could report on them, and that became the `kuto info` command. The idea underneath is worth a look: deciding what is safe to move in a JavaScript file comes down to knowing which statements can run in any order without changing the program.\n\nNote that this does not unpack minified apps back into readable source. It splits bundles rather than reversing them, and it works best on output from another bundler.",
+  "install": "brew install kuto\n# requires Node 16+; esbuild is optional and, if installed, lets split and info compile TS and similar files",
+  "try_this": [
+   {
+    "cmd": "npx kuto",
+    "what_happens": "Prints usage information, which is the README's suggested first step for learning the tool."
+   },
+   {
+    "cmd": "kuto split yourbundle.js out/",
+    "what_happens": "Splits a JS bundle into a main file and a corpus of chunks written to out/."
+   },
+   {
+    "cmd": "kuto --help",
+    "what_happens": "Lists the available commands and flags."
+   }
+  ],
+  "whats_unique": "Most code-splitting happens before bundling, by hand or by config. Kuto does it after the bundle exists, and reuses chunks from earlier deploys automatically.",
+  "caveats": "It works best on large (over 1mb) single ESM bundles, gives little benefit on IIFE or webpack output, and needs the previous output kept around (or pointed to with -c) to reuse anything.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "javascript",
+   "bundler",
+   "esm",
+   "code-splitting",
+   "node"
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repo",
+    "url": "https://github.com/samthor/kuto"
+   },
+   {
+    "label": "Author's blog post on Kuto",
+    "url": "https://samthor.au/2024/kuto/"
+   },
+   {
+    "label": "Theo.gg video about Kuto",
+    "url": "https://www.youtube.com/watch?v=_sxwQBWJQHA"
+   }
+  ]
+ }
+}

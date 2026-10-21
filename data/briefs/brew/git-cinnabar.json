@@ -1,0 +1,85 @@
+{
+ "name": "git-cinnabar",
+ "desc": "Git remote helper to interact with mercurial repositories",
+ "homepage": "https://github.com/glandium/git-cinnabar",
+ "installs_365d": 223,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "protocol",
+  "library"
+ ],
+ "why": "Lets git speak Mercurial remotes by translating between the two object models, a genuinely odd piece of plumbing.",
+ "brief": {
+  "what_it_is": "git-cinnabar is a git remote helper that lets git talk to Mercurial repositories. You run git clone with an hg:: URL (a local path, or http, https or ssh) in place of a git:// URL, and then use git as usual. Git-cinnabar translates between git commits and Mercurial changesets, and it keeps metadata that maps between the two. The README says the main focus is mozilla-central and related Mercurial repositories, including Mozilla workflows such as the try server. The executables are git-cinnabar and git-remote-hg.",
+  "why_it_exists": "The README contrasts it with other git-to-Mercurial helpers: 'Contrary to other such helpers ... it doesn't use a local mercurial clone under the hood.' Its main aim is to make Mozilla's large Mercurial repositories usable from git.",
+  "how_it_works": "Instead of running a local Mercurial clone, it talks to the Mercurial repository directly and stores git-cinnabar metadata that maps git commit SHA-1s to Mercurial changeset SHA-1s, in both directions. The git commands hg2git and git2hg use that mapping. Mercurial branches and bookmarks can be exposed as git refs in several styles, set with the cinnabar.refs configuration.",
+  "commands_seen": [
+   {
+    "cmd": "./download.py",
+    "context": "Fetches a prebuilt git-cinnabar binary (requires Python 3.9 or newer), per the Prebuilt binaries setup section."
+   },
+   {
+    "cmd": "cargo install --locked git-cinnabar",
+    "context": "Cargo install route: installs git-cinnabar from crates.io."
+   },
+   {
+    "cmd": "git cinnabar setup",
+    "context": "Run after cargo install as the next setup step."
+   },
+   {
+    "cmd": "make",
+    "context": "Build-from-source step, run inside the cloned git-cinnabar directory."
+   },
+   {
+    "cmd": "git clone hg::<mercurial repo>",
+    "context": "Basic usage. The hg:: prefix replaces git:// and <mercurial repo> can be a local path or an http, https or ssh URL."
+   },
+   {
+    "cmd": "git cinnabar fetch --tags",
+    "context": "Gets or updates Mercurial tags."
+   },
+   {
+    "cmd": "git cinnabar fetch hg::<mercurial repo> <changeset sha1>",
+    "context": "Fetches one specific Mercurial changeset without fetching the whole repository."
+   },
+   {
+    "cmd": "git cinnabar hg2git <changeset>",
+    "context": "Prints the git commit that corresponds to a Mercurial changeset. Abbreviated SHA-1s work if unambiguous."
+   },
+   {
+    "cmd": "git cinnabar git2hg <commit>",
+    "context": "Prints the Mercurial changeset that corresponds to a git commit. Abbreviated SHA-1s work if unambiguous."
+   },
+   {
+    "cmd": "git cinnabar fsck",
+    "context": "Detects and fixes metadata corruption. The --full option does a much slower, more thorough check."
+   }
+  ],
+  "install_notes": "Any git version should work; cinnabarclone bundles need git 1.4.4. Prebuilt binaries come from download.py, which needs Python 3.9+. Put the directory it downloads to on your PATH, and if another git-remote-hg is already on PATH, put the git-cinnabar directory first. The Cargo route needs cargo install --locked git-cinnabar followed by git cinnabar setup. Building from source needs Rust 1.75.0 or newer, a C compiler (GCC or clang), make, and libcurl development headers and libraries (not needed on Windows; on macOS they come with the SDK). Then clone the repository, run make, and add the directory to PATH. The README does not mention accounts.",
+  "standout": "It skips the usual approach of wrapping a local Mercurial clone and talks to the remote directly while keeping git-side metadata. The hg:// URL form is also unusual: it encodes the transport protocol in the port field (for example hg://host:ssh/path or hg://localhost:8080.http/foo) so that the URL survives the msys shell.",
+  "status": "unknown. The README names version 0.7 and describes its compatibility changes, but the fetched text shows no release date, last-commit date, or maintenance note. I did not check the repository's release history.",
+  "caveats": "Repositories last used with versions below 0.5.0 are not supported; run git cinnabar upgrade with 0.5.0 first. Push is limited to non-merge commits, and an experimental merge option exists. Mercurial obsolescence markers, phases and namespaces are not supported. The README says the project is 'still in early infancy' and that its metadata 'might get corrupted'. From version 0.7, some corner cases produce different git SHA-1s than before; set cinnabar.compat to 0.6 to keep the old behaviour. The fsck --full check can take more than half an hour on repositories the size of mozilla-central. Licensing is mixed: source is MPL-2.0 with the git-core subdirectory under GPL-2.0, and the binaries are distributed under GPL-2.0. The msys shell needs the hg:// URL workaround. Building needs Rust and libcurl headers.",
+  "quotes": [
+   "git-cinnabar is a git remote helper to interact with mercurial repositories.",
+   "Contrary to other such helpers ... it doesn't use a local mercurial clone under the hood.",
+   "Git-cinnabar is still in early infancy, and its metadata might get corrupted for some reason."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README (homepage)",
+    "url": "https://github.com/glandium/git-cinnabar"
+   },
+   {
+    "label": "Wiki: Mozilla git workflow for Gecko development",
+    "url": "https://github.com/glandium/git-cinnabar/wiki/Mozilla:-A-git-workflow-for-Gecko-development"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/glandium/git-cinnabar: fetched OK, README returned (version 0.7). No further fetches were needed, since the README covers installation, usage and caveats in full."
+  ]
+ }
+}

@@ -1,0 +1,115 @@
+{
+ "name": "ladspa-sdk",
+ "desc": "Linux Audio Developer's Simple Plugin",
+ "homepage": "https://www.ladspa.org",
+ "installs_365d": 11827,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "afternoon",
+  "audio",
+  "library",
+  "ancient"
+ ],
+ "why": "LADSPA is a fascinating old plugin standard, but the SDK itself is mostly headers and tooling for developers.",
+ "brief": {
+  "what_it_is": "LADSPA (Linux Audio Developer's Simple Plugin API) is a standard for audio processors and effects, the plugins that sit inside audio software. A developer writes an effect such as a reverb, bundles it into a plugin library, and any LADSPA-friendly host application can load and use it. The API is captured in a C header file, and the SDK adds terse documentation, three small command-line hosts (analyseplugin, applyplugin, listplugins), and ten example plugins. The homepage lists hosts such as Ardour, Audacity, LMMS, Rosegarden, Csound and Pd, and many plugin libraries.",
+  "why_it_exists": "The homepage presents it as a deliberately small compromise: the API aims to be 'a good compromise between functionality, intuition and compatibility but is simple. The \"S\" in \"LADSPA\" is meant seriously.' It was proposed on the Linux Audio Developer mailing list and version 1 was finalised on 2 April 2000.",
+  "how_it_works": "Plugins are compiled into shared libraries that contain one or more individual plugins, each identified by a unique ID. The host discovers libraries by searching the directories in the LADSPA_PATH environment variable (a colon-separated list), or the locations the distribution manages. The API handles only 32-bit floating point data by design, and the host decides how to wire plugins into its own processing, since LADSPA does not impose an architecture. The homepage does not describe the exact function-call sequence; that lives in the header and SDK docs.",
+  "commands_seen": [
+   {
+    "cmd": "listplugins",
+    "context": "Named on the homepage as a trivial LADSPA host included in the SDK; if LADSPA_PATH is set correctly it should list all your plugins. No command line is shown on the page."
+   },
+   {
+    "cmd": "analyseplugin",
+    "context": "Named on the homepage as one of three trivial LADSPA hosts in the SDK. No usage shown."
+   },
+   {
+    "cmd": "applyplugin",
+    "context": "Named on the homepage as one of three trivial LADSPA hosts in the SDK. No usage shown."
+   }
+  ],
+  "install_notes": "Many Linux distributions install LADSPA plugin libraries into a central location for you. If a host cannot find your plugins, set the LADSPA_PATH environment variable manually to a colon-separated list of directories. The SDK is a separate download from the homepage and contains the docs, hosts and example plugins. The homepage shows no build commands, and the README-style commands for building the SDK were not on the page I read.",
+  "standout": "It is a tiny, deliberately minimal plugin API from 2000 that still underpins a large ecosystem of Linux audio plugins and hosts. Its authors chose to leave out features like non-float data types on purpose, which is unusual for a plugin standard.",
+  "status": "unknown. The homepage gives no current version number beyond 1.1, no last release date, and no last-commit information. Its history section is dated (version 1 in April 2000). I did not follow the SDK download link to check for newer releases.",
+  "caveats": "The homepage only supports 32-bit float data, by design. It is LGPL-licensed, and the author says LGPL is not intended as the final license and that commercial use may be unclear. The page says LADSPA has been used on other platforms but those are not supported on this website. The SDK is described as mostly developer material (headers, docs, and small example hosts and plugins), not an end-user tool. The site gives no commands with flags or usage, so the hosts are only named. Unclear whether the SDK builds cleanly on modern systems.",
+  "quotes": [
+   "LADSPA is a standard that allows software audio processors and effects to be plugged into a wide range of audio synthesis and recording packages.",
+   "The \"S\" in \"LADSPA\" is meant seriously.",
+   "Plugin writers can start from example plugins or just the API and code up new plugins very quickly."
+  ],
+  "links": [
+   {
+    "label": "LADSPA homepage",
+    "url": "https://www.ladspa.org"
+   },
+   {
+    "label": "linux-sound.org LADSPA page (other resources)",
+    "url": "http://linux-sound.org/ladspa.html"
+   },
+   {
+    "label": "Steve Harris plugin collection",
+    "url": "http://plugin.org.uk/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.ladspa.org: fetched OK, full homepage text (overview, plugin libraries, tools, hosts, history, resources, contact)."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A deliberately tiny audio-plugin API with simple hosts and example effects offers a hands-on doorway into how DSP plugins work across Linux audio software."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "LADSPA SDK",
+  "tldr": "The reference kit for LADSPA, a deliberately tiny 2000-era audio plugin standard, with three small command-line hosts and example plugins you can run.",
+  "deeper_look": "LADSPA, the Linux Audio Developer's Simple Plugin API, is a standard for audio effects and processors. A developer compiles an effect such as a reverb into a shared library, and any LADSPA-aware host can load it. The homepage lists Ardour, Audacity, LMMS, Rosegarden, Csound and Pd among the hosts. The whole API lives in a single C header file.\n\nThe SDK adds terse documentation, ten example plugins, and three trivial command-line hosts: listplugins, analyseplugin and applyplugin. They let you see plugins without opening a full audio workstation. Hosts find plugin libraries by searching the colon-separated directories in the LADSPA_PATH environment variable, or the locations your distribution manages.\n\nThe interesting part is how much the design leaves out. The API handles only 32-bit floating point audio, on purpose, and it imposes no architecture on the host, which decides how to wire plugins together. The homepage says it aims to be \"a good compromise between functionality, intuition and compatibility but is simple. The \"S\" in \"LADSPA\" is meant seriously.\" It was proposed on the Linux Audio Developer mailing list, and version 1 was finalised on 2 April 2000.\n\nThat makes it a short, readable case study in plugin API design. You can read the header in one sitting, then see why a standard this small still sits under a large ecosystem of Linux audio plugins.",
+  "install": "brew install ladspa-sdk\n# Depends on libsndfile. Plugins themselves are separate libraries; if a host cannot find them, set LADSPA_PATH to a colon-separated list of directories.",
+  "try_this": [
+   {
+    "cmd": "listplugins",
+    "what_happens": "Lists the LADSPA plugins found on your system. It only finds them if LADSPA_PATH points at the directories holding plugin libraries."
+   },
+   {
+    "cmd": "analyseplugin --help",
+    "what_happens": "Shows usage for the small host that inspects a plugin library. The homepage names it but gives no usage, so check the help output."
+   },
+   {
+    "cmd": "applyplugin --help",
+    "what_happens": "Shows usage for the host that runs a plugin over an audio file. The homepage shows no command line for it."
+   }
+  ],
+  "whats_unique": "It is a plugin standard whose authors deliberately kept it small, with float-only audio and no imposed host architecture. The whole API fits in one C header.",
+  "caveats": "The homepage gives no release date or version beyond 1.1, the SDK is mostly developer material, and the brief could not confirm how it behaves on modern systems or what the three hosts print.",
+  "commitment": "afternoon",
+  "category": "sound-and-live-coding",
+  "tags": [
+   "afternoon",
+   "audio",
+   "plugins",
+   "c",
+   "linux-audio",
+   "ancient"
+  ],
+  "links": [
+   {
+    "label": "LADSPA homepage",
+    "url": "https://www.ladspa.org"
+   },
+   {
+    "label": "linux-sound.org LADSPA page (other resources)",
+    "url": "http://linux-sound.org/ladspa.html"
+   },
+   {
+    "label": "Steve Harris plugin collection",
+    "url": "http://plugin.org.uk/"
+   }
+  ]
+ }
+}

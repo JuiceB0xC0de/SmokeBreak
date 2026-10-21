@@ -1,0 +1,133 @@
+{
+ "name": "save3ds_fuse",
+ "desc": "Extract/Import/FUSE for 3DS save/extdata/database",
+ "homepage": "https://github.com/wwylele/save3ds",
+ "installs_365d": 144,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "library",
+  "needs-hardware"
+ ],
+ "why": "Mounts and rewrites Nintendo 3DS save and extdata formats as a filesystem, a good door into console storage internals.",
+ "brief": {
+  "what_it_is": "Save3DS is a Rust project for reading and writing Nintendo 3DS save data, extdata, and title databases. It has two parts: the library libsave3ds, and the save3ds_fuse program, which extracts, imports, or mounts an archive through FUSE. Inputs are 3DS storage (NAND, SD, cartridge, or a standalone save file) plus console-specific keys and dumps such as boot9.bin, otp.bin, and movable.sed. Outputs are a browsable and editable directory tree on the host, or an extracted or re-imported archive.",
+  "why_it_exists": "The README gives no explicit motivation. It describes the project as an 'Extract, import and FUSE program for common save format for 3DS'.",
+  "how_it_works": "save3ds_fuse takes an archive selector (such as --sdsave, --nandsave, --db, or --cart), a mount path, and a mode. The default mode mounts the archive as a virtual filesystem, and unmounting writes the changes back. --extract and --import move content between the archive and a host directory, and --touch opens and closes the archive to check that the resources are correct. Format parameters are passed through --format and follow the fs:USER service functions on the 3DS.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt-get install libfuse-dev pkg-config",
+    "context": "Debian install step for the FUSE library and pkg-config before building on Unix-like systems."
+   },
+   {
+    "cmd": "brew install macfuse --cask",
+    "context": "macOS install step for the FUSE layer, as listed in the README's Unix-like build section."
+   },
+   {
+    "cmd": "cargo build",
+    "context": "Standard Rust build command used for the Unix-like build with FUSE and for the Windows build without FUSE."
+   },
+   {
+    "cmd": "cd save3ds_fuse && cargo build --no-default-features",
+    "context": "Builds save3ds_fuse on Unix-like systems without FUSE support."
+   },
+   {
+    "cmd": "save3ds_fuse ARCHIVE_NAME MOUNT_PATH [MODE] [RESOURCE_PATHS] [FORMAT_PARAM]",
+    "context": "General usage template. Options can appear in any order."
+   },
+   {
+    "cmd": "--sdsave ID",
+    "context": "Selects a game save data archive on SD, where ID is a 16-digit hex title ID."
+   },
+   {
+    "cmd": "--format \"\"",
+    "context": "Uses default parameters when formatting an archive before mounting or importing."
+   },
+   {
+    "cmd": "--nand /home/wwylele/3ds-nand \\\\",
+    "context": "Example command line: sets the NAND root, which is extracted or mounted from a NAND image."
+   },
+   {
+    "cmd": "--boot9 /home/wwylele/3dsbootrom/boot9.bin \\\\",
+    "context": "Example command line: points to the boot9.bin dumped from a 3DS, which is needed for decryption and signing."
+   },
+   {
+    "cmd": "-r",
+    "context": "Example command line: the optional read-only flag that disables all write operations."
+   }
+  ],
+  "install_notes": "Unix-like systems need pkg-config and the FUSE library. The README lists Debian (libfuse-dev, pkg-config), CentOS (fuse-devel, pkgconfig), macOS (macfuse cask), and FreeBSD (fusefs-libs, pkgconf). For --no-default-features or Windows, FUSE is not needed. Beyond the build, you need dumps from your own 3DS: boot9.bin for almost every archive type, otp.bin for nandtitle, nandimport, and ticket databases, movable.sed for SD-related archives when --nand is not given, and for cartridge saves a CCI game dump, a private header, and AES key material (slot 0x2F, 0x19, and 0x1A keys as a file or hex). An optional performance tip is to pass -C target-feature=+aes to enable hardware AES.",
+  "standout": "It treats 3DS storage as an ordinary filesystem: a mount you can browse in a file manager, with saves written back on unmount. It covers NAND, SD, cartridge, and standalone save formats and title databases in one tool, and it documents hardware quirks found by experiment (broken last block in title databases, the extdata resize workaround).",
+  "status": "unknown. The fetched README describes a full feature set but shows no release version, date, or commit history. I did not fetch the repository's release or commit pages, so I cannot confirm recent activity.",
+  "caveats": "FUSE mount mode is not available on Windows. Modifying a standalone --bare save invalidates its signature, so other tools are needed to fix it. NAND must be an unpacked cleartext filesystem, not a raw FAT image; the README points to ninfs for that layer. Extdata resizing is slow and can produce zero-size files that the 3DS cannot open, so the README recommends --import instead of mount mode for extdata. Extdata also needs /boss, /user, and /icon created by hand. Title database --format is not supported. Names longer than 16 bytes are rejected. The README warns that Windows-specific reserved names are not handled and may crash or error out. Card1 wear leveling is not fully understood. Quota.dat handling for NAND extdata is probably incomplete. The README says to back up your data before writing, and it requires console dumps you must produce yourself.",
+  "quotes": [
+   "Extract, import and FUSE program for common save format for 3DS, written in rust.",
+   "Note that the supported NAND format is in unpacked cleartext filesystem.",
+   "Because of all the mess, it is recommended to use `--import` mode instead of mount mode if you intend to modify the content of an extdata.",
+   "Please always backup your data if you don't set this flag!"
+  ],
+  "links": [
+   {
+    "label": "Save3DS repository (homepage, README)",
+    "url": "https://github.com/wwylele/save3ds"
+   },
+   {
+    "label": "ninfs, a virtual filesystem layer for NAND FAT images (mentioned in README)",
+    "url": "https://github.com/ihaveamac/ninfs"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/wwylele/save3ds (homepage, fetched successfully; GitHub README returned)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It turns opaque Nintendo 3DS save and database formats into editable filesystems, offering a hands-on way to explore console storage internals."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "save3ds_fuse",
+  "tldr": "Mounts Nintendo 3DS save data, extdata and title databases as an ordinary folder you can browse and edit, then writes changes back on unmount.",
+  "deeper_look": "save3ds_fuse is a Rust program that reads and writes the storage formats of the Nintendo 3DS. Point it at a save on an SD card, a NAND image, a cartridge dump or a standalone save file, and it can extract the contents, import a directory back in, or mount the archive through FUSE. In mount mode the archive shows up as a normal directory in your file manager, and unmounting writes the changes back.\n\nThe 3DS encrypts and signs its storage, so the tool needs material from your own console: boot9.bin for almost every archive type, otp.bin for some NAND and ticket work, movable.sed for SD archives, and extra key material for cartridge saves. The README gives no explicit motivation for the project. It describes itself as an \"Extract, import and FUSE program for common save format for 3DS, written in rust.\"\n\nThe idea underneath is that a console's storage layer is a filesystem like any other, just wrapped in layers of crypto, hashing and odd allocation rules. The project also ships a library, libsave3ds, and the README records quirks found by experiment: a broken last block in title databases, and a workaround for resizing extdata. Reading it is a view into how a console organises its data.",
+  "install": "brew install save3ds_fuse\n# FUSE mounting needs macFUSE on macOS: brew install macfuse --cask\n# You also need dumps from your own 3DS (boot9.bin, and for some archives otp.bin and movable.sed). Cartridge saves need more key material.",
+  "try_this": [
+   {
+    "cmd": "save3ds_fuse --help",
+    "what_happens": "Prints the usage text: archive selectors, modes, and the options for pointing at your NAND and boot9.bin."
+   },
+   {
+    "cmd": "save3ds_fuse --boot9 /path/to/boot9.bin --sdsave ID /path/to/mountpoint -r",
+    "what_happens": "Mounts a game's SD save read-only, where ID is the 16-digit hex title ID. Other options such as --nand or --movable may be needed depending on setup."
+   }
+  ],
+  "whats_unique": "It treats NAND, SD, cartridge and standalone 3DS storage as one browsable filesystem, and it documents hardware quirks found by experiment.",
+  "caveats": "Needs console dumps you must make yourself, mount mode does not work on Windows, extdata editing is flaky (the README recommends --import), and the README says to back up before writing.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "reverse-engineering",
+   "filesystem",
+   "fuse",
+   "3ds",
+   "rust",
+   "needs-hardware"
+  ],
+  "links": [
+   {
+    "label": "Save3DS repository (homepage, README)",
+    "url": "https://github.com/wwylele/save3ds"
+   },
+   {
+    "label": "ninfs, a virtual filesystem layer for NAND FAT images",
+    "url": "https://github.com/ihaveamac/ninfs"
+   }
+  ]
+ }
+}

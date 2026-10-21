@@ -1,0 +1,75 @@
+{
+ "name": "fcgi",
+ "desc": "Protocol for interfacing interactive programs with a web server",
+ "homepage": "https://fastcgi-archives.github.io/",
+ "installs_365d": 751,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "protocol",
+  "network"
+ ],
+ "why": "FastCGI protocol, a quiet old door into how web servers talk to application processes that almost nobody examines.",
+ "brief": {
+  "what_it_is": "FastCGI is a protocol for connecting an application process to a web server, described by its archive maintainers as CGI with a few extensions. The web server passes requests to a long-running FastCGI application over a socket, and the application returns the response. The Developer's Kit (fcgi2) supplies C, C++, Perl, and Java libraries plus cgi-fcgi, a bridge that lets you test a FastCGI application behind a web server that has no FastCGI support. The homepage is a preserved archive of the original fastcgi.com site, not the live project site.",
+  "why_it_exists": "The archive's About section says FastCGI keeps CGI's language independence and process isolation while improving performance, and avoids tying applications to a server's internal API. It also adds distributed computing (the app can run on a different machine from the web server) and multiple extensible roles beyond generating responses, such as authentication and authorization.",
+  "how_it_works": "Applications run in separate processes that the web server talks to, so a bug in one application cannot corrupt the core server the way an in-process API module can. The archive pages describe this as persistent application processes serving many requests, which is the source of the performance gain over plain CGI. I did not read the protocol specification itself, so the wire-level details are not covered here.",
+  "commands_seen": [
+   {
+    "cmd": "# apt install gcc make m4 autoconf automake libtool",
+    "context": "Ubuntu example from the fcgi2 README for installing the Unix build prerequisites."
+   },
+   {
+    "cmd": "./autogen.sh",
+    "context": "First step of the Unix source build in the fcgi2 README."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Configures the Unix source build before compiling."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles the Developer's Kit on Unix."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the built Developer's Kit on Unix."
+   },
+   {
+    "cmd": "nmake -f Makefile.nt",
+    "context": "Win32 build command in the fcgi2 README; the README also mentions MSVC++ project files in the Win32 directory as an alternative."
+   }
+  ],
+  "install_notes": "Beyond brew install, the only build path documented is building from source. On Unix you need gcc, GNU make, m4, aclocal, autoconf, automake and libtool, then run autogen.sh, configure, make, and make install. On Win32 the README gives nmake -f Makefile.nt or the MSVC++ project files. The kit has no accounts or runtime setup. The brew formula's executable is cgi-fcgi, and I did not find a usage line for it in the pages I read; the Developer's Kit docs say it is documented in a cgi-fcgi man page.",
+  "standout": "The protocol is old and kept alive by an archive: the original fastcgi.com went away, and this site is a Wayback Machine backup with a markdown conversion and forks of the SDK and mod_fastcgi. cgi-fcgi is a small way to run a FastCGI app without a FastCGI-capable server, which is useful for testing.",
+  "status": "Quiet. The archive homepage says 'There is not much development on FastCGI because it is a very stable protocol / application.' The original site was last backed up around March 2016. The fcgi2 repo has a GitHub Actions build badge and a commit history link, but I did not see a release date or last-commit date in the pages I read, so I cannot give a precise date.",
+  "caveats": "This is an unofficial archive, and the homepage says it is not linked to the original fastcgi.com or its copyright owners. The FastCGI Specification is copyright 1996 Open Market, Inc. The fcgi2 README points to a LICENSE file for usage terms, which I did not read. Several links on the archive homepage point to third-party sites that may no longer resolve; I did not check them. The Win32 build is documented only as nmake or MSVC++ project files, which I did not test.",
+  "quotes": [
+   "FastCGI is simple because it is actually CGI with only a few extensions.",
+   "There is not much development on FastCGI because it is a very stable protocol / application.",
+   "This is not an official repository nor is it linked in any way to the original fastcgi.com website and FastCGI copyright owners."
+  ],
+  "links": [
+   {
+    "label": "FastCGI archive homepage",
+    "url": "https://fastcgi-archives.github.io/"
+   },
+   {
+    "label": "FastCGI Developer's Kit documentation overview",
+    "url": "http://fastcgi-archives.github.io/fcgi2/doc/overview.html"
+   },
+   {
+    "label": "fcgi2 source repository (Developer's Kit fork)",
+    "url": "https://github.com/FastCGI-Archives/fcgi2"
+   }
+  ],
+  "fetch_log": [
+   "https://fastcgi-archives.github.io/ - worked; archive homepage with About, protocol summary, and links to docs and server/library lists",
+   "https://github.com/FastCGI-Archives/fcgi2 - worked; README with build instructions and fork note",
+   "http://fastcgi-archives.github.io/fcgi2/doc/overview.html - worked; Developer's Kit doc index, including the cgi-fcgi description"
+  ]
+ }
+}

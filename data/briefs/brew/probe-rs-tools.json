@@ -1,0 +1,71 @@
+{
+ "name": "probe-rs-tools",
+ "desc": "Collection of on chip debugging tools to communicate with microchips",
+ "homepage": "https://probe.rs",
+ "installs_365d": 426,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "afternoon",
+  "library"
+ ],
+ "why": "Talks to debug probes over JTAG and SWD, opening a window into chips and firmware on your desk.",
+ "brief": {
+  "what_it_is": "probe-rs is a Rust toolkit for talking to microcontrollers through hardware debug probes. You give it a debug probe (CMSIS-DAP, J-Link, ST-Link, FTDI, ESP32 USB JTAG, WLink, Blackmagic, and others) and a target chip name, and you can flash a firmware binary (ELF, BIN or IHEX), run it, and stream RTT and defmt output back to your console. It also exposes a library API for reading and writing target memory, halting, stepping and setting breakpoints, and a Debug Adapter Protocol server for VS Code and other editors. The brew package installs three executables: probe-rs, cargo-flash and cargo-embed.",
+  "why_it_exists": "The README describes it as 'a modern, embedded debugging toolkit, written in Rust', with the goal 'to provide a toolkit to interact with a variety of embedded MCUs and debug probes'. The homepage pitches it as 'The user-friendly & flexible embedded toolkit that just works' and promises 'Embedded programming made easy' with 'the ease of a native application'.",
+  "how_it_works": "The library opens a debug probe and attaches to a named chip, then talks to ARM, RISC-V and Xtensa cores over SWD or JTAG. Flash programming uses CMSIS-Pack flash algorithms, and target descriptions are generated from CMSIS-Packs with the target-gen tool. The README also says probe-rs can drive SWD directly from a Linux host's GPIO or spidev interface through a plugin crate, without a dedicated probe.",
+  "commands_seen": [
+   {
+    "cmd": "probe-rs run --chip nRF52840_xxAA",
+    "context": "Written as the Cargo runner in .cargo/config.toml (runner = \"probe-rs run --chip nRF52840_xxAA\"). The README says it flashes firmware, resets the target and streams RTT/defmt output and panics back to the console. It is the recommended tool for most projects."
+   },
+   {
+    "cmd": "cargo run",
+    "context": "Plain prose in the README: once the runner is configured, 'cargo run' flashes and runs the firmware on the chip."
+   },
+   {
+    "cmd": "probe-rs run --probe 0:0:gpiochip1,swclk=26,swdio=25,srst=38 ...",
+    "context": "Linux host example: bit-bangs SWD over the GPIO character device /dev/gpiochip1, with the pin map encoded in a synthetic probe selector. The README's ellipsis stands for the rest of the command."
+   },
+   {
+    "cmd": "probe-rs info --probe 0:0:/dev/spidev0.0",
+    "context": "Linux host example: selects the spidev-based SWD backend, which emulates SWD by tying MOSI and MISO together through a series resistor."
+   }
+  ],
+  "install_notes": "The README recommends downloading a precompiled release and points to https://probe.rs/docs/getting-started/installation for the full guide; I did not fetch that page, so per-platform details are unverified. Building from source needs Rust and Cargo, installed via rustup. Writing a Cargo runner config is the usual setup step for embedded projects. For the Linux-host SWD mode, the README says to use the probe-rs-linux plugin crate and see its README for wiring diagrams, cross-compilation and remote-server use. probe-rs list only shows explicit /dev/spidev_swd* udev links, so those links need to be set up first.",
+  "standout": "Setting probe-rs run as a Cargo runner makes cargo run flash the chip and stream RTT/defmt logs in one step, so embedded Rust development feels like running a native program. Target support is also generated from CMSIS-Packs, and the Linux-host mode can turn a Linux board's own GPIO pins into an SWD probe.",
+  "status": "unknown. The GitHub README I fetched shows a crates.io badge, a CI status badge, a changelog/ directory of unreleased fragments and a CHANGELOG.md, which all suggest active development. I could not see a release date or last-commit date in the pages I read.",
+  "caveats": "The README says cargo-embed 'is expected to be phased out in the future, so prefer probe-rs run for new setups'. The Linux-host SWD mode needs hand wiring and udev setup. The homepage says the project's own open-source probe is 'coming soon'. Building needs a Rust toolchain. Licensing is dual Apache-2.0 or MIT. The homepage says the STM32 memory maps were once unreliable and now rely on stm32-data. I did not check the brew formula's notes; its caveats field is empty.",
+  "quotes": [
+   "a modern, embedded debugging toolkit, written in Rust",
+   "For most projects, **`probe-rs run`** is what you want.",
+   "The user-friendly & flexible embedded toolkit that just works"
+  ],
+  "links": [
+   {
+    "label": "probe-rs homepage",
+    "url": "https://probe.rs"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/probe-rs/probe-rs"
+   },
+   {
+    "label": "Installation guide",
+    "url": "https://probe.rs/docs/getting-started/installation"
+   },
+   {
+    "label": "VS Code debugger setup",
+    "url": "https://probe.rs/docs/tools/debugger"
+   }
+  ],
+  "fetch_log": [
+   "https://probe.rs - worked; homepage text, feature sections and links, no install commands",
+   "https://github.com/probe-rs/probe-rs - worked; full README returned, used as the main source for commands and install notes",
+   "https://probe.rs/docs/getting-started/installation - not fetched; cited from the README only"
+  ]
+ }
+}

@@ -1,0 +1,57 @@
+{
+ "name": "asroute",
+ "desc": "CLI to interpret traceroute -a output to show AS names traversed",
+ "homepage": "https://github.com/stevenpack/asroute",
+ "installs_365d": 130,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "Annotating traceroute hops with AS names is a neat door into how internet routing is actually organised.",
+ "brief": {
+  "what_it_is": "asroute is a command-line tool written in Rust that reads traceroute output and summarises the autonomous systems (AS) the path crosses. You pipe `traceroute -a` output into it, and it prints one line per hop showing the AS name and country code instead of only raw IP addresses. Hops that do not respond show as `*`, and reserved ASNs show as names such as `AS0 (Reserved)`. The README's example traces a route to bhutan.gov.bt.",
+  "why_it_exists": "The author wanted to see the companies and networks that carry their traffic, not individual hops, and to see how much shorter paths get when a site uses a CDN. The README says the tool was also written to scratch an itch: to try building a Rust CLI and to see how easily it can be distributed through Homebrew.",
+  "how_it_works": "It parses the output of `traceroute -a`, which annotates each hop with its origin ASN. It then looks up each ASN's name and country using Team Cymru's ASN-to-name service, via the cymrust Rust crate. The README does not describe the internals beyond this.",
+  "commands_seen": [
+   {
+    "cmd": "$ brew install asroute",
+    "context": "Installs the tool through Homebrew, the only installation method the README lists."
+   },
+   {
+    "cmd": "$ traceroute -a www.bhutan.gov.bt | asroute",
+    "context": "Usage example: runs traceroute with AS annotation on the Bhutan government site and pipes the output into asroute, which prints one AS name per hop."
+   }
+  ],
+  "install_notes": "Install with `brew install asroute`. The README gives no other install steps, runtime requirements, accounts, or configuration. The Todos list checks off brew install as done.",
+  "standout": "Instead of building a traceroute of its own, it post-processes the `-a` annotation that traceroute already provides and turns each hop into a named network operator. The README's own note says the tool exists mainly as a small Rust CLI and a Homebrew distribution exercise, and it points to lft as the more capable option for serious network analysis.",
+  "status": "unknown. The README shows no release version, date, or changelog. It lists brew install as done and has open Todos (-h usage, progress indicator, a mode that runs traceroute itself). I did not check the GitHub releases or commit history, so I cannot say whether it is maintained.",
+  "caveats": "The README does not name the platforms it supports or say which traceroute builds accept the -a flag. The tool depends on the Team Cymru lookup service, and the README does not say what happens if that lookup fails. Missing features listed in the README: no -h usage output yet, no progress indicator, and no mode that runs traceroute itself (it only parses existing output). The README states the tool is MIT licensed. The example command uses www.bhutan.gov.bt, but the example output header reads bhutan.gov.bt, a small inconsistency in the README.",
+  "quotes": [
+   "Ever wondered how your packets get from home to Bhutan?",
+   "`asroute` is a CLI tool for parsing traceroute output to summarize AS's traversed.",
+   "This tool was more to scratch an itch for doing a Rust CLI and seeing how easy (very!) it is to distribute via homebrew."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/stevenpack/asroute"
+   },
+   {
+    "label": "cymrust crate docs (Team Cymru ASN lookup)",
+    "url": "https://docs.rs/cymrust/0.3.4/cymrust/"
+   },
+   {
+    "label": "Layer Four Traceroute (lft), the README's recommended alternative",
+    "url": "https://en.wikipedia.org/wiki/Layer_four_traceroute"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/stevenpack/asroute \u2014 fetched OK; README returned and was detailed enough, so no further fetches were made"
+  ]
+ }
+}

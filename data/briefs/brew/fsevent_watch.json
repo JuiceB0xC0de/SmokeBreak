@@ -1,0 +1,62 @@
+{
+ "name": "fsevent_watch",
+ "desc": "macOS FSEvents client",
+ "homepage": "https://github.com/proger/fsevent_watch",
+ "installs_365d": 20,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "cli",
+  "macos",
+  "protocol"
+ ],
+ "why": "A command-line door into macOS FSEvents, the kernel notification system most developers never see directly.",
+ "brief": {
+  "what_it_is": "A command-line tool for macOS that watches filesystem paths through FSEvents, the kernel notification system. You give it paths (for example `.`) and it prints one line per change to stdout. Each line is tab-delimited: a leading number, hex flags with named flags in brackets such as [ICreated,IRenamed,IModified], then the affected path. The output is line-buffered so other Unix tools can pipe from it.",
+  "why_it_exists": "The README presents it as a usable, composable door into macOS filesystem events: a standalone fork of the C tool inside thibaudgg/rb-fsevent, focused on usability and composability with other tools.",
+  "how_it_works": "It wraps the macOS FSEvents API and writes each event as a parseable tab-separated line, flushing per line so downstream commands like egrep, grep, and xargs can react as changes happen. The README's examples chain it into make and redcarpet to rebuild on save. The README does not describe internals beyond this.",
+  "commands_seen": [
+   {
+    "cmd": "./fsevent_watch -F .",
+    "context": "Watches the current directory tree and prints tab-delimited events; the README's own example runs it while `make clean fsevent_watch` is in progress."
+   },
+   {
+    "cmd": "./fsevent_watch -F . | egrep --line-buffered '\\.[ch]$' | xargs -t -n1 -I% make",
+    "context": "Pipes events through egrep to keep only .c and .h changes, then runs make for each one, so the tool rebuilds itself when its own sources change."
+   },
+   {
+    "cmd": "fsevent_watch -F | grep --line-buffered README.md'$' | xargs -I% -n1 sh -c 'redcarpet --parse-fenced-code-blocks --parse-autolink --render-prettify README.md > README.html'",
+    "context": "Watches for changes to README.md and re-renders it to README.html with redcarpet, the author's example of live Markdown preview from vim."
+   },
+   {
+    "cmd": "make install",
+    "context": "The README's build instruction; installs the binary from source, requiring a compiler."
+   }
+  ],
+  "install_notes": "The README's build step is just `make install`, with a note to make sure you have a compiler. No accounts, runtimes, or configuration are mentioned. Homebrew installs it as a formula providing the fsevent_watch executable.",
+  "standout": "Its output is designed to be pipelined. The line-buffered, tab-delimited format lets a shell pipeline turn filesystem events into rebuilds or previews without writing a watcher program.",
+  "status": "unknown. The README gives no release version, date, or changelog note, and I did not check the commit history. The README's example output includes a build version string, but that does not establish current activity.",
+  "caveats": "The README says the FSEvents API does not follow symlinks. It is macOS-only, since it depends on FSEvents and the README's build line links CoreFoundation and CoreServices frameworks. Licensing was not visible in the README I read.",
+  "quotes": [
+   "The tool allows you to watch filesystem events on a Mac.",
+   "`fsevent_watch` has a damn simple parseable output (tab-delimited)",
+   "`fsevent_watch` does line-buffering so you can even develop the tool with itself!"
+  ],
+  "links": [
+   {
+    "label": "GitHub homepage and README",
+    "url": "https://github.com/proger/fsevent_watch"
+   },
+   {
+    "label": "Upstream rb-fsevent (the C tool this forks)",
+    "url": "https://github.com/thibaudgg/rb-fsevent"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/proger/fsevent_watch: fetched OK, README returned in full; it was not thin, so no further links were followed."
+  ]
+ }
+}

@@ -1,0 +1,89 @@
+{
+ "name": "bitwise",
+ "desc": "Terminal based bit manipulator in ncurses",
+ "homepage": "https://github.com/mellowcandle/bitwise",
+ "installs_365d": 118,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "tui",
+  "visual"
+ ],
+ "why": "Ncurses bit manipulator that shows values in many bases, a pleasant but modest way to see bits.",
+ "brief": {
+  "what_it_is": "bitwise is a terminal calculator for low-level work, written in C on ncurses. You type a number, or a C-style expression, and it shows the value in signed and unsigned decimal, hexadecimal, octal, and binary, with a labelled bit grid. In interactive mode you edit any field and the other bases update, move a cursor along the binary row to toggle individual bits, and switch the width between 8, 16, 32 and 64 bits. It also prints human-readable sizes (IEC or SI), IPv4 in both byte orders, ASCII, and Radix64. Input is a number or expression; output is the same value in every representation.",
+  "why_it_exists": "The README pitches it at people who spend their day staring at a register dump wondering which bit is set: low-level hackers, kernel developers and device driver developers. The point is to save a lookup for each representation.",
+  "how_it_works": "Give it a number on the command line and it detects the base from the prefix: 0x or 0X for hex, a leading 0 for octal, b for binary, and decimal otherwise. Expressions are evaluated with C's operator precedence before display. Verilog-style bit selects such as v[msb:lsb] and v[bit] pull out fields, returned right-aligned. Run with no arguments, or with -i, for the full-screen interactive mode, where : opens an expression calculator, similar to vim's command line.",
+  "commands_seen": [
+   {
+    "cmd": "bitwise -- '-5'",
+    "context": "Passes a negative number. The -- stops option parsing, because a leading minus sign would otherwise be read as an option."
+   },
+   {
+    "cmd": "bitwise '0x875423[31:23]'",
+    "context": "Verilog-style bit-select: extracts bits 31 down to 23 of the value, right-aligned."
+   },
+   {
+    "cmd": "bitwise '0x875423[15]'",
+    "context": "Verilog-style single-bit select: returns bit 15 of the value."
+   },
+   {
+    "cmd": "brew install bitwise",
+    "context": "Homebrew install line from the platform table. The README lists it alongside apt, dnf, zypper, xbps, snap, nix and MacPorts."
+   },
+   {
+    "cmd": "sudo apt-get install bitwise",
+    "context": "Debian and Ubuntu 20.04+ install from the platform table."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Source build step after unpacking the latest release tarball."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles the source after ./configure."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the built binary system-wide."
+   },
+   {
+    "cmd": "make check",
+    "context": "Runs the unit tests. These need libcunit."
+   },
+   {
+    "cmd": "./bootstrap.sh",
+    "context": "Contributor step after forking the repo, before following the build-from-source steps."
+   }
+  ],
+  "install_notes": "Packaged for Debian and Ubuntu 20.04+, Fedora, openSUSE, Void, Arch (AUR), Snap, Nix, Homebrew, and MacPorts. Ubuntu older than 20.04 needs the ppa:ramon-fried/bitwise PPA. Building from source needs libreadline, ncurses with forms, and libcunit (testing only). On Debian/Ubuntu that means build-essential, libncurses5-dev, libreadline-dev and libcunit1-dev. On macOS it means brew install of automake, autoconf, readline and cunit, plus LDFLAGS and CPPFLAGS exported to point at the Homebrew prefixes. Windows is not packaged; the README says to build from source under mingw or msys2. No accounts or runtime services are needed. Editor integration is a separate vim-bitwise plugin that needs this binary on $PATH.",
+  "standout": "The Verilog bit-select, v[msb:lsb], is the notable part. It is right-aligned, so 0xdeadbeef[31:16] gives 0xdead rather than a masked 0xdead0000, which matches how datasheets describe fields. The README says this departs from C on purpose, because in C v[3] means array indexing. The expression evaluator also follows C's precedence table, so expressions copied from source evaluate the same way.",
+  "status": "unknown. The README has CI, Coverity Scan and latest-release badges, and it mentions a CONTRIBUTING.md and a Repology packaging badge, which suggests it is maintained and packaged across many distributions. The fetched page did not show a last release date or last commit date, and I did not fetch the releases or commits pages, so I cannot confirm recent activity.",
+  "caveats": "Changing the bit width masks the number to the new width, which can silently lose high bits; the README warns to use it with care. Comparison and equality operators, logical && and ||, the ternary ?:, and exponentiation are not supported. &=, ^= and |= are accepted but have no assignment target, so they just evaluate like &, ^ and |. Windows has no packaged build and needs mingw or msys2. Source builds need ncurses with forms and readline, which can be fiddly on macOS and older Ubuntu. Some distribution packages are in-tree in Buildroot and Yocto only. Licence is GPL-3.0-or-later.",
+  "quotes": [
+   "Multi-base interactive calculator and bit manipulator for the terminal.",
+   "anyone who spends their day staring at a register dump wondering which bit is set.",
+   "The field comes back right-aligned, as it does in Verilog and as a datasheet means it - not masked in place."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README (homepage)",
+    "url": "https://github.com/mellowcandle/bitwise"
+   },
+   {
+    "label": "vim-bitwise editor plugin",
+    "url": "https://github.com/mellowcandle/vim-bitwise"
+   },
+   {
+    "label": "Latest release",
+    "url": "https://github.com/mellowcandle/bitwise/releases/latest"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/mellowcandle/bitwise (homepage, GitHub repo, fetched OK; README returned and was complete enough that no further fetches were needed)"
+  ]
+ }
+}

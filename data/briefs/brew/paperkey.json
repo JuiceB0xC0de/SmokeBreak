@@ -1,0 +1,53 @@
+{
+ "name": "paperkey",
+ "desc": "Extract just secret information out of OpenPGP secret keys",
+ "homepage": "https://www.jabberwocky.com/software/paperkey/",
+ "installs_365d": 137,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "library",
+  "reverse-engineering"
+ ],
+ "why": "Strips an OpenPGP secret key down to its raw secret bytes for paper backup, a neat dissection of a file format.",
+ "brief": {
+  "what_it_is": "Paperkey is a command-line tool that takes an OpenPGP secret key (GnuPG, PGP, etc.) and strips it down to just the secret bytes, printing them as text or raw output for a paper backup. Going the other way, it takes those printed or re-entered bytes plus the matching public key and rebuilds the full secret key file. It is a single C program distributed as a tarball, with a Win32 binary also offered.",
+  "why_it_exists": "David Shaw's framing is that paper is a durable 'if-all-else-fails' backup for keys, since CD-Rs, tapes and drives often lose data within years. A full secret key file is much larger than its secret parts because it includes a complete copy of the public key, and the public key is widely available on keyservers, so only the secret portion needs archiving.",
+  "how_it_works": "Paperkey parses the OpenPGP packet structure and keeps only the secret key material plus minor packet structure, which the author says is about 149 bytes for a DSA+Elgamal key that was 1281 bytes whole. Restoring requires the public key file; paperkey combines it with the pasted-in secret bytes to produce a secret key. It does no cryptography itself, and any passphrase on the original key carries over unchanged. Output can be base16 (human-readable, default width 78) or raw, and it includes a CRC check that can be overridden with --ignore-crc-error.",
+  "commands_seen": [
+   {
+    "cmd": "paperkey --secret-key my-secret-key.gpg --output to-be-printed.txt",
+    "context": "Extracts the secret data from the key file into a text file meant for printing."
+   },
+   {
+    "cmd": "paperkey --pubring my-public-key.gpg --secrets my-key-text-file.txt --output my-secret-key.gpg",
+    "context": "Restore: combines the public keyring with the printed secret data to rebuild the secret key file."
+   },
+   {
+    "cmd": "gpg --export-secret-key my-key | paperkey | lpr",
+    "context": "Pipes an exported secret key through paperkey straight to the printer, since stdin is used when --secret-key is absent."
+   }
+  ],
+  "install_notes": "Not covered by the homepage beyond the tarball and Win32 zip downloads, each with a detached OpenPGP signature from the author's key 0x99242560. Building from the POSIX tarball is the standard route. A RPM spec file is included; the README-style instructions say to build with rpmbuild -ta /path/to/the/paperkey/tarball.tar.gz. No account or runtime is needed beyond the binary. The author recommends test-restoring the key before filing the paper away.",
+  "standout": "The project's clever observation is that the secret part of a key is tiny compared to the whole file, so a key can be reduced to a few hundred bytes of text you can retype, which makes a paper backup practical. Its honest framing that paper is not a secure store and that it adds no crypto is also unusual for a security-adjacent tool.",
+  "status": "quiet. The homepage shows version 1.6 with a copyright range of 2007-2018, and says earlier releases and 'the usual GitHub stuff' are on GitHub, but the page gives no release date or recent-activity signal and I did not check GitHub. Treat as unknown beyond 'not recently announced'.",
+  "caveats": "Output is a paper backup, not secure storage; the page stresses it is for last-resort restore only. Any passphrase on the original key carries over unchanged. Reconstruction needs the public key as well. Restored text must be re-entered accurately, by hand, OCR or QR, and a CRC error stops restore unless you pass --ignore-crc-error. Build and install details beyond the tarball are thin on this page. The Win32 binary is a precompiled download. The licence is not stated on the homepage.",
+  "quotes": [
+   "The goal with paper is not secure storage.",
+   "In fact, paperkey doesn't do any crypto at all, but just saves and restores the original secret key, whether it is encrypted or not.",
+   "It's a lot easier to re-enter 149 bytes correctly."
+  ],
+  "links": [
+   {
+    "label": "Paperkey homepage (David Shaw)",
+    "url": "https://www.jabberwocky.com/software/paperkey/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.jabberwocky.com/software/paperkey/ \u2014 fetched OK; full page text used. The page is self-contained and not thin, so no further links were followed."
+  ]
+ }
+}

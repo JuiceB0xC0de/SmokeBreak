@@ -1,0 +1,83 @@
+{
+ "name": "gmic",
+ "desc": "Full-Featured Open-Source Framework for Image Processing",
+ "homepage": "https://gmic.eu/",
+ "installs_365d": 3256,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "visual",
+  "afternoon",
+  "library"
+ ],
+ "why": "A full image processing language with a huge filter zoo; strange and deep enough to reward an afternoon of scripting.",
+ "brief": {
+  "what_it_is": "G'MIC is an open-source image processing framework that ships as several interfaces: a command-line tool called gmic, a G'MIC-Qt plug-in for image editors such as GIMP, Krita and digiKam, the libgmic C++ library, a web service (G'MIC Online), and ZArt, a real-time webcam and video processor. It takes generic image data, from 1D signals to 2D colour images to 3D+t multi-spectral volumes, and produces processed images or visualisations. The gmic CLI is pitched as a companion to ImageMagick or GraphicsMagick. The homepage says the framework includes a lightweight scripting language (the G'MIC language) for building processing pipelines, and that it has more than 1000 predefined algorithms and pipelines, with more than 640 filters in G'MIC-Qt.",
+  "why_it_exists": "The homepage frames it as a way to design possibly complex pipelines for converting, processing and visualising generic multi-spectral image datasets, with the G'MIC language as the tool for writing those operators. It is also meant to be an open framework that users can extend with their own command files.",
+  "how_it_works": "Users write or run commands in the G'MIC scripting language, which operates on lists of images, so manipulations can be applied to a group or to specific items. Custom command files add new commands to the interpreter, so users can build their own libraries on top of it. The core is based on the CImg Library and is natively multi-threaded using OpenMP.",
+  "commands_seen": [
+   {
+    "cmd": "$ sudo apt install git build-essential libgimp2.0-dev libcurl4-openssl-dev libfftw3-dev libtiff-dev libjpeg-dev libopenexr-dev libwebp-dev qtbase5-dev qttools5-dev-tools",
+    "context": "Installs the build prerequisites on a fresh Debian or Ubuntu machine before compiling G'MIC from source."
+   },
+   {
+    "cmd": "$ wget https://gmic.eu/files/source/gmic_4.0.6.tar.gz && tar zxvf gmic_4.0.6.tar.gz && cd gmic-4.0.6/src",
+    "context": "Downloads the 4.0.6 source tarball, unpacks it and changes into the src directory to build."
+   },
+   {
+    "cmd": "$ make cli",
+    "context": "Compiles the command-line interface (gmic). The README also lists make gimp, make lib, make zart and make all for the other interfaces."
+   },
+   {
+    "cmd": "make OPENMP_CFLAGS=\"\" OPENMP_LIBS=\"\"",
+    "context": "Workaround for compiler segfaults with old g++ 4.8.1 and 4.8.2: builds with OpenMP support disabled."
+   },
+   {
+    "cmd": "$ make FLTO=\"\" cli",
+    "context": "Windows (MSYS2) build of the CLI with Link-Time Optimization turned off to reduce the memory g++ uses."
+   },
+   {
+    "cmd": "$ pip install gmic",
+    "context": "Installs the G'MIC Python package, listed on the download page."
+   },
+   {
+    "cmd": "$ flatpak install flathub org.gimp.GIMP.Plugin.GMic",
+    "context": "Installs the G'MIC-Qt plug-in for GIMP 3 through Flatpak."
+   },
+   {
+    "cmd": "$ gmic it https://gmic.eu/gmic_stdlib.\\$_version parse_cli images",
+    "context": "Testing step from the download page: runs every stdlib command and generates output images with default parameters. The README warns this can take a long time."
+   }
+  ],
+  "install_notes": "Pre-built packages are listed on the download page for Windows (exe installer or zip), Debian and Ubuntu (.deb, for several releases), Flatpak for GIMP 3, and pip. Homebrew and MacPorts maintain macOS packages, but the project does not officially maintain a macOS build. Building from source on Debian or Ubuntu needs git, build-essential, the libgimp2.0-dev and Qt5 development packages, and several image-format libraries. On Windows, building uses MSYS2 with the MinGW64 toolchain, which the README says needs roughly 3GB of disk space, and the CLI needs a list of DLLs copied next to the executable. The project asks users to build from the release tar.gz rather than the git repositories, which it describes as work in progress. The brew formula's caveats field was empty, and I did not check the Homebrew formula itself.",
+  "standout": "It is a full scripting language for image pipelines, not just a filter collection, and it works on lists of images with support for many channel counts, 8/16-bit and float pixel types, and 3D volumes. It also has a self-extending design, where command files add commands to the language itself, and it is embedded in many editors, so one engine serves the shell, GIMP, Krita and a webcam tool.",
+  "status": "maintained. The homepage lists 4.0.6 as the latest stable release, dated 2026/10/14, and the download page has packages for current Ubuntu and Debian releases, plus a development snapshot. I did not check the GitHub commit history, so this rests on the homepage.",
+  "caveats": "The README says the source repositories are work in progress and may be unstable, so the release tarball is recommended. Compiling needs a large toolchain: Qt5, GIMP dev headers, and on Windows about 3GB via MSYS2. Older g++ versions may crash, and the workaround is to disable OpenMP. The project does not officially maintain macOS builds. Licensing is CeCILL (LGPL-like and/or GPL-compatible), not plain GPL. The homepage gives no command-level tutorial; it points to a Technical Reference and a Scripting Tutorial that I did not fetch.",
+  "quotes": [
+   "G'MIC is focused on designing possibly complex pipelines for converting, processing and visualizing generic 1D/2D/3D multi-spectral image datasets.",
+   "In this context, G'MIC can be viewed as a powerful companion to the ImageMagick or GraphicsMagick software suites.",
+   "G'MIC is an open framework: the default language can be extended with custom G'MIC-written commands, thereby adding new image filters and effects to the language."
+  ],
+  "links": [
+   {
+    "label": "G'MIC homepage",
+    "url": "https://gmic.eu/"
+   },
+   {
+    "label": "Download page (packages and source build instructions)",
+    "url": "https://gmic.eu/download.html"
+   },
+   {
+    "label": "JOSS article (Tschumperl\u00e9, Fourey, Osgood, 2025)",
+    "url": "https://doi.org/10.21105/joss.06618"
+   }
+  ],
+  "fetch_log": [
+   "https://gmic.eu/ - worked; homepage text, no README. Little command-level detail.",
+   "https://gmic.eu/download.html - worked; URL guessed from the Download nav item, and it contained the source build and testing commands."
+  ]
+ }
+}

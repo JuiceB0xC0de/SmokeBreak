@@ -1,0 +1,85 @@
+{
+ "name": "decompose",
+ "desc": "Reverse-engineering tool for docker environments",
+ "homepage": "https://github.com/s0rg/decompose",
+ "installs_365d": 172,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "network"
+ ],
+ "why": "Reverse-engineers running docker environments into compose files, a useful way to see how a stack was assembled.",
+ "brief": {
+  "what_it_is": "decompose is a command-line tool that reverse-engineers a running Docker environment. It takes the network connections of your containers and exports them as a graph or structured file: graphviz dot, structurizr DSL, compose YAML, PlantUML, a pseudographical tree, a JSON stream, statistics (node, connection and listen-port counts), or CSV with columns name, listen and outbounds. Its input is the live Docker daemon (via DOCKER_HOST and related variables), and its output goes to stdout by default. It can also load saved JSON streams and merge them.",
+  "why_it_exists": "The author needed to visualize and inspect a large dockerized legacy system (more than 470 containers) with no schemes and very little documentation. The README says the closest existing tools did not fit: some only produce compose YAML, and others take links and ports from compose configuration, which can miss connections.",
+  "how_it_works": "It collects connections from the containers rather than reading compose files. On Linux as root it uses nsenter, which works even for scratch-based containers. As non-root or on other OSes it runs netstat inside each container, and containers without netstat yield no connections. Unix-socket matching on Linux needs root and uses inode matching. Output formats are sorted, so they can be committed to version control and diffed.",
+  "commands_seen": [
+   {
+    "cmd": "sudo decompose > nodes-1.json",
+    "context": "Saves the full JSON stream of the running environment to a file, run as root so the nsenter strategy is used."
+   },
+   {
+    "cmd": "decompose -format dot > connections.dot",
+    "context": "Writes the connection graph in graphviz dot format to a file (default output is JSON)."
+   },
+   {
+    "cmd": "decompose -proto tcp,udp -format dot > tcp.dot",
+    "context": "Restricts the scan to tcp and udp connections and writes dot output."
+   },
+   {
+    "cmd": "decompose -local -proto tcp -load \"nodes-*.json\" -format dot > graph-merged.dot",
+    "context": "Merges several saved JSON streams, skips external hosts, filters to tcp, and writes dot output."
+   },
+   {
+    "cmd": "decompose -load nodes-1.json -meta metadata.json -format sdsl > workspace.dsl",
+    "context": "Loads a saved stream, enriches it with a metadata file, and writes a structurizr DSL workspace."
+   },
+   {
+    "cmd": "decompose -cluster auto:0.6 -format sdsl > workspace.dsl",
+    "context": "Runs automatic clusterization with similarity 0.6 and writes structurizr DSL."
+   },
+   {
+    "cmd": "decompose -format dot | dot -Tsvg > redis-cluster.svg",
+    "context": "Pipes the dot output through graphviz to render an SVG of the running stack, as in the README's example."
+   },
+   {
+    "cmd": "docker compose up -d",
+    "context": "Starts the redis-cluster example stack that the README uses to reproduce the sample graph."
+   },
+   {
+    "cmd": "sed -i 's/->/ -> /g' myfile.dot",
+    "context": "Workaround the README gives so that gephi can load edges from the generated graphviz file."
+   }
+  ],
+  "install_notes": "Beyond brew, the README points to prebuilt binaries, deb and rpm packages from the GitHub releases page (Linux, FreeBSD, macOS, Windows) and a Docker image on Docker Hub. Full scanning as root on Linux needs sudo, since the nsenter path requires it. Connection settings come from environment variables: DOCKER_HOST (connection URI), DOCKER_CERT_PATH (directory with key.pem, cert.pm and ca.pem; the README spells cert.pem as cert.pm), DOCKER_TLS_VERIFY (enable TLS verification), and IN_DOCKER_PROC_ROOT (host-mounted /proc root for running inside a container). The README does not describe a first-run setup beyond this.",
+  "standout": "The deep mode (-deep) introspects connections between processes inside containers, not just between containers. Automatic clusterization (-cluster auto:<similarity>) groups services by port-set similarity, and clusters can also be defined with expr-language rules. Sorted output makes the results diffable in version control.",
+  "status": "unknown. The README has CI, coverage (98.0%), Go Report Card, release and FOSSA badges, and it is listed in awesome-go. The fetched text carries no release date, last commit date or maintenance note, so I cannot confirm recent activity.",
+  "caveats": "Only established and listen connections are listed, so short-lived connections are missed; the README suggests a snapshots.sh script for that. Non-root or non-Linux runs need netstat inside containers, and containers without it show no connections. Unix-socket collection works only as root on Linux. The compose YAML output is for system overview only: it can lack information even in -full mode or contain cycles between nodes. Gephi needs a sed fix to load the dot output. The README mentions no Windows-specific notes. The badge shows an MIT license.",
+  "quotes": [
+   "Reverse-engineering tool for docker environments.",
+   "I was in need for a tool to visualize and inspect big (more than 470 containers) dockerized legacy system without any schemes and having a bare minimum of documentation",
+   "all output formats are sorted, thus can be placed to any `vcs` to observe changes"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/s0rg/decompose"
+   },
+   {
+    "label": "Releases (binaries, deb, rpm)",
+    "url": "https://github.com/s0rg/decompose/releases"
+   },
+   {
+    "label": "Docker Hub image",
+    "url": "https://hub.docker.com/r/s0rg/decompose"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/s0rg/decompose (homepage, GitHub repo; fetched and returned the README; worked)"
+  ]
+ }
+}

@@ -1,0 +1,92 @@
+{
+ "name": "acl2",
+ "desc": "Logic and programming language in which you can model computer systems",
+ "homepage": "https://www.cs.utexas.edu/~moore/acl2/",
+ "installs_365d": 500,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "languages-and-oddities",
+ "tags": [
+  "days-off",
+  "language",
+  "math"
+ ],
+ "why": "A Lisp-based theorem prover used to model and formally verify real hardware and systems, a genuinely deep rabbit hole.",
+ "brief": {
+  "what_it_is": "ACL2 is a logic and programming language, built on a dialect of Common Lisp, in which you write models of computer systems and then use an accompanying theorem-proving tool to prove properties about those models. The homepage describes it as \"A Computational Logic for Applicative Common Lisp\" and places it in the Boyer-Moore family of provers. The input is ACL2 definitions and theorems, typically organised into files called books, and the output is machine-checked proofs or failed proof attempts. The page is for Version 8.7, dated March 20, 2026.",
+  "why_it_exists": "The homepage frames it as a way to model computer systems and prove properties of those models, and it credits the Boyer-Moore provers with the 2005 ACM Software System Award. It also points to a large shared library of community books so users can reuse existing definitions and lemmas.",
+  "how_it_works": "The homepage does not explain the internal proof machinery. It does describe the usage model: you write definitions and theorems, collect them into books, and can certify and reuse community books that others have written. Extensions include ACL2(r) for real numbers via non-standard analysis, ACL2(p) for parallel evaluation, and the Eclipse-based ACL2 Sedan (ACL2s), which adds termination-proof automation and counterexample generation.",
+  "commands_seen": [
+   {
+    "cmd": "cd acl2-sources/books",
+    "context": "Shown on the homepage as the first step for building the ACL2+Books manual locally from the source distribution."
+   },
+   {
+    "cmd": "make manual ACL2=<path_to_your_ACL2>",
+    "context": "Builds the ACL2+Books manual locally; the placeholder is the path to your ACL2 executable. The page says it uses ccl by default and that sbcl is also acceptable, and that it may take several minutes or longer depending on which books are already certified."
+   },
+   {
+    "cmd": ":DOC",
+    "context": "Referenced as the ACL2 terminal command for reading documentation, as in 'the ACL2 :DOC command at the terminal'. Mentioned in prose, not shown as a standalone command line."
+   }
+  ],
+  "install_notes": "The homepage links to an 'Obtaining, Installing, and License' page, which I did not fetch. Community books are downloaded and installed separately, per the installation instructions. Building the full manual from source requires a local ACL2 binary and, by default, Clozure Common Lisp (ccl), with SBCL also acceptable. ACL2s is distributed separately by Pete Manolios's group and ships a standard executable ACL2 image for Windows. The brew executables are listed as acl2 and acl2p, where acl2p is the parallel-evaluation build.",
+  "standout": "It is a theorem prover where the models are written in an executable Lisp dialect, so the same artefact can be run and proved, and it has a large community library of reusable proven books. The homepage's own emphasis is that the manual and books are at least as large as the system itself.",
+  "status": "Maintained, as far as the homepage shows: it is on Version 8.7 with the page dated March 20, 2026, and the authors and community maintain books and documentation. I did not check a repository commit date or release history.",
+  "caveats": "The homepage does not describe hardware or systems verification. The scout note's claim that it is used to model and verify real hardware and systems is not supported by the text I read, though that is a known use. The homepage warns newcomers not to wander into the full manual and to start with the START-HERE topic. Building the manual is slow. ACL2s, the Eclipse-based variant, is distributed by a different group and is not the same as the base ACL2 executable.",
+  "quotes": [
+   "ACL2 is a logic and programming language in which you can model computer systems, together with a tool to help you prove properties of those models.",
+   "If you are a newcomer to ACL2, we do not recommend that you wander off into the full documentation.",
+   "ACL2 is freely available under the terms of the LICENSE file distributed with ACL2."
+  ],
+  "links": [
+   {
+    "label": "ACL2 homepage",
+    "url": "https://www.cs.utexas.edu/~moore/acl2/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.cs.utexas.edu/~moore/acl2/ \u2014 fetched OK; homepage text returned with version 8.7, the feature summary, and a build command. I did not follow the 'Obtaining, Installing, and License' link, the manual links, or the START-HERE page because the fetched text did not include their URLs."
+  ]
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "ACL2",
+  "tldr": "A Lisp-based programming language and theorem prover where you write models of computer systems, then ask the machine to prove things about them.",
+  "deeper_look": "ACL2 is both a programming language and a logic. You write definitions in an applicative (side-effect-free) dialect of Common Lisp, then state theorems about them. The accompanying prover tries to prove each theorem, and either accepts it or fails, which tells you something about your model or your idea.\n\nThe odd part is that the model is executable. The same definitions you run on test inputs are the ones you prove properties about, so there is no separate specification language to keep in sync. Definitions and theorems are collected into files called books, which can be certified and reused. The community maintains a large shared library of them.\n\nIt belongs to the Boyer-Moore family of provers, which the homepage says received the 2005 ACM Software System Award. Extensions include ACL2(r) for real numbers via non-standard analysis, ACL2(p) for parallel evaluation, and ACL2s, an Eclipse-based variant from a separate group that adds termination-proof automation and counterexample generation.\n\nThe idea underneath is that a program can be treated as a mathematical object and checked by machine, not just tested. The homepage is frank that the learning curve is steep: \"If you are a newcomer to ACL2, we do not recommend that you wander off into the full documentation.\" It points newcomers to the START-HERE topic instead.",
+  "install": "brew install acl2\n# installs the acl2 and acl2p executables; sbcl is pulled in as a dependency",
+  "try_this": [
+   {
+    "cmd": "acl2 --help",
+    "what_happens": "Prints the command-line options for starting the ACL2 prover."
+   },
+   {
+    "cmd": "acl2p --help",
+    "what_happens": "Shows the options for the parallel-evaluation build of ACL2."
+   },
+   {
+    "cmd": ":DOC",
+    "what_happens": "Typed at the ACL2 prompt, opens the built-in documentation browser; start with the START-HERE topic."
+   }
+  ],
+  "whats_unique": "The models are written in an executable Lisp dialect, so the same artefact can be both run and proved. It also has a large community library of reusable proven books.",
+  "caveats": "The learning curve is steep, community books are installed separately, and building the full manual from source is slow.",
+  "commitment": "days-off",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "days-off",
+   "theorem-prover",
+   "lisp",
+   "formal-verification",
+   "math"
+  ],
+  "links": [
+   {
+    "label": "ACL2 homepage",
+    "url": "https://www.cs.utexas.edu/~moore/acl2/"
+   }
+  ]
+ }
+}

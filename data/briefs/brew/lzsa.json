@@ -1,0 +1,52 @@
+{
+ "name": "lzsa",
+ "desc": "Lossless packer that is optimized for fast decompression on 8-bit micros",
+ "homepage": "https://github.com/emmanuel-marty/lzsa",
+ "installs_365d": 25,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "ancient",
+  "tui"
+ ],
+ "why": "A packer built for 8-bit machines, a fun window into retro compression tradeoffs and decompression constraints.",
+ "brief": {
+  "what_it_is": "LZSA is a set of byte-aligned lossless compression formats, with a packer that encodes files into them, aimed at very fast decompression on 8-bit CPUs. It takes a file of any size, splits it into blocks of up to 64 KB, and emits a packed file that decompresses back to the original. Matches can reach back up to 64 KB. The README points to decompressors for Z80, 6502, 6809, 8088, i8080, PDP-11, MC68000 and Game Boy, written by various contributors. The packer's executable is named lzsa.",
+  "why_it_exists": "The README frames it as a compression format for retro machines where decompression speed and decompressor size matter most, offering alternatives to LZ4 and ZX7 in 8-bit scenarios. LZSA1 is meant to replace LZ4 and LZSA2 to replace ZX7.",
+  "how_it_works": "The optimizer searches for the sequence of commands that gives the smallest output while keeping decompression as fast as possible, and the match-finder and optimizer cooperate to prefer 8-bit match offsets. LZSA2 uses 5-, 9-, 13- and 16-bit offsets encoded with nibbles, plus rep-matches, and avoids slow bit-packing in favour of byte alignment and nibbles. The encoding avoids 16-bit arithmetic on the decoder side.",
+  "commands_seen": [],
+  "install_notes": "The README gives no build, install or usage steps and shows no command lines. The brew formula supplies the lzsa executable. Packing needs nothing special; the decompressors are assembly routines meant for the target 8-bit machines.",
+  "standout": "The packer's optimizer deliberately spends effort to keep decompression fast on 8-bit CPUs, not just to shrink output, and the authors cite a 67-byte size-optimized Z80 decompressor for LZSA1. Many retro projects have adopted it, including demos, a game port and an assembler.",
+  "status": "unknown. The fetched README shows no release dates, last commit, or maintenance notice, so I could not judge whether the project is active. I did not fetch the repository's commit or release pages.",
+  "caveats": "The README gives no usage instructions, so the command syntax is unknown from these notes. Benchmark tables are the authors' own and compare against LZ4_HC, ZX7, LZ5, Lizard and MegaLZ. The compressor is about 2X slower than LZ4_HC. Licensing is split: the LZSA code is zlib, and matchfinder.c is CC0 because it reuses parts of Wimlib. Several decompressors are third-party ports with their own origins.",
+  "quotes": [
+   "LZSA is a collection of byte-aligned compression formats that are specifically engineered for very fast decompression on 8-bit systems.",
+   "LZSA1 is designed to replace LZ4 and LZSA2 to replace ZX7, in 8-bit scenarios.",
+   "The compressor is approximately 2X slower than LZ4_HC but compresses better while maintaining similar decompression speeds and decompressor simplicity."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/emmanuel-marty/lzsa"
+   },
+   {
+    "label": "Stream format doc",
+    "url": "https://github.com/emmanuel-marty/lzsa/blob/master/StreamFormat.md"
+   },
+   {
+    "label": "Block format for LZSA1",
+    "url": "https://github.com/emmanuel-marty/lzsa/blob/master/BlockFormat_LZSA1.md"
+   },
+   {
+    "label": "The Hollow demo on Pouet (uses LZSA on Z80)",
+    "url": "https://www.pouet.net/prod.php?which=81909"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/emmanuel-marty/lzsa: fetched OK, README returned (format overview, benchmarks, credits, and format doc links). The linked format docs were not fetched."
+  ]
+ }
+}

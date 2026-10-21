@@ -1,0 +1,87 @@
+{
+ "name": "baysor",
+ "desc": "Bayesian segmentation of imaging-based spatial transcriptomics data",
+ "homepage": "https://github.com/kharchenkolab/Baysor",
+ "installs_365d": 21,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "library"
+ ],
+ "why": "Bayesian cell segmentation of spatial transcriptomics data is real science you can run, though it needs suitable data to enjoy.",
+ "brief": {
+  "what_it_is": "Baysor is a command-line tool for cell segmentation of imaging-based spatial transcriptomics data. It takes a molecule table with x, y and gene columns (z optional for 3D) and assigns each detected molecule to a cell, using molecule positions and gene composition. It can run with or without a prior segmentation. The output goes to a directory, default 'segmentation'. The current release is the native C++ version, cpp-0.9.0, and the executable is baysor.",
+  "why_it_exists": "The README frames it as finding cells from molecule positions and gene composition, with or without a prior segmentation, in imaging-based spatial transcriptomics, where cell boundaries are hard to define from the molecule data alone.",
+  "how_it_works": "The README describes a Bayesian segmentation model over molecule positions and gene identities. The user supplies an approximate cell radius (-s) and a minimum molecule count per cell (-m), or a prior segmentation as a second input with --prior-segmentation-confidence (default 0.2). The README does not go into more detail on the model.",
+  "commands_seen": [
+   {
+    "cmd": "curl -fLO https://github.com/kharchenkolab/Baysor/releases/download/cpp-0.9.0/baysor-0.9.0-linux-x86_64.tar.gz",
+    "context": "Downloads the Linux x86-64 release archive from the cpp-0.9.0 GitHub release."
+   },
+   {
+    "cmd": "tar -xzf baysor-0.9.0-linux-x86_64.tar.gz",
+    "context": "Extracts the release archive."
+   },
+   {
+    "cmd": "./baysor-0.9.0-linux-x86_64/bin/baysor run -m 30 -s 8 molecules.csv",
+    "context": "Runs segmentation on molecules.csv with -m 30 (minimum molecules per cell) and -s 8 (approximate cell radius). The README calls 30 and 8 examples, not defaults."
+   },
+   {
+    "cmd": "docker run --rm -v \"$PWD:/data\" ghcr.io/kharchenkolab/baysor:0.9.0 run -m 30 -s 8 molecules.csv",
+    "context": "Runs the same segmentation through the pinned 0.9.0 Docker image, from the directory containing molecules.csv."
+   },
+   {
+    "cmd": "./configure.sh --deps=conda --install",
+    "context": "Source build on Linux or macOS using a private conda-forge environment, with no root needed. Installs the binary to install/bin."
+   },
+   {
+    "cmd": "./install/bin/baysor --version",
+    "context": "Checks the version of a source-built binary."
+   },
+   {
+    "cmd": "git clone -b cpp-0.9.0 https://github.com/kharchenkolab/Baysor.git",
+    "context": "Clones the cpp-0.9.0 tag for a source build."
+   },
+   {
+    "cmd": "brew install cmake ninja pkg-config eigen spdlog cgal apache-arrow hdf5 nlohmann-json libtiff",
+    "context": "Installs the source-build dependencies on macOS with Homebrew, followed by ./configure.sh --deps=system --install."
+   },
+   {
+    "cmd": "sha256sum --check --ignore-missing SHA256SUMS",
+    "context": "Optional check of the Linux archive against the release SHA256SUMS file."
+   }
+  ],
+  "install_notes": "Release binaries exist for Linux x86-64 (glibc 2.28 or newer), macOS 12+ on Apple Silicon (arm64), and 64-bit Windows 10+ (zip; keep the DLLs beside baysor.exe). No Intel-Mac binary is listed. Docker image is Linux x86-64 only, runs as UID/GID 1000 unless you pass --user. Source builds need a C++17 compiler, CMake 3.20+, Eigen, spdlog, CGAL, Arrow/Parquet, HDF5, nlohmann_json, libtiff and zlib; configure.sh can fetch these via conda, vcpkg, or use system packages. The Ubuntu 24.04 route needs the Apache Arrow apt repository added first. No account or licence key was mentioned. The -c flag takes a TOML config file, and --threads defaults to physical cores.",
+  "standout": "It takes a prior segmentation as an optional second input and lets you weight it with a confidence setting, so it can refine an existing segmentation or run from molecules alone. The project also ships a 'segfree' mode and a 'preview' command, though the README doesn't explain either.",
+  "status": "Appears active: a versioned C++ release (cpp-0.9.0), pinned Docker tags, and versioned docs with a latest track. I did not see a release date or last-commit date, so recency is unknown. The old Julia v0.7.1 line is archived and the README warns not to install it unpinned.",
+  "caveats": "Parameters must be chosen for the protocol; the README stresses that 30 and 8 are examples. Platform coverage is limited: no Intel Mac binary is listed. Source builds have a heavy dependency list. The Docker image is x86-64 Linux only. Legacy Julia users are pointed to a migration guide. The brew scout note says it needs suitable data. I did not check the licence file.",
+  "quotes": [
+   "Baysor finds cells from molecule positions and gene composition, with or without a prior segmentation.",
+   "The table needs `x`, `y` and `gene` columns (optional `z` for 3D).",
+   "`30` molecules and radius `8` are examples, not universal settings.",
+   "Do not use an unpinned Julia package install: the default branch is now C++."
+  ],
+  "links": [
+   {
+    "label": "Cell segmentation docs (parameters, priors, inspecting results)",
+    "url": "https://kharchenkolab.github.io/Baysor/latest/run/"
+   },
+   {
+    "label": "Xenium workflow",
+    "url": "https://kharchenkolab.github.io/Baysor/latest/xenium/"
+   },
+   {
+    "label": "Citation: Petukhov et al., Nat Biotechnol 2021",
+    "url": "https://doi.org/10.1038/s41587-021-01044-w"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/kharchenkolab/Baysor (homepage, README returned, worked)",
+   "https://kharchenkolab.github.io/Baysor/latest/installation/ (worked, installation page text returned)"
+  ]
+ }
+}

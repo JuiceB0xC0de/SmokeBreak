@@ -1,0 +1,102 @@
+{
+ "name": "minuit2",
+ "desc": "Physics analysis tool for function minimization",
+ "homepage": "https://root.cern.ch/doc/master/Minuit2Page.html",
+ "installs_365d": 129,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "math",
+  "science",
+  "afternoon"
+ ],
+ "why": "CERN's function minimizer from particle physics is real scientific software you can run at home, though it is a library.",
+ "brief": {
+  "what_it_is": "Minuit2 is a C++ library for function minimization, a C++ rewrite of the long-standing MINUIT package from CERN. You supply a function (the FCN, usually a chi-square or log-likelihood) and starting parameter values with uncertainties. It searches for the parameter values that minimize the function, then reports the best-fit values, parameter errors, and correlations, and can compute MINOS asymmetric errors and CONTOURS. Results come back as objects you print or query, and CONTOURS returns (x,y) points. It does no histogramming, data handling, or graphics.",
+  "why_it_exists": "The README frames M as a tool to find the minimum of a multi-parameter function and analyze its shape around the minimum, mainly for statistical analysis of chi-square or log-likelihood fits, and especially for difficult problems that may need guidance to find the right solution. It was written at CERN for experimental data analysis, and is also used outside high-energy physics.",
+  "how_it_works": "The user implements a derived class of FCNBase that computes the function value, and the minimizers (MnMigrad, MnHesse, MnMinos, MnContours) search the parameter space. Parameters with limits are mapped to an unbounded internal space with a non-linear transform (sine-based for double-sided limits), and the error matrix is twice the inverse of the second-derivative matrix multiplied by FCNBase::up(). Error definition up is 1.0 for chi-square and 0.5 for negative log-likelihood by default.",
+  "commands_seen": [
+   {
+    "cmd": "make package",
+    "context": "Build step given in the README for creating a tar.gz from the Git checkout of the code."
+   },
+   {
+    "cmd": "minuit2_omp=ON",
+    "context": "ROOT build option named in the README; the README says ROOT must be built with it to get OpenMP parallelization of some gradient calculations, then call GradientCalculator::SetParallelOMP()."
+   },
+   {
+    "cmd": "Quad4FMain",
+    "context": "Name of the test program the README says to run after a cmake/make install to check the build; it prints a converged result with about 74 function calls."
+   },
+   {
+    "cmd": "MnMigrad::fix(n)",
+    "context": "API call (C++, not a shell command) that fixes parameter n; the README describes how this changes the error matrix."
+   }
+  ],
+  "install_notes": "The README says to install with cmake/make and points to the DEVELOP.md file in the ROOT GitHub repo for build instructions. Standalone Minuit2 (independent of ROOT) can be built and installed with CMake, per a linked README. Afterwards run the Quad4FMain test; it should report that Minuit did successfully converge. To use it within ROOT, the ROOT plug-in manager can instantiate ROOT::Minuit2::Minuit2Minimizer. OpenMP needs ROOT built with minuit2_omp=ON. Nothing on this page mentions Homebrew-specific steps, accounts, or hardware.",
+  "standout": "It is a real CERN statistics tool with a long pedigree: the README describes the original Fortran MINUIT written at CERN around 1975-1980 by Fred James and M. Winkler, and this C++ version keeps the numerical behavior while adding single-sided parameter limits and the FUMILI least-squares algorithm. The MINOS method, which computes asymmetric errors that include parameter correlations and non-linearity, is described as probably the first generally available program to do so.",
+  "status": "Unknown from the fetched page alone. The page is the ROOT master reference guide and says version numbers follow ROOT releases; it is distributed within ROOT and the standalone build is documented. I saw no release date, commit date, or deprecation note on the page, so I cannot confirm recent activity.",
+  "caveats": "It is a library, not an application: there is no interactive mode, and the user must write C++ code with a FCNBase subclass and a main program that is compiled before running. Using the standard library's allocator is thread-safe by default, but the optional stack allocator makes it not thread-safe. The README says the practical limit is around 15 free parameters at a time. Parameter limits make the problem non-linear and add numerical error, and the README advises avoiding them unless needed. Single-precision computations inside FCN will produce roundoff noise and bad errors, so double precision is required. The fetched page does not state a license. OpenMP parallelism requires a specific ROOT build flag. The homepage was reachable but the page was truncated at 40000 characters, so the MnHesse, MnMinos, and later API sections were not fully read.",
+  "quotes": [
+   "The Minuit2 library is an object-oriented implementation, written in C++, of the popular MINUIT minimization package.",
+   "It is especially suited to handle difficult problems, including those which may require guidance in order to find the correct solution.",
+   "Minuit did successfully converge."
+  ],
+  "links": [
+   {
+    "label": "Minuit2 reference guide (homepage)",
+    "url": "https://root.cern.ch/doc/master/Minuit2Page.html"
+   },
+   {
+    "label": "DEVELOP.md: ROOT Minuit2 build and standalone install instructions",
+    "url": "https://github.com/root-project/root/blob/master/math/minuit2/DEVELOP.md"
+   }
+  ],
+  "fetch_log": [
+   "https://root.cern.ch/doc/master/Minuit2Page.html: fetched OK, text returned but truncated at 40000 characters partway through the MnHesse API section. Did not fetch the linked DEVELOP.md or other docs."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A niche CERN fitting library with a distinctive statistical twist: MINOS estimates asymmetric parameter errors while accounting for correlations and nonlinearity."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Minuit2",
+  "tldr": "CERN's C++ function minimizer, descended from 1970s Fortran MINUIT, that fits parameters and reports asymmetric errors for chi-square and likelihood fits.",
+  "deeper_look": "Minuit2 is a C++ library for finding the minimum of a function of many parameters. You write a function, usually a chi-square or a negative log-likelihood, and hand over starting values with rough uncertainties. The minimizer searches for the best-fit values, then reports parameter errors and correlations. It can also compute MINOS asymmetric errors and CONTOURS, which returns (x,y) points. It does no histogramming, data handling or graphics.\n\nIt was written at CERN for experimental data analysis. It is an object-oriented rewrite of the original Fortran MINUIT, written around 1975-1980 by Fred James and M. Winkler, and keeps the numerical behavior while adding single-sided parameter limits and the FUMILI least-squares algorithm. Its README describes it as especially suited to \"difficult problems, including those which may require guidance in order to find the correct solution.\"\n\nThe idea underneath is that a fit is not just a best value, it is the shape of the function around the minimum. The error matrix is twice the inverse of the second-derivative matrix, scaled by an error definition: 1.0 for chi-square, 0.5 for negative log-likelihood. MINOS walks away from the minimum to find errors that include non-linearity and parameter correlations. The README calls it probably the first generally available program to do so.\n\nParameters with limits are mapped into an unbounded internal space with a non-linear transform, sine-based for double-sided limits. That is a neat trick, and also the reason the README advises avoiding limits unless you need them.",
+  "install": "brew install minuit2\n# This is a library with no executables. You compile your own C++ program against it. Needs a C++ compiler and CMake.",
+  "try_this": [
+   {
+    "cmd": "Quad4FMain",
+    "what_happens": "The README's post-install test program. It minimizes a test function and should print that Minuit did successfully converge, after about 74 function calls. You may need to build it from the source tree, since brew installs no executables."
+   }
+  ],
+  "whats_unique": "It is the actual minimizer lineage used in high-energy physics fits, with MINOS asymmetric errors and contour finding rather than just a best-fit point.",
+  "caveats": "It is a library, not an application: there is no interactive mode, you write and compile C++ with an FCNBase subclass, and the README puts the practical limit around 15 free parameters.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "math",
+   "science",
+   "statistics",
+   "c++",
+   "library",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "Minuit2 reference guide (homepage)",
+    "url": "https://root.cern.ch/doc/master/Minuit2Page.html"
+   },
+   {
+    "label": "DEVELOP.md: ROOT Minuit2 build and standalone install instructions",
+    "url": "https://github.com/root-project/root/blob/master/math/minuit2/DEVELOP.md"
+   }
+  ]
+ }
+}

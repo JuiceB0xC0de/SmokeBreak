@@ -1,0 +1,145 @@
+{
+ "name": "simutrans",
+ "desc": "Transport simulator",
+ "homepage": "https://www.simutrans.com/",
+ "installs_365d": 278,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "games",
+ "tags": [
+  "afternoon",
+  "game",
+  "simulation",
+  "gui"
+ ],
+ "why": "An open-source transport simulation game with a deep economy model, a strange old-school corner of simulation that rewards long sessions.",
+ "brief": {
+  "what_it_is": "Simutrans is a freeware, open-source transport simulator in which you run a transport company. You build networks by rail, road, ship and air to move passengers, mail and goods between districts, cities, public buildings, industries and tourist attractions. Maps can be any size and need not be square. The game is played with a graphical front end, and it can also run multiplayer with a server that friends join. The homepage does not describe the economy model in detail, so the scout note's 'deep economy model' is unverified.",
+  "why_it_exists": "The homepage pitches it as a way to build 'a transport network you always dreamed of' and to establish a successful transport company. The README gives no further framing.",
+  "how_it_works": "Each pakset is a separate set of graphics and data (objects, buying prices, maintenance costs, themes) that changes the gameplay, so every pakset is effectively a new game. The game itself is built from C++ source with make, MSVC or CMake, and it needs a Simutrans installation (a pakset) to run. The README says you can start the game with -use_workdir to point it at an existing installation.",
+  "commands_seen": [
+   {
+    "cmd": "svn checkout svn://servers.simutrans.org/simutrans/trunk",
+    "context": "Fetches the main Simutrans source repository via Subversion; the README calls SVN the main repository."
+   },
+   {
+    "cmd": "git clone http://github.com/simutrans/simutrans.git",
+    "context": "Clones the git mirror of the SVN repository. Using git means you must set the game version manually to join network games."
+   },
+   {
+    "cmd": "(Linux) autoconf",
+    "context": "First build step on Linux before configure. On macOS the README uses autoreconf -ivf instead."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Runs the configure script in the source directory for the make build."
+   },
+   {
+    "cmd": "make -j 4",
+    "context": "Builds Simutrans with make across four jobs; the executable lands in build/default."
+   },
+   {
+    "cmd": "cmake -G \"Insert Correct Makefiles Generator\" -B build .",
+    "context": "Generates a CMake build directory for Linux, MinGW or macOS. Replace the placeholder with a real generator name."
+   },
+   {
+    "cmd": "cmake --build build -j 4",
+    "context": "Compiles the CMake project in the build directory with four jobs; the executable goes to build/simutrans."
+   },
+   {
+    "cmd": "mkdir build && cd build",
+    "context": "Creates and enters a build directory for the MSVC CMake route."
+   },
+   {
+    "cmd": "cmake.exe .. -G \"Visual Studio 16 2019\" -A x64 -DCMAKE_TOOLCHAIN_FILE=[vcpkg-root]/scripts/buildsystems/vcpkg.cmake",
+    "context": "Configures the Visual Studio 2019 x64 build with the vcpkg toolchain file; [vcpkg-root] is a placeholder you replace."
+   },
+   {
+    "cmd": "cmake --build . --config Release",
+    "context": "Builds the Release configuration of the MSVC CMake project."
+   }
+  ],
+  "install_notes": "The homepage offers a download (version 125.0 listed). The README also points to Steam and Linux package managers via pkgs.org. Paksets are needed to run the game and are not bundled with the code; they carry their own license. Building from source needs zlib, bzip2 or zstd, libpng, freetype and, on Linux and macOS, SDL2 (SDL2 is optional but recommended on Windows). Optional libraries include miniupnpc (easy server), fluidsynth or SDL2_mixer (MIDI), and fontconfig. Windows builders use MSVC with vcpkg or MSYS2. setup-mingw.sh and setup-debian.sh scripts fetch libraries on those platforms, and macOS uses Homebrew. The README describes cross-compiling from Linux to Windows as a separate wiki topic. The brew formula's listed executables (makeobj, nettool, simutrans) are not mentioned anywhere I read.",
+  "standout": "Simutrans is an old-school transport sim with a long history: it began in 1997 under Hansj\u00f6rg Malthaner, who retired around 2004, and a community team now maintains it. Its most distinctive feature is that paksets are swappable graphics and rules packs, so one engine yields very different games. The Artistic License 1.0 and the translation and painting calls for help also give it an unusually open community feel.",
+  "status": "maintained. The homepage copyright runs 2016 to 2026 and lists download version 125.0. The README is active, pointing to a live forum, a translator web tool and a wiki, and it describes an ongoing nightly build. I did not see a last-commit date, so the exact recency of commits is unknown.",
+  "caveats": "Building from source is involved: you pick among three build systems, install many libraries, and in some cases run platform scripts or cross-compile. Paksets are required to play and are separate from the code. The README says most people should use the stable release, not nightly. Contributions go to the forum rather than GitHub pull requests, and the README tells people not to open PRs there. The GitHub repository is a mirror of SVN, and the README states that the SVN repository is the main one. I found the GitHub page by guessing its URL; the homepage does not link to it.",
+  "quotes": [
+   "Your goal is to establish a successful transport company.",
+   "Every pakset is a new game.",
+   "Simutrans is always looking for artists!"
+  ],
+  "links": [
+   {
+    "label": "Simutrans homepage",
+    "url": "https://www.simutrans.com/"
+   },
+   {
+    "label": "Simutrans Wiki",
+    "url": "https://wiki.simutrans.com"
+   },
+   {
+    "label": "Steam store page",
+    "url": "https://store.steampowered.com/app/434520/Simutrans/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.simutrans.com/ - worked; returned homepage text with features and download entry, but no install commands",
+   "https://github.com/simutrans/simutrans - worked; returned the README (a guessed URL, not linked from the homepage), including build and license sections"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Its swappable paksets change the objects and rules, making one transport simulator a family of distinct games rather than just another network-building title."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Simutrans",
+  "tldr": "A long-running open-source transport simulator where you build rail, road, ship and air networks, and swappable paksets turn one engine into many different games.",
+  "deeper_look": "Simutrans is a freeware, open-source game in which you run a transport company. You connect cities, industries, public buildings and tourist attractions by rail, road, ship and air, and you move passengers, mail and goods between them. Maps can be any size and need not be square. It has a graphical front end, and it can run multiplayer, with a server that friends join.\n\nThe idea underneath it is the pakset. A pakset is a separate bundle of graphics and data: objects, buying prices, maintenance costs, themes. The engine does not ship with one baked in. Swapping the pakset changes the gameplay, and the project puts it this way: \"Every pakset is a new game.\" The same executable can therefore be a different economy and a different era depending on what you point it at.\n\nThe project is old. It began in 1997 under Hansj\u00f6rg Malthaner, who retired around 2004, and a community team has maintained it since. The homepage currently lists version 125.0. The community still asks for help: \"Simutrans is always looking for artists!\" The brew formula also installs makeobj and nettool. The brief does not describe them, so check their --help output to see what they do.",
+  "install": "brew install simutrans\n# Paksets are not bundled with the code and carry their own licenses. You need at least one pakset to play. Get one from the homepage download or Steam.",
+  "try_this": [
+   {
+    "cmd": "simutrans --help",
+    "what_happens": "Lists the command-line options of the game."
+   },
+   {
+    "cmd": "makeobj --help",
+    "what_happens": "Shows usage for the second installed executable. The brief does not describe it, so this is the way to find out what it does."
+   },
+   {
+    "cmd": "nettool --help",
+    "what_happens": "Shows usage for the third installed executable. The brief does not describe it either."
+   }
+  ],
+  "whats_unique": "One engine runs many different games, because each pakset carries its own graphics, prices and rules. It is a 1990s-era transport sim that is still maintained by a community.",
+  "caveats": "Paksets are required to play and are separate from the code, and the brief does not confirm that the brew formula fetches one. The README also says most people should use the stable release rather than nightly builds.",
+  "commitment": "afternoon",
+  "category": "games",
+  "tags": [
+   "afternoon",
+   "game",
+   "simulation",
+   "gui",
+   "transport",
+   "multiplayer",
+   "open-source"
+  ],
+  "links": [
+   {
+    "label": "Simutrans homepage",
+    "url": "https://www.simutrans.com/"
+   },
+   {
+    "label": "Simutrans Wiki",
+    "url": "https://wiki.simutrans.com"
+   },
+   {
+    "label": "Steam store page",
+    "url": "https://store.steampowered.com/app/434520/Simutrans/"
+   }
+  ]
+ }
+}

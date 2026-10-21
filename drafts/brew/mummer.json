@@ -1,0 +1,147 @@
+{
+ "name": "mummer",
+ "desc": "Genome alignment tool",
+ "homepage": "https://github.com/mummer4/mummer",
+ "installs_365d": 190,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "library"
+ ],
+ "why": "Genome alignment suite using suffix trees, real bioinformatics you can run on sequences at home.",
+ "brief": {
+  "what_it_is": "MUMmer is a command-line suite for aligning whole genomes and other DNA or protein sequence sets. Its core program, mummer, finds exact maximal matches between a reference FASTA file and one or more query FASTA files. The main entry points, nucmer and promer, build alignments on top of those matches and write a .delta file. A set of show-* tools (show-coords, show-snps, show-aligns, show-tiling, show-diff) and helpers (delta-filter, dnadiff, mummerplot) then parse that output into coordinates, SNP lists, breakpoint classifications, statistics, or plots. Inputs are FASTA; outputs are plain text tables, delta files, and optionally gnuplot or PNG images.",
+  "why_it_exists": "The README frames MUMmer as a system for rapidly aligning entire genomes, noting that version 4 finds all 20 bp maximal exact matches between two bacterial genomes of about 5 Mbp each in 20 seconds using 90 MB of memory. It also positions the tool for draft assemblies, which may contain hundreds or thousands of contigs, and for comparing divergent genomes at the protein level via promer.",
+  "how_it_works": "mummer uses a suffix-tree based match-finding routine to find maximal matches. nucmer aligns nucleotide sequences all-vs-all and by default keeps only matches unique in the reference, with --mum or --maxmatch to change that. promer translates both inputs in all six reading frames and aligns them the same way, with delta integers measured in amino acids (1 delta int = 3 nucleotides). delta-filter applies a longest-increasing-subset calculation to keep a 1-to-1 or mutually consistent set of alignments.",
+  "commands_seen": [
+   {
+    "cmd": "./nucmer  -p <prefix>  ref.fa  qry.fa",
+    "context": "Basic nucmer run from the README 'Simple use case'; writes <prefix>.delta with alignments between the reference and query."
+   },
+   {
+    "cmd": "nucmer -h",
+    "context": "Lists nucmer's options; the README points here for parameter details."
+   },
+   {
+    "cmd": "dnadiff  [options]  <reference>  <query>",
+    "context": "Usage line for the dnadiff wrapper, which runs nucmer with defaults and then the show-* helpers to produce a .report and related files."
+   },
+   {
+    "cmd": "exact-tandems  <file>  <min match>",
+    "context": "Usage for finding exact tandem repeats in a single FASTA sequence; post-processes repeat-match output."
+   },
+   {
+    "cmd": "show-coords -THrcl .1delta",
+    "context": "Example from the dnadiff notes showing the flags used to produce the .1coords file from the 1-to-1 delta output."
+   },
+   {
+    "cmd": "delta-filter  [options]  <deltafile>",
+    "context": "Usage line for the filter that keeps the best alignments from a nucmer or promer delta file; -1 and -m are the recommended modes depending on the task."
+   },
+   {
+    "cmd": "docker run --rm -v $PWD:/mnt -w /mnt mummer nucmer -p <prefix> ref.fa  qry.fa",
+    "context": "From INSTALL.md: runs nucmer inside the Docker image built from the repo's Dockerfiles/Dockerfile-debian."
+   },
+   {
+    "cmd": "./configure --prefix=/path/to/installation",
+    "context": "From INSTALL.md: standard autotools configure step for building from source; on macOS the README asks for CC=gcc-14 CXX=g++-14 added."
+   },
+   {
+    "cmd": "make check",
+    "context": "Optional test step from INSTALL.md after make and before make install."
+   },
+   {
+    "cmd": "make uninstall",
+    "context": "From INSTALL.md: run in the MUMmer4.x base directory to remove the installed files."
+   },
+   {
+    "cmd": "autoreconf -fi",
+    "context": "From INSTALL.md: only needed when building from the git tree rather than a release tarball."
+   }
+  ],
+  "install_notes": "Homebrew is the install path in the entry, but the upstream instructions are source builds. Upstream recommends a release tarball; building from the git tree also needs autoconf, automake, libtool, gettext, and yaggo. Only GCC is supported. On macOS, the README says not to use Clang or Apple's gcc, and to compile with gcc-14 (CC=gcc-14 CXX=g++-14). On FreeBSD, use gmake and gcc14. Ubuntu needs build-essential. SWIG bindings for Python, Ruby, and Perl are optional and need swig, python3-dev, ruby-dev, and libperl-dev. Runtime needs perl5 (5.6.0 or later), sh, sed, and awk on the system path. Optional tools for plotting are gnuplot (4.0+), fig2dev (3.2.3+), and xfig (3.2+). Container builds are documented with Docker and Apptainer.",
+  "standout": "It is a 2000s-era suite that still ships a suffix-tree matcher, a delta format that a whole family of show-* tools read, and a built-in breakpoint classifier (show-diff) that labels gaps, duplications, relocations, inversions, and translocations. Its promer mode aligns six-frame translations, so proteins can match where DNA has diverged too far for nucmer.",
+  "status": "unknown. The README has live GitHub Actions build badges for master and develop, and INSTALL.md describes current GCC 14 build steps, which suggests recent upkeep. I saw no release date, last-commit date, or version number in the pages I read, so I cannot confirm the date.",
+  "caveats": "Only GCC is supported. Clang, including Apple's default toolchain, is not. Building from git needs yaggo and autotools. The README says the docs in docs/ are 'potentially out of date'. Several utilities are obsolete or scheduled for removal: annotate is 'eventually' to be dropped, nucmer2xfig is not properly maintained, and mapview, run-mummer1, run-mummer3, and nucmer2xfig are listed as obsolete in OBSOLETE.md. The README's REPuter note says REPuter is better suited for most repeat matching. The README contact link points to gmarcais/mummer while the repo is mummer4/mummer. I did not see a license statement in the README or INSTALL.md. The Brew caveats field is empty.",
+  "quotes": [
+   "MUMmer is a system for rapidly aligning entire genomes.",
+   "it handles the 100s or 1000s of contigs from a shotgun sequencing project with ease",
+   "MUMmer must be compiled with GCC, not Clang (and not the Apple provided gcc which is really clang)."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repo, README)",
+    "url": "https://github.com/mummer4/mummer"
+   },
+   {
+    "label": "docs/ directory (nucmer, promer, dnadiff READMEs and manual)",
+    "url": "https://github.com/mummer4/mummer/tree/master/docs"
+   },
+   {
+    "label": "INSTALL.md (build instructions, containers)",
+    "url": "https://github.com/mummer4/mummer/blob/master/INSTALL.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/mummer4/mummer (worked; README returned, including the executable descriptions)",
+   "https://github.com/mummer4/mummer/blob/master/INSTALL.md (worked; GitHub page, content legible, used for install notes)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A substantial, runnable bioinformatics suite: suffix-tree genome matching, six-frame protein alignment, and breakpoint classification offer a rewarding look inside genome comparison."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "MUMmer",
+  "tldr": "A suite for aligning whole genomes using suffix trees: feed it two FASTA files, get back coordinates, SNPs, and a classification of rearrangements.",
+  "deeper_look": "MUMmer finds exact maximal matches between a reference sequence and one or more query sequences, then builds alignments on top of them. The core program, mummer, does the matching with a suffix tree. The README says version 4 finds all 20 bp maximal exact matches between two bacterial genomes of about 5 Mbp each in 20 seconds, using 90 MB of memory.\n\nMost people start with nucmer, which aligns nucleotide sequences all-vs-all and writes a .delta file. By default it keeps only matches that are unique in the reference. A family of show-* tools reads the delta file: show-coords prints alignment coordinates, show-snps lists point differences, show-aligns prints the alignments themselves, and show-diff labels the gaps between them as duplications, relocations, inversions, and translocations. delta-filter prunes the alignments with a longest-increasing-subset calculation, so you keep a consistent 1-to-1 set. dnadiff wraps the whole pipeline and produces a report.\n\nThe second idea is promer. It translates both inputs in all six reading frames and aligns the resulting amino acid sequences, so two genomes can still match at the protein level after the DNA has diverged too far for nucmer. The README also says it copes with draft assemblies of hundreds or thousands of contigs.\n\nThe tool is from the 2000s and the file formats show it, but the suffix-tree approach is an approachable way into how genome comparison works. You need two FASTA files to try it, and any two related bacterial genomes will do.",
+  "install": "brew install mummer\n# Runtime needs perl 5.6+, sh, sed and awk on the path. mummerplot needs gnuplot for plots.",
+  "try_this": [
+   {
+    "cmd": "nucmer -h",
+    "what_happens": "Lists nucmer's options, including --mum and --maxmatch, which change which matches it keeps."
+   },
+   {
+    "cmd": "nucmer -p out ref.fa qry.fa",
+    "what_happens": "Aligns the query against the reference and writes out.delta."
+   },
+   {
+    "cmd": "dnadiff ref.fa qry.fa",
+    "what_happens": "Runs nucmer with defaults and the show-* helpers, then writes a .report summarizing the differences between the two genomes."
+   }
+  ],
+  "whats_unique": "It combines a suffix-tree matcher, a delta format shared by a whole family of small show-* tools, and a built-in classifier for rearrangements. Its promer mode aligns six-frame translations, so it can match proteins where DNA has diverged too far.",
+  "caveats": "Upstream supports only GCC, not Clang, and the docs in the repo are described as potentially out of date. Several utilities, such as annotate and nucmer2xfig, are obsolete or headed for removal.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "science",
+   "genomics",
+   "bioinformatics",
+   "alignment",
+   "fasta"
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repo, README)",
+    "url": "https://github.com/mummer4/mummer"
+   },
+   {
+    "label": "docs/ directory (nucmer, promer, dnadiff READMEs and manual)",
+    "url": "https://github.com/mummer4/mummer/tree/master/docs"
+   },
+   {
+    "label": "INSTALL.md (build instructions, containers)",
+    "url": "https://github.com/mummer4/mummer/blob/master/INSTALL.md"
+   }
+  ]
+ }
+}

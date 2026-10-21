@@ -1,0 +1,128 @@
+{
+ "name": "prqlc",
+ "desc": "Simple, powerful, pipelined SQL replacement",
+ "homepage": "https://prql-lang.org",
+ "installs_365d": 294,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "quick",
+  "library"
+ ],
+ "why": "A pipelined query language that compiles to SQL is a genuinely different way to think about queries.",
+ "brief": {
+  "what_it_is": "PRQL (Pipelined Relational Query Language, pronounced 'Prequel') is a language for transforming data, described by its authors as a simple, powerful, pipelined SQL replacement. You write a query as a linear list of transformations (from, filter, derive, group, aggregate, sort, take, join, select), and the compiler turns it into SQL for a chosen database dialect. The tool in this entry is prqlc, the Rust compiler and CLI, which takes PRQL text and emits SQL; it can also format and annotate PRQL queries. Bindings exist for Python (prqlc-python, pyprql), JavaScript (prqlc-js) and R.",
+  "why_it_exists": "The README frames PRQL as a readable alternative to SQL that keeps SQL's explicit, declarative style but forms a logical pipeline and supports variables and functions. The homepage says it was originally designed for analytical queries, emphasizing data transformations, development speed and readability.",
+  "how_it_works": "Each line of a PRQL query transforms the result of the line before it, so the query reads top to bottom starting from the table. The compiler, written in Rust, translates the pipeline into SQL for the target dialect, and s-strings let you embed raw SQL where PRQL has no equivalent. The homepage example shows 'filter' placed both before and after an aggregation, which PRQL turns into WHERE and HAVING clauses.",
+  "commands_seen": [
+   {
+    "cmd": "cargo install prqlc",
+    "context": "Installs the prqlc compiler/CLI from source via Rust's cargo (listed on the homepage Tools section)."
+   },
+   {
+    "cmd": "brew install prqlc",
+    "context": "Installs the prqlc CLI via Homebrew; this is the install route the brew entry is about."
+   },
+   {
+    "cmd": "winget install prqlc",
+    "context": "Installs the prqlc CLI on Windows via winget."
+   },
+   {
+    "cmd": "pip install pyprql",
+    "context": "Installs pyprql, the Python package that provides Jupyter/IPython cell magic and a pandas accessor (not prqlc itself)."
+   },
+   {
+    "cmd": "SET dialect = 'prql'",
+    "context": "ClickHouse's documented way to switch a session to PRQL, per the homepage integrations section."
+   },
+   {
+    "cmd": "prql target:sql.mssql",
+    "context": "PRQL version/target header line on the homepage example; makes the compiler generate TOP instead of LIMIT for SQL Server."
+   }
+  ],
+  "install_notes": "Install with cargo, brew or winget as listed on the homepage; no accounts, runtimes beyond what each package manager needs, or hardware are mentioned. The README says the project can be built 'in a couple of commands' and points to a development doc (prql-lang.org/book/project/contributing/development.html) for build details, which I did not fetch. Integrations like the VS Code extension, Jupyter magic, DuckDB extension and QStudio are separate installs.",
+  "standout": "Compared with other SQL alternatives, the pipeline-of-transformations model means a query is always valid when you comment out one line, which the homepage calls out for analysts exploring data. It compiles to many SQL dialects rather than replacing a single database, and it is pitched as an open standard-like target that tools can read and write.",
+  "status": "quiet. The GitHub README has a 'Current Status - July 2026' section saying development has slowed while the maintainers decide how to build a new resolver, and that the project still has bugs and missing features. Integrations and a CI badge are present, but I did not find a release date or last-commit date in the pages I read, so I can't confirm recent activity beyond that status note.",
+  "caveats": "The README says PRQL 'still has some bugs and some missing features' and is 'probably only ready to be rolled out to non-technical teams for fairly simple queries.' Module/multi-file support is experimental, and the handling of window functions outside a window transform is listed as an open question. Type checking, error messages and column lineage are marked 'in progress' on the homepage. Java, C, C++, Elixir, .NET and PHP bindings are unsupported or nascent. Its focus is analytical queries; it de-emphasizes inserts and transactions. The homepage says the project is open-source and will never have a commercial product; I did not see a license name in what I fetched.",
+  "quotes": [
+   "PRQL is a modern language for transforming data \u2014 a simple, powerful, pipelined SQL replacement.",
+   "Each line of the query is a transformation of the previous line\u2019s result.",
+   "PRQL still has some bugs and some missing features, and is probably only ready to be rolled out to non-technical teams for fairly simple queries.",
+   "It can be used with any database that uses SQL, since it compiles to SQL."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://prql-lang.org"
+   },
+   {
+    "label": "Playground (in-browser, compiles as you type)",
+    "url": "https://prql-lang.org/playground"
+   },
+   {
+    "label": "PRQL Book (language docs)",
+    "url": "https://prql-lang.org/book"
+   },
+   {
+    "label": "GitHub repo",
+    "url": "https://github.com/PRQL/prql"
+   }
+  ],
+  "fetch_log": [
+   "https://prql-lang.org (homepage) \u2014 worked; full landing page with examples, integrations and tools list.",
+   "https://github.com/PRQL/prql \u2014 worked; README with status section and repo layout."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "PRQL\u2019s top-to-bottom transformation pipeline offers a genuinely different way to explore and compose queries, while compiling to ordinary SQL across database dialects."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "prqlc",
+  "tldr": "A compiler for PRQL, a pipelined query language where each line transforms the previous one, and the output is plain SQL for your database.",
+  "deeper_look": "PRQL (Pipelined Relational Query Language, pronounced \"Prequel\") is a language for transforming data. You write a query as a top-to-bottom list of steps: from, filter, derive, group, aggregate, sort, take, join, select. `prqlc`, the Rust compiler and CLI, turns that pipeline into SQL for a chosen dialect. It can also format and annotate PRQL queries.\n\nThe idea underneath is that SQL's clause order (SELECT first, FROM second, WHERE and HAVING scattered around) does not match how people think about data. In PRQL, \"each line of the query is a transformation of the previous line's result.\" The homepage example puts `filter` both before and after an aggregation, and the compiler works out which becomes WHERE and which becomes HAVING.\n\nPRQL keeps SQL's declarative style but adds variables and functions. S-strings let you drop in raw SQL where PRQL has no equivalent. Because it compiles to SQL rather than replacing a database, it works with anything that speaks SQL. A header such as `prql target:sql.mssql` picks the dialect, for example producing TOP instead of LIMIT for SQL Server.\n\nIt was designed for analytical queries, with an emphasis on readability and development speed. Bindings exist for Python, JavaScript and R, and the homepage lists integrations such as a VS Code extension, a DuckDB extension and ClickHouse support.",
+  "install": "brew install prqlc",
+  "try_this": [
+   {
+    "cmd": "prqlc --help",
+    "what_happens": "Lists the compiler's subcommands, including the one that compiles PRQL text to SQL and the formatter."
+   }
+  ],
+  "whats_unique": "Every query is a linear pipeline, so commenting out any one line still leaves a valid query, which the homepage pitches at analysts exploring data. It targets many SQL dialects instead of tying itself to one database.",
+  "caveats": "The README says development has slowed while maintainers decide how to build a new resolver, and that PRQL still has bugs and missing features and suits fairly simple queries.",
+  "commitment": "quick",
+  "category": "languages-and-oddities",
+  "tags": [
+   "quick",
+   "language",
+   "sql",
+   "compiler",
+   "rust",
+   "data"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://prql-lang.org"
+   },
+   {
+    "label": "Playground (in-browser, compiles as you type)",
+    "url": "https://prql-lang.org/playground"
+   },
+   {
+    "label": "PRQL Book (language docs)",
+    "url": "https://prql-lang.org/book"
+   },
+   {
+    "label": "GitHub repo",
+    "url": "https://github.com/PRQL/prql"
+   }
+  ]
+ }
+}

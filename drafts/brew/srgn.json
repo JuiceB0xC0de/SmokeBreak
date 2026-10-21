@@ -1,0 +1,142 @@
+{
+ "name": "srgn",
+ "desc": "Code surgeon for precise text and code transplantation",
+ "homepage": "https://github.com/alexpovel/srgn",
+ "installs_365d": 123,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "library"
+ ],
+ "why": "A code surgeon that matches and transforms code by syntax-aware grammar, a clever transform, though close to many refactoring tools.",
+ "brief": {
+  "what_it_is": "srgn is a command-line tool, written in Rust, that works like grep but understands source code syntax, and it can also change what it finds. You give it a scope, which can be a regular expression, a language-grammar scope such as 'all comments in Python' or 'struct definitions in Go', or both. You can then give it an action such as replacement, deletion, squeezing, casing changes, Unicode normalization, symbol substitution, or German umlaut fixing. Input comes from stdin or from files it walks recursively, and output is the matched lines in search mode or the transformed text otherwise. The README shows examples across C, C#, Go, HCL (Terraform), Python, Rust, and TypeScript.",
+  "why_it_exists": "The README says regular expressions and IDE tools such as 'Rename all' or 'Find all references' cannot reach some precise locations in code, such as only the Python class bodies or only the real Rust unsafe keyword, and srgn aims to complement them. Its stated design goal is simplicity: 'if you know regex and the basics of the language you are working with, you are good to go.'",
+  "how_it_works": "Language scopes are built on tree-sitter, and the README describes them as queries that work 'much like pattern matching against a tree data structure'. The language scope is applied first, and the regex then runs only inside the scoped pieces. Replacement is a positional argument placed last and separated by '--' so that a missing quote cannot make the tool recursive and destructive. Multiple scope flags are AND-ed left to right unless -j is given, which runs them independently and joins the results.",
+  "commands_seen": [
+   {
+    "cmd": "echo 'Hello World!' | srgn '[wW]orld' -- 'there'",
+    "context": "Basic replacement, similar to tr: the first positional argument is the regex scope and the argument after -- is the replacement."
+   },
+   {
+    "cmd": "cat birds.py | srgn --python 'class' 'age'",
+    "context": "Search mode (no actions given) limited to the Python class definitions, so 'age' inside function bodies is not matched."
+   },
+   {
+    "cmd": "cat music.rs | srgn --rust 'pub-enum' --rust 'type-identifier' 'Subgenre'",
+    "context": "Two language scopes given in sequence; they are AND-ed so only lines matching all criteria are returned."
+   },
+   {
+    "cmd": "cat birds.py | srgn -j --python 'comments' --python 'doc-strings' 'bird[^s]'",
+    "context": "The -j flag runs each scope independently and joins the results instead of intersecting them."
+   },
+   {
+    "cmd": "echo 'Hello, World!' | srgn -d '(H|W|!)'",
+    "context": "Deletion action (same flag name as tr) removing whatever the regex matches."
+   },
+   {
+    "cmd": "echo 'The number is: 3490834' | srgn -s '\\d'",
+    "context": "Squeezing action collapses repeats of the scoped characters into one occurrence."
+   },
+   {
+    "cmd": "cat gnu.py | srgn --titlecase --python 'doc-strings' '(?<!The )GNU ([a-z]+)' -- '$1: GNU \ud83d\udc02 is not Unix'",
+    "context": "Combines a Python docstring scope, a regex scope with lookbehind, a titlecase action, and a replacement that uses the $1 capture variable."
+   },
+   {
+    "cmd": "echo '(A --> B) != C --- obviously' | srgn --symbols",
+    "context": "Symbols action replaces multi-character ASCII symbols with single Unicode counterparts; --invert reverses it."
+   },
+   {
+    "cmd": "cat money.py | srgn --python 'function-calls' '^print$' -- 'logging.info'",
+    "context": "Mass-converts print calls to logging.info; the anchors keep print_more from matching."
+   },
+   {
+    "cmd": "cat UserService.cs | srgn --csharp 'comments' -d '.*' | srgn -d '[[:blank:]]+\\n'",
+    "context": "Removes all C# comments in one pass, then a second pass deletes the leftover blank-space-only lines."
+   }
+  ],
+  "install_notes": "Install with brew install srgn, or download a prebuilt binary from the GitHub releases page. Other routes the README lists are nix-shell -p srgn for nixpkgs, sudo port install srgn for MacPorts, and an AUR package for Arch Linux. cargo-binstall is the fastest Rust route, and it falls back to compiling from source if no binary exists for your platform. Compiling with cargo install srgn needs the Rust toolchain plus a C compiler: gcc on Linux, clang on macOS, and MSVC with the 'Desktop development with C++' workload on Windows. The README also gives a GitHub Actions snippet using cargo-binstall. Shell completion is set up by appending eval \"$(srgn --completions zsh)\" to ~/.zshrc for zsh. No accounts, API keys, or first-run configuration are mentioned.",
+  "standout": "It puts a tree-sitter grammar scope in front of a regex, so you can ask for something like 'the regex only inside Python docstrings' or 'only Rust unsafe items' without writing a parser. Replacement is deliberately forced into a fixed position behind '--', so a forgotten quote can't turn the call into a destructive one.",
+  "status": "Maintained. The GitHub releases page lists v0.14.2 as the latest release, dated 22 Feb 2026, and the release before it was 0.14.1 on 9 Nov 2025 (tagged 21 Nov 2025). The README calls the project beta. I did not check commit history directly.",
+  "caveats": "The README says srgn is in beta (major version 0), so you should only process files you can restore with git, and it warns that the advanced regex features come without the usual safety and performance guarantees. Only seven languages are supported, and the README mentions that the set of symbols for the symbols action is limited. The German word list adds to binary size, and the README says it can be left out by compiling without the german feature. Replacement actions are a fixed set, so the tr-style character-list second argument is not available. The README warns that deletion and squeezing need an explicit scope. The homepage README was cut off at 40,000 characters, so I did not see the full help output, the custom query section in full, or the Rust library section. The brew formula's caveats were empty.",
+  "quotes": [
+   "A `grep`-like tool which understands source code syntax and allows for manipulation in addition to search.",
+   "The answer to \"What if `grep`, `tr`, `sed` and `tree-sitter` got really drunk one night and had a baby?\"",
+   "Feel free to file an issue if your use case is not covered."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/alexpovel/srgn"
+   },
+   {
+    "label": "GitHub releases",
+    "url": "https://github.com/alexpovel/srgn/releases"
+   },
+   {
+    "label": "Homebrew formula",
+    "url": "https://formulae.brew.sh/formula/srgn"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/alexpovel/srgn (homepage, worked; README returned but truncated at 40000 characters)",
+   "https://github.com/alexpovel/srgn/releases (worked; used for release dates and latest version v0.14.2)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Combining tree-sitter scopes with regex and in-place transformations makes precise code surgery possible without writing parsers, a genuinely useful twist on grep and refactoring tools."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "srgn",
+  "tldr": "A grep-like tool that understands source code grammar, so you can search and rewrite only the docstrings, comments, or struct definitions you mean.",
+  "deeper_look": "srgn is a Rust command-line tool that sits somewhere between grep, tr, and sed. You give it a scope: a regular expression, a language scope such as \"comments in Python\" or \"pub enums in Rust\", or both. With no action it prints the matches. With an action it transforms them: replace, delete, squeeze repeats, change case, or swap ASCII arrows for Unicode symbols.\n\nThe language scopes are built on tree-sitter, which parses source into a syntax tree. The README describes scopes as queries that work \"much like pattern matching against a tree data structure\". The language scope is applied first, and the regex runs only inside the pieces it selects. That is how you can ask for \"the word `age` only inside Python class bodies\" without writing a parser or a fragile multi-line regex.\n\nThe author's stated reason is that regexes and IDE tools like \"Rename all\" cannot reach some precise places in code. srgn is meant to complement them, with a design goal of simplicity: if you know regex and the basics of the language, you are good to go. Several scopes are AND-ed left to right, and `-j` runs them independently and joins the results.\n\nOne deliberate choice is that the replacement is a positional argument placed last, after `--`. A forgotten quote then cannot quietly turn the command into a recursive, destructive one. The underlying idea, matching on syntax trees instead of text, is a door into how modern code-aware tooling works.",
+  "install": "brew install srgn",
+  "try_this": [
+   {
+    "cmd": "echo 'Hello World!' | srgn '[wW]orld' -- 'there'",
+    "what_happens": "Plain regex replacement, like tr or sed: prints \"Hello there!\"."
+   },
+   {
+    "cmd": "cat birds.py | srgn --python 'class' 'age'",
+    "what_happens": "Searches only inside Python class definitions, so `age` in function bodies is not matched."
+   },
+   {
+    "cmd": "cat money.py | srgn --python 'function-calls' '^print$' -- 'logging.info'",
+    "what_happens": "Rewrites calls to print as logging.info, leaving names like print_more alone."
+   }
+  ],
+  "whats_unique": "It puts a tree-sitter grammar scope in front of a regex, so the pattern only runs inside the syntax elements you pick. Its fixed `--` replacement slot guards against destructive typos.",
+  "caveats": "The README calls it beta, so only run it on files you can restore with git, and only seven languages are supported.",
+  "commitment": "quick",
+  "category": "languages-and-oddities",
+  "tags": [
+   "quick",
+   "grep",
+   "tree-sitter",
+   "refactoring",
+   "rust",
+   "cli"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/alexpovel/srgn"
+   },
+   {
+    "label": "GitHub releases",
+    "url": "https://github.com/alexpovel/srgn/releases"
+   },
+   {
+    "label": "Homebrew formula",
+    "url": "https://formulae.brew.sh/formula/srgn"
+   }
+  ]
+ }
+}

@@ -1,0 +1,103 @@
+{
+ "name": "ltc-tools",
+ "desc": "Tools to deal with linear-timecode (LTC)",
+ "homepage": "https://github.com/x42/ltc-tools",
+ "installs_365d": 135,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "afternoon",
+  "audio",
+  "needs-hardware",
+  "protocol"
+ ],
+ "why": "Encodes and decodes linear timecode, an audio-borne clock signal from film and broadcast; a doorway into a strange analog protocol you can hear.",
+ "brief": {
+  "what_it_is": "ltc-tools is a set of command-line programs for Linear Timecode (LTC), the SMPTE/EBU timecode carried as an audio signal. The README is one line long and does not describe the programs individually. The executable names suggest a split between generating LTC (ltcgen, jltcgen) and decoding it (ltcdump, jltcdump), plus JACK-based variants (the jltc* tools) and others for NTP, triggers, and MTC conversion (jltcntp, jltctrigger, jltc2mtc). Those roles are inferred from the names only and are not confirmed by the README. The tools are built on the libltc library.",
+  "why_it_exists": "The README gives no motivation beyond the description 'Commandline tools to deal with linear-timecode (LTC).' The libltc README frames LTC as 'an encoding of SMPTE timecode data as a Manchester-Biphase encoded audio signal' that is 'commonly recorded on a VTR track or other storage media.'",
+  "how_it_works": "The tools are thin front-ends over the libltc library, which the ltc-tools README says is required. libltc encodes and decodes LTC audio to and from SMPTE or EBU timecode, including SMPTE date support. The README does not explain the internal mechanism of the command-line tools.",
+  "commands_seen": [],
+  "install_notes": "The README says the tools 'require libltc' and links to https://github.com/x42/libltc. Beyond the Homebrew install, the README gives no build steps, runtime requirements, or configuration. The jltc* executables imply a JACK audio dependency, but the README does not state it. The brew caveats field is empty.",
+  "standout": "LTC is a clock signal that lives in audio: a timecode you can literally hear as a tone, the same signal that was recorded on videotape tracks. These tools let you generate it and decode it from the command line, which is an unusual corner of audio and broadcast tooling.",
+  "status": "unknown. The README has no release notes, dates, or version information, and I did not check the commit history or release page. The libltc README points to a documentation site at x42.github.io/libltc, which I did not fetch.",
+  "caveats": "The ltc-tools README is only two lines and points to libltc for details, so the per-tool usage is undocumented in what I read. The jltc* names suggest a JACK dependency that is not stated. No license was visible in the pages I fetched. The brew caveats field is empty.",
+  "quotes": [
+   "Commandline tools to deal with linear-timecode (LTC).",
+   "Linear (or Longitudinal) Timecode (LTC) is an encoding of SMPTE timecode data as a Manchester-Biphase encoded audio signal.",
+   "libltc provides functionality to encode and decode LTC audio from/to SMPTE or EBU timecode, including SMPTE date support."
+  ],
+  "links": [
+   {
+    "label": "ltc-tools homepage (GitHub)",
+    "url": "https://github.com/x42/ltc-tools"
+   },
+   {
+    "label": "libltc (required library, GitHub)",
+    "url": "https://github.com/x42/libltc"
+   },
+   {
+    "label": "libltc API reference and docs",
+    "url": "https://x42.github.io/libltc/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/x42/ltc-tools: worked, README returned (two lines, points to libltc)",
+   "https://github.com/x42/libltc: worked, README returned (describes LTC and links to docs site)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It exposes an unusual broadcast protocol as sound: generate or decode a clock signal carried on an audio track, a worthwhile rabbit hole despite sparse documentation."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "ltc-tools",
+  "tldr": "Command-line tools that generate and decode linear timecode, the SMPTE clock signal from film and video that is carried as an audible audio tone.",
+  "deeper_look": "Linear Timecode (LTC) is a way of putting a clock into an audio signal. The libltc README describes it as \"an encoding of SMPTE timecode data as a Manchester-Biphase encoded audio signal\" that is \"commonly recorded on a VTR track or other storage media.\" In practice, hours, minutes, seconds and frames get turned into a stream of sound that a tape deck or audio interface can carry like any other track.\n\nltc-tools is a set of command-line front-ends built on the libltc library. The executable names suggest a split: ltcgen and jltcgen likely generate timecode, and ltcdump and jltcdump likely decode it. The jltc* names suggest JACK variants, and jltcntp, jltctrigger and jltc2mtc hint at NTP, triggering and MIDI timecode conversion. These roles are inferred from the names only. The project's README is two lines long and does not describe the individual tools.\n\nThe idea underneath is that a clock can be a sound. Once you see that, you can ask how two machines that share nothing but an audio cable stay in sync, and how film and broadcast gear solved that problem decades ago. libltc's documentation site is the place to start reading about the format.",
+  "install": "brew install ltc-tools\n# depends on jack, libltc and libsndfile, which brew pulls in. The jltc* tools likely expect a running JACK audio server, though the README does not say so.",
+  "try_this": [
+   {
+    "cmd": "ltcgen --help",
+    "what_happens": "Prints the options of the timecode generator, which is the quickest way to see what it can write."
+   },
+   {
+    "cmd": "ltcdump --help",
+    "what_happens": "Prints the options of the decoder, which should read timecode out of an audio file."
+   },
+   {
+    "cmd": "jltcdump --help",
+    "what_happens": "Shows the usage of the JACK-based decoder, which presumably listens to a live JACK audio port."
+   }
+  ],
+  "whats_unique": "It is a small, rare toolkit for a broadcast-era protocol where the clock is an audio signal you can record, play back and hear. Few command-line tools handle timecode at all.",
+  "caveats": "The README is only two lines, so per-tool usage is undocumented in what was read, and the project's maintenance status is unknown; the jltc* tools probably need a JACK audio setup.",
+  "commitment": "afternoon",
+  "category": "sound-and-live-coding",
+  "tags": [
+   "afternoon",
+   "audio",
+   "timecode",
+   "smpte",
+   "jack",
+   "protocol"
+  ],
+  "links": [
+   {
+    "label": "ltc-tools homepage (GitHub)",
+    "url": "https://github.com/x42/ltc-tools"
+   },
+   {
+    "label": "libltc (required library, GitHub)",
+    "url": "https://github.com/x42/libltc"
+   },
+   {
+    "label": "libltc API reference and docs",
+    "url": "https://x42.github.io/libltc/"
+   }
+  ]
+ }
+}

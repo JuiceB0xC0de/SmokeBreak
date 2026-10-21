@@ -1,0 +1,96 @@
+{
+ "name": "box2d",
+ "desc": "2D physics engine for games",
+ "homepage": "https://box2d.org",
+ "installs_365d": 250,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "library",
+  "simulation",
+  "visual",
+  "afternoon"
+ ],
+ "why": "A classic 2D physics engine whose simulated bodies you can watch and disturb, though it is mainly a library for game developers.",
+ "brief": {
+  "what_it_is": "Box2D is a 2D physics engine for games, written in portable C17 and distributed as a library. A game creates a world, adds bodies with shapes, joints and gravity, steps the world forward in time, and reads back body positions, contacts and events. It also offers ray casts, shape casts, overlap queries and a character mover. The repo ships a samples app (OpenGL, GLFW, imgui) that demonstrates the features and can open recorded sessions.",
+  "why_it_exists": "The README gives no longer framing than its one-line tagline, \"A 2D Physics Engine for Games.\" The project is a general-purpose 2D physics core for game developers, not a finished game or simulator.",
+  "how_it_works": "The README describes a Soft Step rigid body solver with continuous collision detection for fast translations and rotations, and island-based sleep. It is built for large numbers of bodies using data-oriented design, multithreading and SIMD (SSE2, AVX2, Neon). Recording, replay and snapshot/restore are built in, and the project claims cross-platform determinism.",
+  "commands_seen": [
+   {
+    "cmd": "cmake --preset linux-release",
+    "context": "Configures the Linux release build using the repo's CMakePresets.json."
+   },
+   {
+    "cmd": "cmake --build --preset linux-release",
+    "context": "Builds the Linux release preset after configuring."
+   },
+   {
+    "cmd": "build.sh",
+    "context": "Linux build route: run from a bash shell; results land in the build sub-folder."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Generic CMake configure step from inside a build/ directory (building and installing section)."
+   },
+   {
+    "cmd": "cmake --install .",
+    "context": "Installs the built library; the README notes this might need sudo. Also installs a pkg-config file."
+   },
+   {
+    "cmd": "pkg-config --modversion box2d",
+    "context": "Reports the installed Box2D version after installing."
+   },
+   {
+    "cmd": "pkg-config --cflags --libs box2d",
+    "context": "Prints the compiler and linker flags for linking against the installed library."
+   },
+   {
+    "cmd": "zig fetch --save git+https://github.com/erincatto/box2d",
+    "context": "Adds Box2D as a dependency of a Zig project; then build.zig wires in box2d_dep.module(\"box2d\")."
+   },
+   {
+    "cmd": "build/bin/samples path/to/session.b2rec",
+    "context": "Opens a .b2rec recording in the samples app on Linux (Windows uses build\\bin\\Release\\samples.exe; macOS uses build/bin/Release/samples)."
+   },
+   {
+    "cmd": "cmake -G Xcode ..",
+    "context": "Generates an Xcode project from a build/ directory; then open box2d.xcodeproj and build the samples scheme."
+   }
+  ],
+  "install_notes": "Needs CMake and git on the command line. Building the library requires a C17 compiler; building the samples requires C++20. Windows uses Visual Studio (build_vs2026.bat for VS 2026, or the windows preset for other versions). macOS uses Xcode via the macos preset or cmake -G Xcode. Linux uses make via the linux preset or build.sh. Installing with cmake --install may need sudo. SIMD can be turned off by defining BOX2D_DISABLE_SIMD. Brew installs a library with no executables, so a runnable demo means building the samples from source. No accounts or API keys are mentioned.",
+  "standout": "The samples app doubles as a replay viewer for .b2rec recordings, and the README advertises snapshot/restore and cross-platform determinism. That makes it more than a physics library: you can capture a session and watch it back, which is the \"watch and disturb\" angle the scout note points to.",
+  "status": "Appears active but the README gives no release date or commit date. It references a Version 3.0 release demo video and a build_vs2026.bat for Visual Studio 2026, and it has a build status badge. I could not confirm a last-commit date from the fetched pages.",
+  "caveats": "Primarily a library for developers, so there is no ready-made game or GUI for end users. The samples need OpenGL, GLFW and imgui. The library needs a C17 compiler and the samples need C++20. The README says not to submit pull requests; file issues instead. The README discloses LLM use in unit tests, samples, migration, build config, code reviews and benchmarking. Licensed MIT. The homepage fetch returned almost only page markup, so the README was the main source. The debug presets are not recommended for the replay viewer.",
+  "quotes": [
+   "Box2D is a 2D physics engine for games.",
+   "The samples app doubles as a viewer for Box2D recordings (`.b2rec` files).",
+   "Please do not submit pull requests. Instead, please file an issue for bugs or feature requests."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://box2d.org"
+   },
+   {
+    "label": "Manual",
+    "url": "https://box2d.org/documentation/"
+   },
+   {
+    "label": "Recording docs (resolved from relative link in README)",
+    "url": "https://github.com/erincatto/box2d/blob/main/docs/recording.md"
+   },
+   {
+    "label": "Version 3.0 release demo video",
+    "url": "https://www.youtube.com/watch?v=dAoM-xjOWtA"
+   }
+  ],
+  "fetch_log": [
+   "https://box2d.org: fetched, worked, but returned almost only page markup; the only prose was the tagline \"A 2D Physics Engine for Games\".",
+   "https://github.com/erincatto/box2d: fetched, worked; the README was returned in full and used as the main source.",
+   "https://box2d.org/documentation/ and docs/recording.md: not fetched; listed as links only."
+  ]
+ }
+}

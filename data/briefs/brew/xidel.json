@@ -1,0 +1,85 @@
+{
+ "name": "xidel",
+ "desc": "XPath/XQuery 3.0, JSONiq interpreter to extract data from HTML/XML/JSON",
+ "homepage": "https://www.videlibri.de/xidel.html",
+ "installs_365d": 334,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "language",
+  "library"
+ ],
+ "why": "Full XPath, XQuery and JSONiq interpreter in one binary, an unusual and underknown way to query documents.",
+ "brief": {
+  "what_it_is": "Xidel is a command-line tool that downloads and extracts data from HTML, XML, and JSON. It takes a URL, file, or stdin as input and runs XPath 3.0, XQuery 3.0, CSS 3 selectors, pattern matching, or JSONiq queries against it. Results print in a human-readable form or as XML, HTML, JSON, or shell variables. The homepage says it is a single binary with no external dependencies beyond standard system libraries.",
+  "why_it_exists": "The author describes the point of the tool as making it easy for anyone to parse any webpage, and says he would rather people learn to query with Xidel than ask him how to scrape a particular site. It began as the backend of the VideLibri library service and was released as a standalone command-line tool in 2012.",
+  "how_it_works": "Xidel fetches the page over HTTP or HTTPS, following redirects while keeping cookies, and then evaluates the query expression against the parsed document. Query languages include CSS selectors, XPath and XQuery, pattern matching against an annotated sample of the page, and JSONiq. Output can be piped onward or, with --output-format bash, eval'd into shell variables.",
+  "commands_seen": [
+   {
+    "cmd": "xidel https://www.google.de/search?q=test --extract \"//a/extract(@href, 'url[?]q=([^&]+)&', 1)[. != '']\"",
+    "context": "Prints all URLs found by a Google search, using an XPath extract on the href attributes."
+   },
+   {
+    "cmd": "xidel https://example.org -f //a -e //title",
+    "context": "With XPath: follows all links on the page and prints the title of each linked page (-f is follow, -e is extract)."
+   },
+   {
+    "cmd": "xidel https://example.org -f \"css('a')\" --css title",
+    "context": "With CSS selectors: the same follow-and-extract task written with css() and --css."
+   },
+   {
+    "cmd": "xidel example.xml -e \"<x><foo>ood</foo><bar>{.}</bar></x>\"",
+    "context": "Pattern matching: reads the value in the bar element and fails if the element containing 'ood' is missing."
+   },
+   {
+    "cmd": "xidel -e \"(1 + 2 + 3) * 1000000000000 + 4 + 5 + 6 + 7.000000008\"",
+    "context": "Evaluates an XPath arithmetic expression with arbitrary precision, no input document needed."
+   },
+   {
+    "cmd": "eval \"$(xidel https://site -e 'title:=//title' -e 'links:=//a/@href' --output-format bash)\"",
+    "context": "Linux/bash: sets $title to the page title and $links to an array of link hrefs in the current shell."
+   },
+   {
+    "cmd": "xidel file.json -e '$json(\"foo\")(\"bar\")'",
+    "context": "Reads property foo then bar from a JSON file using JSONiq notation."
+   },
+   {
+    "cmd": "xidel file.json -e '$json?foo?bar'",
+    "context": "Same read using XPath 3.1 notation; the README says this requires Xidel 0.9.9."
+   },
+   {
+    "cmd": "xidel https://site -e '//tr / string-join(td, \",\")'",
+    "context": "Converts table rows and columns to a CSV-like format, one line per row."
+   },
+   {
+    "cmd": "xidel --xquery '<table>{for $i in 1 to 1000 return <tr><td>{$i}</td><td>{if ($i mod 2 = 0) then \"even\" else \"odd\"}</td></tr>}</table>' --output-format xml",
+    "context": "Linux/PowerShell version: builds an HTML table of odd and even numbers with an XQuery expression."
+   }
+  ],
+  "install_notes": "Download a release from SourceForge: zip for Windows, tar.gz for Linux and Android, deb for Debian, or source tarball. Usually you extract it and put the binary on your PATH. HTTPS on Linux needs OpenSSL and libcrypto, including openssl-dev. Unicode collations need libicu. To build from source with FreePascal, run ./build.sh in a Unix shell or call fpc xidel.pas with -Fu and -Fi paths. Lazarus users install components/pascal/internettools.lpk and then open programs/internet/xidel/xidel.lpi. Mac binaries are not current: the page lists only an externally built 0.9.6 for Mac 10.8. The homepage does not mention Homebrew.",
+  "standout": "It is a single binary that bundles a full XPath/XQuery 3.0 interpreter, CSS selectors, pattern matching, and JSONiq, so one command line can fetch, follow links, fill and submit forms, and run Turing-complete scripts. The pattern-matching syntax, which uses an annotated sample of the page as the query, is a less common approach.",
+  "status": "quiet. The last official release is 0.9.8, dated 2018-04-02. The news list ends with 2018 entries, and the homepage says 0.9.9 development builds are published irregularly and gives no date for the most recent one. I did not check the GitHub or GitLab mirrors or SourceForge for commit dates.",
+  "caveats": "The homepage recommends the unreleased 0.9.9 development build over the official 0.9.8 because of bug fixes and partial XPath 3.1 support, but that build is not officially released. The 0.9.9 Linux builds need glibc 2.34 or newer or the Ubuntu 20.04 build, so the choice depends on the system. JSONiq is deprecated in favour of XPath 3.1 JSON syntax. The XPath 3.1 implementation is incomplete. The source is GPLv3+, and the mercurial repository bundles VideLibri and its dependencies, so compiling from the GitHub or GitLab mirrors requires fetching dependencies separately. The Mac build is an old 0.9.6 binary. The author asks users not to request help scraping specific websites.",
+  "quotes": [
+   "Xidel is a command line tool to download and extract data from HTML/XML pages as well as JSON APIs.",
+   "The point of the tool is to make it easy for anyone to parse any webpage.",
+   "Both are Turing-complete, but have slightly incompatible string syntax, so the question is which one you prefer."
+  ],
+  "links": [
+   {
+    "label": "Xidel homepage (author's VideLibri site)",
+    "url": "https://www.videlibri.de/xidel.html"
+   },
+   {
+    "label": "Online test service (CGI, from the README)",
+    "url": "https://www.videlibri.de/cgi-bin/xidelcgi?data=<html><title>foobar</title></html>&extract=//title&raw=true"
+   }
+  ],
+  "fetch_log": [
+   "https://www.videlibri.de/xidel.html: fetched OK. It is the project's own page with news, features, examples, documentation list, downloads, and install notes. It is not a GitHub repo, so no README was returned. I did not follow further links, since the page covered what the brief needs."
+  ]
+ }
+}

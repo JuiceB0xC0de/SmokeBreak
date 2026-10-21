@@ -1,0 +1,138 @@
+{
+ "name": "scriptisto",
+ "desc": "Language-agnostic \"shebang interpreter\" to write scripts in compiled languages",
+ "homepage": "https://github.com/igor-petruk/scriptisto",
+ "installs_365d": 41,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "language"
+ ],
+ "why": "Lets you write shebang scripts in compiled languages, a neat trick that shows how interpreters work.",
+ "brief": {
+  "what_it_is": "Scriptisto is a command-line tool that acts as a shebang interpreter for single-file scripts written in compiled languages. You put a #!/usr/bin/env scriptisto line at the top of a source file, and the build steps go in a comment block between scriptisto-begin and scriptisto-end markers. On first run it builds the script, caches the result, and runs the binary. It takes a source file as input and produces a cached compiled executable, with no separate build step for the user. The README says templates exist for languages such as Rust, Go, C, Fortran, COBOL and C#.",
+  "why_it_exists": "The README says it is a tool for writing one-file scripts in languages that need compilation, dependency fetching or preprocessing, which otherwise need a separate build setup. The wiki 'Advantages' page is linked for more on use cases, but I did not fetch it.",
+  "how_it_works": "Scriptisto reads the build instructions (such as script_src and build_cmd) from comments in the script. If the script has changed, it rebuilds and caches the result. If a built copy already exists, it hands off to that binary with, per the README, under 1 ms of overhead. Builds can also run inside Docker so no compiler needs to be installed on the host.",
+  "commands_seen": [
+   {
+    "cmd": "#!/usr/bin/env scriptisto",
+    "context": "Shebang line at the top of the C demo script; this is what makes the file run through scriptisto."
+   },
+   {
+    "cmd": "// scriptisto-begin",
+    "context": "Opens the build-instruction comment block that scriptisto reads from the script (it is a C comment inside the demo file)."
+   },
+   {
+    "cmd": "// script_src: main.c",
+    "context": "Build-instruction key in the comment block naming the source file used for the build."
+   },
+   {
+    "cmd": "// build_cmd: clang -O2 main.c `pkg-config --libs --cflags glib-2.0` -o ./script",
+    "context": "Build-instruction key giving the exact compile command for the demo; it links GLib via pkg-config and writes ./script."
+   },
+   {
+    "cmd": "// scriptisto-end",
+    "context": "Closes the build-instruction comment block."
+   },
+   {
+    "cmd": "chmod +x ./script.c",
+    "context": "Makes the demo script executable. The README shows it after a $ prompt."
+   },
+   {
+    "cmd": "./script.c",
+    "context": "Runs the demo script directly; the first run builds it and then prints 'Hello, C! Current user: username'. The README shows it after a $ prompt."
+   }
+  ],
+  "install_notes": "The README says scriptisto ships as a prebuilt statically linked standalone binary on the GitHub Releases page, and as a crate on Crates.io (cargo install scriptisto would fetch it). Distribution packages are tracked on Repology. The README points to a wiki Installation page for details, which I did not fetch. Language toolchains are needed only for the languages you use: the C demo needs clang, GLib and pkg-config, and Docker is needed only if you choose Docker builds.",
+  "standout": "It is a shebang line that lets you run compiled-language source files directly, with build instructions kept inside the file as comments and results cached. Its own README calls the trick a way to see how interpreters work, which is the hook the scout notes picked up.",
+  "status": "Maintained. The Releases page shows v2.2.0 as Latest, dated 08 Jun (the year is not visible in the fetched text), with changelog entries for new Cobol and C# templates and a removed scrawl dependency. Earlier releases run from v0.6.10 through v2.1.1 in 2025 or earlier, with a v2.1.0 and v2.1.1 pair dated 10 Apr. The README has Travis-style build badges and a Repology packaging badge, but no explicit maintenance statement.",
+  "caveats": "The README's demo is a little confusing: it calls the source script.c and then says to run ./script.c, while the build_cmd writes a binary named ./script, so read the example carefully before copying it. Some templates, such as rust, can take a long time on the first build, and build logs are suppressed by default, so there may be no output for a while. The demo needs clang, GLib and pkg-config on the host. The README disclaimer says it is 'not an officially supported Google product'. The license is shown only as a badge with no text in the fetched README, so I could not confirm it.",
+  "quotes": [
+   "It works as a \"shebang\" for those scripts, extracting build instructions from comments.",
+   "If a script was already built, scriptisto immediately delegates to a binary with only <1 ms overhead.",
+   "It is tool to enable writing one file scripts in languages that require compilation, dependencies fetching or preprocessing."
+  ],
+  "links": [
+   {
+    "label": "Homepage / README (GitHub)",
+    "url": "https://github.com/igor-petruk/scriptisto"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/igor-petruk/scriptisto/releases"
+   },
+   {
+    "label": "Crates.io",
+    "url": "https://crates.io/crates/scriptisto"
+   },
+   {
+    "label": "Wiki",
+    "url": "https://github.com/igor-petruk/scriptisto/wiki"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/igor-petruk/scriptisto (homepage, README returned, worked)",
+   "https://github.com/igor-petruk/scriptisto/releases (worked, but the page was partly rendered with 'Sorry, something went wrong' placeholders; release names, dates and changelog text were readable)",
+   "https://github.com/igor-petruk/scriptisto/wiki (not fetched; the fetch budget was used on the releases page and the README is sufficient for the brief, though it points to the wiki for installation and writing-scripts details)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It turns comment-embedded build recipes into executable, cached shebang scripts across compiled languages\u2014a neat way to explore how script execution can hide a build step."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "scriptisto",
+  "tldr": "A shebang interpreter that lets you run single-file scripts in compiled languages like C, Rust, Go or COBOL, building and caching the binary on first run.",
+  "deeper_look": "Scriptisto turns a source file into something you can execute directly. You put `#!/usr/bin/env scriptisto` on the first line, then add a comment block between `scriptisto-begin` and `scriptisto-end` markers that holds the build instructions, such as the source file name and the compile command. Run the file and scriptisto builds it, caches the result, and runs the binary.\n\nThe README describes the goal as writing one-file scripts in languages that need compilation, dependency fetching or preprocessing, which would otherwise need a separate build setup. Later runs skip the build. If the script has not changed, scriptisto hands off to the cached binary, and the README claims under 1 ms of overhead. Builds can also run inside Docker, so the host does not need the compiler installed.\n\nThe idea underneath is that a shebang is just a convention: the kernel runs whatever program the first line names and passes it the file. Nothing says that program has to be an interpreter. Scriptisto uses that to put a compile-and-cache step in front of the run, which is a good way to see what an interpreter actually does. It ships templates for languages including Rust, Go, C, Fortran, COBOL and C#.",
+  "install": "brew install scriptisto\n# Toolchains are only needed for the languages you use. The C demo needs clang, GLib and pkg-config. Docker is only needed if you choose Docker builds.",
+  "try_this": [
+   {
+    "cmd": "scriptisto --help",
+    "what_happens": "Lists the subcommands, including the ones for working with language templates."
+   },
+   {
+    "cmd": "chmod +x ./script.c",
+    "what_happens": "Marks the README's C demo file as executable so the shebang line can take effect."
+   },
+   {
+    "cmd": "./script.c",
+    "what_happens": "The first run compiles the C file with the command in its comment block, then prints 'Hello, C! Current user: username'. Later runs reuse the cached binary."
+   }
+  ],
+  "whats_unique": "Build instructions live inside the script as comments, and the compiled result is cached, so a compiled-language file behaves like a plain script. Templates cover unusual languages such as COBOL and Fortran.",
+  "caveats": "The README's C demo is slightly confusing about file names (script.c versus the ./script output), the first build of heavier templates like Rust can take a while with no output because build logs are suppressed by default, and the C demo needs clang, GLib and pkg-config.",
+  "commitment": "quick",
+  "category": "languages-and-oddities",
+  "tags": [
+   "quick",
+   "shebang",
+   "compiled-languages",
+   "scripting",
+   "cli"
+  ],
+  "links": [
+   {
+    "label": "Homepage / README (GitHub)",
+    "url": "https://github.com/igor-petruk/scriptisto"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/igor-petruk/scriptisto/releases"
+   },
+   {
+    "label": "Crates.io",
+    "url": "https://crates.io/crates/scriptisto"
+   },
+   {
+    "label": "Wiki",
+    "url": "https://github.com/igor-petruk/scriptisto/wiki"
+   }
+  ]
+ }
+}

@@ -1,0 +1,151 @@
+{
+ "name": "git-bug",
+ "desc": "Distributed, offline-first bug tracker embedded in git, with bridges",
+ "homepage": "https://github.com/git-bug/git-bug",
+ "installs_365d": 359,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "tui",
+  "afternoon",
+  "library"
+ ],
+ "why": "Storing a bug tracker as objects inside git itself, with bridges to GitHub, is a genuinely odd and distinctive idea.",
+ "brief": {
+  "what_it_is": "git-bug is a bug tracker that stores its issues inside the git repository itself, so no separate service or project files are needed. You create identities and bugs with the git bug CLI, sync them through ordinary git remotes, and browse them in a terminal UI (git bug termui) or a web UI (git bug webui). Bridges import and export bugs with GitHub, GitLab, Jira and Launchpad. The README does not say what output formats it produces beyond these interfaces.",
+  "why_it_exists": "The README frames it as a bug tracker that avoids vendor lock-in and works offline: 'your usual service is down or went bad? You already have a full backup.' It also says it 'doesn't pollute your project: no files are added in your project.'",
+  "how_it_works": "Bugs and identities are stored as git objects, and the README says the on-disk format is specified in a separate git-bug spec repository covering the DAG entity format, identities and the bug entity. Syncing uses git push and pull against normal remotes. The web UI is packed inside the same Go binary, is served by a local HTTP server, and talks to the backend through a GraphQL API.",
+  "commands_seen": [
+   {
+    "cmd": "git bug user create",
+    "context": "Creates a new identity; the README lists this as the first step."
+   },
+   {
+    "cmd": "git bug add",
+    "context": "Creates a new bug; your editor opens to write a title and message."
+   },
+   {
+    "cmd": "git bug push [<remote>]",
+    "context": "Pushes your bugs to a git remote so teammates can pull them."
+   },
+   {
+    "cmd": "git bug pull [<remote>]",
+    "context": "Pulls bug updates from a git remote."
+   },
+   {
+    "cmd": "git bug ls",
+    "context": "Lists existing bugs."
+   },
+   {
+    "cmd": "git bug ls \"status:open sort:edit\"",
+    "context": "Filters and sorts bugs using the query language."
+   },
+   {
+    "cmd": "git bug webui",
+    "context": "Inline in the README text: launches the web UI."
+   },
+   {
+    "cmd": "git bug bridge new",
+    "context": "Interactively configures a new bridge to another tracker."
+   },
+   {
+    "cmd": "git bug bridge pull [<name>]",
+    "context": "Imports bugs from a configured bridge."
+   },
+   {
+    "cmd": "git bug bridge push [<name>]",
+    "context": "Exports local modifications to a configured bridge."
+   }
+  ],
+  "install_notes": "The README points to INSTALLATION.md for the full guide, including building from source and verifying the install; I did not fetch that page, so I have no details on runtimes or build steps. Bridges need configuration: the README's manual example passes --name, --target (e.g. github), --url, --login and --token, so a bridge needs an account login and an access token. Completion scripts for bash, zsh, fish and PowerShell and man pages are in the repo.",
+  "standout": "Most bug trackers keep issues on a server; this one keeps them as git objects in your repo, and it adds bridges so the same local data can sync with GitHub, GitLab, Jira or Launchpad. The web UI also doubles as a code browser with file tree, syntax highlighting, history and diffs.",
+  "status": "unknown. The README has a CI badge, a contributors graph and an Open Collective backers section, which suggest an active project, but I saw no release date, last commit date or version number in the README itself, and I did not check the releases or commit pages.",
+  "caveats": "The README says the web UI is 'WIP' and 'not up to speed' for public use; the planned public-portal workflow with external OAuth is not built yet. Bridge support varies, and the README sends you to a feature matrix for details. Licensed GPLv3 or later, which matters for embedding. The README lists 'inflatable raptor' as a planned feature, which is a joke, not a roadmap item. Installation and build steps are in a separate file I did not read.",
+  "quotes": [
+   "is fully integrated in git: you only need your git repository to have a bug tracker",
+   "prevents vendor lock-in: your usual service is down or went bad? You already have a full backup.",
+   "doesn't pollute your project: no files are added in your project",
+   "Web UI workflow (WIP)"
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repo",
+    "url": "https://github.com/git-bug/git-bug"
+   },
+   {
+    "label": "Installation guide (not fetched)",
+    "url": "https://github.com/git-bug/git-bug/blob/trunk/INSTALLATION.md"
+   },
+   {
+    "label": "Feature matrix (not fetched)",
+    "url": "https://github.com/git-bug/git-bug/blob/trunk/doc/feature-matrix.md"
+   },
+   {
+    "label": "On-disk format spec (not fetched)",
+    "url": "https://github.com/git-bug/spec"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/git-bug/git-bug \u2014 fetched OK, README returned in full. Did not follow further links; INSTALLATION.md, feature matrix and spec were not fetched."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A distributed bug tracker stored as Git objects is a genuinely unusual idea, turning ordinary remotes into offline-first issue sync without adding project files."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "git-bug",
+  "tldr": "A bug tracker that lives inside your git repository as git objects, syncs through normal remotes, and works fully offline.",
+  "deeper_look": "git-bug stores issues and identities as git objects in the repository itself. No server, no database, and no files added to your working tree. You create an identity, add bugs from the command line, and share them with `git bug push` and `git bug pull` against the same remotes you already use for code.\n\nThe idea underneath is that git is already a distributed, content-addressed store with built-in replication, and it can hold more than source files. The README says the on-disk format is a DAG of entities, specified in a separate spec repository. Each bug is a history of operations rather than a mutable row, which is how it can merge between clones without a central service.\n\nThe pitch is practical as well as odd. The README says it prevents vendor lock-in: 'your usual service is down or went bad? You already have a full backup.' Bridges import and export bugs with GitHub, GitLab, Jira and Launchpad, so the local copy can mirror a hosted tracker. You can browse bugs in a terminal UI (`git bug termui`) or a web UI served from the same Go binary by a local HTTP server, backed by a GraphQL API.",
+  "install": "brew install git-bug\n# Bridges need an account login and an access token for the target service. The README points to INSTALLATION.md for building from source.",
+  "try_this": [
+   {
+    "cmd": "git bug user create",
+    "what_happens": "Creates your identity, which the README lists as the first step."
+   },
+   {
+    "cmd": "git bug add",
+    "what_happens": "Opens your editor to write a title and message, then stores a new bug in the repo."
+   },
+   {
+    "cmd": "git bug ls \"status:open sort:edit\"",
+    "what_happens": "Lists open bugs sorted by last edit using the query language."
+   }
+  ],
+  "whats_unique": "Most trackers keep issues on a server. This one keeps them as git objects in your repo, and bridges let the same local data sync with GitHub, GitLab, Jira or Launchpad.",
+  "caveats": "The README calls the web UI workflow 'WIP', bridge support varies by tracker, and I could not confirm the latest release date from the README.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "git",
+   "bug-tracker",
+   "offline-first",
+   "tui",
+   "go"
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repo",
+    "url": "https://github.com/git-bug/git-bug"
+   },
+   {
+    "label": "Installation guide",
+    "url": "https://github.com/git-bug/git-bug/blob/trunk/INSTALLATION.md"
+   },
+   {
+    "label": "Feature matrix",
+    "url": "https://github.com/git-bug/git-bug/blob/trunk/doc/feature-matrix.md"
+   },
+   {
+    "label": "On-disk format spec",
+    "url": "https://github.com/git-bug/spec"
+   }
+  ]
+ }
+}

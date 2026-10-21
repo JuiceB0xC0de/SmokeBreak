@@ -1,0 +1,86 @@
+{
+ "name": "ssh-mitm",
+ "desc": "SSH server for security audits and malware analysis",
+ "homepage": "https://docs.ssh-mitm.at",
+ "installs_365d": 240,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "An SSH server built to intercept and log sessions opens a clear door into how SSH trust and host keys actually fail.",
+ "brief": {
+  "what_it_is": "SSH-MITM is an open-source man-in-the-middle SSH server for authorized security audits and malware analysis. It sits between an SSH client and its real server, terminates both connections separately, and forwards traffic between them. Passwords, public keys, file transfers, forwarded ports, and session activity pass through it and can be logged, mirrored, or changed. It is extended through a plugin system.",
+  "why_it_exists": "The docs say it was first built as a research tool to study how SSH clients behave from the middle of a connection, which cannot be seen from either endpoint. The research led to a FIDO2 token phishing technique (trivial authentication) and to several CVEs in SSH software.",
+  "how_it_works": "The tool acts as a proxy that terminates the client connection and opens its own connection to the target. For each intercepted connection it opens a local mirror shell on a port, so an auditor can watch the session and inject commands without affecting the original user. Credentials are logged as they pass. Trivial auth mode lets a client authenticate without a real challenge, so the hardware token is never asked.",
+  "commands_seen": [
+   {
+    "cmd": "ssh-mitm tutorial",
+    "context": "Opens a browser-based, step-by-step tutorial that follows an authorized assessment of a fictional company, needing no target server."
+   },
+   {
+    "cmd": "wget -O ssh-mitm https://github.com/ssh-mitm/ssh-mitm/releases/latest/download/ssh-mitm-x86_64.AppImage",
+    "context": "Downloads the Linux x86_64 AppImage, the README's recommended install route."
+   },
+   {
+    "cmd": "chmod +x ssh-mitm",
+    "context": "Makes the downloaded AppImage executable."
+   },
+   {
+    "cmd": "pip install git+https://github.com/ssh-mitm/ssh-mitm.git",
+    "context": "Installs the latest code from GitHub; the README says the PyPI release may lag and this is needed for the tutorial."
+   },
+   {
+    "cmd": "ssh-mitm server --remote-host <target-host>",
+    "context": "Starts the proxy pointed at a target SSH server the user is authorized to test."
+   },
+   {
+    "cmd": "ssh -p 10022 user@mitm-host",
+    "context": "Client connects through SSH-MITM on port 10022 instead of directly to the server."
+   },
+   {
+    "cmd": "ssh -p 34463 127.0.0.1",
+    "context": "Attaches to the mirror shell SSH-MITM opened for an intercepted session; the port number is printed per session."
+   },
+   {
+    "cmd": "ssh-mitm server --enable-trivial-auth",
+    "context": "Enables the trivial authentication attack mode used to show FIDO2 token phishing against clients that do not reject it."
+   }
+  ],
+  "install_notes": "The README says SSH-MITM 'requires no installation' for the AppImage: download it, make it executable, and place it on PATH (for example in ~/.local/bin). Other routes listed are pip, Flatpak (flathub at.ssh_mitm.server), and Snap (ssh-mitm), with a link to the installation guide. The PyPI release may lag, so pip install from the GitHub repo is recommended for the tutorial and recent fixes. The README does not mention Homebrew beyond the scout note. The server listens on port 10022 in the examples. No accounts or hardware are needed for the tutorial; a real audit needs a target host the user is authorized to test.",
+  "standout": "Most SSH tools work at one end of a connection; this one sits in the middle and can show what a client negotiates and accepts, which is invisible from either endpoint. It also ships a browser tutorial that runs without a target server, and the research has produced several CVEs in PuTTY, OpenSSH, Dropbear, Midnight Commander, and MobaXterm.",
+  "status": "Appears actively maintained, but the date is unknown. Evidence: the docs and README list a recent CVE-2026-60000 finding and say it is fixed in OpenSSH 10.4, the project has an OpenSSF Best Practices badge, and it is published to AppImage, Flathub, Snap, and PyPI. I did not see a release date or last-commit date.",
+  "caveats": "Legal: the README and docs say it is only for authorized audits, penetration tests, and research, and that unauthorized interception of SSH traffic may be illegal. The PyPI package may be behind GitHub. The README's install section does not cover Homebrew. Using the tutorial's trivial auth mode or interception against systems without permission is out of scope. The homepage notes 7 vulnerabilities found, but the list also includes CVE-2026-60000, which the docs describe as an OpenSSH issue with a fix in 10.4.",
+  "quotes": [
+   "SSH-MITM is intended for authorized security audits, penetration testing, and research only.",
+   "An interactive SSH interception tool for authorized security audits.",
+   "SSH-MITM requires no installation. Download the AppImage and you are ready to go:"
+  ],
+  "links": [
+   {
+    "label": "Documentation (homepage)",
+    "url": "https://docs.ssh-mitm.at"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/ssh-mitm/ssh-mitm"
+   },
+   {
+    "label": "Vulnerability findings",
+    "url": "https://docs.ssh-mitm.at/vulnerabilities/findings.html"
+   },
+   {
+    "label": "Trivial authentication (FIDO2 phishing) docs",
+    "url": "https://docs.ssh-mitm.at/user_guide/trivialauth.html"
+   }
+  ],
+  "fetch_log": [
+   "https://docs.ssh-mitm.at: worked, returned the documentation homepage with overview, legal notice, feature list, and security research sections (no commands on this page).",
+   "https://github.com/ssh-mitm/ssh-mitm: worked, returned the README with install, quick start, feature table, and security research sections. I did not follow further links; the install guide and other docs pages were linked but not fetched."
+  ]
+ }
+}

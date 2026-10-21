@@ -1,0 +1,138 @@
+{
+ "name": "libprotoident",
+ "desc": "Performs application layer protocol identification for flows",
+ "homepage": "https://github.com/LibtraceTeam/libprotoident",
+ "installs_365d": 19,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "Identifies application protocols from flow data, a fascinating door into how traffic reveals its own identity.",
+ "brief": {
+  "what_it_is": "Libprotoident is a C library that labels each network flow with the application protocol it most likely carries, such as BitTorrent, SMTP, or POP3. It works from the first four bytes of application payload sent in each direction, not from full packet contents. It ships three command-line tools (lpi_protoident, lpi_find_unknown, and lpi_arff) that read a libtrace URI, which can be a trace file or a live network interface. lpi_protoident prints one line per flow to stdout, with the protocol label, endpoints, ports, transport protocol, timestamps, byte counts, and the first four payload bytes per direction.",
+  "why_it_exists": "The README presents it as a library for application protocol identification, built so that programmers can write their own tools that use protocol information. It also notes that some traffic patterns in the WAND group's trace sets cannot be tied to any known protocol, and asks readers for help naming them.",
+  "how_it_works": "The library matches patterns in the first four bytes of application payload sent from each endpoint. The tools use libflowmanager to track flows, and identification happens only when a flow concludes or expires. Flows can also be grouped into categories, so BitTorrent, Gnutella, and eMule all fall under P2P, and SMTP, POP3, and IMAP fall under Mail.",
+  "commands_seen": [
+   {
+    "cmd": "./bootstrap.sh",
+    "context": "Run only if the source was cloned from GitHub, before configure."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Configures the build; installs to /usr/local by default."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the library and, by default, the tools."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs libprotoident after the build."
+   },
+   {
+    "cmd": "./configure --prefix=<new location>",
+    "context": "Installs to a directory other than /usr/local."
+   },
+   {
+    "cmd": "./configure --with-tools=no",
+    "context": "Skips building the three command-line tools."
+   },
+   {
+    "cmd": "lpi_protoident <input trace URI>",
+    "context": "Labels each flow in a trace or live source and prints one line per flow."
+   },
+   {
+    "cmd": "lpi_find_unknown <input trace URI>",
+    "context": "Prints only the flows libprotoident could not identify, for developing new identifiers."
+   },
+   {
+    "cmd": "lpi_arff <input trace URI>",
+    "context": "Writes per-flow features in ARFF format for the Weka machine learning software."
+   }
+  ],
+  "install_notes": "Requires libtrace 4.0.1 or later, available from github.com/LibtraceTeam/libtrace. libflowmanager 3.0.0 or later is optional for the library but required to build the tools; it is available from github.com/LibtraceTeam/libflowmanager. Standard autotools build: configure, make, make install. No accounts or runtime services are mentioned. The README does not describe first-run configuration.",
+  "standout": "It identifies protocols from only the first four payload bytes in each direction, a deliberately minimal form of deep packet inspection that works on flow records without decrypting or reassembling streams. It also ships an ARFF exporter so flow features can feed machine learning directly.",
+  "status": "Unknown from the README alone. It shows version 2.0.15 and copyright dates from 2011 to 2020, but gives no release date and no last-commit date. Bug reports point to a separate github.com/wanduow/libprotoident repository.",
+  "caveats": "Only the first four payload bytes per direction are examined, so the method is inherently limited. Identification happens only after a flow ends or expires, so it is poor for real-time use. Some traffic is labelled only as unidentified 'mystery' patterns. The tools need libflowmanager, which adds a dependency. The README names COPYING and COPYING.LESSER for licensing but does not state the license in its text. The full list of supported protocols is kept on a wiki page that was not fetched.",
+  "quotes": [
+   "using a very limited form of deep packet inspection, i.e. using the first four bytes of application payload sent in each direction",
+   "Identification only occurs when the flow has concluded or expired, so it is not very effective for real-time applications.",
+   "The library provides a simple API that will enable programmers to develop their own tools that utilise application protocol information"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage, README)",
+    "url": "https://github.com/LibtraceTeam/libprotoident"
+   },
+   {
+    "label": "Supported protocols list (wiki, cited in README, not fetched)",
+    "url": "https://github.com/wanduow/libprotoident/wiki/SupportedProtocols"
+   },
+   {
+    "label": "libtrace supported trace formats (cited in README, not fetched)",
+    "url": "https://github.com/LibtraceTeam/libtrace/wiki/Supported-Trace-Formats"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/LibtraceTeam/libprotoident: worked, returned the README (version 2.0.15). No further fetches were needed because the README covers installation, tools, and API."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Its deliberately identifying application protocols from just four payload bytes opens a useful, surprising window into how much network traffic reveals."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "libprotoident",
+  "tldr": "A C library and three tools that name the application protocol of a network flow by looking at only the first four payload bytes in each direction.",
+  "deeper_look": "Libprotoident labels each network flow with the application protocol it most likely carries: BitTorrent, SMTP, POP3, and so on. It does this from a very small sample. For each flow it looks at the first four bytes of application payload sent by each endpoint, and matches those against known patterns. The README calls this \"a very limited form of deep packet inspection\".\n\nThree command-line tools come with it. `lpi_protoident` reads a libtrace URI, which can be a trace file or a live interface, and prints one line per flow: the protocol label, endpoints, ports, transport protocol, timestamps, byte counts, and the four leading bytes in each direction. `lpi_find_unknown` prints only the flows it could not identify. `lpi_arff` writes per-flow features in ARFF format for the Weka machine learning software.\n\nThe interesting idea is how much a conversation gives away in its opening bytes. Protocols tend to greet in recognisable ways, so four bytes each way can be enough to tell mail from file sharing, without reassembling streams. Labels can also be grouped into categories, so BitTorrent, Gnutella and eMule all count as P2P, and SMTP, POP3 and IMAP count as Mail.\n\nThe README also says some traffic in the WAND group's trace sets cannot be tied to any known protocol, and asks for help naming it. The `lpi_find_unknown` tool is the way into that puzzle: run it on a trace and look at what is left over.",
+  "install": "brew install libprotoident\n# Depends on libtrace and libflowmanager, which Homebrew pulls in. You need a packet trace file or a live interface to feed it.",
+  "try_this": [
+   {
+    "cmd": "lpi_protoident --help",
+    "what_happens": "Shows the options for the main tool, which labels every flow in a trace."
+   },
+   {
+    "cmd": "lpi_protoident <input trace URI>",
+    "what_happens": "Prints one line per flow with the protocol label, endpoints, ports, timestamps, byte counts and the first four payload bytes per direction."
+   },
+   {
+    "cmd": "lpi_find_unknown <input trace URI>",
+    "what_happens": "Prints only the flows the library could not identify, the mystery traffic."
+   }
+  ],
+  "whats_unique": "It deliberately uses only four payload bytes per direction, so it works on flow-level data without reassembling streams. It also ships an ARFF exporter so flow features can go straight into machine learning.",
+  "caveats": "Identification happens only when a flow ends or expires, so it is poor for real-time use, and the four-byte method is inherently limited; the README does not give a release or last-commit date.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "network",
+   "protocol",
+   "dpi",
+   "flows",
+   "pcap"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage, README)",
+    "url": "https://github.com/LibtraceTeam/libprotoident"
+   },
+   {
+    "label": "Supported protocols list (wiki)",
+    "url": "https://github.com/wanduow/libprotoident/wiki/SupportedProtocols"
+   },
+   {
+    "label": "libtrace supported trace formats",
+    "url": "https://github.com/LibtraceTeam/libtrace/wiki/Supported-Trace-Formats"
+   }
+  ]
+ }
+}

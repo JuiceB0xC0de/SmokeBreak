@@ -1,0 +1,92 @@
+{
+ "name": "libfreenect",
+ "desc": "Drivers and libraries for the Xbox Kinect device",
+ "homepage": "https://openkinect.org/",
+ "installs_365d": 1089,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "afternoon",
+  "library",
+  "visual"
+ ],
+ "why": "Drivers for the Xbox Kinect, letting you read depth and IR streams from a cheap sensor over USB.",
+ "brief": {
+  "what_it_is": "libfreenect is a userspace driver library for the Microsoft Kinect (the original Xbox 360 model, per the firmware note about model 1414). It takes data from the sensor over USB and exposes RGB and depth images, motor tilt, accelerometer, LED, and audio. It runs on Linux, macOS, and Windows, and ships C, C++, C#, Python, Ruby, ActionScript, and Java (JNA) wrappers plus a set of demo viewers such as freenect-glview and freenect-wavrecord. The README does not mention infrared streams, although the scout note says it does.",
+  "why_it_exists": "The README gives no explicit motivation. It describes the project as a userspace driver for the Microsoft Kinect, maintained by the OpenKinect community, and points users of the newer Kinect v2 (Xbox One) to the separate libfreenect2 project.",
+  "how_it_works": "The library talks to the device over libusb (1.0.18 or later; 1.0.22 or later on Windows) and is built with CMake. The fakenect component can record a live session to a directory and later replay it by preloading libfakenect.so with LD_PRELOAD and pointing FAKENECT_PATH at the recording, so programs can run without the hardware attached.",
+  "commands_seen": [
+   {
+    "cmd": "brew install libfreenect",
+    "context": "Homebrew install on macOS; the README also mentions brew install --HEAD libfreenect for the latest code."
+   },
+   {
+    "cmd": "git clone https://github.com/OpenKinect/libfreenect",
+    "context": "First step of the Fetch and Build section for a source build."
+   },
+   {
+    "cmd": "cmake -L .. # -L lists all the project options",
+    "context": "Run from a build directory to list the configurable CMake options."
+   },
+   {
+    "cmd": "cmake .. -DBUILD_PYTHON=ON",
+    "context": "Configures the build to include the Python wrapper, using the system Python."
+   },
+   {
+    "cmd": "cmake .. -DBUILD_REDIST_PACKAGE=OFF",
+    "context": "Makes the build fetch Kinect model 1414 audio firmware automatically instead of shipping it in the package."
+   },
+   {
+    "cmd": "sudo apt-get install git cmake build-essential libusb-1.0-0-dev",
+    "context": "Debian/Ubuntu/Mint dependencies for a manual build."
+   },
+   {
+    "cmd": "mkdir session",
+    "context": "Fakenect step: creates a directory to hold a recorded session."
+   },
+   {
+    "cmd": "fakenect-record ./session",
+    "context": "Records a live Kinect session into the session directory for later playback."
+   },
+   {
+    "cmd": "LD_PRELOAD=\"/usr/local/lib/fakenect/libfakenect.so\" FAKENECT_PATH=\"./session\" freenect-glview",
+    "context": "Replays the recorded session through the glview demo viewer without a Kinect attached."
+   }
+  ],
+  "install_notes": "Linux needs the udev rules from platform/linux/udev installed. Ubuntu's packaged version may be very old, so the README points to the wiki for newer builds. On Windows, use Zadig to install the libusbK driver for each device, and pass CMake the libusb include and library paths. Examples need OpenGL and glut (included on macOS), freeglut3-dev, libxmu-dev and libxi-dev on Debian-family systems, and pthreads-win32 on Windows. Audio and, on newer models, motor and LED control need firmware uploaded to the device; the README suggests inserting it at runtime just after freenect_init(). Gentoo ebuilds and Arch AUR PKGBUILDs are also mentioned.",
+  "standout": "Fakenect lets you record a real Kinect session and replay it through an unmodified program by swapping the USB driver with LD_PRELOAD, which is a neat way to test vision code without the hardware. The project also covers the whole device (motors, LED, accelerometer, audio), not just the video streams.",
+  "status": "unknown. The fetched README has no release date, version number or last-commit date, and I did not fetch the releases page or commit history. The content looks current (it names libusb 1.0.22 and CMake 3.12.4 minimums and points to the libfreenect2 successor), but I cannot confirm recent activity.",
+  "caveats": "The homepage https://openkinect.org/ returned HTTP 525, so the brief relies on the GitHub README. Firmware may not be legal to redistribute in some jurisdictions, as the README warns. Audio and some motor/LED features depend on uploaded firmware. Windows needs Zadig and a specific libusb version. The wrappers are described as not guaranteed to be API stable or up to date. The README does not claim infrared support, which the scout note mentions. Kinect v2 hardware is out of scope and needs libfreenect2.",
+  "quotes": [
+   "libfreenect is a userspace driver for the Microsoft Kinect.",
+   "If you have the newer Kinect v2 (XBox One), use OpenKinect/libfreenect2 instead.",
+   "Using fakenect, you can record a session to a directory and play it back later.",
+   "Note that firmware may not be legal to redistribute in your jurisdiction!"
+  ],
+  "links": [
+   {
+    "label": "Homepage (unreachable, HTTP 525)",
+    "url": "https://openkinect.org/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/OpenKinect/libfreenect"
+   },
+   {
+    "label": "Kinect v2 successor, libfreenect2",
+    "url": "https://github.com/OpenKinect/libfreenect2"
+   },
+   {
+    "label": "OpenKinect wiki, Getting Started",
+    "url": "http://openkinect.org/wiki/Getting_Started"
+   }
+  ],
+  "fetch_log": [
+   "https://openkinect.org/ (homepage): failed, HTTP 525",
+   "https://github.com/OpenKinect/libfreenect (fallback, GitHub README): worked, full README returned; other linked pages (wiki, releases, commits) not fetched"
+  ]
+ }
+}

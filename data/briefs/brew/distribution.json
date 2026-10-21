@@ -1,0 +1,90 @@
+{
+ "name": "distribution",
+ "desc": "Create ASCII graphical histograms in the terminal",
+ "homepage": "https://github.com/time-less-ness/distribution",
+ "installs_365d": 68,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "tui",
+  "visual"
+ ],
+ "why": "Draws ASCII histograms from piped numbers, a small but pleasant transform of data into terminal shapes.",
+ "brief": {
+  "what_it_is": "distribution is a small set of scripts (originally Perl and Python, by Tim Ellis) that read text on stdin and draw a character-based histogram or graph in the terminal. It takes piped input: raw text it can tokenize and tally, already-tallied 'count key' or 'key count' lines, or a plain list of integers. It prints a table of keys, counts and percentages next to a bar drawn with ASCII characters, with optional verbose stats on stderr. The README describes it as a replacement for the final 'sort | uniq -c | sort -rn' stage of a pipeline.",
+  "why_it_exists": "The README says the aim is to generate graphs directly in the ASCII terminal, so that a pipeline like 'long | list | of | commands | sort | uniq -c | sort -rn' can end in '| distribution' and look better. It also says the name is a misnomer: it began as a histogram tool and was extended to time series and any arbitrary x-axis.",
+  "how_it_works": "Input is read line by line. With --tokenize it splits each line on a regexp (word or whitespace by default) and tallies the tokens; otherwise each line is a key. --match filters tokens or lines with a regexp, and --graph (-g) skips parsing when the input is already key/value pairs, in kv or vk order. Counts are scaled to a width or height set by --size, --width or --height, and drawn with a chosen character (--char, default '+'), with optional log scale, colour and an rcfile. The README notes that Perl's regexp engine is used for tokenising and matching, and that the tool keeps a hash of keys, pruned to 5000 by default.",
+  "commands_seen": [
+   {
+    "cmd": "brew install distribution",
+    "context": "Homebrew install, which the README says should work for most users."
+   },
+   {
+    "cmd": "cat file | xargs | distribution --tokenize=word --match=word --size=small -v",
+    "context": "Tokenise a word list into words, tally only alphabetic tokens and draw a small histogram with verbose stats."
+   },
+   {
+    "cmd": "du -s /etc/*/ 2>/dev/null | distribution -g -v",
+    "context": "Graph du output, where each line is a count followed by a label, so the labels appear on the chart."
+   },
+   {
+    "cmd": "cat referrers-20140* | distribution -v -g=kv -s=m",
+    "context": "Aggregate referrer counts from many files; repeated keys are summed, and the input here is key then value."
+   },
+   {
+    "cmd": "ps axww | cut -c 28- | distribution --tokenize=word --match=word --char='|' --width=90 --height=25",
+    "context": "Word-frequency analysis of the process list, using '|' as the bar character."
+   },
+   {
+    "cmd": "sudo du -sb /etc/* | distribution -w=90 -h=15 -g",
+    "context": "Graph pre-tallied du output with short option forms, using the default '+' bar character."
+   },
+   {
+    "cmd": "cat NotServingRegionException-DateHour.txt | distribution -v | sort -n",
+    "context": "Tally time-ordered keys, then sort the chart rows by key; the verbose stats still go to the top of the output."
+   },
+   {
+    "cmd": "grep ^Innodb_data_reads globalStatus*.txt | awk '{print $2}' | distribution --numonly=mon --char='|+'",
+    "context": "Graph a series of integers with no labels, showing the monotonic differences between values."
+   },
+   {
+    "cmd": "cat ~/tmp/numberSeries.txt | ~/Dev/distribution/distribution.py --numonly -c='|o' -s=s",
+    "context": "Graph a plain list of integers with the Python version, which the README says omits the header and the key column."
+   },
+   {
+    "cmd": "wget https://raw.githubusercontent.com/philovivero/distribution/master/distribution.py",
+    "context": "Manual install: download the Python script, then move it onto your PATH as shown in the next command."
+   }
+  ],
+  "install_notes": "Homebrew (brew install distribution) should work. Otherwise, if Perl or Python is already installed, download the script and put it anywhere on your PATH. The README's manual steps are: wget the distribution.py file, sudo mv it to /usr/local/bin/distribution, and optionally alias worddist='distribution -t=word'. The script is a Perl or Python file, so one of those runtimes must be present. An rcfile at $HOME/.distributionrc sets default options. The README's test instructions say to cd into tests/ and run distribution=../distribution ./runTests.sh.",
+  "standout": "Its output is verbose on purpose: it prints the key, count, percentage and bar side by side, with -v showing the tokens examined and the runtime. It can take a list of plain numbers and show a difference or a distribution, and it accepts pre-tallied du or uniq -c style output without re-counting. The README's worked examples (syslog, Apache logs, MySQL slow query log, a 28-million-line user-agent analysis) make it clear that the real use is reading everyday shell pipelines as shapes.",
+  "status": "Quiet, with a handoff. The fetched homepage opens with a notice that the original author has transferred control to wizzat and asks that PRs and issues go to github.com/wizzat/distribution. The README itself says 'Status: stable. Features added very rarely.' No release dates or commit dates appeared in the pages I fetched, so the last activity date is unknown. The wizzat copy I fetched carries the same README text but without the handoff notice.",
+  "caveats": "The homepage says the original owner has handed control to wizzat, so issues and PRs should go to that repo. The README points its screenshot and wget install examples at philovivero/distribution, which is the old location. The README's to-do list says new features are unlikely to be added and that packaging is still to do. Python and Perl are required; the README asks for a C, C++ or Go port but I did not check whether one is maintained. The README says the tool hides low-frequency keys unless you raise the height, so the chart can miss data. It also says --numonly=diff expects monotonically increasing input.",
+  "quotes": [
+   "Short, simple, direct scripts for creating character-based graphs in a command terminal. Status: stable. Features added very rarely.",
+   "The tool is mis-named.",
+   "I have taken employment such that it is difficult for me to be the owner of this project. I have transferred control to the excellent engineer wizzat. Please contribute any PRs, issues, etc to that project rather than this one."
+  ],
+  "links": [
+   {
+    "label": "homepage (original repo, handoff notice)",
+    "url": "https://github.com/time-less-ness/distribution"
+   },
+   {
+    "label": "canonical repo per handoff notice (wizzat)",
+    "url": "https://github.com/wizzat/distribution"
+   },
+   {
+    "label": "holman/spark, the simpler sparkline tool the README compares itself to",
+    "url": "https://github.com/holman/spark"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/time-less-ness/distribution: worked. Returned the README, which opens with a notice that control has been transferred to wizzat.",
+   "https://github.com/wizzat/distribution: worked. Returned the same README text without the handoff notice. Used to check whether the canonical repo carried any dates or status; it did not."
+  ]
+ }
+}

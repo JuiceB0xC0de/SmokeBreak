@@ -1,0 +1,81 @@
+{
+ "name": "pokerstove",
+ "desc": "Poker evaluation and enumeration software",
+ "homepage": "https://github.com/andrewprock/pokerstove",
+ "installs_365d": 95,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "math",
+  "afternoon",
+  "science"
+ ],
+ "why": "Enumerates poker hand equities exhaustively, a satisfying bit of combinatorial math you can run at home.",
+ "brief": {
+  "what_it_is": "PokerStove is a C++ poker hand evaluation library, called peval, with a command-line tool, ps-eval, that uses it. You give ps-eval a game code and cards: hole cards and an optional board, such as ps-eval AcAs Kh4d --board 5c8s9h. It evaluates the hands for that variant and prints the result. The README says the library covers fourteen poker variants, including hold'em, Omaha, stud, razz, badugi and three-card poker. A second tool, ps-colex, views colexicographical indexes for card sets. The README does not describe any exhaustive equity enumeration tool. The executables list includes penum_tests and peval_tests, which look like test binaries, and ps-lut, which the README never mentions.",
+  "why_it_exists": "The README says the library is 'highly hand optimized' and that its main design goals are 'generality, extensibility, and ease of use.' It is an evaluation library first, with a demo program that shows how to build evaluators for different poker variants.",
+  "how_it_works": "The README gives little detail on internals. peval provides evaluators for each variant and card-manipulation and query tools built into a CardSet class. ps-eval is described as a demonstration of how to use the library and create evaluators.",
+  "commands_seen": [
+   {
+    "cmd": "apt-get install libboost-all-dev cmake",
+    "context": "Linux dependency install from the README, using apt, for Boost and CMake."
+   },
+   {
+    "cmd": "cmake -DCMAKE_BUILD_TYPE=Release -S \\. -B build",
+    "context": "Configure a Release build from the repository root into a build directory."
+   },
+   {
+    "cmd": "cmake --build build --target all test -j 4",
+    "context": "Build everything and run the tests with four parallel jobs; the README says to adjust -j for your machine."
+   },
+   {
+    "cmd": "./bin/ps-eval",
+    "context": "Run the bare ps-eval binary from the build directory to print its option help."
+   },
+   {
+    "cmd": "ps-eval AcAs Kh4d --board 5c8s9h",
+    "context": "Example: evaluate two hole-card hands against a flop-and-turn-style board, using the default hold'em game."
+   },
+   {
+    "cmd": "ps-eval --game l 7c5c4c3c2c",
+    "context": "Evaluate a five-card hand under lowball (A-5), using the single-letter game code l."
+   },
+   {
+    "cmd": "ps-eval --game kansas-city-lowball 7c5c4c3c2c",
+    "context": "The same kind of lowball evaluation, using the long game name for Kansas City lowball (2-7)."
+   },
+   {
+    "cmd": "brew install boost cmake",
+    "context": "macOS route the README gives for installing Boost and CMake, as an alternative to MacPorts."
+   },
+   {
+    "cmd": "sudo apt install python3 swig",
+    "context": "Prerequisites for the optional Python bindings on Ubuntu, which the README says were only tested there."
+   },
+   {
+    "cmd": "cmake -DCMAKE_BUILD_TYPE=Release -S \\. -B build -DBUILD_PYTHON=ON",
+    "context": "Configure with the Python bindings turned on."
+   }
+  ],
+  "install_notes": "Needs Boost 1.46 or later and CMake 3.14 or later. Linux uses apt or the cmake commands above. Windows needs Boost binaries, and the README points to SourceForge for them; it recommends 32-bit libraries for Visual Studio 2010, and you may have to edit programs/CMakeLists.txt to point at your Boost install. macOS needs Xcode, git, CMake, MacPorts and Boost, installed with sudo port install boost -no_static or brew install boost cmake. Python bindings use SWIG and python3, and a wheel can be built with pipx and scikit-build-core from pyproject.toml. The README also mentions an old Windows installer in the win32 folder and an Android APK in the android folder; I did not open either.",
+  "standout": "It has been a hand-optimized C++ evaluator with a multi-variant design for many years, and the README says the core is being open-sourced. The ps-eval game-code syntax, with single letters like h, o, O, r, s and l, is compact. I did not find the exhaustive equity enumeration the scout notes mention in the README.",
+  "status": "Unknown, leaning toward quiet or in transition. The README says 'The project is currently in the process of reviewing and publishing the code. As code is reviewed and code sanitized further commits will be added.' I saw no release dates or commit dates in the fetched page. The README does announce a breaking change in version 1.2, which moves from boost::shared_ptr to std::shared_ptr.",
+  "caveats": "The scout note says it enumerates hand equities exhaustively. The README does not say that, and the only enumeration-related binary is penum_tests, which is a test binary. Verify before claiming it as an enumerator. The README says the code is still being reviewed and sanitized before publication, so the public repo may be incomplete. Windows needs a Boost-and-Visual-Studio setup and the README calls it a bit of a challenge. The build was reported working on Linux with g++, Windows with VC2010 and OSX with Xcode, and no newer toolchains are mentioned. Version 1.2 breaks API compatibility. The brew caveats are empty. The README does not mention licensing, and I did not find a LICENSE in the fetched text.",
+  "quotes": [
+   "PokerStove is a highly hand optimized C++ poker hand evaluation library.",
+   "The main design goals of the library are generality, extensibility, and ease of use.",
+   "The project is currently in the process of reviewing and publishing the code. As code is reviewed and code sanitized further commits will be added."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/andrewprock/pokerstove"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/andrewprock/pokerstove: fetched OK, README returned. No further fetches; the README was complete enough and linked to no separate docs."
+  ]
+ }
+}

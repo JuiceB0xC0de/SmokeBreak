@@ -1,0 +1,84 @@
+{
+ "name": "shmcat",
+ "desc": "Tool that dumps shared memory segments (System V and POSIX)",
+ "homepage": "https://shmcat.sourceforge.net/",
+ "installs_365d": 15,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "fundamentals"
+ ],
+ "why": "Dumps System V and POSIX shared memory segments, a rare look at inter-process memory living on the system.",
+ "brief": {
+  "what_it_is": "shmcat is a small command-line tool, written in C, that dumps the contents of shared memory segments. It handles both System V segments (created with shmget/shmat) and POSIX segments (created with shm_open). The project page also says it can dump files, like cat, and text, like echo, and that several objects can be dumped in one run. The page does not show example invocations or output.",
+  "why_it_exists": "The page says it is 'a simple tool that dumps shared memory segments (System V and POSIX), files and text. It might be useful when you have to debug programs that use shared memory.'",
+  "how_it_works": "The SourceForge page does not explain the mechanism. It lists features only: System V access through the shmget/shmat API, POSIX access through shm_open, and an optional utility that computes System V IPC keys with the ftok(3) library function.",
+  "commands_seen": [],
+  "install_notes": "The page gives no install steps, build instructions, or dependencies. It has a 'Download' button and an 'Add to Preferred Sources' option on the SourceForge project page. The brew entry lists the executable as shmcat. Platform support is listed as Linux and FreeBSD.",
+  "standout": "It is a niche debugging tool that looks at inter-process shared memory directly, which most tools don't do. It also accepts files and plain text as inputs, so it can be used like cat and echo in the same run.",
+  "status": "Maintained, judging by the page metadata. The SourceForge page shows 'Last Update: 2026-07-24', 'Downloads: 8 This Week', and a registration date of 2012-02-21. The page does not contain a changelog or a commit history, so this is the only evidence I have.",
+  "caveats": "The homepage is a SourceForge project listing, not a project site with docs. It has no README, usage examples, or command reference, and I could not see any command lines. Listed platforms are Linux and FreeBSD; the page says it 'probably' works on other un*x systems. Licence is GPL v2. The page offers no evidence on whether the tool works with recent kernels or with shared memory from containers.",
+  "quotes": [
+   "This is a simple tool that dumps shared memory segments (System V and POSIX), files and text. It might be useful when you have to debug programs that use shared memory.",
+   "Dumps System V (shmget, shmat API) and POSIX (shm_open...) shared memory",
+   "Comes with an optional utility to calculate System V IPC keys via the ftok(3) library function"
+  ],
+  "links": [
+   {
+    "label": "shmcat homepage (SourceForge)",
+    "url": "https://shmcat.sourceforge.net/"
+   },
+   {
+    "label": "SourceForge project page",
+    "url": "https://sourceforge.net/projects/shmcat/"
+   }
+  ],
+  "fetch_log": [
+   "https://shmcat.sourceforge.net/ : fetched OK, returned SourceForge project page with description, features, licence, and metadata; no README, docs, or command examples found"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A focused, uncommon way to inspect live System V and POSIX shared memory makes otherwise hidden inter-process data tangible; it\u2019s a useful window into IPC internals."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "shmcat",
+  "tldr": "A small C tool that dumps System V and POSIX shared memory segments to your terminal, like cat for memory shared between processes.",
+  "deeper_look": "shmcat prints the contents of shared memory segments. It handles both flavours Unix offers: System V segments, created with shmget and attached with shmat, and POSIX segments, created with shm_open. It can also dump plain files and text, so several kinds of objects can be dumped in one run.\n\nThe project page says it is \"a simple tool that dumps shared memory segments (System V and POSIX), files and text. It might be useful when you have to debug programs that use shared memory.\" That is the whole pitch, and it is a fair one. Shared memory is how processes pass data without copying it through a pipe or socket, and it is hard to see from outside. Most debugging tools look at one process at a time. shmcat looks at the region between them.\n\nThe idea underneath is that inter-process memory is an object the kernel names and tracks, separate from any program. Once you know that, you can start asking which segments exist on your machine, who made them, and what is in them. The package also ships an optional utility that calculates System V IPC keys with the ftok(3) library function, which shows how two unrelated programs find the same segment.",
+  "install": "brew install shmcat\n# Platform support is listed as Linux and FreeBSD; the page says it 'probably' works on other un*x systems.",
+  "try_this": [
+   {
+    "cmd": "shmcat --help",
+    "what_happens": "Prints the usage text, which is the surest way to see the options this version supports."
+   }
+  ],
+  "whats_unique": "Few tools look directly at inter-process shared memory. This one covers both System V and POSIX segments, and also accepts files and text as inputs.",
+  "caveats": "The homepage is only a SourceForge project listing with no examples or docs, and the page says nothing about recent kernels or container shared memory.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "shared-memory",
+   "ipc",
+   "debugging",
+   "c",
+   "unix"
+  ],
+  "links": [
+   {
+    "label": "shmcat homepage (SourceForge)",
+    "url": "https://shmcat.sourceforge.net/"
+   },
+   {
+    "label": "SourceForge project page",
+    "url": "https://sourceforge.net/projects/shmcat/"
+   }
+  ]
+ }
+}

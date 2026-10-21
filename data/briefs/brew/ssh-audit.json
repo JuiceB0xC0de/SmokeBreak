@@ -1,0 +1,90 @@
+{
+ "name": "ssh-audit",
+ "desc": "SSH server & client auditing",
+ "homepage": "https://github.com/jtesta/ssh-audit",
+ "installs_365d": 957,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "quick",
+  "reverse-engineering"
+ ],
+ "why": "Probes SSH servers and clients to expose negotiated algorithms, a revealing way to look inside a protocol everyone uses.",
+ "brief": {
+  "what_it_is": "ssh-audit is a command-line tool that connects to an SSH server, or listens as a fake server for SSH clients to connect to, and reports the software banner, OS if recognizable, compression, and every key-exchange, host-key, cipher and MAC algorithm offered or negotiated. Each algorithm is annotated with security status (available since, removed or disabled, weak, legacy, and so on) and with recommendations tuned to the recognized software version. It can also run policy checks against a built-in or custom policy file, and can run standalone algorithm lookups without connecting to anything. Output is plain text or JSON, and it can scan many targets from a file.",
+  "why_it_exists": "The README says jtesta/ssh-audit is the maintained v2.0+ fork of arthepsy/ssh-audit (v1.x), forked 'due to inactivity', and frames the tool as 'a tool for ssh server & client configuration auditing'.",
+  "how_it_works": "For servers, it opens a TCP connection, reads the banner, and inspects the algorithm lists the server advertises, then checks them against its internal database of algorithms and known software. For clients, it runs a listener (default port 2222) and audits the configuration of whatever SSH client connects to it. Policy mode compares results to a built-in or custom policy; -M builds a starting policy from a target server's configuration.",
+  "commands_seen": [
+   {
+    "cmd": "ssh-audit localhost",
+    "context": "Basic standard audit of a server on the local machine; the README also shows 127.0.0.1, ::1, host:port and unix:///path/socket forms."
+   },
+   {
+    "cmd": "ssh-audit -T servers.txt",
+    "context": "Runs a standard audit against many servers listed one per line in HOST[:PORT] format, using multiple threads."
+   },
+   {
+    "cmd": "ssh-audit -c",
+    "context": "Starts a listener on port 2222 to audit an SSH client's configuration; the README says to connect with ssh -p 2222 anything@localhost."
+   },
+   {
+    "cmd": "ssh-audit -c -p 4567",
+    "context": "Same client audit, but with the listener on port 4567."
+   },
+   {
+    "cmd": "ssh-audit -L",
+    "context": "Lists the official built-in policies; the names can be passed to -P."
+   },
+   {
+    "cmd": "ssh-audit -P [\"policy name\" | path/to/server_policy.txt] targetserver",
+    "context": "Runs a policy audit of a server against a built-in policy name or a custom policy file."
+   },
+   {
+    "cmd": "ssh-audit -M new_policy.txt targetserver",
+    "context": "Creates a policy file based on the target server's configuration, which can then be hand-edited."
+   },
+   {
+    "cmd": "pip3 install ssh-audit",
+    "context": "Installs from PyPI, one of the pre-built package routes listed in the README."
+   },
+   {
+    "cmd": "snap install ssh-audit",
+    "context": "Installs the Snap package."
+   },
+   {
+    "cmd": "docker pull docker.io/positronsecurity/ssh-audit",
+    "context": "Pulls the Docker image; the README then runs it with docker run -it --rm -p 2222:2222 docker.io/positronsecurity/ssh-audit 10.1.1.1 to audit a host."
+   }
+  ],
+  "install_notes": "The README lists no dependencies. Pre-built packages are on PyPI (pip3 install ssh-audit), Snap, Docker Hub, and Windows builds on the GitHub Releases page; Repology status is also shown. Brew is not mentioned in the README. The Docker image runs in the same way as the tool itself and needs -p 2222:2222 to expose the client-audit listener. The -m manual option only works in the Docker, PyPI, Snap and Windows builds. Client audit (-c) needs an SSH client to be pointed at the listener.",
+  "standout": "It audits both directions, so it can grade an SSH client as well as a server. Policy mode can generate a baseline from a known-good host with -M and check other hosts against it, and it ships built-in hardening guides for many platforms that can be fetched from the command line.",
+  "status": "Maintained. The README's changelog has a v3.9.0 release dated 2026-07-04 and a v3.9.1-dev section with unreleased changes. The usage block says v3.4.1-dev, which does not match the changelog. I did not check commit dates or the Releases page.",
+  "caveats": "The --dheat option performs the DHEat denial-of-service attack (CVE-2002-20001), which the README documents with examples; it is a load-generating attack tool, not just an audit. The README says it runs on Linux and Windows and supports Python 3.10 through 3.14. The changelog's v3.9.1-dev section adds Python 3.15. Its standard audit also runs a connection rate test unless --skip-rate-test or --socks5 is used. The README does not give the license beyond a MIT badge. Some CVE data was removed in v3.3.0 on the grounds that it was inaccurate, and SSHv1 support was dropped in v3.9.0.",
+  "quotes": [
+   "**ssh-audit** is a tool for ssh server & client configuration auditing.",
+   "jtesta/ssh-audit (v2.0+) is the updated and maintained version of ssh-audit forked from arthepsy/ssh-audit (v1.x) due to inactivity.",
+   "Added warning to all key exchanges that do not include protections against quantum attacks due to the Harvest Now, Decrypt Later strategy"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/jtesta/ssh-audit"
+   },
+   {
+    "label": "Web front-end",
+    "url": "https://www.ssh-audit.com/"
+   },
+   {
+    "label": "Hardening guides",
+    "url": "https://www.ssh-audit.com/hardening_guides.html"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/jtesta/ssh-audit (homepage, fetched via the tool; README returned in full, worked)"
+  ]
+ }
+}

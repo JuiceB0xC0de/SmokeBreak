@@ -1,0 +1,149 @@
+{
+ "name": "gql",
+ "desc": "Git Query language is a SQL like language to perform queries on .git files",
+ "homepage": "https://amrdeveloper.github.io/GQL/",
+ "installs_365d": 163,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "language"
+ ],
+ "why": "A SQL-like language for querying git internals, turning the repository itself into a queryable database.",
+ "brief": {
+  "what_it_is": "GitQL (the Homebrew formula is named gql, and the executable is gitql) is a SQL-like query language and small engine that runs queries directly against a local git repository's data. You write statements like SELECT author_name, COUNT(author_name) FROM commits, and it returns rows from tables such as commits, branches, tags, refs and diffs_changes. Nothing is converted or imported into a separate database; the engine reads the .git data on the fly and prints the result. The README also describes an in-memory query SDK that the tool is built on.",
+  "why_it_exists": "The homepage pitches GQL as a way to query .git data with familiar SQL syntax, without creating database files or converting .git into another format. The README frames the wider project as an SDK for running SQL-like queries over any kind of data.",
+  "how_it_works": "The engine parses a SQL-like statement, then resolves the FROM clause against tables it builds from the repository, such as commits, branches, refs, tags and diffs_changes. It evaluates the query in memory, using the expression, function and aggregation layers from the GitQL SDK, and the data is computed on the fly rather than stored. Keywords are case-insensitive. The SDK exposes customizable schema, data provider, functions, types and values, according to the README's SDK documentation list.",
+  "commands_seen": [
+   {
+    "cmd": "SELECT author_name, COUNT(author_name) AS commit_num FROM commits GROUP BY author_name, author_email ORDER BY commit_num DESC LIMIT 10",
+    "context": "Counts commits per author and lists the top 10 authors by commit count."
+   },
+   {
+    "cmd": "SELECT * FROM refs WHERE type = \"branch\"",
+    "context": "Lists refs filtered to branch refs."
+   },
+   {
+    "cmd": "SELECT * FROM branches WHERE is_head = true",
+    "context": "Shows the branch that HEAD currently points to."
+   },
+   {
+    "cmd": "SELECT author_name, author_email FROM commits WHERE author_email LIKE \"%gmail%\" ORDER BY author_name",
+    "context": "Filters commits by a LIKE pattern on author email and sorts by author name."
+   },
+   {
+    "cmd": "SELECT * FROM tags OFFSET 1 LIMIT 1",
+    "context": "Pages through the tags table, skipping one row and returning one."
+   },
+   {
+    "cmd": "SELECT path, count() AS changes_count, SUM(insertions) AS additions, SUM(removals) AS removes FROM diffs_changes GROUP BY path ORDER BY changes_count DESC",
+    "context": "Ranks file paths by how often they changed, with total insertions and removals per path."
+   },
+   {
+    "cmd": "SELECT commit_count FROM branches WHERE commit_count BETWEEN 0 AND 10",
+    "context": "Selects branches whose commit_count falls in a range."
+   },
+   {
+    "cmd": "SET @arr = [1, 2, 3];",
+    "context": "Sets a variable to an array literal, shown in the language samples."
+   },
+   {
+    "cmd": "SELECT INTERVAL '1 year 2 mons 3 days 04:05:06.789'",
+    "context": "Demonstrates the interval literal type."
+   },
+   {
+    "cmd": "SELECT DISTINCT title AS tt FROM commits",
+    "context": "Returns the distinct commit titles."
+   }
+  ],
+  "install_notes": "The brief's source is the Homebrew formula, so brew install gql is the install path. I did not fetch the 'Install or Build' page (amrdeveloper.github.io/GQL/setup), so I cannot confirm other install methods. The README badges point to a crates.io package named gitql, which suggests a Rust toolchain route, but I did not verify that from the text. No accounts, hardware, or first-run configuration were mentioned.",
+  "standout": "It turns a git repository into a queryable table store with no import step, so you can write SQL over commits, branches and per-file diff stats directly. The same engine is reused as an SDK, and the README lists sibling tools built on it for LLVM IR, C/C++ source, file systems and Python source.",
+  "status": "unknown. The fetched pages show no release date or last-commit date. The README has active-looking CI badges (release and docs workflows) and a 2023 to 2025 MIT copyright line, so it appears active as of the copy I read, but I could not confirm recent activity.",
+  "caveats": "Installation details beyond Homebrew were not checked. The README's sample queries use features such as HAVING, window-style count(), and SDK extension points, and I did not verify which are fully supported in the released binary. The homepage and README sometimes differ in small details (for example, LOWER(author_name) = \"amrdeveloper\" versus \"AmrDeveloper\"). The formula name gql differs from the tool name GitQL, which may confuse searches.",
+  "quotes": [
+   "GQL is a query language with a syntax very similar to SQL with a tiny engine to perform queries on .git files instance of database files, the engine executes the query on the fly without the need to create database files or convert .git files into any other format",
+   "Note that all Keywords in GitQL are case-insensitive, similar to SQL.",
+   "GitQL SDK is an in memory query engine implemented from scratch as a set of libraries that allow you to perform high customization in types, schema, data provider, operators and functions, so you can build your own tool to run SQL like query on any kind of data."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GQL documentation)",
+    "url": "https://amrdeveloper.github.io/GQL/"
+   },
+   {
+    "label": "Install or Build",
+    "url": "https://amrdeveloper.github.io/GQL/setup"
+   },
+   {
+    "label": "Tables reference",
+    "url": "https://amrdeveloper.github.io/GQL/structure/tables"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/AmrDeveloper/GQL"
+   }
+  ],
+  "fetch_log": [
+   "https://amrdeveloper.github.io/GQL/ : worked. Returned mostly page markup, but the visible text included the GQL description, the sample queries and the documentation index.",
+   "https://github.com/AmrDeveloper/GQL : worked. Returned the README with samples, documentation links, SDK links, related tools and the MIT license text."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It makes repository history and file-change data queryable with SQL directly from Git, a distinctive way to explore what\u2019s inside a repo."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "GitQL",
+  "tldr": "Write SQL-like queries against a git repository's commits, branches, tags and diffs, with no import step and no database file.",
+  "deeper_look": "GitQL (the Homebrew formula is `gql`, the executable is `gitql`) reads a local git repository and exposes it as tables: `commits`, `branches`, `tags`, `refs` and `diffs_changes`. You write a statement such as `SELECT author_name, COUNT(author_name) FROM commits GROUP BY author_name`, and it prints rows. Keywords are case-insensitive, as in SQL.\n\nThe homepage describes it as \"a query language with a syntax very similar to SQL with a tiny engine to perform queries on .git files instead of database files.\" Nothing is converted or stored. The engine builds the tables from the repository on the fly and evaluates the query in memory.\n\nThe idea underneath is that a repository is already structured data, and `git log` flags are just one fixed set of questions about it. With SQL you can ask your own: which files change most often, who commits from a given email domain, which branches are short. The same engine is also packaged as an SDK for running SQL-like queries over any data source. The README lists sibling tools built on it for LLVM IR, C/C++ source, file systems and Python source.",
+  "install": "brew install gql",
+  "try_this": [
+   {
+    "cmd": "gitql --help",
+    "what_happens": "Prints the available options, so you can see how to point it at a repository and run a query."
+   },
+   {
+    "cmd": "SELECT author_name, COUNT(author_name) AS commit_num FROM commits GROUP BY author_name, author_email ORDER BY commit_num DESC LIMIT 10",
+    "what_happens": "Counts commits per author and lists the top ten authors by commit count."
+   },
+   {
+    "cmd": "SELECT path, count() AS changes_count, SUM(insertions) AS additions, SUM(removals) AS removes FROM diffs_changes GROUP BY path ORDER BY changes_count DESC",
+    "what_happens": "Ranks file paths by how often they changed, with total insertions and removals for each."
+   }
+  ],
+  "whats_unique": "It treats the repository itself as a table store with no import step, and the engine behind it is reusable as an SDK for querying other kinds of data.",
+  "caveats": "Release and last-commit dates were not confirmed, though the project looks active, and I did not verify which of the README's more advanced query features the released binary supports.",
+  "commitment": "quick",
+  "category": "languages-and-oddities",
+  "tags": [
+   "quick",
+   "sql",
+   "git",
+   "query-language",
+   "rust"
+  ],
+  "links": [
+   {
+    "label": "Homepage (GQL documentation)",
+    "url": "https://amrdeveloper.github.io/GQL/"
+   },
+   {
+    "label": "Install or Build",
+    "url": "https://amrdeveloper.github.io/GQL/setup"
+   },
+   {
+    "label": "Tables reference",
+    "url": "https://amrdeveloper.github.io/GQL/structure/tables"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/AmrDeveloper/GQL"
+   }
+  ]
+ }
+}

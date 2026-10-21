@@ -1,0 +1,109 @@
+{
+ "name": "cppp",
+ "desc": "Partial Preprocessor for C",
+ "homepage": "https://www.muppetlabs.com/~breadbox/software/cppp.html",
+ "installs_365d": 35,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "language",
+  "ancient"
+ ],
+ "why": "A partial C preprocessor from an old-school hacker, handling only some directives, which makes it a quirky window into macro processing.",
+ "brief": {
+  "what_it_is": "cppp is a small command-line tool that applies a subset of C preprocessor conditionals. You run it with macro names defined (-D) or undefined (-U) on the command line, and it reads C source on input and writes C source on output. Conditionals (#ifdef, #ifndef, #if, #elif, #elifdef, #elifndef) that test those symbols are resolved and removed or simplified. Everything else is left in place, and macros it does not know about are treated as indeterminate. It does not expand macros or do the rest of the preprocessor's work.",
+  "why_it_exists": "The author, Brian Raiter, wrote it for legacy codebases where #ifdef statements have built up over time and hurt legibility. He first wrote it as a learning exercise, then said it later saved him from a tedious and error-prone cleanup.",
+  "how_it_works": "Symbols given with -D are treated as defined and symbols given with -U as undefined. Conditionals that test those symbols are applied, and partly determined #if expressions are rewritten to keep only the undecided part. Numeric constants assigned with -D (for example MYLIB_VERSION=0x0102) can be used in arithmetic comparisons, which are then evaluated.",
+  "commands_seen": [
+   {
+    "cmd": "cppp -DFOO",
+    "context": "Example from the page: defines FOO, so the FOO branch is kept and the #else branch is dropped."
+   },
+   {
+    "cmd": "cppp -DBAR",
+    "context": "Example from the page: defines BAR only, so the nested BAR test is resolved against that."
+   },
+   {
+    "cmd": "cppp -UFOO -UBAZ",
+    "context": "Example from the page: undefines FOO and BAZ, so the #ifdef FOO branch is removed and the #ifndef BAZ branch is kept."
+   },
+   {
+    "cmd": "cppp -UFOO",
+    "context": "Example from the page: undefines FOO only, which leaves the BAR and BAZ tests partly unresolved in the output."
+   },
+   {
+    "cmd": "cppp -DMYLIB_VERSION=0x0102",
+    "context": "Example from the page: assigns a numeric value, so the #if MYLIB_VERSION >= ((1 << 8) | 13) test evaluates to false and the older API branch is kept."
+   },
+   {
+    "cmd": "cppp -DMYLIB_VERSION=0x0200",
+    "context": "Example from the page: assigns a newer numeric value, so the same #if test evaluates to true and the newer API branch is kept."
+   }
+  ],
+  "install_notes": "The homepage offers cppp-2.9.tar.gz as a download, so this is a source tarball that needs to be built. The page says nothing about dependencies, a compiler, or a build procedure. There are no accounts or runtime setup steps mentioned. The page also links to a Sourcehut page, which I did not open.",
+  "standout": "It is a deliberately partial preprocessor: it only resolves conditionals, and anything it cannot decide is passed through unchanged. That makes it a good way to see how #if and defined() evaluation works, and it is useful for stripping configuration branches out of old code.",
+  "status": "unknown. The homepage shows a cppp-2.9 tarball and no release date or commit history. I did not open the Sourcehut page, so I cannot say when the last change was made.",
+  "caveats": "Licensed under GPL v2 or, at the user's option, any later version. Only conditional inclusion is handled, and comparisons against anything other than integer constants are left indeterminate. A test that depends on another macro's value stays unresolved unless that macro is also given on the command line. The author warns that the central logic is messy and opaque: \"Use the program, not the source.\"",
+  "quotes": [
+   "cppp is a \"partial C preprocessor\". It does a tiny fraction of the job of the C preprocessor",
+   "cppp is mainly useful in dealing with legacy codebases, where #ifdef statements have crept in over time, to the general detriment of legibility.",
+   "Use the program, not the source."
+  ],
+  "links": [
+   {
+    "label": "cppp homepage (Brian Raiter)",
+    "url": "https://www.muppetlabs.com/~breadbox/software/cppp.html"
+   }
+  ],
+  "fetch_log": [
+   "https://www.muppetlabs.com/~breadbox/software/cppp.html: fetched OK. Homepage text is complete and includes the examples and license notes. The Sourcehut and tarball links were shown as labels with no URL, so I did not fetch them."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Its unusual partial evaluation resolves known C configuration branches while preserving unknown ones, making preprocessor logic easier to inspect and legacy code easier to simplify."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "cppp",
+  "tldr": "A partial C preprocessor that resolves only the #ifdef-style conditionals you name and leaves everything else untouched, for cleaning old code.",
+  "deeper_look": "cppp reads C source on input and writes C source on output. You tell it which macros are defined (-D) or undefined (-U), and it resolves the conditionals that test them: #ifdef, #ifndef, #if, #elif, #elifdef and #elifndef. Branches that can no longer be taken are removed, and the surviving branch is kept without its directive lines. It does not expand macros or do any of the preprocessor's other work.\n\nThe interesting part is what it does with questions it cannot answer. A macro it has not been told about is treated as indeterminate, and the conditional that tests it passes through. If an #if expression is only partly decided, cppp rewrites it to keep just the undecided part. Numeric constants given with -D, such as MYLIB_VERSION=0x0102, can be used in integer comparisons, so a version check like `MYLIB_VERSION >= ((1 << 8) | 13)` gets evaluated and one side of it disappears.\n\nThe author, Brian Raiter, wrote it for legacy codebases where #ifdef statements have piled up over time and hurt legibility. He first wrote it as a learning exercise, then said it later saved him from a tedious and error-prone cleanup. The idea underneath is partial evaluation: decide what you can, leave the rest alone. It is a good way to see how the preprocessor's conditional logic works, since you can feed it a file and watch exactly which parts collapse.",
+  "install": "brew install cppp",
+  "try_this": [
+   {
+    "cmd": "cppp -DFOO",
+    "what_happens": "Treats FOO as defined, so the FOO branch is kept and the #else branch is dropped."
+   },
+   {
+    "cmd": "cppp -UFOO -UBAZ",
+    "what_happens": "Treats FOO and BAZ as undefined, so the #ifdef FOO branch is removed and the #ifndef BAZ branch is kept."
+   },
+   {
+    "cmd": "cppp -DMYLIB_VERSION=0x0102",
+    "what_happens": "Assigns a numeric value, so a test like MYLIB_VERSION >= ((1 << 8) | 13) evaluates to false and the older API branch is kept."
+   }
+  ],
+  "whats_unique": "It is deliberately partial: it resolves only what it is told about and passes everything else through unchanged, rather than doing a full preprocessing pass like the standard preprocessor.",
+  "caveats": "The homepage gives no release date or commit history, so maintenance status is unknown, and the author warns the source is messy: \"Use the program, not the source.\"",
+  "commitment": "quick",
+  "category": "languages-and-oddities",
+  "tags": [
+   "quick",
+   "c",
+   "preprocessor",
+   "legacy-code",
+   "cli"
+  ],
+  "links": [
+   {
+    "label": "cppp homepage (Brian Raiter)",
+    "url": "https://www.muppetlabs.com/~breadbox/software/cppp.html"
+   }
+  ]
+ }
+}

@@ -1,0 +1,88 @@
+{
+ "name": "hack-browser-data",
+ "desc": "Command-line tool for decrypting and exporting browser data",
+ "homepage": "https://github.com/moonD4rk/HackBrowserData",
+ "installs_365d": 223,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering"
+ ],
+ "why": "Decrypts browser credential stores, which reveals how browsers protect local secrets, though it is security-sensitive and a bit narrow.",
+ "brief": {
+  "what_it_is": "HackBrowserData is a command-line tool (executable hack-browser-data) that decrypts and exports data from browsers on Windows, macOS and Linux. It reads local browser profile files, decrypts them with the user's keys, and writes passwords, cookies, history, bookmarks, credit cards, downloads, localStorage, sessionStorage and extensions to output files. Output is JSON by default, with CSV and a Cookie-Editor cookie format also available. It covers most Chromium-based browsers and Firefox on all three OSes, and Safari on macOS.",
+  "why_it_exists": "The README frames it as a tool for security research. The disclaimer says it is 'only intended for security research' and that users are responsible for their own legal liability. It is also part of the 404Team StarLink-Galaxy project.",
+  "how_it_works": "It locates each browser's profile directory, reads the SQLite and key files (including through a locked-file bypass for live files on Windows), and decrypts them using the platform's secret store, such as DPAPI on Windows, the macOS Keychain (or a keychain password passed with --keychain-pw), or Linux keyring-based keys. For Chrome 127+ cookies on Windows it needs a separate C payload for App-Bound Encryption. The README also describes a cross-host workflow: dumpkeys exports master keys from the origin host as JSON, archive packs the relevant files into a zip, and restore decrypts them offline on another machine, even for browsers the analyst's OS cannot run.",
+  "commands_seen": [
+   {
+    "cmd": "go build ./cmd/hack-browser-data/",
+    "context": "Builds the binary from source on the local platform (Go 1.20+ required)."
+   },
+   {
+    "cmd": "make payload",
+    "context": "Builds the Zig-compiled C payload for Windows App-Bound Encryption (outputs crypto/windows/payload/abe_extractor_amd64.bin)."
+   },
+   {
+    "cmd": "make build-windows",
+    "context": "Builds hack-browser-data.exe with the ABE payload embedded, enabling Chromium 127+ cookie decryption on Windows."
+   },
+   {
+    "cmd": "hack-browser-data dumpkeys -o keys.json",
+    "context": "Cross-host step 1 on the origin host: exports Chromium master keys to keys.json, written with 0600 permissions."
+   },
+   {
+    "cmd": "hack-browser-data archive  -o browser-data.zip",
+    "context": "Cross-host step 2 on the origin host: packs only the files needed for decryption into a zip."
+   },
+   {
+    "cmd": "hack-browser-data restore --keys keys.json --data-zip browser-data.zip",
+    "context": "Cross-host step 3 on the analyst host: decrypts the copied data offline using the exported keys."
+   },
+   {
+    "cmd": "ssh origin \"hack-browser-data dumpkeys\" | hack-browser-data restore --keys - --data-zip browser-data.zip",
+    "context": "Streams keys over SSH so keys.json never touches disk on the analyst host."
+   },
+   {
+    "cmd": "hack-browser-data restore --keys keys.json --data-dir ./chrome-userdata -b chrome",
+    "context": "Restores one browser from a hand-copied User Data folder, with no archive step."
+   },
+   {
+    "cmd": "hack-browser-data dump -b chrome -c password,cookie",
+    "context": "Default-mode extraction limited to Chrome, passwords and cookies."
+   },
+   {
+    "cmd": "hack-browser-data dump -f cookie-editor",
+    "context": "Exports cookies only, in the JSON array format used by the Cookie-Editor browser extension."
+   }
+  ],
+  "install_notes": "Most users are told to download a release binary from the GitHub releases page. Building from source needs Go 1.20 or newer and git clone of the repo. Windows builds for Chromium 127+ App-Bound Encryption cookies need Zig 0.13+ (the Makefile calls zig cc; brew install zig on macOS, scoop install zig on Windows) and then make payload followed by make build-windows; MinGW-w64 gcc is an option if make payload is bypassed. Safari extraction on macOS needs Full Disk Access granted in System Settings \u2192 Privacy & Security. Some Chromium browsers on macOS prompt for the current user password, or you can pass --keychain-pw. No accounts or servers are required.",
+  "standout": "It is built for offline, cross-machine decryption. dumpkeys exports the platform-bound master keys once, so the data can be decrypted on a different OS, including for browsers such as Sogou or QQ that only ship on Windows. Compared with simple password dumpers, it covers many Chromium forks and Safari, and it has a Cookie-Editor export format. Note that the scout's 'a bit narrow' label does not match the README, which lists about 20 browsers and nine data categories.",
+  "status": "Unknown from the README alone. The README has active-looking CI badges for lint, build, release, test and codecov, plus a Contributors list and a Star History chart, and it mentions a Windows App-Bound Encryption workaround and a macOS 26.4 issue, which suggests recent upkeep. I did not fetch the releases or commits page, so I cannot give a last-release or last-commit date.",
+  "caveats": "Security-sensitive: it decrypts saved passwords, cookies and credit cards, and the README itself says it is for security research only. keys.json contains plaintext master keys. Windows Defender and other antivirus tools may flag it as a virus. Chrome 127+ cookies on Windows need the separate ABE payload build, which the standard build does not include. Password decryption may fail on macOS 26.4 or later. Some Chromium browsers on macOS need the user's password. Safari requires Full Disk Access. Credit cards and sessionStorage are not supported for Firefox or Safari, and credit cards are not supported for Safari either. Several browsers (QQ, 360, Sogou, DC, DuckDuckGo) are Windows-only on the local side, and the README points to cross-host decryption for those. OperaGX, Yandex, CocCoc, Arc and Opera on Linux have partial OS coverage. The Go source build needs Go 1.20+.",
+  "quotes": [
+   "`HackBrowserData` is a command-line tool for decrypting and exporting browser data (passwords, history, cookies, bookmarks, credit cards, download history, localStorage, sessionStorage and extensions) from the browser.",
+   "It can also decrypt data **across machines and operating systems**: export the master keys on the origin host, then decrypt a copy of the data offline on any other host",
+   "> Disclaimer: This tool is only intended for security research. Users are responsible for all legal and related liabilities resulting from the use of this tool."
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repository",
+    "url": "https://github.com/moonD4rk/HackBrowserData"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/moonD4rk/HackBrowserData/releases"
+   },
+   {
+    "label": "Contribution Guide",
+    "url": "https://github.com/moonD4rk/HackBrowserData/blob/main/CONTRIBUTING.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/moonD4rk/HackBrowserData (homepage, GitHub README): worked, full README returned"
+  ]
+ }
+}

@@ -1,0 +1,105 @@
+{
+ "name": "goresym",
+ "desc": "Go symbol recovery tool",
+ "homepage": "https://github.com/mandiant/GoReSym",
+ "installs_365d": 247,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "reverse-engineering",
+  "afternoon",
+  "binary"
+ ],
+ "why": "Recovers symbols from stripped Go binaries, a satisfying way into how Go's runtime metadata is laid out.",
+ "brief": {
+  "what_it_is": "GoReSym is a command-line Go symbol parser that reads a compiled Go binary and prints JSON (or a flat text listing with -human) describing it. It reports program metadata such as CPU architecture, OS, endianness and compiler version, plus function names with start and end addresses and source locations, file and line-number data, and embedded type and interface structures. It is cross-platform and handles ELF, Mach-O and PE files, and it can recover this information from stripped or partly damaged binaries.",
+  "why_it_exists": "Go binaries that are stripped, or packed with tools such as UPX, lose much of the symbol information that reverse engineers rely on. The README frames GoReSym as a way to recover that metadata from the runtime structures Go embeds in every binary, for reverse-engineering work. It also points to a Mandiant blog post on Go symbol recovery.",
+  "how_it_works": "It is built on the upstream Go compiler's debug/gosym and runtime code, which it extends to find and parse the pclntab and moduledata structures even when section layout is unusual or the binary is stripped. It can scan for the pclntab by a signature near runtime_modulesinit and repair a modified pclntab magic. Type recovery walks typelinks from the moduledata table, and the internal structures it parses are defined in objfile/internals.",
+  "commands_seen": [
+   {
+    "cmd": "go build",
+    "context": "Builds the GoReSym binary from source using a recent Go compiler."
+   },
+   {
+    "cmd": "GoReSym.exe -t -d -p /path/to/input.exe",
+    "context": "Example run: -t recovers type names, -d includes standard Go package names along with user packages, and -p prints file paths embedded in the pclntab. Output is JSON by default."
+   }
+  ],
+  "install_notes": "Pre-built linux, macos and windows binaries are on the GitHub Releases tab. To build from source, run go build with a recent Go compiler. No accounts or extra runtimes are mentioned. The README also describes an optional IDAPython script, IDAPython/goresym_rename.py, which reads GoReSym's JSON output and sets symbols and labels in IDA Pro.",
+  "standout": "Most symbol tools depend on intact symbol tables. GoReSym instead reads the runtime's own metadata, so it can still work on stripped binaries, UPX-mangled files and binaries with split data sections. The README also says the project keeps pace with new Go runtime releases, with Go 1.24 support listed in its changes.",
+  "status": "Appears maintained. The README's Changes section lists Go 1.24 parsing support, and the project has an MIT license and a Releases tab. I did not see a release date or last-commit date, so recent activity is inferred from that changelog entry alone.",
+  "caveats": "Type parsing requires the Go runtime version to be detected correctly. For some stripped binaries you must pass -v with the version string, and the README warns that type parsing will fail if that version is wrong. Types cannot be extracted from Go versions before 1.5. The pclntab parser covers layouts from 1.2 onward, and the README says the pclntab version can lag the runtime version. The source is partly copied from the Go tree with exported internals, and the README says the maintainers keep these modifications by hand, which makes upgrading the Go dependency work. The README does not state a platform limit for the tool itself beyond the supported architectures and file formats.",
+  "quotes": [
+   "GoReSym is a Go symbol parser that extracts program metadata (such as CPU architecture, OS, endianness, compiler version, etc), function metadata (start & end addresses, names, sources), filename and line number metadata, and embedded structures and types.",
+   "we aim to _always support the latest runtime versions_",
+   "It's not a great situation, but it's not easily avoidable."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/mandiant/GoReSym"
+   },
+   {
+    "label": "Mandiant blog: Golang internals symbol recovery",
+    "url": "https://www.mandiant.com/resources/blog/golang-internals-symbol-recovery"
+   },
+   {
+    "label": "IDAPython rename script",
+    "url": "https://github.com/mandiant/GoReSym/blob/master/IDAPython/goresym_rename.py"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/mandiant/GoReSym: fetched successfully, README returned. No further fetches were needed."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It recovers symbols and type information from stripped Go binaries by parsing runtime metadata, offering a revealing way to take compiled programs apart."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "GoReSym",
+  "tldr": "Reads a compiled Go binary, even a stripped one, and prints its function names, source paths, and types as JSON by pulling them out of Go's own runtime metadata.",
+  "deeper_look": "GoReSym is a command-line parser from Mandiant for compiled Go programs. Point it at an ELF, Mach-O or PE file and it reports the CPU architecture, OS, endianness and compiler version. It also lists functions with start and end addresses, names and source locations, file and line-number data, and the type and interface structures embedded in the binary. Output is JSON by default, or a flat text listing with `-human`.\n\nIt exists because reverse engineers lose a lot when a Go binary is stripped or packed with something like UPX. The usual symbol table is gone. But every Go binary carries its own runtime metadata, because the runtime needs it for stack traces and reflection. GoReSym reads that instead of the symbol table.\n\nUnder the hood it extends the Go toolchain's own `debug/gosym` and runtime code. It locates the pclntab and moduledata structures even when section layout is unusual, can scan for the pclntab by a signature near `runtime_modulesinit`, and can repair a modified pclntab magic. Type recovery walks the typelinks from the moduledata table.\n\nThe idea underneath is that a compiled program still describes itself. Go has to keep enough of a map of its own code to run, and stripping the obvious names does not remove that map. Reading it is a good way into how a language runtime lays out its internals. The README also describes an optional IDAPython script that feeds the JSON into IDA Pro to set symbols and labels.",
+  "install": "brew install goresym\n# Alternatively, pre-built linux, macos and windows binaries are on the GitHub Releases tab, or build from source with `go build` and a recent Go compiler. No accounts or extra runtimes needed. You need a compiled Go binary to point it at.",
+  "try_this": [
+   {
+    "cmd": "goresym --help",
+    "what_happens": "Lists the available flags so you can see what the tool can extract."
+   },
+   {
+    "cmd": "goresym -t -d -p /path/to/input.exe",
+    "what_happens": "Recovers type names (-t), includes standard Go package names alongside user packages (-d), and prints file paths embedded in the pclntab (-p), as JSON."
+   }
+  ],
+  "whats_unique": "Most symbol tools depend on intact symbol tables. GoReSym reads the Go runtime's own metadata, so it still works on stripped binaries, UPX-mangled files and binaries with split data sections.",
+  "caveats": "Type parsing needs the Go version detected correctly; on some stripped binaries you must pass -v with the version string, and a wrong one makes type parsing fail, and types cannot be extracted from Go versions before 1.5.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "reverse-engineering",
+   "binary",
+   "go",
+   "symbols",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/mandiant/GoReSym"
+   },
+   {
+    "label": "Mandiant blog: Golang internals symbol recovery",
+    "url": "https://www.mandiant.com/resources/blog/golang-internals-symbol-recovery"
+   },
+   {
+    "label": "IDAPython rename script",
+    "url": "https://github.com/mandiant/GoReSym/blob/master/IDAPython/goresym_rename.py"
+   }
+  ]
+ }
+}

@@ -1,0 +1,144 @@
+{
+ "name": "urh",
+ "desc": "Universal Radio Hacker",
+ "homepage": "https://github.com/jopohl/urh",
+ "installs_365d": 1164,
+ "deprecated": true,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "afternoon",
+  "gui",
+  "reverse-engineering"
+ ],
+ "why": "Universal Radio Hacker is a strong SDR protocol analyser, but the formula is deprecated, which lowers its standing.",
+ "brief": {
+  "what_it_is": "Universal Radio Hacker (URH) is a desktop suite for investigating wireless protocols, with native support for many common software defined radios. It takes raw radio signals from an SDR and demodulates them, automatically detecting modulation parameters so the bits and bytes in the signal can be read. It also offers customizable decodings for encoded data, tools to infer protocol fields and message types, a fuzzing component for stateless protocols, and a simulation environment for stateful attacks. It runs on Windows, Linux and macOS.",
+  "why_it_exists": "The README frames URH as a complete suite for wireless protocol investigation, aimed at identifying the bits and bytes that fly over the air and at reverse-engineering protocols. The WOOT'18 paper it cites describes it as a suite for analyzing and attacking stateful wireless protocols.",
+  "how_it_works": "URH demodulates captured signals using automatically detected modulation parameters, then applies user-defined decodings to undo encodings such as CC1101 data whitening. For reverse-engineering, users can assign protocol fields and message types by hand, or let URH automatically infer fields using what the README calls rule-based intelligence. The README does not describe the internals further.",
+  "commands_seen": [
+   {
+    "cmd": "pipx install urh",
+    "context": "Recommended Linux install from PyPI; the README says it ships with all native extensions precompiled."
+   },
+   {
+    "cmd": "brew install urh",
+    "context": "Installs the Homebrew formula on macOS (the formula is currently marked deprecated, see caveats)."
+   },
+   {
+    "cmd": "git clone https://github.com/jopohl/urh/",
+    "context": "First step of running from source without installing; the README also uses it before a plain setup.py install."
+   },
+   {
+    "cmd": "cd urh/src/urh",
+    "context": "Changes into the source directory before launching without installation."
+   },
+   {
+    "cmd": "PYTHONPATH=.. ./main.py",
+    "context": "Runs URH straight from the source tree; the C++ extensions are built on first use."
+   },
+   {
+    "cmd": "python3 -m pip install setuptools",
+    "context": "Prerequisite for installing from source with setup.py."
+   },
+   {
+    "cmd": "python setup.py install",
+    "context": "Installs URH from a cloned source tree; afterwards start it by typing urh."
+   },
+   {
+    "cmd": "urh",
+    "context": "Launches the application once installed (named in the README as typing urh in a terminal)."
+   }
+  ],
+  "install_notes": "Windows: use the installer from the GitHub releases page; if a missing api-ms-win-crt-runtime-l1-1-0.dll error appears, run Windows Update or install KB2999226. Linux: pipx is recommended because native extensions come precompiled; to use an SDR as a non-root user, install the udev rules documented in the wiki. Distro packages exist for Arch, Gentoo, Fedora, openSUSE, NixOS and FreeBSD, but you must install the matching -dev package for your SDR (for example hackrf-dev) before installing URH. A Docker image on Docker Hub includes all native backends. macOS: the DMG is recommended on at least macOS 13. From source, you need setuptools, and the C++ extensions are built before first use. The brew formula depends on hackrf, numpy, pyqt and python@3.14 and provides urh and urh_cli binaries.",
+  "standout": "Most tools in this space cover one step, such as capturing or decoding. URH puts demodulation, automatic detection of modulation parameters, customizable decodings, rule-based automatic protocol field inference, fuzzing and stateful simulation in one GUI suite, which is an unusually complete end-to-end workflow for reverse-engineering. Its rule-based field inference, described in a USENIX WOOT'19 paper, is the feature the README highlights most.",
+  "status": "Probably maintained, but not confirmed. Evidence: the GitHub README has an active CI badge and PyPI and Repology badges; the Homebrew page lists stable 2.10.0 with bottles for current macOS and Linux and about 1,162 installs on request in the last 365 days. The README gives no release date and I did not check the commit history. The Homebrew formula itself is marked deprecated with a disable date of 2027-07-17, and the page gives no reason. That status applies to the packaging, not clearly to the upstream project.",
+  "caveats": "The scout note calls the formula deprecated, and the Homebrew page confirms it, but that is a packaging status with a future disable date, not evidence the project is dead. Licence is GPL-3.0-only per the Homebrew page. The Homebrew page also lists a known setuptools advisory (GHSA-h35f-9h28-mq5c) for the current version; this is a dependency issue and I did not verify whether it affects URH. Building from source needs the SDR -dev packages installed first, and the README says the C++ extensions are built before first use. Non-root SDR access needs udev rules. The README does not say which devices are supported beyond linking to the wiki list. The fuzzing component targets stateless protocols only, and the README calls the simulation environment the tool for stateful attacks.",
+  "quotes": [
+   "The Universal Radio Hacker (URH) is a complete suite for wireless protocol investigation with native support for many common Software Defined Radios.",
+   "As data often gets encoded before transmission, URH offers customizable decodings to crack even sophisticated encodings like CC1101 data whitening.",
+   "Note, before first usage the C++ extensions will be built."
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repository",
+    "url": "https://github.com/jopohl/urh"
+   },
+   {
+    "label": "Official userguide (PDF)",
+    "url": "https://github.com/jopohl/urh/releases/download/v2.0.0/userguide.pdf"
+   },
+   {
+    "label": "Supported devices (wiki)",
+    "url": "https://github.com/jopohl/urh/wiki/Supported-devices"
+   },
+   {
+    "label": "WOOT'18 paper",
+    "url": "https://www.usenix.org/conference/woot18/presentation/pohl"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/jopohl/urh: worked, README returned in full",
+   "https://formulae.brew.sh/formula/urh: worked, used to check the scout note that the formula is deprecated (it is, with a disable date of 2027-07-17) and to get the current stable version and dependencies"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "URH makes over-the-air protocol reverse engineering tangible, combining signal demodulation, automatic field inference, and attack simulation in an unusually complete suite."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Universal Radio Hacker (urh)",
+  "tldr": "A GUI suite that turns raw SDR captures into readable bits, then helps you work out what the protocol fields mean.",
+  "deeper_look": "Universal Radio Hacker, or URH, is a desktop application for figuring out how wireless devices talk. You feed it a signal from a software defined radio, or a saved capture, and it demodulates the signal. It detects the modulation parameters automatically, so you end up looking at bits and bytes rather than a waveform.\n\nOnce you have bits, the harder part starts. Transmitters often encode data before sending it, and URH has customizable decodings to undo that. The README names CC1101 data whitening as one example. From there you can label protocol fields and message types by hand, or let URH infer them with what the README calls rule-based intelligence. That inference is described in a USENIX WOOT'19 paper.\n\nThe idea underneath is that the radio side of reverse engineering is a pipeline: capture, demodulate, decode, find structure, then test your guess. URH puts each step in one place. It includes a fuzzing component for stateless protocols and a simulation environment for stateful ones, so you can replay and probe what you learned. The WOOT'18 paper describes it as a suite for analyzing and attacking stateful wireless protocols.\n\nThe Homebrew formula is marked deprecated, with a disable date of 2027-07-17. That is a packaging status, and the brief does not say the upstream project is dead. The PyPI install is the fallback.",
+  "install": "brew install urh\n# The formula is deprecated. On Linux the README recommends: pipx install urh\n# Capturing live signals needs a supported SDR (the brew formula pulls in hackrf). Non-root access on Linux needs the udev rules from the wiki.",
+  "try_this": [
+   {
+    "cmd": "urh",
+    "what_happens": "Launches the GUI, where you can open a capture file or connect an SDR and start demodulating."
+   },
+   {
+    "cmd": "urh_cli --help",
+    "what_happens": "Lists the options of the command-line binary that the formula installs alongside the GUI."
+   },
+   {
+    "cmd": "pipx install urh",
+    "what_happens": "Installs from PyPI with the native extensions precompiled, the README's recommended route on Linux."
+   }
+  ],
+  "whats_unique": "Most tools in this space handle one step, such as capturing or decoding. URH covers demodulation, decoding, automatic field inference, fuzzing and stateful simulation in a single GUI.",
+  "caveats": "The Homebrew formula is deprecated (disable date 2027-07-17), and live capture needs a supported SDR; you can still explore without one.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "sdr",
+   "gui",
+   "reverse-engineering",
+   "protocols"
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repository",
+    "url": "https://github.com/jopohl/urh"
+   },
+   {
+    "label": "Official userguide (PDF)",
+    "url": "https://github.com/jopohl/urh/releases/download/v2.0.0/userguide.pdf"
+   },
+   {
+    "label": "Supported devices (wiki)",
+    "url": "https://github.com/jopohl/urh/wiki/Supported-devices"
+   },
+   {
+    "label": "WOOT'18 paper",
+    "url": "https://www.usenix.org/conference/woot18/presentation/pohl"
+   }
+  ]
+ }
+}

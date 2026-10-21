@@ -1,0 +1,146 @@
+{
+ "name": "landrun",
+ "desc": "Lightweight, secure sandbox for running Linux processes using Landlock LSM",
+ "homepage": "https://github.com/Zouuup/landrun",
+ "installs_365d": 46,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "tui",
+  "reverse-engineering"
+ ],
+ "why": "Runs processes under Landlock LSM restrictions, a good door into kernel sandboxing you rarely see.",
+ "brief": {
+  "what_it_is": "Landrun is a command-line sandbox for Linux. You put it in front of any command, such as `landrun --rox /usr --ro /etc --connect-tcp 443 nc kernel.org 443`, and it runs that command under Landlock restrictions. You list which paths the process may read, write, or execute, and which TCP/UDP ports it may bind or connect to. The command's output is the same as it would be unsandboxed, and any access outside the rules is denied by the kernel. It is written in Go and needs no root privileges.",
+  "why_it_exists": "The README presents it as a practical way to sandbox any command with fine-grained filesystem and network controls, with \"No root. No containers. No SELinux/AppArmor configs.\" It describes itself as \"Think firejail, but with kernel-level security and minimal overhead.\"",
+  "how_it_works": "Landrun wraps the Landlock Linux Security Module, which lets an unprivileged process restrict itself and its future children. It builds a ruleset from the --ro, --rox, --rw, --rwx, --bind-tcp, --connect-tcp, --bind-udp, --connect-udp and --unix flags, then applies it before running the target command. The README targets Landlock ABI v10 by default and uses the go-landlock package (v0.10.0). Its --best-effort mode falls back to whatever ABI the running kernel supports. The README also covers IPC scoping for abstract UNIX sockets and signals, which is on by default, and audit logging of denials.",
+  "commands_seen": [
+   {
+    "cmd": "go install github.com/zouuup/landrun/cmd/landrun@latest",
+    "context": "Quick install via the Go toolchain (Go 1.24 or later)."
+   },
+   {
+    "cmd": "landrun [options] <command> [args...]",
+    "context": "Basic syntax as given in the README."
+   },
+   {
+    "cmd": "landrun --rox /usr/bin/ls --rox /usr/lib --ro /home ls /home",
+    "context": "Example 1: exec access to one binary plus read-only access to /home."
+   },
+   {
+    "cmd": "landrun --rox /usr --ro /etc --env HOME --env PATH --env CUSTOM_VAR=my_value -- env",
+    "context": "Example 12: passes HOME, PATH and a custom variable into the sandbox, since no environment is passed by default."
+   },
+   {
+    "cmd": "landrun --rox /usr --connect-tcp 443 nc kernel.org 443",
+    "context": "Example 8, a DNS-capable client allowed to connect only to port 443 (the README's example also includes --ro /etc,/usr and --log-level debug)."
+   },
+   {
+    "cmd": "landrun --rox /usr/bin --ro /lib,/lib64,/var/www --rwx /var/log --bind-tcp 80,443 /usr/bin/nginx",
+    "context": "Example 9: a web server allowed to bind only ports 80 and 443 with selected read and write paths."
+   },
+   {
+    "cmd": "landrun ls",
+    "context": "Example 10: with no paths or network rules, landrun applies maximum restrictions, so this runs in a maximum-security jail."
+   },
+   {
+    "cmd": "landrun --rox /usr strace -f -e trace=all ls",
+    "context": "Example 11: suggested debugging step when permission denied errors are unclear."
+   },
+   {
+    "cmd": "landrun --ldd --add-exec /usr/bin/true",
+    "context": "Example 15: --ldd adds required shared libraries to --rox, and --add-exec adds the target binary."
+   },
+   {
+    "cmd": "landrun --best-effort --rox /usr --ro /etc --unix /run/postgresql/.s.PGSQL.5432 -- psql ...",
+    "context": "Example 16: allows connecting to one pathname UNIX socket on ABI v9+ kernels."
+   },
+   {
+    "cmd": "grep -E 'landlock|lsm=' /boot/config-$(uname -r)",
+    "context": "Troubleshooting step to check that Landlock is enabled in the kernel config; the output should include CONFIG_SECURITY_LANDLOCK=y and lsm=landlock,..."
+   }
+  ],
+  "install_notes": "Requires Linux kernel 5.13 or later with Landlock enabled. TCP restrictions need kernel 6.7 or later, and UDP restrictions need 7.2 or later (ABI v10). Building from source needs Go 1.24 or later: clone the repo, run `go build -o landrun cmd/landrun/main.go`, then copy the binary to /usr/local/bin. Distro packages are listed: Arch AUR (landrun and landrun-git), Slackware via SlackBuilds, and `sudo apt install landrun` on Ubuntu 26.04 LTS and Debian forky. No root is needed to run the sandbox itself. Systems without Landlock enabled will need the kernel config checked. Most real use will need --best-effort on older kernels, and paths such as /usr, /usr/lib, and /lib64 usually have to be granted explicitly. There is no first-run configuration. A systemd unit example is included in the README.",
+  "standout": "Landrun brings Landlock, a kernel feature most people never touch, to a simple command-line wrapper. Users get path- and port-level restrictions with no root, no container, and no policy language to write. The README also documents Landlock's newer features, including UDP port control, IPC scoping, and pathname UNIX socket control, with a kernel-version table to match.",
+  "status": "unknown. The README has no release dates, changelog, or last-commit information, and I did not open the repository's releases or commit history. Signs of ongoing packaging are that it is in Ubuntu 26.04 and Debian forky and has several AUR and SlackBuild maintainers. It targets recent kernel features such as ABI v10 and Linux 7.2 UDP restrictions. The README has a Contributing section that invites pull requests.",
+  "caveats": "Strict mode fails on kernels below the requested ABI, so most users will need --best-effort. TCP restrictions do not apply to Multipath TCP, and since Go 1.24 net.Listen defaults to MPTCP, so Go servers may not be restrictable (kernel bug landlock-lsm/linux#54). Files opened before sandboxing are not restricted. Shared libraries need exec permission, so the rules are not always as minimal as they look. Linux only. The README does not state a license in what I read. It also links an article titled \"Binaries are not trustworthy\", which suggests building from source.",
+  "quotes": [
+   "Think firejail, but with kernel-level security and minimal overhead.",
+   "No root. No containers. No SELinux/AppArmor configs.",
+   "Landlock is an access-control system that enables processes to securely restrict themselves and their future children."
+  ],
+  "links": [
+   {
+    "label": "Landrun GitHub repository (homepage)",
+    "url": "https://github.com/Zouuup/landrun"
+   },
+   {
+    "label": "Landlock project site",
+    "url": "https://landlock.io"
+   },
+   {
+    "label": "go-landlock, the Go bindings used by landrun",
+    "url": "https://github.com/landlock-lsm/go-landlock"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/Zouuup/landrun (homepage, fetched; worked, README returned in full)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A simple unprivileged wrapper makes Linux\u2019s lesser-known Landlock kernel sandbox tangible, with filesystem, network, and IPC restrictions worth exploring."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "landrun",
+  "tldr": "Put landrun in front of any Linux command and the kernel itself restricts which files and network ports it can touch, with no root or containers.",
+  "deeper_look": "Landrun is a small command-line wrapper around Landlock, a Linux security module that lets an unprivileged process restrict itself and its future children. You list what the command may read, write, or execute, and which TCP or UDP ports it may bind or connect to. Landrun builds that ruleset, applies it, and then runs your command. Anything outside the rules is denied by the kernel, and the command's output is otherwise unchanged.\n\nThe README's pitch is \"No root. No containers. No SELinux/AppArmor configs.\" and it describes the tool as \"Think firejail, but with kernel-level security and minimal overhead.\" It is written in Go on top of the go-landlock package.\n\nThe interesting part is the idea underneath. With no flags at all, `landrun ls` runs in a maximum-restriction jail, and you then add permissions one at a time until the program works. The denial errors teach you what a program actually touches: which libraries it loads, which config it reads, which ports it opens. The README suggests running under strace when the errors are unclear. Landrun also covers newer Landlock features such as UDP port control, IPC scoping, and pathname UNIX socket control, with a kernel-version table to match.",
+  "install": "brew install landrun\n# Needs Linux kernel 5.13+ with Landlock enabled. TCP rules need kernel 6.7+, UDP rules need 7.2+.\n# Alternative: go install github.com/zouuup/landrun/cmd/landrun@latest (Go 1.24+)",
+  "try_this": [
+   {
+    "cmd": "landrun ls",
+    "what_happens": "With no rules given, landrun applies maximum restrictions, so you see the command running in a jail where it can reach almost nothing."
+   },
+   {
+    "cmd": "landrun --rox /usr --connect-tcp 443 nc kernel.org 443",
+    "what_happens": "Runs nc with exec access to /usr and permission to connect only to TCP port 443."
+   },
+   {
+    "cmd": "landrun --rox /usr strace -f -e trace=all ls",
+    "what_happens": "Traces the sandboxed ls to show which accesses are being denied, the README's suggested debugging step."
+   }
+  ],
+  "whats_unique": "It turns Landlock, a kernel feature most people never touch, into a one-line wrapper with path and port rules. There is no root, no container, and no policy language to learn.",
+  "caveats": "Linux only, strict mode fails on kernels older than the requested Landlock ABI so most people will need --best-effort, and Go servers may escape TCP rules because of a Multipath TCP quirk.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "linux",
+   "sandbox",
+   "landlock",
+   "security",
+   "kernel"
+  ],
+  "links": [
+   {
+    "label": "Landrun GitHub repository",
+    "url": "https://github.com/Zouuup/landrun"
+   },
+   {
+    "label": "Landlock project site",
+    "url": "https://landlock.io"
+   },
+   {
+    "label": "go-landlock, the Go bindings used by landrun",
+    "url": "https://github.com/landlock-lsm/go-landlock"
+   }
+  ]
+ }
+}

@@ -1,0 +1,92 @@
+{
+ "name": "digitemp",
+ "desc": "Read temperature sensors in a 1-Wire net",
+ "homepage": "https://www.digitemp.com/",
+ "installs_365d": 14,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "protocol"
+ ],
+ "why": "Talks to Dallas 1-Wire temperature sensors over a serial adapter, a hands-on door into a quirky bus protocol.",
+ "brief": {
+  "what_it_is": "DigiTemp is a command-line program for Linux and other Unix-like systems that reads values from Dallas/Maxim 1-Wire devices attached through a serial or USB adapter. Its main job is reading temperature sensors (DS18S20, DS1820, DS18B20, DS1822), but the homepage also lists the DS2438 battery monitor, DS2422 and DS2423 counters, the DS2409 MicroLAN coupler used in 1-Wire hubs, and the AAG TAI-8540 humidity sensor. It understands hubs with devices on different branches of the network. The homepage does not describe the output format.",
+  "why_it_exists": "The homepage presents it as \"a simple to use program for reading values from 1-wire devices\" and says it can be useful \"wherever you need to monitor temperatures,\" citing deployments from \"backyard temperature pagodas to government computer clusters.\"",
+  "how_it_works": "",
+  "commands_seen": [],
+  "install_notes": "The homepage gives no build or install steps. The release notes mention a Makefile, git tag and archive targets, and an overridable CFLAGS, so it is built from source. The three executables in the package (digitemp_DS2490, digitemp_DS9097, digitemp_DS9097U) correspond to different 1-Wire adapter types, so you pick the one that matches your hardware. The software is tied to hardware: you need a 1-Wire adapter and sensors. The homepage says the author no longer sells hardware, and that iButtonLink sells DT1A temperature modules, or you can build your own from the published Eagle CAD and Gerber files.",
+  "standout": "It is a small, hands-on way into the 1-Wire bus, a quirky protocol where many sensors share one data wire and are addressed individually. The package ships a separate binary per adapter family (DS2490 USB, DS9097 serial, DS9097U), which reflects how much the hardware choice matters. The open hardware design files for the sensor modules are also unusual.",
+  "status": "Quiet but maintained. The homepage announces v3.7.1 as released, with a changelog that includes patches from several contributors. The copyright line reads \"2003-2018 by Brian C. Lane\", and the changelog's copyright bump is to 2015, so the last visible activity is around 2015 to 2018. I could not find an exact release date or a recent commit. The homepage was fetched; the software and documentation pages were not reachable.",
+  "caveats": "The homepage says \"There will be no future support for Windows.\" Older DOS and Windows versions exist but are unsupported. The software needs a 1-Wire adapter and sensors, and the homepage does not say which adapter suits which sensor beyond the executable names. The author no longer sells hardware. I could not read the README or documentation, so commands and install details are unverified. The /software page returned HTTP 403 and /documentation returned HTTP 404. No licence was stated on the homepage.",
+  "quotes": [
+   "DigiTemp is a simple to use program for reading values from 1-wire devices.",
+   "NOTE: There will be no future support for Windows.",
+   "DigiTemp has been deployed in a wide range of environments, from backyard temperature pagodas to government computer clusters, it can be useful wherever you need to monitor temperatures."
+  ],
+  "links": [
+   {
+    "label": "DigiTemp homepage",
+    "url": "https://www.digitemp.com/"
+   },
+   {
+    "label": "iButtonLink (sells DT1A modules)",
+    "url": "https://www.digitemp.com/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.digitemp.com/ : OK, homepage text read (not a GitHub repo, so no README)",
+   "https://www.digitemp.com/software : failed, HTTP 403",
+   "https://www.digitemp.com/documentation : failed, HTTP 404"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A practical way to explore the unusual 1-Wire bus, addressing multiple sensors over one data wire; its age and hardware requirements limit confidence, not the idea."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "DigiTemp",
+  "tldr": "Reads Dallas/Maxim 1-Wire temperature sensors from the command line, a hands-on way into a bus where many sensors share one wire.",
+  "deeper_look": "DigiTemp is a command-line program for Unix-like systems that reads values from Dallas/Maxim 1-Wire devices attached through a serial or USB adapter. Its main job is temperature: DS18S20, DS1820, DS18B20 and DS1822 sensors. The homepage also lists the DS2438 battery monitor, the DS2422 and DS2423 counters, the DS2409 MicroLAN coupler used in 1-Wire hubs, and the AAG TAI-8540 humidity sensor. It understands hubs with devices on different branches of the network.\n\nThe homepage calls it \"a simple to use program for reading values from 1-wire devices\" and says it has been deployed \"from backyard temperature pagodas to government computer clusters.\"\n\nThe idea underneath is the 1-Wire bus itself. Many sensors hang off a single data wire, and each one is addressed individually. The package ships one binary per adapter family: digitemp_DS2490 for USB, digitemp_DS9097 and digitemp_DS9097U for serial. That split shows how much the adapter choice matters on this bus. The author also publishes Eagle CAD and Gerber files, so you can build your own sensor modules.",
+  "install": "brew install digitemp\nRequires hardware: a 1-Wire adapter (USB or serial) and one or more sensors. The formula depends on libusb-compat. Pick the executable that matches your adapter.",
+  "try_this": [
+   {
+    "cmd": "digitemp_DS9097U --help",
+    "what_happens": "Prints the options for the serial adapter build, a first look at what the tool can do."
+   },
+   {
+    "cmd": "digitemp_DS2490 --help",
+    "what_happens": "Prints the options for the USB adapter build."
+   },
+   {
+    "cmd": "digitemp_DS9097 --help",
+    "what_happens": "Prints the options for the older passive serial adapter build."
+   }
+  ],
+  "whats_unique": "It is a small, direct way into the 1-Wire bus, with a separate binary for each adapter family. The open hardware design files for the sensor modules are also unusual.",
+  "caveats": "Useless without a 1-Wire adapter and sensors, the author no longer sells hardware, and the project looks quiet since roughly 2015 to 2018, with no Windows support planned.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "1-wire",
+   "sensors",
+   "protocol",
+   "usb",
+   "serial"
+  ],
+  "links": [
+   {
+    "label": "DigiTemp homepage",
+    "url": "https://www.digitemp.com/"
+   }
+  ]
+ }
+}

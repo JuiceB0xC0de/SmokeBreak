@@ -1,0 +1,112 @@
+{
+ "name": "tracy",
+ "desc": "Real-time, nanosecond resolution frame profiler",
+ "homepage": "https://tracy.nereid.pl/",
+ "installs_365d": 802,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "visual",
+  "library",
+  "gui"
+ ],
+ "why": "A nanosecond frame profiler that lets you watch a running program's timing live, a real window into program execution.",
+ "brief": {
+  "what_it_is": "Tracy is a real-time, nanosecond-resolution profiler for games and other applications, which the README describes as a remote telemetry and hybrid frame and sampling profiler. Your program is instrumented with Tracy's client integration, and the timing data streams to the Tracy profiler viewer while the program runs. The README says it covers CPU work (with direct support for C, C++, Lua, Python and Fortran, and third-party bindings for others such as Rust, Zig, C#, OCaml and Odin), GPU work across OpenGL, Vulkan, Direct3D 11/12, Metal, OpenCL, CUDA and WebGPU, memory allocations, locks, and context switches. It also attributes screenshots to captured frames. The brew executables list also includes tracy-capture, tracy-csvexport, tracy-import-chrome, tracy-merge and others, but the README does not describe those tools.",
+  "why_it_exists": "The README frames it as a profiler for games and other real-time applications, where you want to see live, nanosecond-level timing of frames and code rather than post-run summaries.",
+  "how_it_works": "The README does not explain the internals in detail. It says the profiler is hybrid, combining frame and sampling profiling, and that it supports remote telemetry, so the application streams data to the profiler viewer over the network while it runs. The full mechanism is described in the PDF documentation, which I did not open.",
+  "commands_seen": [],
+  "install_notes": "The README points to Releases for compiled Windows x64 binaries (Tracy-<version>.7z) and to tracy.pdf for build instructions. Nothing else about installation, accounts, or runtime setup appeared in the README. The brew install route itself was not described in the README.",
+  "standout": "It combines frame profiling and sampling in one tool, with remote live telemetry, GPU coverage across many graphics and compute APIs, and screenshots tied to captured frames. Those together are less common in a single open profiler.",
+  "status": "unknown. The GitHub README shows no release date or last-commit date, and I did not open the Releases or Changelog pages to check. The README links to video walkthroughs up to v0.8, which says nothing about current activity.",
+  "caveats": "The main documentation is a PDF (tracy.pdf), not web pages. The README lists prebuilt binaries only for Windows x64; other platforms are presumably built from source per the PDF, which I did not read. Languages beyond C, C++, Lua, Python and Fortran rely on third-party bindings of unknown quality. The homepage returned only a JavaScript shell with a 'Downloading...' placeholder and no readable text, so I relied on the GitHub README. No license was visible in the README text I read.",
+  "quotes": [
+   "A real time, nanosecond resolution, remote telemetry, hybrid frame and sampling profiler for games and other applications.",
+   "Direct support is provided for C, C++, Lua, Python and Fortran integration.",
+   "automatically attribute screenshots to captured frames"
+  ],
+  "links": [
+   {
+    "label": "Homepage (interactive demo)",
+    "url": "https://tracy.nereid.pl/"
+   },
+   {
+    "label": "Documentation (tracy.pdf, latest release)",
+    "url": "https://github.com/wolfpld/tracy/releases/latest/download/tracy.pdf"
+   },
+   {
+    "label": "Releases (binaries and changelog assets)",
+    "url": "https://github.com/wolfpld/tracy/releases"
+   },
+   {
+    "label": "CppCon 2023 introduction by Marcos Slomp",
+    "url": "https://youtu.be/ghXk3Bk5F2U?t=37"
+   }
+  ],
+  "fetch_log": [
+   "https://tracy.nereid.pl/ - loaded but returned only a JavaScript page shell with 'Downloading...' text and no readable content",
+   "https://github.com/wolfpld/tracy - loaded; returned the project README, which I used as the main source"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Tracy makes live CPU, GPU, memory, and synchronization activity inspectable together, an unusually rich window into how a running program spends its time."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Tracy",
+  "tldr": "A nanosecond-resolution profiler that streams timing data from a running program into a live viewer, covering CPU, GPU, memory, locks and context switches.",
+  "deeper_look": "Tracy is a profiler for games and other real-time applications. You add Tracy's client integration to your program, and while the program runs, timing data streams to a separate viewer window. The README calls it \"a real time, nanosecond resolution, remote telemetry, hybrid frame and sampling profiler for games and other applications.\"\n\nThe README lists what it can see: CPU work (direct support for C, C++, Lua, Python and Fortran, plus third-party bindings for languages such as Rust, Zig, C#, OCaml and Odin), GPU work across OpenGL, Vulkan, Direct3D 11/12, Metal, OpenCL, CUDA and WebGPU, memory allocations, locks, and context switches. It can also attach screenshots to captured frames, so a slow frame can be matched with what was on screen.\n\nThe idea underneath is to look at timing as it happens rather than reading a summary afterward. Because the viewer is separate from the program and connected over the network, the profiled program can be on another machine. The brew install also ships a set of command-line helpers, including tracy-capture, tracy-csvexport, tracy-import-chrome and tracy-merge. The README does not describe them, so their exact roles are best checked with their --help output.\n\nThe full explanation of how it works lives in the PDF manual, which is the place to go next.",
+  "install": "brew install tracy\n# Profiling your own program means adding Tracy's client code to it; the manual (tracy.pdf) covers build instructions.",
+  "try_this": [
+   {
+    "cmd": "tracy-profiler --help",
+    "what_happens": "Prints the options for the profiler viewer, the window that receives and displays live timing data."
+   },
+   {
+    "cmd": "tracy-capture --help",
+    "what_happens": "Shows the options for the command-line capture tool, which records a session to a file without opening the viewer."
+   },
+   {
+    "cmd": "tracy-csvexport --help",
+    "what_happens": "Shows how to export captured data as CSV."
+   }
+  ],
+  "whats_unique": "It combines frame profiling and sampling in one tool, with live remote telemetry, GPU coverage across many graphics and compute APIs, and screenshots tied to captured frames.",
+  "caveats": "The main documentation is a PDF, you need a program instrumented with the Tracy client to see anything interesting, and non-C/C++/Lua/Python/Fortran languages rely on third-party bindings of unknown quality.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "profiler",
+   "performance",
+   "gpu",
+   "gui",
+   "gamedev",
+   "telemetry"
+  ],
+  "links": [
+   {
+    "label": "Homepage (interactive demo)",
+    "url": "https://tracy.nereid.pl/"
+   },
+   {
+    "label": "Documentation (tracy.pdf, latest release)",
+    "url": "https://github.com/wolfpld/tracy/releases/latest/download/tracy.pdf"
+   },
+   {
+    "label": "Releases (binaries and changelog assets)",
+    "url": "https://github.com/wolfpld/tracy/releases"
+   },
+   {
+    "label": "CppCon 2023 introduction by Marcos Slomp",
+    "url": "https://youtu.be/ghXk3Bk5F2U?t=37"
+   }
+  ]
+ }
+}

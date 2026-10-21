@@ -1,0 +1,84 @@
+{
+ "name": "djbdns",
+ "desc": "D.J. Bernstein's DNS tools",
+ "homepage": "https://cr.yp.to/djbdns.html",
+ "installs_365d": 23,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol",
+  "deprecated"
+ ],
+ "why": "Bernstein's DNS tools open a door into how DNS servers were built differently, though the package is old.",
+ "brief": {
+  "what_it_is": "A set of DNS programs written by D. J. Bernstein, listed on his site as 'Domain Name System tools'. The executables cover running a caching resolver (dnscache, with dnscache-conf), running authoritative servers (tinydns with tinydns-conf, tinydns-data, tinydns-edit, tinydns-get, plus axfrdns and axfr-get for zone transfer), and running walldns and rbldns servers. There are also many command-line lookup tools (dnsq, dnsip, dnsipq, dnsmx, dnsname, dnsqr, dnstxt, dnstrace, dnstracesort, dnsfilter, random-ip, pickdns). Input is DNS queries and configuration or data files; output is DNS answers and lookup results. The homepage itself is a table of contents with no one-paragraph description, so the roles above come from the page titles and the install page.",
+  "why_it_exists": "The homepage gives no explicit framing statement. Its contents point to a concern with DNS security and with keeping caches and servers separate, including pages titled 'The djbdns security guarantee', 'The importance of separating DNS caches from DNS servers', and 'The libresolv security disaster'.",
+  "how_it_works": "The install page describes building the package from source and installing it under /usr/local. It says djbdns depends on daemontools 0.70 or above and ucspi-tcp, which are what run the servers as services. The homepage's table of contents has a page on separating DNS caches from DNS servers, which suggests the design runs them as separate programs, but I did not read those pages, so I cannot describe the mechanism in detail.",
+  "commands_seen": [
+   {
+    "cmd": "gunzip < doc.tar.gz | (cd /; tar -xf -)",
+    "context": "Optional step to unpack a local copy of the djbdns documentation under /doc."
+   },
+   {
+    "cmd": "slashdoc-merge",
+    "context": "Run after unpacking the docs to create indices such as /doc/commands.html."
+   },
+   {
+    "cmd": "gunzip djbdns-1.05.tar",
+    "context": "Decompresses the djbdns-1.05 source tarball, the latest published package according to the install page."
+   },
+   {
+    "cmd": "tar -xf djbdns-1.05.tar",
+    "context": "Unpacks the djbdns source tree."
+   },
+   {
+    "cmd": "cd djbdns-1.05",
+    "context": "Changes into the unpacked source directory before compiling."
+   },
+   {
+    "cmd": "echo gcc -O2 -include /usr/include/errno.h > conf-cc",
+    "context": "Writes the compiler setting into conf-cc. The page says this is needed on some Linux systems to work around a Linux bug, and can be skipped on BSD, Solaris, and other IEEE 1003.1-1990 systems."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles the djbdns programs."
+   },
+   {
+    "cmd": "make setup check",
+    "context": "Run as root to install the programs under /usr/local and check the install."
+   },
+   {
+    "cmd": "( echo 'First M. Last'; cat `cat SYSDEPS` ) | mail djb-sysdeps@cr.yp.to",
+    "context": "Final step: reports success by mailing system details to the author's sysdeps address. Replace First M. Last with your name."
+   }
+  ],
+  "install_notes": "Works only under UNIX. Install daemontools 0.70 or above and ucspi-tcp first. Build from the source tarball (djbdns-1.05.tar.gz), not from a package manager. Compiling on Linux may need the conf-cc workaround. The install page asks you to keep notes on what you did and what the computer did, and to include the URL of those notes in any questions sent to the dns mailing list. Local docs are optional.",
+  "standout": "The site is unusually long and opinionated, with how-to pages for many setups, critique pages about other DNS software and standards, and a formal 'security guarantee'. Its install steps are a plain make and make setup check, with a mail-based success report to the author instead of a package registry.",
+  "status": "Quiet. The install page calls djbdns-1.05 the 'latest published' package. The homepage and install page I read carry no release date or commit history, so I could not confirm a date. The scout notes also call the package old.",
+  "caveats": "UNIX only. The install page says SCO UnixWare is not supported. It comes with NO WARRANTY, except as stated in the security guarantee page. It needs daemontools 0.70 or above and ucspi-tcp. Linux builds may need the conf-cc workaround. The install is manual (gunzip, tar, make, make setup check) and does not use a package manager. The homepage has no one-line description, and I could not load the blurbs page (it returned 404), so my read of what each program does relies mostly on the program names and page titles.",
+  "quotes": [
+   "djbdns works only under UNIX.",
+   "Like any other piece of software (and information generally), djbdns comes with NO WARRANTY.",
+   "please keep notes of exactly what you did and exactly what the computer did."
+  ],
+  "links": [
+   {
+    "label": "djbdns homepage",
+    "url": "https://cr.yp.to/djbdns.html"
+   },
+   {
+    "label": "How to install djbdns",
+    "url": "https://cr.yp.to/djbdns/install.html"
+   }
+  ],
+  "fetch_log": [
+   "https://cr.yp.to/djbdns.html: worked. Returned the table of contents only, no description.",
+   "https://cr.yp.to/djbdns/blurbs.html: failed, HTTP 404. This URL was my guess, not a link from the homepage.",
+   "https://cr.yp.to/djbdns/install.html: worked. Used for install steps and commands."
+  ]
+ }
+}

@@ -1,0 +1,70 @@
+{
+ "name": "oclgrind",
+ "desc": "OpenCL device simulator and debugger",
+ "homepage": "https://github.com/jrprice/Oclgrind",
+ "installs_365d": 119,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "library"
+ ],
+ "why": "An OpenCL device simulator lets you watch GPU kernels execute instruction by instruction, a real window into program execution.",
+ "brief": {
+  "what_it_is": "Oclgrind is a virtual OpenCL device simulator. It presents itself to an application as an OpenCL platform and device, but the kernels run on an interpreter for LLVM IR, not on a GPU or CPU driver. The input is an OpenCL application run through the oclgrind command, or a kernel file run through the standalone oclgrind-kernel executable. The output is the program's normal results plus diagnostics on stderr, such as invalid memory accesses, and an optional interactive GDB-style debugging session. The README also lists data-race and barrier-divergence detection and instruction histograms.",
+  "why_it_exists": "The README says the goal is 'to provide a platform for creating tools to aid OpenCL development', and that the project was originally created by James Price and Simon McIntosh-Smith at the University of Bristol. The tools it currently ships target memory access errors, data races, barrier divergence, instruction counts, and interactive kernel debugging.",
+  "how_it_works": "Kernels are compiled to LLVM IR and then interpreted, with every memory access bounds-checked. That is why it is slow: the README says it is 'typically a couple of orders of magnitude slower than a regular CPU implementation'. Errors are reported with the kernel name, work-item entity (Global/Local/Group IDs), the offending IR instruction, and the source line. With -i or OCLGRIND_INTERACTIVE=1, execution breaks at the start of each kernel invocation and at any invalid access, and the user gets a prompt where 'help' lists commands.",
+  "commands_seen": [
+   {
+    "cmd": "oclgrind ./application",
+    "context": "Recommended way to run an application under Oclgrind; it makes Oclgrind the only OpenCL platform and device the app can see."
+   },
+   {
+    "cmd": "cmake ${OCLGRIND_SOURCE} -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=${INSTALL_ROOT} -DLLVM_DIR=${LLVM_ROOT}/lib/cmake/llvm",
+    "context": "Typical CMake configure line; the README splits it across lines with backslash continuations. Sets the build type, install prefix, and the LLVM config directory."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds Oclgrind after CMake configuration."
+   },
+   {
+    "cmd": "make test",
+    "context": "Runs the test suite, which the README says needs Python."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs to the CMake install prefix."
+   }
+  ],
+  "install_notes": "Build from source with CMake; the README calls this the recommended method. You need LLVM and Clang 18.0 or newer, both development libraries and headers, and a C++17 compiler. Python is needed to run the tests. For best performance the README recommends building LLVM itself with CMAKE_BUILD_TYPE set to Release or RelWithDebInfo. CMake may ask for LLVM_DIR (the folder containing LLVMConfig.cmake) and, if Clang is installed separately, CLANG_ROOT. After install, the bin directory must be on PATH. For use through the OpenCL ICD loader, copy oclgrind.icd from the build directory to /etc/OpenCL/vendors/. On Windows you need Visual Studio 2017 or newer, and the ICD is registered by adding a REG_DWORD under HKEY_LOCAL_MACHINE\\SOFTWARE\\Khronos\\OpenCL\\Vendors (or the Wow6432Node variant for 32-bit apps), with the name set to the full path of oclgrind-rt-icd.dll and the value 0. Binary releases are on the GitHub releases page, which I did not test.",
+  "standout": "It runs unmodified OpenCL host programs and checks every memory access, race, and barrier against the kernel's IR, so it finds bugs a real device would silently ignore. The scout note called it a way to watch GPU kernels run instruction by instruction, which overstates it: it is a CPU-side interpreter, and step-through debugging is available only in interactive mode.",
+  "status": "Maintained. The latest GitHub release is Oclgrind 26.03.1, published 23 Mar with no year shown on the releases page; the version scheme (YY.MM.patch) points to March 2026. That release enabled OpenCL 3.0 by default and added LLVM 18 through 22 support, dropping older LLVM versions. Earlier releases run back to 14.5 (2014). I did not check the commit log.",
+  "caveats": "Slow: a couple of orders of magnitude slower than a native CPU implementation, so the README advises small problem sizes. Needs LLVM and Clang 18 or newer and C++17, so building is nontrivial. Release 26.03.1 notes that precompiled header support is disabled for LLVM 21 and 22 because of a bug there, which may slow kernel compilation. Windows builds need Visual Studio 2017 or newer and manual registry edits for ICD use. The README gives no license, and I did not find one on the pages I read. oclgrind-kernel is listed as an executable but the README does not describe it; the 14.5 release notes mention a standalone kernel interface.",
+  "quotes": [
+   "The goal is to provide a platform for creating tools to aid OpenCL development.",
+   "Since it is interpreting an abstract intermediate representation and bounds-checking each memory access, Oclgrind will run quite slowly (typically a couple of orders of magnitude slower than a regular CPU implementation).",
+   "This command will make it such the only OpenCL platform and device available to your application is Oclgrind."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/jrprice/Oclgrind"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/jrprice/Oclgrind/releases"
+   },
+   {
+    "label": "Wiki",
+    "url": "https://github.com/jrprice/Oclgrind/wiki/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/jrprice/Oclgrind: worked, README returned in full",
+   "https://github.com/jrprice/Oclgrind/releases: worked, but the page is mostly page chrome; release notes for 26.03.1 and earlier were readable. Used to establish status."
+  ]
+ }
+}

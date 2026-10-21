@@ -1,0 +1,88 @@
+{
+ "name": "libtatsu",
+ "desc": "Library handling the communication with Apple's Tatsu Signing Server (TSS)",
+ "homepage": "https://libimobiledevice.org/",
+ "installs_365d": 31803,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "protocol",
+  "library",
+  "reverse-engineering"
+ ],
+ "why": "A door into Apple's signing server protocol used in firmware restore flows, though it is a library rather than a tool to explore.",
+ "brief": {
+  "what_it_is": "libtatsu is a C library from the libimobiledevice project that talks to Apple's Tatsu Signing Server (TSS). According to its README, its main purpose is to build TSS request payloads, send them to Apple's server, and retrieve and process the response. It is a library, not a command-line tool: it ships no executables, and callers link against its headers. The Homebrew entry lists no executables and no caveats.",
+  "why_it_exists": "The code was originally part of idevicerestore and was split out into its own library, while idevicerestore remains its main consumer. The README gives no broader framing beyond that split.",
+  "how_it_works": "The library builds TSS request payloads, posts them to Apple's TSS endpoint over libcurl, and parses the response. The README uses plist as its data format through libplist. The README says usage is through the header files, and that documentation 'might be added later'.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/libimobiledevice/libtatsu",
+    "context": "Clone the source repository before building from git."
+   },
+   {
+    "cmd": "./autogen.sh",
+    "context": "Generates and runs configure when building from a git checkout."
+   },
+   {
+    "cmd": "./configure --prefix=/usr/local",
+    "context": "Configures a release tarball build for installation under /usr/local. autogen.sh accepts the same --prefix option."
+   },
+   {
+    "cmd": "export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig",
+    "context": "Points pkg-config at dependencies installed under /usr/local, which the README says to do when libtatsu's dependencies live there."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the library once configure has succeeded."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the built library. The README says to drop sudo if the user can already write to the destination."
+   },
+   {
+    "cmd": "sudo ldconfig",
+    "context": "Linux only, run after installation so the new shared libraries are found."
+   },
+   {
+    "cmd": "brew install libtool autoconf automake pkg-config",
+    "context": "macOS build prerequisites via Homebrew, per the README's macOS section."
+   },
+   {
+    "cmd": "tar xjf libtatsu-x.y.z.tar.bz2",
+    "context": "Extracts a release tarball as an alternative to cloning git."
+   }
+  ],
+  "install_notes": "Requires a C compiler (gcc or clang) and autotools for a git build. Requires libplist version 2.6.0 or later and libcurl. On Debian/Ubuntu the README's apt list includes libplist-dev and libcurl4-openssl-dev. On macOS, it recommends the system libcurl and exporting libcurl_CFLAGS and libcurl_LIBS, with the SDK include path from xcrun. On Windows, the README says MSYS2 is the official route, using the MinGW 64-bit shell with pacman packages including libcurl-devel. Installing from a tarball uses ./configure; installing from git uses ./autogen.sh. No accounts, hardware, or first-run configuration are mentioned. The README does not describe a Homebrew-specific install path.",
+  "standout": "It is a small, focused piece of the libimobiledevice stack that speaks to a server Apple runs, and it has been extracted from idevicerestore so other tools can reuse the same signing-request code. The README says plainly that it is not affiliated with Apple.",
+  "status": "Maintained, with a slow cadence for this library. The latest libtatsu release is 1.0.5 (2025-06-04), and the README was last updated on 2025-06-04. Sibling libimobiledevice components released in October 2025 (libimobiledevice 1.4.0 on 2025-10-10, libirecovery 1.3.1 on 2025-10-17, ideviceinstaller 1.2.0 on 2025-10-30), so the project is active overall.",
+  "caveats": "The README says there is no real documentation yet, so the header files are the reference. The library depends on Apple's TSS server, which the README does not describe in terms of availability or access rules. The README says the project 'has not been authorized, sponsored, or otherwise approved by Apple Inc.' Building on macOS needs manual libcurl environment variables, and Windows needs MSYS2. The homepage says libtatsu depends on libplist and libcurl, but the README requires libplist 2.6.0 or later, so the homepage's dependency line is not a version requirement. Licensed LGPL-2.1.",
+  "quotes": [
+   "Library handling the communication with Apple's Tatsu Signing Server (TSS).",
+   "The main purpose of this library is to allow creating TSS request payloads, sending them to Apple's TSS server, and retrieving and processing the response.",
+   "This library is directly used by idevicerestore and libimobiledevice, so there is no need to do anything in particular.",
+   "This project is an independent software library and has not been authorized, sponsored, or otherwise approved by Apple Inc."
+  ],
+  "links": [
+   {
+    "label": "libtatsu repository and README",
+    "url": "https://github.com/libimobiledevice/libtatsu"
+   },
+   {
+    "label": "libimobiledevice homepage",
+    "url": "https://libimobiledevice.org/"
+   },
+   {
+    "label": "idevicerestore, the main consumer",
+    "url": "https://github.com/libimobiledevice/idevicerestore"
+   }
+  ],
+  "fetch_log": [
+   "https://libimobiledevice.org/ - worked. It is the umbrella libimobiledevice site. It lists libtatsu 1.0.5 under Downloads, but has no libtatsu-specific description beyond the one-liner.",
+   "https://github.com/libimobiledevice/libtatsu - worked. Returned the repository README, which covers features, build steps, usage, and license."
+  ]
+ }
+}

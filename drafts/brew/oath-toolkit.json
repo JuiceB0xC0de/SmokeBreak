@@ -1,0 +1,83 @@
+{
+ "name": "oath-toolkit",
+ "desc": "Tools for one-time password authentication systems",
+ "homepage": "https://oath-toolkit.codeberg.page/",
+ "installs_365d": 10098,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "protocol",
+  "tui"
+ ],
+ "why": "Doors into OATH one-time password algorithms like HOTP and TOTP, a protocol everyone uses daily but few have actually computed by hand.",
+ "brief": {
+  "what_it_is": "OATH Toolkit is a set of C libraries, command-line tools and a PAM module for building one-time password (OTP) authentication systems. It supports the event-based HOTP algorithm (RFC 4226), the time-based TOTP algorithm (RFC 6238), and the Portable Symmetric Key Container format PSKC (RFC 6030) for managing secret key data. The shipped command-line tools are oathtool, which generates and validates OTPs, and pskctool, which manipulates PSKC key containers. The homepage does not say explicitly what goes in and comes out of each tool, so the input and output details are unverified.",
+  "why_it_exists": "The homepage says the toolkit provides components to build one-time password authentication systems, and that OATH is the organization that specifies the algorithms. The scout notes frame it as a doorway into HOTP and TOTP, the protocols behind everyday two-factor codes.",
+  "how_it_works": "",
+  "commands_seen": [],
+  "install_notes": "The homepage has a Download page and a NEWS file for release notes, but it gives no install steps and no commands. The fetched homepage named no build or runtime requirements. Documentation pages exist for oathtool(1), pskctool(1), the Liboath and Libpskc APIs, a PSKC tutorial, and pam_oath, but I could not reach them (a guessed doc URL returned 404), so build and first-run details are unknown.",
+  "standout": "The toolkit covers the whole stack in one package: the algorithms (HOTP, TOTP), the key-container format (PSKC), a command-line generator, and a PAM module for pluggable login. That makes it a practical way to see how the codes are actually produced and checked.",
+  "status": "Appears maintained. The homepage announces OATH Toolkit 2.6.15 as released on 2026-10-13, and it lists two security advisories (CVE-2026-109117 and CVE-2024-47191) for earlier versions. I could not see a commit history or a repository page, so this is based on the homepage alone.",
+  "caveats": "The homepage carries two security advisories: CVE-2026-109117 covers versions 2.0.1 to 2.6.14 inclusive, and CVE-2024-47191 covers versions 2.6.7 to 2.6.11 inclusive, so users should run 2.6.15. The homepage has no usage examples or command lines. The Download and Documentation pages were not reachable from my fetches. The licence is LGPLv2+ for the libraries and GPLv3+ for the tools. The brew caveats field is empty.",
+  "quotes": [
+   "OATH Toolkit provide components to build one-time password authentication systems.",
+   "Supported technologies include the event-based HOTP algorithm (RFC 4226), the time-based TOTP algorithm (RFC 6238), and Portable Symmetric Key Container (PSKC, RFC 6030) to manage secret key data.",
+   "OATH Toolkit is free software and is licenced under the terms of the LGPLv2+ (libraries) and GPLv3+ (tools)."
+  ],
+  "links": [
+   {
+    "label": "OATH Toolkit homepage",
+    "url": "https://oath-toolkit.codeberg.page/"
+   }
+  ],
+  "fetch_log": [
+   "https://oath-toolkit.codeberg.page/ - worked; the homepage text was returned and used as the main source",
+   "https://oath-toolkit.codeberg.page/doc/oathtool.html - failed with HTTP 404; this URL was a guess and is not a link from the homepage"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A useful, lesser-known way to inspect and generate HOTP/TOTP codes and explore the protocols and key formats behind everyday two-factor authentication."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "OATH Toolkit",
+  "tldr": "Command-line tools for generating and checking the HOTP and TOTP one-time codes behind everyday two-factor logins, so you can compute them yourself.",
+  "deeper_look": "OATH Toolkit is a set of C libraries, command-line tools and a PAM module for building one-time password authentication systems. It implements HOTP (RFC 4226), the counter-based algorithm, and TOTP (RFC 6238), the time-based variant that most authenticator apps use. It also handles PSKC (RFC 6030), a standard container format for shipping secret keys around.\n\nTwo executables come with it. `oathtool` generates and validates one-time passwords. `pskctool` works with PSKC key containers. The homepage does not spell out exactly what each tool takes in and puts out, so check the man pages after installing.\n\nThe idea underneath is small enough to hold in your head. A shared secret and a counter, or the current time, go into a keyed hash, and a short number comes out. Your phone and the server each do this separately and compare results. Running the algorithm from a terminal turns a six-digit code that looks like magic into something you can reproduce. The PAM module shows how the same check plugs into a Unix login.\n\nThe project describes itself plainly: \"OATH Toolkit provide components to build one-time password authentication systems.\" It is free software, with the libraries under LGPLv2+ and the tools under GPLv3+.",
+  "install": "brew install oath-toolkit",
+  "try_this": [
+   {
+    "cmd": "oathtool --help",
+    "what_happens": "Lists the options for generating and validating one-time passwords, including the choice between HOTP and TOTP modes."
+   },
+   {
+    "cmd": "pskctool --help",
+    "what_happens": "Shows what the PSKC key container tool can do."
+   }
+  ],
+  "whats_unique": "It covers the whole stack in one package: the HOTP and TOTP algorithms, the PSKC key-container format, a command-line generator, and a PAM module for logins.",
+  "caveats": "The homepage lists two security advisories (CVE-2026-109117 for 2.0.1 to 2.6.14, CVE-2024-47191 for 2.6.7 to 2.6.11), so make sure you have 2.6.15 or later, and it offers no usage examples.",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "protocol",
+   "otp",
+   "totp",
+   "hotp",
+   "authentication",
+   "cli"
+  ],
+  "links": [
+   {
+    "label": "OATH Toolkit homepage",
+    "url": "https://oath-toolkit.codeberg.page/"
+   }
+  ]
+ }
+}

@@ -1,0 +1,120 @@
+{
+ "name": "thrax",
+ "desc": "Tools for compiling grammars into finite state transducers",
+ "homepage": "https://www.openfst.org/twiki/bin/view/GRM/Thrax",
+ "installs_365d": 24,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "afternoon",
+  "library"
+ ],
+ "why": "Compiles grammar rules into finite state transducers, a rare look at how text normalisers and morphology engines are built.",
+ "brief": {
+  "what_it_is": "Thrax is a set of command-line tools from the OpenGrm project that compile grammars into weighted finite-state transducers (FSTs). You write grammar source files (.grm) that combine regular expressions and context-dependent rewrite rules. The compiler turns them into an FST archive (.far), which you can test with thraxrewrite-tester or sample with thraxrandom-generator. The README's example grammar tokenises English text, for instance turning \"Well, I can't eat muffins\" into \"Well , I ca n't eat muffins\", and it also spells out numbers, so it works as a text normaliser. It builds on the OpenFst library.",
+  "why_it_exists": "The README says the tools \"compile grammars expressed as regular expressions and context-dependent rewrite rules into weighted finite-state transducers\". It is named after Dionysius Thrax, \"the reputed first Greek grammarian\".",
+  "how_it_works": "A .grm file has an Imports section and a Body of functions and statements, and each source file compiles to a .far archive that other grammars can import by alias. The language provides operators for concatenation, union, composition, rewrite (cross product) and CDRewrite for context-dependent rules, plus Feature, Category and Paradigm tools for morphology. For nested or copying structure, the README describes pushdown (PDT) and multi-pushdown (MPDT) extensions, with the MPDT example handling reduplication such as \"kidongo\" to \"kididongo\".",
+  "commands_seen": [
+   {
+    "cmd": "conda install -c conda-forge thrax",
+    "context": "Installs the library and its dependencies from conda-forge; the homepage says this is for Linux (x86) and Mac OS X users who already have conda."
+   },
+   {
+    "cmd": "$ thraxmakedep example.grm",
+    "context": "Generates the Makefile for a grammar, from the Quick Tour's step for copying and building the sample grammar."
+   },
+   {
+    "cmd": "$ make",
+    "context": "Builds example.far from the grammar, after thraxmakedep has created the Makefile."
+   },
+   {
+    "cmd": "$ thraxrewrite-tester --far=example.far --rules=TOKENIZER",
+    "context": "Runs the TOKENIZER rule from the built archive interactively on input strings, with sample input and output shown in the Quick Tour."
+   },
+   {
+    "cmd": "$ thraxrewrite-tester --far=pdt.far --rules=PDT\\$PARENS",
+    "context": "Tests a pushdown transducer rule together with its parenthesis transducer; the README notes \":\" can replace \"$\" as a bash-friendly form."
+   },
+   {
+    "cmd": "$ thraxrewrite-tester --far=mpdt.far --rules=INFIXING_REDUPLICATION\\$PARENS\\$ASSIGNMENTS",
+    "context": "Tests a multi-pushdown reduplication rule with its parenthesis and assignment transducers; example outputs are kidongo to kididongo and fungus to fungungus."
+   }
+  ],
+  "install_notes": "The homepage gives conda-forge as the easy route (conda install -c conda-forge thrax) for Linux x86 and Mac OS X users who already have conda. Building from source is implied by the Quick Tour: the sample grammar is installed to /usr/local/share/thrax/grammars and you copy it to a writable directory before running make. Writing a function in C++ means overloading thrax::function::Function, registering it in src/lib/loader.cc, and rebuilding the libraries. Optional GNU readline support is enabled with --enable-readline at configure time. I did not fetch a separate download or install page, so details beyond these are unknown.",
+  "standout": "The grammar language is unusually approachable for FST work: a short, readable script with named functions, imports and tokenised string literals, and the README shows a working text normaliser and morphology tools. Pushdown and multi-pushdown extensions let the same toolkit express context-free patterns and copying such as reduplication, which plain finite-state rewriting cannot.",
+  "status": "Probably maintained. The homepage was edited on 2025-09-09 by KyleGorman, it announces version 1.3.10 as available for download, and it says Thrax is on conda-forge. The Quick Tour page was last edited in 2019, so some of its docs may lag the current release. I did not see a release date for 1.3.10 itself.",
+  "caveats": "The README states that thraxrewrite-tester only works with grammars compiled to standard (tropical) arcs. Temporary symbols are not handled well by thraxrewrite-tester. Symbol tables must match across a multi-file grammar when --save_symbols is used, and byte-mode compilation splits non-ASCII characters into byte sequences that are hard to read. The conda-forge route is only mentioned for Linux x86 and Mac OS X. The homepage is a TWiki page with older documentation links, and I did not find the licence in what I read. The brew caveats field was empty.",
+  "quotes": [
+   "The OpenGrm Thrax tools compile grammars expressed as regular expressions and context-dependent rewrite rules into weighted finite-state transducers.",
+   "It is named after Dionysius Thrax (\u0394\u03b9\u03bf\u03bd\u03cd\u03c3\u03b9\u03bf\u03c2 \u1f41 \u0398\u03c1\u1fb7\u03be, 170 BC \u2013 90 BC), the reputed first Greek grammarian.",
+   "Thrax is now available on conda-forge."
+  ],
+  "links": [
+   {
+    "label": "Thrax homepage (OpenFst TWiki)",
+    "url": "https://www.openfst.org/twiki/bin/view/GRM/Thrax"
+   },
+   {
+    "label": "Thrax Quick Tour",
+    "url": "https://www.openfst.org/twiki/bin/view/GRM/ThraxQuickTour"
+   }
+  ],
+  "fetch_log": [
+   "https://www.openfst.org/twiki/bin/view/GRM/Thrax \u2014 worked; TWiki homepage with version 1.3.10 announcement, conda-forge note and links to Quick tour and Download pages (their URLs were not shown).",
+   "https://www.openfst.org/twiki/bin/view/GRM/ThraxQuickTour \u2014 worked; guessed from the homepage's Quick tour link, last edited 2019-01-12. Contains the command examples and language reference; output cut at about 40000 characters, so later sections were not read."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Thrax makes finite-state grammar and morphology concrete, with a distinctive path from readable rewrite rules to transducers and even reduplication models."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Thrax",
+  "tldr": "Write grammars as short readable scripts and compile them into finite-state transducers that tokenise text, spell out numbers, or model word morphology.",
+  "deeper_look": "Thrax is a set of command-line tools from the OpenGrm project. You write `.grm` source files that combine regular expressions with context-dependent rewrite rules. The compiler turns each file into an FST archive (`.far`), a weighted finite-state transducer that maps input strings to output strings. The README's example grammar tokenises English, turning \"Well, I can't eat muffins\" into \"Well , I ca n't eat muffins\", and it also spells out numbers, so it doubles as a text normaliser.\n\nA grammar file has an Imports section and a Body of functions and statements. Other grammars can import a compiled archive by alias. The language has operators for concatenation, union, composition, rewrite and `CDRewrite` for context-dependent rules, plus Feature, Category and Paradigm tools for morphology. It builds on the OpenFst library.\n\nThe idea underneath is that a lot of language processing, such as text normalisation, tokenising and inflecting words, can be written as rules and compiled into one machine that is composable and fast. Plain finite-state rewriting cannot handle nesting or copying, so Thrax adds pushdown (PDT) and multi-pushdown (MPDT) extensions. The MPDT example handles reduplication, turning \"kidongo\" into \"kididongo\".\n\nThe name comes from Dionysius Thrax, \"the reputed first Greek grammarian\".",
+  "install": "brew install thrax\n# Pulls in openfst as a dependency. The homepage also lists: conda install -c conda-forge thrax (Linux x86 and Mac OS X, for people who already use conda).",
+  "try_this": [
+   {
+    "cmd": "thraxmakedep example.grm",
+    "what_happens": "Generates a Makefile for the sample grammar, which the Quick Tour has you copy to a writable directory first."
+   },
+   {
+    "cmd": "make",
+    "what_happens": "Builds example.far from the grammar, using the Makefile that thraxmakedep created."
+   },
+   {
+    "cmd": "thraxrewrite-tester --far=example.far --rules=TOKENIZER",
+    "what_happens": "Starts an interactive session where each line you type is run through the TOKENIZER rule and the rewritten text is shown."
+   }
+  ],
+  "whats_unique": "The grammar language is short and readable for FST work, with named functions, imports and string literals. The pushdown extensions let the same toolkit express nesting and reduplication, which plain finite-state rewriting cannot.",
+  "caveats": "Documentation is on an older TWiki, with the Quick Tour last edited in 2019, and thraxrewrite-tester only works with grammars compiled to standard (tropical) arcs.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "grammar",
+   "fst",
+   "nlp",
+   "linguistics",
+   "openfst",
+   "compiler"
+  ],
+  "links": [
+   {
+    "label": "Thrax homepage (OpenFst TWiki)",
+    "url": "https://www.openfst.org/twiki/bin/view/GRM/Thrax"
+   },
+   {
+    "label": "Thrax Quick Tour",
+    "url": "https://www.openfst.org/twiki/bin/view/GRM/ThraxQuickTour"
+   }
+  ]
+ }
+}

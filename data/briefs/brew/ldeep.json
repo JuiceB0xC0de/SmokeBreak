@@ -1,0 +1,91 @@
+{
+ "name": "ldeep",
+ "desc": "LDAP enumeration utility",
+ "homepage": "https://github.com/franc-pentest/ldeep",
+ "installs_365d": 216,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "reverse-engineering",
+  "afternoon"
+ ],
+ "why": "LDAP enumeration gives a real door into directory protocols most people never query, though it leans pentest-tool.",
+ "brief": {
+  "what_it_is": "ldeep is a Python command-line tool for enumerating Active Directory through LDAP. You point it at a domain controller with a domain name, server URL, and credentials (NTLM, Kerberos, certificate, or anonymous), then pick a subcommand such as users, groups, gpo, trusts, or dns_records. It prints the results to the terminal and can store them as .lst or .json files with -o or the all subcommand's dump prefix. A cache mode reads those saved files back offline, and a protections mode checks which LDAP security settings are in place. The README says it is installed from PyPI as the package 'ldeep' and runs as the 'ldeep' executable.",
+  "why_it_exists": "The README gives no formal problem statement. It says 'Help is self-explanatory' and describes the tool as an LDAP enumeration utility that runs against an Active Directory LDAP server or locally on saved files. The related-projects list places it alongside impacket, windapsearch, and LDAPPER.",
+  "how_it_works": "In LDAP mode, each subcommand runs LDAP queries against the server, with optional throttling, page-size control, and encryption settings. The -o/--outfile option and the 'all' subcommand save output to files, and the cache mode then queries those saved JSON files without contacting the server. The protections mode is a separate subcommand that checks LDAP security mechanisms.",
+  "commands_seen": [
+   {
+    "cmd": "ldeep -h",
+    "context": "Shows top-level help with the -o/--outfile and --security_desc options and the ldap, cache, and protections modes."
+   },
+   {
+    "cmd": "ldeep ldap -u Administrator -p 'password' -d winlab -s ldap://10.0.0.1 all backup/winlab",
+    "context": "Runs the 'all' collection against a lab domain controller and writes the output files under backup/winlab with that prefix."
+   },
+   {
+    "cmd": "ldeep cache -d backup -p winlab users",
+    "context": "Lists users offline from files saved by an earlier run, using the directory backup and the prefix winlab, without contacting the server."
+   },
+   {
+    "cmd": "ldeep ldap -h",
+    "context": "Shows LDAP mode options, including authentication types (NTLM, Kerberos, certificate, anonymous), --throttle, --page_size, and the list of subcommands."
+   },
+   {
+    "cmd": "ldeep ldap -u Administrator -p 'password' -d winlab.local -s ldap://10.0.0.1 users",
+    "context": "Lists user account names in the domain with no verbosity."
+   },
+   {
+    "cmd": "ldeep ldap -u Administrator -p 'password' -d winlab.local -s ldap://10.0.0.1 users reversible -v",
+    "context": "Filters users with the reversible password encryption flag and prints full verbose JSON for each account."
+   },
+   {
+    "cmd": "ldeep ldap -u Administrator -p 'password' -d winlab.local -s ldap://10.0.0.1 all /tmp/winlab.local_dump",
+    "context": "Collects the main AD object classes and saves them to /tmp as winlab.local_dump_*.lst and .json files."
+   },
+   {
+    "cmd": "ldeep protections -h",
+    "context": "Shows the protections mode options for checking LDAP security mechanisms against a server."
+   },
+   {
+    "cmd": "python -m pip install ldeep",
+    "context": "Installs the latest released version from PyPI."
+   },
+   {
+    "cmd": "python -m pip install git+https://github.com/franc-pentest/ldeep",
+    "context": "Installs the current master branch straight from GitHub."
+   }
+  ],
+  "install_notes": "Kerberos support needs native extensions and headers. On Debian, install libkrb5-dev, krb5-config, gcc, and python3-dev with apt-get. On Arch, install krb5 with pacman. For Kerberos use, /etc/krb5.conf must define the realm and KDC, for example a [realms] block with CORP.LOCAL and kdc = DC01.CORP.LOCAL, and the ticket file is set through the KRB5NAME environment variable. Development uses pdm: pdm install, then pdm run ldeep. The README does not mention Homebrew, and the brew formula notes were empty.",
+  "standout": "It covers a part of AD that most enumeration tools skip. The subcommands include LAPS passwords, gMSA secrets, BitLocker recovery keys, shadow principals, silos, and PSOs. It also has an offline cache mode, so you can run collection once and query the saved output later.",
+  "status": "unknown. The README has a passing build badge, a PyPI version badge, and a version string of 2.0.4.dev6+gf055cc0, which suggests active development. It has no release date or last-commit date, and I did not fetch the GitHub release or commit pages to check.",
+  "caveats": "The README lists ADCS enumeration as upcoming, so certificate-template and CA enumeration is not yet in the tool. A simple bind over ldap, not ldaps, sends the password in cleartext, as the README notes. The README's SCCM output shows warnings for missing classes. Kerberos needs native build dependencies. The help text and examples disagree in places; for example, one example omits the mode name (ldeep -u ... gpo). The brew formula had no caveats. The README does not state a license, and I did not check the repository for one.",
+  "quotes": [
+   "Help is self-explanatory. Let's check it out::",
+   "`ldeep` can either run against an Active Directory LDAP server or locally on saved files",
+   "Lastly, ldeep allows checking LDAP security mechanisms",
+   "Simple bind will always be in cleartext with ldap (not ldaps)"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/franc-pentest/ldeep"
+   },
+   {
+    "label": "PyPI package",
+    "url": "https://pypi.org/project/ldeep/"
+   },
+   {
+    "label": "impacket (related project)",
+    "url": "https://github.com/fortra/impacket"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/franc-pentest/ldeep: fetched OK, returned the README text. The README covers installation, usage, and examples, so no further fetches were needed."
+  ]
+ }
+}

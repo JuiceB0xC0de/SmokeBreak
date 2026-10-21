@@ -1,0 +1,135 @@
+{
+ "name": "xplanet",
+ "desc": "Create HQ wallpapers of planet Earth",
+ "homepage": "https://xplanet.sourceforge.net/",
+ "installs_365d": 117,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "visual",
+  "science"
+ ],
+ "why": "Renders planets as wallpapers from real astronomical data, a pleasant old-school trick, though the output is mostly pretty.",
+ "brief": {
+  "what_it_is": "Xplanet is a free, GPL-licensed program that renders an image of a planet, moon, or the Sun and either draws it to an X window, saves it to a file (gif, jpg, png, ppm, tiff), or sets it as the desktop wallpaper. Its inputs are command-line options and an optional configuration file, along with map and star images and, for precise positions, JPL ephemeris or SPICE kernel files. The output is a rendered picture of the chosen body as seen from a chosen observer position, date, and projection. Earth is the default body.",
+  "why_it_exists": "Xplanet was inspired by Xearth, which renders an image of the earth into the X root window. The author's homepage says all of the major planets and most satellites can be drawn, similar to the Solar System Simulator.",
+  "how_it_works": "The program places an observer at a chosen location and time relative to a target body, then computes the view and shading. Position data comes from a built-in model or from JPL ephemeris or SPICE files, and the view can be a globe or one of many map projections (azimuthal, Lambert, Mercator, Mollweide, orthographic, rectangular and others). Background stars come from a star map file, and output can be rerun on a timer with -wait or -num_times.",
+  "commands_seen": [
+   {
+    "cmd": "-body naif-82",
+    "context": "Centers the field of view on NAIF ID -82, which the README says is the Cassini orbiter. Requires SPICE support compiled in and the kernels present."
+   },
+   {
+    "cmd": "-body norad20580",
+    "context": "Centers the field of view on NORAD ID 20580, which the README says is the Hubble Space Telescope. Requires the appropriate TLE files."
+   },
+   {
+    "cmd": "-target earth -origin sun",
+    "context": "Places the observer at the center of the Sun while targeting Earth. The README notes that -origin -sun instead places the observer on the far side of Earth from the Sun."
+   },
+   {
+    "cmd": "-target earth -separation moon:-3",
+    "context": "Places the observer where the Moon appears 3 degrees to the left of Earth."
+   },
+   {
+    "cmd": "-date YYYYMMDD.HHMMSS",
+    "context": "Uses the given date (assumed GMT) instead of the current time."
+   },
+   {
+    "cmd": "-output filename",
+    "context": "Writes to a file instead of a window. The format comes from the extension and the default size is 512 by 512 pixels."
+   },
+   {
+    "cmd": "-geometry string",
+    "context": "Sets the image geometry in X syntax, for example 256x256-10+10. The README uses this with -window or -output."
+   },
+   {
+    "cmd": "-prev_command command",
+    "context": "Runs a command before each render. The README example is xplanet.exe -prev_command ./prev.bat on Windows."
+   },
+   {
+    "cmd": "-projection projection_type",
+    "context": "Selects a map projection such as mollweide or mercator. The README says multiple bodies are not shown when this option is used."
+   },
+   {
+    "cmd": "-rotate angle",
+    "context": "Rotates the globe counterclockwise. The README says -rotate 180 suits Southern Hemisphere viewers."
+   }
+  ],
+  "install_notes": "The homepage's own description implies a compile step: it lists several optional features that depend on build-time libraries or kernels, including the X Screensaver extension (for -idlewait and -hibernate), Pango (for -pango), SPICE (for -body naif-N), and image format libraries. Satellite and SPICE use needs extra data files: JPL ephemeris files (DE200, DE405 or DE406) for -ephemeris_file, SPICE kernels with a README in the spice subdirectory, and TLE files for norad IDs. Input files are found by searching the current directory, then -searchdir, then ~/.xplanet on X11, ~/Library/Xplanet on macOS, and DATADIR/xplanet, where DATADIR defaults to /usr/local/share. The homepage links to Maps & Scripts and Cloud Maps pages, which I did not fetch, so I can't say what map images are needed. I did not check the Homebrew formula.",
+  "standout": "It descends from Xearth but reaches further: many bodies, a wide range of projections, real ephemeris and spacecraft-tracking input, and cloud-overlay map generation. Its option set is large enough to work as a small astronomy visualizer rather than only a desktop picture.",
+  "status": "unknown. The homepage and option reference describe old platforms (FreeBSD 5.1, Sparc Solaris, Cygwin, Mac OS X Aqua) and have no release date or changelog visible in what I fetched. The sourceforge hosting and the Homebrew formula suggest it still packages, but I found no last-release or last-commit date.",
+  "caveats": "The homepage's tested platforms are old (i386 GNU/Linux, Sparc Solaris, FreeBSD 5.1, Cygwin, Darwin, Mac OS X Aqua). The README warns that -pango appears to leak memory, so it should not run indefinitely. -fork on Windows can leave multiple processes running unnoticed. Only TrueType fonts are supported. Satellite and SPICE features need extra data files and a build with those options. License is GPL, per the homepage.",
+  "quotes": [
+   "Xplanet was inspired by Xearth, which renders an image of the earth into the X root window.",
+   "My friends in the Southern Hemisphere can use -rotate 180 to make the earth look like it should!",
+   "Be careful when using this option; it's easy to have multiple processes running at the same time without knowing it - check the Task Manager."
+  ],
+  "links": [
+   {
+    "label": "Xplanet homepage",
+    "url": "https://xplanet.sourceforge.net/"
+   },
+   {
+    "label": "Option reference (the page served at /README)",
+    "url": "https://xplanet.sourceforge.net/README"
+   }
+  ],
+  "fetch_log": [
+   "https://xplanet.sourceforge.net/ : OK. Homepage text with navigation (Download, Documentation, FAQ, Maps & Scripts, Cloud Maps, Config Files, Discussion Forums). Short description, platforms, GPL license.",
+   "https://xplanet.sourceforge.net/Doc.php : failed, HTTP 404. This URL was a guess, not a link from the homepage.",
+   "https://xplanet.sourceforge.net/README : OK, but it returned a command-line option reference, not a conventional README with a project header. Used as the main source for commands and behavior. Did not fetch the Documentation, Download, FAQ, or Maps pages."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Beneath the wallpaper pitch, it can render the solar system from arbitrary viewpoints and dates using ephemerides, SPICE kernels, or satellite tracks."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "xplanet",
+  "tldr": "Renders a shaded image of Earth, another planet, or the Moon as seen from any chosen place and date, then saves it or sets it as your wallpaper.",
+  "deeper_look": "Xplanet draws a planet, moon, or the Sun from a chosen observer position and time. It can paint into an X window, write an image file (gif, jpg, png, ppm, tiff), or set the desktop background. Earth is the default target. You choose the date, the viewpoint, and whether you see a globe or a flat map in one of many projections: Mercator, Mollweide, Lambert, orthographic, azimuthal and others.\n\nIt was inspired by Xearth, which put an image of the Earth in the X root window. Xplanet goes further. The homepage says all the major planets and most satellites can be drawn. Positions come from a built-in model, or from JPL ephemeris and SPICE kernel files if you want precise ones. With the right data files you can center the view on a spacecraft such as Cassini or on Hubble, using NORAD IDs and TLE files.\n\nThe idea underneath is that a picture of the sky is a computation: put an observer somewhere, pick a time, and work out what is lit and what is in shadow. Changing the observer lets you see Earth from the Sun, or with the Moon 3 degrees to one side. With -wait or -num_times it re-renders on a timer, so the wallpaper follows real time.",
+  "install": "brew install xplanet\nSpacecraft and SPICE features need extra data files (JPL ephemeris, SPICE kernels, TLE files) and a build with those options. Map images are searched for in the current directory, then -searchdir, then ~/.xplanet on X11 or ~/Library/Xplanet on macOS.",
+  "try_this": [
+   {
+    "cmd": "xplanet --help",
+    "what_happens": "Lists the large set of command-line options."
+   },
+   {
+    "cmd": "xplanet -output earth.png -geometry 800x800",
+    "what_happens": "Renders the Earth as it looks right now and saves it to a PNG instead of opening a window."
+   },
+   {
+    "cmd": "xplanet -target earth -separation moon:-3 -output moon.png",
+    "what_happens": "Renders Earth from a point where the Moon appears 3 degrees to its left."
+   }
+  ],
+  "whats_unique": "It descends from Xearth but covers many bodies, many map projections, and real ephemeris and spacecraft-tracking input. The option set is big enough to make it a small astronomy visualizer, not just a wallpaper tool.",
+  "caveats": "The documentation describes old platforms such as FreeBSD 5.1 and Sparc Solaris, no recent release date is visible, and the README warns that -pango appears to leak memory.",
+  "commitment": "quick",
+  "category": "quick-weird-payoffs",
+  "tags": [
+   "quick",
+   "visual",
+   "science",
+   "astronomy",
+   "wallpaper"
+  ],
+  "links": [
+   {
+    "label": "Xplanet homepage",
+    "url": "https://xplanet.sourceforge.net/"
+   },
+   {
+    "label": "Option reference (the page served at /README)",
+    "url": "https://xplanet.sourceforge.net/README"
+   }
+  ]
+ }
+}

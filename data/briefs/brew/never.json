@@ -1,0 +1,53 @@
+{
+ "name": "never",
+ "desc": "Statically typed, embedded functional programming language",
+ "homepage": "https://never-lang.readthedocs.io/en/latest/",
+ "installs_365d": 18,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language",
+  "library"
+ ],
+ "why": "A statically typed functional language designed for embedding, an obscure and interesting language to explore.",
+ "brief": {
+  "what_it_is": "Never is a small statically typed, strongly typed, call-by-value functional programming language with an interpreter/VM. You write functions (with int, float, string, char, arrays, records, enums, closures and modules) and the program runs from a main function, which must return an int or float. Input is Never source, either as a file run with the nev binary or as a string compiled from a C host program. Output is printed text (print, printf, prints) plus a final return value from main. The docs describe it as a language meant to be embedded in Unix shell scripts and C code.",
+  "why_it_exists": "The docs frame it as a demonstration of how functions can be compiled, invoked, and passed as parameters or results. The stated aim is a simple language that is useful for calculating expressions, with basic data types, assignment, control flow, arrays and first-order functions.",
+  "how_it_works": "Source is compiled (nev_compile_str in the C API) into a program object, then run on a VM created with vm_new and a memory and stack size. A host can pick an entry function with nev_prepare, set parameters, and call nev_execute to get the result back. Control flow such as if, while, do-while and for are expressions, and recursion is the main looping tool; tail recursion is noted as an optimisation. Functions can be nested, passed as arguments, and returned from other functions.",
+  "commands_seen": [
+   {
+    "cmd": "#!/usr/bin/nev",
+    "context": "Shebang line to put at the top of a Never script so it runs directly without naming the interpreter; the script must also be marked executable."
+   },
+   {
+    "cmd": "$ ./sample81.nevs 10 20",
+    "context": "Runs an executable Never script with two command-line arguments that become main's int parameters; the docs show its output as 'result is 31'."
+   },
+   {
+    "cmd": "export NEVER_PATH=.:/usr/local/share/never-lib:/home/smaludzi/never-lib",
+    "context": "Sets the NEVER_PATH environment variable, which is the list of directories searched in order for Never modules; the first match is used."
+   }
+  ],
+  "install_notes": "The homepage does not describe installation. The brew caveats are empty. The docs show a shell-run form that uses the nev binary (for example '#!/usr/bin/nev' and 'nev -e' with a program), while the brew metadata lists the executable as 'never', so the names do not line up in the text I read. The C embedding example needs nev.h and links against the Never library; the FFI section loads libraries such as libm.so.6 and libc.so.6, so it assumes a Linux-style system. Modules need NEVER_PATH set if you want to use them.",
+  "standout": "Its selling point is embedding: the same language runs as a Unix shell script via a shebang, as a C library through a small compile/prepare/execute API, and it can call functions in shared libraries directly with extern declarations. Its syntax is unusual for a small language, with conformant arrays (arrays passed with their dimensions), list comprehensions that yield closures, enumerated records, and exceptions attached to functions as catch blocks.",
+  "status": "unknown. The homepage has no release date, changelog, or commit date. It has a 'Star me!' link, which suggests a GitHub repository, but I did not fetch it or see its URL, so I cannot say whether it is active.",
+  "caveats": "The docs are written in a non-native English voice and have many small errors ('practise', 'lets to', 'Conformat arrays', 'dir_def', 'initalize'). Some code samples look inconsistent: the array operator section calls printtab, but earlier code uses print2Tab, so those samples may not run as written. The FFI section says only basic types can be passed. The main function must return int or float, and the docs say an expression-only function body may return only one expression. The shell-facing binary name (nev) and the brew name (never) differ in the material I read. The pages I saw link to a 'Neural Network in Never', a 3D sine animation and a raylib FFI page, but I did not fetch them.",
+  "quotes": [
+   "Never is a simple functional programming language.",
+   "Never lets to use control flow expressions known from other languages.",
+   "Never modules are searched in the NEVER_PATH environment variable from the first to the last directory."
+  ],
+  "links": [
+   {
+    "label": "Never documentation (homepage)",
+    "url": "https://never-lang.readthedocs.io/en/latest/"
+   }
+  ],
+  "fetch_log": [
+   "https://never-lang.readthedocs.io/en/latest/ - fetched OK; returned the full documentation text including the introduction, examples, embedding and FFI sections."
+  ]
+ }
+}

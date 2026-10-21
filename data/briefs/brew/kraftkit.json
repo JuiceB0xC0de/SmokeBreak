@@ -1,0 +1,75 @@
+{
+ "name": "kraftkit",
+ "desc": "Build and use highly customized and ultra-lightweight unikernel VMs",
+ "homepage": "https://unikraft.org/docs/cli",
+ "installs_365d": 364,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "library",
+  "afternoon",
+  "simulation"
+ ],
+ "why": "Builds ultra-lightweight unikernel VMs, a fascinating corner of systems work, though it leans toward a CLI wrapper for tooling.",
+ "brief": {
+  "what_it_is": "KraftKit, shipped as the kraft command-line tool, builds and runs unikernels: small single-purpose virtual machines that bundle an application with a minimal library OS (Unikraft). It takes an application, either a Dockerfile-based rootfs described by a Kraftfile or a pre-built image from the Unikraft catalog, and produces a unikernel image that it can run locally under QEMU, Xen or Firecracker, or push as an OCI package. The README also describes a Go SDK for building unikernels programmatically, and the tool includes local networking, volume and compose-style commands. The homepage help output also lists a large set of Unikraft Cloud commands, but the README says that cloud CLI is a separate product.",
+  "why_it_exists": "The README frames unikernels as a lighter, faster, more secure and greener alternative to containers and general-purpose VMs, and says KraftKit exists to make building and managing these specialized applications easy at every stage, from construction to production. The docs say the tool was modeled on popular package managers and build tools with the explicit aim of making it easy to build and manage an application as a unikernel.",
+  "how_it_works": "You place a Kraftfile in a repo that points at an existing Dockerfile (rootfs) and a start command, then run kraft run . to build and launch it. kraft fetches Unikraft components and libraries, configures and builds them for a target platform and architecture (the GitHub Actions example uses qemu and x86_64), and runs the result on a hypervisor. The README describes the local instance manager as daemonless.",
+  "commands_seen": [
+   {
+    "cmd": "curl --proto '=https' --tlsv1.2 -sSf https://get.kraftkit.sh | sh",
+    "context": "Interactive installer from the homepage and README; it installs the kraft binary plus build and run dependencies, detecting the OS."
+   },
+   {
+    "cmd": "kraft run unikraft.org/helloworld:latest",
+    "context": "Test command from the docs: runs a pre-built Hello World unikernel from the catalog to confirm the install works."
+   },
+   {
+    "cmd": "kraft -h",
+    "context": "Prints the help screen with the full command tree, the version (v0.10.1 in the sample output), and global flags."
+   },
+   {
+    "cmd": "kraft run .",
+    "context": "Run after placing a Kraftfile in the current directory; builds and runs the unikernel defined there."
+   },
+   {
+    "cmd": "docker run -it --rm -v $(pwd):/workspace --entrypoint bash kraftkit.sh/base:latest",
+    "context": "Opens a shell in the KraftKit container build environment, which has kraft and the build tools so nothing needs to be installed on the host; the host working directory is mounted at /workspace."
+   }
+  ],
+  "install_notes": "The primary route is the curl installer piped to sh (the installer detects the OS and suggests a procedure and installs extra dependencies). Alternatives are downloading binaries from the GitHub releases page, following the install guide at unikraft.org/docs/cli/install, building from source per the hacking docs, or using the container image kraftkit.sh/base:latest. Running unikernels needs a hypervisor: QEMU (4.2.0 to 9.2.1 in the compatibility table), Firecracker (1.4.1 or later), or Xen (4.19 or earlier). Config flags include --qemu, --runtime-dir, --containerd-addr and --buildkit-host. I did not see any account requirement for the local tooling; Unikraft Cloud commands need a login.",
+  "standout": "Unikraft builds the library OS to match each app, and kraft wraps that in a Docker-like workflow: a Dockerfile plus a Kraftfile produces a VM image, and existing Dockerfiles and Composefiles are reused. The Go SDK and GitHub Action make it scriptable in CI.",
+  "status": "Maintained, as far as I can tell. The README links an active Discord, a Working Group that meets every other Wednesday, a public events calendar, and an issue tracker; the homepage help output shows v0.10.1. I did not find a release date or last-commit date in the pages I read, so I can't confirm recency beyond that.",
+  "caveats": "The README says this repo is for Unikraft and not the Unikraft Cloud CLI, though the homepage's help output mixes both command sets. The compatibility table is limited: Xen and Firecracker are Linux-only, and the table lists no Windows row even though the feature list says Windows is supported. Docs are CC BY-NC 4.0, which is non-commercial; the code is BSD-3-Clause. Unikernels are a different model from containers, so existing Linux apps may need porting, and the docs say to read the concepts page first. The homepage describes the tool as a companion tool, and the README itself is still marked by a build-and-run emoji mascot style rather than detailed limits.",
+  "quotes": [
+   "Build and use highly customized and ultra-lightweight unikernels.",
+   "KraftKit provides a suite of tools and Go-based framework for building custom, minimal, immutable lightweight unikernel virtual machines based on unikraft.org: a fast, secure and open-source library operating system.",
+   "Daemonless unikernel local VM instance manager;",
+   "Happy krafting! \ud83d\udc12"
+  ],
+  "links": [
+   {
+    "label": "Homepage: Unikraft CLI docs",
+    "url": "https://unikraft.org/docs/cli"
+   },
+   {
+    "label": "GitHub repository (kraftkit)",
+    "url": "https://github.com/unikraft/kraftkit"
+   },
+   {
+    "label": "Getting started guide",
+    "url": "https://unikraft.org/docs/getting-started/"
+   },
+   {
+    "label": "App catalog",
+    "url": "https://github.com/unikraft/catalog"
+   }
+  ],
+  "fetch_log": [
+   "https://unikraft.org/docs/cli: worked (homepage, docs text and kraft -h output)",
+   "https://github.com/unikraft/kraftkit: worked (README returned; no release or commit dates included)"
+  ]
+ }
+}

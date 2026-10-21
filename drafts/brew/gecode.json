@@ -1,0 +1,127 @@
+{
+ "name": "gecode",
+ "desc": "Toolkit for developing constraint-based systems and applications",
+ "homepage": "https://www.gecode.dev/",
+ "installs_365d": 478,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "math",
+  "library"
+ ],
+ "why": "A constraint programming toolkit where you state rules and a solver finds arrangements, a door into combinatorial search.",
+ "brief": {
+  "what_it_is": "Gecode is an open source C++ toolkit for building constraint-based systems and applications, with a constraint solver at its core. You state variables and constraints over integers, Booleans, sets, and floats, and its search engines look for assignments that satisfy them. It also provides a C++ modeling layer, and the brew formula ships fzn-gecode and mzn-gecode, which indicates MiniZinc and FlatZinc front ends. The homepage says it supports MiniZinc, but I did not see the executables described in either page I fetched.",
+  "why_it_exists": "The homepage pitches Gecode as open, efficient, and modular: a solver with state-of-the-art performance that can be extended with new constraints, branching strategies, search engines, and variable domains.",
+  "how_it_works": "The homepage lists advanced branching heuristics (accumulated failure count, activity), several search engines (parallel, interactive graphical, restarts), automatic symmetry breaking (LDSB), and no-goods from restarts. Parallel search uses multiple cores. The README also points to a worker-control guide for asynchronous control of parallel-search worker allocation.",
+  "commands_seen": [
+   {
+    "cmd": "make regenerate",
+    "context": "From the README: after configuring, run this when changing generated-source inputs. Bison 3.8.2, Flex 2.6.4 and uv must be on the system; ordinary C++ changes do not need it."
+   },
+   {
+    "cmd": "-DGECODE_ENABLE_GIST=ON",
+    "context": "CMake flag from the README: opts in to the Gist graphical search tool on macOS when Qt is installed and usable."
+   },
+   {
+    "cmd": "-DGECODE_REGENERATE_VARIMP=ON",
+    "context": "CMake flag from the README: opt-in regeneration of var-type.hpp and var-imp.hpp, which are checked in by default."
+   },
+   {
+    "cmd": "find_package(Gecode CONFIG REQUIRED)",
+    "context": "Downstream CMake line from the README's minimal example for consuming the library."
+   },
+   {
+    "cmd": "target_link_libraries(my_target PRIVATE Gecode::gecode)",
+    "context": "Downstream CMake line from the README's minimal example, linking a target against the Gecode library."
+   }
+  ],
+  "install_notes": "The 6.4.0 release is source-only; source archives come from GitHub releases or gecode.github.io/download.html. The build uses CMake 3.21 or newer, or the Autoconf configure script. Optional dependencies include Qt (Qt 6 preferred, 5.15 or newer supported), MPFR, and Gist. Doc generation needs Doxygen 1.17.0 or newer and uv. Build-time scripts need uv and Python 3.11 or newer. Autoconf builds need uv on PATH. The README does not describe a first-run step.",
+  "standout": "The solver is designed to be embedded and extended: you can program new constraints, branching strategies, search engines, and variable domains at the same efficiency as the built-in ones. It also reports winning every gold medal at the MiniZinc Challenges from 2008 to 2012 and has a test suite of more than 50000 cases.",
+  "status": "Maintained. The homepage lists Gecode 6.3.0 (July 7, 2026) and 6.4.0 (July 15, 2026) as recent releases, and the GitHub README describes 6.4.0 as the current distributed version with CI badges. I did not see a last-commit date.",
+  "caveats": "This is a C++ library, not a command-line application, so the README shows almost no runnable commands and the build flags are the main hands-on content. Building from source needs CMake or Autoconf plus optional Qt, MPFR, and uv; on macOS, Gist is opt-in for CMake builds. The brew caveats field was empty. The fzn-gecode and mzn-gecode executables are named only in the brew metadata, not described in the pages I read.",
+  "quotes": [
+   "Gecode is an open source C++ toolkit for developing constraint-based systems and applications.",
+   "Gecode is radically open for programming: it can be easily interfaced to other systems.",
+   "Gecode complies with reality in that it exploits the multiple cores of today's commodity hardware for parallel search, giving an already efficient base system an additional edge."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.gecode.dev/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/Gecode/gecode"
+   },
+   {
+    "label": "Documentation (tutorial and reference)",
+    "url": "https://gecode.github.io/documentation.html"
+   },
+   {
+    "label": "Download page",
+    "url": "https://gecode.github.io/download.html"
+   }
+  ],
+  "fetch_log": [
+   "https://www.gecode.dev/ - worked; homepage text, feature list, and news items",
+   "https://github.com/Gecode/gecode - worked; README returned, including CMake build options and download section"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Gecode opens a door into constraint programming: describe the rules of a combinatorial problem, then explore how search and symmetry-breaking find solutions."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Gecode",
+  "tldr": "A C++ constraint solver: you describe variables and rules, and it searches for assignments that satisfy them, with MiniZinc front ends installed alongside.",
+  "deeper_look": "Gecode is an open source C++ toolkit for building constraint-based systems. You declare variables over integers, Booleans, sets, or floats, then state constraints between them. The search engines look for assignments that satisfy every constraint. Puzzles, scheduling, and timetabling are typical problems for this style.\n\nThe idea underneath is constraint programming. Instead of writing the algorithm that finds an answer, you write down what a valid answer looks like and let the solver propagate, branch, and backtrack. Gecode lists branching heuristics such as accumulated failure count and activity, restarts with no-goods, automatic symmetry breaking, and parallel search across cores.\n\nThe homepage says it is built to be extended: new constraints, branching strategies, search engines, and variable domains can be programmed to run as efficiently as the built-in ones. It also reports winning every gold medal at the MiniZinc Challenges from 2008 to 2012.\n\nThe brew formula installs two executables, fzn-gecode and mzn-gecode. Going by their names, these are FlatZinc and MiniZinc front ends, and the homepage says MiniZinc is supported. The pages read for this entry do not describe the executables, so check their --help output before relying on that guess.",
+  "install": "brew install gecode\n# Depends on qtbase. The upstream 6.4.0 release is source-only; the formula builds it for you.",
+  "try_this": [
+   {
+    "cmd": "mzn-gecode --help",
+    "what_happens": "Prints the options of the MiniZinc-facing executable, a way to see what the front end accepts."
+   },
+   {
+    "cmd": "fzn-gecode --help",
+    "what_happens": "Prints the options of the FlatZinc solver executable."
+   }
+  ],
+  "whats_unique": "The solver is meant to be embedded and extended, so you can add your own constraints and search strategies at the same efficiency as the built-in ones. It also comes with a test suite of more than 50000 cases.",
+  "caveats": "This is mainly a C++ library, not a command-line app, so the upstream docs show little to run and the two executables are not described in the pages read.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "constraint-programming",
+   "solver",
+   "math",
+   "c++",
+   "minizinc"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.gecode.dev/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/Gecode/gecode"
+   },
+   {
+    "label": "Documentation (tutorial and reference)",
+    "url": "https://gecode.github.io/documentation.html"
+   },
+   {
+    "label": "Download page",
+    "url": "https://gecode.github.io/download.html"
+   }
+  ]
+ }
+}

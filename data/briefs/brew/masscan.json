@@ -1,0 +1,91 @@
+{
+ "name": "masscan",
+ "desc": "TCP port scanner, scans entire Internet in under 5 minutes",
+ "homepage": "https://github.com/robertdavidgraham/masscan/",
+ "installs_365d": 3720,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "tui",
+  "quick",
+  "protocol"
+ ],
+ "why": "Famous among security people for its scanning speed, but it is a well-known tool and mostly a fast port scanner.",
+ "brief": {
+  "what_it_is": "Masscan is a command-line TCP port scanner written in C, aimed at scanning very large address ranges, up to the whole IPv4 Internet. You give it target IPv4 or IPv6 addresses or ranges and a list of ports, and it prints the open host and port pairs to stdout or to a file. Output can be XML, binary, grepable, JSON, or a simple list. It can also complete TCP connections to grab banners from services such as SSH, HTTP, SMB, RDP and VNC. Its option syntax is modelled on nmap's.",
+  "why_it_exists": "The author frames it as an Internet-scale port scanner that can scan the entire Internet in under 5 minutes, transmitting 10 million packets per second from a single machine. He says its usage is similar to nmap, the most famous port scanner, but it is built for wide scanning of many machines rather than in-depth scanning of one.",
+  "how_it_works": "It is asynchronous, with separate transmit and receive threads, similar in design to ZMap, scanrand and unicornscan. It walks a single index from zero and passes each index through an encryption function, so the probe order is random yet covers every target exactly once. Masscan uses its own user-mode TCP/IP stack, which is why the local OS can interfere, and why source-IP or firewall setup is needed for banner grabbing.",
+  "commands_seen": [
+   {
+    "cmd": "# masscan -p80,8000-8100 10.0.0.0/8 2603:3001:2d00:da00::/112",
+    "context": "Basic example: scan ports 80 and 8000-8100 on an IPv4 /8 and an IPv6 /112 subnet, printing results to stdout."
+   },
+   {
+    "cmd": "# masscan 0.0.0.0/0 -p0-65535 --max-rate 100000",
+    "context": "Whole-Internet scan example at 100,000 packets per second; the README says the default rate is only 100 packets per second."
+   },
+   {
+    "cmd": "# masscan 0.0.0.0/0 -p0-65535 --excludefile exclude.txt",
+    "context": "Whole-Internet scan with a file of excluded ranges, which the README recommends to avoid harming networks and getting banned."
+   },
+   {
+    "cmd": "# masscan 0.0.0.0/0 -p0-65535 -oX scan.xml",
+    "context": "Saves the scan results as nmap-inspired XML to scan.xml instead of printing them."
+   },
+   {
+    "cmd": "# masscan -p80,8000-8100 10.0.0.0/8 2603:3001:2d00:da00::/112 --echo > xxx.conf",
+    "context": "Dumps the full current configuration to a file that can be reused with -c."
+   },
+   {
+    "cmd": "# masscan -c xxx.conf --rate 1000",
+    "context": "Runs a scan from a saved configuration file, overriding the rate on the command line."
+   },
+   {
+    "cmd": "# masscan -c myscan.conf",
+    "context": "Runs a scan from a configuration file; the README's example file sets rate, output format, ports, range and excludefile."
+   },
+   {
+    "cmd": "# iptables -A INPUT -p tcp --dport 61000 -j DROP",
+    "context": "Linux firewall rule that stops the local TCP stack from seeing replies on source port 61000, so masscan can grab banners on that port."
+   },
+   {
+    "cmd": "# masscan 10.0.0.0/8 -p80 --banners --source-port 61000",
+    "context": "Banner-grabbing scan that uses source port 61000, paired with the iptables rule above."
+   },
+   {
+    "cmd": "# masscan --nmap",
+    "context": "Lists the additional nmap-compatible options that masscan accepts."
+   },
+   {
+    "cmd": "$ make test",
+    "context": "Runs the built-in self-test (bin/masscan --selftest), which the README says to do after building."
+   }
+  ],
+  "install_notes": "The README describes building from source, not a package install: on Debian or Ubuntu, sudo apt-get install git make gcc, then git clone, cd masscan, and make. The output lands in bin/masscan, and make install works on Linux. The only dependency is a C compiler such as gcc or clang. Other platforms: Windows with Visual Studio uses the VS10 project, Windows with MinGW uses make, macOS uses make or the XCode4 project, FreeBSD uses gmake, and cygwin is said not to work. make -j needs more than 2 GB of RAM on a Raspberry Pi, so use something like -j4 there. Running from the examples implies root or sudo, though the README does not say so in words. Banner grabbing and the heartbleed check may need a separate source IP or a local firewall rule. Optional PF_RING ZC support needs ntop's kernel driver, library and Intel ixgbe driver. The README does not describe a brew-specific setup.",
+  "standout": "Scan order is produced by encrypting a linear index, so probes are random across the target space without repeats, and a scan can be paused with ctrl-c and resumed from the saved index. It also makes nmap-style options and output work at very high packet rates, which is the unusual combination here.",
+  "status": "unknown. The fetched README has no release version, date, or changelog, and I did not fetch the commit history or releases page. Its build instructions and the 2018 Kali example look dated, but I could not confirm the current maintenance state from what I read.",
+  "caveats": "The README warns that masscan uses its own ad hoc TCP/IP stack, so anything beyond simple port scans may conflict with the local stack and needs --src-ip or a local firewall rule. It is licensed under AGPL v3. Scanning the whole Internet is discouraged, because networks may react badly and ban your IP, and the default rate is 100 packets per second. Only SYN scanning is supported, and there is no DNS name resolution and no default port list. IPv6 scans at high rates can overwhelm target networks. Windows and macOS reach about 300,000 packets per second, and PF_RING mode needs special drivers. The README also asks for donations to a Bitcoin address. The scout note calls it mostly a fast port scanner, which fits the README's own framing.",
+  "quotes": [
+   "This is an Internet-scale port scanner. It can scan the entire Internet in under 5 minutes, transmitting 10 million packets per second, from a single machine.",
+   "Its usage (parameters, output) is similar to `nmap`, the most famous port scanner.",
+   "NOTE: masscan uses its own **ad hoc TCP/IP stack**. Anything other than simple port scans may cause conflict with the local TCP/IP stack.",
+   "This program spews out packets very fast. On Windows, or from VMs, it can do 300,000 packets/second. On Linux (no virtualization) it'll do 1.6 million packets-per-second. That's fast enough to melt most networks."
+  ],
+  "links": [
+   {
+    "label": "Project homepage and README (GitHub)",
+    "url": "https://github.com/robertdavidgraham/masscan/"
+   },
+   {
+    "label": "ntop PF_RING installation guide (linked from README for PF_RING ZC mode)",
+    "url": "https://www.ntop.org/installation-guide-for-pf_ring/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/robertdavidgraham/masscan/ - fetched successfully; README returned in full. Linked VULNINFO.md, PoC||GTFO 0x15 and the Kali example were not followed."
+  ]
+ }
+}

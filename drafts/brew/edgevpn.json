@@ -1,0 +1,144 @@
+{
+ "name": "edgevpn",
+ "desc": "Immutable, decentralized, statically built p2p VPN",
+ "homepage": "https://mudler.github.io/edgevpn",
+ "installs_365d": 224,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "afternoon"
+ ],
+ "why": "A decentralized p2p VPN built on libp2p is a neat door into peer-to-peer networking, though it is a close call.",
+ "brief": {
+  "what_it_is": "EdgeVPN is a single statically compiled Go binary, edgevpn, that builds a private network between machines using libp2p with no central server. Nodes join by sharing a token or config file that identifies the network, and each node is given a virtual IP (for example 10.1.0.11/24) on a virtual interface, edgevpn0 by default. The same network can also expose TCP services through a reverse proxy, send files between peers, and host a small replicated ledger that holds data and the DHCP and DNS registries. A web UI, a REST API and a separate desktop GUI sit on top.",
+  "why_it_exists": "The author, Ettore Di Giacinto, says it began as his first experiment with libp2p and as a wish for a more open ngrok alternative that needs less infrastructure to maintain. The README frames it as fully decentralized, immutable, portable and easy to use.",
+  "how_it_works": "A token is the network's configuration encoded in base64, and the README says exposing it gives full control of the network. Nodes started with the same token find each other over libp2p, and the README warns that it can take up to five minutes for connections to form. Automatic IP assignment, an embedded DNS server and the blockchain (described as a lightweight ledger) keep network state among peers instead of on a server.",
+  "commands_seen": [
+   {
+    "cmd": "edgevpn -g > config.yaml",
+    "context": "Generates a new network config file, to be reused later as EDGEVPNCONFIG."
+   },
+   {
+    "cmd": "EDGEVPNTOKEN=$(edgevpn -g -b)",
+    "context": "Generates a portable base64 token for the network instead of a config file."
+   },
+   {
+    "cmd": "EDGEVPNTOKEN=$(edgevpn -g | tee config.yaml | base64 -w0)",
+    "context": "Shows that the token is just the base64-encoded config, and writes the config to config.yaml at the same time."
+   },
+   {
+    "cmd": "EDGEVPNTOKEN=.. edgevpn --address 10.1.0.11/24",
+    "context": "Starts the VPN on node A with a unique virtual IP. The README repeats this with 10.1.0.12 and 10.1.0.13 for other nodes."
+   },
+   {
+    "cmd": "make build",
+    "context": "Builds the web UI if needed and then the Go binary. This is the full source build."
+   },
+   {
+    "cmd": "make react-ui-force",
+    "context": "Forces a clean rebuild of the embedded React web UI."
+   },
+   {
+    "cmd": "curl -sfL https://raw.githubusercontent.com/mudler/edgevpn/master/install.sh | sh",
+    "context": "One-line install of the latest release through the project's install script."
+   },
+   {
+    "cmd": "mkdir -p api/react-ui/dist && touch api/react-ui/dist/index.html",
+    "context": "Stub that lets go build work for Go-only development when the UI has not been built."
+   }
+  ],
+  "install_notes": "The README points to precompiled static releases on the GitHub releases page and to an install script. Install routes include the script, release archives, Homebrew, a container image and source builds, and the README says these are covered in the docs' install tutorial. Source builds need Node 20.19 or newer because the web UI is a React app embedded with go:embed. A plain go build fails unless api/react-ui/dist exists. The VPN needs a network interface, so it will probably need root or equivalent privileges. The README doesn't spell that out. Nothing in the README mentions accounts. Brew caveats were empty.",
+  "standout": "One binary combines a VPN, a reverse proxy like ngrok, peer-to-peer file transfer, and a replicated ledger that carries DHCP and DNS state, all over libp2p. The network identity is just a shareable config or token, so nothing needs a central coordinator.",
+  "status": "Unknown from what I read. The README has no release dates, last-commit information or maintenance notice. The repository shows an Apache 2.0 license badge and an open-issues badge, and the README invites contributions and mentions good-first-issue labels. The README's TODO list is all ticked, and the GUI is described as alpha.",
+  "caveats": "The README says it has not been through a full security audit and should not be used for sensitive traffic or production. It also says the decentralized approach is chatty and may not suit low-latency workloads. Trusted zones are marked experimental: they do not currently stop a token holder from entering the zone. Connections may take minutes to form. The desktop GUI is alpha and Linux-only. Source builds need a Node toolchain. The full limits are in a 'when not to use EdgeVPN' page, which I did not fetch.",
+  "quotes": [
+   "Fully Decentralized. Immutable. Portable. Easy to use Statically compiled VPN and a reverse proxy over p2p.",
+   "Every token is unique and identifies the network,  no central server setup, or specifying hosts ip is required.",
+   "This software has not been through a full security audit \u2014 don't rely on it for sensitive traffic or production environments."
+  ],
+  "links": [
+   {
+    "label": "Homepage and documentation",
+    "url": "https://mudler.github.io/edgevpn"
+   },
+   {
+    "label": "GitHub repository (README source)",
+    "url": "https://github.com/mudler/edgevpn"
+   },
+   {
+    "label": "When not to use EdgeVPN",
+    "url": "https://mudler.github.io/edgevpn/docs/explanation/when-not-to-use-edgevpn/"
+   },
+   {
+    "label": "Install EdgeVPN tutorial",
+    "url": "https://mudler.github.io/edgevpn/docs/tutorials/install/"
+   }
+  ],
+  "fetch_log": [
+   "https://mudler.github.io/edgevpn: worked. A landing page with a short summary and a link to docs. It gave no commands and no release information.",
+   "https://github.com/mudler/edgevpn: worked. The full README was returned and used as the main source.",
+   "Not fetched: the docs site pages (install tutorial, when-not-to-use, security model), which the README links to. Not followed because the README already covered the essentials and the fetch limit was nearly reached."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "An obscure libp2p VPN that replicates DHCP and DNS state across peers, alongside file transfer and reverse proxying, offers a genuinely interesting networking experiment."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "EdgeVPN",
+  "tldr": "A single Go binary that builds a private network between machines over libp2p, with no central server, just a shared token.",
+  "deeper_look": "EdgeVPN creates a virtual network interface (edgevpn0 by default) on each machine and gives every node a virtual IP such as 10.1.0.11/24. Nodes that start with the same token find each other over libp2p and join the same network. No coordinator, no host list, no server to run.\n\nThe token is the whole idea. It is the network's configuration, base64-encoded, and the README says exposing it gives full control of the network. Generate one, hand it to a friend, and you share a network. Network state, including DHCP and DNS registries, lives in a small replicated ledger that the peers keep among themselves instead of on a server.\n\nThe author, Ettore Di Giacinto, says it began as his first experiment with libp2p and as a wish for a more open ngrok alternative that needs less infrastructure. So the same binary can also expose TCP services through a reverse proxy and send files between peers. A web UI and a REST API sit on top.\n\nThe door here is peer-to-peer networking: how nodes discover each other with no fixed address, and how shared state survives without a central owner.",
+  "install": "brew install edgevpn\n# Creating the virtual interface will probably need root or equivalent privileges; the README does not spell this out.",
+  "try_this": [
+   {
+    "cmd": "edgevpn -g > config.yaml",
+    "what_happens": "Generates a new network config file you can reuse as EDGEVPNCONFIG."
+   },
+   {
+    "cmd": "EDGEVPNTOKEN=$(edgevpn -g -b)",
+    "what_happens": "Generates a portable base64 token that identifies a new network."
+   },
+   {
+    "cmd": "EDGEVPNTOKEN=.. edgevpn --address 10.1.0.11/24",
+    "what_happens": "Starts a node on that network with a virtual IP; run it on other machines with 10.1.0.12 and so on, using the same token."
+   }
+  ],
+  "whats_unique": "One binary combines a VPN, an ngrok-style reverse proxy, peer-to-peer file transfer and a replicated ledger carrying DHCP and DNS state. The network's identity is just a shareable token.",
+  "caveats": "The README says it has not had a full security audit and should not carry sensitive traffic or run in production, and connections can take up to five minutes to form.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "network",
+   "p2p",
+   "vpn",
+   "libp2p",
+   "go",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "Homepage and documentation",
+    "url": "https://mudler.github.io/edgevpn"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/mudler/edgevpn"
+   },
+   {
+    "label": "Install EdgeVPN tutorial",
+    "url": "https://mudler.github.io/edgevpn/docs/tutorials/install/"
+   },
+   {
+    "label": "When not to use EdgeVPN",
+    "url": "https://mudler.github.io/edgevpn/docs/explanation/when-not-to-use-edgevpn/"
+   }
+  ]
+ }
+}

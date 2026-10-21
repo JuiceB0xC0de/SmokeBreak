@@ -1,0 +1,86 @@
+{
+ "name": "lief-patchelf",
+ "desc": "Robust, modern reimplementation of patchelf based on the LIEF",
+ "homepage": "https://lief.re/doc/latest/tools/lief-patchelf/index.html",
+ "installs_365d": 17,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "library"
+ ],
+ "why": "Rewrites ELF binaries' RPATH, interpreters and more; a practical way into the internals of executable files.",
+ "brief": {
+  "what_it_is": "lief-patchelf is a command-line tool that rewrites ELF executables and shared libraries in place. It is a Rust reimplementation of NixOS's patchelf, built on the LIEF binary-parsing library. The homepage names RPATH and the interpreter as things it rewrites. It keeps the original patchelf command-line interface, so existing invocations should carry over. The homepage does not show example invocations, so the exact input and output forms are not confirmed here.",
+  "why_it_exists": "The page presents it as a more robust, modern, and maintainable alternative to the original NixOS patchelf, while keeping the same command-line interface for a smooth switch.",
+  "how_it_works": "The tool sits on LIEF, a cross-platform library that parses and modifies ELF, PE, and Mach-O files. The docs describe it as a LIEF-based rewrite in Rust, with clap providing argument parsing and man page and shell completion generation. The homepage does not explain the internal rewrite mechanism in detail.",
+  "commands_seen": [
+   {
+    "cmd": "cargo build [--release]",
+    "context": "Builds lief-patchelf from the tools/lief-patchelf directory of the LIEF repository; --release is optional."
+   },
+   {
+    "cmd": "./target/{release,debug}/lief-patchelf --version",
+    "context": "Runs the freshly built binary to confirm the build works, from either the release or debug output directory."
+   },
+   {
+    "cmd": "rustup.exe target add $RUST_TARGET (optional)",
+    "context": "Optional step on Windows to add a Rust cross-compilation target before building for another platform."
+   },
+   {
+    "cmd": "$env:RUSTFLAGS=\"-Ctarget-feature=+crt-static\"",
+    "context": "PowerShell setting used before the Windows cross-build so the binary links the C runtime statically."
+   },
+   {
+    "cmd": "cargo build --target=aarch64-pc-windows-msvc",
+    "context": "Cross-compiles lief-patchelf for Windows ARM64 with the MSVC target."
+   },
+   {
+    "cmd": "./target/{release,debug}/lief-patchelf.exe --version",
+    "context": "Checks the Windows executable's version after the cross-build."
+   },
+   {
+    "cmd": "$ lief-patchelf --generate-manpage ./lief-patchelf.1",
+    "context": "Writes a man page for the tool to ./lief-patchelf.1, using the clap_mangen crate."
+   },
+   {
+    "cmd": "$ ./lief-patchelf --generate {bash, elvish, fish, powershell, zsh}",
+    "context": "Generates shell completion stubs for the chosen shell, via clap_complete."
+   }
+  ],
+  "install_notes": "The docs describe building from source with Cargo, run from the tools/lief-patchelf directory of the LIEF repository, so a Rust toolchain is needed. Cross-compiling for Windows ARM64 needs the MSVC target added via rustup and RUSTFLAGS set to crt-static. The homepage does not describe a Homebrew install of this tool. The Homebrew line I saw in the LIEF README is 'brew install lief', which is for the library, not confirmed for this executable. No accounts or runtime configuration are mentioned.",
+  "standout": "It keeps the NixOS patchelf command-line interface while being a Rust rewrite on top of a general binary-analysis library, so the same tool can parse and modify ELF, PE, and Mach-O internals. It also ships with man page and shell completion generation built in.",
+  "status": "The docs page is labelled version 2.0.0 (commit 6dc25f25). The LIEF main repository is active, with nightly builds and a 2.0.0.dev0 nightly install path, but I did not find a last-release or last-commit date specific to lief-patchelf, so its status is best described as unknown rather than confirmed maintained.",
+  "caveats": "The homepage covers only building, man pages, and completions. It shows no usage examples, so claims about RPATH or interpreter rewriting come from the description, not from demonstrated commands. The Windows build needs extra toolchain steps. The LIEF library is Apache 2.0 licensed per its README, but I did not check the license of the lief-patchelf tool itself.",
+  "quotes": [
+   "lief-patchelf is an implementation of the original patchelf created by NixOS (NixOS/patchelf), based on LIEF.",
+   "This LIEF-based version is written in Rust, offering a more robust, modern, and maintainable implementation compared to the original project.",
+   "lief-patchelf maintains the same command-line interface as the original NixOS implementation, allowing for a seamless transition between the two versions."
+  ],
+  "links": [
+   {
+    "label": "lief-patchelf documentation (homepage)",
+    "url": "https://lief.re/doc/latest/tools/lief-patchelf/index.html"
+   },
+   {
+    "label": "LIEF GitHub repository",
+    "url": "https://github.com/lief-project/LIEF"
+   },
+   {
+    "label": "LIEF main documentation",
+    "url": "https://lief.re/doc/latest/index.html"
+   },
+   {
+    "label": "Original NixOS patchelf",
+    "url": "https://github.com/NixOS/patchelf"
+   }
+  ],
+  "fetch_log": [
+   "https://lief.re/doc/latest/tools/lief-patchelf/index.html: fetched OK, the lief-patchelf docs page with build, man page, and completion sections",
+   "https://github.com/lief-project/LIEF: fetched OK, the LIEF main README, used for context on the parent library, license, and install routes"
+  ]
+ }
+}

@@ -1,0 +1,66 @@
+{
+ "name": "sixtunnel",
+ "desc": "Tunnelling for application that don't speak IPv6",
+ "homepage": "https://github.com/wojtekka/6tunnel",
+ "installs_365d": 30,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "Tunnels IPv6 through IPv4 for apps that cannot speak it, a small clever shim into how addressing gets bridged.",
+ "brief": {
+  "what_it_is": "6tunnel is a small command-line TCP forwarder that lets IPv4-only applications reach services on IPv6 hosts, and IPv6-only applications reach IPv4 hosts. It binds a local port on IPv4 by default (or IPv6 with -6) and forwards everything it receives to a remote host and port over the other protocol. The README's worked example is a local port 6668 that forwards to the IPv6 IRC server irc6.net on port 6667. An optional -i flag makes it ask the connecting client for a password before forwarding.",
+  "why_it_exists": "The README frames it as a way to use services provided by IPv6 hosts from IPv4-only applications, and the reverse, without changing the applications themselves.",
+  "how_it_works": "The README describes it as a forwarder that binds to a local IPv4 (default) or IPv6 address and relays all data to a remote IPv4 or IPv6 (default) host. If the remote host has no IPv6 address it uses the IPv4 one; otherwise -4 prefers IPv4 and -6 binds to IPv6 for IPv6-to-any tunnels. The README does not explain the internals beyond this.",
+  "commands_seen": [
+   {
+    "cmd": "6tunnel -1 6668 irc6.net 6667",
+    "context": "Listens on local port 6668 and forwards to the IPv6 IRC server irc6.net port 6667, so an IPv4-only IRC client can connect."
+   },
+   {
+    "cmd": "irc foobar localhost:6668",
+    "context": "Example IRC client invocation that connects through the local 6tunnel port from the previous command."
+   },
+   {
+    "cmd": "6tunnel -i dupa.8 31337 irc6.net 6667",
+    "context": "Same kind of tunnel on port 31337, but with -i so 6tunnel asks the client for the password dupa.8 before forwarding."
+   },
+   {
+    "cmd": "irc foobar localhost:31337:dupa.8",
+    "context": "IRC client connect string that supplies the password after the colon, matching the -i setup."
+   }
+  ],
+  "install_notes": "Nothing beyond the standard install is described in the README. The -I option sends a password to the upstream server after successful proxy authentication. No accounts or runtimes are mentioned.",
+  "standout": "Compact, single-purpose forwarder that handles IPv4 and IPv6 in every combination with a few flags, and can act as a password gate in front of an IRC server. The scout note's 'clever shim' framing is fair but the README itself is modest about the mechanism.",
+  "status": "Quiet to moderately maintained. The latest tagged release is 0.11, released 26 Feb (year not visible in the fetched page). The release page says 32 commits to master since that release, so development continues without a newer tag. The README is short and has no changelog beyond the 0.11 notes.",
+  "caveats": "The README has no build or install instructions and no list of platforms. The 0.11 release notes say the license was only added in that version, after earlier code had no license information. Code from two earlier contributors was removed and rewritten because their contact addresses were dead, and the author admits it may still contain offending code. The README has typos (for example 'preffered'), and the examples depend on remote services that may no longer exist.",
+  "quotes": [
+   "6tunnel allows you to use services provided by IPv6 hosts with IPv4-only applications and vice-versa.",
+   "If you don't wish to run 6tunnel every time you want to show your `:c001:` or `:dead:` IPv6 address on IRC, you can use `-i` parameter, which makes 6tunnel ask your client for specified password.",
+   "6tunnel can also be used as a tunnel for all other combinations of IPv4 and IPv6 endpoints."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/wojtekka/6tunnel"
+   },
+   {
+    "label": "Release 0.11 notes",
+    "url": "https://github.com/wojtekka/6tunnel/releases/tag/0.11"
+   },
+   {
+    "label": "GPL version 2 text linked from README",
+    "url": "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/wojtekka/6tunnel: OK, README returned",
+   "https://github.com/wojtekka/6tunnel/releases/tag/0.11: OK, but page was mostly GitHub navigation chrome; the release notes and '32 commits to master since this release' line were readable, the year was not"
+  ]
+ }
+}

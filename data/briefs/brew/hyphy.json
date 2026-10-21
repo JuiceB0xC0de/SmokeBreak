@@ -1,0 +1,96 @@
+{
+ "name": "hyphy",
+ "desc": "Hypothesis testing using Phylogenies",
+ "homepage": "https://www.hyphy.org",
+ "installs_365d": 127,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "math"
+ ],
+ "why": "Phylogenetic hypothesis testing software that lets you run real evolutionary analyses on sequence trees at home.",
+ "brief": {
+  "what_it_is": "HyPhy (Hypothesis Testing using Phylogenies) is an open-source package for comparative sequence analysis, built on stochastic evolutionary models. It takes a sequence alignment plus a phylogenetic tree (FASTA, NEXUS, Phylip or MEGA input, per the 2.5 README) and runs statistical tests that detect natural selection, recombination, co-evolution and rate variation across genes and lineages. Output is machine-readable JSON, which the companion HyPhy Vision site renders as interactive trees and site plots. It ships as a command-line tool (hyphy), a scripting language called HBL, and a shared library callable from Python and R.",
+  "why_it_exists": "The homepage describes it as a suite of advanced phylogenetic methods for detecting and testing natural selection, recombination, co-evolution and rate variation. The 2.5 README frames it as software for analysing genetic sequences with techniques from phylogenetics, molecular evolution and machine learning, and notes that it powers the datamonkey.org web server.",
+  "how_it_works": "Each analysis is a named method (for example MEME, FUBAR, FEL, BUSTED, aBSREL, RELAX, GARD) that fits a codon or nucleotide substitution model to an alignment and tree and then tests hypotheses about selection or recombination. Results are written as JSON, which HyPhy Vision parses for visualisation. The homepage lists the analyses as: MEME for episodic site-specific positive selection, FUBAR/FEL/SLAC for pervasive selection, BUSTED/aBSREL for gene-wide and branch-specific selection, RELAX for relaxed or intensified constraint, and GARD for recombination breakpoints.",
+  "commands_seen": [
+   {
+    "cmd": "hyphy -i",
+    "context": "Launches the interactive command-line helper that walks you through choosing an analysis and its parameters (from the 2.5 README and homepage)."
+   },
+   {
+    "cmd": "hyphy <method_name> --alignment <path_to_alignment_file> <additional_method_specific_arguments>",
+    "context": "General form of a scripted run. The README lists the method names as absrel, bgm, busted, fade, fel, fubar, gard, meme, relax or slac."
+   },
+   {
+    "cmd": "hyphy meme --alignment data.fas --tree tree.nwk",
+    "context": "Example from the homepage's Scripted CLI section. Note the separate --tree flag, which the 2.5 README's general form does not show."
+   },
+   {
+    "cmd": "hyphy gard --help",
+    "context": "Prints the available options for the gard analysis, including defaults for type, code, model, rate-classes and mode."
+   },
+   {
+    "cmd": "hyphy gard --alignment /path/to/file --rv GDD --mode Faster --rate-classes 3",
+    "context": "Example GARD recombination run with a rate-variation model, faster mode and three rate classes."
+   },
+   {
+    "cmd": "hyphy acd Universal <alignment.fa> MG94CUSTOMCF3X4 Global 012345 <treefile> Estimate",
+    "context": "Shows positional-argument invocation for an analysis (acd) that has no named CLI flags. Arguments follow the order of the interactive prompts."
+   },
+   {
+    "cmd": "conda install -c bioconda hyphy",
+    "context": "The README's preferred install method. Per the installation page, the Conda package includes both the multi-threaded HYPHYMP (aliased to hyphy) and the MPI HYPHYMPI builds."
+   },
+   {
+    "cmd": "brew install hyphy",
+    "context": "Homebrew install method given in the 2.5 README as the alternative to Conda."
+   },
+   {
+    "cmd": "cmake . && make -j MP && make install",
+    "context": "Source build steps from the installation page. Running make -j MP builds the multi-threaded executable, and make install puts it under /usr/local by default. The README runs these as separate commands."
+   },
+   {
+    "cmd": "docker run --rm -v [path-to-your-input-data]:/hyphy/data -it hyphy:latest",
+    "context": "Runs HyPhy in a container from a local Docker build, with your data mounted at /hyphy/data."
+   }
+  ],
+  "install_notes": "Not available for Windows. Conda or Homebrew are the easy routes; the installation page says you may need to add the bioconda channel first. Building from source needs cmake 3.12 or newer, a C++14-capable compiler (gcc 4.9 or newer per the README), libcurl and pthreads. On macOS, OpenMP comes from brew install libomp. An MPI build needs an MPI library such as OpenMPI on your PATH. The build auto-detects host CPU features (AVX, AVX2); use -DNOAVX=ON for heterogeneous clusters. The HyPhy library path can be set with the LIBPATH argument or the HYPHY_LIB_PATH environment variable. Docker and a WebAssembly build are also described. There are no accounts needed for local use. The installation page says 'please register and download HyPhy' before building from source, but it does not say what registration involves, so treat that as unverified.",
+  "standout": "You can run the core analyses without installing anything: Datamonkey runs them on a public cluster, and v3.datamonkey.org runs them entirely client-side in the browser, with results viewable in HyPhy Vision. The CLI also accepts every interactive prompt as a positional argument, so even older analyses without flags can be scripted.",
+  "status": "Maintained, with a mid-transition. The README carries a notice that HyPhy 2.5.x (this repo's legacy line) is in pure maintenance mode with only critical bug fixes, and that active development has moved to HyPhy 3 at github.com/veg/hyphy-3. The homepage lists 2026 publications and tools, so the project is active. I did not see a last-release date or last-commit date, so the exact recency of commits is unknown.",
+  "caveats": "No Windows support. The legacy 2.5 line is maintenance-only, so new models and methods are in HyPhy 3, which I only skimmed (its README covers C++20, Python and PyTorch bindings, and new methods such as BUSTED-S and dFEL). The homepage and README disagree slightly on the --tree flag in the scripted example. Not every analysis has CLI flags (the README cites acd as an example). Building from source has real dependencies, and OpenMP is missing from some default macOS toolchains. The license page was not fetched, so the licence is unverified. I did not check whether the Homebrew formula tracks 2.5 or 3.",
+  "quotes": [
+   "HyPhy is an open-source software package for the analysis of genetic sequences using techniques in phylogenetics, molecular evolution, and machine learning.",
+   "HyPhy is the computational backbone powering datamonkey.org.",
+   "HyPhy 2.5.x is now in pure maintenance mode, with only critical bug fixes expected.",
+   "run them directly in your web browser at v3.datamonkey.org (runs entirely client-side in your browser!)"
+  ],
+  "links": [
+   {
+    "label": "HyPhy homepage",
+    "url": "https://www.hyphy.org"
+   },
+   {
+    "label": "GitHub repository (2.5 legacy README)",
+    "url": "https://github.com/veg/hyphy"
+   },
+   {
+    "label": "Datamonkey web server",
+    "url": "https://www.datamonkey.org"
+   },
+   {
+    "label": "HyPhy 3 repository (active development)",
+    "url": "https://github.com/veg/hyphy-3"
+   }
+  ],
+  "fetch_log": [
+   "https://www.hyphy.org \u2014 worked; homepage text with feature summary, companion services, and getting-started commands",
+   "https://github.com/veg/hyphy \u2014 worked; README (HyPhy 2.5 legacy) with install, CLI and build details and a maintenance-mode notice",
+   "https://www.hyphy.org/installation/ \u2014 worked; installation page with build targets, Conda notes and environment variables"
+  ]
+ }
+}

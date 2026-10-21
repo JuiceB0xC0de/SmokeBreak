@@ -1,0 +1,94 @@
+{
+ "name": "bup",
+ "desc": "Backup tool",
+ "homepage": "https://bup.github.io/",
+ "installs_365d": 387,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "library",
+  "science"
+ ],
+ "why": "Backup built on git packfiles with rolling-hash deduplication, an unusual and elegant idea worth an afternoon of poking.",
+ "brief": {
+  "what_it_is": "bup is a command-line backup program, short for 'backup', written mostly in Python with some C. You point it at files on stdin or as command-line arguments, and it breaks the data into chunks using a rolling checksum and stores those chunks in a git-format packfile repository (default ~/.bup). Repeated backups share chunks automatically, so later saves only add the new data. The output is a bup repository that git can read, and backups can be restored with bup restore or streamed back out with bup join. Remote backups go over ssh to a server that just needs bup installed.",
+  "why_it_exists": "The README frames bup as a backup program that handles huge files, such as VM disk images, databases, and XML files, incrementally without using a lot of disk space for each version. It also aims to avoid git's slow repacking step and to scale to millions of filenames and hundreds or thousands of gigabytes.",
+  "how_it_works": "'bup split' reads data, cuts it into chunks with a rolling checksum similar to rsync's, and writes the chunks into a new git packfile, after checking existing packfiles to skip chunks they already contain. 'bup index' records each file's name, attributes, and optional blob id in an index file, and 'bup save' runs the split logic per file and assembles a git tree, so 'git diff' is useful on the results. Each named backup is stored as a git branch, and a remote backup only needs the server's .idx files to decide what to send.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/bup/bup",
+    "context": "Gets the source code from GitHub; the README says to check out the 0.34 tag if you only want to use bup."
+   },
+   {
+    "cmd": "make check",
+    "context": "Runs the test suite; the README says make long-check is the full version and make -j 5 check runs in parallel if xdist is installed."
+   },
+   {
+    "cmd": "make install DESTDIR=/opt/bup PREFIX=''",
+    "context": "Installs bup, with the destination set by DESTDIR and PREFIX (default prefix /usr/local)."
+   },
+   {
+    "cmd": "bup init",
+    "context": "Creates the default repository at ~/.bup; -d DIR or BUP_DIR can select another location."
+   },
+   {
+    "cmd": "bup index /etc",
+    "context": "Walks /etc and updates the index file with names, attributes, and optional blob ids; run before each save."
+   },
+   {
+    "cmd": "bup save -n local-etc /etc",
+    "context": "Creates a named backup called local-etc from /etc; repeated runs store only new data."
+   },
+   {
+    "cmd": "bup restore -C ./dest local-etc/latest/etc",
+    "context": "Restores the latest local-etc backup of /etc into ./dest."
+   },
+   {
+    "cmd": "bup fsck -g",
+    "context": "Writes par2 parity data for existing repository contents so some corruption can be recovered (needs par2 installed)."
+   },
+   {
+    "cmd": "tar -cvf - /etc | bup split -n local-etc -vv",
+    "context": "Streams a tar archive into bup split as an alternative to index/save, storing it as a named backup."
+   },
+   {
+    "cmd": "bup join local-etc | tar -tf -",
+    "context": "Streams the split-based backup back out so tar can list its contents."
+   },
+   {
+    "cmd": "bup ls -r SERVER:",
+    "context": "Lists the saves available in ~/.bup on a remote server reached over ssh."
+   }
+  ],
+  "install_notes": "Homebrew is the easy route. From source, you need Python 3.7+ development headers, a C compiler, GNU make, and git (the README also mentions git 1.7.2 or newer and Python 3.8 or newer in another section). Run ./configure, then make, then optionally make install. For bup fuse you need python-fuse, not fusepy. The optional web server needs tornado (pip install tornado). par2 is optional, for fsck recovery. The Debian notes list packages such as python3-dev, python3-fuse, python3-pyxattr, libacl1-dev, and attr, and there are FreeBSD, NetBSD and Cygwin notes. Remote use needs ssh access and bup on the server's PATH. The macOS notes say the system bash (3.2.57) is too old and bash 5.3.3 is known to work.",
+  "standout": "bup uses git's packfile format as its storage layer but writes packfiles itself instead of using git's code, and it deduplicates across all backups with no need to track which backup is based on which. An incremental backup also looks like a full backup when restored, which is unusual for a tool that stores this compactly.",
+  "status": "Looks maintained. The README points to a current stable release, 0.34, with per-release change notes going back to 0.27.1, and it has CI badges for Debian, FreeBSD, Ubuntu and macOS. I did not see a release date or last-commit date, so I cannot give a precise date.",
+  "caveats": "The README says bup is 'not remotely as well tested as something like tar' and may 'eat your data', and it lists missing features. Metadata support is immature (no ACLs on macOS, Cygwin or NetBSD). It has only been reported to work on Linux, FreeBSD, NetBSD, OS X, Solaris and Windows via Cygwin or WSL. The build treats compiler warnings as errors, so it may need CFLAGS=-Wno-error ./configure. The test suite may fail if there are symlinks in the working directory path. The mmap handling is 'overly optimistic' and may fail on 32-bit systems. There is no GUI, though the homepage lists related front ends. The README says to send bug reports to the mailing list and not open pull requests. Licence not checked.",
+  "quotes": [
+   "bup is a program that backs things up.  It's short for \"backup.\"",
+   "It uses the packfile format from git (the open source version control system), so you can access the stored data even if you don't like bup's user interface.",
+   "Defend your backups from death rays (OK fine, more likely from the occasional bad disk block)."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://bup.github.io/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/bup/bup"
+   },
+   {
+    "label": "Releases and tags",
+    "url": "https://github.com/bup/bup/tags"
+   }
+  ],
+  "fetch_log": [
+   "https://bup.github.io/ - worked; homepage with description, docs and related-project list; doc links have no URLs in the text",
+   "https://github.com/bup/bup - worked; README returned in full, including getting started, usage and how-it-works sections. I did not follow the docs or DESIGN links, which were not in the README text."
+  ]
+ }
+}

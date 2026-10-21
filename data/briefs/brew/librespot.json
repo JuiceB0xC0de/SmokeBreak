@@ -1,0 +1,78 @@
+{
+ "name": "librespot",
+ "desc": "Open Source Spotify client library",
+ "homepage": "https://github.com/librespot-org/librespot",
+ "installs_365d": 487,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol",
+  "library"
+ ],
+ "why": "An open reimplementation of the Spotify Connect client, a reverse-engineered protocol door, though it's mostly a client library.",
+ "brief": {
+  "what_it_is": "librespot is an open source client library for Spotify, written in Rust and installed through Cargo as the librespot crate. It lets applications use Spotify's service to control and play music through various audio backends, and it can act as a Spotify Connect receiver. The repository includes a sample headless Spotify Connect receiver program, which runs from the command line with options for device name, bitrate, cache directory, volume, and device type. It needs a Spotify Premium account.",
+  "why_it_exists": "The README presents it as an alternative to the official closed-source libspotify, which it describes as now deprecated, and says it will also provide extra features not available in the official library. The current organisation exists because the original project by plietar is no longer actively maintained, so this fork was set up so the project could be maintained and upgraded.",
+  "how_it_works": "The README does not explain the internals beyond saying the project implements a client library and Spotify Connect receiver behaviour. It points to a docs folder with brief documentation of the protocol, and says the best way to learn how it works is to read the code. It uses Rodio for audio playback by default, with ALSA, GStreamer, PortAudio, PulseAudio, JACK, SDL, Pipe and Subprocess among the other backend choices, and it stores an authentication blob and audio cache in a directory you specify.",
+  "commands_seen": [
+   {
+    "cmd": "cargo install librespot",
+    "context": "Installs librespot from crates.io, the README's quick-start route."
+   },
+   {
+    "cmd": "librespot -n \"Librespot Speaker\" -b 160",
+    "context": "Runs the installed binary to create a speaker named Librespot Speaker serving 160 kbps audio."
+   },
+   {
+    "cmd": "sudo apt-get install build-essential libasound2-dev",
+    "context": "Installs build tools and ALSA headers on Debian/Ubuntu before building from source on Linux."
+   },
+   {
+    "cmd": "sudo dnf install alsa-lib-devel make gcc",
+    "context": "Installs build tools and ALSA headers on Fedora before building from source on Linux."
+   },
+   {
+    "cmd": "cargo build --release",
+    "context": "Builds librespot from a cloned repository with default features: native-tls, Rodio audio, and libmdns discovery."
+   },
+   {
+    "cmd": "target/release/librespot --name DEVICENAME",
+    "context": "Runs the minimal headless Spotify Connect receiver from the release build."
+   },
+   {
+    "cmd": "target/release/librespot -n \"Librespot\" -b 320 -c ./cache --enable-volume-normalisation --initial-volume 75 --device-type avr",
+    "context": "Fuller example: 320 kbps, cache folder ./cache, volume normalisation on, initial volume 75, shown in the app as an Audio/Video Receiver."
+   }
+  ],
+  "install_notes": "On macOS and Windows, the README says you should be able to clone and build with Cargo directly, since Rodio is the default backend. On Linux you need extra packages: build-essential and libasound2-dev on Debian/Ubuntu, or alsa-lib-devel, make and gcc on Fedora. The README also points to COMPILING.md for TLS, audio and discovery backend dependencies, and to the wiki for backend-specific dependencies. It is packaged for various Linux distributions, FreeBSD and NetBSD, tracked on Repology. Running with the cache feature stores an authentication blob, so the README recommends setting the cache directory permissions to 700. A Spotify Premium account is required.",
+  "standout": "It is a library first, not just a player, which is why it is embedded by other projects such as Spotifyd, ncspot, Snapcast and raspotify. Its README lists a long set of audio backends, and it says plainly that it will never support free Spotify accounts. The README does not use the phrase reverse-engineered; that is implied by the disclaimer about Spotify's terms rather than stated.",
+  "status": "maintained, per the README. The fetched text shows an active maintainer organisation with a link to current maintainers, a recent switch to Rodio, and newly adopted GitHub Discussions. I could not see a release date or last commit date in the fetched text, so I have no dated evidence.",
+  "caveats": "Requires Spotify Premium, and the README says free-account support will not be added. The disclaimer says connecting to Spotify's API is probably forbidden by Spotify, so use is at your own risk. Documentation is described as a work in progress. Linux builds need ALSA development headers. The README warns that the cache directory holds an authentication blob. The README asks that crash backtraces and Spotify URIs be included in bug reports.",
+  "quotes": [
+   "librespot only works with Spotify Premium. This will remain the case.",
+   "Using this code to connect to Spotify's API is probably forbidden by them.",
+   "Documentation is currently a work in progress, contributions are welcome!"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/librespot-org/librespot"
+   },
+   {
+    "label": "crates.io package",
+    "url": "https://crates.io/crates/librespot"
+   },
+   {
+    "label": "Options wiki page (runtime flags)",
+    "url": "https://github.com/librespot-org/librespot/wiki/Options"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/librespot-org/librespot: fetched OK, README returned in full. I did not follow the docs or COMPILING.md links, since the README was complete enough for this brief."
+  ]
+ }
+}

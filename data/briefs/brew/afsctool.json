@@ -1,0 +1,89 @@
+{
+ "name": "afsctool",
+ "desc": "Utility for manipulating APFS and ZFS compressed files",
+ "homepage": "https://brkirch.wordpress.com/afsctool/",
+ "installs_365d": 549,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "afternoon"
+ ],
+ "why": "Exposes APFS and HFS compression internals on macOS, a close call but a real look at filesystem compression.",
+ "brief": {
+  "what_it_is": "afsctool is a command-line utility for macOS that applies Apple File System Compression to files, decompresses files that are already compressed, or reports information about compressed files. The original blog describes it as working on HFS+ compression on Mac OS 10.6 or later. This GitHub fork (RJVB/afsctool) also covers APFS, adds LZVN and LZFSE support, and builds a second executable, zfsctool. Input is one or more file or folder paths on the command line, and output is compression statistics or the compressed or decompressed files on disk.",
+  "why_it_exists": "The blog post frames it as a way to use AFSC (Apple File System Compression) on existing files, which the author says Finder does not let you do directly. The blogger's own example is compressing a large World of Warcraft install, and a commenter reports running it nightly as a cron job over ~/Library mail and sync directories to save SSD space.",
+  "how_it_works": "Per the fork README, afsctool compresses files by writing them back in compressed form, with an undo path if something goes wrong and an optional backup while compressing. Parallel modes -j and -J let you set a worker-thread count; -j parallelises only the compression step while disk I/O runs with exclusive access, and -J parallelises all steps. zfsctool takes a different route: ZFS compression is set per dataset, so it recompresses by changing the dataset's compression property, rewriting the files, and resetting the property, which also affects other files written during the rewrite.",
+  "commands_seen": [
+   {
+    "cmd": "sudo afsctool -cv expansion4.MPQ",
+    "context": "From the blog comments: compress a single large file with -c (compress) and -v (verbose). The reported result was 'Unable to compress file.'"
+   },
+   {
+    "cmd": "port install sparsehash zlib cmake pkgconfig",
+    "context": "MacPorts command to install the build dependencies listed in the fork README."
+   },
+   {
+    "cmd": "brew install google-sparsehash zlib cmake pkgconfig",
+    "context": "Homebrew command to install the build dependencies listed in the fork README."
+   },
+   {
+    "cmd": "PKG_CONFIG_PATH=/usr/local/opt/zlib/lib/pkgconfig",
+    "context": "Needed only with Homebrew, so that pkg-config finds the Homebrew zlib."
+   },
+   {
+    "cmd": "git clone --recurse-submodules https://github.com/RJVB/afsctool",
+    "context": "Clones the fork along with its lzfse submodule, which is linked statically."
+   },
+   {
+    "cmd": "mkdir afsctool/build",
+    "context": "Creates a build directory for the out-of-tree CMake build."
+   },
+   {
+    "cmd": "cd afsctool/build",
+    "context": "Changes into the build directory before running cmake."
+   },
+   {
+    "cmd": "cmake -Wno-dev ..",
+    "context": "Configures the build from the parent source directory, suppressing developer warnings."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the afsctool executable into afsctool/build."
+   },
+   {
+    "cmd": "sudo make install/fast V=1 VERBOSE=1",
+    "context": "Optional official install, which by default places the binary in /usr/local/bin."
+   }
+  ],
+  "install_notes": "Build from source with CMake; there is no brew formula described in the README. You need zlib (1.2.8 or newer), Google's sparsehash, cmake and pkgconfig, installed through MacPorts, Fink, or Homebrew. Clone with --recurse-submodules so the lzfse submodule is present. With Homebrew you must set PKG_CONFIG_PATH by hand. zfsctool needs only a runtime dependency on ZFS (OpenZFS on OS X).",
+  "standout": "The parallel modes are unusual for this kind of tool: -j and -J let you pick the worker count, and -S with -R can compress the largest files first to limit free-space fragmentation. zfsctool is also an interesting idea, since it recompresses ZFS data by flipping a dataset's compression property and rewriting, a workaround for ZFS having no API to get or set that property.",
+  "status": "unknown. The blog's latest version is 1.6.4 (build 34), and the fork README covers up to 1.7.2 with a mention of 1.7.1 and 1.7.2 changes, but I saw no release dates or commit dates in either page. The fork README also says zfsctool 'doesn't yet do anything except for printing out statistics', which suggests active but early work.",
+  "caveats": "macOS only, Mac OS 10.6 or later. Building from source requires several dependencies and CMake, and the README gives no prebuilt download. The blog's download link URL did not come through, so I could not confirm the official binary. LZVN support in the fork needs the lzfse submodule, and the README says LZFSE decompression 'should work' but is not confirmed. The README says the permission-change feature for read-only files has 'No error checking'. zfsctool is a work in progress that only prints statistics. The blog's version history ends at 1.6.4, so the fork's extra features are not in the homepage's release. I took the fork URL from a guess at the upstream repository location, since the homepage did not link to it.",
+  "quotes": [
+   "This is my version of brkirch's afsctool",
+   "The main new feature that justifies the version bump, however, is the parallel processing feature, allowing the user to specify an arbitray (though positive :)) number of threads that will compress the specified files in parallel.",
+   "Zfsctool is a work in progress that doesn't yet do anything except for printing out statistics."
+  ],
+  "links": [
+   {
+    "label": "Homepage (brkirch blog)",
+    "url": "https://brkirch.wordpress.com/afsctool/"
+   },
+   {
+    "label": "RJVB fork on GitHub (README used for this brief)",
+    "url": "https://github.com/RJVB/afsctool"
+   },
+   {
+    "label": "LZFSE reference implementation (lzfse)",
+    "url": "https://github.com/lzfse/lzfse"
+   }
+  ],
+  "fetch_log": [
+   "https://brkirch.wordpress.com/afsctool/ - worked. Blog post with version 1.6.4 and a download link whose URL did not appear in the text. Comments are included.",
+   "https://github.com/RJVB/afsctool - worked. Returned the README for the RJVB fork, which covers the newer features and zfsctool. The homepage did not link to this, so it was chosen by guess, not by following a link from the homepage."
+  ]
+ }
+}

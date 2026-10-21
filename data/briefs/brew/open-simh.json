@@ -1,0 +1,84 @@
+{
+ "name": "open-simh",
+ "desc": "Multi-system computer simulator",
+ "homepage": "https://opensimh.org/",
+ "installs_365d": 300,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "ancient",
+  "simulation"
+ ],
+ "why": "Boot real PDP, VAX, and other vintage machines in software and poke at operating systems from the era.",
+ "brief": {
+  "what_it_is": "Open SIMH is a family of software simulators of historic computers, built as one framework (SCP) with many machine-specific simulator programs. The brew package ships 24 executables, including altair, pdp1, pdp8, pdp10, pdp11, vax, vax780, sigma, i7094 and b5500-era families, though the list of machines is not all covered in the README. Each simulator emulates the hardware of one machine so that its original operating system and software can run unchanged; the homepage cites Version 7 Unix (1979) running on it. Per the status document, disk and tape images (raw disks, virtual disk containers, AWS and TAR tapes) are attached to the simulated devices, and console I/O goes to your terminal or a TELNET port, with optional SDL2 video windows.",
+  "why_it_exists": "The homepage frames the goal as preserving knowledge held in old software by providing the ability to execute and experience it through simulation of the original hardware. The README describes SIMH as created by Bob Supnik, originally at Digital Equipment Corporation, and extended by many contributors.",
+  "how_it_works": "Each simulator emulates a specific machine's CPU and devices in software and runs the period operating system from disk or tape images. The shared SCP command layer provides the console prompt, ATTACH/DETACH of media, BOOT and breakpoint handling, and scripting through DO files, EXPECT and SEND. The README does not spell out the emulation internals beyond this.",
+  "commands_seen": [
+   {
+    "cmd": "$ make {simulator-name (i.e. vax)}",
+    "context": "Build command from the README for compiling one simulator from source with GNU make, for example vax; the simulator name is a placeholder."
+   },
+   {
+    "cmd": "$ brew install vde",
+    "context": "Installs the VDE networking library on macOS via Homebrew, one of the optional dependencies for Ethernet support; the README also lists sdl2 and sdl2_ttf."
+   },
+   {
+    "cmd": "# apt-get install libpcap-dev",
+    "context": "Ubuntu package for libpcap, one of the Linux dependencies listed for building simulators with networking and video support."
+   },
+   {
+    "cmd": "sim> set env say=echo",
+    "context": "Example from the README defining a command alias through an environment variable; afterwards typing say Hello there prints Hello there."
+   },
+   {
+    "cmd": "SET REMOTE TELNET=port",
+    "context": "Enables the remote console facility on a TELNET port so out-of-band commands can be entered into a running simulator."
+   },
+   {
+    "cmd": "SHOW FEATURES",
+    "context": "Lists the devices and features of the running simulator, per the command reference in the status document."
+   },
+   {
+    "cmd": "HELP dev",
+    "context": "Shows the built-in per-device help, per the status document; variants include HELP dev ATTACH and HELP dev REGISTERS."
+   },
+   {
+    "cmd": "SET THROTTLE x/t",
+    "context": "Throttles the simulator by t milliseconds every x cycles, per the SCP command list in the status document."
+   }
+  ],
+  "install_notes": "The README says to git clone the open-simh/simh master branch and run make with the simulator name, and that GNU make is required (gmake on some systems). Ethernet-capable simulators (the VAX and PDP-11 families) need extra networking components; the README points to a 0readme_ethernet.txt file for these. Optional packages (vde2, libsdl2, libsdl2_ttf, libpcap, libpcre, libedit) add networking and video; without them the build succeeds with reduced functionality. Windows builds use Visual Studio 2008 through 2019 or MinGW32, with steps in a Visual Studio Projects readme. The homepage has Download links for tar, zip and source, and the TOC mentions prebuilt Windows simulators, but I did not read those pages.",
+  "standout": "Beyond running old systems, the project has a scripting layer for the simulator console: DO command files with labels, GOTO, IF, ON error traps, EXPECT/SEND for automating a login prompt, and a remote TELNET console for changing a running machine. Its SHOW and SET commands cover asynchronous I/O, throttling and clock calibration, and it also simulates some uncommon hardware, such as the Sigma, SDS 940 and AT&T 3B2 families.",
+  "status": "Unknown as to release dates and recent commits: I saw no last-release date or commit date. The README is current in tone, the status document is labelled as v4.0 current with a 19-01 date, and the page has a Coverity Scan badge. The homepage says the project is run by dedicated volunteers. Treat it as active but unconfirmed.",
+  "caveats": "The README says the project is MIT licensed, but I did not read the LICENSE text. Windows is supported via Visual Studio or MinGW32; MinGW64 is explicitly not supported and Cygwin is not the preferred option with fewer features. The Ethernet and video features depend on host libraries and may be missing if they are not installed. The homepage disclaims guarantees and says the information is provided at your own risk. The README asks contributors not to copy code from github.com/simh/simh unless they wrote it, which marks a split from an earlier codebase as of 12 May 2022.",
+  "quotes": [
+   "SIMH is a framework and family of computer simulators, initiated by Bob Supnik and continued with contributions (large and small) from many others.",
+   "For example Version 7 Unix, released in 1979, runs unchanged today on SimH.",
+   "Open SimH - Bringing Antiquities back to life"
+  ],
+  "links": [
+   {
+    "label": "Open SIMH homepage",
+    "url": "https://opensimh.org/"
+   },
+   {
+    "label": "Source repository (README)",
+    "url": "https://github.com/open-simh/simh"
+   },
+   {
+    "label": "SIMH v4.0 status and command reference",
+    "url": "https://github.com/open-simh/simh/blob/master/SIMH-V4-status.md"
+   }
+  ],
+  "fetch_log": [
+   "https://opensimh.org/ : worked; thin page with project description, resources list and download buttons, no usage commands",
+   "https://github.com/open-simh/simh : worked; README with project description, license, build pointers and problem-report guidance",
+   "https://github.com/open-simh/simh/blob/master/SIMH-V4-status.md : worked; feature list, SCP command list, build dependency lists"
+  ]
+ }
+}

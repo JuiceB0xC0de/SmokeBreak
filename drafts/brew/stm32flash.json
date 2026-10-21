@@ -1,0 +1,148 @@
+{
+ "name": "stm32flash",
+ "desc": "Open source flash program for STM32 using the ST serial bootloader",
+ "homepage": "https://sourceforge.net/projects/stm32flash/",
+ "installs_365d": 501,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "afternoon"
+ ],
+ "why": "Flashes STM32 chips over the ST serial bootloader, a useful door into talking to bare microcontrollers.",
+ "brief": {
+  "what_it_is": "stm32flash is an open source, cross-platform command-line flash programmer for STM32 ARM microcontrollers. It talks to the chip's built-in ST serial bootloader over a UART or I2C connection. It takes a firmware image (Intel HEX or raw binary) from a file and writes it to the chip's flash, and it can also read flash back out to a file or stdout, identify the device, erase, verify, and start execution at an address. It is written in C and runs from a terminal against a serial device path such as /dev/ttyS0 or /dev/i2c-0.",
+  "why_it_exists": "The README does not state a motivation in so many words. Its framing is that it is an open source flash program that uses the ST serial bootloader already built into the chips. The SourceForge scout notes call it a useful way into talking to bare microcontrollers. A reviewer on the SourceForge page said they had problems with ST's STCubeProgrammer and found stm32flash worked out of the box.",
+  "how_it_works": "The chip's factory-programmed ST bootloader is reached over a serial link, so no debug probe is needed. stm32flash sends the initial INIT handshake, then issues bootloader commands to identify the device, erase, write, read and verify flash. Optional GPIO or RTS/DTR sequences (-i) can drive the chip's boot pins and reset line to enter and exit bootloader mode, which is hardware dependent. The README describes it as supporting device identification, read and write to flash or RAM, auto-detection of Intel HEX versus binary input, verify with up to N retries, and software reset at exit with -R.",
+  "commands_seen": [
+   {
+    "cmd": "Usage: ./stm32flash [-bvngfhc] [-[rw] filename] [tty_device | i2c_device]",
+    "context": "Usage synopsis from the README. Shows the flag set and the serial or I2C device argument."
+   },
+   {
+    "cmd": "./stm32flash /dev/ttyS0",
+    "context": "Example to get device information over a serial port. The README also gives ./stm32flash /dev/i2c-0 for I2C."
+   },
+   {
+    "cmd": "./stm32flash -w filename -v -g 0x0 /dev/ttyS0",
+    "context": "Write a file to flash with verify, then start execution at address 0x0."
+   },
+   {
+    "cmd": "./stm32flash -r filename /dev/ttyS0",
+    "context": "Read the chip's flash into a file."
+   },
+   {
+    "cmd": "./stm32flash -r - -S 0x1000:100 /dev/ttyS0",
+    "context": "Read 100 bytes of flash starting at 0x1000 and write them to stdout."
+   },
+   {
+    "cmd": "./stm32flash -g 0x0 /dev/ttyS0",
+    "context": "Start execution at the flash start address without writing anything."
+   },
+   {
+    "cmd": "./stm32flash -i '-3&-2,2:3&-2,,,2' /dev/ttyS0",
+    "context": "Example GPIO sequence for entering and exiting bootloader mode via GPIO pins 2 and 3. The README explains the delimiters and the leading minus for reset-low."
+   },
+   {
+    "cmd": "./stm32flash -R -i ',,,,,:rts&-dtr,,,2' /dev/ttyS0",
+    "context": "Example GPIO sequence that adds a delay after opening the port, uses RTS and DTR as signals, and resets the device at exit."
+   },
+   {
+    "cmd": "git clone git://git.code.sf.net/p/stm32flash/code stm32flash",
+    "context": "Clones the source from the SourceForge git repository for building from source."
+   }
+  ],
+  "install_notes": "Beyond brew install, the README says that on most platforms you build from source by running make in the source folder, and there is also autotools support. Windows builds have a separate Build page on the wiki. Source comes from the SourceForge git repo or the GitLab mirror at https://gitlab.com/stm32flash/stm32flash. Hardware is a USB-serial adapter or a UART or I2C connection to the target chip. The Hints wiki page covers a Raspberry Pi 3 UART and pin control, Linux with CH340 USB-serial adapters, and macOS with PL2303 adapters. GPIO-based entry into bootloader mode depends on how the board is wired.",
+  "standout": "It drives the chip's own ROM bootloader over a plain serial line, so it needs no ST-LINK or debug probe, and it can use GPIO or RTS/DTR lines to enter bootloader mode on your own board. It is a small, scriptable single binary that lets you use a plain USB-serial adapter.",
+  "status": "Maintained. The wiki says stm32flash 0.7 was released 2022-03-26, and the SourceForge page lists a last update of 2025-05-25. The README says the project has been maintained by Tormod Volden since 2012. The 2025 date may reflect a file or page update rather than a new release, so the exact release cadence is not fully clear.",
+  "caveats": "The README makes no claim of platform limits beyond the transports, but usage depends on the chip's built-in bootloader being available and on the correct serial wiring. Entry into bootloader mode via GPIO is hardware dependent. Setup can be fiddly with some USB-serial adapters, and the Hints page exists for that reason. The SourceForge page shows only 2 reviews. One reviewer asked for a feature to scan serial ports for an STM32 in boot mode, which the README does not mention. License is GPLv2. Bug reports go to the SourceForge tracker.",
+  "quotes": [
+   "Open source cross platform flash program for the STM32 ARM microcontrollers using the built-in ST serial bootloader over UART or I2C",
+   "On most platforms just run \"make\" in the source folder.",
+   "stm32flash was originally written by Geoffrey McRae and is since 2012 maintained by Tormod Volden."
+  ],
+  "links": [
+   {
+    "label": "SourceForge project homepage",
+    "url": "https://sourceforge.net/projects/stm32flash/"
+   },
+   {
+    "label": "Wiki home (README text)",
+    "url": "https://sourceforge.net/p/stm32flash/wiki/Home/"
+   },
+   {
+    "label": "Bug tracker",
+    "url": "https://sourceforge.net/p/stm32flash/tickets/"
+   },
+   {
+    "label": "GitLab mirror",
+    "url": "https://gitlab.com/stm32flash/stm32flash"
+   }
+  ],
+  "fetch_log": [
+   "https://sourceforge.net/projects/stm32flash/ : worked, but mostly page boilerplate. It gave the one-line description, GPLv2 license, last update 2025-05-25, registered 2015, 2 reviews, and developer tormod.",
+   "https://github.com/stm32flash/stm32flash : failed with HTTP 404, so I did not use it.",
+   "https://sourceforge.net/p/stm32flash/wiki/Home/ : worked. This is the full README text with usage, examples, features, build notes and authors."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It makes a chip\u2019s built-in ROM bootloader tangible: inspect, read, and flash STM32s over ordinary UART or I2C without a debug probe."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "stm32flash",
+  "tldr": "A small command-line tool that programs STM32 microcontrollers through the chip's built-in serial bootloader, using only a USB-serial adapter and no debug probe.",
+  "deeper_look": "stm32flash writes firmware to STM32 ARM microcontrollers by talking to the bootloader ST programs into the chip at the factory. You point it at a serial device such as `/dev/ttyS0`, or an I2C device, and it sends the initial handshake. After that it issues bootloader commands to identify the chip, erase, write, read back and verify flash. It accepts Intel HEX or raw binary and detects which one it has been given.\n\nThe idea underneath is that a bare microcontroller is not a sealed box. Before any of your code runs, a ROM bootloader is waiting to be spoken to over a plain serial line. Once you see that, flashing stops being a vendor IDE feature and becomes a short conversation of bytes. It also works in reverse: you can read flash out to a file or to stdout, or jump to an address and start running.\n\nEntering bootloader mode usually means holding the chip's boot pins in a certain state during reset. The `-i` option lets stm32flash do that for you by driving GPIO pins, or RTS and DTR lines on the serial adapter, in a sequence you describe. How well that works depends on how your board is wired.\n\nThe project was originally written by Geoffrey McRae and has been maintained by Tormod Volden since 2012. One SourceForge reviewer said ST's own STCubeProgrammer gave them trouble and stm32flash worked out of the box.",
+  "install": "brew install stm32flash\n# Hardware needed: an STM32 board plus a USB-serial adapter (or a UART/I2C connection) wired to the chip's bootloader pins.",
+  "try_this": [
+   {
+    "cmd": "stm32flash /dev/ttyS0",
+    "what_happens": "Connects to the chip's bootloader on that serial port and prints device information."
+   },
+   {
+    "cmd": "stm32flash -r filename /dev/ttyS0",
+    "what_happens": "Reads the chip's flash contents into a file."
+   },
+   {
+    "cmd": "stm32flash -w filename -v -g 0x0 /dev/ttyS0",
+    "what_happens": "Writes a firmware file to flash, verifies it, then starts execution at address 0x0."
+   }
+  ],
+  "whats_unique": "It uses the chip's own ROM bootloader over a plain serial line, so no ST-LINK or debug probe is needed. It is a small scriptable binary that can toggle boot and reset pins through GPIO or RTS/DTR.",
+  "caveats": "It needs real hardware and correct wiring, entering bootloader mode is board dependent, and some USB-serial adapters are fiddly (the wiki has a Hints page for this).",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "needs-hardware",
+   "afternoon",
+   "stm32",
+   "microcontroller",
+   "serial",
+   "firmware",
+   "bootloader"
+  ],
+  "links": [
+   {
+    "label": "SourceForge project homepage",
+    "url": "https://sourceforge.net/projects/stm32flash/"
+   },
+   {
+    "label": "Wiki home (README text)",
+    "url": "https://sourceforge.net/p/stm32flash/wiki/Home/"
+   },
+   {
+    "label": "GitLab mirror",
+    "url": "https://gitlab.com/stm32flash/stm32flash"
+   },
+   {
+    "label": "Bug tracker",
+    "url": "https://sourceforge.net/p/stm32flash/tickets/"
+   }
+  ]
+ }
+}

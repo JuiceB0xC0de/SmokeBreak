@@ -1,0 +1,71 @@
+{
+ "name": "liblxi",
+ "desc": "Simple C API for communicating with LXI compatible instruments",
+ "homepage": "https://lxi-tools.github.io",
+ "installs_365d": 187,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "network",
+  "library",
+  "afternoon"
+ ],
+ "why": "Opens the LXI network protocol for talking to lab instruments over Ethernet, a door worth a look if you own gear.",
+ "brief": {
+  "what_it_is": "liblxi is an open source C library that gives applications a small API for talking to LXI-compatible lab instruments such as oscilloscopes, power supplies and spectrum analyzers over Ethernet. Applications can discover instruments on the network, open a connection, send SCPI command strings, and read the text responses. The example in the README sends *IDN? to an instrument at a given IP address and prints the ID string, such as a Rigol DS1104Z reply. The homepage (lxi-tools.github.io) describes the wider lxi-tools suite, and the liblxi README is the library's own documentation.",
+  "why_it_exists": "The README says liblxi offers a simple API for communicating with LXI compatible instruments, so applications can discover devices and send SCPI commands without implementing the network protocols themselves. It is an independent community effort and is explicitly not affiliated with the LXI Consortium.",
+  "how_it_works": "The library currently speaks VXI-11 over TCP and RAW over TCP, and VXI-11 is based on the RPC implementation from the EPICS asynDriver module. Discovery uses either VXI-11 or mDNS, selected by a discover type argument. HiSlip, the newer and more efficient protocol used by next generation LXI instruments, is listed as future work and is not yet supported.",
+  "commands_seen": [
+   {
+    "cmd": "meson setup build",
+    "context": "Source install step 1: configures the build directory (README says only for users familiar with meson)."
+   },
+   {
+    "cmd": "meson compile -C build",
+    "context": "Source install step 2: compiles the library in the build directory."
+   },
+   {
+    "cmd": "meson install -C build",
+    "context": "Source install step 3: installs the built library."
+   },
+   {
+    "cmd": "brew install liblxi",
+    "context": "Homebrew install on macOS or Linux, per the README's section 4.3."
+   }
+  ],
+  "install_notes": "Building from source needs libtirpc and libxml2, plus avahi as an optional dependency, and the build uses meson. The README warns against source installs unless you are familiar with meson. Linux users are pointed to their distribution's package manager. Homebrew works on macOS and Linux. The README does not describe any first-run configuration, accounts or hardware setup beyond having an instrument reachable on the network.",
+  "standout": "It is a deliberately small C API with a single-file, roughly six-function surface, aimed at making Ethernet lab instruments scriptable from C without a vendor SDK. The README is open about being an independent effort, not an official LXI product.",
+  "status": "Appears maintained, but the README gives no release date or last-commit date. It has CircleCI build, GitHub release and Repology badges, and the README links to a release page. I could not confirm the most recent release or commit date from the fetched pages.",
+  "caveats": "The README says only VXI-11/TCP and RAW/TCP are supported, with no HiSlip, so newer LXI instruments that need HiSlip are not covered yet. Source builds need meson and several dependencies. The license is mixed: BSD-3 plus the EPICS Open Software License, with details in a COPYING file that I did not read. The homepage fetch returned only a short description with no links, so the entry relies mainly on the GitHub README.",
+  "quotes": [
+   "liblxi is an open source software library which offers a simple API for communicating with LXI compatible instruments.",
+   "Currently the library supports VXI-11/TCP and RAW/TCP connections. Future work include adding support for the newer and more efficient HiSlip protocol which is used by next generation LXI instruments.",
+   "Please notice that liblxi is not affiliated with the LXI consortium - it is an independent open source community effort."
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://lxi-tools.github.io"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/lxi-tools/liblxi"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/lxi-tools/liblxi/releases"
+   },
+   {
+    "label": "LXI Consortium standard",
+    "url": "http://www.lxistandard.org"
+   }
+  ],
+  "fetch_log": [
+   "https://lxi-tools.github.io: worked, but returned only a short project description and a 'Visit Github for more details' line with no usable link target",
+   "https://github.com/lxi-tools/liblxi: worked, returned the full README (used as the main source; I inferred this repo from the lxi-tools homepage and the brew name liblxi)"
+  ]
+ }
+}

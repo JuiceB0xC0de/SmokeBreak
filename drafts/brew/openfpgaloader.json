@@ -1,0 +1,140 @@
+{
+ "name": "openfpgaloader",
+ "desc": "Universal utility for programming FPGA",
+ "homepage": "https://trabucayre.github.io/openFPGALoader/",
+ "installs_365d": 1135,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "quick",
+  "library"
+ ],
+ "why": "A universal FPGA programmer that talks to many boards over USB, a real door into hardware bitstream loading.",
+ "brief": {
+  "what_it_is": "openFPGALoader is a command-line utility that loads bitstreams onto FPGAs. You give it a bitstream file and either a board name (-b) or a JTAG cable model (-c), and it writes the design either straight into the FPGA's SRAM or into an attached flash chip (-f). It covers FPGAs from Xilinx, Altera/Intel, Lattice, Gowin, Efinix, Anlogic and Cologne Chip, across many boards and USB cables. The README says it runs on Linux, Windows, macOS and OpenBSD. Its own scout note calls it a universal FPGA programmer that talks to many boards over USB.",
+  "why_it_exists": "The README frames it as a universal utility for programming FPGAs, so one tool replaces the separate vendor programmers for each FPGA family and cable. The homepage adds a compatibility-list approach: check whether your specific hardware is supported before you start.",
+  "how_it_works": "Cable or board selection picks a driver for the JTAG interface, such as FTDI MPSSE, CMSIS-DAP, USB-Blaster or Xilinx cables, and the bitstream parser matches the file type. With -m (default) the bitstream goes into SRAM. With -f it goes into external flash, and for flash-attached boards the tool can first load a small helper bitstream called spiOverJtag, so it can reach a SPI flash through the JTAG port. The README says spiOverJtag bitstreams are looked up in /usr/local/share/ by default and can be redirected with the OPENFPGALOADER_SOJ_DIR environment variable.",
+  "commands_seen": [
+   {
+    "cmd": "openFPGALoader -b arty arty_bitstream.bit # Loading in SRAM",
+    "context": "Quick usage: loads a bitstream into SRAM for the named board (arty is one of the board names on the compatibility list)."
+   },
+   {
+    "cmd": "openFPGALoader -b arty -f arty_bitstream.bit # Writing in flash",
+    "context": "Quick usage: same board, but -f writes the bitstream into the board's flash so it persists across power cycles."
+   },
+   {
+    "cmd": "openFPGALoader -c cmsisdap fpga_bitstream.bit",
+    "context": "Selects a JTAG cable model directly with -c instead of a board name; here a CMSIS-DAP probe."
+   },
+   {
+    "cmd": "export OPENFPGALOADER_SOJ_DIR=/somewhere",
+    "context": "Sets the directory where spiOverJtag bitstreams are searched, replacing the /usr/local/share/ default."
+   },
+   {
+    "cmd": "OPENFPGALOADER_SOJ_DIR=/somewhere openFPGALoader xxxx",
+    "context": "Same spiOverJtag directory override, applied to a single invocation instead of the whole shell session."
+   }
+  ],
+  "install_notes": "The README gives no install steps beyond a documentation link, and I did not open the install page. It does say the build uses CMake with ENABLE_xxx options to switch individual cables and vendor drivers on or off. The v1.1.0 and v1.1.1 release notes mention libFTDI detection through find_package with pkg-config as a fallback, a plugdev/dialout group note, and a 70-openfpgaloader.rules udev file for Linux USB access. The v1.2.0 notes mention a hidapi dependency for macOS CI builds. The release notes also list a MinGW-w64 Windows cross-compile path. I did not see any Homebrew-specific steps.",
+  "standout": "One tool covers many vendors' FPGAs and many boards and cables, with a single command-line grammar. The spiOverJtag approach, which loads a helper bitstream so the tool can reach a SPI flash through JTAG, is a clever way to program flash on boards that have no dedicated flash interface.",
+  "status": "Maintained. The latest release, v1.2.0, is dated 18 Oct in the fetched GitHub releases page; the year is not shown in the extracted text. A nightly pre-release is dated 30 Dec and v1.1.1 is dated 11 Mar, so releases recur roughly every few months. The release notes list recent hardware additions such as Agilex and Xilinx Kria parts and Vivado 2025.2.1 compatibility, which points to 2025. The GitHub release page was cut off at about 40,000 characters, so I did not read the full list.",
+  "caveats": "Support depends on the exact board, cable and FPGA, so you have to check the compatibility lists before buying hardware. Some boards need specific jumper settings or only partly work; for example, one older release notes that a board's SPI flashing does not boot. The default build is a CMake build with native library dependencies, and the install page was not checked. Vendor-specific behaviour is documented separately for each vendor. The homepage footer shows a 2019-2022 copyright, which does not match the 2025-era release notes; I read this as an old footer not a sign of abandonment. The README is terse, so the usage guide holds the detail.",
+  "quotes": [
+   "universal utility for programming FPGAs",
+   "Compatible with many boards, cables and FPGA from major manufacturers (Xilinx, Altera/Intel, Lattice, Gowin, Efinix, Anlogic, Cologne Chip).",
+   "openFPGALoader works on Linux, Windows, macOS and OpenBSD."
+  ],
+  "links": [
+   {
+    "label": "Documentation homepage",
+    "url": "https://trabucayre.github.io/openFPGALoader/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/trabucayre/openFPGALoader"
+   },
+   {
+    "label": "Board compatibility list",
+    "url": "https://trabucayre.github.io/openFPGALoader/compatibility/board.html"
+   },
+   {
+    "label": "First steps guide",
+    "url": "https://trabucayre.github.io/openFPGALoader/guide/first-steps.html"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/trabucayre/openFPGALoader/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://trabucayre.github.io/openFPGALoader/ : worked; Sphinx docs landing page with links to compatibility lists and vendor notes, but little usage detail",
+   "https://github.com/trabucayre/openFPGALoader : worked; README returned with quick usage, full help text, and spiOverJtag environment variable notes",
+   "https://github.com/trabucayre/openFPGALoader/releases : worked but truncated at about 40,000 characters; used for release dates and status"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A unified JTAG loader is useful, and its helper-bitstream trick for reaching SPI flash through JTAG makes the hardware plumbing genuinely worth exploring."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "openFPGALoader",
+  "tldr": "One command-line tool that loads bitstreams onto FPGAs from many vendors, replacing a drawer of vendor-specific programmers.",
+  "deeper_look": "An FPGA is a chip whose logic is rewired by a file called a bitstream. Loading that file normally means installing a different vendor tool for each chip family and each programming cable. openFPGALoader is a single utility that does the loading for FPGAs from Xilinx, Altera/Intel, Lattice, Gowin, Efinix, Anlogic and Cologne Chip, over many boards and USB cables.\n\nThe grammar is small. You give it a bitstream and either a board name with -b or a JTAG cable model with -c. By default the design goes into the FPGA's SRAM, so it vanishes at power-off. With -f it is written to the attached flash instead and survives power cycles.\n\nThe interesting trick is spiOverJtag. On some boards the flash chip is only reachable through the FPGA itself. The tool first loads a small helper bitstream that bridges JTAG to the SPI flash, and then writes the flash through that bridge. The FPGA temporarily becomes the programmer for its own memory.\n\nUnder the hood it picks a driver for the cable (FTDI MPSSE, CMSIS-DAP, USB-Blaster, Xilinx cables and others) and a parser for the bitstream format. The README says it runs on Linux, Windows, macOS and OpenBSD.",
+  "install": "brew install openfpgaloader\nNeeds an FPGA board or a JTAG cable to do anything real. On Linux, USB access may need the udev rules file (70-openfpgaloader.rules) and plugdev/dialout group membership, according to the release notes.",
+  "try_this": [
+   {
+    "cmd": "openFPGALoader --help",
+    "what_happens": "Prints the full list of options, including the supported cables and board selection flags."
+   },
+   {
+    "cmd": "openFPGALoader -b arty arty_bitstream.bit",
+    "what_happens": "Loads the bitstream into the SRAM of an Arty board. The design runs until power is removed."
+   },
+   {
+    "cmd": "openFPGALoader -b arty -f arty_bitstream.bit",
+    "what_happens": "Writes the same bitstream into the board's flash so it persists across power cycles."
+   }
+  ],
+  "whats_unique": "One command-line grammar covers many vendors, boards and cables. The spiOverJtag helper bitstream lets it reach flash chips that have no direct programming path.",
+  "caveats": "It is only useful with real hardware, and support depends on your exact board, cable and FPGA, so check the compatibility list before buying anything.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "fpga",
+   "jtag",
+   "usb",
+   "bitstream"
+  ],
+  "links": [
+   {
+    "label": "Documentation homepage",
+    "url": "https://trabucayre.github.io/openFPGALoader/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/trabucayre/openFPGALoader"
+   },
+   {
+    "label": "Board compatibility list",
+    "url": "https://trabucayre.github.io/openFPGALoader/compatibility/board.html"
+   },
+   {
+    "label": "First steps guide",
+    "url": "https://trabucayre.github.io/openFPGALoader/guide/first-steps.html"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/trabucayre/openFPGALoader/releases"
+   }
+  ]
+ }
+}

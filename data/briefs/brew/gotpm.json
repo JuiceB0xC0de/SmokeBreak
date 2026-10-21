@@ -1,0 +1,90 @@
+{
+ "name": "gotpm",
+ "desc": "CLI for using TPM 2.0",
+ "homepage": "https://github.com/google/go-tpm-tools",
+ "installs_365d": 137,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "protocol"
+ ],
+ "why": "Talks to a TPM 2.0 chip directly, a hardware security door most developers never open.",
+ "brief": {
+  "what_it_is": "gotpm is a command-line tool for using a TPM 2.0 chip, shipped from the same repository as the go-tpm-tools Go module. The homepage is the library repo, and gotpm is one of its parts. The README lists what the underlying library covers: signing, attestation, reading PCRs, sealing and unsealing data, importing data and keys, reading NV data, and getting the TCG Event Log. The README does not list gotpm's subcommands or describe its output formats, and tells you to run gotpm --help and gotpm <command> --help instead. The Homebrew formula description is 'CLI for using TPM 2.0'.",
+  "why_it_exists": "The README presents go-tpm-tools as a support library that complements Go-TPM, providing simplified abstractions and utility functions for interacting with a TPM 2.0, and it says the module explicitly supports only TPM 2.0. It also points out that TPM 1.2 relies on the broken SHA1, which is why it avoids it.",
+  "how_it_works": "The client package issues TPM commands against the chip on the local machine. The server package does not talk to the TPM; it parses TCG Event Logs, verifies attestations, and creates data for importing into a TPM. The two sides exchange protocol buffer messages from the proto package. A simulator package wraps Microsoft's TPM 2.0 simulator for testing.",
+  "commands_seen": [
+   {
+    "cmd": "gotpm --help",
+    "context": "Lists gotpm's top-level help; the README says to run this first, along with gotpm <command> --help for per-command docs."
+   },
+   {
+    "cmd": "curl -L https://github.com/google/go-tpm-tools/releases/download/[VERSION]/go-tpm-tools_[ARCH].tar.gz -o go-tpm-tools.tar.gz",
+    "context": "Downloads a prebuilt release tarball; the README's example comment says VERSION 0.4.4 and ARCH Linux_x86_64, with the placeholders left for you to fill in."
+   },
+   {
+    "cmd": "tar xvf go-tpm-tools.tar.gz",
+    "context": "Unpacks the release tarball to get the gotpm binary."
+   },
+   {
+    "cmd": "go install github.com/google/go-tpm-tools/cmd/gotpm@latest",
+    "context": "Builds and installs gotpm into $GOBIN from the repo, per the README's direct-install option."
+   },
+   {
+    "cmd": "cd /my/path/to/cloned/go-tpm-tools/cmd/gotpm",
+    "context": "Moves into the gotpm source directory of a cloned repo before building it locally."
+   },
+   {
+    "cmd": "go build",
+    "context": "Builds the gotpm binary in the cmd/gotpm subdirectory of a cloned repo."
+   },
+   {
+    "cmd": "sudo apt install libssl-dev",
+    "context": "Installs OpenSSL headers on Ubuntu or Debian; needed only to build the simulator package or its tests."
+   },
+   {
+    "cmd": "brew install openssl",
+    "context": "Installs OpenSSL on macOS for the simulator build, which needs the OpenSSL headers."
+   },
+   {
+    "cmd": "sudo modprobe tdx_guest",
+    "context": "Manually loads the tdx_guest kernel module on Intel TDX confidential VMs; the README also mentions a reboot as an alternative."
+   },
+   {
+    "cmd": "sudo apt-get install linux-modules-extra-gcp",
+    "context": "Installs the package that holds tdx_guest on Ubuntu kernels 1016 and newer, for Intel TDX confidential VMs."
+   }
+  ],
+  "install_notes": "Two routes: download a prebuilt binary from GitHub releases (the README notes that on Container-Optimized OS, /var/lib/google/ is executable, so you may need to copy the binary there), or install with go install, which needs Go. The README says the project requires Go 1.26.6 or newer. Building the simulator package or its tests needs OpenSSL headers: libssl-dev on Debian/Ubuntu, openssl-devel on Red Hat/CentOS, the openssl package on Arch, brew install openssl on macOS, or choco install openssl on Windows. Pointing the build at a custom OpenSSL is covered too. On Intel TDX confidential VMs you may need the tdx_guest module. The README does not mention a TPM device path, permissions, or any account setup.",
+  "standout": "Most TPM tools are either low-level bindings or cloud-attestation services. This one pairs a client library that talks to the local chip with a server library that verifies the same data, so both ends of attestation come from one codebase. The README also takes a firm line on security by refusing TPM 1.2 because of SHA1.",
+  "status": "unknown for release date and last commit: the fetched README gives no date, and I did not check the releases or commit pages. The README does show current-looking material: a 0.4.4 example version, a Go 1.26.6 minimum, and a CI badge. The project is clearly an active Google-maintained repository.",
+  "caveats": "The README does not document gotpm's subcommands; you have to use --help. Building the simulator needs OpenSSL development headers, and the error message is confusing, so expect to install them. The README says the minimum Go version is 1.26.6. Only TPM 2.0 is supported. Intel TDX setups may need a kernel module. The README states this is not an official Google product, even though it is under the google GitHub organization. The code is Apache 2.0, and the bundled Microsoft simulator is under a 3-clause BSD license plus the TCG software license. I did not look at the LICENSE file. The brew formula's caveats field is empty. I did not verify the brew install.",
+  "quotes": [
+   "This repository also contains gotpm, a command line tool for using the TPM.",
+   "Run `gotpm --help` and `gotpm <command> --help` for more documentation.",
+   "Users should avoid use of TPM 1.2 due to the inherent reliance on SHA1 (which is quite broken).",
+   "This is not an official Google product."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repo)",
+    "url": "https://github.com/google/go-tpm-tools"
+   },
+   {
+    "label": "Releases (prebuilt gotpm binaries)",
+    "url": "https://github.com/google/go-tpm-tools/releases"
+   },
+   {
+    "label": "Go package docs",
+    "url": "https://pkg.go.dev/github.com/google/go-tpm-tools"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/google/go-tpm-tools (homepage, GitHub repo): fetched OK, README returned. README was detailed enough, so I did not follow further links."
+  ]
+ }
+}

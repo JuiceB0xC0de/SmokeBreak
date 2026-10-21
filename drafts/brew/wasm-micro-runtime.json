@@ -1,0 +1,139 @@
+{
+ "name": "wasm-micro-runtime",
+ "desc": "WebAssembly Micro Runtime (WAMR)",
+ "homepage": "https://github.com/bytecodealliance/wasm-micro-runtime",
+ "installs_365d": 229,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "library",
+  "language"
+ ],
+ "why": "A tiny WebAssembly runtime for embedded targets, a interesting window into running bytecode on small devices.",
+ "brief": {
+  "what_it_is": "WebAssembly Micro Runtime (WAMR) is a lightweight, standalone WebAssembly runtime. It loads Wasm modules and runs them, either interpreted, ahead-of-time compiled (AOT), or JIT-compiled. Its command-line product, iwasm, takes a .wasm file (or an AOT file produced by the wamrc compiler) and runs it with WASI support. The VMcore is also meant to be embedded as a C/C++ library, with Python, Go and Rust bindings. The scout note calls it tiny and aimed at embedded targets; the README does say small footprint and embedded/IoT, but it also covers Linux, macOS, Windows, Android and cloud and TEE uses, so 'embedded' is only part of the picture.",
+  "why_it_exists": "The README pitches WAMR as a runtime for applications \"from embedded, IoT, edge to Trusted Execution Environment (TEE), smart contract, cloud native and so on\", with small footprint and high performance as the main goals. The README does not spell out a separate problem statement beyond that.",
+  "how_it_works": "The VMcore offers several execution modes: a fast interpreter, a classic interpreter, AOT (wamrc compiles a .wasm to an AOT file that iwasm loads), LLVM JIT, Fast JIT, and a multi-tier JIT. Multi-tier starts a module on Fast JIT right away and compiles LLVM JIT functions on background threads, switching over as they finish. Build-time choices are made with cmake flags such as -DWAMR_BUILD_JIT=1 and -DWAMR_BUILD_FAST_JIT=1.",
+  "commands_seen": [
+   {
+    "cmd": "iwasm <wasm file>",
+    "context": "Run a Wasm file with the default fast interpreter (product-mini README, Linux section)."
+   },
+   {
+    "cmd": "wamrc -o <AOT file> <WASM file>",
+    "context": "Ahead-of-time compile a Wasm file into an AOT file using the wamrc compiler, which must be built first."
+   },
+   {
+    "cmd": "iwasm <AOT file>",
+    "context": "Run the AOT file produced by wamrc."
+   },
+   {
+    "cmd": "./build_llvm.sh",
+    "context": "Run from product-mini/platforms/linux/ to clone and build the LLVM library needed for LLVM JIT mode."
+   },
+   {
+    "cmd": "cmake .. -DWAMR_BUILD_JIT=1",
+    "context": "Configure a build that enables the LLVM JIT mode; run inside a build directory, then make."
+   },
+   {
+    "cmd": "cmake .. -DWAMR_BUILD_FAST_JIT=1",
+    "context": "Configure a build that enables the Fast JIT mode; run inside a build directory, then make."
+   },
+   {
+    "cmd": "cmake .. -DWAMR_BUILD_FAST_JIT=1 -DWAMR_BUILD_JIT=1",
+    "context": "Configure a build that enables multi-tier JIT, which starts on Fast JIT and tiers up to LLVM JIT."
+   },
+   {
+    "cmd": "brew install cmake",
+    "context": "Homebrew install of cmake, given in the macOS build section as the prerequisite before building iwasm."
+   },
+   {
+    "cmd": "./build/iwasm.com <wasm file>",
+    "context": "Run the iwasm binary built for the Cosmopolitan Libc target (x86_64, interpreter modes only)."
+   }
+  ],
+  "install_notes": "Building iwasm from source is the normal route; the README has no Homebrew-specific steps. Linux needs build-essential, cmake, g++-multilib, libgcc and ccache (Ubuntu) or glibc-devel.i686 (Fedora). macOS needs Xcode and cmake. Windows needs MSVC and cmake. The default build is fast interpreter, AOT and libc WASI, with JIT off. LLVM JIT needs the LLVM library built first (build_llvm.sh, which takes a long time). Embedded targets each have their own steps: Zephyr, ESP-IDF (at least 4.3.1), NuttX (Kconfig), RT-Thread (menuconfig), and Android (SDK and NDK). A Docker route exists via ci/build_wamr.sh. The README does not explain the iwasm-2.4.5 executable name from the brew formula.",
+  "standout": "One runtime that offers an interpreter, AOT, and two JIT tiers, with a Fast JIT that moves to LLVM JIT while the program runs. It also ships a small libc option alongside full WASI, and its README gives per-part size figures measured on a Cortex-M4F (about 21.4K for WASI libc, 3.7K for builtin libc).",
+  "status": "unknown. The fetched pages show no release date or last-commit date. The README has a recent-looking notice that the project moved to a new GitHub organisation and that CI/CD is being rechecked. It also lists a current TSC roster and a wiki of adopters, which suggests active upkeep, but that is inference rather than a dated signal.",
+  "caveats": "The README lists some hard limits. MinGW builds have WASI disabled, and hardware bounds checking is turned off there, so wamrc needs --bounds-checks=1. VxWorks is only validated on SR0620. Cosmopolitan Libc supports only x86_64 and interpreter modes. LLVM JIT needs a large LLVM build. The wamr.dev domain has not moved yet. The license is Apache 2.0 with the LLVM exception. The README does not say which version the brew formula's iwasm-2.4.5 corresponds to.",
+  "quotes": [
+   "WebAssembly Micro Runtime (WAMR) is a lightweight standalone WebAssembly (Wasm) runtime with small footprint, high performance and highly configurable features",
+   "WAMR has arrived to its new home.",
+   "The Fast JIT is a lightweight JIT engine with quick startup, small footprint and good portability, and gains ~50% performance of AOT."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/bytecodealliance/wasm-micro-runtime"
+   },
+   {
+    "label": "WAMR guide (GitBook)",
+    "url": "https://wamr.gitbook.io/"
+   },
+   {
+    "label": "WAMR website",
+    "url": "https://bytecodealliance.github.io/wamr.dev"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/bytecodealliance/wasm-micro-runtime (homepage, worked; README returned)",
+   "https://github.com/bytecodealliance/wasm-micro-runtime/blob/main/product-mini/README.md (linked from the homepage for build and run commands, worked; the page was mostly HTML chrome but the README text was readable)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A compact Wasm runtime that runs on microcontrollers and can tier from a fast JIT to LLVM JIT mid-execution offers a genuinely unusual systems rabbit hole."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "WAMR (WebAssembly Micro Runtime)",
+  "tldr": "A small WebAssembly runtime that runs .wasm files outside the browser, with an interpreter, ahead-of-time compiler and JIT tiers to compare.",
+  "deeper_look": "WebAssembly Micro Runtime, or WAMR, loads Wasm modules and runs them. Its command-line tool, iwasm, takes a .wasm file, or an AOT file made by the separate wamrc compiler, and runs it with WASI support. The core is also meant to be embedded as a C/C++ library, with Python, Go and Rust bindings.\n\nThe README describes it as a runtime for applications \"from embedded, IoT, edge to Trusted Execution Environment (TEE), smart contract, cloud native and so on\". Small footprint and high performance are the stated goals. It is not only for microcontrollers: it also covers Linux, macOS, Windows and Android.\n\nThe interesting part is that one project offers several ways to execute the same bytecode: a fast interpreter, a classic interpreter, AOT, LLVM JIT, Fast JIT, and a multi-tier mode. Multi-tier starts a module on Fast JIT immediately, compiles hot functions with LLVM on background threads, and switches over as they finish. Comparing these modes on one module is a hands-on way to learn the tradeoffs between interpreting, compiling ahead of time and compiling while running.\n\nThe README also gives size figures measured on a Cortex-M4F: about 21.4K for the WASI libc and 3.7K for the builtin libc. That shows how small a Wasm runtime can be made.",
+  "install": "brew install wasm-micro-runtime\n# installs iwasm and a versioned iwasm-2.4.5. The brief does not explain the versioned name, and the README documents building from source rather than brew.\n# You need a .wasm file of your own to run. The default build has the interpreter, AOT and WASI but no JIT. wamrc must be built from source.",
+  "try_this": [
+   {
+    "cmd": "iwasm --help",
+    "what_happens": "Lists the runtime's options so you can see what the command-line tool can do."
+   },
+   {
+    "cmd": "iwasm <wasm file>",
+    "what_happens": "Runs a WebAssembly module with the default fast interpreter."
+   },
+   {
+    "cmd": "wamrc -o <AOT file> <WASM file>",
+    "what_happens": "Compiles a Wasm file ahead of time into an AOT file; wamrc has to be built from the source tree first. Run the result with iwasm <AOT file>."
+   }
+  ],
+  "whats_unique": "One runtime offers an interpreter, AOT and two JIT tiers, including a Fast JIT that hands off to LLVM JIT while the program runs. The README documents per-component sizes down to a few kilobytes.",
+  "caveats": "Making full use of it means building from source (LLVM JIT needs a long LLVM build), and the brief shows no dated release signal, though the README suggests ongoing upkeep.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "webassembly",
+   "runtime",
+   "jit",
+   "embedded",
+   "wasi"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/bytecodealliance/wasm-micro-runtime"
+   },
+   {
+    "label": "WAMR guide (GitBook)",
+    "url": "https://wamr.gitbook.io/"
+   },
+   {
+    "label": "WAMR website",
+    "url": "https://bytecodealliance.github.io/wamr.dev"
+   }
+  ]
+ }
+}

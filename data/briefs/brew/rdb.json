@@ -1,0 +1,93 @@
+{
+ "name": "rdb",
+ "desc": "Redis RDB parser",
+ "homepage": "https://github.com/HDT3213/rdb/",
+ "installs_365d": 290,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "library",
+  "reverse-engineering"
+ ],
+ "why": "Parses Redis RDB snapshot files, a good door into the binary format of a database's on-disk state.",
+ "brief": {
+  "what_it_is": "A Go command-line tool and library that parses Redis RDB snapshot files, the binary on-disk dump of a Redis database. It reads an .rdb file and can output a JSON dump of every key, a CSV memory report, the biggest or hottest keys, a key-prefix size breakdown, a flame graph served on a local web port, or an AOF/RESP command stream. It can also be used as a Go package to walk objects in code, and to write new RDB files.",
+  "why_it_exists": "The README frames it as a golang implemented Redis RDB parser for secondary development and memory analysis. It credits sripathikrishnan's redis-rdb-tools as the inspiration.",
+  "how_it_works": "It decodes the RDB binary format and streams objects (string, list, set, hash, zset, stream, aux, functions) one at a time. Memory figures are estimates based on the RDB-encoded size of each key, not Redis's live allocator numbers. For flame graphs, keys are split on separators such as ':' and grouped by shared prefix. The default prefix analysis uses a radix tree, and -prefix-sep switches to a flat map with constant memory use.",
+  "commands_seen": [
+   {
+    "cmd": "go install github.com/hdt3213/rdb@latest",
+    "context": "Install from source with the Go toolchain, the README's default install route."
+   },
+   {
+    "cmd": "brew install rdb",
+    "context": "Homebrew install, written in the README with a leading $ prompt."
+   },
+   {
+    "cmd": "rdb",
+    "context": "Run with no arguments to print the built-in manual listing the -c modes and options."
+   },
+   {
+    "cmd": "rdb -c json -o intset_16.json cases/intset_16.rdb",
+    "context": "Convert an RDB file to JSON, one object per key, written to the -o path."
+   },
+   {
+    "cmd": "rdb -c memory -o mem.csv cases/memory.rdb",
+    "context": "Write a per-key memory report as CSV with database, key, type, size and element_count columns."
+   },
+   {
+    "cmd": "rdb -c bigkey -n 5 cases/memory.rdb",
+    "context": "List the N largest keys by estimated size."
+   },
+   {
+    "cmd": "rdb -c hotkey -n 5 cases/memory.rdb",
+    "context": "List the N hottest keys by LFU frequency. Only meaningful for RDB files from allkeys-lfu or volatile-lfu instances."
+   },
+   {
+    "cmd": "rdb -c flamegraph -port 16379 -sep : dump.rdb",
+    "context": "Serve a flame graph of memory by key prefix on the given port, splitting keys on ':'."
+   },
+   {
+    "cmd": "rdb -c aof -o dump.aof dump.rdb",
+    "context": "Convert the RDB file to an AOF file of RESP commands."
+   },
+   {
+    "cmd": "rdb -c prefix -prefix-sep : -n 10 -max-depth 2 -o prefix.csv dump.rdb",
+    "context": "Prefix report using the constant-memory flat-map mode, top 10 prefixes, depth limited to 2."
+   },
+   {
+    "cmd": "rdb -c json -o regex.json -regex '^l.*' cases/memory.rdb",
+    "context": "Filter keys with a regular expression before the JSON conversion."
+   }
+  ],
+  "install_notes": "Requires Go if installed via go install. Homebrew formula exists. Alternatively, download a prebuilt binary from the GitHub releases page and put it on PATH. No accounts, hardware, or configuration needed. The tool reads a local .rdb file, so you need a dump from your own Redis instance (or the repo's cases/ directory samples). Bigkey and hotkey output depends on the Redis eviction policy that produced the file.",
+  "standout": "It is a single binary that covers several analyses of the same snapshot: JSON export, memory report, bigkey and hotkey lists, prefix tree, and flame graph, plus a Go API that can also write RDB files. The README benchmarks a 1.3 GB production RDB file, with JSON and prefix taking about 25 seconds on an M2 MacBook Air.",
+  "status": "unknown. The README has build, coverage and Go Report Card badges, an Awesome Go listing, and claims support up to RDB version 12 (Redis 7.2). Its example timestamps (2025 expiration dates, a ctime of 1767107423) suggest recent work, but the README gives no release date or last-commit date, and I did not fetch the releases or commit pages to confirm.",
+  "caveats": "The hotkey command returns nothing unless the source Redis used an LFU eviction policy. Memory sizes are RDB-encoded estimates. The -no-expired flag is deprecated in favour of -expire. Flame graph and prefix output depend on the separators you pass. Support is stated only up to RDB version 12 (Redis 7.2), so newer Redis formats may not parse. The README does not state a license in its text, though the page shows a license badge. Benchmarks are from one machine and one file.",
+  "quotes": [
+   "This is a golang implemented Redis RDB parser for secondary development and memory analysis.",
+   "Support RDB version: 1 <= version <= 12(Redis 7.2)",
+   "RDB tool could separate keys by the given delimeters, then aggregate keys with same prefix."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/HDT3213/rdb/"
+   },
+   {
+    "label": "Go package reference",
+    "url": "https://pkg.go.dev/github.com/hdt3213/rdb"
+   },
+   {
+    "label": "Releases (prebuilt binaries)",
+    "url": "https://github.com/HDT3213/rdb/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/HDT3213/rdb/ - worked; GitHub README returned in full (about 480 lines, including usage, examples, Go library snippets and benchmark table). Did not follow further links because the README was complete."
+  ]
+ }
+}

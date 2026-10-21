@@ -1,0 +1,87 @@
+{
+ "name": "libkeyfinder",
+ "desc": "Musical key detection for digital audio, GPL v3",
+ "homepage": "https://mixxxdj.github.io/libkeyfinder/",
+ "installs_365d": 193,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "afternoon",
+  "audio",
+  "library",
+  "science"
+ ],
+ "why": "Detects the musical key of audio using signal analysis, a real transform from sound to music theory, though it is a library.",
+ "brief": {
+  "what_it_is": "libkeyfinder is a small C++11 library that estimates the musical key of digital audio. You give it audio samples with a frame rate and channel count, and it returns a key value (a KeyFinder::key_t) for the whole track. It can also run in progressive mode, where it builds a chromagram from a stream of audio packets and reports key estimates as it goes. It is a library with no standalone GUI in this repo. The GUI app by the original author is separate and no longer maintained.",
+  "why_it_exists": "It was written by Ibrahim Shaath in 2011 as part of a master's thesis in computer science, and in 2020 maintenance passed to the Mixxx DJ software team, who incorporated it into Mixxx as of Mixxx 2.3. The README frames it as a reusable key-detection component for audio software.",
+  "how_it_works": "The README does not explain the signal-processing method in detail. It says the library turns audio into a chromatic representation (a chromagram) and estimates key from that. The progressive API lets a caller feed packets and read the most recent key estimate, then call finalChromagram for a final result. The README links the thesis, 'Estimations of key in digital music recordings', for the underlying method.",
+  "commands_seen": [
+   {
+    "cmd": "$ sudo apt install cmake libfftw3-dev",
+    "context": "Debian/Ubuntu: installs CMake and the FFTW3 development headers, a dependency the library needs."
+   },
+   {
+    "cmd": "$ brew install cmake fftw catch2",
+    "context": "macOS via Homebrew: installs the build tools and FFTW3 and Catch2 dependencies."
+   },
+   {
+    "cmd": "$ cmake -DCMAKE_INSTALL_PREFIX=/where/you/want/to/install/to -S . -B build",
+    "context": "Configures the build from the repo top level into a build directory, with a chosen install prefix."
+   },
+   {
+    "cmd": "$ cmake --build build --parallel number-of-cpu-cores",
+    "context": "Compiles the library in the build directory, using the given number of parallel jobs."
+   },
+   {
+    "cmd": "$ cmake --install build",
+    "context": "Installs the built library to the prefix set at configure time."
+   },
+   {
+    "cmd": "$ cmake -DCMAKE_INSTALL_PREFIX=/where/you/want/to/install/to -S . -B build",
+    "context": "Same configure step as above; add -DBUILD_SHARED_LIBS=OFF to build a static library instead."
+   },
+   {
+    "cmd": "$ ctest --parallel number-of-cpu-cores",
+    "context": "Runs the test suite from the build directory. The README warns that FftAdapterTest/ForwardAndBackward fails intermittently."
+   },
+   {
+    "cmd": "$ sysctl -n hw.logicalcpu",
+    "context": "macOS: prints the logical CPU count to use for the --parallel flag."
+   }
+  ],
+  "install_notes": "Needs FFTW3 installed first (the README lists per-platform packages: dnf, apt, pacman, brew, vcpkg). Needs CMake. Catch2 is only needed for the tests; if it is missing, CMake downloads it automatically. To skip tests, pass -DBUILD_TESTING=OFF. Windows install uses 'vcpkg install fftw3 catch2'. Typical macOS install prefix is /usr/local. No accounts or runtime setup are mentioned.",
+  "standout": "The library has a real transform from audio to music theory with a documented API, and it has been carried on by a DJ software team rather than left to rot. Its progressive chromagram mode lets a host read key estimates while audio is still streaming.",
+  "status": "Maintained, as far as the evidence shows. The README says the Mixxx team took over maintenance in 2020, invites pull requests and issues on GitHub, and has a build status badge pointing to a GitHub Actions workflow. I did not see a release date or a last commit date in the pages I read, so I cannot confirm recent activity beyond that.",
+  "caveats": "The GUI application is no longer maintained and does not build on contemporary Linux distributions. Building requires FFTW3 and CMake. The README notes an intermittent test failure in FftAdapterTest/ForwardAndBackward. The README gives no license detail beyond GPL v3 or later. I did not see the thesis or any accuracy benchmarks.",
+  "quotes": [
+   "A small C++11 library for estimating the musical key of digital audio.",
+   "libkeyfinder is a small C++11 library for estimating the musical key of digital audio. It is published under the GNU General Public License (GPL) version 3 or later.",
+   "In 2020, Ibrahim handed over maintenance of libkeyfinder to the Mixxx DJ software team who incorporated it into Mixxx as of Mixxx 2.3."
+  ],
+  "links": [
+   {
+    "label": "Homepage / documentation",
+    "url": "https://mixxxdj.github.io/libkeyfinder/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/mixxxdj/libkeyfinder"
+   },
+   {
+    "label": "Thesis: Estimations of key in digital music recordings (PDF)",
+    "url": "https://www.ibrahimshaath.co.uk/keyfinder/KeyFinder.pdf"
+   },
+   {
+    "label": "Original GUI app (is_KeyFinder)",
+    "url": "https://github.com/ibsh/is_KeyFinder"
+   }
+  ],
+  "fetch_log": [
+   "https://mixxxdj.github.io/libkeyfinder/ - fetched OK (documentation page, not a GitHub repo, so no README shortcut)",
+   "https://github.com/mixxxdj/libkeyfinder - fetched OK (README with installation and testing sections)"
+  ]
+ }
+}

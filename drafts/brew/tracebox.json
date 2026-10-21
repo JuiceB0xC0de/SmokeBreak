@@ -1,0 +1,149 @@
+{
+ "name": "tracebox",
+ "desc": "Middlebox detection tool",
+ "homepage": "https://github.com/tracebox/tracebox",
+ "installs_365d": 120,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "quick"
+ ],
+ "why": "Reveals middleboxes that silently rewrite TCP packets by comparing what you sent against what came back, a real door into hidden network behaviour.",
+ "brief": {
+  "what_it_is": "Tracebox is a command-line tool for detecting middleboxes (devices that modify packets in transit) on a network path between a source and any destination. It is similar to traceroute in that it reports hop by hop, but instead of just listing routers it uses ICMP replies to spot changes made to the packets it sent. Input is a destination address (plus options such as -j for JSON output, -m for maximum hops, and -v for verbose detail). Output is a per-hop report of modifications, additions and deletions, or a JSON document with a Hops array. The distribution includes a Lua API (luatracebox) alongside the tracebox executable.",
+  "why_it_exists": "The README frames it as a way to detect middleboxes on any path, which is hard to do with ordinary traceroute. Its core observation is that ICMP messages often do not follow RFC 792: routers that return the full original datagram in Time-to-Live exceeded messages reveal what the packet looked like when it reached that hop.",
+  "how_it_works": "Tracebox sends probes with increasing TTL, as traceroute does, and compares the packet it sent with the quoted packet in the ICMP reply from each hop. Differences in the quoted headers or payload show where a middlebox changed, added or removed fields. The README says this works because some operating systems (Linux, Cisco IOS-XR) and MPLS routers return the full datagram, as well as through the ICMP Multi-Part Messages extension.",
+  "commands_seen": [
+   {
+    "cmd": "brew install tracebox",
+    "context": "Mac OS X install via Homebrew, the route this catalogue entry is based on."
+   },
+   {
+    "cmd": "xcode-select --install",
+    "context": "Needed first on Yosemite and El Capitan so the full Apple command line developer tools are present before brew install."
+   },
+   {
+    "cmd": "apt-get install autotools autoconf automake libtool liblua5.2-dev libpcap-dev libjson0 libjson0-dev libcurl4-gnutls-dev lua-ldoc libnetfilter-queue-dev lua5.2",
+    "context": "Debian build dependencies, as listed in the README."
+   },
+   {
+    "cmd": "dnf install autoconf automake libtool lua-devel libpcap-devel json-c-devel gnutls-devel lua-ldoc libnetfilter_queue-devel",
+    "context": "Fedora 24 build dependencies, as listed in the README."
+   },
+   {
+    "cmd": "./bootstrap.sh",
+    "context": "First step of building from source."
+   },
+   {
+    "cmd": "./configure [--prefix=install_prefix [--enable-tests][--enable-curl]]",
+    "context": "Configures the build; prefix is optional, and tests and curl support are opt-in flags."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles tracebox after configure."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the built tracebox (run as root in the README's notation)."
+   },
+   {
+    "cmd": "man tracebox",
+    "context": "Shows the manual page after installation."
+   },
+   {
+    "cmd": "ldoc .",
+    "context": "Generates the Lua API documentation from the doc directory using LDoc; output goes under doc/html."
+   }
+  ],
+  "install_notes": "Mac: brew install tracebox, after installing Apple's command line developer tools. Linux: install the listed Debian or Fedora packages (Lua 5.2 dev files, libpcap, json-c, libcurl, libnetfilter_queue, ldoc), then build from source with bootstrap, configure, make, make install. Prebuilt .deb packages are published through CircleCI artifacts, and the README gives a link to the latest amd64 .deb and a fallback procedure. OpenWRT needs the OpenWRT SDK and a feed from the tracebox/openwrt repo. Android needs a build script from tracebox/android and a rooted phone. Tracebox needs superuser privileges to run (per the Homebrew caveats, use sudo).",
+  "standout": "It exploits the fact that many routers quote full original packets in ICMP errors, so it can see which header fields were rewritten at each hop without needing any cooperation from the middlebox. It is traceroute-shaped, but the output is about packet modification rather than path.",
+  "status": "unknown. The README gives no release dates or version numbers. It refers to old platforms (Yosemite, El Capitan, Fedora 24), Travis CI at travis-ci.org, and a CircleCI artifact link on an rhcloud domain, which suggests the docs have not been refreshed in a long time. The README marks the OpenWRT package as currently unmaintained. The Homebrew description and the project homepage are present, but I did not check the commit history or recent releases.",
+  "caveats": "Needs root (sudo) to run, and the Homebrew caveat says to trust the software you run with elevated privileges. The README says the Lua API docs are 'should be' documented, so the docs are incomplete. Build on Linux needs several distro-specific packages. The OpenWRT package is unmaintained. Android requires a rooted phone. The CircleCI artifact link may be broken, and the README admits to this. Output in JSON mode is buffered, so you should use -m when the target does not answer. The README does not state a license in the portion I read.",
+  "quotes": [
+   "Tracebox is a tool that allows to detect middleboxes on any paths, i.e., between a source and any destination.",
+   "Tracebox can be viewed as a tool similar to traceroute as it uses ICMP replies to identify changes in the packets.",
+   "As the output will be buffered, you SHOULD make use of the max hop parameter (-m) if the target node does not answer in order to get the partial trace.",
+   "This is currently unmaintained."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (tracebox.org)",
+    "url": "http://www.tracebox.org"
+   },
+   {
+    "label": "Lua API documentation",
+    "url": "http://tracebox.org/lua_doc"
+   },
+   {
+    "label": "OpenWRT package repository",
+    "url": "http://github.com/tracebox/openwrt"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/tracebox/tracebox: fetched OK, README returned (no docs or demo followed; README was complete enough)."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Tracebox turns traceroute into a way to expose packet rewrites by hidden middleboxes, revealing network behavior ordinary path tracing cannot show."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "tracebox",
+  "tldr": "A traceroute that reports what changed your packets on the way, revealing hidden middleboxes like NATs, firewalls and proxies rewriting headers.",
+  "deeper_look": "Tracebox sends probes with increasing TTL, the same trick traceroute uses. The difference is in what it reads back. When a router drops a packet because its TTL ran out, it sends an ICMP error that often quotes the original packet. Tracebox compares that quoted packet with the one it sent. Any difference in the headers or payload shows that something between you and that hop modified, added or removed fields.\n\nThe README says this works because some systems (Linux, Cisco IOS-XR) and MPLS routers return the full original datagram, rather than the minimum RFC 792 asks for. The ICMP Multi-Part Messages extension is another route to the same information. In the project's words, \"Tracebox can be viewed as a tool similar to traceroute as it uses ICMP replies to identify changes in the packets.\"\n\nThe idea underneath is that the network path is not transparent. Devices in the middle quietly rewrite TCP options, sequence numbers and other fields, and you normally never see it. Tracebox gives a per-hop view of that, with no cooperation needed from the middlebox. It also ships a Lua API, exposed as the luatracebox executable, for scripting your own probes.",
+  "install": "brew install tracebox\n# needs root to run: use sudo. On older macOS (Yosemite, El Capitan) run xcode-select --install first.\n# On Linux, build from source: ./bootstrap.sh, ./configure, make, make install (distro packages listed in the README).",
+  "try_this": [
+   {
+    "cmd": "tracebox --help",
+    "what_happens": "Lists the options, including -j for JSON output, -m for maximum hops and -v for verbose detail."
+   },
+   {
+    "cmd": "man tracebox",
+    "what_happens": "Opens the manual page installed with the tool."
+   },
+   {
+    "cmd": "luatracebox --help",
+    "what_happens": "Shows how to run the Lua-scriptable version of the tool."
+   }
+  ],
+  "whats_unique": "Ordinary traceroute tells you which routers are on the path. Tracebox tells you what was done to your packets along it, by reading the quoted copy that routers send back.",
+  "caveats": "Needs root, and the README is dated: it mentions Yosemite, Fedora 24 and a possibly broken CircleCI link, while the OpenWRT package is marked unmaintained.",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "network",
+   "protocol",
+   "icmp",
+   "traceroute",
+   "middlebox",
+   "lua",
+   "needs-root"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (tracebox.org)",
+    "url": "http://www.tracebox.org"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/tracebox/tracebox"
+   },
+   {
+    "label": "Lua API documentation",
+    "url": "http://tracebox.org/lua_doc"
+   },
+   {
+    "label": "OpenWRT package repository",
+    "url": "http://github.com/tracebox/openwrt"
+   }
+  ]
+ }
+}

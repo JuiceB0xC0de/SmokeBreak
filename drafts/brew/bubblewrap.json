@@ -1,0 +1,118 @@
+{
+ "name": "bubblewrap",
+ "desc": "Unprivileged sandboxing tool for Linux",
+ "homepage": "https://github.com/containers/bubblewrap",
+ "installs_365d": 511879,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "linux",
+  "sandboxing",
+  "protocol"
+ ],
+ "why": "Unprivileged namespace sandboxing is a door into how containers and Flatpak actually isolate processes, though it is Linux-only.",
+ "brief": {
+  "what_it_is": "Bubblewrap (bwrap) is a small Linux command-line tool that runs a program inside a sandbox built from kernel namespaces, without needing root. You give it arguments that describe the filesystem view, namespaces, and command to run, and it starts that command in a new, mostly empty mount namespace where the root is a tmpfs invisible to the host. It takes a list of mount and namespace options plus a command, and outputs the sandboxed process's own output and exit status. The README describes it as a low-level building block rather than a finished sandbox with a fixed policy.",
+  "why_it_exists": "The README argues that tools like docker and systemd-nspawn are built for administrators and orchestrators, and are not safe to give to unprivileged users because access can be turned into a root shell on the host. Bubblewrap is meant to give ordinary users container-style isolation by using unprivileged user namespaces, and to be shared by tools such as Flatpak that need non-root sandboxing.",
+  "how_it_works": "Bubblewrap creates a new mount namespace whose root is a tmpfs that is invisible from the host, and the user's command-line options then construct the filesystem, process environment, and command inside it. It uses unprivileged user namespaces rather than setuid, and sets PR_SET_NO_NEW_PRIVS to block setuid binaries from escalating. Optional namespaces cover users, IPC, PID (with a small pid1 that reaps children), network (loopback only), and UTS, and seccomp filters can be passed in.",
+  "commands_seen": [
+   {
+    "cmd": "meson setup _builddir",
+    "context": "Source build step: configures the meson build directory named _builddir."
+   },
+   {
+    "cmd": "meson compile -C _builddir",
+    "context": "Source build step: compiles bubblewrap into _builddir."
+   },
+   {
+    "cmd": "meson test -C _builddir",
+    "context": "Source build step: runs the test suite in _builddir."
+   },
+   {
+    "cmd": "meson install -C _builddir",
+    "context": "Source build step: installs the built bubblewrap from _builddir."
+   },
+   {
+    "cmd": "bwrap \\\n    --ro-bind /usr /usr \\\n    --symlink usr/lib64 /lib64 \\\n    --proc /proc \\\n    --dev /dev \\\n    --unshare-pid \\\n    --new-session \\\n    bash",
+    "context": "Trimmed illustrative example from the README: starts a bash shell in a sandbox that reuses the host's /usr read-only, sets up /proc and /dev, unshares the PID namespace, and uses a new session. The README calls it incomplete and for illustration only."
+   }
+  ],
+  "install_notes": "Most Linux distributions package bubblewrap in their repositories, so installing from the distro is the README's first suggestion. To build from source, the README gives a meson sequence (setup, compile, test, install). The kernel needs support for unprivileged user namespaces, since the setuid mode has been removed. The README does not mention accounts, runtimes, or first-run configuration.",
+  "standout": "It reaches container-style isolation without setuid by relying on unprivileged user namespaces, and it deliberately stays small so the security-relevant code is easy to audit. Unlike Firejail, it has no desktop-specific features such as PulseAudio filtering; those are left to the calling application.",
+  "status": "unknown. The fetched README shows no release date, version number, or last-commit date. It does describe current behaviour, such as removing the old setuid mode, and it lists downstream users like Flatpak. I did not check the releases or commit history.",
+  "caveats": "Linux only, because it depends on Linux namespaces and seccomp. It is not a ready-made sandbox: the protection level is set entirely by the arguments passed in, so a wrong setup gives weak isolation. The README says anything mounted into the sandbox can be used to escalate privileges, for example a D-Bus socket that can run commands through systemd, so xdg-dbus-proxy is suggested for filtering. Without seccomp filtering of TIOCSTI, --new-session is needed to prevent out-of-sandbox command injection (CVE-2017-5226). Some applications with their own sandboxes, such as certain browsers, may fail under these restrictions. The setuid mode is gone, so systems without unprivileged user namespaces are not supported.",
+  "quotes": [
+   "bubblewrap is a tool for constructing sandbox environments. bubblewrap is not a complete, ready-made sandbox with a specific security policy.",
+   "bubblewrap works by creating a new, completely empty, mount namespace where the root is on a tmpfs that is invisible from the host, and will be automatically cleaned up when the last process exits.",
+   "The name bubblewrap was chosen to convey that this tool runs as the parent of the application (so wraps it in some sense) and creates a protective layer (the sandbox) around it."
+  ],
+  "links": [
+   {
+    "label": "Bubblewrap GitHub repository (README)",
+    "url": "https://github.com/containers/bubblewrap"
+   },
+   {
+    "label": "Flatpak",
+    "url": "https://www.flatpak.org"
+   },
+   {
+    "label": "xdg-dbus-proxy",
+    "url": "https://github.com/flatpak/xdg-dbus-proxy"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/containers/bubblewrap: fetched OK; the README was returned in full. I did not follow further links because the README was complete and had no separate docs."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Bubblewrap makes Linux namespaces tangible: you construct a process\u2019s isolated filesystem and environment yourself, revealing how tools like Flatpak build sandboxes."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "bubblewrap",
+  "tldr": "A small Linux tool that builds a container-like sandbox from kernel namespaces without root, so you can see how Flatpak-style isolation is assembled.",
+  "deeper_look": "Bubblewrap (`bwrap`) runs a command inside a sandbox you describe on the command line. It starts by creating a new, empty mount namespace whose root is a tmpfs, invisible to the host and cleaned up when the last process exits. Your options then build the world inside it: which host directories to bind in, whether read-only, what goes in /proc and /dev, and which namespaces to unshare.\n\nIt exists because tools like docker and systemd-nspawn are built for administrators, and the README argues they are not safe to hand to unprivileged users, since access can be turned into a root shell on the host. Bubblewrap uses unprivileged user namespaces instead of setuid, and sets PR_SET_NO_NEW_PRIVS so setuid binaries cannot escalate. Flatpak is one of the tools that builds on it.\n\nThe idea underneath is that a container is not a special object. It is a process with a rearranged view of the filesystem, PIDs, network and users. Because bubblewrap is a low-level building block, not a finished sandbox, you assemble that view yourself, one flag at a time. In the README's words: \"bubblewrap is not a complete, ready-made sandbox with a specific security policy.\" That makes it a good way to learn what isolation actually consists of.",
+  "install": "brew install bubblewrap\n# Linux only. The kernel must support unprivileged user namespaces; the setuid mode has been removed.",
+  "try_this": [
+   {
+    "cmd": "bwrap --help",
+    "what_happens": "Lists the mount, namespace and environment options you combine to describe a sandbox."
+   },
+   {
+    "cmd": "bwrap \\\n    --ro-bind /usr /usr \\\n    --symlink usr/lib64 /lib64 \\\n    --proc /proc \\\n    --dev /dev \\\n    --unshare-pid \\\n    --new-session \\\n    bash",
+    "what_happens": "Starts a bash shell in a sandbox that reuses the host's /usr read-only, with its own /proc, /dev and PID namespace. The README calls this example incomplete and illustrative only."
+   }
+  ],
+  "whats_unique": "It gets container-style isolation without setuid or root, and stays small so the security-relevant code is easy to audit. Unlike Firejail, it has no desktop-specific features; those are left to the calling application.",
+  "caveats": "Linux only, and the protection level depends entirely on the arguments you pass, so a careless setup gives weak isolation; anything mounted in, like a D-Bus socket, can be an escape route.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "linux",
+   "sandboxing",
+   "namespaces",
+   "containers"
+  ],
+  "links": [
+   {
+    "label": "Bubblewrap GitHub repository (README)",
+    "url": "https://github.com/containers/bubblewrap"
+   },
+   {
+    "label": "Flatpak",
+    "url": "https://www.flatpak.org"
+   },
+   {
+    "label": "xdg-dbus-proxy",
+    "url": "https://github.com/flatpak/xdg-dbus-proxy"
+   }
+  ]
+ }
+}

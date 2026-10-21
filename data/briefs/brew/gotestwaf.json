@@ -1,0 +1,90 @@
+{
+ "name": "gotestwaf",
+ "desc": "Tool for API and OWASP attack simulation",
+ "homepage": "https://lab.wallarm.com/test-your-waf-before-hackers/",
+ "installs_365d": 85,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "network",
+  "security",
+  "afternoon"
+ ],
+ "why": "Generates OWASP-style attack traffic to probe WAFs, a window into how filters misjudge requests.",
+ "brief": {
+  "what_it_is": "GoTestWAF is an open-source command-line tool, written in Go, that simulates API and OWASP-style attacks against a web application security product such as a WAF, API gateway, IPS, or API security proxy. It takes a target URL and generates malicious HTTP requests from YAML test cases, with payloads placed in bodies, headers, URL parameters, paths, and API formats (REST, SOAP, XMLRPC, gRPC, GraphQL). It then classifies each response as blocked, bypassed, or unresolved and writes a scored report to the console, as a PDF, HTML, or JSON file.",
+  "why_it_exists": "Wallarm's blog argues that WAF evaluation usually focuses on false positives while ignoring false negatives, and that no simple tool lets a developer, QA engineer, or security engineer produce a report of WAF coverage. GoTestWAF was open-sourced to fill that gap.",
+  "how_it_works": "Each YAML test case lists payloads, encoders (Base64, Base64Flat, JSUnicode, URL, Plain, XML Entity), and placeholders (places in the request such as URLPath, URLParam, Header, JSONBody, SOAPBody, gRPC, RawRequest), and GoTestWAF sends every payload-encoder-placeholder permutation, so 2 payloads x 3 encoders x 1 placeholder yields 6 requests. A response is marked blocked when it has a block status code (default 403) or matches a block regex, and bypassed when it has a pass status code (default 200 or 404) or matches a pass regex. With --openapiFile, it builds valid requests from an OpenAPI 3.0 spec and substitutes attack vectors into them.",
+  "commands_seen": [
+   {
+    "cmd": "docker pull wallarm/gotestwaf",
+    "context": "Pulls the official GoTestWAF image from Docker Hub (README Quick start, step 1)."
+   },
+   {
+    "cmd": "docker run --rm --network=\"host\" -it -v ${PWD}/reports:/app/reports \\ wallarm/gotestwaf --url=<EVALUATED_SECURITY_SOLUTION_URL>",
+    "context": "Runs a scan against the target WAF or security product and saves the report into ./reports on the host (README Quick start, step 2)."
+   },
+   {
+    "cmd": "docker run --rm --network=\"host\" -it -v ${PWD}/reports:/app/reports \\ wallarm/gotestwaf --grpcPort 9000 --url=http://my.grpc.endpoint",
+    "context": "Adds a gRPC check on port 9000 alongside the HTTP scan; the README says gRPC tests need a working endpoint."
+   },
+   {
+    "cmd": "docker run --rm --network=\"host\" -v ${PWD}/reports:/app/reports wallarm/gotestwaf --url=http://127.0.0.1:8080 --noEmailReport",
+    "context": "Scans a local ModSecurity demo on port 8080 and skips the interactive email prompt so the report is saved locally."
+   },
+   {
+    "cmd": "make modsec",
+    "context": "Starts the demo ModSecurity CRS container on port 8080 from the cloned repo, with PARANOIA set to 1."
+   },
+   {
+    "cmd": "make modsec_down",
+    "context": "Stops the ModSecurity demo containers."
+   },
+   {
+    "cmd": "go run ./cmd --url=<EVALUATED_SECURITY_SOLUTION_URL>",
+    "context": "Runs GoTestWAF natively from a cloned repo with Go installed, without Docker."
+   },
+   {
+    "cmd": "go build -mod vendor -o gotestwaf ./cmd",
+    "context": "Builds a gotestwaf binary from the cloned repo as a Go module."
+   },
+   {
+    "cmd": "docker run --rm --network=\"host\" -it -v ${PWD}/reports:/app/reports -v ${PWD}/api.yaml:/app/api.yaml wallarm/gotestwaf --wafName your_waf_name --url=https://example.com/v1 --openapiFile api.yaml",
+    "context": "Runs the scan using an OpenAPI spec mounted into the container, so attack vectors are sent through valid API requests."
+   },
+   {
+    "cmd": "make modsec_crs_regression_tests_convert",
+    "context": "Converts OWASP Core Rule Set regression tests into GoTestWAF format; the README says to run make gotestwaf afterwards to rebuild the container."
+   }
+  ],
+  "install_notes": "Docker is the simplest route: docker pull wallarm/gotestwaf, then docker run with a reports volume. Use --network=\"host\" or put GoTestWAF and the target on the same Docker network, and the README says the IP running GoTestWAF must be whitelisted on the security solution. Running natively needs Go installed (the repo can be built with go build). For native runs, PDF reports need Google Chrome; without Chrome, use --reportFormat html. Chrome as the HTTP client (--httpClient=chrome) on Linux needs --cap-add=SYS_ADMIN in Docker. There is no account or license key required in the README; without --noEmailReport or --email the tool prompts for an email address, which can be skipped by pressing Enter.",
+  "standout": "The Payload -> Encoder -> Placeholder model with YAML permutations lets one short test file expand into many request shapes, and the RawRequest placeholder allows arbitrary HTTP requests. The OpenAPI mode sends attacks inside requests that are valid for the app's own API description, which makes the bypass results more meaningful than raw fuzzing.",
+  "status": "unknown. The README sample report is dated 2025-07-14 and shows version v0.5.6-7 in its log; the Wallarm blog post is dated June 19, 2025. I did not see a release date, last commit date, or maintenance note, so I cannot confirm current activity.",
+  "caveats": "The homepage is a Wallarm marketing blog post, and its sample output and scores (dated 2024-03-04, version v0.4.14) differ from the README's current sample. WebSocket support is listed as future roadmap, and the OWASP Core Rule Set tests are not included by default and need a conversion step. Chrome is required for PDF output in native mode and for the chrome HTTP client. gRPC checks need a live endpoint. Scan results depend on the blocking and passing criteria you set, and the default criteria can misjudge some responses. Only run it against systems you are authorized to test, since it sends attack traffic.",
+  "quotes": [
+   "GoTestWAF is a tool for API and OWASP attack simulation that supports a wide range of API protocols including REST, GraphQL, gRPC, SOAP, XMLRPC, and others.",
+   "It was designed to evaluate web application security solutions, such as API security proxies, Web Application Firewalls, IPS, API gateways, and others.",
+   "GoTestWAF generates malicious requests using encoded payloads placed in different parts of HTTP requests: its body, headers, URL parameters, etc."
+  ],
+  "links": [
+   {
+    "label": "Homepage (Wallarm blog post)",
+    "url": "https://lab.wallarm.com/test-your-waf-before-hackers/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/wallarm/gotestwaf"
+   },
+   {
+    "label": "Docker Hub image",
+    "url": "https://hub.docker.com/r/wallarm/gotestwaf"
+   }
+  ],
+  "fetch_log": [
+   "https://lab.wallarm.com/test-your-waf-before-hackers/ (worked; returned the Wallarm blog post, not the README; it contains the usage example, flags, and sample report)",
+   "https://github.com/wallarm/gotestwaf (worked; returned the full README, which was used as the primary source for commands and configuration)"
+  ]
+ }
+}

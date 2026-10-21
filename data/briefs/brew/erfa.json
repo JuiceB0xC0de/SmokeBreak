@@ -1,0 +1,73 @@
+{
+ "name": "erfa",
+ "desc": "Essential Routines for Fundamental Astronomy",
+ "homepage": "https://github.com/liberfa/erfa",
+ "installs_365d": 189,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "library"
+ ],
+ "why": "The fundamental astronomy routines behind SOFA-style calculations; real science but mostly a library underneath other tools.",
+ "brief": {
+  "what_it_is": "ERFA (Essential Routines for Fundamental Astronomy) is a C library of core astronomy algorithms, based on the SOFA library published by the International Astronomical Union. It is a code library, not an application: programs call its functions, which compute astronomical quantities such as coordinate transformations and time-scale conversions. Its inputs are numeric values passed in by the calling program, and its outputs are computed results returned through those functions. The README does not list the individual functions, and it does not say which downstream tools use it.",
+  "why_it_exists": "The README says ERFA is meant to replicate SOFA's functionality while being licensed under a three-clause BSD license, so it is compatible with a wide range of open source licenses. Permission for this release was obtained from the SOFA board.",
+  "how_it_works": "ERFA is a C library built with meson and ninja. It is a renamed and relicensed derivative of SOFA version 20210512 for v2.0.0, with functions prefixed era instead of iau and C macros prefixed ERFA_. It adds runtime functions for version info (eraVersion, eraSofaVersion) and for reading and setting leap seconds (eraGetLeapSeconds, eraSetLeapSeconds), declared in erfaextra.h.",
+  "commands_seen": [
+   {
+    "cmd": "meson setup builddir/",
+    "context": "Configures a build directory from the source tree, as the first step of building ERFA."
+   },
+   {
+    "cmd": "ninja -C builddir/",
+    "context": "Compiles ERFA in the configured build directory."
+   },
+   {
+    "cmd": "meson install -C builddir/",
+    "context": "Installs the built ERFA library into the OS's standard location."
+   },
+   {
+    "cmd": "meson test -C builddir/",
+    "context": "Runs the test suite; the README suggests running it before installing to confirm the build is correct."
+   },
+   {
+    "cmd": "apt install meson",
+    "context": "Debian-based install command for meson; the README says ninja is also needed but gives no apt command for it."
+   },
+   {
+    "cmd": "pkg-config PKG_CONFIG_PATH=$PWD/builddir/meson-uninstalled/",
+    "context": "Not a literal command. For developers, the README says to add $PWD/builddir/meson-uninstalled/ to the $PKG_CONFIG_PATH variable so other projects can link against the uninstalled static library."
+   }
+  ],
+  "install_notes": "Needs meson and ninja, installed separately (on Debian-based systems, apt install meson). Build with meson setup, ninja, and meson install. Run meson test before installing if you want to check the build. Developers can build against the uninstalled library by adding builddir/meson-uninstalled/ to PKG_CONFIG_PATH. The README does not mention Homebrew, macOS, or Windows specifically.",
+  "standout": "ERFA is a deliberate relicensing of SOFA: the same algorithms, with BSD terms that SOFA's own license does not offer, and with the SOFA board's permission written into the repo. The README also notes that functions are renamed from iau to era, and that bugs found in ERFA should also be reported upstream to SOFA.",
+  "status": "Probably maintained, but the README gives no dates. It documents releases up to 2.0.1, which tracks SOFA 20231011, and it links to a Zenodo DOI. I could not see a last release date or last commit date, so I cannot confirm recent activity.",
+  "caveats": "The README says runtime leap-second modification is 'currently considered somewhat experimental', and that an improved API might come later. The README also says that as of 2.0.0, erfam.h must be included explicitly to use its constants macros; including erfa.h no longer pulls it in. The scout note calls this a library under other tools, which fits the README, but the README itself does not name those tools. This is a C library with no end-user command-line interface, so it may be of limited interest as a standalone 'try it' entry.",
+  "quotes": [
+   "ERFA is a C library containing key algorithms for astronomy, and is based on the SOFA library published by the International Astronomical Union (IAU).",
+   "ERFA is intended to replicate the functionality of SOFA (aside from possible bugfixes in ERFA that have not yet been included in SOFA), but is licensed under a three-clause BSD license to enable its compatibility with a wide range of open source licenses.",
+   "This functionality is currently considered somewhat experimental, meaning an improved API might be available in the future, but the current API can also be counted on for the near future."
+  ],
+  "links": [
+   {
+    "label": "ERFA homepage (GitHub repository)",
+    "url": "https://github.com/liberfa/erfa"
+   },
+   {
+    "label": "SOFA library (IAU)",
+    "url": "http://www.iausofa.org/"
+   },
+   {
+    "label": "Zenodo DOI for citing ERFA",
+    "url": "https://doi.org/10.5281/zenodo.3564896"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/liberfa/erfa: fetched OK, README returned (the repository's README text, which describes ERFA, its differences from SOFA, build instructions, and citation). No further links were followed."
+  ]
+ }
+}

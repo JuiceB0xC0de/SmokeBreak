@@ -1,0 +1,109 @@
+{
+ "name": "gcl",
+ "desc": "GNU Common Lisp",
+ "homepage": "https://www.gnu.org/software/gcl/",
+ "installs_365d": 68,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "afternoon",
+  "ancient"
+ ],
+ "why": "GNU Common Lisp is an old-school Lisp environment, a worthwhile visit to a classic language implementation.",
+ "brief": {
+  "what_it_is": "GNU Common Lisp (GCL) is a free implementation of Common Lisp, the official Common Lisp of the GNU project. It takes Lisp source or code typed at its REPL and produces native object code by using the system's C compiler. It can also save custom Lisp images. The homepage describes it as 'An implementation of Common Lisp' and gives 2.7.1 as the latest stable release.",
+  "why_it_exists": "The page presents GCL as the GNU project's Common Lisp, built to support free software Lisp applications such as Maxima, ACL2 and Axiom. Its history section says it began as AKCL and was released as GCL in 1994, mainly to support the Maxima computer algebra system.",
+  "how_it_works": "GCL uses the system C compiler to compile Lisp to native object code, which the README credits for good performance and easy portability. On most platforms it can load native object code modules directly into its Lisp core, and those modules persist in custom images made with save-system. The README also describes a stratified garbage collector (SGC) that uses native page fault handling for recent allocations.",
+  "commands_seen": [
+   {
+    "cmd": "tar zxf gcl-2.7.1.tar.gz",
+    "context": "Unpacks the 2.7.1 release tarball (stable release build instructions)."
+   },
+   {
+    "cmd": "cd gcl-2.7.1",
+    "context": "Enters the unpacked source directory before applying the errata and building."
+   },
+   {
+    "cmd": "./configure --prefix=your_install_directory && make install",
+    "context": "Configures the build for a chosen install prefix, then compiles and installs. Shown for both the stable tarball and the git snapshot."
+   },
+   {
+    "cmd": "git clone git://git.sv.gnu.org/gcl.git",
+    "context": "Clones the GCL git repository to build the 2.7.2pre snapshot."
+   },
+   {
+    "cmd": "cd gcl/gcl",
+    "context": "Enters the gcl source directory inside the cloned repository (snapshot build)."
+   },
+   {
+    "cmd": "git checkout Version_2_7_2pre",
+    "context": "Checks out the 2.7.2 prerelease tag from the repository."
+   },
+   {
+    "cmd": "autoreconf -f -i",
+    "context": "Regenerates the autotools build files for the git snapshot, which needs autotools, m4 and texinfo."
+   }
+  ],
+  "install_notes": "There is no brew-specific note on the page. Build requirements for the stable release are gcc or clang, libgmp-dev, libtirpc-dev and zlib1g-dev. Optional features need libreadline-dev, tk8.6-dev, libxmu-dev and libxaw7-dev. The git snapshot also needs texinfo, autotools and m4. The 2.7.1 tarball has a small published errata: three patches to gcl/debian/rules (adding gcl_pool to a clean target), gcl/git.tag (version string), and gcl/o/alloc.c (adding a call to expand_contblock_array in empty_relblock). The README says to apply these before building. Compile-time options such as --enable-ansi are mentioned in the older text.",
+  "standout": "GCL leans on the host C compiler and a conservative, page-fault-based garbage collector rather than a bespoke native code generator. The homepage also says a function call costs about the same as a C function call through a pointer, and it has a source-level debugger (dbl) for interpreted code that works with an Emacs window.",
+  "status": "Maintained, based on the page. The release log has an entry dated 20250411 for GCL 2.7.1, and a 2.7.2pre snapshot tag is listed. The page says a team of 12 developers coordinates through the gcl-devel mailing list. Some news entries are from 2004 to 2005, but these are older history rather than a sign of stalling.",
+  "caveats": "The 2.7.1 tarball needs manual errata patches before it builds cleanly. The build depends on several system libraries, and the optional Tk, X and readline features need more dev packages. The page lists platforms as eleven GNU/Linux architectures, Windows, Sparc Solaris and FreeBSD, so other systems are not covered. The page says ANSI compliance is still a goal and is enabled optionally at compile time. Some of the description is old, from when the project was under the CLtL1 standard. The brew formula lists no executables, and the scout note is the only hint about what the brew package installs.",
+  "quotes": [
+   "An implementation of Common Lisp",
+   "GCL is the official Common Lisp for the GNU project.",
+   "Very efficient. A function call is basically the same speed as a C function call, in fact identical to a C function call via a pointer."
+  ],
+  "links": [
+   {
+    "label": "GCL homepage",
+    "url": "https://www.gnu.org/software/gcl/"
+   },
+   {
+    "label": "Git repository (from README)",
+    "url": "git://git.sv.gnu.org/gcl.git"
+   }
+  ],
+  "fetch_log": [
+   "https://www.gnu.org/software/gcl/ - fetched OK; HTML page returned as text with release notes, build instructions, history and links. No separate docs were fetched because the homepage had enough detail."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "GCL\u2019s C-compiler-based native Lisp and page-fault-driven collector make this venerable implementation an unusually concrete peek beneath the runtime."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "GCL (GNU Common Lisp)",
+  "tldr": "GCL is the GNU project's Common Lisp, which turns Lisp into native code by handing it to your C compiler.",
+  "deeper_look": "GNU Common Lisp is a free implementation of Common Lisp. You can type code at its REPL or feed it source files, and it compiles them to native object code by calling the system's C compiler. It can also save a custom Lisp image of your session with save-system.\n\nIt began as AKCL and was released as GCL in 1994. The homepage says it exists mainly to support free software built in Lisp, and names Maxima, ACL2 and Axiom. Maxima, a computer algebra system, was the original driver. Running GCL means touching the Lisp layer under those mathematics tools.\n\nThe design leans on existing tools instead of building a code generator of its own. The README credits the C compiler for good performance and easy portability. On most platforms it can load native object code modules straight into the running Lisp core, and those modules persist in saved images. Memory is managed by a stratified garbage collector that uses native page fault handling for recent allocations. The homepage claims a function call costs the same as a C function call through a pointer.\n\nThere is also a source-level debugger, dbl, for interpreted code, which works with an Emacs window. Some of the project's wording is old, from the era of the first Common Lisp standard, CLtL1. The homepage says ANSI compliance is a goal and can be enabled at compile time.",
+  "install": "brew install gcl\n# The formula pulls in gmp and libtirpc. The brief lists no executables for the brew package, so check what lands on your PATH after installing.",
+  "try_this": [],
+  "whats_unique": "Instead of a bespoke native code generator, GCL compiles Lisp through the host C compiler and uses a page-fault-based garbage collector. It is the GNU project's official Common Lisp and the long-time engine behind Maxima.",
+  "caveats": "The brief lists no executables for the brew formula, so I cannot say what command starts it. The upstream 2.7.1 tarball needs manual errata patches before building, and ANSI compliance is still described as a goal.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "lisp",
+   "common-lisp",
+   "compiler",
+   "gnu",
+   "repl",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "GCL homepage",
+    "url": "https://www.gnu.org/software/gcl/"
+   },
+   {
+    "label": "Git repository (from README)",
+    "url": "git://git.sv.gnu.org/gcl.git"
+   }
+  ]
+ }
+}

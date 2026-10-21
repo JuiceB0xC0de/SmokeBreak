@@ -1,0 +1,85 @@
+{
+ "name": "readpe",
+ "desc": "PE analysis toolkit",
+ "homepage": "https://github.com/mentebinaria/readpe",
+ "installs_365d": 244,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering"
+ ],
+ "why": "A PE file analysis toolkit lets you poke inside Windows executables and see how binaries are laid out.",
+ "brief": {
+  "what_it_is": "readpe is an open-source, multiplatform command-line toolkit for working with and analyzing PE (Portable Executable) binaries, the Windows executable format. It is a collection of small tools rather than one program. The executables it installs are ofs2rva, pedis, pehash, peldd, pepack, peres, pescan, pesec, pestr, readpe, and rva2ofs. Input is a PE file, and output is text printed to the terminal. The README does not describe each tool's output, so this is inferred from the names and the old manual's section headings: headers and sections, function directories, file comparison, security tests, disassembly, and packer detection.",
+  "why_it_exists": "The README says the project was formerly called pev and was moved from a user account to an organization account and renamed, because the name 'pev' stood for PE Version and no longer reflected what the tools do. It also says the libpe library was merged into this repository because the two were tightly coupled.",
+  "how_it_works": "The README does not explain the internals. The tools are built from C sources with make and link against OpenSSL, and the libpe library lives inside the repository under lib/libpe. The old manual says pev has a plugin mechanism and that its tools are invoked separately as commands.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/mentebinaria/readpe.git",
+    "context": "Gets the source code."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the tools on Linux, macOS, and Windows under Cygwin (run inside the readpe directory)."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the built tools on Linux."
+   },
+   {
+    "cmd": "echo \"/usr/local/lib\" | sudo tee /etc/ld.so.conf.d/libpe.conf",
+    "context": "Adds /usr/local/lib to the linker search path on Linux so the libpe shared library can be found."
+   },
+   {
+    "cmd": "sudo ldconfig",
+    "context": "Refreshes the shared library cache on Linux after the libpe.conf entry is added."
+   },
+   {
+    "cmd": "CFLAGS=\"-I/usr/local/opt/openssl/include/\" LDFLAGS=\"-L/usr/local/opt/openssl/lib/\" make",
+    "context": "Builds on macOS, pointing the compiler at Homebrew's OpenSSL."
+   },
+   {
+    "cmd": "brew install openssl",
+    "context": "Installs OpenSSL on macOS through Homebrew before building."
+   },
+   {
+    "cmd": "apt install libssl-dev",
+    "context": "Installs OpenSSL headers on Debian or Ubuntu when the build reports openssl/evp.h missing."
+   },
+   {
+    "cmd": "yum install openssl-devel",
+    "context": "Installs OpenSSL headers on Fedora or RHEL-family systems."
+   },
+   {
+    "cmd": "make zip",
+    "context": "Packages the build into a zip on Windows under Cygwin."
+   }
+  ],
+  "install_notes": "Build from source with git clone, then make. OpenSSL headers and libraries must be installed first (libssl-dev on apt, openssl-devel on yum, openssl via Homebrew on macOS). On macOS, CFLAGS and LDFLAGS must be set to point at Homebrew's OpenSSL. The README's macOS note also mentions PCRE, but the only command it gives is for openssl. On Linux, after sudo make install, you must add /usr/local/lib to the loader path (the libpe.conf and ldconfig steps) or the shared library will fail to load. On Windows there is no native build: you need Cygwin with the zip, binutils, gcc-core, git, make, and libssl-devel packages. No accounts, runtimes beyond a C toolchain, or hardware are mentioned.",
+  "standout": "Most PE tools are either a single-purpose script or a large commercial suite. This is a set of small C command-line programs under one name, with an unusual history: it was renamed from pev and absorbed its library, libpe, into the same repository. The tools are named by function (pesec for security flags, pestr for strings, pehash for hashes, pepack for packer detection), so a user can run only the one they need.",
+  "status": "unknown. The fetched README has no release dates, version numbers, or commit dates. It does say the repository was moved and renamed from pev, which suggests recent activity, but I could not confirm that. The linked manual is pev version 0.80 with a copyright of 2013-2017, which is old and points to a SourceForge site, so it may not match the current tools.",
+  "caveats": "The documentation is thin: the README does not describe what any tool outputs, and the linked manual is for the older pev 0.80 with the old name. Windows is supported only through Cygwin. Builds fail with a missing openssl/evp.h unless OpenSSL headers are installed. Licensing is split: the main project is GPL v2, and lib/libpe is LGPL v3. The README's FAQ also says to check the old pev docs for help. Homebrew installation is not shown in the README; the build steps above are the only route it describes.",
+  "quotes": [
+   "Open source, full-featured, multiplatform command line toolkit to work with and analyze PE (Portable Executables) binaries.",
+   "This repository used to be pev. We just moved the repository from a user account to an organization account.",
+   "We felt that readpe was a good name as it is the most prominent tool."
+  ],
+  "links": [
+   {
+    "label": "Homepage / source (GitHub)",
+    "url": "https://github.com/mentebinaria/readpe"
+   },
+   {
+    "label": "pev user manual (old, version 0.80)",
+    "url": "https://pev.sourceforge.io/doc/manual/en_us/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/mentebinaria/readpe: worked, README returned.",
+   "https://pev.sourceforge.io/doc/manual/en_us/: worked, but it is the old pev 0.80 manual. The table of contents lists the tools, but the text returned no command examples, so the commands above come from the README."
+  ]
+ }
+}

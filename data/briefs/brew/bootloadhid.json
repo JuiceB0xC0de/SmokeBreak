@@ -1,0 +1,50 @@
+{
+ "name": "bootloadhid",
+ "desc": "HID-based USB bootloader for AVR microcontrollers",
+ "homepage": "https://www.obdev.at/products/vusb/bootloadhid.html",
+ "installs_365d": 828,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "library",
+  "reverse-engineering"
+ ],
+ "why": "A bootloader that flashes AVR chips over plain USB HID, a clever door into how firmware updates can hide in ordinary input devices.",
+ "brief": {
+  "what_it_is": "BootloadHID is a USB bootloader for AVR microcontrollers, built on the HID device class so that no kernel-level driver is needed on Windows. It lives in the upper 2 kB of flash and takes control at reset. If a hardware condition is met (for example a jumper), it waits for data over USB and writes it into the rest of flash. The host-side 'bootloadHID' tool accepts one parameter, an Intel-Hex file, and sends its contents to the chip. If the condition is not met, control passes to the firmware already loaded.",
+  "why_it_exists": "The page frames it as a more user-friendly alternative to Thomas Fischl's avrusbboot. The point is that Windows users can flash AVRs without installing kernel drivers or DLLs, because the transport is the HID class.",
+  "how_it_works": "The bootloader occupies the upper 2 kB of flash and runs immediately after reset. A configurable hardware condition, such as a jumper, decides whether it stays in bootloader mode and accepts USB data, or hands control to the application already in flash. The page describes the mechanism only at this level and does not go into the HID protocol details.",
+  "commands_seen": [
+   {
+    "cmd": "bootloadHID",
+    "context": "The host uploader tool. The page says it accepts only one parameter, an Intel-Hex file containing the code to load. No full example invocation is shown on the page."
+   },
+   {
+    "cmd": "-r",
+    "context": "Mentioned in the 2010-07-29 release notes as an option for the command-line utility. It lets you boot the target firmware when no file is uploaded. The page does not show its full usage."
+   }
+  ],
+  "install_notes": "Hardware: an AVR with at least 2 kB of boot loader section (the page names the ATMega8 as an example), a way to set the boot condition (jumper or other configured pin), and a reset on the AVR after connecting to the host if it is not bus-powered. Software: source tarballs and zips are linked on the page (versions 2007 through 2012-12-08). The page does not spell out build steps, toolchain versions, or how to install the host tool through Homebrew. The Brew formula only supplies the bootloadHID executable name and no caveats. For Windows, the page points to Mario Steiner's separate GUI uploader.",
+  "standout": "It moves a firmware bootloader onto plain USB HID, so Windows users need no custom driver, which is the reason the project exists. The scout note's phrase about hiding firmware updates in 'ordinary input devices' overstates it: the page presents HID as a transport class and does not describe any disguise as an input device.",
+  "status": "Quiet. The most recent release on the page is 2012-12-08, which updated the driver and fixed compiler errors against recent gcc and avr-libc. The page shows no commit history or newer release, and I did not check a source repository, so I cannot say more than that.",
+  "caveats": "Only AVRs with at least 2 kB of boot section are supported. The uploader takes a single Intel-Hex file and has no richer options on this page. The release notes mention compiler breakage with newer gcc and avr-libc, which suggests build friction. The page does not state the license, the host platforms beyond Windows, or whether the Brew package builds from source. The GUI uploader for Windows is a third-party contribution.",
+  "quotes": [
+   "BootloadHID is a USB boot loader for AVR microcontrollers. The uploader tool requires no kernel level driver on Windows and can therefore be run without installing any DLLs.",
+   "This implementation is more user friendly on Windows, since no kernel level drivers need to be installed.",
+   "It accepts only one parameter: an Intel-Hex file containing the code to be loaded."
+  ],
+  "links": [
+   {
+    "label": "BootloadHID homepage (V-USB by Objective Development)",
+    "url": "https://www.obdev.at/products/vusb/bootloadhid.html"
+   }
+  ],
+  "fetch_log": [
+   "https://www.obdev.at/products/vusb/bootloadhid.html: fetched OK. This is a project page, not a GitHub repo, and the README-style text on it was complete enough that I did not follow further links. The download files and the Mario Steiner GUI were not fetched."
+  ]
+ }
+}

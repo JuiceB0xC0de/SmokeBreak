@@ -1,0 +1,135 @@
+{
+ "name": "sispmctl",
+ "desc": "Control Gembird SIS-PM programmable power outlet strips",
+ "homepage": "https://sispmctl.sourceforge.net/",
+ "installs_365d": 31,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "usb"
+ ],
+ "why": "Drives Gembird USB power strips from the command line, a small but satisfying door into talking to physical hardware.",
+ "brief": {
+  "what_it_is": "sispmctl is a command-line tool for Linux and other POSIX systems that switches the outlets on USB-controlled power strips made by Gembird, and newer ones sold as Energenie. It takes commands such as on, off, toggle, status and power-meter readings for a chosen outlet (1 to 4, or all) and prints the result, with options to pick a specific device by index, serial number or USB bus address. It can also store on/off schedules in the device and run a small built-in HTTP web interface on port 2638.",
+  "why_it_exists": "The homepage describes it as an application for managing USB controlled powerstrips produced by GEMBIRD LTD, which lets people run these strips from Linux instead of a vendor GUI.",
+  "how_it_works": "It talks to the strip over USB through libusb (version 0.15 or newer is required), so the device must be reachable from user space. The -l option daemonizes it as a minimal HTTP server; the README says only the first line of each request is parsed, the file name is looked up in a skin directory, and $$command(n)?yes:no$$ control sequences in HTML pages are replaced with live outlet status or actions.",
+  "commands_seen": [
+   {
+    "cmd": "lsusb",
+    "context": "Lists USB devices so you can spot the vendor and product IDs (example shows 04b4:fd13 Energenie EG-PMS). Shown as '$ lsusb' in the README."
+   },
+   {
+    "cmd": "sispmctl -s",
+    "context": "Scans for supported GEMBIRD devices (the -s option in the synopsis)."
+   },
+   {
+    "cmd": "sispmctl -b <on|off>",
+    "context": "Synopsis line for switching the buzzer on or off."
+   },
+   {
+    "cmd": "sispmctl -f 1 -d 1 -f 3",
+    "context": "Example: switches off outlet 1 of the first SiS-PM and outlet 3 of the second, shown as '$ sispmctl -f 1 -d 1 -f 3'."
+   },
+   {
+    "cmd": "sispmctl -nqg 4",
+    "context": "Example: prints the status of outlet 4 as 0 or 1 with no extra text, shown as '$ sispmctl -nqg 4'."
+   },
+   {
+    "cmd": "sispmctl -d 1 -l",
+    "context": "Example: runs the second device as a web server, reachable at http://localhost:2638."
+   },
+   {
+    "cmd": "sudo apt-get install sispmctl",
+    "context": "Debian and Ubuntu install, preceded by sudo apt-get update."
+   },
+   {
+    "cmd": "sudo snap install sispmctl",
+    "context": "Installs the snap package if snapd is present."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Source build step after autogen.sh, make and sudo make install, followed by sudo ldconfig."
+   },
+   {
+    "cmd": "udevadm control --reload-rules",
+    "context": "Reloads udev rules after creating /lib/udev/rules.d/60-sispmctl.rules so a non-root group can use the device."
+   }
+  ],
+  "install_notes": "Most Linux distributions package it, including Debian, Ubuntu, Gentoo, openSUSE and OpenWRT, and it is also a snap. To build from source, download a tarball or clone https://git.code.sf.net/p/sispmctl/git, then run ./autogen.sh (only needed from git), ./configure, make, sudo make install and sudo ldconfig. It needs libusb-0.15 or newer. By default only root can use the devices. To allow a group, create a udev rule file with SUBSYSTEM==usb rules for idVendor 04b4 and product IDs fd10 through fd15 setting GROUP=sispmctl and MODE=660, then reload udev rules.",
+  "standout": "It is a small, dependency-light C tool that also includes its own minimal HTTP control panel and a device-side schedule language (--Aat, --Aafter, --Ado, --Aloop), so a cheap USB strip becomes a scheduled, network-reachable outlet controller without extra software. The README mentions reports of it running on x86, ARM, MIPS, PowerPC and RISC-V.",
+  "status": "Quiet, as far as I can tell. The homepage says 'Last modified: 2023-09-28' and I saw no release version or changelog on the page. I did not check the git log or SourceForge, so the last code change is unknown.",
+  "caveats": "Only the listed Gembird and Energenie models are supported (vendor 04b4, products fd10, fd11, fd12, fd13, fd15, fd21, fd22, fd34 variants as listed in the table). The web interface has no authentication, and the README says so explicitly. The HTTP parser is minimal, and the README warns against putting on, off or toggle in pages that get reloaded. Without a udev rule, it only works as root. The README mentions Solaris and macOS only as old reports (macOS 10.4 and 10.5). It is GPL v2 with no warranty.",
+  "quotes": [
+   "SIS-PM Control for Linux (sispmctl) is an application for managing USB controlled powerstrips produced by GEMBIRD LTD.",
+   "There is no authentication implemented yet.",
+   "Per default, only root is allowed to use devices directly, therefore the SiS-PM also only works as root.",
+   "The http capabilities of sispmctl are limited."
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://sispmctl.sourceforge.net/"
+   },
+   {
+    "label": "Git repository",
+    "url": "https://git.code.sf.net/p/sispmctl/git"
+   }
+  ],
+  "fetch_log": [
+   "https://sispmctl.sourceforge.net/ - worked; full README-style page with overview, device table, install, usage, permissions and man-page excerpt. Did not follow further links; the page was complete enough."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A command-line interface to physical USB outlets is a satisfying hardware rabbit hole, with device-stored schedules and an oddly tiny built-in HTTP control panel."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "sispmctl",
+  "tldr": "A small C tool that switches Gembird and Energenie USB power strips on and off from the command line, with schedules and a tiny web panel.",
+  "deeper_look": "sispmctl talks to Gembird SIS-PM power strips over USB and switches their outlets. You give it an outlet number (1 to 4, or all) and a verb such as on, off, toggle or status, and it prints the result. Models with a power meter can report readings too. With several strips plugged in, you pick one by index, serial number or USB bus address.\n\nThe project exists so these strips can be run from Linux instead of a vendor GUI. The homepage calls it \"an application for managing USB controlled powerstrips produced by GEMBIRD LTD.\" Newer units sold under the Energenie name work as well, if they appear in the supported device table.\n\nThe interesting part is what a cheap strip becomes once it has a command line. The strip can hold on/off schedules in the device itself, set with options like --Aat, --Aafter, --Ado and --Aloop. The -l option turns sispmctl into a minimal HTTP server on port 2638. It looks up page files in a skin directory and replaces `$$command(n)?yes:no$$` sequences with live outlet status or actions. The result is a scheduled, network-reachable outlet controller.\n\nUnderneath, this is plain userspace USB: libusb sends control requests to a device with a known vendor and product ID. That makes it a gentle first look at talking to physical hardware. You identify the device with lsusb, fix permissions with a udev rule, and then a shell script can flip a real switch.",
+  "install": "brew install sispmctl\n# Needs a supported Gembird/Energenie SIS-PM strip (vendor ID 04b4). By default only root can access the device; see the udev rule note in the README to allow a group.",
+  "try_this": [
+   {
+    "cmd": "lsusb",
+    "what_happens": "Lists USB devices so you can spot the strip by its vendor and product ID (the README's example shows 04b4:fd13, an Energenie EG-PMS)."
+   },
+   {
+    "cmd": "sispmctl -s",
+    "what_happens": "Scans for supported Gembird devices and reports what it finds."
+   },
+   {
+    "cmd": "sispmctl -nqg 4",
+    "what_happens": "Prints the status of outlet 4 as a bare 0 or 1, handy for scripts."
+   }
+  ],
+  "whats_unique": "It is a dependency-light C tool that also carries its own device-side schedule language and a small HTTP control panel. A cheap USB strip becomes a networked, scheduled switch without extra software.",
+  "caveats": "Only the listed Gembird and Energenie models work, the web interface has no authentication (the README says so), and the homepage was last modified in 2023.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "usb",
+   "libusb",
+   "power-strip",
+   "http"
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://sispmctl.sourceforge.net/"
+   },
+   {
+    "label": "Git repository",
+    "url": "https://git.code.sf.net/p/sispmctl/git"
+   }
+  ]
+ }
+}

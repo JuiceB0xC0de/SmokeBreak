@@ -1,0 +1,139 @@
+{
+ "name": "torf-cli",
+ "desc": "CLI tool for creating, reading and editing torrent files",
+ "homepage": "https://github.com/rndusr/torf-cli",
+ "installs_365d": 98,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "protocol",
+  "tui"
+ ],
+ "why": "Reading and editing torrent metadata by hand is a neat way to see how bencoded swarm files are built.",
+ "brief": {
+  "what_it_is": "torf-cli is a command-line tool for creating, reading and editing .torrent files and magnet URIs. You can point it at a directory to build a new torrent with trackers, a private flag and a chosen creation date, or point it at an existing .torrent to print its metadata, edit fields such as the comment, and write a revised file. It can also verify a filesystem path against a torrent and report detailed errors such as corrupt pieces. Output is formatted for humans, and a JSON mode (--json) and a metainfo dump (-m) make it easy to parse with other tools.",
+  "why_it_exists": "The README does not state a motivating problem in so many words. It presents the tool as a practical way to make, inspect and fix torrent files from a terminal, with a configuration file for default options and profiles of commonly used options.",
+  "how_it_works": "When creating a torrent, it can find an existing torrent containing the same files and copy that torrent's piece hashes into the new one, avoiding a rehash of the files. Verification compares the files at a given path against the piece hashes in a torrent and reports which files are wrong or which pieces are corrupt. Its only dependencies are the torf library and pyxdg.",
+  "commands_seen": [
+   {
+    "cmd": "torf ./docs -t http://bar:123/announce -t http://baz:321/announce --private --date '2020-03-31 21:23:42'",
+    "context": "Creates a private torrent from the ./docs directory with two trackers and a specific creation date."
+   },
+   {
+    "cmd": "torf -i docs.torrent",
+    "context": "Displays information about an existing torrent: name, info hash, size, trackers, piece layout, file list and magnet link."
+   },
+   {
+    "cmd": "torf -i docs.torrent --comment 'Forgot to add this comment.' -o docs.revised.torrent",
+    "context": "Adds a comment to an existing torrent and writes the result to a new file."
+   },
+   {
+    "cmd": "torf -i docs.revised.torrent docs",
+    "context": "Verifies the files in the docs directory against the torrent; reports errors and says whether the path satisfies the torrent."
+   },
+   {
+    "cmd": "torf -i docs.revised.torrent | grep '^Files' | cut -f2-",
+    "context": "Lists the torrent's files by grepping the Files line and cutting out the tab-delimited paths."
+   },
+   {
+    "cmd": "torf -i docs.revised.torrent --json | jq .Files",
+    "context": "Gets the file list as a JSON array by piping the --json output to jq."
+   },
+   {
+    "cmd": "torf -i docs.revised.torrent -m",
+    "context": "Prints the raw metainfo dictionary as JSON."
+   },
+   {
+    "cmd": "pipx install torf-cli",
+    "context": "Recommended install: puts torf-cli in its own virtual environment and links the executable into ~/.local/bin."
+   },
+   {
+    "cmd": "pip3 install [--user] git+https://github.com/rndusr/torf-cli.git",
+    "context": "Installs the latest development version from the master branch on GitHub."
+   }
+  ],
+  "install_notes": "Available on PyPI and the AUR. The README recommends pipx, which installs into ~/.local/venvs/ and links the executable into ~/.local/bin/. pipx does not install the man page, so the README points to the HTML version online. Plain pip3 works too, with --user for a home install; uninstalling with pip leaves the dependencies behind. No accounts or hardware are needed. The optional configuration file sets default options and profiles, but the README gives no path or syntax for it.",
+  "standout": "Verification gives detailed, per-file errors (for example, a file that is one byte too large, or a corrupt piece with the list of files that cover it). The piece-hash reuse from an existing torrent is a practical shortcut for re-creating torrents from files you already have.",
+  "status": "unknown. The README mentions no release date or changelog, and I did not check the PyPI or GitHub release and commit history. The example output shows torf 3.1.0, which suggests the examples were written against that version.",
+  "caveats": "The README says nothing about platform support beyond Python packaging. Editing an existing torrent writes a new file rather than modifying it in place. Installing with plain pip leaves dependencies behind on uninstall. The configuration file format is not described on the homepage. Licensed under GPL-3.0-or-later.",
+  "quotes": [
+   "torf-cli is a command line tool that can create, read and edit torrent files and magnet URIs.",
+   "When creating a torrent, it can find an existing torrent with the same files and copy its piece hashes to the freshly created torrent to avoid hashing the files again.",
+   "The output is pleasant to read for humans or easy to parse with common CLI tools."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/rndusr/torf-cli"
+   },
+   {
+    "label": "Man page (HTML)",
+    "url": "https://rndusr.github.io/torf-cli/torf.1.html"
+   },
+   {
+    "label": "PyPI package",
+    "url": "https://pypi.org/project/torf-cli"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/rndusr/torf-cli: fetched OK, README returned; it was complete enough that I did not follow the man page link."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It makes torrent metainfo tangible: inspect swarm details, edit fields, and verify piece hashes, exposing the structure behind a familiar file-sharing protocol."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "torf-cli",
+  "tldr": "A command-line tool that builds, inspects, edits and verifies .torrent files, so you can see exactly what is inside the metadata of a swarm file.",
+  "deeper_look": "torf-cli reads and writes .torrent files and magnet URIs from the terminal. Point it at a directory and it builds a torrent, with trackers, a private flag and even a creation date of your choosing. Point it at an existing .torrent and it prints the name, info hash, size, trackers, piece layout, file list and magnet link. You can change a field such as the comment and write the result to a new file.\n\nThe README does not state a motivating problem. It presents the tool as a practical way to make, inspect and fix torrent files without a GUI client, with a configuration file for default options and profiles.\n\nThe interesting part is what a torrent file actually is: a small metadata dictionary, plus a list of hashes, one per piece of the content. Verification makes that concrete. Give torf a torrent and a path, and it compares the files against those hashes, then reports which files are wrong or which pieces are corrupt, down to a file that is one byte too large. When creating a torrent, it can also find an existing torrent with the same files and copy its piece hashes, so nothing has to be hashed again.\n\nOutput is meant for people, but `--json` and a raw metainfo dump (`-m`) make it easy to feed into jq or grep. That makes it a handy way to look at the bencoded structure underneath without writing a parser.",
+  "install": "brew install torf-cli\n# or, as the README recommends: pipx install torf-cli\n# Needs Python; no account or hardware required.",
+  "try_this": [
+   {
+    "cmd": "torf ./docs -t http://bar:123/announce -t http://baz:321/announce --private --date '2020-03-31 21:23:42'",
+    "what_happens": "Builds a private torrent from the ./docs directory with two trackers and a fixed creation date."
+   },
+   {
+    "cmd": "torf -i docs.torrent",
+    "what_happens": "Prints the torrent's name, info hash, size, trackers, piece layout, file list and magnet link."
+   },
+   {
+    "cmd": "torf -i docs.torrent -m",
+    "what_happens": "Dumps the raw metainfo dictionary as JSON, so you can see the structure the client reads."
+   }
+  ],
+  "whats_unique": "Verification reports per-file errors and names the files covered by a corrupt piece. It can also reuse piece hashes from an existing torrent to skip rehashing.",
+  "caveats": "The README gives no release dates and does not describe the configuration file format; editing writes a new file rather than changing the original in place.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "torrent",
+   "bittorrent",
+   "protocol",
+   "file-formats",
+   "python",
+   "cli"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/rndusr/torf-cli"
+   },
+   {
+    "label": "Man page (HTML)",
+    "url": "https://rndusr.github.io/torf-cli/torf.1.html"
+   },
+   {
+    "label": "PyPI package",
+    "url": "https://pypi.org/project/torf-cli"
+   }
+  ]
+ }
+}

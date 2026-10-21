@@ -1,0 +1,133 @@
+{
+ "name": "openfst",
+ "desc": "Library for weighted finite-state transducers",
+ "homepage": "https://www.openfst.org/twiki/bin/view/FST/WebHome",
+ "installs_365d": 1100,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "math",
+  "library",
+  "afternoon"
+ ],
+ "why": "Weighted finite-state transducers are a fascinating formal-language idea, though it is a library first.",
+ "brief": {
+  "what_it_is": "OpenFst is an open-source C++ template library for building, combining, optimizing, and searching weighted finite-state transducers (FSTs). Each transition in these automata has an input label, an output label, and a weight, and the finite-state acceptor is the special case where input and output labels match. The library takes FSTs as input, whether built in code or from AT&T-format text files, and produces new FSTs or search results such as shortest paths. It also ships about 60 shell commands (fstcompile, fstcompose, fstshortestpath, and others, plus far* and pdt/mpdt tools) that read and write binary FST files.",
+  "why_it_exists": "The homepage describes FSTs as a way to represent sets of strings (acceptors) and binary relations between strings (transducers), with key uses in speech recognition and synthesis, machine translation, OCR, pattern matching, and information extraction. The library was developed by contributors from Google Research and NYU's Courant Institute and is meant to be comprehensive, reliable, flexible, efficient, and to scale well.",
+  "how_it_works": "Weights form a semiring: one operation (Plus) combines alternative paths with the same labels, and another (Times) combines weights along a path. Predefined weight types include Tropical and Log, which suit shortest-path and probabilistic models. Operations such as determinization, minimization, composition, and shortest path are applied to FSTs, which can be chained together. The shell commands read binary FST files, run the matching C++ operation, and write an output file, using standard input and output when file names are omitted.",
+  "commands_seen": [
+   {
+    "cmd": "conda install -c conda-forge openfst",
+    "context": "Install route given on the homepage for Linux (x86) and Mac OS X users who already have conda."
+   },
+   {
+    "cmd": "fstcompile --isymbols=isyms.txt --osymbols=osyms.txt text.fst binary.fst",
+    "context": "Converts an AT&T-format text FST into a binary FST, mapping symbolic labels through the symbol table files."
+   },
+   {
+    "cmd": "fstinfo binary.fst",
+    "context": "Prints a summary of an FST: state and arc counts, initial and final states, and properties such as deterministic, acyclic, and weighted."
+   },
+   {
+    "cmd": "fstprint --isymbols=isyms.txt --osymbols=osyms.txt binary.fst text.fst",
+    "context": "Prints a binary FST in text form using the symbol tables."
+   },
+   {
+    "cmd": "fstdraw --isymbols=isyms.txt --osymbols=osyms.txt binary.fst binary.dot",
+    "context": "Writes a Graphviz dot drawing of an FST; the quick tour then renders it with dot -Tps."
+   },
+   {
+    "cmd": "fstarcsort --sort_type=olabel input.fst input_sorted.fst",
+    "context": "Sorts arcs by output label, which composition needs on one of its two inputs."
+   },
+   {
+    "cmd": "fstcompose input_sorted.fst model_sorted.fst comp.fst",
+    "context": "Computes the relational composition of two transducers, here applying a model to an input."
+   },
+   {
+    "cmd": "fstproject --project_output comp.fst result.fst",
+    "context": "Keeps only the output labels of a transducer, yielding an acceptor of output strings."
+   },
+   {
+    "cmd": "fstarcsort --sort_type=ilabel model.fst | fstcompose input.fst - | fstproject --project_output result.fst",
+    "context": "Single-pipeline version of the sort, compose, and project steps, showing that the tools chain through stdin and stdout."
+   }
+  ],
+  "install_notes": "Installing from source is not covered on the pages I read; the homepage only gives the conda-forge command for Linux (x86) and Mac OS X. To use the C++ API, include <fst/fstlib.h> from the installation include directory and link against libfst.so in the library directory. The shell tools are in the installation bin directory, and --help gives usage for each. No accounts, hardware, or first-run configuration were mentioned.",
+  "standout": "Weighted transducers unify acceptors, transducers, and probabilistic models behind one semiring framework, so composition, determinization, and shortest path work the same way across speech, translation, and string-processing uses. The shell commands are small Unix-style filters that can be piped together, as the quick tour's one-line composition example shows.",
+  "status": "maintained. The homepage (a TWiki page last revised 2024-12-23) announces OpenFst version 1.8.4 as available and says it is now on conda-forge. I did not find a release date for 1.8.4 or a recent commit. The quick tour page was last edited in 2020.",
+  "caveats": "The primary interface is a C++ template library; the command-line tools are a secondary interface. The homepage and docs are on an old TWiki site, and I found no GitHub README. The quick tour I read was last edited in 2020, and one of its links returned 404 (FstQuickTour is the working URL). Licensing is Apache, per the homepage. The default arc type is StdArc, and the docs warn that a path with weight 0 is not allowed. I saw no build or platform warnings beyond the conda note.",
+  "quotes": [
+   "OpenFst is a library for constructing, combining, optimizing, and searching weighted finite-state transducers (FSTs).",
+   "It is intended to be comprehensive, reliable, flexible, efficient, and to scale well.",
+   "As an alternative interface, there are shell-level commands in the installation bin directory that operate on file representations of FSTs."
+  ],
+  "links": [
+   {
+    "label": "OpenFst homepage",
+    "url": "https://www.openfst.org/twiki/bin/view/FST/WebHome"
+   },
+   {
+    "label": "Quick Tour (working URL)",
+    "url": "https://www.openfst.org/twiki/bin/view/FST/FstQuickTour"
+   }
+  ],
+  "fetch_log": [
+   "https://www.openfst.org/twiki/bin/view/FST/WebHome: OK, homepage text retrieved (TWiki page, rev 2024-12-23).",
+   "https://www.openfst.org/twiki/bin/view/FST/QuickTour: HTTP 404, the URL linked from the homepage did not resolve.",
+   "https://www.openfst.org/twiki/bin/view/FST/FstQuickTour: OK, quick tour retrieved (last edited 2020-04-25); used for commands and the shell examples."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "OpenFst makes weighted transducers\u2014a surprisingly general model for string relations and probabilistic paths\u2014composable through practical command-line tools."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "OpenFst",
+  "tldr": "A library and about 60 pipeable shell tools for weighted finite-state transducers, the machinery behind speech recognition and machine translation.",
+  "deeper_look": "OpenFst is a C++ template library for building, combining, optimizing and searching weighted finite-state transducers. A transducer is a graph where each arc has an input label, an output label and a weight. A finite-state acceptor is the special case where input and output match, so it represents a set of strings. A transducer represents a relation between strings.\n\nThe shell tools are the easy way in. Each one reads binary FST files, runs one operation such as composition, determinization, minimization or shortest path, and writes a new file. With file names omitted they use stdin and stdout, so a whole computation can be a Unix pipeline. You write a machine as AT&T-format text, compile it with `fstcompile`, and look at it with `fstinfo` or `fstdraw`, which emits Graphviz dot.\n\nThe idea underneath is the semiring. Weights have one operation to combine alternative paths (Plus) and another to combine weights along a path (Times). Swap the semiring, for example Tropical for shortest-path problems or Log for probabilities, and the same composition and search algorithms work on different problems. The homepage lists speech recognition and synthesis, machine translation, OCR, pattern matching and information extraction as key uses.\n\nThe library was developed by contributors from Google Research and NYU's Courant Institute. It aims to be \"comprehensive, reliable, flexible, efficient, and to scale well.\"",
+  "install": "brew install openfst\n# The homepage itself documents conda instead: conda install -c conda-forge openfst\n# No accounts, hardware or first-run setup are mentioned. Graphviz (dot) is needed to render fstdraw output.",
+  "try_this": [
+   {
+    "cmd": "fstcompile --isymbols=isyms.txt --osymbols=osyms.txt text.fst binary.fst",
+    "what_happens": "Turns a hand-written AT&T-format text description of a machine into a binary FST, mapping symbol names through your symbol tables."
+   },
+   {
+    "cmd": "fstinfo binary.fst",
+    "what_happens": "Prints state and arc counts, initial and final states, and properties such as deterministic, acyclic and weighted."
+   },
+   {
+    "cmd": "fstarcsort --sort_type=ilabel model.fst | fstcompose input.fst - | fstproject --project_output result.fst",
+    "what_happens": "Sorts a model, composes an input with it, and keeps only the output side, all as one pipeline."
+   }
+  ],
+  "whats_unique": "One semiring framework covers acceptors, transducers and probabilistic models, so composition, determinization and shortest path behave the same across very different uses. The command-line tools are small filters that pipe together.",
+  "caveats": "The main interface is the C++ template library, with the shell tools secondary. The docs live on an old TWiki site, and the quick tour was last edited in 2020 with one broken link on the homepage.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "automata",
+   "formal-languages",
+   "nlp",
+   "speech",
+   "cpp",
+   "library"
+  ],
+  "links": [
+   {
+    "label": "OpenFst homepage",
+    "url": "https://www.openfst.org/twiki/bin/view/FST/WebHome"
+   },
+   {
+    "label": "Quick Tour (working URL)",
+    "url": "https://www.openfst.org/twiki/bin/view/FST/FstQuickTour"
+   }
+  ]
+ }
+}

@@ -1,0 +1,142 @@
+{
+ "name": "caire",
+ "desc": "Content aware image resize tool",
+ "homepage": "https://github.com/esimov/caire",
+ "installs_365d": 119,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "visual",
+  "library"
+ ],
+ "why": "Seam carving makes content-aware image resizing visible, a genuine algorithm door, though the CLI itself is modest.",
+ "brief": {
+  "what_it_is": "Caire is a content-aware image resizing tool, written in Go, that shrinks or enlarges an image by carving out low-importance seams instead of simply scaling or cropping. The README calls it a library, but it ships a `caire` command-line binary. It takes an input image (file, URL, stdin, or a directory) plus a target width/height (or a percentage, or square), and writes the resized image in jpg, jpeg, png, or bmp, chosen by the output file extension. Optional protective and removal masks, face detection, and a GUI preview are available.",
+  "why_it_exists": "The README frames it as a Go implementation of the seam carving paper 'Seam Carving for Content-Aware Image Resizing', so that resizing can preserve the content that matters rather than cropping or distorting everything uniformly.",
+  "how_it_works": "The README describes an energy map built from edge detection (Sobel, with a blur step beforehand). A dynamic programming pass computes the cumulative minimum energy for connected seams running top to bottom (or left to right), and the lowest-cost seam is removed. The process repeats until the target size is reached. Face detection uses the embedded Pigo library to keep detected faces from being cut.",
+  "commands_seen": [
+   {
+    "cmd": "go install github.com/esimov/caire/cmd/caire@latest",
+    "context": "Installs the caire binary from source using the Go toolchain (the README's non-Homebrew install path)."
+   },
+   {
+    "cmd": "brew install caire",
+    "context": "Installs caire via Homebrew on macOS."
+   },
+   {
+    "cmd": "caire -in input.jpg -out output.jpg",
+    "context": "Basic usage: resize input.jpg and write output.jpg, with width and height set by flags (the README's usage example shows no width or height flags)."
+   },
+   {
+    "cmd": "caire --help",
+    "context": "Lists the supported flags."
+   },
+   {
+    "cmd": "caire -in input.jpg -out output.jpg -face=1 -perc=1 -width=20",
+    "context": "Shrinks the image by 20% while running face detection so detected faces are not deformed."
+   },
+   {
+    "cmd": "cat input/source.jpg | caire -in - -out - >out.jpg",
+    "context": "Uses stdin and stdout pipes, with - meaning standard streams."
+   },
+   {
+    "cmd": "curl -s <image_url> | caire > out.jpg",
+    "context": "Pipes an image downloaded with curl into caire; the README notes -in can be omitted in this case."
+   },
+   {
+    "cmd": "caire -in <input_folder> -out <output-folder>",
+    "context": "Processes every image in a directory recursively and concurrently. The README says the preview GUI is disabled in this mode."
+   },
+   {
+    "cmd": "caire -in input/source.jpg -out ./out.jpg -perc=1 -width=20 -height=20 -debug=false",
+    "context": "Reduces both dimensions by 20 percent, using -perc to interpret width and height as percentages."
+   },
+   {
+    "cmd": "snap run caire --h",
+    "context": "Runs caire through the Snap package, as an alternative to installing it directly."
+   }
+  ],
+  "install_notes": "Go-based. The README says to install Go first, set GOPATH, and put $GOPATH/bin on PATH before the go install command. The face classifier is embedded in the binary, so no separate model file is needed. The GUI preview uses Gio, and the README says to install Gio's system dependencies first (linked from its installation page). Homebrew and Snap packages are also mentioned.",
+  "standout": "The debug mode draws the chosen seams in a configurable colour (default #ff0000) with circle or line shapes, so you can see exactly what the algorithm removed. Face detection avoids the usual seam-carving failure of cutting through faces, and the embedded Pigo model means it needs no extra files.",
+  "status": "Appears maintained, though the evidence is limited. The README shows a release badge for v1.5.0 that matches the Homebrew badge. The README has a build workflow badge, and the license is 2018. I could not see a last-commit date or release date from the README alone, so the date is unknown.",
+  "caveats": "The brief's desc says 'tool', but the README calls it a 'library' and describes it as a Go implementation of the paper. Preview GUI needs Gio's system dependencies. Preview is turned off during directory batch runs. Masks must be binary images the same size as the input. The README gives no notes on limitations or quality trade-offs beyond the examples. The README's Homebrew section says it is for macOS. Licensing: MIT, copyright 2018 Endre Simo.",
+  "quotes": [
+   "Caire is a content aware image resize library based on Seam Carving for Content-Aware Image Resizing paper.",
+   "There is no need to provide a face classification file, since it's already embedded into the generated binary file.",
+   "White areas represent regions where no seams should be carved."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub)",
+    "url": "https://github.com/esimov/caire"
+   },
+   {
+    "label": "Seam Carving for Content-Aware Image Resizing (paper)",
+    "url": "https://inst.eecs.berkeley.edu/~cs194-26/fa16/hw/proj4-seamcarving/imret.pdf"
+   },
+   {
+    "label": "Pigo face detection library",
+    "url": "https://github.com/esimov/pigo"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/esimov/caire \u2014 fetched OK, README returned in full (no further links followed)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Caire makes the surprising seam-carving algorithm tangible, and its debug view reveals how images can be resized without ordinary cropping or distortion."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "caire",
+  "tldr": "Shrinks an image by repeatedly carving out its least interesting pixel paths, so the subject stays put while the empty space collapses.",
+  "deeper_look": "Caire is a Go implementation of the seam carving paper, \"Seam Carving for Content-Aware Image Resizing\". Ordinary resizing either scales everything uniformly, which squashes the subject, or crops, which throws away the edges. Seam carving does neither. It finds a connected line of pixels running top to bottom (or left to right) that matters least to the picture, deletes it, and repeats until the image reaches the target size.\n\nThe idea underneath is small enough to hold in your head. An edge-detection pass (Sobel, after a blur) gives each pixel an energy value. A dynamic programming pass then computes the cheapest connected path across the image, and that path is the seam to remove. Sky, walls and blank backgrounds have little energy, so they get eaten first. Faces and sharp edges survive.\n\nThe `caire` binary takes a file, URL, stdin or a whole directory, and picks the output format from the file extension (jpg, jpeg, png or bmp). Width and height can be absolute pixels or percentages. You can also supply protective and removal masks, which are binary images the same size as the input. White areas mark where no seams should be carved. Face detection uses the embedded Pigo library so seams do not cut through people, and no separate model file is needed.\n\nThe debug mode is the best way in. It draws the chosen seams in a configurable colour (red by default), so you can see exactly which pixels the algorithm decided were expendable.",
+  "install": "brew install caire\n# alternative, needs a Go toolchain with $GOPATH/bin on PATH:\n# go install github.com/esimov/caire/cmd/caire@latest\n# the optional GUI preview needs Gio's system dependencies",
+  "try_this": [
+   {
+    "cmd": "caire --help",
+    "what_happens": "Lists all supported flags, including the debug, mask and face detection options."
+   },
+   {
+    "cmd": "caire -in input.jpg -out output.jpg -perc=1 -width=20 -height=20 -debug=false",
+    "what_happens": "Shrinks both dimensions of the image by 20 percent by carving seams instead of scaling."
+   },
+   {
+    "cmd": "caire -in input.jpg -out output.jpg -face=1 -perc=1 -width=20",
+    "what_happens": "Shrinks the width by 20 percent while face detection keeps detected faces from being deformed."
+   }
+  ],
+  "whats_unique": "Debug mode draws the removed seams over the image, so the algorithm becomes visible. Embedded face detection avoids the classic seam carving failure of slicing through faces, with no extra files to download.",
+  "caveats": "The README is thin on limitations and quality trade-offs, and I could not confirm a recent release date; it describes itself as a library even though it ships a CLI.",
+  "commitment": "quick",
+  "category": "quick-weird-payoffs",
+  "tags": [
+   "quick",
+   "image",
+   "algorithms",
+   "go",
+   "seam-carving",
+   "visual"
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub)",
+    "url": "https://github.com/esimov/caire"
+   },
+   {
+    "label": "Seam Carving for Content-Aware Image Resizing (paper)",
+    "url": "https://inst.eecs.berkeley.edu/~cs194-26/fa16/hw/proj4-seamcarving/imret.pdf"
+   },
+   {
+    "label": "Pigo face detection library",
+    "url": "https://github.com/esimov/pigo"
+   }
+  ]
+ }
+}

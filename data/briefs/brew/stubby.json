@@ -1,0 +1,91 @@
+{
+ "name": "stubby",
+ "desc": "DNS privacy enabled stub resolver service based on getdns",
+ "homepage": "https://dnsprivacy.org/wiki/display/DP/DNS+Privacy+Daemon+-+Stubby",
+ "installs_365d": 207,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "afternoon"
+ ],
+ "why": "A DNS privacy stub resolver, a door into how DNS over TLS quietly runs under your queries.",
+ "brief": {
+  "what_it_is": "Stubby is a local DNS privacy stub resolver. It runs as a daemon on the loopback addresses (127.0.0.1 and ::1) and takes the DNS queries your machine makes, then sends them out over TLS (DNS-over-TLS) to DNS Privacy resolvers instead of plain-text DNS. Its default configuration uses Strict Privacy and spreads queries across a subset of test servers, and it can be pointed at others such as Cloudflare or Quad9 through its YAML config file. It is a command-line tool, with a separate Stubby Manager GUI in development.",
+  "why_it_exists": "The project exists to increase end-user privacy by encrypting DNS queries sent from a desktop or laptop to a DNS Privacy resolver. The homepage links to a page on the problem with DNS privacy and how Stubby helps, and says the command-line version is suited to technical and advanced users while a friendlier GUI is in progress.",
+  "how_it_works": "Stubby listens on the loopback address on port 53, so the system's stub resolver is pointed at 127.0.0.1 and ::1. Every outgoing query that arrives there is forwarded over TLS to the configured upstream servers, with options such as strict TLS authentication, EDNS0 padding, client-subnet privacy, and a 10-second idle timeout to keep TLS connections open. Stubby is built on the getdns library, and the configuration options map onto getdns context settings.",
+  "commands_seen": [
+   {
+    "cmd": "brew install stubby",
+    "context": "Homebrew install of the stubby package, mentioned in the GitHub README as available for macOS."
+   },
+   {
+    "cmd": "git clone https://github.com/getdnsapi/stubby.git",
+    "context": "Gets the source code for building Stubby from source."
+   },
+   {
+    "cmd": "cmake .",
+    "context": "Configures the source build from the stubby directory; since release 0.3.0 Stubby uses cmake."
+   },
+   {
+    "cmd": "sudo stubby",
+    "context": "Runs Stubby in the foreground as root, which is needed to bind port 53."
+   },
+   {
+    "cmd": "sudo setcap 'cap_net_bind_service=+ep' /usr/local/bin/stubby",
+    "context": "Grants the binary the capability to bind low ports so it can run as an unprivileged user afterwards."
+   },
+   {
+    "cmd": "dig @127.0.0.1 www.example.com",
+    "context": "Quick test that Stubby answers on the loopback address."
+   },
+   {
+    "cmd": "getdns_query -s @127.0.0.1 www.example.com",
+    "context": "Alternative test query using the getdns tool against the local Stubby instance."
+   },
+   {
+    "cmd": "sudo /usr/local/sbin/stubby-setdns-macos.sh",
+    "context": "macOS script that switches all system DNS queries to use Stubby."
+   },
+   {
+    "cmd": "sudo /usr/local/sbin/stubby-setdns-macos.sh -r",
+    "context": "Reverts macOS DNS settings, which should pick up the default DHCP nameservers again."
+   },
+   {
+    "cmd": "make",
+    "context": "Second step of the source build, run after cmake; the README shows it as a bare command."
+   }
+  ],
+  "install_notes": "Needs the getdns library: the GitHub README says release 1.5.0 or later, while the homepage recommends at least 1.6 and preferably the latest stable. Also needs the yaml (libyaml) library. Packages are available via Homebrew, a Windows MSI, a zip, and Chocolatey, and a Debian package exists but reports the getdns version number. Building from source uses cmake; if cmake cannot find getdns, pass -DGETDNS_LIBRARY and -DGETDNS_INCLUDE_DIR. Stubby is also in getdns from 1.1.3 as a submodule (BUILD_STUBBY), and a Dockerfile is in contrib/docker. Config is YAML, installed on *nix at /usr/local/etc/stubby/stubby.yml, and can be overridden with -C. Config changes need a restart. Linux needs manual edits to /etc/resolv.conf, or a systemd unit from the repo. Running as an unprivileged user needs the setcap step. Use -g to run in the background and -l for connection logging. The pid file is /usr/local/var/run/stubby.pid.",
+  "standout": "Stubby is a small, single-purpose layer: it does not cache or recurse, it only converts plain stub queries into TLS queries to privacy servers, and it can be placed in front of Unbound or BIND to handle the upstream TLS connections. The macOS script flips system DNS to 127.0.0.1 with one command and can revert it, which makes the whole thing easy to try and undo. The project is also a good way to see how DNS-over-TLS works in practice, with Wireshark on port 853 as a way to watch the traffic.",
+  "status": "unknown. The fetched pages show no dated release or last commit. The homepage mentions a chocolatey package as of March 2019 and says the macOS Stubby Manager GUI prototype 'is no longer maintained'. The GitHub README describes Stubby as 'in the early stages of development' and mentions a Windows installer from version 0.4.0. Nothing I read says the project is abandoned, but I could not confirm recent activity.",
+  "caveats": "Command-line only for now; the GUI is still a development release on Windows and the macOS GUI is unmaintained. Platform support is uneven: Windows 7 works but is not officially supported, the iPhone app is only work in progress, and mobile support is a future plan. Only DNS-over-TLS is supported; DNS-over-HTTPS and configuring servers by authentication name only are listed as future work. Some users hit 'None of the configured upstreams could be used' errors that a restart fixes. Servers that do not handle concurrent TLS queries can cause timeouts. Logging is basic and writes to stdout. Changing the macOS or Linux DNS setup takes effect only after applications reconnect. The README also says some Linux distros' packages report the wrong version.",
+  "quotes": [
+   "Stubby encrypts DNS queries sent from a client machine (desktop or laptop) to a DNS Privacy resolver increasing end user privacy.",
+   "Stubby is in the early stages of development but is suitable for technical/advanced users.",
+   "Once this change is made your DNS queries will be re-directed to Stubby and sent over TLS!"
+  ],
+  "links": [
+   {
+    "label": "Stubby homepage (dnsprivacy.org)",
+    "url": "https://dnsprivacy.org/dns_privacy_daemon_-_stubby/"
+   },
+   {
+    "label": "Stubby source on GitHub",
+    "url": "https://github.com/getdnsapi/stubby"
+   },
+   {
+    "label": "Stubby configuration guide",
+    "url": "https://dnsprivacy.org/wiki/display/DP/Configuring+Stubby"
+   }
+  ],
+  "fetch_log": [
+   "https://dnsprivacy.org/wiki/display/DP/DNS+Privacy+Daemon+-+Stubby: returned only a stub page pointing to http://dnsprivacy.org/dns_privacy_daemon_-_stubby/ (no article text)",
+   "http://dnsprivacy.org/dns_privacy_daemon_-_stubby/: worked, full overview and installation text",
+   "https://github.com/getdnsapi/stubby: worked, README returned with configuration, run, and macOS DNS commands"
+  ]
+ }
+}

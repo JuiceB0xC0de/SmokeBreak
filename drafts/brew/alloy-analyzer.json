@@ -1,0 +1,128 @@
+{
+ "name": "alloy-analyzer",
+ "desc": "Open-source language and analyzer for software modeling",
+ "homepage": "https://alloytools.org",
+ "installs_365d": 468,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "math",
+  "language",
+  "science"
+ ],
+ "why": "A formal modelling language with a SAT-based analyzer that finds counterexamples to system designs, a real door into formal methods.",
+ "brief": {
+  "what_it_is": "Alloy is an open source language and analyzer for software modeling. You write a model of a system or design in the Alloy language, and the Alloy Analyzer searches for instances and counterexamples of that model using the Kodkod model finder and SAT solvers. The distribution is a single executable JAR that opens a GUI when run. The homepage says the tool has been used for everything from finding holes in security mechanisms to designing telephone switching networks.",
+  "why_it_exists": "The homepage presents Alloy as a way to model software and check designs in a formal, automated way, with applications in security and network design. Alloy 6 is described as a major revision that makes specifying system behavior easier in many cases.",
+  "how_it_works": "The README describes Alloy 6 as a self-contained executable that bundles an extended version of the Kodkod model finder and several SAT solvers, plus the standard Alloy library and tutorial examples. Sat4j is the cross-platform SAT solver, with optional native solvers (minisat, lingeling/plingeling, glucose). The same JAR can be embedded as an API in other applications. The README does not spell out the translation pipeline in more detail.",
+  "commands_seen": [
+   {
+    "cmd": "java -version",
+    "context": "Checks the installed JVM; the README says Alloy requires Java 17 (example output shows OpenJDK 17.0.9)."
+   },
+   {
+    "cmd": "git clone --recursive https://github.com/AlloyTools/org.alloytools.alloy.git",
+    "context": "Clones the Alloy source repository with submodules, for building from source."
+   },
+   {
+    "cmd": "./gradlew build",
+    "context": "Builds the project; the executable JAR lands at org.alloytools.alloy.dist/target/org.alloytools.alloy.dist.jar."
+   },
+   {
+    "cmd": "java -jar org.alloytools.alloy.dist/target/org.alloytools.alloy.dist.jar",
+    "context": "Runs the built Alloy executable, which opens the GUI."
+   }
+  ],
+  "install_notes": "Homebrew's alloy-analyzer formula installs the executable named alloy. Upstream requires a recent JVM, Java 17 or later. The README says the JAR is runnable directly with java -jar, and building from source is done with Gradle (./gradlew build) after cloning the repo with submodules. Behind a proxy, the Gradle wrapper can fail unless proxy settings are passed as -D JVM options. Developers can also use Eclipse with Bndtools, or IntelliJ IDEA Ultimate with the Osmorc plugin. The Homebrew caveats field was empty.",
+  "standout": "Alloy 6 adds mutable state and a temporal logic with solvers on top of the earlier relational model finder, which makes it a practical entry point to formal methods for people who just want to check a design. The whole tool ships as one self-contained JAR with the solvers included.",
+  "status": "Maintained, as far as I can tell. The homepage lists a latest release of Alloy 6.2.0 dated 2025/01/09, and it also announces a new draft online book, Practical Alloy, dated 2025/02/19. The GitHub README shows release and snapshot CI build badges. I did not check the date of the latest commit.",
+  "caveats": "Requires Java 17 or later. Alloy 6 has important syntactic changes from pre-6 versions, so older models may need rewriting. Building from source behind a proxy needs extra Gradle options. The README says only the executable JAR is built in this workspace, and the OSX DMG comes from a separate conveyor directory. The IntelliJ setup needs the Ultimate edition. The native SAT solvers are optional, and Sat4j is the default cross-platform option.",
+  "quotes": [
+   "Alloy is an open source language and analyzer for software modeling.",
+   "Alloy 6 is a self-contained executable, which includes an extended version of the Kodkod model finder and a variety of SAT solvers, as well as the standard Alloy library and a collection of tutorial examples.",
+   "Alloy 6 is a major revision w.r.t Alloy 4, that adds mutable state, a temporal logic and accompanying solvers as well as an improved Visualizer."
+  ],
+  "links": [
+   {
+    "label": "Alloy homepage",
+    "url": "https://alloytools.org"
+   },
+   {
+    "label": "Alloy source repository (GitHub README)",
+    "url": "https://github.com/AlloyTools/org.alloytools.alloy"
+   },
+   {
+    "label": "Alloy documentation",
+    "url": "http://alloytools.org/documentation.html"
+   },
+   {
+    "label": "Alloy 6 overview",
+    "url": "http://alloytools.org/alloy6.html"
+   }
+  ],
+  "fetch_log": [
+   "https://alloytools.org: fetched OK. Homepage text, latest release 2025/01/09 (Alloy 6.2.0), and a note on the Practical Alloy book. It contained no install commands and no direct links, so I followed the GitHub repo.",
+   "https://github.com/AlloyTools/org.alloytools.alloy: fetched OK, README returned. Contains the requirements, build commands, and project layout. I did not follow the documentation link (alloytools.org/documentation.html) because the README already gave the essentials, and the fetch budget allowed it."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Alloy turns compact relational and temporal models into SAT-backed searches for concrete instances and counterexamples, making formal verification unusually approachable and hands-on."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Alloy Analyzer",
+  "tldr": "Write a small model of a system in a relational logic language, and a SAT-based analyzer hunts for examples and counterexamples to your design.",
+  "deeper_look": "Alloy is a language for describing software designs, plus an analyzer that checks them. You write down what things exist in your system and what rules they must obey. The Alloy Analyzer then searches for instances that satisfy the model, or for counterexamples to claims you made about it. The homepage says it has been used for everything from finding holes in security mechanisms to designing telephone switching networks.\n\nUnder the hood, the README says Alloy 6 bundles an extended version of the Kodkod model finder and several SAT solvers. Sat4j is the cross-platform default, with optional native solvers such as minisat, lingeling/plingeling and glucose. The brief does not spell out the translation pipeline in more detail than that.\n\nThe idea underneath is lightweight formal methods: instead of proving a design correct by hand, you ask a solver to try to break it, and it shows you a concrete case when it succeeds. Alloy 6 is described as a major revision that adds mutable state and a temporal logic with accompanying solvers, plus an improved Visualizer. That makes it easier to specify how a system behaves over time, not just what shape it has.\n\nThe whole tool is one self-contained JAR that opens a GUI. It ships with the standard Alloy library and a collection of tutorial examples, so the first session can start from a working model instead of a blank file. The same JAR can also be embedded as an API in other applications.",
+  "install": "brew install alloy-analyzer\n# needs a JVM; the formula depends on openjdk, and upstream says Java 17 or later\n# the installed executable is named alloy and opens a GUI",
+  "try_this": [
+   {
+    "cmd": "alloy",
+    "what_happens": "Launches the Alloy Analyzer GUI, where you can open the bundled tutorial examples and run them."
+   },
+   {
+    "cmd": "java -version",
+    "what_happens": "Checks your JVM; the README says Alloy requires Java 17."
+   },
+   {
+    "cmd": "alloy --help",
+    "what_happens": "Shows what the executable accepts on the command line."
+   }
+  ],
+  "whats_unique": "Alloy 6 adds mutable state and temporal logic to a relational model finder, so you can check how a design behaves over time. It ships as one JAR with the solvers already included.",
+  "caveats": "Requires Java 17 or later, and Alloy 6 has syntax changes from pre-6 versions, so older models may need rewriting.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "formal-methods",
+   "modeling",
+   "sat",
+   "java",
+   "gui"
+  ],
+  "links": [
+   {
+    "label": "Alloy homepage",
+    "url": "https://alloytools.org"
+   },
+   {
+    "label": "Alloy 6 overview",
+    "url": "http://alloytools.org/alloy6.html"
+   },
+   {
+    "label": "Alloy documentation",
+    "url": "http://alloytools.org/documentation.html"
+   },
+   {
+    "label": "Alloy source repository (GitHub README)",
+    "url": "https://github.com/AlloyTools/org.alloytools.alloy"
+   }
+  ]
+ }
+}

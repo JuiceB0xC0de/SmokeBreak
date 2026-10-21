@@ -1,0 +1,84 @@
+{
+ "name": "classads",
+ "desc": "Classified Advertisements (used by HTCondor Central Manager)",
+ "homepage": "https://research.cs.wisc.edu/htcondor/classad/",
+ "installs_365d": 91,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language",
+  "library"
+ ],
+ "why": "A classified-ad expression language used for matchmaking in HTCondor, an obscure and genuinely unusual data model.",
+ "brief": {
+  "what_it_is": "Classified Advertisements (ClassAds) is a data format and expression language from the HTCondor project. A classad maps attribute names to expressions, which are often plain integers, floats, or strings, so it works like a property list. Expressions can refer to another ad, for example 'other.size > 3' is true when the other ad has an integer size greater than three. Two ads match when each one's requirements attribute evaluates to true in the context of the other, and the HTCondor central manager uses this to decide which jobs can run on which machines. The C++ and Java ClassAd libraries are distributed as standalone packages for use outside HTCondor.",
+  "why_it_exists": "The page says classads are 'the lingua franca of HTCondor', used to describe jobs and workstations, exchanged between HTCondor processes to schedule work, logged for statistics and debugging, and queried for the current state of the system. The underlying idea is matchmaking: two-sided matching of jobs to resources based on each side's constraints.",
+  "how_it_works": "Each ad is a set of attribute-to-expression bindings. Matching evaluates each ad's requirements expression with the other ad in scope, so both sides must accept the pairing. The papers listed extend this from two-way matches to multiway 'gangmatching' across several resources at once.",
+  "commands_seen": [],
+  "install_notes": "The homepage gives no install steps, commands, or configuration. Its download section lists C++ library versions (latest 1.0.10) and Java jars (classad.jar for versions 1.1 through 2.4). The brew executables (classad_functional_tester, classad_version, cxi and their _ns variants) are not described on the homepage, so I could not confirm what they do.",
+  "standout": "It is a small, specialised expression language that is built around two-sided matching of ads rather than ordinary queries or data records, and it has a formal language reference and academic papers behind it. Most readers will not have met a data model like this before.",
+  "status": "Quiet. The newest C++ library release listed is 1.0.10, dated 08-Apr-2011. The Java versions have no dates on the page. The homepage's HTCondor news items run to December 2025, so the wider project is active, but the ClassAd page itself shows no release after 2011.",
+  "caveats": "The homepage does not describe install steps, supported platforms, or licensing. The brew package description and the homepage do not match on the executables, so I could not confirm the purpose of cxi or the functional tester. The release history stops in 2011. I did not follow the Language Reference Manual or the ClassAd Catalog because the homepage gave no direct URLs for them.",
+  "quotes": [
+   "Classified Advertisements (classads) are the lingua franca of HTCondor.",
+   "A classad is a mapping from attribute names to expressions.",
+   "Two classads match if each ad has an attribute requirements that evaluates to true in the context of the other ad."
+  ],
+  "links": [
+   {
+    "label": "ClassAd homepage",
+    "url": "https://research.cs.wisc.edu/htcondor/classad/"
+   }
+  ],
+  "fetch_log": [
+   "https://research.cs.wisc.edu/htcondor/classad/ - fetched OK; HTML page with the ClassAd overview, paper list, and library download sections. No README or docs fetched."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "ClassAds\u2019 two-sided, expression-based matchmaking model is a genuinely unusual language and data model, even if the standalone library looks quiet."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "ClassAds",
+  "tldr": "An expression language from HTCondor where two records match only if each one's requirements evaluate true against the other, a two-sided matchmaking data model.",
+  "deeper_look": "A classad is a mapping from attribute names to expressions. Many of those expressions are plain integers, floats or strings, so an ad can read like a property list. Expressions can also refer to another ad: `other.size > 3` is true when the other ad has an integer `size` greater than three.\n\nThat reference to \"the other ad\" is the idea underneath. Per the project, two classads match if each ad has a `requirements` attribute that evaluates to true in the context of the other ad. Both sides state what they need, and both must accept the pairing. A job can say what kind of machine it wants, and a machine can say what kind of jobs it will take.\n\nIt was built for HTCondor, where classads are described as \"the lingua franca\": they describe jobs and workstations, are exchanged between processes to schedule work, are logged for debugging and statistics, and are queried for the current state of the system. The listed papers extend the model from two-way matches to multiway \"gangmatching\" across several resources at once.\n\nThe brew package installs the C++ library plus six executables: `classad_functional_tester`, `classad_version`, `cxi` and an `_ns` variant of each. The homepage does not describe them, so start with `--help` and see what they offer.",
+  "install": "brew install classads",
+  "try_this": [
+   {
+    "cmd": "classad_version",
+    "what_happens": "Probably prints the version of the installed ClassAd library; the homepage does not document it, so this is a guess from the name."
+   },
+   {
+    "cmd": "cxi --help",
+    "what_happens": "Shows the usage text for the cxi tool, whose purpose the homepage does not explain."
+   },
+   {
+    "cmd": "classad_functional_tester --help",
+    "what_happens": "Shows the options for the functional tester, which is presumably the library's test driver."
+   }
+  ],
+  "whats_unique": "It is built around two-sided matching rather than queries or plain records: each ad carries its own constraints, and a match needs both to hold. It has a formal language reference and academic papers behind it.",
+  "caveats": "The ClassAd homepage lists its newest C++ release as 1.0.10 from April 2011, and it gives no install steps or documentation for the brew executables.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "language",
+   "library",
+   "htcondor",
+   "matchmaking"
+  ],
+  "links": [
+   {
+    "label": "ClassAd homepage",
+    "url": "https://research.cs.wisc.edu/htcondor/classad/"
+   }
+  ]
+ }
+}

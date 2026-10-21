@@ -1,0 +1,80 @@
+{
+ "name": "testdisk",
+ "desc": "Powerful free data recovery utility",
+ "homepage": "https://www.cgsecurity.org/wiki/TestDisk",
+ "installs_365d": 24559,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "tui",
+  "reverse-engineering",
+  "science"
+ ],
+ "why": "Recovers lost partitions and files by reading raw disk structures, a satisfying look under the filesystem layer.",
+ "brief": {
+  "what_it_is": "TestDisk is a free, open-source (GPL v2+) data recovery utility from CGSecurity. It reads the raw structures of a disk (partition tables, boot sectors, backup superblocks, filesystem metadata) and tries to repair them or rebuild lost partitions. It can also undelete files from FAT12/16/32, exFAT, NTFS and ext2/3/4, and copy them out. Input is a physical disk, USB device, or disk image such as a .dd or .E01 file. Output is a repaired partition table or boot sector, or recovered files. The package also ships PhotoRec (signature-based file carving for when filesystem-level recovery fails) and fidentify.",
+  "why_it_exists": "The wiki says TestDisk was primarily designed to recover lost partitions and make non-booting disks bootable again when the cause is faulty software, certain viruses, or human error such as accidentally deleting a partition table. It also aims to serve novices, who can collect detailed information about a non-booting drive and send it to a tech, and experts doing onsite recovery.",
+  "how_it_works": "TestDisk scans the disk for partition structures and filesystem signatures, including backup boot sectors (FAT32, NTFS), backup superblocks (ext2/3/4) and other partition types, then lists what it finds so the user can choose which partitions to keep, mark as deleted or logical, and write back to the partition table. The Deeper Search option scans each cylinder for backups. Boot sectors can be restored by copying the valid backup over the damaged one. PhotoRec works differently: it identifies files by their content signatures rather than by reading the filesystem.",
+  "commands_seen": [
+   {
+    "cmd": "sudo testdisk-6.13/testdisk_static",
+    "context": "Unix/Linux/BSD: TestDisk needs root, so the static binary is launched with sudo (example from the step-by-step guide, which uses an older 6.13 build path)."
+   },
+   {
+    "cmd": "testdisk image.dd",
+    "context": "Work on a raw disk image to recover a partition or repair a filesystem inside it."
+   },
+   {
+    "cmd": "testdisk image.E01",
+    "context": "Recover files from an EnCase EWF image."
+   },
+   {
+    "cmd": "testdisk 'image.???'",
+    "context": "Same as the EWF case, when the EnCase image is split across several files."
+   },
+   {
+    "cmd": "testdisk /dev/loop0",
+    "context": "Repair the boot sector of a filesystem not listed by TestDisk, here via a loop device; the page gives the same pattern for device paths in general."
+   },
+   {
+    "cmd": "testdisk /dev/md0",
+    "context": "Repair a filesystem on top of a Linux RAID device."
+   },
+   {
+    "cmd": "testdisk /dev/mapper/truecrypt0",
+    "context": "Repair the NTFS or FAT32 boot sector of a TrueCrypt partition. The page says the same method works for cryptsetup/dm-crypt/LUKS volumes."
+   }
+  ],
+  "install_notes": "The homepage offers binary executables and source for DOS, Win32, macOS and Linux. Brew installs the executables fidentify, photorec and testdisk. Physical-device work needs elevated rights: Administrator on Windows (Run as administrator on Vista and later), root on Unix/Linux/BSD, and on macOS TestDisk restarts itself under sudo after you confirm. OS/2 only handles disk images. No account, runtime or configuration is mentioned.",
+  "standout": "It works at the level below the filesystem: it reads partition tables and backup boot sectors directly and can often bring back a whole partition, not just individual files. It pairs that with PhotoRec, which carves files by signature when the filesystem is too damaged to read. The step-by-step guide walks through a real recovery in menus, which is a good way to see the raw structures.",
+  "status": "Maintained, with evidence from the wiki: it lists 7.2 as the latest stable version, released February 22, 2024. I did not check a commit history or release page, so I cannot confirm activity after that date. The step-by-step guide still shows older 6.13 paths, so some docs lag behind the code.",
+  "caveats": "Working on physical devices requires Administrator or root rights, and the wiki warns not to format a drive the system says is unformatted without knowing why. FAT directory listing is limited to 10 clusters, so some files may not appear even though recovery is unaffected. Undelete support is limited to FAT12/16/32, exFAT, NTFS and ext2; other filesystems need PhotoRec. OS/2 cannot access physical devices. The homepage is a wiki page, not a GitHub README, so build instructions and a changelog were not in what I read.",
+  "quotes": [
+   "TestDisk is powerful free data recovery software!",
+   "It was primarily designed to help recover lost partitions and/or make non-booting disks bootable again when these symptoms are caused by faulty software",
+   "Partition table recovery using TestDisk is really easy.",
+   "To recover lost pictures or files from digital camera or harddisk, run the PhotoRec command."
+  ],
+  "links": [
+   {
+    "label": "TestDisk homepage (CGSecurity wiki)",
+    "url": "https://www.cgsecurity.org/wiki/TestDisk"
+   },
+   {
+    "label": "TestDisk Step By Step recovery guide",
+    "url": "https://www.cgsecurity.org/wiki/TestDisk_Step_By_Step"
+   },
+   {
+    "label": "TestDisk & PhotoRec forum",
+    "url": "https://forum.cgsecurity.org/phpBB3/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.cgsecurity.org/wiki/TestDisk (homepage): worked, returned the wiki page with description, feature list, OS list and download info; not a GitHub README.",
+   "https://www.cgsecurity.org/wiki/TestDisk_Step_By_Step (linked from homepage as 'TestDisk Step by Step'; URL constructed from the link label): worked, returned the tutorial with the command lines listed in commands_seen."
+  ]
+ }
+}

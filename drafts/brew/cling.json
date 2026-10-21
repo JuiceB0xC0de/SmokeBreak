@@ -1,0 +1,144 @@
+{
+ "name": "cling",
+ "desc": "C++ interpreter",
+ "homepage": "https://root.cern/cling/",
+ "installs_365d": 904,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "quick",
+  "library"
+ ],
+ "why": "An interactive C++ interpreter from CERN that makes a famously compiled language feel like a REPL playground.",
+ "brief": {
+  "what_it_is": "Cling is an interactive C++ interpreter built on Clang and LLVM. You type C++ at a command prompt, or pass it as arguments, and it compiles each piece just-in-time and runs it, with compiler diagnostics printed back to you. It has an emacs-style line editor, dot-prefixed metaprocessor commands for loading files, libraries and include paths, and a Jupyter kernel. The README describes it as implementing the read-eval-print loop concept for rapid application development.",
+  "why_it_exists": "The homepage says one of Cling's main goals was to provide a contemporary, high-performance alternative to CINT, the first C++ interpreter in the ROOT project, with backward compatibility with CINT as a major priority. The README frames it as bringing a REPL to C++ for rapid application development.",
+  "how_it_works": "Cling is a small extension to LLVM and Clang: Clang parses the input and LLVM's just-in-time compiler generates code that runs inside the interpreter process. On startup it automatically includes several header files and its own runtime universe, which creates the minimal environment for the user to begin. The README also says it reuses Clang's concise, expressive compiler diagnostics.",
+  "commands_seen": [
+   {
+    "cmd": ".x filename.cxx",
+    "context": "Metaprocessor command from the homepage: loads filename.cxx and calls void filename() if it is defined."
+   },
+   {
+    "cmd": ".L library | filename.cxx",
+    "context": "Metaprocessor command from the homepage: loads a library or a filename.cxx file."
+   },
+   {
+    "cmd": ".printAST",
+    "context": "Metaprocessor command from the homepage: shows the abstract syntax tree after each processed entity."
+   },
+   {
+    "cmd": ".I path",
+    "context": "Metaprocessor command from the homepage: adds an include path."
+   },
+   {
+    "cmd": "./bin/cling --help",
+    "context": "From the GitHub README, run from the build folder to see command-line options."
+   },
+   {
+    "cmd": "[cling]$ .help",
+    "context": "From the GitHub README, typed at the cling prompt to list metaprocessor commands."
+   },
+   {
+    "cmd": "./bin/cling -I\"../cling/include\" '#include <stdio.h>' 'printf(\"Hello World!\\n\");'",
+    "context": "From the GitHub README: the Hello World example for a standalone build, which needs the include directory passed with -I."
+   },
+   {
+    "cmd": "./bin/cling '#include <stdio.h>' 'printf(\"Hello World!\\n\");'",
+    "context": "From the GitHub README: the same Hello World example when cling is built as part of LLVM, so no -I flag is needed."
+   },
+   {
+    "cmd": "cmake --build . --target libclingJupyter",
+    "context": "From the GitHub README: builds the library needed for Jupyter notebook support after cling is built."
+   },
+   {
+    "cmd": "CLING_DEBUG=1",
+    "context": "From the GitHub README: environment setting that emits debug symbols for interpreted code so a standard debugger can be used. It has a runtime cost and is off by default."
+   }
+  ],
+  "install_notes": "The Homebrew formula is cling and installs an executable named cling. The GitHub README says nightly binary snapshots are currently unavailable, so building from source is the main route it documents. Building as a standalone project requires a build of Clang and LLVM from the root-project/llvm-project repository on the cling-latest branch, configured with cmake using LLVM_TARGETS_TO_BUILD=\"host;NVPTX\". Cling can also be built together with LLVM using LLVM_EXTERNAL_PROJECTS. Do not build inside the source directories. Jupyter support needs a separate install following the README in tools/Jupyter, and cling must be on PATH when jupyter starts.",
+  "standout": "Cling is a REPL for a compiled language built on the real Clang front end, so it accepts C++ and reports errors the way the compiler does. Its metaprocessor dot-commands and its CINT-compatibility goal set it apart from simpler C++ REPLs.",
+  "status": "unknown. I saw no release date or last commit. The GitHub README says nightly binaries are currently unavailable and that some linked resources are rather old and most of the stated limitations are outdated. It does document a release process with tags and release notes, and the Homebrew formula is present.",
+  "caveats": "The README warns that some resources are old and the stated limitations are outdated. Nightly binaries are unavailable, so you will likely need to build Clang and LLVM yourself, which is a heavy build. Contributors must transfer copyright to the Cling project. Debugging and profiling support has a runtime cost and is disabled by default. I did not read the LICENSE file. The supported platforms were not stated in the pages I read.",
+  "quotes": [
+   "Cling is an interactive C++ interpreter, built on the top of LLVM and Clang libraries.",
+   "Cling implements the read-eval-print loop (REPL) concept, in order to leverage rapid application development.",
+   "Please note that some of the resources are rather old and most of the stated limitations are outdated."
+  ],
+  "links": [
+   {
+    "label": "Cling homepage",
+    "url": "https://root.cern/cling/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/root-project/cling"
+   },
+   {
+    "label": "CHEP 2012 paper (DOI)",
+    "url": "https://doi.org/10.1088/1742-6596/396/5/052071"
+   }
+  ],
+  "fetch_log": [
+   "https://root.cern/cling/ - worked, returned the homepage text with the description, metaprocessor commands and resources.",
+   "https://github.com/root-project/cling - worked, returned the repository README, which I used for install, usage, debugging and status information."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Cling turns real Clang/LLVM C++ into a live REPL, making compiler-grade diagnostics and AST inspection available interactively in a normally compiled language."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "cling",
+  "tldr": "An interactive C++ interpreter from the ROOT project at CERN, built on Clang and LLVM, that lets you type C++ at a prompt and run it immediately.",
+  "deeper_look": "Cling takes a language that normally means write, compile, link, run, and gives it a prompt. You type C++ at the command line, or pass it as arguments, and each piece is parsed by Clang, compiled just-in-time by LLVM, and executed inside the interpreter process. Compiler errors come back in Clang's own diagnostic style.\n\nIt began in the ROOT project as a replacement for CINT, the first C++ interpreter there. The homepage describes the goal as a contemporary, high-performance alternative, with backward compatibility with CINT as a major priority. The idea underneath is that a REPL for a compiled language does not need a separate toy implementation. If you embed the real compiler front end and a JIT, the interpreter accepts what the compiler accepts.\n\nBeyond plain C++, there is a set of dot-prefixed metaprocessor commands. They load source files and libraries, add include paths, and show the abstract syntax tree after each processed entity. There is also a Jupyter kernel, so C++ can run in notebooks. On startup it pulls in several headers and its own runtime universe, so you begin with a minimal working environment.",
+  "install": "brew install cling\n# Jupyter support is a separate install: see tools/Jupyter in the repository README, and keep cling on PATH when jupyter starts.",
+  "try_this": [
+   {
+    "cmd": "cling '#include <stdio.h>' 'printf(\"Hello World!\\n\");'",
+    "what_happens": "Runs the README's Hello World: the include and the printf are each compiled and executed on the spot, with no separate build step."
+   },
+   {
+    "cmd": "cling --help",
+    "what_happens": "Lists the command-line options."
+   },
+   {
+    "cmd": ".printAST",
+    "what_happens": "Typed at the cling prompt, turns on display of the abstract syntax tree after each entity you enter, so you can see how Clang reads your code."
+   }
+  ],
+  "whats_unique": "It is a REPL built on the real Clang front end, so it accepts C++ and reports errors as the compiler does. The dot-commands and the CINT-compatibility goal set it apart from simpler C++ REPLs.",
+  "caveats": "The README warns that \"some of the resources are rather old and most of the stated limitations are outdated\", and I could not confirm recent activity. It documents building Clang and LLVM from source since nightly binaries are unavailable, but the Homebrew formula spares you that.",
+  "commitment": "quick",
+  "category": "languages-and-oddities",
+  "tags": [
+   "quick",
+   "c++",
+   "repl",
+   "llvm",
+   "clang",
+   "interpreter",
+   "jupyter"
+  ],
+  "links": [
+   {
+    "label": "Cling homepage",
+    "url": "https://root.cern/cling/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/root-project/cling"
+   },
+   {
+    "label": "CHEP 2012 paper (DOI)",
+    "url": "https://doi.org/10.1088/1742-6596/396/5/052071"
+   }
+  ]
+ }
+}

@@ -1,0 +1,83 @@
+{
+ "name": "libklvanc",
+ "desc": "VANC Processing Framework",
+ "homepage": "https://github.com/stoth68000/libklvanc",
+ "installs_365d": 33,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "broadcast",
+  "protocol",
+  "library",
+  "afternoon",
+  "needs-hardware"
+ ],
+ "why": "Decodes VANC ancillary data hidden in broadcast video streams, a rarely seen door into SDI broadcast plumbing.",
+ "brief": {
+  "what_it_is": "Libklvanc is a C library for parsing and generating Vertical Ancillary Data (VANC) found in the Serial Digital Interface (SDI) video wire protocol. It takes VANC line data from captured SDI video and decodes it into structured packets, and it can also encode packets back into VANC lines for an SDI output. Protocols listed in the README include CEA-708 closed captions (SMPTE ST 334), AFD and Bar Data (ST 2016), SCTE-104 ad triggers, ST 2038 arbitrary VANC encapsulation, ST 12-2 timecodes, RDD 8 subtitle packets, and ST 2108-1 HDR/WCG metadata. It also includes utility functions for colour representations such as the V210 format used by Blackmagic DeckLink cards.",
+  "why_it_exists": "The README frames it as a general parser/decoder and encoder for VANC, so that capture and output applications can both work with the ancillary data SDI carries alongside video. It is meant to be the library underneath real capture tools, with the separate klvanc-tools project using it with Blackmagic cards to capture live SDI signals.",
+  "how_it_works": "The README says the library provides a general parser/decoder and an encoder for VANC lines, with per-protocol support for each SMPTE or SCTE format it lists. It computes and validates checksums at several levels and handles line-formatting edge cases such as keeping packets contiguous. API documentation is generated with Doxygen, and the tools subdirectory holds test programs that call the library.",
+  "commands_seen": [
+   {
+    "cmd": "./autogen.sh --build",
+    "context": "First step of compiling from source with Make, generates the autotools build files."
+   },
+   {
+    "cmd": "./configure --enable-shared=no",
+    "context": "Configures the Make build and asks for a static library rather than a shared one."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the library after configure in the source-build path."
+   },
+   {
+    "cmd": "brew install libklvanc",
+    "context": "Installs the library via Homebrew on macOS or Linux."
+   },
+   {
+    "cmd": "make docs",
+    "context": "Generates Doxygen API documentation into the doxygen folder."
+   },
+   {
+    "cmd": "make test",
+    "context": "Runs the bundled test cases to confirm the build works."
+   },
+   {
+    "cmd": "meson build",
+    "context": "Sets up a Meson build directory as an alternative to autotools."
+   },
+   {
+    "cmd": "ninja -C build",
+    "context": "Compiles the Meson build in the build directory."
+   },
+   {
+    "cmd": "meson test -C build",
+    "context": "Runs the test suite for a Meson build."
+   }
+  ],
+  "install_notes": "Building from source needs the autotools chain (autogen.sh, configure, make) or Meson with Ninja. Doxygen is optional and only needed for API documentation. The README lists no hardware, accounts, or runtime configuration. Real-world SDI capture needs Blackmagic cards and is handled by the separate klvanc-tools project, not by this library.",
+  "standout": "It covers both directions, decoding captured VANC and generating it for output, across many SDI ancillary formats in one library. That is less common than tools that only decode or only handle one protocol.",
+  "status": "unknown. The README fetched from the GitHub homepage shows no release date, version number, or recent-activity note, and I did not check the commit history or releases page.",
+  "caveats": "The README is licensed LGPL-2.1. It documents no platform limits beyond Homebrew on macOS/Linux and the build commands. The README does not list the executables named in the package metadata (klvanc_afd, klvanc_scte104, klvanc_parse and others), so their behaviour is unverified here. The README also has a typo in the Homebrew link (hhtps://brew.sh). The homepage is a GitHub repo, so this brief reflects only the README.",
+  "quotes": [
+   "Libklvanc is a library which can be used for parsing/generation of Vertical Ancillary Data (VANC) commonly found in the Serial Digital Interface (SDI) wire protocol.",
+   "By providing both encoders and decoders, the library can be used for common use cases involving both capture of SDI (and subsequent decoding) as well as generation of VANC for inclusion in an SDI output interface.",
+   "For a \"real world\" application, refer to the klvanc-tools package, which make use of libklvanc in conjunction with Blackmagic cards to capture real SDI signals."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repository)",
+    "url": "https://github.com/stoth68000/libklvanc"
+   },
+   {
+    "label": "klvanc-tools (real-world capture application)",
+    "url": "https://github.com/stoth68000/klvanc-tools"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/stoth68000/libklvanc: fetched OK, README returned in full. I did not follow further links, since the README covers the library's scope, build steps, and license."
+  ]
+ }
+}

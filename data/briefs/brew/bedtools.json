@@ -1,0 +1,62 @@
+{
+ "name": "bedtools",
+ "desc": "Tools for genome arithmetic (set theory on the genome)",
+ "homepage": "https://github.com/arq5x/bedtools2",
+ "installs_365d": 1366,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "math"
+ ],
+ "why": "Set-theoretic arithmetic on genomic intervals, real bioinformatics you can run at home on your own data.",
+ "brief": {
+  "what_it_is": "bedtools is a command-line suite of utilities for genome arithmetic, meaning set operations on genomic intervals. Its tools can intersect, merge, count, complement, shuffle, and compare intervals from multiple files. The inputs come from common formats such as BAM, BED, GFF/GTF, and VCF. Each tool does one relatively simple job, and the author says more involved analyses come from chaining them on the UNIX command line.",
+  "why_it_exists": "The README describes bedtools as 'the swiss army knife for genome arithmetic' and says it began 'through urgency and adrenaline' in Spring 2009. Its stated goal is to make set operations on genomic features easy to run on common file formats.",
+  "how_it_works": "Each tool takes one or more interval files and applies a set operation such as intersect, merge, or subtract. The docs say that when input is pre-sorted by chromosome and start position, the algorithm scales much better than the unsorted path, which uses an R-tree. The author reports that bedtools intersect on sorted data is as fast as or slightly faster than bedops' bedmap, which uses a similar approach.",
+  "commands_seen": [
+   {
+    "cmd": "bedtools intersect -a exp1.bed -b exp2.bed -f 0.50 -r > both.bed",
+    "context": "From the docs' brief example. Keeps peaks shared by two experiments, requiring 50% reciprocal overlap (-f 0.50 with -r)."
+   },
+   {
+    "cmd": "bedtools closest -a both.bed -b genes.bed -io > both.nearest.genes.txt",
+    "context": "From the docs' brief example. For each shared peak, finds the closest gene, using -io to ignore overlapping intervals."
+   },
+   {
+    "cmd": "bedtools intersect -a ccds.exons.bed -b aln.bam.bed -c -sorted",
+    "context": "From the docs' performance section, shown there across several lines with backslashes. Counts alignments overlapping each CCDS exon, assuming sorted input (-sorted). The docs also show the same command without -sorted for the unsorted case."
+   }
+  ],
+  "install_notes": "The README links to a releases page ('Download current version'). Neither the README nor the docs show build steps, accounts, or runtimes. Two notes apply to setup: for CRAM input, set the CRAM_REFERENCE environment variable to the reference genome (added in 2.28.0); and a .fai file can be used as a genome (-g) file.",
+  "standout": "The design is a set of small, composable tools in the UNIX style rather than one large program. The author also publishes a sorted-input performance comparison against bedops' bedmap, with the commands used, so the speed claim can be checked.",
+  "status": "Not fully confirmed. The README has no release date or changelog. The docs page reports version 2.31.0 and says it was last updated Apr 28, 2023. The homepage shows an active GitHub repository with a releases page, but I did not check commit dates or the release list. Lead developers are named as Aaron Quinlan, Hao Hou, Brent Pedersen, and Neil Kindlon.",
+  "caveats": "Except for BAM, input files must be tab-delimited with UNIX line endings. Chromosome names must match across files, so chr1 will not match 1. Without -sorted, chromosomes larger than 512Mb are not supported. With -sorted, if chromosomes are not in lexicographic order, you must supply a genome file (-g) that sets the expected order. The README notes that bedtools could not finish 100 million alignments using the unsorted R-tree algorithm. The README and docs disagree on the lab's institution (University of Virginia vs University of Utah). The brew package list includes legacy names such as intersectBed and windowMaker; I did not verify these against the source. The brew package has no caveats of its own.",
+  "quotes": [
+   "the swiss army knife for genome arithmetic",
+   "quite sophisticated analyses can be conducted by combining multiple bedtools operations on the UNIX command line.",
+   "First created through urgency and adrenaline by Aaron Quinlan Spring 2009."
+  ],
+  "links": [
+   {
+    "label": "Documentation (readthedocs)",
+    "url": "http://bedtools.readthedocs.org"
+   },
+   {
+    "label": "Stable releases (GitHub)",
+    "url": "https://github.com/arq5x/bedtools2/releases"
+   },
+   {
+    "label": "Cheat-sheet from Ilya Levantis (gist)",
+    "url": "https://gist.github.com/ilevantis/6d6ecf8718a5803acff736c2dffc933e"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/arq5x/bedtools2 - worked, README returned",
+   "http://bedtools.readthedocs.org - worked, docs index for v2.31.0 returned; the cheat-sheet gist and the release page were not fetched"
+  ]
+ }
+}

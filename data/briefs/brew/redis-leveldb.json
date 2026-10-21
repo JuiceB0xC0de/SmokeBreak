@@ -1,0 +1,65 @@
+{
+ "name": "redis-leveldb",
+ "desc": "Redis-protocol compatible frontend to leveldb",
+ "homepage": "https://github.com/KDr2/redis-leveldb",
+ "installs_365d": 59,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "Speaks the Redis protocol over a LevelDB backend, a strange hybrid worth a short look.",
+ "brief": {
+  "what_it_is": "Redis-LevelDB is a server that speaks the Redis wire protocol and stores data in Google's LevelDB embedded key-value store, so a Redis client can talk to it. The README lists supported commands for key-value (get/set, mget/mset, incr/incrby), hashes (hget, hset, hgetall and others), sets (sadd, srem, smembers and others), transactions (multi, exec, discard), and server (keys, info). It takes Redis client commands over TCP, which default to port 8323, and returns Redis-style replies backed by files in a LevelDB data directory.",
+  "why_it_exists": "The README describes it as a way to \"Use leveldb as a Redis-Server.\" It gives no longer rationale in the fetched text.",
+  "how_it_works": "The server listens on a host and port and parses Redis protocol requests, then maps them onto LevelDB reads and writes in a data directory (default redis.db under the working directory). With the -M option it runs in multi-db mode, where each database is a separate LevelDB instance in a db-<num> subdirectory, and clients switch with select. The info command takes flags: no flag shows leveldb.stat, k counts all keys, and t shows leveldb.sstables.",
+  "commands_seen": [
+   {
+    "cmd": "git clone git://github.com/KDr2/redis-leveldb.git",
+    "context": "Clones the repository to build from source."
+   },
+   {
+    "cmd": "git submodule init",
+    "context": "Initializes the bundled leveldb submodule before building."
+   },
+   {
+    "cmd": "git submodule update",
+    "context": "Fetches the leveldb submodule contents."
+   },
+   {
+    "cmd": "[LIBEV=LIBEV_PREFIX GMP=GMP_PREFIX DEBUG=1] make",
+    "context": "Builds the server; LIBEV and GMP point to install prefixes and DEBUG=1 is optional, per the README template."
+   },
+   {
+    "cmd": "./redis-leveldb -h",
+    "context": "Prints the list of command-line options."
+   },
+   {
+    "cmd": "make test",
+    "context": "Runs the test suite, which needs perl 5.10 or later with the Redis.pm module."
+   }
+  ],
+  "install_notes": "Beyond brew install, the README requires libev (>=1.4), gmp, and libsnappy, with the note to install libev and gmp via apt-get or port. LevelDB is not a system dependency; it comes in as a git submodule, so you must run git submodule init and update before make. Build with make, optionally setting LIBEV and GMP prefixes. The README has no account or hardware requirements. Running it: -d for daemon mode, -H for the listen address, -P for the port (default 8323), -D for the data directory, and -M <number> for multi-db mode. The test suite needs perl 5.10+ with Redis.pm.",
+  "standout": "It puts the Redis protocol in front of an embedded LevelDB store, so any Redis client can reach a durable, single-process key-value store with no Redis server. Its multi-db mode maps each Redis select index to its own LevelDB directory.",
+  "status": "Looks stalled. The README opens with a notice that the project is looking for a new maintainer. The repo shows 195 commits, 203 stars, and 29 forks, and the README lists version 1.6. The fetched page shows no release date or last-commit date, so recent activity is unknown.",
+  "caveats": "The project has no current maintainer, per the README notice. Known issue 13 is a limit on single data package size. The command set is partial: no lists, sorted sets, or expiry commands appear in the README list. The info command's flags differ from Redis. Dependencies (libev, gmp, libsnappy) must be installed separately. Tests require Perl with Redis.pm. The README gives no platform list. The license is MIT.",
+  "quotes": [
+   "!!! Notice !!!: This project is looking for a new maintainer, if you are interested, please fix some known issues then contact me, I will transfer the project to you.",
+   "Redis-LevelDB is a redis-protocol compatible frontend to google\u2019s leveldb: Use leveldb as a Redis-Server.",
+   "Different to redis, this info command accepts a flag argument"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/KDr2/redis-leveldb"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/KDr2/redis-leveldb (homepage, README returned, worked)"
+  ]
+ }
+}

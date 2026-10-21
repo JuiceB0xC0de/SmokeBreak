@@ -1,0 +1,85 @@
+{
+ "name": "cocot",
+ "desc": "Code converter on tty",
+ "homepage": "https://vmi.jp/software/cygwin/cocot.html",
+ "installs_365d": 47,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "ancient"
+ ],
+ "why": "A code converter on tty from the Cygwin era; obscure and old-school, with unclear depth beyond conversion.",
+ "brief": {
+  "what_it_is": "cocot (COde COnverter on Tty) is a small Unix command-line filter that sits between a terminal and a program and converts character encodings on the fly. It takes a byte stream in one encoding, such as Shift_JIS/CP932 or EUC-JP, and converts it to the encoding the terminal expects, typically UTF-8 or CP932, in the other direction too. It is wrapped around a command, as in 'cocot ssh host', so it works with interactive sessions over ssh or telnet. The homepage describes Japanese-language use, and the options it lists (-t TERM_CODE, -p PROC_CODE, -i to disable ISO-2022-JP handling, -n to convert without a child process, -o LOGFILE to log output) point to that focus. The homepage text was mostly unreadable in my fetch, so this description leans on the parts I could read.",
+  "why_it_exists": "The homepage says it exists because Cygwin is a UNIX-compatible environment that can run ssh and telnet, but Japanese text from a remote Unix host or a Windows-side terminal can come through in a mismatched encoding, and the author wanted a tool to convert between them. The author's changelog also mentions working from FreeBSD's script.c as a reference.",
+  "how_it_works": "cocot runs a child command under a pseudo-terminal and converts the byte stream in both directions between the terminal code and the process code. Those two codes are set with -t and -p, and the defaults were set at configure time (CP932 for the terminal, EUC-JP for the process, per the homepage). The -n option skips conversion and is intended for use with script(1). The homepage notes that on Cygwin, a terminfo entry for cygwin must be installed on the remote host for full-screen programs to work.",
+  "commands_seen": [
+   {
+    "cmd": "./install-cygwin.sh",
+    "context": "Installs the prebuilt Cygwin binary into /usr/local/bin from the extracted archive."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Generic build step for non-Cygwin systems. The homepage lists it with make and make install as the default route."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles cocot after configure on non-Cygwin systems."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs cocot after a successful make on non-Cygwin systems."
+   },
+   {
+    "cmd": "infocmp cygwin > cygwin.terminfo",
+    "context": "Run on Windows Cygwin to dump the cygwin terminfo entry to a file so it can be copied to the remote host."
+   },
+   {
+    "cmd": "scp cygwin.terminfo [remote host]:/tmp",
+    "context": "Copies the exported terminfo file to the remote host."
+   },
+   {
+    "cmd": "export TERMINFO=$HOME/.terminfo",
+    "context": "Sets a per-user terminfo directory on the remote host when the user lacks root permission."
+   },
+   {
+    "cmd": "tic /tmp/cygwin.terminfo",
+    "context": "Compiles and registers the cygwin terminfo entry on the remote host. Needs root, via su or sudo, or the per-user TERMINFO directory instead."
+   },
+   {
+    "cmd": "cocot ssh lydia",
+    "context": "Example from the author's session: runs ssh through cocot from a Windows Cygwin shell to a Linux host with EUC-JP locale."
+   },
+   {
+    "cmd": "\\ls --show-control-chars *.bmp",
+    "context": "Example listing Shift_JIS filenames from a Windows-side directory, showing the raw bytes problem that cocot addresses."
+   }
+  ],
+  "install_notes": "On Cygwin, download the prebuilt binary tarball (cocot-20100903-bin.tar.bz2, built for Cygwin-1.7) and run ./install-cygwin.sh, which installs to /usr/local/bin. Cygwin also needs libiconv (Devel category) and inetutils (Net category) from the Cygwin Setup package selector. On other systems, use ./configure, make, make install. The configure script accepts defaults for TERM_CODE and PROC_CODE. For a remote Linux host, install the cygwin terminfo entry as described above. Homepage notes this is for Cygwin 1.7 and that the author's build was verified on Cygwin 1.5.25, Mac OS X 10.5.2, Debian 4.1.1, OpenBSD 3.3, NetBSD 1.6.1, and SUA. I did not check the GitHub README for brew-specific install steps, and the GitHub README was just a copyright line.",
+  "standout": "It is a tiny, single-purpose pty wrapper for Japanese character encodings, built for an older Cygwin-era workflow. The homepage's changelog is itself a history of Japanese-encoding fixes, such as Unicode East Asian Width tables and the CP932 default, which is unusual for a tool this small.",
+  "status": "quiet. The homepage says 'Last Updated: 2010-09-03' and lists the 2010 build as the latest binary. The GitHub page shows a copyright line through 2017, which suggests the repository was touched later, but I saw no release or commit date. Treat it as unmaintained-in-practice rather than abandoned.",
+  "caveats": "Built for Cygwin 1.7 and older UNIX environments; the homepage's test list stops at 2008-era platforms. The homepage is in EUC-JP/Shift_JIS, so my reading of its Japanese text was partial and some option descriptions may be incomplete. License is a BSD-style license per the homepage ('see. LICENSE.txt'); I did not read the license file. The GitHub README I fetched contained only a title and copyright line, so I could not confirm current build steps or Homebrew-specific behaviour. The scout note's 'unclear depth' is fair: beyond the conversion itself there is little detail I could confirm.",
+  "quotes": [
+   "cocot - COde COnverter on Tty",
+   "Copyright (c) 2002-2017  IWAMURO Motonori  All rights reserved."
+  ],
+  "links": [
+   {
+    "label": "Homepage (Japanese, Cygwin binaries, changelog)",
+    "url": "https://vmi.jp/software/cygwin/cocot.html"
+   },
+   {
+    "label": "Repository",
+    "url": "https://github.com/vmi/cocot"
+   }
+  ],
+  "fetch_log": [
+   "https://vmi.jp/software/cygwin/cocot.html: worked, but the Japanese text came back as mojibake, so only the English headings, the commands, and the option list were readable.",
+   "http://github.com/vmi/cocot: worked, returned only the title and copyright line with no README body.",
+   "https://github.com/vmi/cocot: worked, returned the same title and copyright line as the http version."
+  ]
+ }
+}

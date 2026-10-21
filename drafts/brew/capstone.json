@@ -1,0 +1,118 @@
+{
+ "name": "capstone",
+ "desc": "Multi-platform, multi-architecture disassembly framework",
+ "homepage": "https://www.capstone-engine.org/",
+ "installs_365d": 87894,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "library"
+ ],
+ "why": "Multi-architecture disassembly engine; a door into binary exploration, though it is mostly consumed as a library.",
+ "brief": {
+  "what_it_is": "Capstone is a lightweight, multi-platform, multi-architecture disassembly framework written in pure C. It takes raw machine-code bytes for a chosen architecture and mode and returns decoded instructions, with details on each one and some semantics such as the implicit registers it reads and writes. It is mostly used as a library through many language bindings, and it ships a command-line tool, cstool, that disassembles hex bytes from the shell.",
+  "why_it_exists": "The homepage's stated goal is to make Capstone \"the ultimate disassembly engine for binary analysis and reversing in the security community.\" The README says it was created by Nguyen Anh Quynh and is now developed and maintained by a small community.",
+  "how_it_works": "Architecture-neutral API: a client picks an architecture and mode, passes bytes, and gets back instruction objects with decoded operands and details. The homepage says it provides \"details on disassembled instruction\" (what it calls the \"decomposer\" approach) and \"semantics\" such as implicit registers read and written. The homepage also mentions thread-safety by design and special support for embedding in firmware or OS kernels.",
+  "commands_seen": [
+   {
+    "cmd": "> cstool aarch64 0xe402a012",
+    "context": "Homepage example of cstool disassembling one AArch64 instruction; the output shown is mov w4, #-0x170001."
+   },
+   {
+    "cmd": "> cstool aarch64+explicitwideimm 0xe402a012",
+    "context": "Same bytes using the AArch64 explicit-wide-immediate option; the output shown is movn w4, #0x17, lsl #16."
+   },
+   {
+    "cmd": "> cstool aarch64+explicitwideimm 0xe402a052",
+    "context": "Homepage example with the explicit-wide-immediate option on different bytes; the output shown is movz w4, #0x17, lsl #16."
+   },
+   {
+    "cmd": "find . -type f -regex \".*\\.\\(c\\|h\\)$\" -exec sed -i -E \"s|Alpha_([A-Z0-9_]+)|ALPHA_\\1|g\" {} +",
+    "context": "Release note for 6.0.0-Alpha10: a sed one-liner that renames Alpha_ enum prefixes to ALPHA_ across .c and .h files in your code base after the enum-name fix."
+   }
+  ],
+  "install_notes": "The GitHub README says to see BUILDING.md for how to compile and install; I did not open that file. The README lists optional RISC-V v5 compatibility via defining CAPSTONE_RISCV_COMPAT_HEADER before including capstone.h. Language bindings are listed as main-code or community-provided, so each one has its own install path. Nothing in the pages I read mentions accounts or hardware.",
+  "standout": "It exposes per-instruction semantic detail, such as implicit register reads and writes, through an architecture-neutral API, and it is built to be embeddable in firmware and kernels. Its architecture list is long and includes older and niche ISAs such as M680X, TriCore, XCore and TMS320C64X.",
+  "status": "Maintained. The homepage lists 6.0.0-Alpha11 dated September 21, 2026, with a patch release 5.0.9 dated May 28, 2026 that includes CVE backports, and the 6.0.0-Alpha9 release fixed security advisories. The README has CI badges and an oss-fuzz badge. I did not check commit dates on GitHub.",
+  "caveats": "The current 6.0 line is still alpha, and the release notes show API churn: enum renames in Alpha10 (Alpha_ to ALPHA_) and a CS_MODE_RISCVC rename, with a compatibility macro to ease it. The 6.0 x86 JO/JNO behavior has new CS_MODE_X86_AMD and CS_MODE_X86_INTEL modes, though the default is unchanged. The architecture lists on the homepage and in the README differ: the README adds Alpha, ARC, LoongArch, HPPA and Xtensa, which the homepage omits. The project is mainly a library, so cstool is a thin wrapper. It is BSD-licensed; the README asks redistributors to include LICENSE.TXT.",
+  "quotes": [
+   "Capstone is a lightweight multi-platform, multi-architecture disassembly framework.",
+   "Our target is to make Capstone the ultimate disassembly engine for binary analysis and reversing in the security community.",
+   "Distributed under the open source BSD license."
+  ],
+  "links": [
+   {
+    "label": "Capstone homepage",
+    "url": "https://www.capstone-engine.org/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/capstone-engine/capstone"
+   },
+   {
+    "label": "6.0.0-Alpha10 release notes",
+    "url": "https://github.com/capstone-engine/capstone/releases/tag/6.0.0-Alpha10"
+   }
+  ],
+  "fetch_log": [
+   "https://www.capstone-engine.org/ : worked, homepage text with features, testimonials and release news",
+   "https://github.com/capstone-engine/capstone : worked, README returned; it points to BUILDING.md, docs/README and other files, which I did not fetch (fetch limit and README was adequate)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A solid multi-architecture disassembly engine makes raw machine code inspectable and exposes instruction semantics\u2014a useful door into binary analysis beyond its thin CLI."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Capstone",
+  "tldr": "A disassembly engine that turns raw machine-code bytes into readable instructions for dozens of CPU architectures, with a small shell tool, cstool, for trying it.",
+  "deeper_look": "Capstone takes bytes, an architecture and a mode, and gives back decoded instructions. Each one comes with operand details and some semantics, such as the implicit registers it reads and writes. It is written in pure C and is mostly used as a library through many language bindings. Debuggers, emulators and analysis tools often build on it.\n\nThe homepage states the goal plainly: \"to make Capstone the ultimate disassembly engine for binary analysis and reversing in the security community.\" It was created by Nguyen Anh Quynh and is now maintained by a small community.\n\nThe idea underneath is an architecture-neutral API. The same calls work whether the bytes are AArch64, x86 or something obscure. The homepage lists niche instruction sets such as M680X, TriCore, XCore and TMS320C64X. It also mentions thread-safety by design and support for embedding in firmware or OS kernels.\n\nThe command-line door is cstool. Give it an architecture and a hex string and it prints the instruction. That is a quick way to see how the same four bytes read under different modes, and a first step toward reading binaries.",
+  "install": "brew install capstone",
+  "try_this": [
+   {
+    "cmd": "cstool aarch64 0xe402a012",
+    "what_happens": "Disassembles one AArch64 instruction; the homepage shows it as mov w4, #-0x170001."
+   },
+   {
+    "cmd": "cstool aarch64+explicitwideimm 0xe402a012",
+    "what_happens": "Decodes the same bytes with the explicit-wide-immediate option, giving movn w4, #0x17, lsl #16."
+   },
+   {
+    "cmd": "cstool --help",
+    "what_happens": "Lists the supported architectures and mode options."
+   }
+  ],
+  "whats_unique": "It exposes per-instruction detail, like implicit register reads and writes, through one architecture-neutral API, and it can be embedded in firmware and kernels. Its architecture list is long and includes older, niche instruction sets.",
+  "caveats": "The current 6.0 line is still alpha with some API churn such as enum renames, and cstool is a thin wrapper around what is mainly a library.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "reverse-engineering",
+   "disassembly",
+   "library",
+   "c"
+  ],
+  "links": [
+   {
+    "label": "Capstone homepage",
+    "url": "https://www.capstone-engine.org/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/capstone-engine/capstone"
+   },
+   {
+    "label": "6.0.0-Alpha10 release notes",
+    "url": "https://github.com/capstone-engine/capstone/releases/tag/6.0.0-Alpha10"
+   }
+  ]
+ }
+}

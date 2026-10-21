@@ -1,0 +1,74 @@
+{
+ "name": "tpix",
+ "desc": "Simple terminal image viewer using the Kitty graphics protocol",
+ "homepage": "https://github.com/jesvedberg/tpix",
+ "installs_365d": 111,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "tui",
+  "visual"
+ ],
+ "why": "Terminal image viewer over the Kitty graphics protocol; a neat door into inline terminal graphics, but many viewers exist.",
+ "brief": {
+  "what_it_is": "tpix is a small command-line image viewer written in Nim that displays pictures directly inside a terminal window. It takes image files named on the command line, or image data piped on STDIN, and draws them inline using the Kitty graphics protocol. Supported formats are PNG, JPG, GIF (static only), BMP, QOI, PPM, and SVG (limited support). Width, height, background, and resize behaviour can be set with flags.",
+  "why_it_exists": "The author works on remote servers and clusters without root access and wants to glance at quick plots over SSH. He found no easily installable helper for Kitty on such machines, so he wrote one as a single dependency-free binary that can be copied and run on any modern Linux system.",
+  "how_it_works": "tpix reads images with the Pixie graphics library and wraps the pixel data in the escape sequences that the Kitty graphics protocol expects, so the terminal emulator draws the image inline. By default, images narrower than the terminal are shown at native size and larger ones are scaled to fit. Width and height can be set manually, and the aspect ratio is kept when only one of them is given.",
+  "commands_seen": [
+   {
+    "cmd": "wget https://github.com/jesvedberg/tpix/releases/download/v1.0.0/tpix-1.0.0-x86_64-linux.tar.gz",
+    "context": "Example download of the static x86_64 Linux release tarball from the releases page."
+   },
+   {
+    "cmd": "tar xzf tpix-1.0.0-x86_64-linux.tar.gz",
+    "context": "Extracts the downloaded release archive."
+   },
+   {
+    "cmd": "nimble install https://github.com/jesvedberg/tpix",
+    "context": "Builds and installs tpix from source via Nim's nimble package manager; yields a dynamically linked executable."
+   },
+   {
+    "cmd": "nimble build_static",
+    "context": "Named in the README as a build task in tpix.nimble that produces a statically linked binary when run from a cloned repo."
+   },
+   {
+    "cmd": "tpix image.jpg",
+    "context": "Basic usage: view an image file in the terminal."
+   },
+   {
+    "cmd": "cat image.jpg | tpix",
+    "context": "Pipes image data to tpix on STDIN."
+   }
+  ],
+  "install_notes": "Simplest route is the prebuilt static binaries on the GitHub releases page (Linux x86_64 and arm64 built with musl; macOS x86_64), which need only download, extract, and placing the binary on PATH; no root needed. Building from source requires the Nim compiler and nimble; nimble pulls in the Pixie and Cligen dependencies. Cloning and compiling directly also needs those libraries installed through nimble. Build options live in tpix.nimble. The README describes no configuration or first-run steps.",
+  "standout": "It is aimed at a specific niche: a single static binary that runs on remote machines without root, which the author says he could not find for Kitty. The choice of Nim makes static linking and cross-compilation straightforward. The scout note calls it a neat entry point into inline terminal graphics, though many viewers exist.",
+  "status": "Maintained, as far as the evidence shows. The releases page lists v1.0.3 marked Latest, dated 17 Jun (year not shown in the fetched text), with v1.0.2 on 13 Jun, v1.0.1 on 02 Jun, and v1.0.0 on 12 May. Release notes describe a switch from docopt to cligen, performance work, and better error messages. I did not check the commit history.",
+  "caveats": "Animated GIFs are not supported and SVG support is limited. Terminal multiplexers such as tmux and screen do not show images in any of the tested emulators. Wezterm rendering is slightly buggy and shows only one image at a time. Tested terminals are Kitty, Wezterm, and Konsole 22.04.1, so other kitty-protocol terminals are unverified. Prebuilt binaries cover Linux x86_64/arm64 and macOS x86_64 only, and the README mentions no macOS arm64 build. The README states no license.",
+  "quotes": [
+   "`tpix` is available as a statically linked single binary that is easy to deploy on remote systems where the user does not have root privileges.",
+   "I wanted to create a single dependency-free binary that can easily be copied and run from any modern Linux system.",
+   "Viewing images in Wezterm is slightly buggy at the moment and only one image will be shown at the time."
+  ],
+  "links": [
+   {
+    "label": "tpix homepage (GitHub repository)",
+    "url": "https://github.com/jesvedberg/tpix"
+   },
+   {
+    "label": "Releases (prebuilt binaries)",
+    "url": "https://github.com/jesvedberg/tpix/releases"
+   },
+   {
+    "label": "Kitty graphics protocol specification",
+    "url": "https://sw.kovidgoyal.net/kitty/graphics-protocol/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/jesvedberg/tpix: fetched OK, README returned in full (includes installation, usage, and full help text).",
+   "https://github.com/jesvedberg/tpix/releases: fetched OK, but the text is mostly page chrome. Release list and notes were readable: v1.0.3 (Latest, 17 Jun), v1.0.2, v1.0.1, v1.0.0."
+  ]
+ }
+}

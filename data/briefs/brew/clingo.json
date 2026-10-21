@@ -1,0 +1,89 @@
+{
+ "name": "clingo",
+ "desc": "ASP system to ground and solve logic programs",
+ "homepage": "https://potassco.org/clingo/",
+ "installs_365d": 1393,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "math",
+  "language",
+  "science"
+ ],
+ "why": "Answer set programming solver where you describe constraints and it finds models; a genuine door into declarative logic.",
+ "brief": {
+  "what_it_is": "Clingo is a grounder and solver for answer set programming (ASP), a declarative logic-programming approach. You write a logic program that describes a combinatorial problem, and clingo grounds it and computes answer sets, each one representing a solution to that problem. The README describes the input as a logic program and the output as answer sets. The Potassco-branded homepage returned no readable text in my fetch, so this comes from the GitHub README.",
+  "why_it_exists": "The README frames ASP as offering a simple and powerful modeling language for describing combinatorial problems as logic programs, with clingo as the system that takes such a program and computes its solutions.",
+  "how_it_works": "The README does not explain the internals. It says clingo takes a logic program and computes answer sets. The INSTALL file says clingo uses libpotassco and clasp, and that it builds the gringo, clingo, and reify applications.",
+  "commands_seen": [
+   {
+    "cmd": "git submodule update --init --recursive",
+    "context": "From INSTALL.md: run when cloning the git repository, to fetch submodules. Source releases can skip this."
+   },
+   {
+    "cmd": "cmake -S<SOURCE_DIR> -B<BUILD_DIR> -DCMAKE_BUILD_TYPE=Release",
+    "context": "From INSTALL.md: configures a release build of gringo, clingo, and reify. Replace the placeholders with your source and build directories."
+   },
+   {
+    "cmd": "cmake --build <BUILD_DIR>",
+    "context": "From INSTALL.md: compiles the configured build. Binaries and shared libraries land in <BUILD_DIR>/bin."
+   },
+   {
+    "cmd": "cmake --build <BUILD_DIR> --target install",
+    "context": "From INSTALL.md: installs binaries and development files under the CMake install prefix."
+   },
+   {
+    "cmd": "cmake --build <BUILD_DIR> --target test",
+    "context": "From INSTALL.md: runs the tests. You must first enable CLINGO_BUILD_TESTS."
+   },
+   {
+    "cmd": "cmake -S<SOURCE_DIR> -B<BUILD_DIR> -DCMAKE_BUILD_TYPE=Release -LH",
+    "context": "From INSTALL.md: lists the clingo-specific CMake build options."
+   },
+   {
+    "cmd": "emcmake cmake -S<SOURCE_DIR> -B<BUILD_DIR> -DCLINGO_BUILD_WEB=On -DCLINGO_BUILD_WITH_PYTHON=Off -DCLINGO_BUILD_WITH_LUA=Off -DCLINGO_BUILD_SHARED=Off -DCLASP_BUILD_WITH_THREADS=Off -DCMAKE_VERBOSE_MAKEFILE=On -DCMAKE_BUILD_TYPE=release",
+    "context": "From INSTALL.md: starts a JavaScript build through Emscripten. The full command also sets several CXX flags and is truncated here. Only the web target and a subset of options are supported."
+   },
+   {
+    "cmd": "cmake --build <BUILD_DIR> --target web",
+    "context": "From INSTALL.md: builds the JavaScript web target after the emcmake configure step."
+   }
+  ],
+  "install_notes": "The README points to precompiled packages on the Potassco site and source/binary releases on GitHub. Building from source needs a C++14 compiler (GCC 4.9 or later, Clang 3.1 or later, or MSVC 2017 or later) and CMake 3.10 or later, with 3.18 recommended. Bison and re2c are needed only for development branches. Python 3.6+ with CFFI 1.14+ and Lua 5.1+ are optional for scripting support. The INSTALL file says Homebrew provides what is needed to compile on macOS. There are no accounts or runtime setup steps in what I read. I did not check the Homebrew formula itself. The brew entry lists five executables (clasp, clingo, gringo, lpconvert, reify), but the README and INSTALL.md I read mention only gringo, clingo, and reify as apps and never mention clasp or lpconvert by name.",
+  "standout": "Clingo is a full ASP toolchain that is also a grounder and a solver, with a runnable online version linked from the README, so you can try it without installing anything. The README is short and points elsewhere for documentation, so the docs were not reachable from my fetches.",
+  "status": "Probably maintained, but I could not confirm it. The README links to a GitHub releases page and a CHANGES.md file, and the INSTALL file mentions CMake and compiler minimums, but I saw no release date or last-commit date in what I fetched. The potassco.org/doc/start/ page returned 404 and the homepage gave no text.",
+  "caveats": "The homepage returned an empty HTML shell with no readable text, and the Getting Started link returned HTTP 404, so the usage examples are missing from this brief. The README contains no command examples. Building from source takes a C++ toolchain and CMake. The Windows notes mention MinGW-w64, Cygwin, or Visual Studio 2015 Update 3. The Emscripten JavaScript build supports only the web target and a subset of options. The README's own description of the project is brief, and the full documentation lives in a separate guide repository. Licensing is MIT, per the README.",
+  "quotes": [
+   "ASP offers a simple and powerful modeling language to describe combinatorial problems as *logic programs*.",
+   "The *clingo* system then takes such a logic program and computes *answer sets* representing solutions to the given problem.",
+   "Clingo is distributed under the [MIT License](LICENSE.md)."
+  ],
+  "links": [
+   {
+    "label": "Potassco clingo homepage",
+    "url": "https://potassco.org/clingo/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/potassco/clingo"
+   },
+   {
+    "label": "Releases (source and binary downloads)",
+    "url": "https://github.com/potassco/clingo/releases"
+   },
+   {
+    "label": "Online version of clingo",
+    "url": "https://potassco.org/clingo/run/"
+   }
+  ],
+  "fetch_log": [
+   "https://potassco.org/clingo/ : fetched, but returned only an empty HTML shell with no readable text",
+   "https://github.com/potassco/clingo : worked; README returned",
+   "https://potassco.org/doc/start/ : failed, HTTP 404",
+   "https://github.com/potassco/clingo/blob/master/INSTALL.md : worked; the page's file content was extracted"
+  ]
+ }
+}

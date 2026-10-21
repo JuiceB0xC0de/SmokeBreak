@@ -1,0 +1,130 @@
+{
+ "name": "libimobiledevice",
+ "desc": "Library to communicate with iOS devices natively",
+ "homepage": "https://www.libimobiledevice.org/",
+ "installs_365d": 72597,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "protocol",
+  "afternoon"
+ ],
+ "why": "Talks to iOS devices over the native protocols without Apple's tools, a real door into a closed ecosystem.",
+ "brief": {
+  "what_it_is": "libimobiledevice is a cross-platform, free C library, plus a set of command-line tools, for talking to iOS devices such as iPhones and iPads over Apple's native protocols. It takes a device connection, either USB through usbmuxd or wireless if Wi-Fi sync is enabled on iOS 11 and later, and exposes device services for apps, backup, filesystem, debugging, activation, provisioning, SpringBoard, syslog, and firmware updates. Output is device data returned through the C API or printed by the bundled utilities, such as ideviceinfo printing device key/value details. The bundled tools are ideviceinfo, ideviceactivation, idevicediagnostics, idevicebackup2, idevicescreenshot, idevicesyslog, ideviceinstaller and others, 22 executables in the Homebrew listing.",
+  "why_it_exists": "The homepage says Linux enthusiasts were not amused by hardware like the iPhone 2G, and because iTunes was not available for Linux, libiphone was born, which became libimobiledevice with the goal to \"bring freedom and 'allow penguins to talk to fruits'\".",
+  "how_it_works": "The library reimplements the native protocols itself and, per the homepage, does not depend on or bundle any existing libraries from Apple. Connections go through usbmuxd, which the release notes describe as a socket daemon that multiplexes connections from and to iOS devices. The C API opens a device with idevice_new_with_options, then performs a lockdown handshake (lockdownd_client_new_with_handshake) before reading values such as DeviceColor.",
+  "commands_seen": [
+   {
+    "cmd": "ideviceinfo -k ProductVersion",
+    "context": "Prints one device key, here the iOS version (example output 12.4). The FAQ says running plain ideviceinfo is the test that the install worked."
+   },
+   {
+    "cmd": "ideviceinfo -s",
+    "context": "Dumps the full set of device details in simple key: value form, such as DeviceName, ProductType, BuildVersion and WiFiAddress (example output is from an iPhone 6 Plus)."
+   },
+   {
+    "cmd": "ideviceactivation state",
+    "context": "Reports the device's activation state, shown in the example as ActivationState: Activated."
+   },
+   {
+    "cmd": "idevicediagnostics restart",
+    "context": "Restarts the connected device; the example output is 'Restarting device.'"
+   },
+   {
+    "cmd": "brew install libimobiledevice",
+    "context": "Homebrew install option for macOS, listed under the Mac tab's Homebrew choice."
+   },
+   {
+    "cmd": "sudo port install libimobiledevice",
+    "context": "MacPorts install option for macOS."
+   },
+   {
+    "cmd": "mkdir -p limd-build && cd limd-build && curl -Ls -o limd-build-macos.sh https://is.gd/limdmacos && bash ./limd-build-macos.sh",
+    "context": "The recommended macOS source route: the page lists these as separate lines, which builds the whole stack and asks for the sudo password to install into /usr/local. Xcode Command Line Tools must be installed first."
+   },
+   {
+    "cmd": "./autogen.sh --prefix=/opt/local --enable-debug && make && sudo make install",
+    "context": "Source build on Debian and Raspberry Pi OS, shown as separate commands after installing the build dependencies with apt-get."
+   },
+   {
+    "cmd": "sudo apt-get install usbmuxd libimobiledevice6 libimobiledevice-utils",
+    "context": "Installs the packaged daemon and tools on Debian or Ubuntu, avoiding a source build."
+   },
+   {
+    "cmd": "sudo zypper install libimobiledevice6 usbmuxd",
+    "context": "Installs the packaged daemon and library on openSUSE."
+   },
+   {
+    "cmd": "pacman -S base-devel git mingw-w64-x86_64-gcc make libtool autoconf automake-wrapper",
+    "context": "Prerequisite packages for the MSYS2 MinGW 64-bit shell on Windows, the official way to compile the project there."
+   }
+  ],
+  "install_notes": "Linux: either distro packages (apt or zypper) or a source build from the Debian/Raspberry Pi OS dependency list (libplist-dev, libimobiledevice-glue-dev, libusbmuxd-dev, libssl-dev, usbmuxd), then autogen.sh, make, and sudo make install. macOS: the recommended route is the build script (requires Xcode Command Line Tools and a sudo password), with MacPorts or Homebrew as alternatives. Windows: use MSYS2, and you need Apple Mobile Device Support from iTunes installed because usbmuxd is not fully supported there. No account or runtime is mentioned. The device has to be plugged in over USB first, or set up for Wi-Fi sync for wireless use.",
+  "standout": "It is a clean-room reimplementation of Apple's device protocols, so it reaches iOS services without Apple's own libraries, and the object-oriented C design is meant to make bindings in other languages easy. Using it, a Linux or other non-Apple machine can read device info, restore firmware, and drive services that normally need iTunes.",
+  "status": "Maintained. The homepage lists libimobiledevice 1.4.0 (2025-10-10, described as a development release, with the note that releases will now be more frequent), libirecovery 1.3.1 (2025-10-17), and ideviceinstaller 1.2.0 (2025-10-30), with news items dated October 2025. Some dependencies are older: usbmuxd 1.1.1 is from 2020-06-15 and idevicerestore 1.0.0 from 2020-06-15.",
+  "caveats": "Music sync to newer devices is not supported, according to the FAQ. Windows support is partial, needs iTunes' Apple Mobile Device Support, and usbmuxd is not fully supported there. Wireless access requires Wi-Fi sync and iOS 11 or later. Licensing is mixed across the stack: libimobiledevice and most libraries are LGPL-2.1, usbmuxd and ideviceinstaller are GPL-2.0, and idevicerestore is LGPL-3.0. The 1.4.0 release notes say 'definitely some' bug fixes were left out. The homepage's example outputs are from old devices and firmware (iOS 12.4), so they are illustrative.",
+  "quotes": [
+   "A cross-platform FOSS library written in C to communicate with iOS devices natively.",
+   "Due to the reimplemention it does not depend on using or bundling any existing libraries from Apple.",
+   "To test if you installed everything correctly plug in your device and run \"ideviceinfo\" within a terminal. Congratulations if it prints a lot of details about your device."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.libimobiledevice.org/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.libimobiledevice.org/ \u2014 fetched OK; the homepage carries the feature, download, install, FAQ and release content, so no further pages were followed."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A clean-room implementation of iOS protocols lets non-Apple machines inspect and operate device services, opening a rare window into a closed ecosystem."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "libimobiledevice",
+  "tldr": "A free C library and command-line toolkit that talks to iPhones and iPads over Apple's own protocols, no iTunes needed, so you can read device info, logs and screenshots from a terminal.",
+  "deeper_look": "libimobiledevice is a cross-platform C library plus a set of small command-line tools for talking to iOS devices. It connects over USB through a daemon called usbmuxd, or over Wi-Fi if Wi-Fi sync is enabled on iOS 11 and later. Through that connection it reaches the services a phone exposes: backup, filesystem access, syslog, diagnostics, provisioning, debugging, screenshots and more. Each service gets its own executable, such as `ideviceinfo`, `idevicesyslog` or `idevicebackup2`.\n\nIt started because, in the homepage's words, Linux enthusiasts were not amused by hardware like the iPhone 2G, and iTunes did not exist for Linux. The project, first called libiphone, set out to \"bring freedom and 'allow penguins to talk to fruits'\". The library reimplements the protocols itself and, per the homepage, does not depend on or bundle any existing libraries from Apple.\n\nThe idea underneath is that a phone is a network-style peer with a set of named services behind a handshake. The C API opens a device, performs a lockdown handshake with the lockdown daemon on the phone, then asks for values or starts services. Once you see that shape, the tools read like a map of what the phone offers, and the object-oriented C design is meant to make bindings for other languages easy.",
+  "install": "brew install libimobiledevice\n# Needs an iPhone or iPad plugged in over USB (or set up for Wi-Fi sync, iOS 11+).\n# On Debian/Ubuntu: sudo apt-get install usbmuxd libimobiledevice6 libimobiledevice-utils",
+  "try_this": [
+   {
+    "cmd": "ideviceinfo -k ProductVersion",
+    "what_happens": "Prints a single device key, here the iOS version of the connected device."
+   },
+   {
+    "cmd": "ideviceinfo -s",
+    "what_happens": "Dumps the device's details as simple key: value lines, including DeviceName, ProductType, BuildVersion and WiFiAddress."
+   },
+   {
+    "cmd": "idevicediagnostics restart",
+    "what_happens": "Restarts the connected device and prints 'Restarting device.'"
+   }
+  ],
+  "whats_unique": "It is a clean-room reimplementation of Apple's device protocols, so a Linux or other non-Apple machine can reach iOS services that normally need iTunes. Each service is exposed as its own small tool.",
+  "caveats": "You need a physical iOS device; Windows support is partial and needs iTunes' Apple Mobile Device Support, and the homepage's example outputs come from old devices and iOS 12.4.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "ios",
+   "usb",
+   "protocol",
+   "c-library"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.libimobiledevice.org/"
+   }
+  ]
+ }
+}

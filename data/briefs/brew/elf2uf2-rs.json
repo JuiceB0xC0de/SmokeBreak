@@ -1,0 +1,74 @@
+{
+ "name": "elf2uf2-rs",
+ "desc": "Convert ELF files to UF2 for USB Flashing Bootloaders",
+ "homepage": "https://github.com/JoNil/elf2uf2-rs",
+ "installs_365d": 122,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "quick",
+  "needs-hardware",
+  "firmware",
+  "embedded"
+ ],
+ "why": "Converts ELF binaries into UF2 images for flashing Raspberry Pi Pico boards, a neat look at how bootloaders expect firmware.",
+ "brief": {
+  "what_it_is": "elf2uf2-rs is a command-line tool written in Rust that converts ELF binaries into UF2 images, the drag-and-drop firmware format used by USB bootloaders. Its input is a compiled ELF file. It can write a UF2 file to disk with the convert subcommand, or deploy the ELF directly to a connected board with the deploy subcommand. The README says it targets RP2040, RP2350 and other supported boards, and the deploy options include family selection for RP2040, RP2350 (Arm secure, Arm non-secure, RISC-V) and RP2XXX variants.",
+  "why_it_exists": "The README describes it as a tool for converting ELF binaries into UF2 format and flashing them to a microcontroller. It credits Raspberry Pi's own elf2uf2 tool from the pico-sdk as the basis for the work.",
+  "how_it_works": "The tool reads the ELF file and packages its contents as UF2 blocks tagged with a board family ID, selected with --family (default rp2040). With deploy it sends the result to a connected board, and -s connects to serial afterward while -t sends a termination message on Ctrl+C. The README gives a Cargo runner setup so that cargo run builds the project, converts it, and flashes the board in one step. The README does not go deeper into the UF2 block layout or the USB transfer.",
+  "commands_seen": [
+   {
+    "cmd": "cargo install elf2uf2-rs",
+    "context": "Installs the tool from crates.io; this is the install command the README shows."
+   },
+   {
+    "cmd": "elf2uf2-rs deploy --family rp2040 firmware.elf",
+    "context": "Deploys a compiled ELF straight to a connected RP2040 board, with the family set explicitly."
+   },
+   {
+    "cmd": "runner = \"elf2uf2-rs deploy -t -s\"",
+    "context": "Line for .cargo/config.toml under the thumb target section; makes cargo run flash the board and attach to serial, with Ctrl+C termination enabled."
+   },
+   {
+    "cmd": "runner = \"elf2uf2-rs deploy -t -s --family rp2350-arm-s\"",
+    "context": "Commented-out alternative runner for Pico 2 (Cortex-M23/M33) boards."
+   },
+   {
+    "cmd": "target = \"thumbv6m-none-eabi\"",
+    "context": "Commented-out build target for Pico 1 (Cortex-M0/M0+) in the example .cargo/config.toml."
+   },
+   {
+    "cmd": "target = \"thumbv8m.main-none-eabihf\"",
+    "context": "Build target set in the example for Pico 2 (Cortex-M23/M33)."
+   },
+   {
+    "cmd": "DEFMT_LOG = \"debug\"",
+    "context": "Environment variable in the example [env] section that sets defmt log level for the firmware."
+   }
+  ],
+  "install_notes": "Install with cargo install elf2uf2-rs, so a Rust toolchain is needed. For Rust projects, add a [target.'cfg(all(target_arch = \"arm\", target_os = \"none\"))'] section with the runner to .cargo/config.toml and set the build target for your board (thumbv6m-none-eabi for Pico 1, thumbv8m.main-none-eabihf for Pico 2). The board has to be in its USB bootloader mode for deploy to find it. The README does not spell out that step, so it is an inference from how UF2 bootloaders work.",
+  "standout": "It turns a flash-and-run loop into a cargo runner, so cargo run builds, converts and flashes in one step. It also does the UF2 conversion without the Raspberry Pi SDK, which is a useful look at what the bootloader expects.",
+  "status": "unknown. The README shows no release version, changelog or last-commit date, and I did not fetch the repository's commit or release pages to check.",
+  "caveats": "The README does not state a license. Only the Raspberry Pi family names are listed as examples, and the README says only 'other supported boards' without naming them. The deploy path depends on a board in USB bootloader mode and on the correct --family value for the chip, so a wrong family can fail. Installing needs a working Rust toolchain.",
+  "quotes": [
+   "A tool for converting ELF binaries into UF2 format and flashing them to a microcontroller (RP2040, RP2350, etc.) and other supported boards.",
+   "Deploy ELF directly to a connected board",
+   "Based upon Raspberry Pi's elf2uf2"
+  ],
+  "links": [
+   {
+    "label": "elf2uf2-rs homepage and README",
+    "url": "https://github.com/JoNil/elf2uf2-rs"
+   },
+   {
+    "label": "Raspberry Pi elf2uf2 (original tool credited in README)",
+    "url": "https://github.com/raspberrypi/pico-sdk/tree/master/tools/elf2uf2"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/JoNil/elf2uf2-rs - fetched OK; GitHub repository README returned. No further links followed because the README covered usage, options and install."
+  ]
+ }
+}

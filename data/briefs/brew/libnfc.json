@@ -1,0 +1,86 @@
+{
+ "name": "libnfc",
+ "desc": "Low level NFC SDK and Programmers API",
+ "homepage": "https://github.com/nfc-tools/libnfc",
+ "installs_365d": 724,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "library",
+  "protocol"
+ ],
+ "why": "A low-level NFC SDK that lets you talk to readers and tags directly, a real door into contactless protocols.",
+ "brief": {
+  "what_it_is": "libnfc is a free, open-source C library that gives userspace programs access to NFC (near field communication) reader hardware. Programs call it to open a supported reader, send it commands, and read back responses from tags and other NFC devices. The README calls it a library that allows userspace application access to NFC devices. The brew entry lists 21 command-line tools built on it, including nfc-list, nfc-poll, nfc-mfclassic, nfc-emulate-tag, nfc-relay, and pn53x-tamashell.",
+  "why_it_exists": "The README gives no stated motivation beyond providing userspace access to NFC devices. Its header credits a list of historical contributors and says the project is Free/Libre Near Field Communication (NFC) library.",
+  "how_it_works": "The library talks to reader chips such as the PN53x/PN532 family over USB, serial (for example pn532_uart:/dev/ttyACM0), or PC/SC middleware, depending on which drivers were built in. A libnfc.conf file and per-device files in a devices.d directory list the readers to use, and environment variables such as LIBNFC_DEVICE and LIBNFC_LOG_LEVEL can override them at runtime. The README does not describe the internals in more depth.",
+  "commands_seen": [
+   {
+    "cmd": "autoreconf -vis",
+    "context": "Generates the configure script when building from a git clone rather than a release tarball."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Standard autotools configuration step before building; accepts --with-drivers=... to select drivers."
+   },
+   {
+    "cmd": "./configure --with-drivers=pcsc",
+    "context": "Builds with the PC/SC driver so Feitian bR500 and R502 readers can be used through the proprietary PCSC driver."
+   },
+   {
+    "cmd": "sudo cp contrib/udev/93-pn53x.rules /lib/udev/rules.d/",
+    "context": "Installs the provided udev rules so an unprivileged user can drive the device on udev-based Linux systems."
+   },
+   {
+    "cmd": "sudo mkdir /etc/nfc",
+    "context": "Creates the configuration directory when libnfc was configured with --sysconfdir=/etc, before copying in the sample config."
+   },
+   {
+    "cmd": "sudo cp libnfc.conf.sample /etc/nfc/libnfc.conf",
+    "context": "Copies the commented sample configuration file into place as the active libnfc configuration."
+   },
+   {
+    "cmd": "LIBNFC_AUTO_SCAN=true nfc-scan-device",
+    "context": "Lists the names and connection strings of all NFC devices found, which are needed for configuration."
+   },
+   {
+    "cmd": "LIBNFC_LOG_LEVEL=3 nfc-list -v",
+    "context": "Runs nfc-list with debug logging turned on, which the README asks for when reporting bugs."
+   },
+   {
+    "cmd": "grep -A 1 CFBundleShortVersionString /usr/lib/pcsc/drivers/ifd-ccid.bundle/Contents/Info.plist",
+    "context": "Checks the installed CCID driver version on Linux; readers need CCID 1.4.25 or later."
+   }
+  ],
+  "install_notes": "Build from source with ./configure and make, then make install; a release tarball with ./configure included is offered as an alternative to a git clone. Needs libusb-0.1 for the pn53x_usb and acr122_usb drivers, and pcsc-lite for the acr122_pcsc driver. The regression test suite needs the cutter framework. After install, you may need the provided udev rules (Linux) or devd rules file (FreeBSD, contrib/devd/pn53x.conf), and optionally a libnfc.conf in /etc/nfc. On Linux 3.1 and later, the kernel modules nfc, pn533 and pn533_usb must be blacklisted using contrib/linux/blacklist-libnfc.conf. Touchatag and ACR122 readers may need the libccid_Info.plist ifdDriverOptions value changed and pcscd restarted.",
+  "standout": "It is a low-level reader SDK rather than a high-level wrapper, and the tool list goes past simple reading into card emulation, relay, MIFARE work, and a PN53x diagnostic shell. Based on the README alone, the project's own pitch is about userspace device access.",
+  "status": "unknown. The README does not give a release date, and I did not fetch the releases or commits pages. It does say the official website and forum are gone and point to Wayback Machine copies, and that the development site is the GitHub repository.",
+  "caveats": "The README covers POSIX systems only; Windows needs a separate README-Windows.md, which I did not read. Several drivers depend on libusb-0.1 or pcsc-lite. Libnfc cannot run concurrently with the SCL3711 PCSC proprietary driver. ACR122 setups need changes to the libccid plist and pcscd restarts. The official site and forum are offline. The header marks the project as Free/Libre, but I did not see a license named in what I read. The brew entry has no caveats.",
+  "quotes": [
+   "libnfc is a library which allows userspace application access to NFC devices.",
+   "Important note: this file covers POSIX systems, for Windows please read README-Windows.md",
+   "The official web site is gone, browse a copy via the WayBackMachine."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/nfc-tools/libnfc"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/nfc-tools/libnfc/releases/"
+   },
+   {
+    "label": "Community page",
+    "url": "http://www.libnfc.org/community"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/nfc-tools/libnfc: worked, README returned in full (the repository's README was the only text read)"
+  ]
+ }
+}

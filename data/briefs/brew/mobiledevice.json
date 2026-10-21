@@ -1,0 +1,95 @@
+{
+ "name": "mobiledevice",
+ "desc": "CLI for Apple's Private (Closed) Mobile Device Framework",
+ "homepage": "https://github.com/imkira/mobiledevice",
+ "installs_365d": 518,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "protocol",
+  "reverse-engineering",
+  "needs-hardware",
+  "apple"
+ ],
+ "why": "Drives Apple's private MobileDevice framework from the shell, a door into how iOS devices talk to desktops, though niche and Apple-specific.",
+ "brief": {
+  "what_it_is": "mobiledevice is a command-line utility for macOS that talks to iPhones and iPads connected over USB, using Apple's private MobileDevice framework. It can list connected devices by UDID, read device and app properties, install and uninstall .app folders, look up an app's bundle identifier from a local .app, and forward local TCP ports to a port on the device. Input is a device UDID or a bundle ID or .app path, and output is plain text on stdout, with errors on stderr and a non-zero exit status on failure.",
+  "why_it_exists": "The README says it automates tasks such as installing and uninstalling apps on an iPhone or iPad without doing it by hand in Xcode or iTunes. It also says 'You don't need a jailbroken device!'",
+  "how_it_works": "The README does not explain the internals beyond saying the tool interacts with Apple's Private Mobile Device Framework. The tunnel command listens on a local port on the Mac and forwards each connection over USB to the given port on the device. Commands take an optional -t timeout and -u UDID, and default to the first detected device.",
+  "commands_seen": [
+   {
+    "cmd": "brew install mobiledevice",
+    "context": "Homebrew install, the route the README lists first. It is preceded by brew update."
+   },
+   {
+    "cmd": "git clone git://github.com/imkira/mobiledevice.git",
+    "context": "Manual build: clone the repository."
+   },
+   {
+    "cmd": "make",
+    "context": "Manual build: compile the tool from the cloned directory."
+   },
+   {
+    "cmd": "make install",
+    "context": "Manual build: install the compiled tool onto the system."
+   },
+   {
+    "cmd": "mobiledevice help",
+    "context": "Prints the usage screen listing every subcommand and its options."
+   },
+   {
+    "cmd": "mobiledevice list_devices",
+    "context": "Lists the UDID of each connected device, one per line."
+   },
+   {
+    "cmd": "mobiledevice get_device_prop ProductType",
+    "context": "Prints one device property value, here ProductType, for the first detected device."
+   },
+   {
+    "cmd": "mobiledevice install_app path/to/my_application.app",
+    "context": "Installs a .app folder onto the device. The README notes that a .ipa will not work for get_bundle_id, and this example uses a .app."
+   },
+   {
+    "cmd": "mobiledevice uninstall_app com.mycompany.myapp",
+    "context": "Removes the app with the given bundle identifier from the device."
+   },
+   {
+    "cmd": "mobiledevice tunnel 8080 80",
+    "context": "Forwards Mac localhost port 8080 to device TCP port 80 until the process is stopped with CTRL-C."
+   },
+   {
+    "cmd": "mobiledevice get_bundle_id path/to/my_application.app",
+    "context": "Prints the bundle identifier from a local .app folder. This does not touch a device."
+   }
+  ],
+  "install_notes": "Homebrew is the easy path. The README's manual route needs git and make, with Xcode 3 or later and the iOS SDK installed, and a Mac running OS X 10.6 or later. Installing apps onto a device requires iOS development certificates to be installed already. The device must be plugged into the Mac over USB. The README says iPhone 3G and later should work, and that iPad works too, and lists iPhone 4, 5 and 6 as tested. It does not describe any further first-run configuration.",
+  "standout": "The tunnel subcommand gives a USB-only route from a Mac's localhost to a TCP server running on an iOS device, which the README says avoids needing Wi-Fi or a cellular connection. It is a neat shell-level view of how the desktop side talks to a phone.",
+  "status": "unknown. The README has no release dates, changelog, or version numbers, and I did not fetch the commit history or releases page. The Travis CI badge points at travis-ci.org, which suggests the CI setup predates the move to a newer service. The README's Mac OS X 10.6 and iPhone 4 to 6 references also point to an older project.",
+  "caveats": "This relies on Apple's private, closed framework, so it is outside any public API and could break with OS updates. The README says it requires macOS and Xcode with the iOS SDK. Installing apps needs iOS development certificates. The Homebrew formula is the easy install route, but the README's device list is dated. The README gives no explicit note about the MIT license beyond the license heading. The tunnel stops all forwarded connections when the process is terminated.",
+  "quotes": [
+   "mobiledevice is a command line utility for interacting with Apple's Private Mobile Device Framework.",
+   "You don't need a jailbroken device!",
+   "Please fork this project and send me a pull request!"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/imkira/mobiledevice"
+   },
+   {
+    "label": "Japanese README",
+    "url": "https://github.com/imkira/mobiledevice/blob/master/README_JP.md"
+   },
+   {
+    "label": "Contributors graph",
+    "url": "https://github.com/imkira/mobiledevice/graphs/contributors"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/imkira/mobiledevice (fetched; GitHub repo, README returned successfully)"
+  ]
+ }
+}

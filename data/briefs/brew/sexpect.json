@@ -1,0 +1,87 @@
+{
+ "name": "sexpect",
+ "desc": "Expect for shells",
+ "homepage": "https://github.com/clarkwang/sexpect",
+ "installs_365d": 38,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "tui",
+  "language"
+ ],
+ "why": "An Expect-style automation tool written in shell, a neat way to script interactive programs and watch them respond.",
+ "brief": {
+  "what_it_is": "sexpect is an Expect-style automation tool written for shell users. It is described as another implementation of Expect, built for sh, bash, ksh, zsh and similar shells. You start an interactive program with 'sexpect spawn PROGRAM', and it runs in the background on a pseudo-terminal. Other sub-commands such as send, expect, wait and interact then drive that program and read its output. Scripts get back exit codes and match output, so they can branch on what the program printed.",
+  "why_it_exists": "The README presents sexpect as another implementation of Expect, designed specifically for shell scripts rather than Tcl, Perl or Python. The aim is to script interactive programs from plain shell.",
+  "how_it_works": "sexpect uses a client/server model. 'sexpect spawn' forks a background daemon that allocates a pty and runs the program there. Each later sub-command is a short-lived client that talks to that server over a Unix socket file, set with -sock or the SEXPECT_SOCKFILE environment variable. Expect results come back as exit codes, and the chkerr sub-command tells EOF from timeout.",
+  "commands_seen": [
+   {
+    "cmd": "cmake ..",
+    "context": "Build step from the README: run inside the build directory after creating it, to configure the project with CMake."
+   },
+   {
+    "cmd": "make",
+    "context": "Build step from the README, run after cmake, to compile sexpect."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs to /usr/local by default, so sexpect lands in /usr/local/bin/."
+   },
+   {
+    "cmd": "cmake -D CMAKE_INSTALL_PREFIX=/opt/sexpect  ..",
+    "context": "Changes the install location from the /usr/local default to /opt/sexpect at configure time."
+   },
+   {
+    "cmd": "export SEXPECT_SOCKFILE=~/.sexpect-bash.sock",
+    "context": "From the manual: sets the socket file once in the environment so later commands do not need -sock."
+   },
+   {
+    "cmd": "sexpect spawn bash --norc",
+    "context": "From the manual's example: starts a background server that runs bash with --norc on a new pty."
+   },
+   {
+    "cmd": "sexpect expect -re foobar",
+    "context": "From the manual: waits until the output matches the extended regex foobar. Exit status 0 means matched."
+   },
+   {
+    "cmd": "sexpect chkerr -errno $ret -is eof",
+    "context": "From the manual's Bash example: after a failed expect, checks whether the failure was EOF from the spawned process."
+   },
+   {
+    "cmd": "sexpect expect_out -index 0",
+    "context": "From the manual: prints the substring that matched the whole pattern. Index 1 to 9 give regex group captures."
+   }
+  ],
+  "install_notes": "The README gives no Homebrew-specific steps. Installing from source uses CMake: create a build directory, run cmake .. then make and make install. The default prefix is /usr/local. Nothing beyond a C toolchain and CMake is mentioned. There is no account, runtime or configuration step. The socket file is created automatically if it does not exist.",
+  "standout": "Expect-style control is usually bundled with a scripting language, but sexpect exposes it as ordinary shell commands. Each step is a separate process, and results come back as exit codes, so a plain if/elif in bash can branch on match, EOF or timeout. The background daemon keeps the pty alive between calls.",
+  "status": "unknown. The README and manual show no release date, version number or last-commit date in the pages I read. The tested-platform list names Debian 9, macOS 10.13 and FreeBSD 11.1, which suggests the project was last worked on around 2017 to 2018, but that is inference, not evidence.",
+  "caveats": "The README's tested-platform list is old: OpenWRT 15.05.1, Debian 9, macOS 10.13, FreeBSD 11.1 and Cygwin on Windows 10. Newer systems are not listed. Build is via CMake, not a one-line install. send caps each call at 1024K bytes. interact fails when not on a tty. The spawned process can receive SIGHUP when the server closes the pty. The license was not visible in the pages I read.",
+  "quotes": [
+   "sexpect is another implementation of Expect which is specifically designed for Shell scripts (sh, bash, ksh, zsh, ...).",
+   "sexpect is designed in the client/server model.",
+   "Other sexpect sub-commands (send, expect, wait, ...) communicate to the server as client commands."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repo)",
+    "url": "https://github.com/clarkwang/sexpect"
+   },
+   {
+    "label": "Manual (doc/sexpect.adoc)",
+    "url": "https://github.com/clarkwang/sexpect/blob/master/doc/sexpect.adoc"
+   },
+   {
+    "label": "Examples directory",
+    "url": "https://github.com/clarkwang/sexpect/tree/master/examples"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/clarkwang/sexpect (homepage, worked: README returned)",
+   "https://github.com/clarkwang/sexpect/blob/master/doc/sexpect.adoc (manual, worked: full manual text extracted from the GitHub page, with page chrome around it)",
+   "examples/ directory linked from the README was not fetched; two-fetch limit was used for the README and manual, and the examples link is listed unverified"
+  ]
+ }
+}

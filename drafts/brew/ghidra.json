@@ -1,0 +1,147 @@
+{
+ "name": "ghidra",
+ "desc": "Multi-platform software reverse engineering framework",
+ "homepage": "https://github.com/NationalSecurityAgency/ghidra",
+ "installs_365d": 32229,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "gui",
+  "reverse-engineering"
+ ],
+ "why": "A famous NSA disassembler, well known in security circles, but it is a major default for reverse engineers.",
+ "brief": {
+  "what_it_is": "Ghidra is a software reverse engineering (SRE) framework from the NSA Research Directorate for analysing compiled code on Windows, macOS, and Linux. It takes executables in a wide range of formats and processor instruction sets and provides disassembly, assembly, decompilation, graphing, and scripting, plus what the README calls hundreds of other features. It can run interactively or in automated (headless) modes. Users can write extensions or scripts in Java or Python.",
+  "why_it_exists": "The README says Ghidra was built to solve scaling and teaming problems on complex SRE efforts and to provide a customizable, extensible SRE research platform. It also says NSA has applied it to analysing malicious code and to understanding potential vulnerabilities in networks and systems.",
+  "how_it_works": "",
+  "commands_seen": [
+   {
+    "cmd": "./ghidraRun",
+    "context": "Launches Ghidra from the extracted release directory (ghidraRun.bat on Windows)."
+   },
+   {
+    "cmd": "./support/pyghidraRun",
+    "context": "Launches Ghidra through PyGhidra, the Python-based launcher (support\\pyghidraRun.bat on Windows)."
+   },
+   {
+    "cmd": "unzip ghidra-master",
+    "context": "Unpacks the downloaded source archive for a build from source."
+   },
+   {
+    "cmd": "cd ghidra-master",
+    "context": "Changes into the unpacked source directory before building."
+   },
+   {
+    "cmd": "git clone https://github.com/NationalSecurityAgency/ghidra.git",
+    "context": "Alternative to the zip download: clones the source repository."
+   },
+   {
+    "cmd": "gradle -I gradle/support/fetchDependencies.gradle",
+    "context": "Downloads additional build dependencies into the source repository. ./gradlew can replace gradle if there is internet access."
+   },
+   {
+    "cmd": "gradle buildGhidra",
+    "context": "Creates the development build, which is written to build/dist/."
+   },
+   {
+    "cmd": "gradle prepdev eclipse buildNatives",
+    "context": "Prepares the environment for developing Ghidra itself in Eclipse."
+   },
+   {
+    "cmd": "./gradlew",
+    "context": "Gradle wrapper that can stand in for the gradle command when an internet connection is available (gradlew.bat on Windows)."
+   }
+  ],
+  "install_notes": "For a pre-built release: install JDK 25 64-bit, download the official multi-platform zip named ghidra_<version>_<release>_<date>.zip from the Releases Assets list (not the 'Source Code' files), and extract it. Do not extract over an existing installation. Launch with ./ghidraRun. For building from source: JDK 25 64-bit; Gradle 9.1.0 or newer (or the wrapper); Python 3 from 3.9 to 3.15 with bundled pip; GCC or Clang and make on Linux/macOS; on Windows, Visual Studio 2017+ or Microsoft C++ Build Tools with MSVC, Windows SDK, and C++ ATL. The Getting Started document at the root of an installation covers troubleshooting. The GhidraDev Eclipse plugin and the VS Code integration only work against fully built installations.",
+  "standout": "Scripting and extension are first-class in both Java and Python, and the README documents a separate PyGhidra launcher for Python-driven use. The project also points developers to Eclipse with a customised setup, and it has a headless automated mode alongside the GUI.",
+  "status": "Unknown from the README alone. The README has no release date or changelog, and I did not check the commit history or releases page. It does name current toolchain requirements (JDK 25, Gradle 9.1.0+, Python up to 3.15) and includes a live build badge, which suggests active development but does not prove it.",
+  "caveats": "The README opens with a security warning: there are known vulnerabilities in certain versions, so read the Security Advisories first. Installing needs JDK 25, and building from source needs a heavier toolchain, including Visual Studio build tools on Windows. The 'Source Code' zip is the wrong download for a pre-built install. Do not extract over an existing installation. The GhidraDev Eclipse plugin only works against built installations. The README gives no licence information, so check the repository's LICENSE file before reuse. The scout note calling it a major default is not supported by the README, so I did not repeat it.",
+  "quotes": [
+   "Ghidra is a software reverse engineering (SRE) framework created and maintained by the National Security Agency Research Directorate.",
+   "Ghidra was built to solve scaling and teaming problems on complex SRE efforts, and to provide a customizable and extensible SRE research platform.",
+   "WARNING: There are known security vulnerabilities within certain versions of Ghidra."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/NationalSecurityAgency/ghidra"
+   },
+   {
+    "label": "Releases (pre-built zip downloads)",
+    "url": "https://github.com/NationalSecurityAgency/ghidra/releases"
+   },
+   {
+    "label": "Security Advisories",
+    "url": "https://github.com/NationalSecurityAgency/ghidra/security/advisories"
+   },
+   {
+    "label": "Getting Started doc (repo path GhidraDocs/GettingStarted.md, URL constructed from the README's relative link)",
+    "url": "https://github.com/NationalSecurityAgency/ghidra/blob/master/GhidraDocs/GettingStarted.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/NationalSecurityAgency/ghidra (homepage, README returned, worked)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Ghidra turns compiled binaries into explorable, decompiled programs, offering a genuinely revealing way to take software apart beyond ordinary developer tooling."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Ghidra",
+  "tldr": "A reverse engineering framework from the NSA that disassembles and decompiles compiled programs across many processor architectures, with a GUI and scripting in Java or Python.",
+  "deeper_look": "Ghidra takes a compiled executable, in a wide range of file formats and for many instruction sets, and turns it back into something a person can read. It disassembles, decompiles, graphs, and lets you annotate as you go. It runs on Windows, macOS, and Linux, and it can also run headless for automated analysis.\n\nThe README says it was built \"to solve scaling and teaming problems on complex SRE efforts, and to provide a customizable and extensible SRE research platform.\" The NSA Research Directorate created and maintains it, and the README says the agency has used it to analyse malicious code and to understand potential vulnerabilities in networks and systems.\n\nThe door it opens is the idea that a binary is not opaque. Once you can see the machine code lifted into readable pseudo-code, you can ask what a program does without the source. Scripts and extensions can be written in Java or Python, so you can automate the questions you keep asking. A separate PyGhidra launcher exists for Python-driven use.",
+  "install": "brew install ghidra\nRequires a JDK; the formula pulls in openjdk@21. The README's own notes for the pre-built release name JDK 25, so check the Getting Started document if the launcher complains about the Java version.",
+  "try_this": [
+   {
+    "cmd": "ghidraRun",
+    "what_happens": "Launches the Ghidra GUI, where you create a project and import a binary to analyse."
+   },
+   {
+    "cmd": "pyghidraRun",
+    "what_happens": "Launches Ghidra through PyGhidra, the Python-based launcher."
+   },
+   {
+    "cmd": "ghidraRun --help",
+    "what_happens": "Prints whatever launch options the launcher offers."
+   }
+  ],
+  "whats_unique": "It is a full-featured decompiler and disassembler that is open source under Apache-2.0, with scripting in both Java and Python and a headless mode alongside the GUI.",
+  "caveats": "The README opens with a warning that certain versions have known security vulnerabilities, so read the Security Advisories before using it on anything sensitive.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "gui",
+   "reverse-engineering",
+   "disassembler",
+   "decompiler",
+   "java",
+   "python"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/NationalSecurityAgency/ghidra"
+   },
+   {
+    "label": "Releases (pre-built zip downloads)",
+    "url": "https://github.com/NationalSecurityAgency/ghidra/releases"
+   },
+   {
+    "label": "Security Advisories",
+    "url": "https://github.com/NationalSecurityAgency/ghidra/security/advisories"
+   },
+   {
+    "label": "Getting Started doc",
+    "url": "https://github.com/NationalSecurityAgency/ghidra/blob/master/GhidraDocs/GettingStarted.md"
+   }
+  ]
+ }
+}

@@ -1,0 +1,151 @@
+{
+ "name": "anyquery",
+ "desc": "Query anything with SQL",
+ "homepage": "https://anyquery.dev",
+ "installs_365d": 395,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "tui",
+  "language"
+ ],
+ "why": "Runs SQL across many external sources like apps and APIs, a fun door into treating everything as a database.",
+ "brief": {
+  "what_it_is": "Anyquery is a SQL query engine, built on SQLite, that exposes apps, files, and databases as tables you can query with one dialect. Its sources include GitHub, Notion, Spotify, Gmail, Airtable, Google Sheets, Apple Notes, Chrome, Todoist, CSV and Parquet files, and logs, with 40+ in total via plugins. It takes SQL in through a shell, through a MySQL-protocol server, or through an MCP server for LLM clients, and returns rows from the underlying services. It also supports INSERT, UPDATE, and DELETE on some sources such as Notion, Airtable, and Google Sheets.",
+  "why_it_exists": "The homepage pitches it as one way to ask questions of everything you already use, so you don't have to learn the Notion API, write a Gmail scraper, or install four CLI tools. The README frames it as a SQL query engine that can run queries on pretty much anything.",
+  "how_it_works": "Anyquery runs on SQLite and uses plugins to turn each external service or file type into a table, so you can JOIN across them. It runs locally and the homepage says API tokens never leave the machine. It can run as an MCP server so LLM clients can query your data, or as a MySQL-compatible server so tools like Metabase and TablePlus can connect.",
+  "commands_seen": [
+   {
+    "cmd": "brew install anyquery",
+    "context": "Homebrew install on macOS and Linux, shown on the homepage and in the README."
+   },
+   {
+    "cmd": "curl -fsSL https://anyquery.dev/install.sh | sh",
+    "context": "Quick install for macOS and Linux that downloads the binary, verifies its checksum, and adds it to PATH without sudo."
+   },
+   {
+    "cmd": "anyquery i github spotify notion",
+    "context": "Homepage example for installing your first plugins after the base install."
+   },
+   {
+    "cmd": "SELECT * FROM github;",
+    "context": "Homepage hero example showing a SQL query against the GitHub source."
+   },
+   {
+    "cmd": "anyquery mcp --stdio",
+    "context": "Starts the MCP server over stdio, to be launched by an LLM client such as Claude Desktop."
+   },
+   {
+    "cmd": "anyquery mcp --host 127.0.0.1 --port 8070",
+    "context": "Starts the MCP server over an HTTP and SSE tunnel on a local port."
+   },
+   {
+    "cmd": "anyquery gpt",
+    "context": "Prints an ID to paste into function-calling clients such as ChatGPT or TypingMind."
+   },
+   {
+    "cmd": "anyquery server &",
+    "context": "Launches the MySQL-compatible server in the background."
+   },
+   {
+    "cmd": "mysql -u root -h 127.0.0.1 -P 8070",
+    "context": "Connects a MySQL client to the running Anyquery server on port 8070."
+   },
+   {
+    "cmd": "CGO_ENABLED=1 go install -tags \"vtable fts5 sqlite_json sqlite_math_functions\" github.com/julien040/anyquery@main",
+    "context": "Builds from source with Go, requiring Go 1.26+ and a C compiler because of go-sqlite3 cgo."
+   }
+  ],
+  "install_notes": "Beyond brew, the README lists a quick install script (curl ... | sh), AUR (yay -S anyquery-git or paru -S anyquery-git), APT and YUM/DNF repos hosted by the author, Scoop, Winget (winget install JulienCagniart.anyquery), Chocolatey, and direct binaries from the GitHub releases page. Building from source needs Go 1.26+ and a C compiler (gcc, clang, or mingw on Windows) on PATH. Plugins are installed separately with anyquery i followed by names, and the README says any SQLite extension can be loaded too. No accounts are mentioned for the core engine, though some plugins will need their own API tokens.",
+  "standout": "Most tools in this space cover one source; this one puts 40+ apps, files, and databases behind a single SQLite dialect, with JOINs across them, and writes back to some of them. It also ships as an MCP server with one command, so an LLM can answer questions by running real SQL against your own accounts.",
+  "status": "Appears maintained but the signals are mixed. The README badges show commit activity and an issues tracker, and the install script example references version 0.4.5, while a Go reference badge points at v0.1.3. The homepage says it is built and maintained by one person. I did not find a release date or last-commit date in the pages I read, so the exact recency is unknown.",
+  "caveats": "The core engine is AGPL-3.0, while the RPC library is MIT and each plugin has its own license, so check plugin terms before reuse. Building from source needs Go 1.26+ and cgo with a C toolchain. The README says it is built and maintained by one person, and it currently accepts only minor contributions. The homepage and README both carry sponsor banners, and the homepage also carries a personal internship-seeking notice from the author. The README's license link points to an 'anquery' path, which looks like a typo. Windows is supported through Scoop, Winget, or Chocolatey rather than the shell script. The homepage's own claims are marketing copy, and the sample Spotify conversation is marked as illustrative.",
+  "quotes": [
+   "One binary, one dialect, one way of asking questions.",
+   "You write SELECT and Anyquery does the rest \u2014 across 40+ services and every file on disk.",
+   "Anyquery is built and maintained by one person. Sponsoring keeps it free and open-source."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://anyquery.dev"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://anyquery.dev/docs"
+   },
+   {
+    "label": "Integrations registry",
+    "url": "https://anyquery.dev/integrations"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/julien040/anyquery"
+   }
+  ],
+  "fetch_log": [
+   "https://anyquery.dev: worked, homepage text retrieved.",
+   "https://github.com/julien040/anyquery: worked, README retrieved. I did not follow the docs links further, so the docs were not read directly."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Treating everyday apps and files as joinable SQL tables, with writeback to some sources, is a genuinely surprising interface rather than just another API wrapper."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Anyquery",
+  "tldr": "A SQLite-based query engine that turns GitHub, Notion, Spotify, Gmail, CSV files and 40+ other sources into tables you can SELECT from and JOIN.",
+  "deeper_look": "Anyquery is a SQL engine built on SQLite. Plugins expose each external service or file type as a table, so a query against your GitHub issues, a Google Sheet or a Parquet file uses the same dialect. Sources named in the brief include GitHub, Notion, Spotify, Gmail, Airtable, Apple Notes, Chrome, Todoist, CSV, Parquet and logs, with 40+ in total. Some sources, such as Notion, Airtable and Google Sheets, also accept INSERT, UPDATE and DELETE.\n\nThe pitch is that you stop learning one API or CLI per service. Because everything is a SQLite table, you can JOIN across sources that were never meant to meet. The homepage says it runs locally and that API tokens never leave the machine.\n\nYou can reach it three ways: an interactive shell, a MySQL-compatible server that tools like Metabase and TablePlus can connect to, and an MCP server so an LLM client can run real SQL against your own accounts. The underlying idea is old and appealing: if everything looks like a table, one query language covers all of it.",
+  "install": "brew install anyquery\n# then add plugins for the sources you want:\nanyquery i github spotify notion\n# some plugins need their own API tokens",
+  "try_this": [
+   {
+    "cmd": "anyquery i github spotify notion",
+    "what_happens": "Installs your first plugins so those services show up as tables."
+   },
+   {
+    "cmd": "anyquery server &",
+    "what_happens": "Starts the MySQL-compatible server in the background so other tools can query your data."
+   },
+   {
+    "cmd": "mysql -u root -h 127.0.0.1 -P 8070",
+    "what_happens": "Connects a MySQL client to the running server, where you can run SELECT * FROM github; and similar queries."
+   }
+  ],
+  "whats_unique": "Most tools in this space cover one source. This one puts 40+ apps, files and databases behind a single SQLite dialect, with JOINs across them, and ships an MCP server with one command.",
+  "caveats": "Maintained by one person, with mixed signals on recent activity; the core is AGPL-3.0, each plugin has its own license, and some plugins need API tokens.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "sql",
+   "sqlite",
+   "mcp",
+   "plugins",
+   "cli"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://anyquery.dev"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://anyquery.dev/docs"
+   },
+   {
+    "label": "Integrations registry",
+    "url": "https://anyquery.dev/integrations"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/julien040/anyquery"
+   }
+  ]
+ }
+}

@@ -1,0 +1,141 @@
+{
+ "name": "liquidsoap",
+ "desc": "Audio and video streaming language",
+ "homepage": "https://www.liquidsoap.info",
+ "installs_365d": 232,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "audio",
+  "language",
+  "afternoon",
+  "library"
+ ],
+ "why": "A domain-specific language for composing audio and video streams, a genuinely odd tool that treats radio stations as code.",
+ "brief": {
+  "what_it_is": "Liquidsoap is an open-source audio and video streaming language. You write a short script (.liq file) that describes streams: sources such as a folder of music files, a playlist, or a live RTMP feed from OBS, combined with operators such as rotate, crossfade and fallback, then sent to an output such as an Icecast server, YouTube Live over RTMP, SRT or HLS. Inputs are files, network feeds and request backends; outputs are live streams, and FFmpeg encoders and filters are available from inside the language for transcoding. It is aimed at internet radio and web TV.",
+  "why_it_exists": "The homepage pitches it as a way to build audio and video streams from a few lines of code, covering internet radio, live shows, RTMP to YouTube, and transcoding. The README calls it a swiss-army knife for multimedia streaming, notably used for netradios and webtvs, and describes it as a language for describing your streams rather than a fixed configuration file.",
+  "how_it_works": "A script declares sources and combines them with operators, and the liquidsoap binary runs that graph as a long-running process. The homepage's example builds a playlist, weights it with rotate, applies crossfade, and then calls output.icecast to send the result out. FFmpeg is wired in, so the same language can re-encode a stream or pass it through untouched when no re-encoding is needed.",
+  "commands_seen": [
+   {
+    "cmd": "curl -fsSL https://repo.liquidsoap.info/setup.sh | sudo sh",
+    "context": "README binary packages: configures the apt, dnf or apk repository for the release channel you pick."
+   },
+   {
+    "cmd": "apt-get install liquidsoap",
+    "context": "README: after the repo setup, installs Liquidsoap on Debian or Ubuntu (dnf install liquidsoap and apk add liquidsoap are the Fedora and Alpine equivalents)."
+   },
+   {
+    "cmd": "opam install --deps-only ./opam/liquidsoap.opam ./opam/liquidsoap-lang.opam",
+    "context": "README developer build: installs the build dependencies before compiling from a checkout."
+   },
+   {
+    "cmd": "dune build",
+    "context": "README developer build: compiles everything directly from the source tree."
+   },
+   {
+    "cmd": "./liquidsoap your_script.liq",
+    "context": "README: runs a script straight from the build tree, with no install step; your_script.liq is a placeholder name for your own script."
+   },
+   {
+    "cmd": "opam pin -ny .",
+    "context": "README: registers the local source tree with opam so you can test local changes before publishing."
+   },
+   {
+    "cmd": "opam install liquidsoap",
+    "context": "README: installs the liquidsoap package via opam, typically after the pin above."
+   },
+   {
+    "cmd": "git checkout git@github.com:savonet/liquidsoap.git",
+    "context": "README contributing section: the checkout command given for the repository (as written in the README; it is a clone-style SSH URL)."
+   }
+  ],
+  "install_notes": "The recommended route on the homepage is opam. The GitHub README also publishes apt, dnf and apk repositories, one channel per release, configured by the curl setup script above or by hand; Docker images and Windows zip archives are published too. Building from source needs OCaml 5.4 or later and dune 3.23 or later. FFmpeg 8 and 9 are the supported majors; 7.1 and above also work. On Fedora, all FFmpeg codecs need RPM Fusion. Debian .deb packages before 2.4.6 need deb-multimedia.org. No account, hardware, or first-run configuration step appeared in the pages I read.",
+  "standout": "The configuration is a real language rather than a set of knobs, so a complete internet radio with a weighted rotation, crossfades and an Icecast output fits in about ten lines. Scheduling and request backends can be plugged in as operators, so the station's logic lives in code next to the audio.",
+  "status": "Maintained. The README shows a release table with 2.4.6 marked supported, 2.5.0-rc1 as the latest release candidate on the 2.5.x branch with a rolling release, and 2.3.x unsupported. The copyright line reads 2003-2026 and CI and release badges are present. I did not find a last-commit date or release date on the pages I read.",
+  "caveats": "Licensed under GPL version 2 or later. The README warns that bugfix releases can change operator behaviour and break scripts that relied on the old behaviour, so it recommends a staging environment. The language server is marked experimental. The IRC channel and mailing list are marked deprecated in favour of Discord and GitHub. Building from source needs a recent OCaml and dune, which is real build effort. Windows is supported only as a zip archive.",
+  "quotes": [
+   "Build audio and video streams from a few lines of code \u2014 internet radio, live shows, RTMP to YouTube, transcoding and everything in between.",
+   "Not a configuration file with a fixed set of knobs, but a real language built for streaming, so anything you can describe you can build.",
+   "Liquidsoap is a swiss-army knife for multimedia streaming, notably used for netradios and webtvs."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.liquidsoap.info"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/savonet/liquidsoap"
+   },
+   {
+    "label": "Browser playground",
+    "url": "https://www.liquidsoap.info/try/"
+   },
+   {
+    "label": "The Liquidsoap book (PDF)",
+    "url": "http://www.liquidsoap.info/book/book.pdf"
+   }
+  ],
+  "fetch_log": [
+   "https://www.liquidsoap.info (homepage): fetched OK, marketing page with example scripts and install pointers.",
+   "https://github.com/savonet/liquidsoap (repository README): fetched OK, contains install, release table, licence and authors; this was the second fetch, to get status and install detail the homepage did not give."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A real, composable language for building live radio and video pipelines makes streaming infrastructure unusually programmable, from playlist rotation and crossfades to transcoding and network outputs."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Liquidsoap",
+  "tldr": "A scripting language for building radio stations and video streams, where playlists, crossfades and fallbacks are operators you wire together in a short file.",
+  "deeper_look": "Liquidsoap is a language for describing audio and video streams. You write a `.liq` script that declares sources, such as a folder of music, a playlist, or a live RTMP feed from OBS. You combine them with operators like `rotate`, `crossfade` and `fallback`, then send the result to an output such as an Icecast server, YouTube Live over RTMP, SRT or HLS. The `liquidsoap` binary runs that graph as a long-lived process.\n\nThe idea underneath is that a radio station is a program. Its logic is what plays next, what happens when the live feed drops, and how tracks blend. That logic normally lives in a pile of config knobs or in a human at a mixing desk. Here it is code. The project's own phrasing is \"Not a configuration file with a fixed set of knobs, but a real language built for streaming, so anything you can describe you can build.\"\n\nFFmpeg is wired in, so the same language can re-encode a stream with FFmpeg encoders and filters, or pass it through untouched when no re-encoding is needed. Scheduling and request backends plug in as operators too, which keeps the station's behaviour next to the audio it controls.\n\nIt is aimed at internet radio and web TV. It is also a good way to see how a streaming pipeline fits together: sources, transformations and outputs as a graph.",
+  "install": "brew install liquidsoap\n# pulls in ffmpeg as a dependency. No account or hardware needed. The homepage recommends opam as the main route; the README also publishes apt, dnf and apk repositories.",
+  "try_this": [
+   {
+    "cmd": "liquidsoap --help",
+    "what_happens": "Lists the command-line options of the interpreter so you can see how scripts are run."
+   },
+   {
+    "cmd": "./liquidsoap your_script.liq",
+    "what_happens": "Runs a script of your own. The README gives this form for running from a build tree, and with a brew install you would call `liquidsoap your_script.liq` instead."
+   }
+  ],
+  "whats_unique": "The configuration is a real language, so a complete internet radio with weighted rotation, crossfades and an Icecast output fits in about ten lines. Most streaming tools give you a fixed set of settings instead.",
+  "caveats": "The README warns that bugfix releases can change operator behaviour and break existing scripts, so it recommends a staging environment; the language server is also marked experimental.",
+  "commitment": "afternoon",
+  "category": "sound-and-live-coding",
+  "tags": [
+   "audio",
+   "video",
+   "streaming",
+   "language",
+   "radio",
+   "ffmpeg",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.liquidsoap.info"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/savonet/liquidsoap"
+   },
+   {
+    "label": "Browser playground",
+    "url": "https://www.liquidsoap.info/try/"
+   },
+   {
+    "label": "The Liquidsoap book (PDF)",
+    "url": "http://www.liquidsoap.info/book/book.pdf"
+   }
+  ]
+ }
+}

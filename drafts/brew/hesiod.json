@@ -1,0 +1,104 @@
+{
+ "name": "hesiod",
+ "desc": "Library for the simple string lookup service built on top of DNS",
+ "homepage": "https://github.com/achernya/hesiod",
+ "installs_365d": 8,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "protocol",
+  "network",
+  "library",
+  "quick",
+  "ancient"
+ ],
+ "why": "Hesiod is a real but obscure lookup service layered on DNS, a door into MIT-era naming, though this is only the library.",
+ "brief": {
+  "what_it_is": "Hesiod is a C name service library, release 3.2.1, for a simple string lookup service layered on top of DNS. A client program asks the library for a name and a type, and the library turns that into an ordinary DNS query under the configured domain. The answers are plain text records (TXT, or CNAME pointing at a TXT record) held on the central name servers. The README describes the data as general name service for a variety of applications. The Homebrew entry names one executable, hesinfo, but the README does not describe it.",
+  "why_it_exists": "The README says Hesiod \"can provide general name service for a variety of applications\" and is based on the Berkeley Internet Name Daemon (BIND). It does not give a longer motivation.",
+  "how_it_works": "Clients read a hesiod.conf file that sets rhs (the domain suffix) and lhs (a label, default .ns); the rhs value can be overridden by the HES_DOMAIN environment variable. Administrators make their name servers authoritative for ns.your.domain and load a zone file containing TXT records such as haynes.group and CNAME records such as 2638.gid pointing at them. A lookup therefore resolves through normal DNS to a text string.",
+  "commands_seen": [
+   {
+    "cmd": "./configure",
+    "context": "Prepares the source directory for building; accepts options."
+   },
+   {
+    "cmd": "./configure --help",
+    "context": "Lists the configure options."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the Hesiod library."
+   },
+   {
+    "cmd": "make all",
+    "context": "Alternative build target, same as make per the README."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the library."
+   }
+  ],
+  "install_notes": "Needs a vaguely ANSI C compiler; the README says gcc will do. Beyond building, each client machine needs a hesiod.conf in sysconfdir (default /usr/local/etc/hesiod.conf) with rhs and lhs lines, and the central DNS servers need a named.boot primary line and a named.hesiod zone file with SOA, NS and Hesiod TXT/CNAME data. The README's example uses rhs=.your.domain and lhs=.ns. No account or hardware is required.",
+  "standout": "It is a 1980s-style naming scheme that reuses DNS as its transport, so no new server protocol is needed; the zone data is just TXT and CNAME records. The README is candid that the .ns label is a historical accident that it would not choose today.",
+  "status": "Release 3.2.1 is stated in the README, but no release date or last-commit date was visible on the page I fetched. The README carries a Travis CI badge pointing at travis-ci.org, the retired legacy host, which hints the CI setup is old. Status is best described as unknown, leaning quiet.",
+  "caveats": "Only the library is in this package; the README mentions no client tools beyond the library itself, and the hesinfo executable named by Homebrew is not described in the README. The README assumes BIND-era named.boot configuration, which is dated. The mailing list is hesiod@mit.edu, with subscription handled through hesiod-request@mit.edu. The README is terse and gives no license text or platform list beyond the compiler note.",
+  "quotes": [
+   "Hesiod can provide general name service for a variety of applications and is based on the Berkeley Internet Name Daemon (BIND).",
+   "The value \".ns\" for lhs is an unfortunate historical convention; \".hs\" or \"hesiod\" would have been better.",
+   "Hesiod requires a vaguely ANSI compiler to build; gcc will do."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/achernya/hesiod"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/achernya/hesiod - worked; GitHub README returned (release 3.2.1 text, Travis badge). No further fetches needed since the README covers build, config, and server setup."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Hesiod is an obscure naming scheme that turns ordinary DNS TXT and CNAME records into a general directory service, revealing a forgotten layer atop DNS."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Hesiod",
+  "tldr": "A 1980s naming service that stores plain-text lookups as ordinary DNS TXT records, so any DNS server can double as a tiny directory.",
+  "deeper_look": "Hesiod is a small C library. A program hands it a name and a type, and the library turns that into a normal DNS query under a configured domain. The answer comes back as a text string, stored in a TXT record or in a CNAME that points at one. The README says it \"can provide general name service for a variety of applications\" and that it is based on BIND.\n\nSetup is mostly DNS zone work. Each client reads a `hesiod.conf` with two settings: `rhs`, the domain suffix, and `lhs`, a label that defaults to `.ns`. The `HES_DOMAIN` environment variable can override `rhs`. Administrators make their name servers authoritative for `ns.your.domain` and load a zone file with records like `haynes.group` (TXT) and `2638.gid` (CNAME pointing at it).\n\nThe idea underneath is reuse. Instead of inventing a new server protocol for looking up things like users and groups, Hesiod treats DNS as a distributed key-value store that already runs everywhere. The README admits that the `.ns` label is \"an unfortunate historical convention\" and that \".hs\" or \"hesiod\" would have been better.\n\nThe Homebrew package installs one executable, `hesinfo`. The README does not describe it, so treat it as something to explore with `--help`.",
+  "install": "brew install hesiod\n# Depends on libidn. No account or hardware needed.\n# Real lookups need a hesiod.conf on the client and a DNS zone serving Hesiod TXT/CNAME records.",
+  "try_this": [
+   {
+    "cmd": "hesinfo --help",
+    "what_happens": "Prints usage for the one executable Homebrew installs, which the README leaves undocumented."
+   },
+   {
+    "cmd": "./configure --help",
+    "what_happens": "If building from source, lists the configure options, including where hesiod.conf is expected."
+   }
+  ],
+  "whats_unique": "It is a naming scheme that needs no new server protocol: the data lives in plain TXT and CNAME records on stock DNS servers. The README is candid about its own historical naming mistakes.",
+  "caveats": "Release 3.2.1 shows no visible date, the README still references a retired Travis CI host and BIND-era named.boot configuration, and hesinfo is undocumented.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "dns",
+   "protocol",
+   "naming",
+   "c-library",
+   "historical"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/achernya/hesiod"
+   }
+  ]
+ }
+}

@@ -1,0 +1,85 @@
+{
+ "name": "augeas",
+ "desc": "Configuration editing tool and API",
+ "homepage": "https://augeas.net/",
+ "installs_365d": 11864,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "library",
+  "afternoon",
+  "protocol"
+ ],
+ "why": "Its lens-based model parses config files into trees and back, an unusual way of treating every config as structured data.",
+ "brief": {
+  "what_it_is": "Augeas is a configuration editing tool. It parses configuration files in their native formats and transforms them into a tree. Changes are made by manipulating that tree and saving it back into the native config files. The homepage describes it as a C library API, a shell command-line tool for scripts, language bindings for scripting languages, canonical tree representations of common config files, and a domain-specific language for describing config file formats. The Homebrew executables are augmatch, augparse, augprint, augtool, and fadot.",
+  "why_it_exists": "The homepage says the goal is to manipulate configuration files more safely than the ad-hoc grep, sed, and awk techniques commonly used in scripts, and to provide a local configuration API for Linux. It also aims to make it easy to integrate new config files into the Augeas tree.",
+  "how_it_works": "Lenses, written in Augeas's domain-specific language, describe each config file format and map it to and from a canonical tree. Edits go to the tree, and Augeas writes the tree back out as native config text. The homepage does not go into further detail, and I did not fetch the Quick Tour or documentation pages.",
+  "commands_seen": [],
+  "install_notes": "Homebrew installs lenses to $HOMEBREW_PREFIX/share/augeas/lenses/dist, according to the brew caveat. No other setup, runtime, or account requirements were visible on the homepage.",
+  "standout": "Most config tools treat files as text to be patched with regular expressions. Augeas instead parses each file into a tree using a per-format lens and writes it back, so scripts edit structured data. The lens language is what makes new formats pluggable.",
+  "status": "unknown. The homepage has a Releases link and a Todo list link, but it shows no release date, version, or last-commit date, and I did not follow those links.",
+  "caveats": "The homepage describes the Linux focus as a goal, and it does not state platform support beyond that. I did not read the README, docs, or release notes, so I have no build or install details beyond the brew caveat. The homepage was reachable, so no fallback was needed.",
+  "quotes": [
+   "Augeas is a configuration editing tool. It parses configuration files in their native formats and transforms them into a tree.",
+   "Manipulate configuration files safely, safer than the ad-hoc techniques generally used with grep, sed, awk and similar mechanisms in scripting languages",
+   "Make it easy to integrate new config files into the Augeas tree"
+  ],
+  "links": [
+   {
+    "label": "Augeas homepage",
+    "url": "https://augeas.net/"
+   }
+  ],
+  "fetch_log": [
+   "https://augeas.net/ - fetched OK; the homepage text was returned and contains the project description, goals, and navigation (FAQ, Quick Tour, Documentation, Download, Releases, Stock Lenses, Wiki, Bug tracker, Todo list, Contribute, libfa). Sub-page URLs were not visible in the returned text, so I did not follow them."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Augeas turns configuration files into editable trees through a dedicated lens language, an unusual and practical way to safely transform formats beyond ad-hoc text patching."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Augeas",
+  "tldr": "Augeas parses config files into a tree and writes them back, so scripts edit structured data instead of patching text with sed.",
+  "deeper_look": "Augeas reads configuration files in their native formats and turns them into a tree. You change the tree, then save it, and Augeas writes the native config text back out. It ships as a C library, a shell tool for scripts (`augtool`), and bindings for scripting languages. The Homebrew formula also installs `augmatch`, `augparse`, `augprint` and `fadot`.\n\nThe homepage states the motivation plainly: manipulate config files \"safer than the ad-hoc techniques generally used with grep, sed, awk and similar mechanisms in scripting languages\". It also aims to provide a local configuration API for Linux.\n\nThe idea underneath is the lens. A lens is a small program in Augeas's own domain-specific language that describes one file format and maps it to and from a canonical tree. Because the same description drives both parsing and writing, the tool can save a file back out as native text. Supporting a new file means writing a new lens, which the project says it wants to make easy.\n\nThat makes it a door into bidirectional parsing: treating every config file, whatever its quirks, as the same kind of structured data.",
+  "install": "brew install augeas\n# Lenses are installed to $HOMEBREW_PREFIX/share/augeas/lenses/dist",
+  "try_this": [
+   {
+    "cmd": "augtool --help",
+    "what_happens": "Lists the options of the interactive shell for browsing and editing the config tree."
+   },
+   {
+    "cmd": "augparse --help",
+    "what_happens": "Shows how to run and test lenses, the format descriptions at the core of Augeas."
+   },
+   {
+    "cmd": "augmatch --help",
+    "what_happens": "Shows how to query a config file's parsed tree from the command line."
+   }
+  ],
+  "whats_unique": "Most config tools patch text with regular expressions. Augeas parses each file with a per-format lens and writes it back, and the lens language is what makes new formats pluggable.",
+  "caveats": "The homepage shows no release date or version, and it frames the Linux focus as a goal, so how well it works on macOS is unclear.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "config",
+   "parsing",
+   "library",
+   "dsl",
+   "linux"
+  ],
+  "links": [
+   {
+    "label": "Augeas homepage",
+    "url": "https://augeas.net/"
+   }
+  ]
+ }
+}

@@ -1,0 +1,90 @@
+{
+ "name": "orbiton",
+ "desc": "Fast and config-free text editor and IDE limited by VT100",
+ "homepage": "https://roboticoverlords.org/orbiton/",
+ "installs_365d": 340,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "tui",
+  "library"
+ ],
+ "why": "An editor and IDE deliberately limited to VT100 with no config, an odd design constraint with personality.",
+ "brief": {
+  "what_it_is": "Orbiton is a terminal text editor with a simple IDE built in, written in Go. It is limited to VT100 terminal features and has no configuration file; the only exception the README names is the optional O_THEME environment variable for themes. It takes a filename (or a line number after it) and opens it for editing, with syntax highlighting, build and format keys (ctrl-b, ctrl-w), a debugger for C and C++ via gdb, and LSP tab-completion for many languages. It ships as a single self-contained executable.",
+  "why_it_exists": "The author writes that he 'spent too much time configuring text editors, IDEs and plugins, so I could just as well create a new one', and wanted something 'simple, but capable'. The stated principles are minimal annoyance within VT100 limits, no configuration to help users stay focused (apart from themes), and rapid edit-format-compile-run cycles.",
+  "how_it_works": "Because it targets VT100, it draws and reads input through plain terminal escape sequences rather than a GUI toolkit, so it runs over SSH and on live images. Build and format keys map to per-language external tools: the README has a table pairing each language with a build command (for example gcc, go build, cargo build, zig build-exe) and a format command (for example clang-format, rustfmt, ruff format). For Go, Rust, C, C++, Python, Zig, Odin, Haskell, Gleam, Lua, Ruby and Bash it can also talk to a language server for tab completion.",
+  "commands_seen": [
+   {
+    "cmd": "go install github.com/xyproto/orbiton/v2@latest && mv -i ~/go/bin/orbiton ~/go/bin/o",
+    "context": "Quick start: installs the development version with Go 1.25 or later, then renames the binary to o."
+   },
+   {
+    "cmd": "git config --global core.editor o",
+    "context": "Makes o the default git editor, so commit messages open in it."
+   },
+   {
+    "cmd": "export MANPAGER=o",
+    "context": "Uses o as the pager for man pages."
+   },
+   {
+    "cmd": "make && sudo make install",
+    "context": "Manual install from a git clone on Linux, OpenSUSE and similar systems."
+   },
+   {
+    "cmd": "make gui && sudo make gui-install",
+    "context": "Optional: builds and installs the VTE GUI wrapper, which lives in the gtk3 directory."
+   },
+   {
+    "cmd": "export O_THEME=synthwave",
+    "context": "Selects the Synthwave theme; the README says this is the one config exception and it is optional."
+   },
+   {
+    "cmd": "o -b",
+    "context": "Build tool that auto-detects build flags for C and C++."
+   },
+   {
+    "cmd": "o -l",
+    "context": "Previews the last build or export command that o ran, so you can run it from the shell for more detail."
+   },
+   {
+    "cmd": "o filename.md",
+    "context": "Markdown to HTML: open the file, press ctrl-b twice to build, then ctrl-q to quit, per the README."
+   },
+   {
+    "cmd": "o main.c",
+    "context": "Create-build-run example: open main.c, press ctrl-w to format, then ctrl-b twice to build and run."
+   }
+  ],
+  "install_notes": "Homebrew installs the executables o, obuild, osudo and vs; the README does not describe obuild or vs in the parts I read. Other routes: go install needs Go 1.25 or later and a ~/go/bin rename to o; release tarballs are on GitHub releases (the README gives an armv7 static build for Raspberry Pi 2/3/4, release v2.74.6); manual make and sudo make install on Linux and OpenSUSE; OpenBSD uses add_pkg git and a build from source (the README text was cut off there). Clipboard needs xclip (X), wl-clipboard (Wayland) or pbcopy (macOS). Debug mode needs gdb. Build and format keys need whichever compiler or formatter you want for each language. It requires /dev/tty to be available.",
+  "standout": "It is deliberately configuration-free, and it packs a lot into a single binary: build and run by key, a C/C++ debugger with breakpoints, an ANSI-based Markdown table editor, a file browser, spellcheck via ctrl-f, a built-in gzip and man page editor, digraph symbol input, and an optional nano/pico mode. Its VT100 limit is a design choice, not a missing feature.",
+  "status": "unknown: the fetched text shows no release date or last-commit date. It cites release v2.74.6 and says it requires Go 1.25 or later, and the author says it has been his main editor since early 2022. The GitHub repo has a build badge and a Repology packaging badge, but I could not read dates from them.",
+  "caveats": "Only one file can be edited at a time, by design. It never asks before saving or quitting. Only UNIX line endings are written (DOS endings are converted on load). On some terminals ctrl-s can lock the terminal; ctrl-o's menu is the workaround. The Markdown table editor does not scroll. Debug support for C and C++ is described as brand new and needs more testing. Many languages are marked WIP for jump-to-error, build or format. Tested terminals include alacritty, konsole, st, urxvt, xfce4-terminal, xterm and zutty. Tested platforms include Arch, Debian, OpenSUSE, macOS, FreeBSD and OpenBSD. The repo badge reads BSD license. The homepage was thin (a tagline and three feature names), so most detail comes from the GitHub README.",
+  "quotes": [
+   "Minimal annoyance (within the limits of VT100)",
+   "I spent too much time configuring text editors, IDEs and plugins, so I could just as well create a new one.",
+   "Never asks before saving or quitting. Be careful."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://roboticoverlords.org/orbiton/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/xyproto/orbiton"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/xyproto/orbiton/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://roboticoverlords.org/orbiton/ : worked, but the text is mostly page markup; it gave only the tagline 'Text editor and IDE limited by VT100. Configuration-free, portable, and open source.' and three feature labels, with no visible links except 'Orbiton project page'.",
+   "https://github.com/xyproto/orbiton : worked; README returned, truncated at 40000 characters during the OpenBSD installation section. Used as the main source. I guessed this URL from the project name and the homepage's 'project page' link; it turned out to be the right repo."
+  ]
+ }
+}

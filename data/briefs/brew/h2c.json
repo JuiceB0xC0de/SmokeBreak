@@ -1,0 +1,49 @@
+{
+ "name": "h2c",
+ "desc": "Headers 2 curl",
+ "homepage": "https://curl.se/h2c/",
+ "installs_365d": 10,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "protocol",
+  "library"
+ ],
+ "why": "Converts HTTP/2 header dumps into curl commands, a small but odd way to look at protocol headers.",
+ "brief": {
+  "what_it_is": "h2c is a small converter from curl. You paste a raw HTTP/1.1 request (request line, headers, and body) into a web form, and it returns a curl command line that would send that same request. The page's example turns a POST with Host, User-Agent, Shoesize, Cookie and Content-Type headers plus a two-line JSON body into a single curl invocation. The page also describes uploading a saved request file with curl itself, and a local copy of the tool is available on GitHub.",
+  "why_it_exists": "The page frames it as a way to turn a captured HTTP request into a reproducible curl command. The page does not state a broader motivation beyond that.",
+  "how_it_works": "You submit the raw request text, either in the web form or by uploading a file with curl --data-urlencode http@file https://curl.se/h2c/. The service parses the request line and headers, then emits a curl command with --header, --cookie, --user-agent and --data-binary options, and assumes an https:// URL built from the Host header. The page says the conversion happens on the curl server, and that running h2c locally keeps requests private.",
+  "commands_seen": [
+   {
+    "cmd": "curl --header Accept: --header \"Content-Type: application/json\" --cookie \"a=12; b=23\" --header \"Shoesize: 12\" --user-agent \"moo\" --data-binary \"{\\\"I do not speak\\\": \\\"json\\\"} {\\\"I do not write it\\\": \\\"either\\\"}\" https://example.com/test/site/post.cgi",
+    "context": "Example output the page generates from the sample POST request; it is the tool's output, not a command you type."
+   },
+   {
+    "cmd": "curl --data-urlencode http@file https://curl.se/h2c/",
+    "context": "Sends a locally saved HTTP request file to the h2c web service; the service responds with the curl command line."
+   }
+  ],
+  "install_notes": "Nothing beyond what the homepage shows. The page links to an h2c project on GitHub for running it locally, but I did not fetch that link, so I cannot describe its build or install steps. The Homebrew formula installs an executable named h2c.",
+  "standout": "It runs in the reverse direction from most curl tooling: it reads a wire-level HTTP request and writes a curl command that reproduces it. The page's own note says the output is meant to be a faithful curl request rather than a full HTTP serializer.",
+  "status": "unknown. The homepage shows no release date, version, or last-commit information, and I did not reach the GitHub repository to check.",
+  "caveats": "Privacy: the hosted web service processes submitted requests on the curl server, so the page advises running h2c locally for sensitive requests. The generated command assumes HTTPS, and the page says nothing in the request shows whether HTTP or HTTPS was used. Malformed requests may not reproduce exactly, since curl is primarily built to generate well-formed HTTP.",
+  "quotes": [
+   "Paste the HTTP request into the text field and get the correspending curl command line for generating such a request.",
+   "All data you submit to this web service will be crunched and converted on the curl server.",
+   "curl is primarily made to generate fine HTTP."
+  ],
+  "links": [
+   {
+    "label": "h2c homepage (curl.se)",
+    "url": "https://curl.se/h2c/"
+   }
+  ],
+  "fetch_log": [
+   "https://curl.se/h2c/ \u2014 fetched successfully; contains the description, a sample request and generated command, usage notes, and a privacy section. The GitHub link is labelled on the page but its URL was not present in the fetched text, so I did not follow it."
+  ]
+ }
+}

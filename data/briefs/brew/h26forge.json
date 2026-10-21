@@ -1,0 +1,102 @@
+{
+ "name": "h26forge",
+ "desc": "Tool for making syntactically valid but semantically spec-noncompliant videos",
+ "homepage": "https://github.com/h26forge/h26forge",
+ "installs_365d": 52,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "visual",
+  "reverse-engineering",
+  "protocol"
+ ],
+ "why": "Generates syntactically valid but spec-breaking H.264/H.265 video to probe decoders, a wonderful way to see how codecs fail.",
+ "brief": {
+  "what_it_is": "H26Forge is a command-line tool, written in Rust, for generating and modifying H.264 (AVC) video files that are syntactically valid but break the spec's semantic rules. It can take an existing Annex B H.264 file and randomly mutate its syntax elements, or apply edits from a Python script to those elements. It can also generate new Annex B H.264 streams from random syntax elements, written to a file or streamed over RTP. The output is meant to be fed to video decoders to see how they fail. The README mentions only H.264. The scout note's mention of H.265 is not supported by this README.",
+  "why_it_exists": "The README describes it as domain-specific infrastructure for analyzing, generating, and manipulating syntactically correct but semantically spec-non-compliant H.264 files. Its motivation document, MOTIVATION.md, says it simplifies a previously manual proof-of-concept (PoC) generation process. The accompanying paper is \"The Most Dangerous Codec in the World: Finding and Exploiting Vulnerabilities in H.264 Decoders\" (USENIX Security 2023).",
+  "how_it_works": "Per the README, the tool has three modes: random mutation of syntax elements in an existing Annex B file, programmatic modification of syntax elements via a Python script, and generation of Annex B H.264 from random syntax elements. The syntax element ranges are controlled by a JSON config file (config/default.json, or config/chrome.json for browser-oriented output). The README says the spec is 844 pages and the tool parses bitstreams into syntax elements and reproduces frames, so its generated streams are structurally valid but violate semantic rules. The README does not give deeper internals.",
+  "commands_seen": [
+   {
+    "cmd": "./make.sh",
+    "context": "Linux/Mac build script. Calls cargo build --release and copies the binary to the top-level directory."
+   },
+   {
+    "cmd": "./make.bat",
+    "context": "Windows build script. Same role as make.sh."
+   },
+   {
+    "cmd": "./h26forge generate -o out.264",
+    "context": "Quickstart: generates one video with the default configuration and writes it to out.264."
+   },
+   {
+    "cmd": "./h26forge generate -o out.264 -c config/default.json",
+    "context": "Generates a video using a custom randomness range, by editing or copying config/default.json, which holds the syntax element ranges."
+   },
+   {
+    "cmd": "./scripts/gen_100_videos.sh",
+    "context": "Generates a batch of 100 videos into the tmp/ folder."
+   },
+   {
+    "cmd": "./scripts/gen_100_chrome_videos.sh",
+    "context": "Generates 100 videos using config/chrome.json. Open tmp/<output>/play_videos.html in a browser to view them."
+   },
+   {
+    "cmd": "./scripts/download_and_run_avcv1_test_vectors.sh",
+    "context": "Downloads the ITU AVC conformance test vectors and runs them, to check spec conformance."
+   },
+   {
+    "cmd": "python scripts/end-to-end-tester.py --testdir <DIRECTORY>",
+    "context": "Runs the end-to-end tester on any folder of .264 files, as an alternative to the download script."
+   },
+   {
+    "cmd": "rustup update",
+    "context": "Updates Rust before building; the README says an up-to-date Rust is required."
+   },
+   {
+    "cmd": "cargo build --release",
+    "context": "Named in the README as what make.sh and make.bat run under the hood. Not given as a standalone instruction."
+   },
+   {
+    "cmd": "cargo test",
+    "context": "Runs the unit tests."
+   },
+   {
+    "cmd": "cargo doc",
+    "context": "Produces code documentation at target/doc/h26forge/index.html."
+   }
+  ],
+  "install_notes": "Prebuilt binaries are on the GitHub releases page. Building from source needs an up-to-date Rust toolchain (run rustup update first) and Python 3 for the video-editing scripts. Build with ./make.sh on Linux/Mac or ./make.bat on Windows. The README does not say whether Homebrew installs Python or other extras. The conformance scripts need the ITU test vectors, which are downloaded separately from the ITU site.",
+  "standout": "It turns syntax-level fuzzing into a targeted tool for building spec-breaking streams, and the README's trophy list ties it to real CVEs in Apple, Firefox, FFmpeg/VLC, and Pixel hardware decoders. It also includes a conformance harness against ITU vectors, so the user can see which parts of the spec the generator still gets wrong.",
+  "status": "Status is not clear from the README. It cites a 2023 paper and a trophy list running through CVE-2024-27793, which suggests active work through 2024. The README has no release date or changelog, and I did not check the commit history. I would call it unknown rather than maintained or abandoned.",
+  "caveats": "Scope is H.264 only, per the README. Generated files are intentionally broken and are meant for decoder testing, not for playback or as normal video. The README does not state a license in the text I read. Conformance is 99% for baseline/main/extended profiles (FM1_BT_B.264 and FM1_FT_E.264 fail, both using FMO) and 97% for High-family profiles. Two large 1920x1088 10-bit vectors were too big to test. Building needs a recent Rust toolchain. The Python scripts need Python 3. The README does not describe Windows support beyond the make.bat script.",
+  "quotes": [
+   "H26Forge is domain-specific infrastructure for analyzing, generating, and manipulating syntactically correct but semantically spec-non-compliant H.264 video files.",
+   "Generate Annex B H.264 with random syntax elements, which can be written to files or streamed over RTP",
+   "If you use H26Forge to find and report an issue, please let us know so we can include it in this list."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/h26forge/h26forge"
+   },
+   {
+    "label": "H26Forge paper (USENIX Security 2023)",
+    "url": "https://wrv.github.io/h26forge.pdf"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/h26forge/h26forge/releases"
+   },
+   {
+    "label": "Motivation doc",
+    "url": "https://github.com/h26forge/h26forge/blob/main/docs/MOTIVATION.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/h26forge/h26forge: fetched OK, README returned. It was thorough enough that I did not follow the linked docs (GETTINGSTARTED.md, EDITING.md, MOTIVATION.md)."
+  ]
+ }
+}

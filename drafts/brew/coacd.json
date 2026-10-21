@@ -1,0 +1,142 @@
+{
+ "name": "coacd",
+ "desc": "Approximate convex decomposition for 3D meshes with collision-aware concavity",
+ "homepage": "https://github.com/SarahWeiii/CoACD",
+ "installs_365d": 47,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "math",
+  "visual"
+ ],
+ "why": "Approximate convex decomposition of 3D meshes, a real computational geometry idea you can run on your own models.",
+ "brief": {
+  "what_it_is": "CoACD is an approximate convex decomposition tool for 3D meshes. It takes a triangle mesh (the README asks for .obj input, and says the input must be triangles, not quads or n-gons) and splits it into a set of convex pieces. Each piece is a convex hull, and the set can serve as collision shapes in physics or game engines. Output goes to .obj and .wrl files, and the Python API returns a list of convex hulls. It ships as a Python package (pip install coacd), a C++ command-line binary built from source, and a Unity package.",
+  "why_it_exists": "The README frames it as making geometry algorithms that only work on convex shapes, such as collision detection, usable on arbitrary meshes. It says the method preserves the collision behaviour of the input with fewer components, so it supports object interaction in downstream applications.",
+  "how_it_works": "The README gives little internals beyond the title, which describes a collision-aware concavity measure and a tree search (MCTS) over cutting strategies. Non-manifold inputs are first preprocessed into a watertight mesh (controlled by -pr and -pm). The decomposition then stops once the concavity falls below the threshold (-t), with an optional merge pass to reduce the piece count. The algorithm is stochastic, so results depend on --seed. The paper is linked for detail.",
+  "commands_seen": [
+   {
+    "cmd": "pip install coacd",
+    "context": "Installs the Python package from PyPI."
+   },
+   {
+    "cmd": "python package/bin/coacd -i $InputFile -o $OutputFile",
+    "context": "Runs the bundled Python example script on an input mesh (run from the python directory)."
+   },
+   {
+    "cmd": "git clone --recurse-submodules https://github.com/SarahWeiii/CoACD.git",
+    "context": "Clones the repository with submodules for building from source."
+   },
+   {
+    "cmd": "cmake .. -DCMAKE_BUILD_TYPE=Release && make main -j",
+    "context": "Configures and builds the C++ main binary on Linux and macOS, inside a build directory."
+   },
+   {
+    "cmd": "COACD_WITH_OPENMP=0 pip install .",
+    "context": "Builds the Python wheel from source with the std::thread backend instead of OpenMP."
+   },
+   {
+    "cmd": "./main -i PATH_OF_YOUR_MESH -o PATH_OF_OUTPUT",
+    "context": "Quick start: decomposes a mesh with default parameters and writes convex parts to the output path."
+   },
+   {
+    "cmd": "bash run_example.sh",
+    "context": "Runs the bundled example meshes; results go to the outputs folder."
+   },
+   {
+    "cmd": "./main -i PATH_OF_YOUR_MESH -o PATH_OF_OUTPUT -t 0.05 -mi 200 -md 4 -mn 25",
+    "context": "Example with the concavity threshold and MCTS iteration, depth, and node settings changed."
+   }
+  ],
+  "install_notes": "Beyond brew install, the README covers several routes. Python is pip install coacd, with Linux x86_64, Windows amd64, and macOS (x86_64 and Apple silicon) supported. For a C++ build you need git and cmake >= 3.24, with g++ 9 to below 12 on Linux, clang on macOS 10.14+, and MSVC 2019/2022 on Windows. Parallelism uses OpenMP by default on Linux and Windows, and off by default on macOS. Unity 2020.1 or later is installed by adding the package from the git URL https://github.com/SarahWeiii/CoACD.git?path=/Packages/info.flandre.coacd#unity through the Package Manager. The README does not mention accounts, GPUs, or licence keys for the core tool.",
+  "standout": "Collision-aware concavity: the cuts are chosen to keep collision behaviour, not just to minimise geometric error, and the tree search over cut strategies is a deliberate step beyond greedy splitting. It also has a real-metric mode (-rm) that takes the threshold in meters, and a --split option that writes each part to its own file so engines like MuJoCo or Bullet don't collapse the parts back into one convex shape.",
+  "status": "maintained. The README has news items dated 2023-06, 2023-10, 2025-09, 2026-04, and 2026-09, and a build badge. It points to a successor library, CuACD, announced in 2026-09 as a GPU-resident implementation of the same lookahead-search formulation. I did not see a release date or last-commit date on the page itself.",
+  "caveats": "The input must be a triangle mesh. Non-manifold inputs go through a preprocessing step that can change the geometry, and turning it off with -pm off can crash or give wrong results unless the mesh is 2-manifold. The default parameters are the fast setting, so better results cost more runtime. -c max hull counts can produce hulls whose concavity exceeds the threshold. Building from source has compiler version limits, and the Windows build needs specific MSVC flags. The README's news points to CuACD as a faster alternative, which may matter for batch use. The Unity path is documented only for the Unity branch and the git-URL install.",
+  "quotes": [
+   "Approximate convex decomposition enables efficient geometry processing algorithms specifically designed for convex shapes (e.g., collision detection).",
+   "In most cases, you only need to adjust the `threshold` (0.01~1) to balance the level of detail and the number of decomposed components.",
+   "`--seed` is used for reproduction of the same results as our algorithm is stochastic."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/SarahWeiii/CoACD"
+   },
+   {
+    "label": "Project page",
+    "url": "https://colin97.github.io/CoACD/"
+   },
+   {
+    "label": "Paper (arXiv)",
+    "url": "https://arxiv.org/pdf/2205.02961.pdf"
+   },
+   {
+    "label": "Video",
+    "url": "https://www.youtube.com/watch?v=r12O0z0723s"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/SarahWeiii/CoACD: fetched OK, README returned in full. No further fetches were needed."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "CoACD turns arbitrary meshes into collision-ready convex pieces using collision-aware concavity and search over cuts\u2014an unexpectedly rich, runnable geometry rabbit hole."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "CoACD",
+  "tldr": "Splits a 3D triangle mesh into a small set of convex pieces, chosen so collisions behave like the original shape.",
+  "deeper_look": "CoACD takes a triangle mesh and cuts it into convex parts. Each part is a convex hull, and together they approximate the original shape closely enough to serve as collision geometry in a physics or game engine. Output is written as .obj and .wrl files, and the Python API returns a list of convex hulls.\n\nThe reason to do this is that many geometry algorithms, collision detection among them, only work on convex shapes. A mug, a chair or a robot gripper is not convex. Break it into a handful of convex pieces and those algorithms work on it again. The README says the method keeps the collision behaviour of the input with fewer components.\n\nThe interesting part is how the cuts are chosen. The paper title describes a collision-aware concavity measure and a Monte Carlo tree search over cutting strategies, instead of splitting greedily and hoping. Cutting is treated as a search problem: try a cut, look ahead at what it leads to, and keep the sequence that scores best. Because the search is stochastic, `--seed` exists to reproduce a result.\n\nIn most cases only one knob matters. The README says: \"you only need to adjust the `threshold` (0.01~1) to balance the level of detail and the number of decomposed components.\" Lower values give more pieces and a tighter fit, and you can see the trade-off on your own models.",
+  "install": "brew install coacd\n# Alternative: pip install coacd (Python package; Linux x86_64, Windows amd64, macOS x86_64 and Apple silicon)\n# Building from source needs git and cmake >= 3.24 plus a recent compiler. No account or GPU is needed.",
+  "try_this": [
+   {
+    "cmd": "pip install coacd",
+    "what_happens": "Installs the Python package from PyPI, which gives you the bundled example script and the API that returns convex hulls."
+   },
+   {
+    "cmd": "./main -i PATH_OF_YOUR_MESH -o PATH_OF_OUTPUT",
+    "what_happens": "Decomposes a triangle .obj mesh with default parameters and writes the convex parts to the output path. This is the binary built from source."
+   },
+   {
+    "cmd": "./main -i PATH_OF_YOUR_MESH -o PATH_OF_OUTPUT -t 0.05 -mi 200 -md 4 -mn 25",
+    "what_happens": "Runs the same decomposition with a lower concavity threshold and different search iteration, depth and node settings, so you can compare piece count and fit."
+   }
+  ],
+  "whats_unique": "The cuts are chosen to preserve collision behaviour, not just to minimise geometric error, using a tree search instead of greedy splitting. A `--split` option writes each part to its own file so engines like MuJoCo or Bullet don't merge them back into one convex shape.",
+  "caveats": "Input must be a triangle mesh, non-manifold meshes are preprocessed in ways that can change the geometry, and the default settings are the fast ones, so better results cost runtime. The brew formula lists no executables, so the command-line examples come from the source build.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "math",
+   "geometry",
+   "3d",
+   "mesh",
+   "physics"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/SarahWeiii/CoACD"
+   },
+   {
+    "label": "Project page",
+    "url": "https://colin97.github.io/CoACD/"
+   },
+   {
+    "label": "Paper (arXiv)",
+    "url": "https://arxiv.org/pdf/2205.02961.pdf"
+   },
+   {
+    "label": "Video",
+    "url": "https://www.youtube.com/watch?v=r12O0z0723s"
+   }
+  ]
+ }
+}

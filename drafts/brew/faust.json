@@ -1,0 +1,117 @@
+{
+ "name": "faust",
+ "desc": "Functional programming language for real time signal processing",
+ "homepage": "https://faust.grame.fr",
+ "installs_365d": 1686,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "afternoon",
+  "audio",
+  "language",
+  "library"
+ ],
+ "why": "A functional language for signal processing that compiles DSP code to many targets, a genuinely distinctive way to make sound.",
+ "brief": {
+  "what_it_is": "Faust (Functional Audio Stream) is a functional programming language for real-time audio signal processing and synthesis, built at GRAME in Lyon. You write DSP code in the Faust language, and the Faust compiler translates it into C++, C, LLVM IR, WebAssembly, Rust and other targets. Wrapper scripts called architectures then turn the generated code into plugins (VST, AU, LV2, CLAP and others), standalone apps, mobile or web apps, and objects for Max, Pure Data, SuperCollider and similar hosts. The README describes it as 'fully compiled', and the homepage calls it an alternative to C++ that is much simpler to learn.",
+  "why_it_exists": "The homepage frames Faust as a way to design synthesizers, instruments and audio effects in a functional language, then ship the same DSP specification to many platforms without rewriting it by hand. It has been developed at GRAME since 2002.",
+  "how_it_works": "A Faust program is a DSP specification that the compiler translates to sample-level code for the chosen language. The master branch can emit LLVM IR and use an LLVM JIT, which lets libfaust be embedded in C++ programs and used by tools such as FaustLive. The faust2... scripts combine the generated code with a chosen architecture file (JACK, ALSA, Qt, VST, and so on) to produce a finished binary or plugin.",
+  "commands_seen": [
+   {
+    "cmd": "faust2jaqt yourCode.dsp",
+    "context": "README example: compiles a Faust file into a JACK application with a Qt interface."
+   },
+   {
+    "cmd": "faust2",
+    "context": "README tip: type faust2 in a terminal and press Tab to auto-complete and list every faust2... tool."
+   },
+   {
+    "cmd": "git submodule update --remote --merge libraries",
+    "context": "Maintainer-side: updates the libraries submodule to its latest version before committing it to the main repo. Not something a user needs to run."
+   }
+  ],
+  "install_notes": "Since release 2.5.18 the build and install is CMake-based. The README points to the GitHub wiki (BuildingSimple tutorial) for compiling from source. Official packages are on the GitHub releases page. Each faust2... script needs its own dependencies installed, for example faust2jaqt needs JACK and Qt. Faust libraries live in a separate repo included as a git submodule, so a source checkout needs submodules. No account or license key is mentioned. The browser tools (Faust Playground, Online Faust IDE) need no install.",
+  "standout": "Compile-to-everything from one functional DSP source is the core trick. Also notable: the Faust Web IDE and Playground run the compiler in the browser, so you can try a DSP program with no install, and the web tooling is a live part of the project, with 2026 news including a Godot integration and an experimental Rust port (faust-rs) that adds forward and reverse-mode automatic differentiation.",
+  "status": "Maintained. The homepage news runs through September 2, 2026 (Google Summer of Code projects finalized). Three CI badges (Ubuntu, macOS, Windows) appear in the README. I did not check the GitHub commit date or the latest release tag, so this rests on the news and CI links.",
+  "caveats": "Each faust2... target has its own dependencies, so some will not build out of the box. The homepage flags faust-rs, the Rust port, as exploratory and not production-ready. The executable list is long and mostly thin wrappers, so most users will only need a few. The README does not state a license in what I read. The homepage has a small factual slip: it lists IFC-26 in Cannes as being in Italy.",
+  "quotes": [
+   "Faust (Functional Audio Stream) is a functional programming language specifically designed for real-time signal processing and synthesis.",
+   "A distinctive characteristic of Faust is that it is fully compiled.",
+   "The fastest way to get an exhaustive list of all of them is to open a terminal window, type faust2, and then press the Tab key for auto-completion."
+  ],
+  "links": [
+   {
+    "label": "Faust homepage",
+    "url": "https://faust.grame.fr"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/grame-cncm/faust"
+   },
+   {
+    "label": "Faust Playground (compile in the browser)",
+    "url": "https://faustplayground.grame.fr/"
+   }
+  ],
+  "fetch_log": [
+   "https://faust.grame.fr: worked, returned homepage text with news and links; no install commands on the page",
+   "https://github.com/grame-cncm/faust: worked, returned the README with install, usage and resource sections"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Faust\u2019s functional DSP language lets you describe audio processing once and compile it into instruments, plugins, and apps across many platforms\u2014a distinctive idea worth exploring."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Faust",
+  "tldr": "A functional language for sound: write a synth or effect once, then compile it to plugins, apps, web audio, and objects for Max, Pure Data and SuperCollider.",
+  "deeper_look": "Faust (Functional Audio Stream) is a functional programming language for real-time signal processing and synthesis. You write a DSP specification, and the compiler translates it into sample-level code in C++, C, Rust, WebAssembly, LLVM IR and other targets. The project describes itself as \"fully compiled\".\n\nThe long list of `faust2...` executables is the second half of the system. Each one is a wrapper script that pairs the generated code with an architecture file, which supplies the audio driver, the user interface, or the plugin format. That is how one source file becomes a JACK app with a Qt interface, a VST or LV2 plugin, a Pure Data external, a SuperCollider UGen, or a mobile app. There are many of these scripts, and most people will only ever use a few.\n\nThe idea underneath is that audio processing can be described as composed signal flows instead of loops over buffers. Because the program is a specification rather than a hand-written implementation, the same description can be retargeted to hardware and hosts that have nothing in common. GRAME in Lyon has developed it since 2002.\n\nThe master branch can also emit LLVM IR and run it through a JIT, which lets libfaust be embedded in other C++ programs and used by tools such as FaustLive. A browser Playground and Web IDE run the compiler with no install at all, so you can try a program before you commit to the toolchain.",
+  "install": "brew install faust\n# Each faust2... script needs its own dependencies. For example, faust2jaqt needs JACK and Qt installed separately.\n# No install needed to try it first: https://faustplayground.grame.fr/",
+  "try_this": [
+   {
+    "cmd": "faust --help",
+    "what_happens": "Lists the compiler's options, including the choice of output language."
+   },
+   {
+    "cmd": "faust2jaqt yourCode.dsp",
+    "what_happens": "Compiles a Faust file into a JACK application with a Qt interface (needs JACK and Qt)."
+   },
+   {
+    "cmd": "faust2",
+    "what_happens": "Type this in a terminal and press Tab to list every faust2... target tool."
+   }
+  ],
+  "whats_unique": "One functional DSP source compiles to an unusually wide range of targets: plugin formats, computer music environments, embedded boards, mobile and web. The compiler also runs in the browser.",
+  "caveats": "Each faust2... target has its own dependencies and some will not build out of the box, and the Rust port (faust-rs) is flagged by the project as exploratory and not production-ready.",
+  "commitment": "afternoon",
+  "category": "sound-and-live-coding",
+  "tags": [
+   "afternoon",
+   "audio",
+   "dsp",
+   "language",
+   "compiler",
+   "synthesis",
+   "plugins"
+  ],
+  "links": [
+   {
+    "label": "Faust homepage",
+    "url": "https://faust.grame.fr"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/grame-cncm/faust"
+   },
+   {
+    "label": "Faust Playground (compile in the browser)",
+    "url": "https://faustplayground.grame.fr/"
+   }
+  ]
+ }
+}

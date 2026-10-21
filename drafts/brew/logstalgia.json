@@ -1,0 +1,103 @@
+{
+ "name": "logstalgia",
+ "desc": "Web server access log visualizer with retro style",
+ "homepage": "https://logstalgia.io/",
+ "installs_365d": 436,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "visual",
+  "gui",
+  "generative"
+ ],
+ "why": "Turning web server access logs into a Pong-like animated stream of requests is a strange and satisfying way to watch traffic.",
+ "brief": {
+  "what_it_is": "Logstalgia is a website traffic visualizer that replays or streams web-server access logs as a Pong-like animation. Each request is drawn as a colored ball, colored to match the requesting host, that travels across the screen to the requested location. It reads standard Apache and Nginx access log formats (NCSA Common, Combined, and virtual-host variants), a pipe-delimited custom format, or live input on STDIN. The output is an on-screen animation rather than a file or report.",
+  "why_it_exists": "The homepage presents it as a way to watch a busy website's traffic as a never-ending torrent of requests, a pong-like battle between the web server and its visitors. It is pitched as a dashboard for work use, and the author invites contact about bespoke visualization work.",
+  "how_it_works": "Successful requests are hit by the paddle, while unsuccessful ones such as 404 File Not Found are missed and pass through. Paths are summarized by finding common path prefixes, and related paths are grouped under headings; by default, paths ending in png, gif or jpg fall under 'Images', and everything else goes to 'Miscellaneous'. Logs can be replayed from a file or followed live, for example by piping tail -f into it.",
+  "commands_seen": [
+   {
+    "cmd": "logstalgia data/example.log",
+    "context": "Watches the bundled example access log with default settings."
+   },
+   {
+    "cmd": "tail -f /var/log/apache2/access.log | logstalgia -",
+    "context": "Follows a live Apache log, starting from the most recent batch of entries. The trailing '-' tells logstalgia to read from STDIN."
+   },
+   {
+    "cmd": "tail -f /var/log/apache2/access.log | logstalgia --sync",
+    "context": "Follows the log in real time, starting from the next entry received on STDIN."
+   },
+   {
+    "cmd": "ssh user@yourserver.com tail -f /var/log/apache2/access.log | logstalgia -g \"Ad Clicks,/adclick.php,30\" -",
+    "context": "Watches a remote log over ssh, grouping URLs containing '/adclick.php' under the heading 'Ad Clicks'."
+   }
+  ],
+  "install_notes": "Requires a video card with OpenGL, so it is best run on a workstation rather than on the web server itself. The homepage offers a Windows setup.exe and zip for 1.0.9, and a source tarball logstalgia-1.1.5.tar.gz for 1.1.5. Building from source needs SDL 2 (1.2 support was removed), GLM and Boost headers (Boost 1.69 or newer as of 1.1.5), libpng, GLEW, and PCRE2. The homepage does not give full build steps and points to an INSTALL file that I did not read. No accounts or runtime configuration are mentioned.",
+  "standout": "Turning a Pong-style game into a log viewer is an unusual choice, and the paddle mechanic carries meaning: a 404 visibly gets through the defense. Prefix-based path summarization also keeps a busy site's many URLs readable on one screen.",
+  "status": "maintained. The latest release, 1.1.5, is dated 4 March 2026, and the news section also shows 1.1.4 in January 2023 and 1.1.3 in June 2022. Releases are irregular, with a long gap between 2018 and 2022, but the project is clearly still active.",
+  "caveats": "Needs OpenGL, so it is not meant for headless servers. The README says it is designed for real-time playback and needs a fairly busy log (hundreds of requests per minute) to look interesting. Tailing remote logs is 'not currently recommended on the Windows version due to buffering issues'. Wayland support is listed as experimental. The README says nothing about license terms. Some of the README's more specific options, such as the --sync and -g flags, appear without a full reference on the homepage.",
+  "quotes": [
+   "Logstalgia is a website traffic visualization that replays or streams web-server access logs as a pong-like battle between the web server and an never ending torrent of requests.",
+   "Successful requests are hit by the paddle while unsuccessful ones (eg 404 - File Not Found) are missed and pass through.",
+   "If you use Logstalgia as a dashboard at your work and are interested in getting new features developed or maybe would like to discuss other bespoke visualization work please don't hesitate to contact me."
+  ],
+  "links": [
+   {
+    "label": "Logstalgia homepage",
+    "url": "https://logstalgia.io/"
+   }
+  ],
+  "fetch_log": [
+   "https://logstalgia.io/ - fetched OK; the page contains the full introduction, examples, log format notes, and release news. No separate README or docs were followed."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Its Pong-like replay makes server traffic and failures legible in a genuinely unusual way, turning familiar logs into a short, memorable visual exploration."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Logstalgia",
+  "tldr": "Logstalgia turns a web server access log into a Pong game where each request is a ball and failed requests slip past the paddle.",
+  "deeper_look": "Logstalgia reads web-server access logs and draws each request as a coloured ball that flies across the screen to the resource it asked for. Balls are coloured by the requesting host. It understands Apache and Nginx formats (NCSA Common, Combined, and virtual-host variants), a pipe-delimited custom format, or live input on STDIN. The output is an animation in a window, not a report or a file.\n\nThe Pong framing carries information. Successful requests are hit by the paddle, while failures such as 404 File Not Found are missed and pass through. A burst of misses is visible at a glance without reading a line of the log. The project's own description is \"a pong-like battle between the web server and an never ending torrent of requests.\"\n\nTo keep a busy site readable, paths are summarised by finding common prefixes, and related paths are grouped under headings. By default anything ending in png, gif or jpg goes under 'Images' and everything else under 'Miscellaneous'. You can replay a saved log or follow a live one by piping tail -f into it.\n\nThe idea underneath is that a log is a stream of events, and a stream can be watched instead of searched. Once you see traffic as motion, patterns like crawlers, scans and broken links become things you notice rather than things you grep for.",
+  "install": "brew install logstalgia\nNeeds a machine with OpenGL, so run it on a workstation rather than on the web server itself. Read logs from a file, or pipe them in over ssh.",
+  "try_this": [
+   {
+    "cmd": "logstalgia data/example.log",
+    "what_happens": "Plays the bundled example access log with default settings."
+   },
+   {
+    "cmd": "tail -f /var/log/apache2/access.log | logstalgia -",
+    "what_happens": "Follows a live Apache log, starting from the most recent entries. The trailing '-' means read from STDIN."
+   },
+   {
+    "cmd": "ssh user@yourserver.com tail -f /var/log/apache2/access.log | logstalgia -g \"Ad Clicks,/adclick.php,30\" -",
+    "what_happens": "Watches a remote log over ssh and groups URLs containing /adclick.php under the heading 'Ad Clicks'."
+   }
+  ],
+  "whats_unique": "It borrows the rules of Pong to encode request outcomes, so a 404 visibly gets past the defence. Prefix-based path grouping keeps a busy site's URLs legible on one screen.",
+  "caveats": "It needs OpenGL and is not for headless servers, and the README says it only looks interesting with a fairly busy log, hundreds of requests per minute.",
+  "commitment": "quick",
+  "category": "quick-weird-payoffs",
+  "tags": [
+   "quick",
+   "visual",
+   "gui",
+   "logs",
+   "web",
+   "generative"
+  ],
+  "links": [
+   {
+    "label": "Logstalgia homepage",
+    "url": "https://logstalgia.io/"
+   }
+  ]
+ }
+}

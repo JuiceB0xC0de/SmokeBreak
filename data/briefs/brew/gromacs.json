@@ -1,0 +1,96 @@
+{
+ "name": "gromacs",
+ "desc": "Versatile package for molecular dynamics calculations",
+ "homepage": "https://www.gromacs.org/",
+ "installs_365d": 1883,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "days-off",
+  "science",
+  "simulation"
+ ],
+ "why": "Molecular dynamics you can run at home, watching atoms move under real physics, is serious science worth a long weekend.",
+ "brief": {
+  "what_it_is": "GROMACS is a free, open-source molecular dynamics package that simulates the Newtonian equations of motion for systems of hundreds to millions of particles. It is built mainly for biomolecules such as proteins, lipids and nucleic acids, though its homepage says many groups also use it for polymers and fluid dynamics. Input is clear-text topology and parameter files plus run settings, and output is trajectories and energies that analysis tools can read. The suite ships with a large set of command-line tools under the gmx program, such as gmx grompp and gmx mdrun, and the docs say no scripting is required.",
+  "why_it_exists": "The About page frames it as a versatile package for high-performance molecular dynamics and output analysis, and it stresses speed, with the nonbonded interactions that usually dominate a simulation calculated extremely fast. It is run by a community-driven development team.",
+  "how_it_works": "The README-level pages do not explain the core integration algorithm in detail; they point to the manual. What they do describe is the execution model: compute kernels use SIMD intrinsics on CPUs and CUDA, OpenCL or SYCL on GPUs, CPU and GPU work can run at once with load balancing, and parallelism uses either MPI or the built-in thread-MPI for single workstations.",
+  "commands_seen": [
+   {
+    "cmd": "tar xfz gromacs-2026.4.tar.gz",
+    "context": "Unpack the source tarball (install guide quick-and-dirty path)."
+   },
+   {
+    "cmd": "cd gromacs-2026.4",
+    "context": "Enter the unpacked source directory."
+   },
+   {
+    "cmd": "mkdir build",
+    "context": "Create a separate build directory, which the guide recommends for an out-of-source build."
+   },
+   {
+    "cmd": "cmake .. -DGMX_BUILD_OWN_FFTW=ON -DREGRESSIONTEST_DOWNLOAD=ON",
+    "context": "Configure the build; GMX_BUILD_OWN_FFTW=ON makes CMake download and build FFTW itself, and REGRESSIONTEST_DOWNLOAD=ON fetches the regression tests."
+   },
+   {
+    "cmd": "make",
+    "context": "Compile GROMACS and the bundled FFT library."
+   },
+   {
+    "cmd": "make check",
+    "context": "Run the test suite after building."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Install to the default prefix /usr/local/gromacs (requires root)."
+   },
+   {
+    "cmd": "source /usr/local/gromacs/bin/GMXRC",
+    "context": "Set up the environment so the gmx tools are on the path."
+   },
+   {
+    "cmd": "cmake -DGMX_MPI=on",
+    "context": "Option for building with MPI support; the guide says to add it to the cmake options. Shown in the text as an option, not as a full command line."
+   },
+   {
+    "cmd": "cmake --version",
+    "context": "Check which CMake version is installed; GROMACS needs 3.28 or later."
+   },
+   {
+    "cmd": "ccmake ..",
+    "context": "Curses interface to inspect and change CMake settings after configuring."
+   }
+  ],
+  "install_notes": "The Homebrew caveat says GMXRC and other scripts are installed to $HOMEBREW_PREFIX/share/gromacs, so that GMXRC is the file to source. The install guide assumes a C99 and C++17 compiler (gcc 11+, clang 14+ or MSVC 2019+) and CMake 3.28 or later. An FFT library is required: FFTW 3, Intel MKL, or the bundled FFTPACK fallback. Optional extras include CUDA (toolkit 12.1+, GPU compute capability 5.0+), SYCL, OpenCL, HIP, MPI (MPI 3.0 standard), and hwloc. The guide notes that the -DGMX_BUILD_OWN_FFTW option does not work on Windows, with the ninja generator, or when cross-compiling. Those cases need a manually built FFTW. Building the docs is optional. The install guide shown is for version 2026.4.",
+  "standout": "The homepage and About page stress a lot of engineering: hand-written SIMD kernels, a virial calculation moved out of the innermost loops, and a fully automated topology builder for proteins, including multimeric structures. It also uses lossy trajectory compression with user-selected accuracy, and it reads and writes files that are independent of endianness and floating-point precision.",
+  "status": "maintained. The homepage news lists patch releases through 2026, with 2026.4 dated 2 October 2026 and 2025.5 dated 1 September 2026, plus a 2026.0 release on 19 January 2026. The install guide is for 2026.4. The footer copyright says 2022-2024, which is probably just stale.",
+  "caveats": "Only one GPU backend can be configured per build, and CPU code always runs alongside GPU acceleration. OpenCL is marked deprecated but is the only backend for Apple M-series GPUs. On macOS, Apple's Clang has OpenMP disabled, so the configure step stops unless you use thread-MPI or a different compiler such as a downloaded gcc. The icc compiler is no longer supported. The NVSHMEM communication path is marked experimental. The license is LGPL 2.1 or later. The Homebrew install does not replace the need to source GMXRC before use.",
+  "quotes": [
+   "A free and open-source software suite for high-performance molecular dynamics and output analysis.",
+   "GROMACS is user-friendly, with topologies and parameter files written in clear text format.",
+   "There is no scripting required - all programs use a simple interface with command line options for input and output files.",
+   "GROMACS is a proper name. It is not an acronym for anything."
+  ],
+  "links": [
+   {
+    "label": "GROMACS homepage",
+    "url": "https://www.gromacs.org/"
+   },
+   {
+    "label": "About GROMACS",
+    "url": "https://www.gromacs.org/about.html"
+   },
+   {
+    "label": "Installation guide (2026.4)",
+    "url": "https://manual.gromacs.org/documentation/current/install-guide/index.html"
+   }
+  ],
+  "fetch_log": [
+   "https://www.gromacs.org/ - worked; Sphinx docs landing page, not a README, with news and links.",
+   "https://www.gromacs.org/about.html - worked; About page with feature description and license.",
+   "https://manual.gromacs.org/documentation/current/install-guide/index.html - worked; output was cut at 40000 characters, but the quick install, prerequisites, GPU, MPI and FFT sections were read."
+  ]
+ }
+}

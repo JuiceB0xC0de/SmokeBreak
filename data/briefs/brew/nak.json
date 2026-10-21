@@ -1,0 +1,94 @@
+{
+ "name": "nak",
+ "desc": "CLI for doing all things nostr",
+ "homepage": "https://github.com/fiatjaf/nak",
+ "installs_365d": 933,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "protocol",
+  "network",
+  "quick"
+ ],
+ "why": "A nostr swiss army knife that lets you poke at relays and events, a door into a decentralized protocol few have touched.",
+ "brief": {
+  "what_it_is": "nak is a command-line tool, written in Go, that does a wide range of things with the Nostr protocol. It takes Nostr keys, event JSON, NIP-19 codes like npub, note1, nevent1 and naddr1, and relay URLs as input, and prints JSON events, decoded or encoded identifiers, profile details, verification results, and relay responses to stdout. Many subcommands also publish events to relays, serve a local relay, run a remote-signing bunker, mount a FUSE filesystem, or move files through Blossom servers.",
+  "why_it_exists": "The README presents it as a 'nostr army knife' for 'doing all things nostr' from the terminal, and says to read the built-in help text to discover everything it can do. The README gives no longer statement of motive.",
+  "how_it_works": "Each subcommand is a verb (event, req, fetch, decode, encode, key, profile, verify, bunker, serve, fs, blossom, gift, sync, admin). Output is line-delimited JSON, so it pipes into jq and into other nak subcommands; the README chains them, for example nak req ... | nak event relay1 relay2 to republish an event. Built-in jq helpers are available via --jq and a ~/.jq file, and the README points to jq.go for the function definitions.",
+  "commands_seen": [
+   {
+    "cmd": "curl -sSL https://raw.githubusercontent.com/fiatjaf/nak/master/install.sh | sh",
+    "context": "One-line installer from the README's install section."
+   },
+   {
+    "cmd": "go install github.com/fiatjaf/nak@latest",
+    "context": "Installs nak with the Go toolchain if Go is set up."
+   },
+   {
+    "cmd": "nak event --sec 02 -c 'good morning' --tag t=gm nostr-pub.wellorder.net relay.damus.io",
+    "context": "Creates a kind 1 event signed with key 02, with content and a t tag, and publishes it to two relays."
+   },
+   {
+    "cmd": "nak req -k 1 -t t=gm -l 2 nostr.mom nostr.wine nostr-pub.wellorder.net | jq .content",
+    "context": "Queries several relays for kind 1 notes tagged t=gm, limit 2 each, and prints the content."
+   },
+   {
+    "cmd": "nak key generate",
+    "context": "Prints a new random private key in hex."
+   },
+   {
+    "cmd": "nak key encrypt 7b94e287b1fafa694ded1619b27de7effd3646104a158e187ff4edc56bc6148d mypassword",
+    "context": "Encrypts a private key with NIP-49 (ncryptsec output), given a password."
+   },
+   {
+    "cmd": "nak serve",
+    "context": "Runs a verbose local relay at ws://localhost:10547 for testing; the README also shows --negentropy, --grasp and --blossom flags."
+   },
+   {
+    "cmd": "nak bunker --persist --sec ncryptsec1... relay.nsec.app nos.lol",
+    "context": "Starts a local remote-signing bunker that saves its secret key, relays and authorized client keys to disk. The ncryptsec1... is a placeholder in the README."
+   },
+   {
+    "cmd": "nak fs --sec 01 ~/nostr",
+    "context": "Mounts Nostr as a FUSE filesystem; writing a file in the notes folder creates a pending note, and touch publish sends it."
+   },
+   {
+    "cmd": "nak req --only-missing ./events.jsonl -k 30617 pyramid.fiatjaf.com",
+    "context": "Fetches events from a relay except those already present in a local JSONL file, described as negentropy sync."
+   },
+   {
+    "cmd": "nak sync relay1.com relay2.com",
+    "context": "Syncs events between two relays using negentropy (NIP-77)."
+   }
+  ],
+  "install_notes": "Besides brew install nak, the README lists: the curl install.sh one-liner; go install github.com/fiatjaf/nak@latest with Go; downloading a binary from the GitHub releases page; cloning the repo and running go install or docker build -t nak . && docker run nak event; yay -S nak-bin on Arch Linux; and nix-env --install nak on Nix. No accounts are needed for basic use. Private keys can be given as hex, nsec, or ncryptsec (NIP-49), and an encrypted key prompts for a password on each use. The README suggests setting NOSTR_SECRET_KEY or NOSTR_CLIENT_KEY in the shell environment. Bunker and Blossom examples need you to name real relays or servers. A debug build is available with go install -tags=debug github.com/fiatjaf/nak@latest. The README does not describe a dedicated first-run setup step.",
+  "standout": "A single Go binary covers a lot of protocol surface: event creation and publishing, NIP-19 encode/decode, NIP-49 key encryption, MuSig2 co-signing across multiple people, a NIP-46 remote-signing bunker, a FUSE mount that turns notes into files, Blossom uploads, NIP-59 gift wrap and unwrap, negentropy sync, and a local relay that can also serve grasp and blossom. Many subcommands compose through stdin and stdout pipes, so it reads like a Unix tool for Nostr.",
+  "status": "maintained. The GitHub releases page shows v0.21.2 marked Latest, with v0.21.0 on 3 Oct, and v0.21.1 and v0.21.2 on 8 Oct. The release list has 0.20.x releases from July to September. The asset timestamps show the year 2026, so the dates are as displayed. The README itself has no release date or changelog.",
+  "caveats": "The README has no license text that I saw, so I could not confirm the license. Several examples need a relay that accepts your key, and the README's own output shows relays rejecting events with 'blocked: not on white-list' and 'not an active paid member'. Admin calls need the key to have permission on that relay. Some features (MuSig2, FUSE mount, bunker) are niche or need extra setup, and the FUSE example implies a Unix-like system. The README's example for verify shows an invalid event ID as its output, which is a deliberate demo of failure. The jq helpers need a separate copy-paste step into ~/.jq. The README fetch was truncated by the tool at 40000 characters, so later sections may have been missed.",
+  "quotes": [
+   "take a look at the help text that comes in it to learn all possibilities",
+   "install with this one-liner:",
+   "it will add the hashtag, turn the npub1 code into a nostr:npub1 URI, turn the olas.app string into https://olas.app, add the \"p\" tag"
+  ],
+  "links": [
+   {
+    "label": "Homepage / README",
+    "url": "https://github.com/fiatjaf/nak"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/fiatjaf/nak/releases"
+   },
+   {
+    "label": "jq helper functions (jq.go)",
+    "url": "https://github.com/fiatjaf/nak/blob/master/jq.go#L10"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/fiatjaf/nak: worked; README returned, truncated by the tool at 40000 characters.",
+   "https://github.com/fiatjaf/nak/releases: worked, but the page came back as mostly page chrome; release names, dates and notes were readable."
+  ]
+ }
+}

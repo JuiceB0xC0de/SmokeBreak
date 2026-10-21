@@ -1,0 +1,154 @@
+{
+ "name": "austin",
+ "desc": "Python frame stack sampler for CPython",
+ "homepage": "https://github.com/P403n1x87/austin",
+ "installs_365d": 171,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "tui",
+  "science"
+ ],
+ "why": "A sampling profiler that watches a running CPython process from outside without modifying it, a neat way to see execution.",
+ "brief": {
+  "what_it_is": "Austin is a frame stack sampler for CPython, written in pure C. It reads the CPython interpreter's memory from outside the process to find the running threads and the stack of frames each one is executing, at a regular interval (default 100 microseconds). Input is a running or launched Python process; output is binary MOJO data (or collapsed stacks, Speedscope JSON, or pprof after conversion) that can be piped into flame graph and profiling tools. The README also describes a live terminal view (-w) that prints current thread stacks.",
+  "why_it_exists": "The README frames it as a profiler that needs no instrumentation and has minimal impact on the target: 'Hence, one can use Austin to easily make powerful statistical profilers that have minimal impact on the target application and that don't require any instrumentation.' Its pitch is that it is 'Just a sampler', leaving analysis to other tools.",
+  "how_it_works": "Samples are collected by reading the CPython interpreter's virtual memory space to retrieve information about the currently running threads and their frame stacks. Austin dumps raw stacks at intervals and leaves aggregation to later tools, which the README says lets it sample faster than tools that aggregate at run time. The optional austinp variant instead uses ptrace and libunwind to capture native stacks, at a higher impact on the target.",
+  "commands_seen": [
+   {
+    "cmd": "pip install austin-dist",
+    "context": "Installs Austin from PyPI on any supported platform; pipx install austin-dist is the alternative."
+   },
+   {
+    "cmd": "brew install austin",
+    "context": "Installs Austin on macOS via Homebrew."
+   },
+   {
+    "cmd": "sudo snap install austin --classic",
+    "context": "Installs Austin as a snap on Linux distributions that support snapd."
+   },
+   {
+    "cmd": "sudo apt update -y && sudo apt install austin -y",
+    "context": "Installs Austin from the official repositories on Debian and derivatives."
+   },
+   {
+    "cmd": "austin -o profile.mojo python myscript.py",
+    "context": "Profiles a Python script by launching it under Austin and writing samples to profile.mojo."
+   },
+   {
+    "cmd": "austin -o profile.mojo -p <pid>",
+    "context": "Attaches Austin to an already running Python process by PID and writes samples to a file."
+   },
+   {
+    "cmd": "austin -o profile.mojo -Cp <pid>",
+    "context": "Same as attaching by PID, with -C so child processes are also sampled."
+   },
+   {
+    "cmd": "austin -Cp `pgrep apache2 | head -n 1` > profile.mojo",
+    "context": "Attaches to an Apache2 WSGI web server including its children, redirecting binary output to a file."
+   },
+   {
+    "cmd": "sudo austin -w `pgrep -f my-running-python-app`",
+    "context": "Prints the stacks of all threads in a running Python process to the terminal (the where mode)."
+   },
+   {
+    "cmd": "sudo setcap cap_sys_ptrace+ep `which austin`",
+    "context": "Grants the CAP_SYS_PTRACE capability to the Austin binary on Linux so it can run without sudo."
+   },
+   {
+    "cmd": "pip install austin-tui --upgrade",
+    "context": "Installs the separate top-like terminal UI for Austin."
+   }
+  ],
+  "install_notes": "Linux: the only build dependency is the standard C library. Build from source with ./configure, make, make install after autoreconf --install, or compile directly with gcc -O3 -Os -Wall -pthread src/*.c -o src/austin. Attaching to external processes needs sudo or the CAP_SYS_PTRACE capability; in Docker, start the container with --cap-add SYS_PTRACE. macOS: attaching needs sudo, and the system Python and python.org installers are blocked by System Integrity Protection and the Hardened Runtime unless the python binary's signature is removed; pyenv, Anaconda and Homebrew Python work out of the box. Windows: compile with gcc -O3 -Os -Wall -lpsapi -lntdll src/*.c -o src/austin, or install with choco install austin or scoop install austin. Conda users can run conda install -c conda-forge austin. The austin-tui module needs python-curses, which the README says is broken in standard Windows Python builds. Austin supports CPython 3.9 through 3.14.",
+  "standout": "Austin is a sampler with no instrumentation and no run-time aggregation: it writes raw stacks in a compact binary format and leaves analysis to converters and viewers such as FlameGraph, Speedscope, pprof, a VS Code extension and a TUI. It also attaches to a running process (including child processes and sub-interpreters) and can sample garbage collector state.",
+  "status": "Appears maintained. The README lists support for CPython 3.9 through 3.14 and mentions Austin 4.0.0 and 3.x release features, with CI badges and a latest-release badge. I could not see a release date or last commit date in the fetched text, so recent activity is unconfirmed.",
+  "caveats": "Licensed GPLv3, per the badge in the README. Linux attach needs root or CAP_SYS_PTRACE. macOS attach needs sudo and fails for SIP- or hardened-runtime-protected Python builds, such as the system Python and python.org installers. The austinp native-stack variant uses ptrace, so its impact on the target is no longer minimal and it is not recommended in production; its default interval is 10 ms. Austin writes binary data, so the README warns to use -o or redirect output to a file. Logs go to syslog on Linux and macOS, and to %TEMP%\\austin.log on Windows. The Windows curses problem affects the TUI only.",
+  "quotes": [
+   "Austin is a Python frame stack sampler for CPython written in pure C.",
+   "Hence, one can use Austin to easily make powerful statistical profilers that have minimal impact on the target application and that don't require any instrumentation.",
+   "This is the nicest profiler I\u2019ve found for Python. It\u2019s cross-platform, doesn\u2019t need me to change the code that\u2019s being profiled, and its output can be piped directly into flamegraph.pl."
+  ],
+  "links": [
+   {
+    "label": "Austin GitHub repository and README",
+    "url": "https://github.com/P403n1x87/austin"
+   },
+   {
+    "label": "MOJO binary format (project wiki)",
+    "url": "https://github.com/P403n1x87/austin/wiki/The-MOJO-file-format"
+   },
+   {
+    "label": "Austin VS Code extension",
+    "url": "https://marketplace.visualstudio.com/items?itemName=p403n1x87.austin-vscode"
+   },
+   {
+    "label": "Austin TUI",
+    "url": "https://github.com/P403n1x87/austin-tui"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/P403n1x87/austin (homepage, fetched as README): worked. The README is complete and covers installation, usage, compatibility and examples, so no further fetches were made."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Austin samples CPython\u2019s live frame stacks from outside the process, offering a low-overhead, no-instrumentation way to see what a running program is doing."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Austin",
+  "tldr": "Austin reads a running Python process's memory from outside and samples every thread's call stack, with no changes to the code being watched.",
+  "deeper_look": "Austin is a frame stack sampler for CPython, written in pure C. It finds the interpreter's data structures in the target process's memory and reads out the running threads and the stack of frames each one is executing. It does this at a regular interval, 100 microseconds by default. The target can be launched under Austin or attached to by PID, including child processes.\n\nIt is deliberately just a sampler. Austin writes raw stacks in a compact binary format called MOJO and leaves aggregation to other tools. The README says this is what lets it sample faster than profilers that aggregate while running. Its output can be converted to collapsed stacks for FlameGraph, to Speedscope JSON, or to pprof. There is also a VS Code extension and a separate top-like terminal UI.\n\nThe idea underneath is that a running interpreter is just memory laid out in a known shape, and you can read it from outside. The README puts it as 'Hence, one can use Austin to easily make powerful statistical profilers that have minimal impact on the target application and that don't require any instrumentation.' It is a small way into how CPython represents threads and frames, and into statistical profiling in general.\n\nA `-w` mode prints the current stacks of all threads in a running process, which is a quick way to ask a live program what it is doing right now.",
+  "install": "brew install austin\n# Attaching to other processes needs sudo on macOS, and root or CAP_SYS_PTRACE on Linux.",
+  "try_this": [
+   {
+    "cmd": "austin -o profile.mojo python myscript.py",
+    "what_happens": "Launches your script under Austin and writes the sampled stacks to profile.mojo."
+   },
+   {
+    "cmd": "sudo austin -w `pgrep -f my-running-python-app`",
+    "what_happens": "Prints the current stacks of all threads in a running Python process to the terminal."
+   },
+   {
+    "cmd": "austin --help",
+    "what_happens": "Lists the available options."
+   }
+  ],
+  "whats_unique": "It is only a sampler: no instrumentation and no aggregation at run time, just raw stacks in a binary format that other tools turn into flame graphs and profiles. It can also attach to a live process, including children and sub-interpreters.",
+  "caveats": "Attaching needs root or CAP_SYS_PTRACE on Linux and sudo on macOS, which fails for SIP-protected Python builds such as the system Python and python.org installers; output is binary, so write it to a file.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "python",
+   "profiler",
+   "cpython",
+   "flamegraph",
+   "tui"
+  ],
+  "links": [
+   {
+    "label": "Austin GitHub repository and README",
+    "url": "https://github.com/P403n1x87/austin"
+   },
+   {
+    "label": "MOJO binary format (project wiki)",
+    "url": "https://github.com/P403n1x87/austin/wiki/The-MOJO-file-format"
+   },
+   {
+    "label": "Austin TUI",
+    "url": "https://github.com/P403n1x87/austin-tui"
+   },
+   {
+    "label": "Austin VS Code extension",
+    "url": "https://marketplace.visualstudio.com/items?itemName=p403n1x87.austin-vscode"
+   }
+  ]
+ }
+}

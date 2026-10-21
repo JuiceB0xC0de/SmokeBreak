@@ -1,0 +1,75 @@
+{
+ "name": "bento4",
+ "desc": "Full-featured MP4 format and MPEG DASH library and tools",
+ "homepage": "https://www.bento4.com/",
+ "installs_365d": 2862,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "library",
+  "reverse-engineering",
+  "visual"
+ ],
+ "why": "Its mp4dump tool exposes the box structure inside MP4 and DASH files, a useful way to take media files apart.",
+ "brief": {
+  "what_it_is": "Bento4 is a C++ class library and command-line toolkit for reading and writing ISO-MP4 files, plus packaging for MPEG DASH, HLS and CMAF. It takes in MP4 files and elementary streams (H.264/AVC, H.265/HEVC, AAC) and produces things like fragmented MP4, encrypted or decrypted MP4, MPEG-TS, HLS playlists and segments, DASH presentations, and metadata edits. It ships about thirty command-line tools, including mp4info for track and codec summaries and mp4dump for the full box tree of a file. The README says the SDK does not depend on any external library.",
+  "why_it_exists": "The README frames it as a fast, modern, open source toolkit for all MP4 and DASH/HLS/CMAF media format needs. It notes that ISO-MP4 is derived from Apple QuickTime, so it also reads and writes most QuickTime files.",
+  "how_it_works": "The tools are built on the Bento4 C++ SDK API and operate on the ISO-MP4 box (atom) structure, so tools like mp4edit and mp4extract can add, replace, or pull out individual boxes. Packaging tools such as mp4fragment, mp4dash and mp42hls read samples from existing MP4 files and write new segments, playlists and manifests. Encryption tools implement several schemes, including MPEG Common Encryption (CENC), PIFF, ISMA, and OMA DCF. The README does not describe the internal design in more detail.",
+  "commands_seen": [
+   {
+    "cmd": "scons -u",
+    "context": "Builds the Debug configuration with SCons, run from the top-level directory or a Build/Targets/xxx subdirectory. The README marks SCons as deprecated."
+   },
+   {
+    "cmd": "scons -u build_config=Release",
+    "context": "Builds the Release configuration with SCons."
+   },
+   {
+    "cmd": "make AP4_BUILD_CONFIG=Release",
+    "context": "Makes a Release build with plain Make, run from the target build directory under Build/Targets."
+   },
+   {
+    "cmd": "mkdir cmakebuild",
+    "context": "First step of the out-of-tree CMake build; the following commands run inside this directory."
+   },
+   {
+    "cmd": "cmake -DCMAKE_BUILD_TYPE=Release ..",
+    "context": "Configures a Release CMake build (Makefiles, or Visual Studio on Windows) from the cmakebuild directory."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles the CMake-generated Makefiles after configuration."
+   },
+   {
+    "cmd": "./vcpkg install bento4",
+    "context": "Installs Bento4 through the vcpkg package manager, after cloning vcpkg and running bootstrap."
+   }
+  ],
+  "install_notes": "The README covers build paths rather than a brew-style install. Options are Make with Build/Targets/<arch>-<vendor>-<os> files, CMake (Makefiles, Xcode, Visual Studio, or Android NDK with an NDK toolchain file), SCons, Xcode projects for macOS and iOS, a Visual Studio 2010 solution for Windows, or vcpkg. The Android CMake path needs the NDK, an ABI such as arm64-v8a, and a minimum API level. No accounts or runtimes are mentioned. Prebuilt SDKs and tools are on a separate Downloads page that I did not open.",
+  "standout": "It is a self-contained C++ library with no external dependencies that covers the whole MP4 stack, from box-level inspection to DASH and HLS packaging and multiple DRM-compatible encryption schemes. The inspection tools mp4info and mp4dump let you examine the structure of any MP4 or DASH file from the command line.",
+  "status": "Appears maintained. The GitHub README has a CI badge and release notes up to 1.6.0-638, which mention new AV1 support and a move to MkDocs docs. No release dates or last commit date were visible in what I fetched, so the timing is unknown.",
+  "caveats": "The README says SCons support is deprecated. Windows is covered by a VS2010 solution file, which looks dated. The README lists DRM support for Marlin, PlayReady and Widevine, while the homepage also names FairPlay and Adobe Access. Licensing is dual, with details only on an About page I did not read. The homepage has a typo, mp4decryp, where the tool is mp4decrypt. The brew executables list includes mp4hls and mp4dashclone, which the GitHub README table does not mention; the homepage does list them. The homepage promises Dolby Vision and HDR support, which the README does not mention.",
+  "quotes": [
+   "A fast, modern, open source C++ toolkit for all your MP4 and DASH/HLS/CMAF media format needs.",
+   "The implementation does not rely on any external library. All the code necessary to compile the SDK and tools is included in the standard distribution.",
+   "mp4dump: displays the entire atom/box structure of an MP4 file"
+  ],
+  "links": [
+   {
+    "label": "Bento4 homepage",
+    "url": "https://www.bento4.com/"
+   },
+   {
+    "label": "GitHub repository (axiomatic-systems/Bento4)",
+    "url": "https://github.com/axiomatic-systems/Bento4"
+   }
+  ],
+  "fetch_log": [
+   "https://www.bento4.com/ - fetched OK; returned the homepage text with feature list and tool descriptions, but no shell commands",
+   "https://github.com/axiomatic-systems/Bento4 - fetched OK; returned the README with build commands and release notes. I did not follow the docs or About pages."
+  ]
+ }
+}

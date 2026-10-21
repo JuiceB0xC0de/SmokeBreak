@@ -1,0 +1,50 @@
+{
+ "name": "dnscrypt-proxy",
+ "desc": "Secure communications between a client and a DNS resolver",
+ "homepage": "https://dnscrypt.info",
+ "installs_365d": 2464,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "afternoon"
+ ],
+ "why": "A window into encrypted DNS transport and resolver trust, a protocol most people never inspect despite it running on every machine.",
+ "brief": {
+  "what_it_is": "dnscrypt-proxy is a local DNS proxy written in Go that sits between your machine and upstream DNS resolvers. It accepts ordinary DNS queries on localhost and forwards them over encrypted transports: DNSCrypt v2, Post-Quantum DNSCrypt, DNS-over-HTTPS, Anonymized DNSCrypt, and ODoH. Answers come back to the client as ordinary DNS responses. The dnscrypt.info homepage itself is the protocol's project site, not the tool's page, and the tool's README is on GitHub.",
+  "why_it_exists": "The homepage frames DNSCrypt as a protocol built for privacy, security, and performance from the ground up, which encrypts and authenticates DNS between client and resolver and uses signatures to prevent spoofing. It argues that DNSCrypt needs no certificate authorities, that anyone can run a resolver, and that its traffic is harder to block than DoH.",
+  "how_it_works": "Per the homepage, DNSCrypt clients are configured with a resolver IP address and a public key, so encryption starts from the first packet without a plaintext hostname lookup, and each resolver has a static public key verified by signatures rather than a CA. The README says the proxy measures the speed of the resolvers you list and balances traffic across the fastest ones. It can also cache answers, filter ads and malware, and hide client IPs via Tor, SOCKS proxies, or Anonymized DNS relays.",
+  "commands_seen": [],
+  "install_notes": "The README points to pre-built binaries for many platforms, including macOS arm64 and x86_64, and says signature-verification steps are in the GitHub wiki installation page. The Homebrew caveats (not from the README) say to point the system DNS to 127.0.0.1 through Network settings, that the default listens on 127.0.0.1 port 53, that the config lives at $HOMEBREW_PREFIX/etc/dnscrypt-proxy.toml, and suggest checking with: sudo tcpdump -i en1 -vvv 'port 443' (replace en1 with your interface). Port 53 and changing system DNS need admin rights.",
+  "standout": "The homepage pitches a protocol that starts encrypting from the first packet and has no CA dependency, while the proxy bundles many transports, Tor and relay support, and local cloaking/filtering into one binary. Few DNS tools cover this range of transports and anonymization options together.",
+  "status": "unknown. The README mentions DNSCrypt 2026 and a v2.1.10 release note, has a live build-status badge and a latest-release link, and the Homebrew formula is present, but I did not see a release date or last commit date in the fetched text.",
+  "caveats": "The homepage fetch returned only the protocol marketing copy, with no install or usage details. The README gives no commands, so the only usage lines come from Homebrew metadata. Changing system DNS to 127.0.0.1 affects the whole machine's resolution, and the README does not say how to undo it. The README does not state a license in the fetched text. Hot-reloading is disabled by default from v2.1.10.",
+  "quotes": [
+   "A flexible DNS proxy, with support for modern encrypted DNS protocols such as DNSCrypt v2 including Post-Quantum DNSCrypt (DNSCrypt 2026), DNS-over-HTTPS, Anonymized DNSCrypt and ODoH (Oblivious DoH).",
+   "Load balancing: pick a set of resolvers, dnscrypt-proxy will automatically measure and keep track of their speed, and balance the traffic across the fastest available ones.",
+   "Cloaking: like a HOSTS file on steroids, that can return preconfigured addresses for specific names, or resolve and return the IP address of other names.",
+   "DNSCrypt clients are configured with an IP address and a public key. Encryption starts from the very first query."
+  ],
+  "links": [
+   {
+    "label": "DNSCrypt project home page (protocol)",
+    "url": "https://dnscrypt.info"
+   },
+   {
+    "label": "dnscrypt-proxy documentation",
+    "url": "https://dnscrypt.info/doc"
+   },
+   {
+    "label": "dnscrypt-proxy GitHub repository",
+    "url": "https://github.com/DNSCrypt/dnscrypt-proxy"
+   }
+  ],
+  "fetch_log": [
+   "https://dnscrypt.info: worked, returned the DNSCrypt v2 protocol home page with marketing copy and no install or command details",
+   "https://github.com/DNSCrypt/dnscrypt-proxy: worked, returned the README with the overview, feature list, and binary list; it links to the docs at dnscrypt.info/doc and the wiki installation page, which I did not fetch"
+  ]
+ }
+}

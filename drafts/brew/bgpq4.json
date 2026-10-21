@@ -1,0 +1,150 @@
+{
+ "name": "bgpq4",
+ "desc": "BGP filtering automation for Cisco, Juniper, BIRD and OpenBGPD routers",
+ "homepage": "https://github.com/bgp/bgpq4",
+ "installs_365d": 309,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "A door into BGP, the routing protocol that runs the internet, via prefix-list generation from IRR data.",
+ "brief": {
+  "what_it_is": "bgpq4 is a command-line tool that generates router filter configuration from Internet Routing Registry (IRR) data. You give it AS numbers, AS-SETs, route-sets, or prefixes, and it queries an IRRd server (by default rr.ntt.net) and prints prefix-lists, extended access-lists, policy-statement terms, or as-path lists. Output is Cisco IOS by default, and the -J, -B, -b, -e, -K, -n, -N, -U, -u, and -X flags switch it to Juniper, OpenBGPD, BIRD, Arista EOS, Mikrotik, Nokia, Huawei, or IOS XR syntax. A -F format string can produce arbitrary text, for example ipfw rules.",
+  "why_it_exists": "The README describes it as a \"bgp filtering automation tool\" and says it is \"used to generate configurations (prefix-lists, extended access-lists, policy-statement terms and as-path lists) based on IRR data.\" It is meant to replace hand-built customer filters with lists generated from registry route objects.",
+  "how_it_works": "bgpq4 expands objects recursively: AS-SETs and route-sets are resolved into member prefixes by querying the IRR database over the network. It then aggregates or filters the results (-A, -m, -r, -R, -S, and so on) and renders them in the selected vendor format. The README also explains how to restrict which databases are trusted: -S limits sources to a named list, and the \"SOURCE::OBJECT\" notation sets the source for one AS-SET or route-set in the tree.",
+  "commands_seen": [
+   {
+    "cmd": "bgpq4 -Jl eltel AS20597",
+    "context": "Generates a named Juniper prefix-list called eltel for AS20597 (README example)."
+   },
+   {
+    "cmd": "bgpq4 -Al eltel AS20597",
+    "context": "Same AS with -A aggregation for Cisco output, producing a more compact ip prefix-list."
+   },
+   {
+    "cmd": "bgpq4 -AJEl eltel/specifics -r 29 -R 32 -M \"community blackhole\" AS20597",
+    "context": "Juniper policy-statement term that matches more-specifics /29 to /32 carrying a blackhole community."
+   },
+   {
+    "cmd": "bgpq4 -6l as-retn-6 AS-RETN6",
+    "context": "Generates an IPv6 Cisco prefix-list from the AS-RETN6 AS-SET."
+   },
+   {
+    "cmd": "bgpq4 -Jf 112 AS-SPACENET",
+    "context": "Generates Juniper as-path-group filters for AS-SPACENET, with 32-bit ASNs included."
+   },
+   {
+    "cmd": "bgpq4 -F \"ipfw add pass all from %n/%l to any\\n\" as3254",
+    "context": "Uses a user-defined format string to emit FreeBSD ipfw rules, showing that output need not be router config."
+   },
+   {
+    "cmd": "bgpq4 -S RIPE AS-VOSTRON",
+    "context": "Limits all IRR queries to the RIPE source only, so the prefix list reflects only RIPE route objects."
+   },
+   {
+    "cmd": "bgpq4 RIPE::AS-VOSTRON",
+    "context": "Queries only the root AS-SET from RIPE while letting members use the default source list."
+   },
+   {
+    "cmd": "sysctl -w net.core.rmem_max=2097152",
+    "context": "One of the Linux sysctl tweaks the README recommends for expanding very large AS-SETs faster."
+   },
+   {
+    "cmd": "docker run --rm ghcr.io/bgp/bgpq4:latest -Jl eltel AS20597",
+    "context": "Runs the published container image with the same Juniper example, with no local install."
+   }
+  ],
+  "install_notes": "The README gives no Homebrew-specific steps. Building from a git checkout uses autotools: run ./bootstrap, then ./configure, make, and make install (make maintainer-clean and make dist are also documented). A multi-arch Docker/OCI image (linux/amd64 and linux/arm64, Alpine-based) is published to GitHub Container Registry for tagged releases and main. Runtime needs network access to an IRRd server; the default is rr.ntt.net, changeable with -h host[:port]. No accounts or hardware are needed. For large AS-SET expansions, the README suggests raising OS TCP buffer sizes (FreeBSD sysctl net.inet.tcp.sendbuf_max, or several Linux net.core and net.ipv4 settings).",
+  "standout": "Most prefix-list tools hand-write a single vendor syntax. bgpq4 targets a long list of vendors plus a free-form -F template for anything else, and its README spends real effort on data-trust problems: stale route objects in non-RIR databases, and why the NONAUTH sources should be avoided. The README's example outputs are tied to real ASNs and AS-SETs.",
+  "status": "Probably maintained, but the fetched README gives no release version or date and no last-commit date, so this is not confirmed. Signs of ongoing upkeep: a CI badge for unit tests, a Repology packaging badge, automatic container builds for tagged releases and main, and a named project maintainer (Job Snijders). Recent-looking format support includes Nokia SR Linux, Mikrotik ROSv7, Huawei XPL, and JunOS 21.3R1+ as-path-origin.",
+  "caveats": "The default data source is NTT's IRR service at rr.ntt.net, so results depend on that server and on whatever databases it mirrors. Output reflects registry data, which can be stale or wrong; the README tells users to limit sources with -S or the :: notation. If an AS-SET includes members from sources not named in -S, the query may return nothing useful. The README warns against trusting ARIN-NONAUTH and RIPE-NONAUTH. Building from source needs autotools. Some README examples include hand-edited output, and the sample prefixes are a snapshot from when they were written.",
+  "quotes": [
+   "The bgpq4 utility is used to generate configurations (prefix-lists, extended access-lists, policy-statement terms and as-path lists) based on IRR data.",
+   "By default bgpq4 trusts data from all databases mirrored into NTT's IRR service.",
+   "RIR maintained databases (AFRINIC, ARIN, APNIC, LACNIC and RIPE) shall be trusted more than the others because they have the knowledge about which address space is allocated to each ASN"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README (homepage)",
+    "url": "https://github.com/bgp/bgpq4"
+   },
+   {
+    "label": "NLNOG BGP Filter Guide (cited in SEE ALSO)",
+    "url": "http://bgpfilterguide.nlnog.net/"
+   },
+   {
+    "label": "Container image on GitHub Container Registry",
+    "url": "https://github.com/bgp/bgpq4/pkgs/container/bgpq4"
+   },
+   {
+    "label": "BGPQ4 mailing list",
+    "url": "https://tcp0.com/cgi-bin/mailman/listinfo/bgpq4"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/bgp/bgpq4 - worked; returned the README, which is formatted as a man page. Its content was enough, so I did not fetch further links."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It turns Internet routing registry data into deployable, multi-vendor BGP policy, making an obscure but consequential layer of routing infrastructure tangible."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "bgpq4",
+  "tldr": "Turns Internet Routing Registry data into router filter configs, a way to see how the internet decides which networks to believe.",
+  "deeper_look": "bgpq4 takes an AS number, an AS-SET, or a route-set, asks an IRRd server what prefixes belong to it, and prints a filter list. The default server is rr.ntt.net, and `-h` points it elsewhere. Output is Cisco IOS by default. Flags switch it to Juniper, OpenBGPD, BIRD, Arista EOS, Mikrotik, Nokia, Huawei or IOS XR syntax.\n\nThe idea underneath is how BGP, the protocol that stitches networks together, stays sane. Anyone can announce anything, so operators filter what they accept from customers and peers. The README describes the tool as being used to generate configurations \"based on IRR data\", meant to replace hand-built customer filters with lists generated from registry route objects. AS-SETs are expanded recursively into their member prefixes, then optionally aggregated or trimmed by prefix length.\n\nThe interesting part is trust. The README notes that \"By default bgpq4 trusts data from all databases mirrored into NTT's IRR service\", and says the RIR-maintained databases should be trusted more than the others. The `-S` flag limits which sources are used, and `SOURCE::OBJECT` notation sets the source for a single object. It warns against ARIN-NONAUTH and RIPE-NONAUTH. Running the same query with different sources shows how much routing data is stale or self-asserted.\n\nThe `-F` format option takes a template, so output does not have to be router config. The README's example emits FreeBSD ipfw rules.",
+  "install": "brew install bgpq4\n# Needs network access to an IRRd server (default rr.ntt.net). No account or hardware needed.",
+  "try_this": [
+   {
+    "cmd": "bgpq4 -Jl eltel AS20597",
+    "what_happens": "Prints a Juniper prefix-list named eltel for the prefixes registered to AS20597."
+   },
+   {
+    "cmd": "bgpq4 -6l as-retn-6 AS-RETN6",
+    "what_happens": "Expands the AS-RETN6 AS-SET and prints an IPv6 Cisco prefix-list."
+   },
+   {
+    "cmd": "bgpq4 -S RIPE AS-VOSTRON",
+    "what_happens": "Restricts all lookups to the RIPE database, so the list reflects only RIPE route objects."
+   }
+  ],
+  "whats_unique": "It covers a long list of router vendors plus a free-form template, and its documentation spends real effort on which registry data to trust.",
+  "caveats": "Results are only as good as the registry data, which can be stale or wrong, and they depend on the IRR server you query.",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "bgp",
+   "routing",
+   "network",
+   "protocol",
+   "irr"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/bgp/bgpq4"
+   },
+   {
+    "label": "NLNOG BGP Filter Guide",
+    "url": "http://bgpfilterguide.nlnog.net/"
+   },
+   {
+    "label": "Container image on GitHub Container Registry",
+    "url": "https://github.com/bgp/bgpq4/pkgs/container/bgpq4"
+   },
+   {
+    "label": "BGPQ4 mailing list",
+    "url": "https://tcp0.com/cgi-bin/mailman/listinfo/bgpq4"
+   }
+  ]
+ }
+}

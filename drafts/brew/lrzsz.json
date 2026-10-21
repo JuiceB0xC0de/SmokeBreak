@@ -1,0 +1,99 @@
+{
+ "name": "lrzsz",
+ "desc": "Tools for zmodem/xmodem/ymodem file transfer",
+ "homepage": "https://www.ohse.de/uwe/software/lrzsz.html",
+ "installs_365d": 3951,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "protocol",
+  "ancient",
+  "serial"
+ ],
+ "why": "Zmodem, xmodem and ymodem are old file transfer protocols over serial lines, a fine doorway into how terminals once moved files.",
+ "brief": {
+  "what_it_is": "lrzsz is a Unix command-line package that implements the XMODEM, YMODEM and ZMODEM file transfer protocols. The installed programs (lrb, lrx, lrz, lsb, lsx, lsz, rz, sz) send or receive files over a communication link, typically a serial line or a terminal session, rather than over a network protocol of their own. The sender reads files and the receiver writes them, with error checking and block-size handling along the way. The page describes it as free x/y/zmodem software released under the GNU General Public Licence.",
+  "why_it_exists": "The author, Uwe Ohse, says lrzsz is a reworked version of the last public domain release of Omen Technologies' rzsz package, and that he took the work up again after security flaws were reported. The changelog frames the older ZMODEM design as proprietary and insecure, noting that the receiver could be made to run commands the sender chose.",
+  "how_it_works": "The page gives little mechanism detail. It says ZMODEM supports crash recovery, block sizes up to 8KB (ZMODEM8K), and automatic block-size tuning based on the number of errors seen. The 0.13.0 release notes say the package includes ZMODEM documentation and a work-in-progress specification.",
+  "commands_seen": [
+   {
+    "cmd": "make vcheck",
+    "context": "Named in the 0.12.16 changelog as the check that showed about 50% more throughput after a performance change. Not a user command, but a build target."
+   },
+   {
+    "cmd": "make rpm",
+    "context": "From the 0.12.20 changelog: says make rpm creates an rpm file."
+   },
+   {
+    "cmd": "make check",
+    "context": "From the 0.12.10 changelog: an improved make check target, contributed by Philippe De Muyter."
+   },
+   {
+    "cmd": "sh systype | mail uwe-generic-counter@ohse.de",
+    "context": "Quoted from the 0.12.20 changelog as a way to send a success report with a description of the system type to the author. Included verbatim; it is a mail-sending suggestion from the changelog, not something the user is asked to run in normal use."
+   }
+  ],
+  "install_notes": "The page says the package is configured automatically with GNU autoconf, which suggests the usual ./configure and make steps from the source tarball. The latest tarball is named lrzsz-0.13.1.tar.gz, about 480KB; I did not find a direct download URL on the page. The page says 0.13.0 compiles cleanly on modern systems and supports C99 to C23 and POSIX.1-2008. It also mentions a dejagnu testsuite, which may need a dejagnu snapshot. No accounts, hardware or runtime requirements beyond a C toolchain are mentioned. The Homebrew formula's caveats field was empty.",
+  "standout": "It is a rare, readable record of a public-domain protocol tool being hardened by its maintainer, with a candid changelog and a frank essay on why ZMODEM's design is a security problem. The page also says the author plans to remove command execution from lsz, which is itself a notable design point.",
+  "status": "Looks maintained. The changelog lists releases from 1996 through 0.13.1, with 0.13.0 and 0.13.1 both dated 2026 on the page, the latest as October 2026. I could not check a commit history or release page because I did not fetch the tarball or a repository, so I am going only on the dates the homepage gives.",
+  "caveats": "The page is the author's own and is the only source I read. The 0.13.1 release removed the newly added ESC8 high-bit escaping after an incompatibility report, and the author notes a list of incompatibilities between the 0.12 and 0.13 series. The author says the ZMODEM documentation is incomplete and the protocol has undocumented extensions. The to-do list includes removing command execution from lsz and the --full-path option, and the 0.12.21 notes say the --tcp option was removed. Some older release notes warn about specific bugs, such as 0.12.18 being broken, and the author admits to some doubt about having caught all endless-loop bugs. The page itself is fairly dated in style and gives no examples of usage. The brew caveats field was empty.",
+  "quotes": [
+   "lrzsz is a unix communication package providing the XMODEM, YMODEM and ZMODEM file transfer protocols.",
+   "The ability to let the receiver execute any command the sender tells him is nothing more then a really large security hole, and a hackers dreams come true.",
+   "Most other communication protocols of that time are already forgotten."
+  ],
+  "links": [
+   {
+    "label": "Homepage (Uwe Ohse, lrzsz)",
+    "url": "https://www.ohse.de/uwe/software/lrzsz.html"
+   }
+  ],
+  "fetch_log": [
+   "https://www.ohse.de/uwe/software/lrzsz.html: fetched OK, the homepage with features, download, change history and comments. The download link text names lrzsz-0.13.1.tar.gz but I did not follow it. I did not fetch any further pages, since the homepage was complete enough."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "ZMODEM turns a terminal session into crash-resumable file transfer, making this small, obscure implementation a hands-on doorway into a forgotten protocol."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "lrzsz",
+  "tldr": "Send and receive files over a serial line or terminal session with XMODEM, YMODEM and ZMODEM, the pre-network protocols that once moved files between machines.",
+  "deeper_look": "lrzsz is a set of command-line programs, `sz` to send and `rz` to receive among them, that implement three old file transfer protocols. They work over a plain communication link such as a serial line or a terminal session, not over a network protocol of their own. The sender reads files, the receiver writes them, and both sides handle error checking and block sizes along the way.\n\nZMODEM is the interesting one. According to the project page it supports crash recovery, block sizes up to 8KB, and automatic block-size tuning based on how many errors it sees. The page's own words: \"Most other communication protocols of that time are already forgotten.\"\n\nThe package is a reworked version of the last public domain release of Omen Technologies' rzsz. The author, Uwe Ohse, took it up again after security flaws were reported. His changelog is candid about the old design: \"The ability to let the receiver execute any command the sender tells him is nothing more then a really large security hole, and a hackers dreams come true.\" He plans to remove command execution from `lsz`.\n\nThat makes lrzsz two doors in one. One leads to how terminals moved files before networks were everywhere. The other is a case study in a maintainer hardening a protocol whose design assumed a friendly peer.",
+  "install": "brew install lrzsz\n# Homebrew caveats are empty. Source builds use GNU autoconf and need a C toolchain. A real transfer needs a serial line or terminal session with a peer that speaks the protocol.",
+  "try_this": [
+   {
+    "cmd": "sz --help",
+    "what_happens": "Prints the sender's options, a quick look at what the protocol lets you control."
+   },
+   {
+    "cmd": "rz --help",
+    "what_happens": "Prints the receiver's options, the other half of a transfer."
+   }
+  ],
+  "whats_unique": "Its changelog and essays document a public-domain protocol tool being hardened in the open, including a blunt account of why ZMODEM's design is a security problem.",
+  "caveats": "The homepage is the author's own, gives no usage examples, and notes incomplete ZMODEM documentation, undocumented protocol extensions and incompatibilities between the 0.12 and 0.13 series.",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "protocol",
+   "ancient",
+   "serial",
+   "zmodem",
+   "file-transfer"
+  ],
+  "links": [
+   {
+    "label": "Homepage (Uwe Ohse, lrzsz)",
+    "url": "https://www.ohse.de/uwe/software/lrzsz.html"
+   }
+  ]
+ }
+}

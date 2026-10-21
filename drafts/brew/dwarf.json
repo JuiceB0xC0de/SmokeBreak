@@ -1,0 +1,134 @@
+{
+ "name": "dwarf",
+ "desc": "Object file manipulation tool",
+ "homepage": "https://github.com/elboza/dwarf-ng/",
+ "installs_365d": 41,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering"
+ ],
+ "why": "An object file manipulation tool that opens the door to ELF and DWARF debug structures.",
+ "brief": {
+  "what_it_is": "dwarf-ng is a command-line object file manipulation tool and hex editor, described as being in the spirit of gdb. It opens raw files and ELF (32 and 64-bit), PE (PE32 and PE+), and Mach-O (macOS 32 and 64-bit) executables, and lets you read and edit section headers and raw data. It can also create new file headers, inject headers and code or data into a file, and be used as a compiler back-end to produce executables or object files. Input is a file; output is printed hex, strings, numbers, and edited or saved files.",
+  "why_it_exists": "The README frames it as a little but powerful tool for reading and editing object files at the header and raw-byte level, the way gdb works on a running program, and for building or patching binaries directly.",
+  "how_it_works": "You open a file (probed for its type, or opened raw with oO) and get a shell-like prompt where commands follow a gdb-like syntax: a letter for the operation, optional ? for help, and arguments such as an address or block size. Format-specific structures are exposed as variables such as $elf, $ph[0..n], $sh[0..n] for ELF, $mac and $lc for Mach-O, and $pe and $sect for PE, which can be printed, assigned, and used in expressions. Config files /etc/dwarfrc and ~/.dwarfrc are read in that order, and a work_on_tmpcopy option controls whether edits go to a temporary copy.",
+  "commands_seen": [
+   {
+    "cmd": "$ make",
+    "context": "Builds dwarf from the repo. The README comment says to use make FLEX=osx on macOS."
+   },
+   {
+    "cmd": "$ sudo make install",
+    "context": "Installs the built dwarf binary system-wide, per the README's HOWTO INSTALL section."
+   },
+   {
+    "cmd": "$ ./dwarf -h",
+    "context": "Prints the usage banner (shows version dwarf-ng-0.4.0 in the help text) with the list of command-line options."
+   },
+   {
+    "cmd": "o myfile",
+    "context": "Inside the dwarf prompt, opens myfile and probes its type."
+   },
+   {
+    "cmd": "oO myfile",
+    "context": "Inside the dwarf prompt, opens myfile without probing the file type or loading data structures."
+   },
+   {
+    "cmd": "x 0x100",
+    "context": "Inside the dwarf prompt, hexdumps from offset 0x100."
+   },
+   {
+    "cmd": "s/x 9091",
+    "context": "Inside the dwarf prompt, searches for the next occurrence of bytes \\x90\\x91 from the current offset."
+   },
+   {
+    "cmd": "pp %x 10+2",
+    "context": "Inside the dwarf prompt, prints the expression 10+2 in hexadecimal."
+   },
+   {
+    "cmd": "wx %10 '0' $sh[4]::offset",
+    "context": "Inside the dwarf prompt, writes the byte 0 ten times at the offset of section header 4, per the README's offsets example."
+   },
+   {
+    "cmd": "M 0 +10 0x100",
+    "context": "Inside the dwarf prompt, moves a 10-byte block from offset 0 to offset 0x100."
+   }
+  ],
+  "install_notes": "Build from source with make; on macOS pass FLEX=osx. Dependencies listed in the README are flex, bison, readline (libreadline and libreadline-dev on Linux), and gcc. Install with sudo make install. Optional configuration lives in /etc/dwarfrc and ~/.dwarfrc, with settings such as work_on_tmpcopy, verbose, tmpdir, tmpname, and colors. No accounts or hardware are needed.",
+  "standout": "It is a gdb-style hex editor that understands several executable formats at once and exposes their headers as scriptable variables that you can assign, resize, and rebuild, including adding new program or section headers. The README also pitches it as a compiler back-end.",
+  "status": "Unknown from the README alone. The help banner reads dwarf-ng-0.4.0 with copyright 2007-2013-2017, and the README has no release dates, changelog, or recent-activity note. I did not check the repository's commit history or releases page.",
+  "caveats": "The README says Raw, ELF, PE, and Mach-O are the only formats handled now and that new types will come later. Build needs flex, bison, readline, and gcc, and macOS needs the FLEX=osx flag. The README does not describe parsing DWARF debug information, so the name refers to the tool's 'dwarf' identity and not obviously to the DWARF debug format; the scout note's link to DWARF debug structures is not supported by the README text. Licence is GPL v2 or later. The docs are a man page link and a short example set, and the README does not say how to test changes.",
+  "quotes": [
+   "a little and powerful object file manipulation tool and hex editor.",
+   "in the spirit of _gdb_. with dwarf-ng you can read and edit all the file's section headers as well as the raw data.",
+   "it can be used as a compiler back-end to create executables/object files."
+  ],
+  "links": [
+   {
+    "label": "dwarf-ng GitHub repository (homepage)",
+    "url": "https://github.com/elboza/dwarf-ng/"
+   },
+   {
+    "label": "dwarf man page (linked from README as doc/xdwarf.man.html; branch assumed to be master)",
+    "url": "https://github.com/elboza/dwarf-ng/blob/master/doc/xdwarf.man.html"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/elboza/dwarf-ng/ - fetched OK, README returned in full. It was detailed enough that I did not follow the man page link or the demo GIFs."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A gdb-like shell for inspecting and rewriting ELF, PE, and Mach-O structures\u2014including adding headers\u2014makes binary formats unusually hands-on, despite uncertain project activity."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "dwarf",
+  "tldr": "A gdb-flavoured hex editor that understands ELF, PE and Mach-O headers as editable variables, so you can patch binaries at the structure level.",
+  "deeper_look": "dwarf-ng is a command-line object file tool and hex editor. You open a file and get a shell-like prompt whose commands follow a gdb-like syntax: a letter for the operation, an optional `?` for help, then arguments such as an address or block size. It handles raw files, ELF (32 and 64-bit), PE (PE32 and PE+), and Mach-O.\n\nThe interesting part is that headers are exposed as variables. For ELF you get `$elf`, `$ph[0..n]` and `$sh[0..n]`; Mach-O has `$mac` and `$lc`; PE has `$pe` and `$sect`. You can print them, assign to them, use them in expressions, and write bytes at the offset a header field points to. The README says you can also create new file headers, inject headers and code or data, and use the tool as a compiler back-end.\n\nThe README describes it as \"a little and powerful object file manipulation tool and hex editor\" \"in the spirit of _gdb_\". The idea underneath is that an executable is just a structured byte array. Once you can address its section headers by name, you see how loaders and linkers read the file, and how little stands between a binary and your edits.\n\nDespite the name, the README does not describe parsing DWARF debug information. The name appears to be the tool's own identity, not a debug-format reader.",
+  "install": "brew install dwarf\n# Config is optional: /etc/dwarfrc and ~/.dwarfrc (e.g. work_on_tmpcopy, verbose, colors). No accounts or hardware needed.",
+  "try_this": [
+   {
+    "cmd": "dwarf -h",
+    "what_happens": "Prints the usage banner, including the version and the list of command-line options."
+   },
+   {
+    "cmd": "o myfile",
+    "what_happens": "Run inside the dwarf prompt: opens a file and probes its type, loading the ELF, PE or Mach-O structures."
+   },
+   {
+    "cmd": "x 0x100",
+    "what_happens": "Run inside the prompt: hexdumps the open file starting at offset 0x100."
+   }
+  ],
+  "whats_unique": "It is a gdb-style hex editor that understands several executable formats at once and exposes their headers as variables you can assign, resize and rebuild.",
+  "caveats": "The help banner reads dwarf-ng-0.4.0 with copyright through 2017, and the README gives no release dates, so maintenance status is unclear; only raw, ELF, PE and Mach-O are supported.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "reverse-engineering",
+   "hex-editor",
+   "elf",
+   "pe",
+   "mach-o",
+   "binary"
+  ],
+  "links": [
+   {
+    "label": "dwarf-ng GitHub repository",
+    "url": "https://github.com/elboza/dwarf-ng/"
+   },
+   {
+    "label": "dwarf man page",
+    "url": "https://github.com/elboza/dwarf-ng/blob/master/doc/xdwarf.man.html"
+   }
+  ]
+ }
+}

@@ -1,0 +1,83 @@
+{
+ "name": "mspdebug",
+ "desc": "Debugger for use with MSP430 MCUs",
+ "homepage": "https://dlbeer.co.nz/mspdebug/",
+ "installs_365d": 126,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "needs-hardware",
+  "afternoon",
+  "reverse-engineering"
+ ],
+ "why": "Debugger driving MSP430 microcontrollers over JTAG or Spy-Bi-Wire, a direct way into watching real chips execute code.",
+ "brief": {
+  "what_it_is": "MSPDebug is a free command-line debugger for Texas Instruments MSP430 microcontrollers. It talks to the chip through a programmer such as the FET430UIF, eZ430, RF2500, Launchpad, Chronos, GoodFET, or Olimex MSP430-JTAG-TINY, and supports programming, single-stepping, running to breakpoints, and memory inspection. It can also act as a GDB remote stub or client, and it has a simulation mode that runs MSP430 code without hardware. It reads Intel HEX, ELF32, COFF, TI Text, SREC, and BSD symbol table files, and it can disassemble code and translate addresses to symbols.",
+  "why_it_exists": "The README presents it as a free alternative for MSP430 work, and as a replacement for the proprietary msp430-gdbproxy. Its pitch is that it runs in userspace and can serve as either a gdb proxy or a standalone debugger, with reverse-engineering tools added on top.",
+  "how_it_works": "It runs in userspace with no kernel modifications and talks to the programmer over USB, which the build notes tie to libusb. For GDB use it acts as a remote stub, and it can also work as a GDB client. The page does not describe the internals beyond this.",
+  "commands_seen": [
+   {
+    "cmd": "tar xvfz mspdebug-version.tar.gz",
+    "context": "Unpacks the source tarball, from the 'Compiling from source' section of the homepage."
+   },
+   {
+    "cmd": "cd mspdebug-version",
+    "context": "Changes into the unpacked source directory before building."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds mspdebug from source."
+   },
+   {
+    "cmd": "make WITHOUT_READLINE=1",
+    "context": "Builds without GNU readline support, for systems where readline is unwanted or unavailable."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the binary and manual page; the page says to run it as root."
+   },
+   {
+    "cmd": "mspdebug --help",
+    "context": "Prints usage instructions after installation."
+   },
+   {
+    "cmd": "apt-get install libusb-dev",
+    "context": "Installs the libusb development package on Debian or Ubuntu before compiling. The homepage says 'you might need' this."
+   },
+   {
+    "cmd": "sudo apt-get install libreadline-dev",
+    "context": "From the GitHub README: installs readline headers on Debian or Ubuntu if the build needs them."
+   }
+  ],
+  "install_notes": "Building from source needs the libusb development headers (libusb-dev on Debian/Ubuntu, and the GitHub README also gives an Arch package name). GNU readline is optional, and the Makefile can skip it with WITHOUT_READLINE=1. The homepage also lists packages for Fedora RPM, Gentoo ebuilds, OpenBSD ports, and Debian/Ubuntu. Installing is done with make install as root. The Homebrew caveat says RF2500-like devices such as the TI Launchpad may need a kernel extension on macOS.",
+  "standout": "It covers a lot of hardware with one userspace tool: several programmer families, GDB stub and client modes, a simulator, and reverse-engineering features such as instruction search, call-graph analysis, and symbol table editing. Most debuggers for this chip do not bundle all of that.",
+  "status": "unknown. The homepage and GitHub README show no release version, release date, or last-commit date in the text I read. They do show the project is still listed in several distribution channels (Fedora, Gentoo, OpenBSD ports, Debian/Ubuntu), and the README gives current-looking build instructions. Those are weak signals, not a dated maintenance record.",
+  "caveats": "On macOS, RF2500-like devices such as the TI Launchpad may need a kernel extension, per the Homebrew caveat and the FAQ anchor rf2500_osx. Building from source requires libusb and optionally readline, and the package names vary by distro. Windows is listed as a compile target, but the page gives no Windows build details. The page does not state a license, and I did not check the FAQ or any hardware-level details.",
+  "quotes": [
+   "MSPDebug is a free debugger for use with MSP430 MCUs.",
+   "Userspace only: no kernel modifications required.",
+   "It can be used as a proxy for gdb or as an independent debugger with support for programming, disassembly and reverse engineering."
+  ],
+  "links": [
+   {
+    "label": "MSPDebug homepage",
+    "url": "https://dlbeer.co.nz/mspdebug/"
+   },
+   {
+    "label": "FAQ (RF2500 on OS X kernel extension)",
+    "url": "https://dlbeer.co.nz/mspdebug/faq.html#rf2500_osx"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/dlbeer/mspdebug"
+   }
+  ],
+  "fetch_log": [
+   "https://dlbeer.co.nz/mspdebug/ - fetched OK, homepage text read in full",
+   "https://github.com/dlbeer/mspdebug - fetched OK, README read; the URL was inferred from the homepage's 'Github' link text, not given as a literal link in the fetched text",
+   "FAQ page (faq.html) - not fetched"
+  ]
+ }
+}

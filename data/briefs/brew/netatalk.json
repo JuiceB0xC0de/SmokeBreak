@@ -1,0 +1,54 @@
+{
+ "name": "netatalk",
+ "desc": "File server for Macs, compliant with Apple Filing Protocol (AFP)",
+ "homepage": "https://netatalk.io",
+ "installs_365d": 405,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "protocol",
+  "network",
+  "afternoon",
+  "deprecated"
+ ],
+ "why": "A door into the Apple Filing Protocol, the old AFP world that most people never see running on a network.",
+ "brief": {
+  "what_it_is": "Netatalk is a free and open source file server that speaks the Apple Filing Protocol (AFP). It runs on UNIX-like systems such as Linux, the BSDs and macOS. Any computer with an AFP client can connect to it and share files over a local network or the Internet. By default it shares each authorized user's home directory, using a secure authentication method for modern AFP clients. The page describes it as light-weight, performant and portable.",
+  "why_it_exists": "The project's framing is that AFP has a long history on Macs, and the page says millions of Macs and NAS devices, decades of archives, studios, labs and retro-computing setups still speak it. Its stated mission is to make AFP the best file sharing solution on any platform.",
+  "how_it_works": "The page does not explain the internals beyond saying that most macOS, Mac OS X and Classic Mac OS systems can connect out of the box because Netatalk conforms to the Apple Filing Protocol specification. Operation is through the operating system's init system, and custom setups go through afp.conf and the Configuration chapter of the manual.",
+  "commands_seen": [
+   {
+    "cmd": "sudo install -d -o $USER -g admin /usr/local/etc",
+    "context": "From the Homebrew caveats supplied with the project data, not the homepage: creates /usr/local/etc owned by the user, needed for the manual PAM setup that lets Netatalk authenticate system users."
+   },
+   {
+    "cmd": "mkdir -p /usr/local/etc/pam.d",
+    "context": "From the Homebrew caveats, not the homepage: creates the PAM directory before copying the config file into it."
+   },
+   {
+    "cmd": "cp $(brew --prefix)/etc/pam.d/netatalk /usr/local/etc/pam.d",
+    "context": "From the Homebrew caveats, not the homepage: copies the netatalk PAM config from the Homebrew prefix to the predetermined location. The caveats point to man pam.conf for more."
+   }
+  ],
+  "install_notes": "The homepage offers three routes and says basic system administration knowledge is required (installing packages, editing config files, starting and stopping services). 1) Install a binary package from your distribution's package manager, the recommended option for most users; Repology lists known packages. 2) Deploy a container image published on Docker Hub and GHCR with docker or podman; the container documentation covers configuration. 3) Build from source, which the page suggests when the other options don't fit or when you want a hardened deployment with only some features enabled; a getting started guide and the manual's dependencies section cover this. Homebrew users must also do the manual PAM setup shown in commands_seen to authenticate system users.",
+  "standout": "With release 4.6.0 the project also ships Netatalk Client 1.0.0, and the page says that for the first time Netatalk provides both sides of the AFP connection. The page also says macOS 27 Golden Gate, released 14 September 2026, is the first Apple OS in 35 years without an AFP client. The server ships a Webmin module as well.",
+  "status": "Maintained, by the homepage's own evidence. It lists Netatalk 4.6.1 as the latest release, dated 2 October 2026, described as a bugfix release. Before that it lists 4.6.0 (15 September 2026) and 4.5.2 (6 September 2026), and it has a news archive. I could not check the repository or release history myself.",
+  "caveats": "The homepage warns that Netatalk has a dizzying amount of options that can be daunting at first. Allowing very old AFP clients requires extra configuration. Setup assumes sysadmin skills. Homebrew installs need the manual PAM step to authenticate system users. The executables list includes many tools (afpd, cnid_dbd, cnid_metad, timelord, and others), so the package is larger than a simple file share. The release dates and CVE numbers on the page are as stated there and I did not verify them. The page does not say which platforms are supported for the Homebrew formula. Licence was not on the homepage.",
+  "quotes": [
+   "Netatalk has a dizzying amount of options which can be daunting initially.",
+   "Our mission is to make AFP the best file sharing solution on any platform.",
+   "This is the end of an era, but also a new beginning for AFP: millions of Macs and NAS devices, decades of archives, studios, labs, and retro-computing setups speak AFP every day."
+  ],
+  "links": [
+   {
+    "label": "Netatalk homepage",
+    "url": "https://netatalk.io"
+   }
+  ],
+  "fetch_log": [
+   "https://netatalk.io: fetched and loaded. The homepage was enough to write the brief, so I did not follow the manual or getting-started links. Those links appear on the page but I did not open them, and their URLs are not confirmed beyond the homepage."
+  ]
+ }
+}

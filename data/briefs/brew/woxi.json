@@ -1,0 +1,93 @@
+{
+ "name": "woxi",
+ "desc": "Interpreter for a subset of the Wolfram Language",
+ "homepage": "https://github.com/ad-si/Woxi",
+ "installs_365d": 73,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "library",
+  "quick"
+ ],
+ "why": "A from-scratch Wolfram Language subset interpreter is an unusual, under-the-radar way to play with symbolic computation in a terminal.",
+ "brief": {
+  "what_it_is": "Woxi is an interpreter for a subset of the Wolfram Language, written in Rust. You give it Wolfram Language source, either as a one-line expression through `woxi eval`, as a script file through `woxi run`, or interactively in a REPL or Jupyter notebook, and it evaluates the code and prints the result. The README says it is aimed at CLI scripting and notebooks. It also ships a Language Server Protocol server for editors and a Woxi Studio notebook editor, and it has a WebAssembly build with npm and Python bindings.",
+  "why_it_exists": "The README says the initial focus is to implement a subset of the Wolfram Language so that it can be used for CLI scripting and notebooks. It also positions Woxi against WolframScript: it runs faster because it does not start a kernel or verify a license.",
+  "how_it_works": "Woxi is a from-scratch interpreter rather than a wrapper around a Wolfram kernel. The README says the CLI tests in tests/cli define the supported commands and expected output, and that all of them must pass with both Woxi and WolframScript. The functions.csv file tracks the implementation status of each Wolfram Language function. The language server takes its hover docs and completions from the same symbol registry the interpreter uses, and it warns on symbols the interpreter does not implement.",
+  "commands_seen": [
+   {
+    "cmd": "cargo install woxi",
+    "context": "Primary install route from crates.io via Rust's cargo."
+   },
+   {
+    "cmd": "woxi eval \"1 + 2\"",
+    "context": "Evaluates a single expression from the command line; the README shows output 3."
+   },
+   {
+    "cmd": "woxi eval 'StringJoin[\"Hello\", \" \", \"World!\"]'",
+    "context": "Example of evaluating a string function call; output is Hello World!."
+   },
+   {
+    "cmd": "woxi run tests/scripts/hello_world.wls",
+    "context": "Runs a Wolfram Language script file."
+   },
+   {
+    "cmd": "woxi repl",
+    "context": "Starts an interactive REPL where definitions and % / Out[] history persist across inputs."
+   },
+   {
+    "cmd": "woxi install-kernel",
+    "context": "Installs the Woxi Jupyter kernelspec, which is embedded in the binary; --system installs it for all users."
+   },
+   {
+    "cmd": "cd examples && jupyter lab",
+    "context": "Starts a Jupyter server from the examples directory after the kernel is installed."
+   },
+   {
+    "cmd": "woxi lsp",
+    "context": "Starts the Language Server Protocol server over stdin/stdout, which editors launch for .wl, .wls, .m and .nb files."
+   },
+   {
+    "cmd": "make install",
+    "context": "Builds Woxi from a source clone and installs it; on macOS it also builds Woxi Studio as an app bundle."
+   },
+   {
+    "cmd": "make test",
+    "context": "Runs the test suite from a source checkout."
+   }
+  ],
+  "install_notes": "Beyond brew, the README lists cargo install woxi, prebuilt archives for Linux, macOS and Windows (x86-64 and arm64) on GitHub releases with a SHA256SUMS.txt, npm install woxi-wasm for a WebAssembly build, and pip install woxi for Python wheels. Building from source needs Rust, and make install on macOS also installs Woxi Studio into /Applications. The macOS Woxi Studio app is not notarized, so you must run xattr -dr com.apple.quarantine \"Woxi Studio.app\" once after unzipping. Jupyter support needs woxi install-kernel, and the JupyterLite demo runs in the browser with no setup.",
+  "standout": "It is an independent reimplementation rather than a wrapper, and it targets WolframScript compatibility with a published test bar: the CLI tests must pass in both. It is also unusually broad in where it runs, with a native CLI, a WASM/npm build, a Python package, a Jupyter kernel, a browser JupyterLite demo, and an LSP server.",
+  "status": "unknown. The README I fetched has no release dates, changelog, or commit information. The screenshot filenames are dated 2026-02, which suggests recent activity, but I did not verify this against the releases or commit history.",
+  "caveats": "Only a subset of the Wolfram Language is implemented, and the README points to functions.csv to see what is covered. Woxi cannot run .nb notebook files directly, and it has no language server in WolframScript. The macOS Woxi Studio app is not notarized and needs the quarantine flag removed. The README does not state a license in the portion I read. I did not check the licence file, the release history, or the functions.csv coverage.",
+  "quotes": [
+   "An interpreter for the Wolfram Language powered by Rust.",
+   "Woxi runs faster than WolframScript as there is no overhead of starting a kernel and verifying its license.",
+   "All tests must pass with Woxi and WolframScript."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repository)",
+    "url": "https://github.com/ad-si/Woxi"
+   },
+   {
+    "label": "Official documentation",
+    "url": "https://woxi.ad-si.com/docs/"
+   },
+   {
+    "label": "JupyterLite demo (runs in browser)",
+    "url": "https://woxi.ad-si.com/jupyterlite/lab/index.html?path=showcase.ipynb"
+   },
+   {
+    "label": "Function implementation status (functions.csv)",
+    "url": "https://github.com/ad-si/Woxi/blob/main/functions.csv"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/ad-si/Woxi: fetched OK, README returned. Not followed further; the README was complete enough to write the brief."
+  ]
+ }
+}

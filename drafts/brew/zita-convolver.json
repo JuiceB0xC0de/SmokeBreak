@@ -1,0 +1,73 @@
+{
+ "name": "zita-convolver",
+ "desc": "Fast, partitioned convolution engine library",
+ "homepage": "https://kokkinizita.linuxaudio.org/linuxaudio/",
+ "installs_365d": 52,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "audio",
+  "library",
+  "afternoon"
+ ],
+ "why": "A partitioned convolution engine for audio; a real DSP idea, but only useful as a library.",
+ "brief": {
+  "what_it_is": "libzita-convolver is a real-time C++ convolution library that uses FFT-based convolution with non-uniform partition sizes, small ones at the start of the impulse response and larger ones further on. It takes audio input and impulse responses and produces the convolved audio output. The homepage describes it as able to do zero-delay processing of very long IRs such as reverbs at moderate CPU load. The homepage is a sitewide index of Linux audio projects, so this description comes from the libzita-convolver section of that page, not a dedicated project README.",
+  "why_it_exists": "The homepage presents it as a library for real-time convolution where you can trade CPU load against processing delay, and it stays efficient even at zero delay. The homepage gives no separate problem statement.",
+  "how_it_works": "Partitions are sized non-uniformly, and the calculations are spread over up to five threads, one per partition size, running at priorities equal to or just below the calling thread's priority. The homepage says this lets CPU be allocated well when several instances run at once. Sparse and diagonal matrices skip empty cells and empty partitions.",
+  "commands_seen": [],
+  "install_notes": "The homepage gives no build or install instructions for libzita-convolver and names no dependencies. It is a C++ library, so a developer would consume it as code. The homepage's JACK applications jconvolver and fconvolver use the same library, but the page does not say how they are built or installed.",
+  "standout": "The non-uniform partitioning, with a separate thread per partition size, is what the homepage highlights. It is the clever part: it allows zero-delay convolution of very long IRs without the CPU cost of a uniform approach. The brew scout note calls it only useful as a library, but the same engine powers the jconvolver and fconvolver command-line JACK tools on the same page, which is worth correcting in the entry.",
+  "status": "unknown. The homepage has no release dates or changelog and says 'This site in always under construction.' The page does list several projects, but nothing on it shows when libzita-convolver last changed.",
+  "caveats": "The homepage describes the library only in general terms and gives no license, version, platform list, or install steps. The page itself says it is always under construction. The page also lists the library's channel matrix as up to 64 inputs by 64 outputs, limited by CPU. The homepage was reachable, and no link to a separate API doc or README was found on it, so the entry should not claim details beyond this page.",
+  "quotes": [
+   "Libzita-convolver is a real-time C++ convolution library using FFT based convolution with non-uniform partition sizes: small ones at the start of the impulse response and building up to the most efficient size further on.",
+   "It can perform zero-delay processing of very long IRs (e.g. reverbs) with moderate CPU load.",
+   "Allows trading off CPU load to processing delay, and remains efficient even when configured for zero delay."
+  ],
+  "links": [
+   {
+    "label": "Kokkini Zita Linux Audio homepage",
+    "url": "https://kokkinizita.linuxaudio.org/linuxaudio/"
+   }
+  ],
+  "fetch_log": [
+   "https://kokkinizita.linuxaudio.org/linuxaudio/ : fetched OK; sitewide index of projects, libzita-convolver section read; no separate docs URL given on the page, so no further fetches"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Its non-uniform FFT partitioning makes zero-delay, long-impulse-response convolution practical in real time\u2014a distinctive DSP idea, even though it is a library."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "zita-convolver",
+  "tldr": "A C++ library that convolves audio with very long impulse responses, like reverbs, at zero delay and moderate CPU cost, using non-uniform FFT partitions.",
+  "deeper_look": "libzita-convolver is a real-time convolution engine. It takes an input signal and an impulse response (IR), the recorded fingerprint of a room, a speaker or a piece of gear, and produces the input as if it had been played through that thing. Convolution is how a convolution reverb puts your dry guitar into a cathedral.\n\nThe hard part is doing this live with long IRs. Direct convolution is far too slow for a multi-second reverb tail, and a plain FFT approach forces you to wait for a whole block of samples before you can output anything. Zita-convolver splits the IR into partitions of non-uniform size: small ones at the start, where low delay matters, growing to \"the most efficient size further on\". The homepage says this allows \"zero-delay processing of very long IRs (e.g. reverbs) with moderate CPU load\", and lets you trade CPU load against processing delay.\n\nThe work is spread over up to five threads, one per partition size, running at priorities equal to or just below the calling thread. The homepage says this helps CPU allocation when several instances run at once. It also handles matrices of inputs and outputs, up to 64 by 64 depending on CPU, and sparse or diagonal matrices skip empty cells and empty partitions.\n\nThe library has no commands of its own. The same page lists the JACK applications jconvolver and fconvolver as built on it, so it is the engine under real command-line tools, and reading about its partitioning is a good way into how convolution reverbs work.",
+  "install": "brew install zita-convolver\n# Installs the library and its fftw dependency only. There is no executable. You need a C++ project to link against it.",
+  "try_this": [],
+  "whats_unique": "The non-uniform partitioning with one thread per partition size gives zero-delay convolution of very long IRs without the CPU cost of a uniform scheme.",
+  "caveats": "It is a library with no executables, the homepage is a sitewide index that is always under construction, and it gives no install steps, version or release dates.",
+  "commitment": "afternoon",
+  "category": "sound-and-live-coding",
+  "tags": [
+   "audio",
+   "dsp",
+   "library",
+   "convolution",
+   "reverb",
+   "c++",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "Kokkini Zita Linux Audio homepage",
+    "url": "https://kokkinizita.linuxaudio.org/linuxaudio/"
+   }
+  ]
+ }
+}

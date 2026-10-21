@@ -1,0 +1,54 @@
+{
+ "name": "sqlite-analyzer",
+ "desc": "Analyze how space is allocated inside an SQLite file",
+ "homepage": "https://www.sqlite.org/",
+ "installs_365d": 1932,
+ "deprecated": true,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "deprecated",
+  "tui"
+ ],
+ "why": "Shows how every byte of an SQLite file is allocated across pages, a satisfying way to see a database's internal layout, though deprecated.",
+ "brief": {
+  "what_it_is": "sqlite3_analyzer is a command-line tool that reports how space is used inside an SQLite database file. You pass it a database file path, and it prints a human-readable ASCII report of space utilization for each table and index, including page counts, unused bytes, and payload percentages. The SQLite documentation describes it as a TCL program that uses the dbstat virtual table to gather the data and then formats it. The homepage itself does not mention the tool; the details come from the sqlanalyze documentation page.",
+  "why_it_exists": "The documentation describes it as measuring and displaying how much and how efficiently space is used by individual tables and indexes within an SQLite database file. It does not give a longer motivation in the text I read.",
+  "how_it_works": "It uses the dbstat virtual table to collect information about the database file, then formats that information into a report. The report is plain text, but the documentation says it is also valid SQL: most of the text sits in a header comment, and the end of the report contains SQL statements that create and fill a database with the raw data behind the report. You can load that into the shell and query it to dig deeper.",
+  "commands_seen": [
+   {
+    "cmd": "sqlite3_analyzer database.sqlite",
+    "context": "Basic usage from the docs: runs the analyzer on a database file and prints the space-utilization report. Deprecated as of SQLite 3.54.0."
+   },
+   {
+    "cmd": "sqlite3 database.sqlite .diskused",
+    "context": "The docs' replacement, stated as 'As of 3.54.0, use instead': runs the CLI's .diskused dot-command on the same file."
+   }
+  ],
+  "install_notes": "Nothing beyond brew install was shown in the pages I read. The brew formula's executable is sqlite3_analyzer. The docs describe it as a TCL program, so a TCL runtime may be needed, but I did not see that stated. No accounts, hardware, or first-run configuration were mentioned.",
+  "standout": "The report is itself valid SQL: running it through the shell rebuilds a queryable database of the raw measurements, so you can dig into the layout with SQL. The docs' example is a Firefox places.sqlite file, showing per-table and per-index page counts and unused-byte percentages.",
+  "status": "quiet. The sqlanalyze documentation says that as of SQLite 3.54.0 (2026-10-09) the utility is deprecated and has been replaced by the .diskused CLI command and the diskused() SQL function. The homepage lists latest release 3.54.1 (2026-10-16), and the page was last updated 2026-10-16. The brew description and scout notes also call it deprecated. I did not find a separate last-commit date for the analyzer.",
+  "caveats": "Deprecated as of SQLite 3.54.0; the documented replacement is the CLI's .diskused command and the diskused() SQL function. The docs describe it as a TCL program. The homepage says the SQLite source code is public domain, but I did not check licensing specifically for this utility. The sqlanalyze page was truncated at 40000 characters during fetch, so I did not read the end of the example output or the explanation of the parameters.",
+  "quotes": [
+   "The sqlite3_analyzer.exe binary is a command-line utility program that measures and displays how much and how efficiently space is used by individual tables and indexes with an SQLite database file.",
+   "Note: As of SQLite version 3.54.0 (2026-10-09), the sqlite3_analyzer.exe utility is deprecated. It has been replaced by the .diskused command of the CLI and/or the diskused() SQL function.",
+   "The output is also valid SQL. Most of the report text is contained within a header comment, with various SQL statements that create and initialize a database at the end of the report."
+  ],
+  "links": [
+   {
+    "label": "SQLite homepage",
+    "url": "https://www.sqlite.org/"
+   },
+   {
+    "label": "sqlite3_analyzer documentation",
+    "url": "https://www.sqlite.org/sqlanalyze.html"
+   }
+  ],
+  "fetch_log": [
+   "https://www.sqlite.org/ : worked. Homepage with no mention of sqlite3_analyzer; the sqlanalyze page was reached via the docs.",
+   "https://www.sqlite.org/sqlanalyze.html : worked, but the page was cut off at 40000 characters during the Firefox example output. The deprecation note and the usage and implementation sections were read in full."
+  ]
+ }
+}

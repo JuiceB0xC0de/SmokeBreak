@@ -1,0 +1,126 @@
+{
+ "name": "enzyme",
+ "desc": "High-performance automatic differentiation of LLVM",
+ "homepage": "https://enzyme.mit.edu",
+ "installs_365d": 1492,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "math",
+  "library"
+ ],
+ "why": "Automatic differentiation performed on LLVM IR is a genuinely odd and deep compiler idea worth understanding.",
+ "brief": {
+  "what_it_is": "Enzyme is an automatic differentiation plugin for LLVM. It takes existing code in the form of LLVM IR, which the homepage says can come from C, C++, Swift, Julia, Rust, Fortran, and TensorFlow, and produces the derivative or gradient of a chosen function. You mark the function with a call to __enzyme_autodiff. When the Enzyme pass runs, that call is replaced with the generated derivative function. The GitHub README also describes it as working on MLIR and as plugin for statically analyzable code.",
+  "why_it_exists": "The homepage says the goal is to create gradients of existing source code without much additional work, instead of rewriting that code for machine learning. Working at the LLVM level lets one tool cover several languages and reuse LLVM's optimizer.",
+  "how_it_works": "Enzyme runs in four parts: an optional preprocessing phase, a new interprocedural type analysis that deduces the underlying types of memory locations, an activity analysis that determines which values can affect the derivative, and an optimization pass that generates derivative functions and replaces calls to __enzyme_autodiff. The homepage says it differentiates code after optimization rather than before, which it claims yields substantially faster derivatives than tools that differentiate before optimization.",
+  "commands_seen": [
+   {
+    "cmd": "cd /path/to/Enzyme/enzyme",
+    "context": "From the GitHub README: change into the enzyme subdirectory of the source checkout before building."
+   },
+   {
+    "cmd": "mkdir build && cd build",
+    "context": "From the GitHub README: create and enter a build directory."
+   },
+   {
+    "cmd": "cmake -G Ninja .. -DLLVM_DIR=/path/to/llvm/lib/cmake/llvm -DLLVM_EXTERNAL_LIT=/path/to/lit/lit.py",
+    "context": "From the GitHub README: configure a source build with the Ninja generator, pointing at an LLVM CMake directory and the lit test runner."
+   },
+   {
+    "cmd": "ninja",
+    "context": "From the GitHub README: build Enzyme after CMake configuration."
+   },
+   {
+    "cmd": "brew install enzyme",
+    "context": "From the GitHub README: install Enzyme via Homebrew."
+   },
+   {
+    "cmd": "spack install enzyme",
+    "context": "From the GitHub README: install Enzyme via Spack."
+   },
+   {
+    "cmd": "nix-shell -p enzyme",
+    "context": "From the GitHub README: open a Nix shell with Enzyme available."
+   }
+  ],
+  "install_notes": "Building from source needs an LLVM installation that CMake can find through LLVM_DIR, plus a lit path through LLVM_EXTERNAL_LIT, and Ninja. Package-manager routes are Homebrew, Spack, and Nix. The README says Julia, Rust, and Fortran bindings exist. The homepage points to a getting started guide and a getting involved guide, but I did not fetch them, so first-run and configuration steps are unverified. The README suggests joining the mailing list for questions.",
+  "standout": "Most AD tools differentiate source code or a high-level IR before optimization. Enzyme instead differentiates already-optimized LLVM IR, so one implementation can serve many languages and support GPU and parallel code, including OpenMP, MPI, and Julia tasks as the README lists.",
+  "status": "Maintained, with moderate confidence. The GitHub page shows about 3,127 commits, roughly 1.7k stars, 197 forks, and packages in Homebrew, Spack, and Nix. I could not see a last-commit or release date in the fetched text, so recent activity is unconfirmed.",
+  "caveats": "It only handles statically analyzable code, according to the README. Performance and speed claims come from the authors and their papers. Building from source needs a matching LLVM development setup. The homepage describes the project as LLVM-only, while the GitHub README says LLVM and MLIR. I did not confirm the license type, though the repo has a LICENSE file. The homepage's Compiler Explorer demo link had no URL in the fetched text.",
+  "quotes": [
+   "The Enzyme project is a tool that takes arbitrary existing code as LLVM IR and computes the derivative (and gradient) of that function.",
+   "Enzyme is a plugin that performs automatic differentiation (AD) of statically analyzable LLVM and MLIR.",
+   "By differentiating code after optimization, Enzyme is able to create substantially faster derivatives than existing tools that differentiate programs before optimization."
+  ],
+  "links": [
+   {
+    "label": "Enzyme homepage",
+    "url": "https://enzyme.mit.edu"
+   },
+   {
+    "label": "GitHub repository (EnzymeAD/Enzyme)",
+    "url": "https://github.com/EnzymeAD/Enzyme"
+   },
+   {
+    "label": "SC '21 paper on GPU kernel AD (DOI)",
+    "url": "https://doi.org/10.1145/3458817.3476165"
+   }
+  ],
+  "fetch_log": [
+   "https://enzyme.mit.edu: fetched OK, homepage text with overview, example, components, and citations",
+   "https://github.com/EnzymeAD/Enzyme: fetched OK, README plus repo stats and package listing; page navigation text was noisy"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Enzyme\u2019s unusual approach\u2014generating derivatives from optimized LLVM IR\u2014opens a deep compiler rabbit hole and brings automatic differentiation to code across many languages."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Enzyme",
+  "tldr": "An LLVM plugin that computes derivatives of existing compiled code, so C, Rust, Julia or Fortran functions get gradients without being rewritten.",
+  "deeper_look": "Enzyme takes code as LLVM IR and produces the derivative or gradient of a function you choose. You mark the function by calling `__enzyme_autodiff` on it. When the Enzyme pass runs, that call is replaced with generated derivative code. The homepage lists C, C++, Swift, Julia, Rust, Fortran and TensorFlow as sources of IR, and the README says Julia, Rust and Fortran bindings exist.\n\nThe project exists so that people can get gradients of existing source code without rewriting it for a machine learning framework. Working at the LLVM level means one tool can serve many languages and reuse LLVM's optimizer.\n\nThe underlying idea is to differentiate after optimization instead of before. In the project's words: \"By differentiating code after optimization, Enzyme is able to create substantially faster derivatives than existing tools that differentiate programs before optimization.\" That speed claim comes from the authors and their papers. The pipeline has an optional preprocessing phase, a type analysis that deduces what lives in each memory location, an activity analysis that works out which values can affect the derivative, and a pass that emits the derivative functions.\n\nThis is a door into compilers and automatic differentiation: what a derivative of a program even means, why types and memory matter, and what changes when the optimizer runs first. The README says it also handles GPU and parallel code, including OpenMP, MPI and Julia tasks.",
+  "install": "brew install enzyme\n# Pulls in llvm as a dependency. Enzyme installs no executables; it is a plugin loaded into LLVM tooling.\n# Also packaged for Spack (spack install enzyme) and Nix (nix-shell -p enzyme).",
+  "try_this": [
+   {
+    "cmd": "brew install enzyme",
+    "what_happens": "Installs the Enzyme plugin and the LLVM it depends on. There is no command to run afterwards."
+   },
+   {
+    "cmd": "cmake -G Ninja .. -DLLVM_DIR=/path/to/llvm/lib/cmake/llvm -DLLVM_EXTERNAL_LIT=/path/to/lit/lit.py",
+    "what_happens": "Configures a source build from a checkout, pointing at your LLVM CMake directory and the lit test runner. Run it inside a build directory, then run ninja."
+   }
+  ],
+  "whats_unique": "Most automatic differentiation tools work on source code or a high-level IR before optimization. Enzyme differentiates already-optimized LLVM IR, so one implementation covers many languages.",
+  "caveats": "It only handles statically analyzable code, it has no command-line tool to try, and the brief did not confirm a first-run workflow, so expect to read the getting started guide and match LLVM versions.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "math",
+   "compilers",
+   "llvm",
+   "automatic-differentiation"
+  ],
+  "links": [
+   {
+    "label": "Enzyme homepage",
+    "url": "https://enzyme.mit.edu"
+   },
+   {
+    "label": "GitHub repository (EnzymeAD/Enzyme)",
+    "url": "https://github.com/EnzymeAD/Enzyme"
+   },
+   {
+    "label": "SC '21 paper on GPU kernel AD (DOI)",
+    "url": "https://doi.org/10.1145/3458817.3476165"
+   }
+  ]
+ }
+}

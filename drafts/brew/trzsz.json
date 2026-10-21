@@ -1,0 +1,151 @@
+{
+ "name": "trzsz",
+ "desc": "Simple file transfer tools, similar to lrzsz (rz/sz), and compatible with tmux",
+ "homepage": "https://trzsz.github.io",
+ "installs_365d": 1077,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "protocol",
+  "network"
+ ],
+ "why": "A modern take on rz/sz that moves files through the terminal stream, a window into the old ZMODEM-style transfer idea.",
+ "brief": {
+  "what_it_is": "trzsz (trz / tsz) is a file transfer tool for SSH terminals. trz uploads files and directories to the remote machine, and tsz downloads files from it, as a modern take on the rz/sz pair from lrzsz. Transfers run inside the existing terminal session rather than through a separate scp or sftp connection. The homepage presents trzsz as one part of a wider set that also includes tssh, an OpenSSH-compatible client with built-in trzsz, and tsshd, a UDP-based SSH server with roaming. The GitHub README covers only trzsz itself, which ships as Go (recommended), Python, Node, and Homebrew packages.",
+  "why_it_exists": "The author says that on a chain like laptop -> hostA -> hostB -> docker -> tmux, scp and sftp are inconvenient, and lrzsz is handy but does not work under tmux. The README notes that tmux has declined to support rz/sz (tmux issues 906 and 1439), so trzsz was built to fill that gap.",
+  "how_it_works": "The README does not explain the wire protocol. It says the remote-side trz and tsz commands run inside the session and that the local end must be a supported terminal or wrapper: tssh, trzsz ssh, iTerm2 via trzsz-iterm2, tabby, electerm, ttyd, or trzsz.js for web terminals. Transfers show a progress bar with file name, size, speed, and remaining time, and ctrl+c stops them. Options cover directories (-d), overwrite and resume (-y), binary mode (-b), control-character escaping (-e), and chunk size and timeout (-B, -t).",
+  "commands_seen": [
+   {
+    "cmd": "sudo python3 -m pip install --upgrade trzsz",
+    "context": "Server-side install via Python 3 pip (README alternative to the recommended Go version)."
+   },
+   {
+    "cmd": "brew install trzsz",
+    "context": "Homebrew install on the server, preceded by brew update in the README."
+   },
+   {
+    "cmd": "sudo npm install -g trzsz",
+    "context": "Server-side install via Node.js npm."
+   },
+   {
+    "cmd": "trz -d",
+    "context": "Upload a directory tree from local to the remote current directory (trz -d transfers directories and files)."
+   },
+   {
+    "cmd": "tsz -d xxx",
+    "context": "Download the directory xxx from the remote machine."
+   },
+   {
+    "cmd": "trz -y",
+    "context": "Upload with overwrite; the README says existing files are auto-resumed from the breakpoint when overwriting."
+   },
+   {
+    "cmd": "tsz -y xxx",
+    "context": "Download xxx with overwrite, which triggers breakpoint resume for an existing file."
+   },
+   {
+    "cmd": "trzsz ssh x.x.x.x",
+    "context": "Log in with the native trzsz wrapper so trz and tsz work without a special terminal (x.x.x.x is a placeholder address)."
+   },
+   {
+    "cmd": "tssh xxx",
+    "context": "Log in with trzsz-ssh (tssh), the recommended local client, to a host named xxx."
+   },
+   {
+    "cmd": "trz -eb",
+    "context": "Troubleshooting step for failed binary uploads over telnet or docker exec: escape all known control characters."
+   }
+  ],
+  "install_notes": "Server side needs trzsz installed (Go version recommended, with a guide at trzsz.github.io/go); Python, Node, or Homebrew also work. Pip and npm examples use sudo, but the README says it can be installed without sudo by adding the install path such as ~/.local/bin to PATH. The local side needs a supported terminal: tssh (recommended), iTerm2 (trzsz-iterm2 integration, documented at trzsz.github.io/iterm2), tabby with the tabby-trzsz plugin, electerm 1.19.0 or later, ttyd 1.7.3 or later started with -t enableTrzsz=true over https unless on localhost, or trzsz-go on any terminal with a local shell. No account is needed.",
+  "standout": "It fixes a specific pain that tmux has refused to address, so a tmux user can move files without leaving the session, and the README says it works with tmux both in normal mode and in iTerm2 tmux -CC integration. It also runs in terminals other than classic SSH, including web shells, Electron apps, and Windows servers.",
+  "status": "unknown. Neither the homepage nor the README showed a release date, version number, or last-commit date. The README has a PyPI version badge and an MIT license badge, and it links to Go, Python, and JS sibling repos, but I could not read recency from the fetched text.",
+  "caveats": "Each terminal must support trzsz or be run through trzsz-ssh, trzsz-go, or another listed wrapper, so plain ssh in an unsupported terminal will not work. Under tmux on a local or jump machine, the README gives several workarounds, and a hung transfer may need ctrl+c on the server or command+option+shift+r in iTerm2. Binary mode (-b) can fail over telnet, docker exec, or expect; the README suggests -eb or LC_CTYPE=C. Default chunk timeout is 20 seconds. The homepage's tssh and tsshd are separate tools with their own scope. License is MIT per the badge. Contact is the author by email or a GitHub issue, and a Chinese QQ group is listed.",
+  "quotes": [
+   "trzsz ( trz / tsz ) is a modern alternative to rz / sz, designed for SSH terminals with native tmux compatibility.",
+   "tmux is not going to support rz / sz ( 906, 1439 ), so trzsz ( trz / tsz ) was developed.",
+   "Support **breakpoint resume**, `trz -y` or `tsz -y xxx` overwrite exiting files will auto resume from breakpoint."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://trzsz.github.io"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/trzsz/trzsz"
+   },
+   {
+    "label": "Go version install guide",
+    "url": "https://trzsz.github.io/go"
+   },
+   {
+    "label": "iTerm2 trzsz integration",
+    "url": "https://trzsz.github.io/iterm2"
+   }
+  ],
+  "fetch_log": [
+   "https://trzsz.github.io (worked; homepage text, describes trzsz, tssh, and tsshd, but has no command examples)",
+   "https://github.com/trzsz/trzsz (worked; README returned with usage, options, install, and troubleshooting sections; used because the homepage lacked commands)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It revives terminal-stream file transfer for tmux and nested SSH sessions, a useful and unexpectedly capable alternative to opening a separate scp or sftp connection."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "trzsz",
+  "tldr": "trz and tsz move files through your existing SSH terminal session, like rz/sz, but they work inside tmux, where the old tools do not.",
+  "deeper_look": "trzsz is a pair of commands, `trz` to upload and `tsz` to download, that run on the remote machine inside an ordinary terminal session. There is no second scp or sftp connection to set up. The local terminal or wrapper catches the transfer and shows a progress bar with file name, size, speed and time remaining.\n\nThe author built it for chains like laptop -> hostA -> hostB -> docker -> tmux, where scp and sftp are awkward. lrzsz handles this sort of hop, but not under tmux. The README quotes it plainly: \"tmux is not going to support rz / sz ( 906, 1439 ), so trzsz ( trz / tsz ) was developed.\"\n\nThe idea underneath is old: file transfer carried in-band, over the same byte stream as your keystrokes, which is what the rz/sz family does. The brief does not describe trzsz's wire protocol, so read the README before assuming details. What it does show is the practical layer. The local end has to cooperate, so you use tssh, `trzsz ssh`, iTerm2 through `trzsz-iterm2`, tabby, electerm, ttyd, or a web terminal via trzsz.js.\n\nIt also supports directories (`-d`), resuming from a breakpoint when you overwrite an existing file (`-y`), binary mode, control-character escaping, and tunable chunk size and timeout.",
+  "install": "brew install trzsz\n# This installs trz, tsz and trzsz-iterm2. The remote machine needs trzsz too (Go version recommended; pip, npm or brew also work).\n# The local side needs a supported terminal or wrapper such as tssh, iTerm2 with trzsz-iterm2, or `trzsz ssh`. No account needed.",
+  "try_this": [
+   {
+    "cmd": "trzsz ssh x.x.x.x",
+    "what_happens": "Logs in through the native trzsz wrapper, so trz and tsz work without a special terminal. Replace x.x.x.x with your host."
+   },
+   {
+    "cmd": "trz -d",
+    "what_happens": "Run on the remote side, it uploads files and directories from your local machine into the remote current directory."
+   },
+   {
+    "cmd": "tsz -y xxx",
+    "what_happens": "Downloads xxx from the remote machine, overwriting an existing local copy and resuming from the breakpoint if the file is partly there."
+   }
+  ],
+  "whats_unique": "It fixes a specific gap: moving files in-band under tmux, which tmux has declined to support. The README says it works in normal tmux mode and with iTerm2's tmux -CC integration.",
+  "caveats": "Plain ssh in an unsupported terminal will not work, since the local end must be trzsz-aware, and the brief could not confirm release recency.",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "ssh",
+   "tmux",
+   "file-transfer",
+   "terminal",
+   "protocol"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://trzsz.github.io"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/trzsz/trzsz"
+   },
+   {
+    "label": "Go version install guide",
+    "url": "https://trzsz.github.io/go"
+   },
+   {
+    "label": "iTerm2 trzsz integration",
+    "url": "https://trzsz.github.io/iterm2"
+   }
+  ]
+ }
+}

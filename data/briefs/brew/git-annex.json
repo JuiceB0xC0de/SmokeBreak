@@ -1,0 +1,91 @@
+{
+ "name": "git-annex",
+ "desc": "Manage files with git without checking in file contents",
+ "homepage": "https://git-annex.branchable.com/",
+ "installs_365d": 3265,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "cli",
+  "storage"
+ ],
+ "why": "Tracks large file contents outside git with a distributed, location-aware model; a strange and deep design worth an afternoon.",
+ "brief": {
+  "what_it_is": "git-annex is a command-line tool, written in Haskell, that manages large files with git without storing their contents in git. You run git-annex inside a git repository. Each file's content is stored under .git/annex/objects and tracked by a checksum-based key, while git holds only a symlink pointing at that content. It takes existing files and commands such as add, get, drop, move, copy, and sync, and it records which repositories hold which content. Its output is a git repository whose annexed files can be fetched from or sent to other repositories, USB drives, ssh remotes, or cloud storage (special remotes such as S3). The homepage also describes an optional git-annex assistant that acts as a folder synchroniser.",
+  "why_it_exists": "The homepage says git-annex lets you 'Bring the power and distributed nature of git to bear on your large files' and is 'designed for git users who love the command line'. Its use cases are archiving many offline drives (Bob) and a nomad who syncs files across a laptop, USB drive, and server (Alice).",
+  "how_it_works": "git-annex stores file contents in the annex under .git/annex/objects and commits only symlinks to git. Each repository records which other repositories hold each file's content, so commands like get and drop can find or verify copies and report which drives to plug in. The numcopies setting and --auto options let git-annex decide when to fetch or drop content to reach a target number of copies. The homepage describes this location tracking as letting 'every drive know what is on every other drive'.",
+  "commands_seen": [
+   {
+    "cmd": "git annex init",
+    "context": "Run inside a new git repository (after git init) to turn it into an annex; the walkthrough also shows git annex init \"portable USB drive\" to add a description."
+   },
+   {
+    "cmd": "git annex add .",
+    "context": "Adds the files in the current directory to the annex; the content is checksummed and only a symlink is staged for git."
+   },
+   {
+    "cmd": "git annex get .",
+    "context": "Fetches the content of annexed files in the current directory from another repository that has them."
+   },
+   {
+    "cmd": "git annex drop iso/debian.iso",
+    "context": "Removes local content of an annexed file, but only after verifying another repository still has a copy; the file stays in the work tree as a broken symlink."
+   },
+   {
+    "cmd": "git annex unlock my_cool_big_file",
+    "context": "Replaces the content symlink with a real copy so the file can be edited; git annex lock reverses it."
+   },
+   {
+    "cmd": "git annex move my_cool_big_file --to usbdrive",
+    "context": "Copies content to the named remote and then drops it locally, freeing space."
+   },
+   {
+    "cmd": "git annex initremote mys3 type=S3 chunk=1MiB encryption=shared",
+    "context": "Creates a special remote (S3 here) with shared encryption; S3 credentials are read from AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables."
+   },
+   {
+    "cmd": "git annex numcopies 2",
+    "context": "Sets the global default minimum number of copies before content can be dropped."
+   },
+   {
+    "cmd": "git annex get --auto --numcopies=2",
+    "context": "Fetches content only for files that have fewer than two copies, letting git-annex decide what to get."
+   },
+   {
+    "cmd": "git annex fsck",
+    "context": "Verifies data integrity (checksums for SHA backends) and checks that numcopies is satisfied; bad content is moved to .git/annex/bad/ rather than deleted."
+   }
+  ],
+  "install_notes": "The install page lists packages for many systems, including apt-get install git-annex on Debian/Ubuntu, pacman -S git-annex on Arch, and brew install git-annex on macOS (Homebrew). Other entries include FreeBSD (pkg install hs-git-annex), termux on Android, and PyPI (uv tool install git-annex). The Windows section has no command shown. Building from source is possible in Haskell; the install page says 'Experienced users should not find it too hard'. Special remotes such as S3 need their own credentials set in environment variables, and git-annex prompts if they are missing. Ssh remotes need full shell access or the git-annex-shell command on the remote host.",
+  "standout": "Instead of a central server, every repository keeps a distributed log of which copies exist where, so any clone can say which drive to plug in to get a file. Dropping content is refused unless git-annex can verify enough other copies, and it never deletes possibly bad data during fsck. The repository format is plain git and files on disk, which the homepage stresses for long-term future-proofing.",
+  "status": "Maintained. The homepage news lists version 10.20261020 posted Tue Oct 20 2026 and version 10.20261006 posted Oct 6 2026, and recent forum posts run to September 2026.",
+  "caveats": "The homepage is a wiki and no README was fetched, so the brief relies on the homepage, the walkthrough, and the install page. The walkthrough notes it is one possible workflow, and its page footer shows 'Last edited Mon Feb 13 20:05:09 2017'. Special remotes and ssh setups need credentials or shell access. Building from source needs a Haskell toolchain. The Windows install section gives no command. The git-annex-only command set is large, and the walkthrough admits some commands act quietly when nothing needs doing.",
+  "quotes": [
+   "git-annex allows managing large files with git, without storing the file contents in git.",
+   "git-annex is designed for git users who love the command line.",
+   "Fsck never deletes possibly bad data; instead it will be moved to .git/annex/bad/ for you to recover."
+  ],
+  "links": [
+   {
+    "label": "git-annex homepage",
+    "url": "https://git-annex.branchable.com/"
+   },
+   {
+    "label": "Walkthrough",
+    "url": "https://git-annex.branchable.com/walkthrough/"
+   },
+   {
+    "label": "Install page",
+    "url": "https://git-annex.branchable.com/install/"
+   }
+  ],
+  "fetch_log": [
+   "https://git-annex.branchable.com/ - worked (wiki homepage, not a GitHub README)",
+   "https://git-annex.branchable.com/walkthrough/ - worked",
+   "https://git-annex.branchable.com/install/ - worked"
+  ]
+ }
+}

@@ -1,0 +1,152 @@
+{
+ "name": "nexttrace",
+ "desc": "Open source visual route tracking CLI tool",
+ "homepage": "https://www.nxtrace.org/",
+ "installs_365d": 4282,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "tui",
+  "protocol"
+ ],
+ "why": "Visual traceroute with rich route mapping; a close call since traceroute itself is a known door but this one adds geography.",
+ "brief": {
+  "what_it_is": "NextTrace is an open source, Go-based command-line route tracer. You give it an IP address, hostname, or URL, and it sends ICMP probes by default (TCP or UDP optional) and lists each hop along the path. Each hop is annotated with geographic and network-owner information, and a map of the route can be drawn from the per-hop coordinates; the README prints a MapTrace link for this. Output can be terminal text, a table, pipe-delimited RAW lines, or JSON. The full build also bundles MTR-style continuous probing, path-MTU discovery, a standalone DNS client, a CDN speed test, and IP annotation for text streams.",
+  "why_it_exists": "The README frames it as a light-weight, visual routing tool: \"An open source visual routing tool that pursues light weight, developed using Golang.\" The visual, geography-aware view of a traceroute is the main idea, and the project is run by the nxtrace organisation, which also provides its API and the network infrastructure it runs on.",
+  "how_it_works": "By default it runs a normal traceroute over ICMP, supporting IPv4 and IPv6, and reports why the trace stopped. Geographic data for each hop comes from the NextTrace API, IPInfo, or IP-API.com, and the map is a separate component at nxtrace/traceMap. On Linux, the README says route queries use netlink, macOS uses routing sockets, and Windows uses GetBestRoute2. Three build flavors exist (nexttrace full, nexttrace-tiny, ntr MTR-only) that use compile-time build tags to exclude modules.",
+  "commands_seen": [
+   {
+    "cmd": "curl -sL https://nxtrace.org/nt | bash",
+    "context": "One-click installer for the Full flavor on Linux, macOS, and BSD; the README also shows variants with --flavor tiny and --flavor ntr."
+   },
+   {
+    "cmd": "brew install nexttrace",
+    "context": "Homebrew-core install; per the README this provides only the Full flavor. The tap nxtrace/nexttrace provides all three flavors."
+   },
+   {
+    "cmd": "nexttrace 1.0.0.1",
+    "context": "Default IPv4 ICMP traceroute to the given IP address."
+   },
+   {
+    "cmd": "nexttrace --table 1.0.0.1",
+    "context": "Runs the trace once and prints a final summary table (report mode)."
+   },
+   {
+    "cmd": "nexttrace --json 1.0.0.1",
+    "context": "Traceroute with stdout as a single JSON document."
+   },
+   {
+    "cmd": "nexttrace --fast-trace",
+    "context": "Quick test of several China carrier-network endpoints (Beijing, Shanghai, Guangzhou, Hangzhou) for backhaul-route checks."
+   },
+   {
+    "cmd": "nexttrace -t 1.1.1.1",
+    "context": "MTR mode: continuous probing with ICMP, with the table refreshed in real time."
+   },
+   {
+    "cmd": "nexttrace --mtr --json 1.1.1.1",
+    "context": "MTR with JSON output as a continuous NDJSON event stream."
+   },
+   {
+    "cmd": "nexttrace --doctor example.com",
+    "context": "Plain-text probe environment check that reports settings, DNS/source selection, and local backend setup. It sends no probe packets."
+   },
+   {
+    "cmd": "dig example.com +short | nexttrace --nali --data-provider IPInfo --language en",
+    "context": "Pipes DNS output into nexttrace to annotate IP literals in the text stream (full build only)."
+   }
+  ],
+  "install_notes": "Debian/Ubuntu: the README recommends the official nexttrace-debs APT repository; it needs an apt keyring under /etc/apt/keyrings, a sources file in /etc/apt/sources.list.d, then sudo apt update and sudo apt install nexttrace (also nexttrace-tiny and ntr). Other routes: AUR (nexttrace-bin or nexttrace, amd64 only), x-cmd, Termux (pkg install root-repo, then nexttrace), ImmortalWrt (opkg), WinGet (winget install nexttrace), Scoop (extras bucket). Manual binaries are on the downloads page. Windows is experimental: for normal-user mode only ICMP works, and the firewall must allow ICMP/ICMPv6 via netsh advfirewall rules shown in the README; in administrator mode TCP/UDP needs WinDivert, which can be set up with --init. Building from source needs Go 1.27.1 or later (GOTOOLCHAIN=go1.27.1 and GOEXPERIMENT=nojsonv2 are set for release-equivalent builds). On macOS, source builds need macOS 13 or later, Xcode Command Line Tools, and cgo, because packet capture links against the system libpcap.",
+  "standout": "Few traceroute tools put a geographic and network-owner view on each hop and draw the path on a map, while also including MTR, path-MTU discovery, a q-compatible DNS client, and a CDN speed test. The build-tag flavors let one codebase ship a small embedded-friendly binary. The README is unusually explicit about its own contracts, such as JSON stop reasons, RAW column layouts, and exit codes.",
+  "status": "Appears actively maintained. The fetched README has CI and golangci-lint badges, references Go 1.27.1 and a recent release line, and includes a dated note that the default mode will switch to MTR no earlier than 2027. I did not see a last release date or last commit date in the text I fetched, so I cannot give an exact date.",
+  "caveats": "The README says Windows support is experimental, and the native Windows ICMP path sends zero for nonzero TOS values, so nonzero ICMP TOS needs WinDivert and administrator rights. The brew caveat says nexttrace needs root (run as sudo nexttrace <ip>), and the README warns that users should trust any software they grant root. Default-mode migration: from a release no earlier than 2027, plain 'nexttrace <target>' will switch to MTR, and downstream scripts should adopt --traceroute now. The visualization needs geographic coordinates from NextTrace API, IPInfo, or IP-API.com. The homebrew-core build may lag and provides only the Full flavor. The DNS client, speed test, nali, Globalping, WebUI and MCP exist only in the full build. The homepage requires JavaScript, so I read the GitHub README instead. The fetched README was cut off at about 40,000 characters, so later sections (docs, WebUI/MCP, session format) were not read. I did not confirm the license.",
+  "quotes": [
+   "An open source visual routing tool that pursues light weight, developed using Golang.",
+   "NextTrace uses the ICMP protocol to perform TraceRoute requests by default, which supports both IPv4 and IPv6",
+   "The routing visualization function requires the geographical coordinates of each hop. It is currently available with NextTrace API, IPInfo, and IP-API.com."
+  ],
+  "links": [
+   {
+    "label": "Homepage (JavaScript-only, not readable)",
+    "url": "https://www.nxtrace.org/"
+   },
+   {
+    "label": "GitHub repository NTrace-core (README source)",
+    "url": "https://github.com/nxtrace/NTrace-core"
+   },
+   {
+    "label": "traceMap visualization component",
+    "url": "https://github.com/nxtrace/traceMap"
+   },
+   {
+    "label": "Downloads page",
+    "url": "https://www.nxtrace.org/downloads"
+   }
+  ],
+  "fetch_log": [
+   "https://www.nxtrace.org/ - fetched, but returned only a JavaScript-required placeholder with no content",
+   "https://github.com/nxtrace/NTrace-core - fetched, README returned; truncated at about 40,000 characters, so later sections were not read; docs links not followed"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Mapping each traceroute hop to geography and network ownership makes familiar routing behavior newly inspectable, with MTR and path-MTU tools adding useful depth."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "NextTrace",
+  "tldr": "A traceroute that labels every hop with its location and network owner, and can draw the route on a map.",
+  "deeper_look": "NextTrace is a Go command-line route tracer. Give it an IP address, hostname or URL and it sends ICMP probes by default (TCP or UDP are optional), listing each hop between you and the target over IPv4 or IPv6. Each hop is annotated with geographic and network-owner data, and the README prints a MapTrace link that draws the path from the per-hop coordinates.\n\nThe project describes itself as \"An open source visual routing tool that pursues light weight, developed using Golang.\" The idea is that a plain traceroute gives you a column of IP addresses, and the interesting part is working out where those addresses are and who runs them. Reading a path this way shows where traffic leaves your ISP, which carriers it crosses, and where a detour adds latency.\n\nThe full build bundles more than tracing. It has MTR-style continuous probing, path-MTU discovery, a standalone DNS client, a CDN speed test, and a mode that annotates IP addresses in piped text. Output can be terminal text, a summary table, pipe-delimited RAW lines or JSON. Three build flavors (full, tiny, and an MTR-only one called ntr) are produced from one codebase using compile-time build tags.",
+  "install": "brew install nexttrace\n# needs root to send probes: sudo nexttrace <ip>\n# Homebrew-core provides only the Full flavor; the tap nxtrace/nexttrace has all three.\n# Map and location data need network access to the NextTrace API, IPInfo, or IP-API.com.",
+  "try_this": [
+   {
+    "cmd": "sudo nexttrace 1.0.0.1",
+    "what_happens": "Runs a default ICMP traceroute to that address, listing each hop with location and network-owner details."
+   },
+   {
+    "cmd": "sudo nexttrace --table 1.0.0.1",
+    "what_happens": "Traces once and prints a final summary table."
+   },
+   {
+    "cmd": "sudo nexttrace -t 1.1.1.1",
+    "what_happens": "Switches to MTR mode, continuously probing and refreshing the table in real time."
+   }
+  ],
+  "whats_unique": "Few traceroute tools put geography and network ownership on each hop and draw the path on a map. This one also folds in MTR, path-MTU discovery and a DNS client.",
+  "caveats": "It needs root, Windows support is experimental, the map and location data depend on external services, and the README says plain `nexttrace <target>` will switch to MTR mode in a release no earlier than 2027.",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "network",
+   "traceroute",
+   "icmp",
+   "routing",
+   "cli"
+  ],
+  "links": [
+   {
+    "label": "Homepage (JavaScript-only)",
+    "url": "https://www.nxtrace.org/"
+   },
+   {
+    "label": "GitHub repository NTrace-core",
+    "url": "https://github.com/nxtrace/NTrace-core"
+   },
+   {
+    "label": "traceMap visualization component",
+    "url": "https://github.com/nxtrace/traceMap"
+   },
+   {
+    "label": "Downloads page",
+    "url": "https://www.nxtrace.org/downloads"
+   }
+  ]
+ }
+}

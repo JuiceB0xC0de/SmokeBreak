@@ -1,0 +1,94 @@
+{
+ "name": "fwupd",
+ "desc": "Firmware update daemon",
+ "homepage": "https://github.com/fwupd/fwupd",
+ "installs_365d": 1446,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "protocol"
+ ],
+ "why": "A door into the firmware update path of real devices, with LVFS metadata and vendor blobs worth inspecting.",
+ "brief": {
+  "what_it_is": "fwupd is a Linux firmware update daemon, with fwupdmgr as its command-line client. It detects devices that have firmware fwupd supports, downloads update metadata from the Linux Vendor Firmware Service (LVFS) by default, and applies firmware updates to those devices. Updates that can be applied live happen immediately, and others are staged to run at the next boot. The README also mentions optionally reporting update success or failure back to LVFS. The README does not mention the brew executables dbxtool or fwupdtool.",
+  "why_it_exists": "The README says the project aims \"to make updating firmware on Linux automatic, safe, and reliable.\" It is meant to give Linux users a single path for vendor firmware updates, backed by LVFS as the source of firmware.",
+  "how_it_works": "The daemon is configured by default to download firmware metadata and capsules from LVFS, and fwupdmgr refresh pulls the latest metadata. Enterprises can restrict updates with an approved-updates list: ApprovalRequired=true in the remote config, plus ApprovedFirmware in fwupd.conf, which holds container checksums. If Passim is installed and enabled, fwupd republishes downloaded metadata on 0.0.0.0:27500 so other clients on the LAN can fetch it via mDNS/LLMNR; P2pPolicy=none in /etc/fwupd/daemon.conf turns this off.",
+  "commands_seen": [
+   {
+    "cmd": "# fwupdmgr get-devices",
+    "context": "Lists all devices fwupd detects on the system."
+   },
+   {
+    "cmd": "# fwupdmgr refresh",
+    "context": "Downloads the latest metadata from LVFS."
+   },
+   {
+    "cmd": "# fwupdmgr get-updates",
+    "context": "Shows any available updates for devices on the system."
+   },
+   {
+    "cmd": "# fwupdmgr update",
+    "context": "Downloads and applies all available updates for the system."
+   },
+   {
+    "cmd": "# fwupdmgr report-history",
+    "context": "Reports the status of past updates to LVFS; only updates distributed from LVFS are reported."
+   },
+   {
+    "cmd": "fwupdmgr set-approved-firmware baz",
+    "context": "Adds firmware to the approved list, as an alternative to the fwupd.conf setting or D-Bus."
+   },
+   {
+    "cmd": "meson setup build",
+    "context": "Developer build: sets up the Meson build directory."
+   },
+   {
+    "cmd": "ninja -C build",
+    "context": "Developer build: compiles the project in the build directory."
+   },
+   {
+    "cmd": "ninja -C build clang-tidy",
+    "context": "Developer static analysis: runs clang-tidy on all files in the build."
+   },
+   {
+    "cmd": "meson setup build -Dstatic_analysis=true",
+    "context": "Developer option: enables the gcc -fanalyzer scan."
+   }
+  ],
+  "install_notes": "The README says most end users should not compile fwupd. They should use the version their distro packages, and Snap or Flatpak are described as options for a newer fwupd on specific devices, not as replacements. Building from source is described as complicated, with dozens of dependencies and configuration options; the build guide is at docs/building.md, which I did not fetch. Enterprise setups need ApprovalRequired and ApprovedFirmware configured by hand. Passim is optional. The README mentions no hardware or account requirements.",
+  "standout": "Firmware is distributed through a vendor-facing service (LVFS) that OEMs can publish to, and the daemon can share its downloaded metadata over the LAN through Passim. The enterprise approved-firmware list lets an administrator limit updates to firmware tested in their own organisation.",
+  "status": "Appears actively maintained, based on the README's CI, fuzzing, coverage, and OpenSSF badges and its references to current tooling such as Tartan and clang-18. I did not find a release date or last-commit date in the README, so this is an inference, not a verified fact.",
+  "caveats": "The README steers users away from building from source and toward distro packages. The packaging note warns that the systemd_unit_user Meson option must be used carefully, because a misconfigured user can enable privilege escalation; the default DynamicUser=true is recommended. Passim sharing is on by default if Passim is installed and must be disabled explicitly if unwanted. The README does not discuss the brew executables dbxtool or fwupdtool, and I did not verify them.",
+  "quotes": [
+   "This project aims to make updating firmware on Linux automatic, safe, and reliable.",
+   "In most cases, end users should not compile fwupd from scratch; it's a complicated project with dozens of dependencies (and as many configuration options) and there's just too many things that can go wrong.",
+   "Updates that can be applied live will be done immediately.",
+   "Updates that run at boot-up will be staged for the next reboot."
+  ],
+  "links": [
+   {
+    "label": "fwupd homepage (GitHub repository)",
+    "url": "https://github.com/fwupd/fwupd"
+   },
+   {
+    "label": "fwupd website",
+    "url": "https://fwupd.org/"
+   },
+   {
+    "label": "Building and Debugging guide (linked from README, not fetched)",
+    "url": "https://github.com/fwupd/fwupd/blob/main/docs/building.md"
+   },
+   {
+    "label": "Passim (linked from README)",
+    "url": "https://github.com/hughsie/passim/blob/main/README.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/fwupd/fwupd: fetched OK, README returned in full"
+  ]
+ }
+}

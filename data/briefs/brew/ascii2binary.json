@@ -1,0 +1,76 @@
+{
+ "name": "ascii2binary",
+ "desc": "Converting Text to Binary and Back",
+ "homepage": "https://billposer.org/Software/a2b.html",
+ "installs_365d": 41,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "visual"
+ ],
+ "why": "Converts text to binary and back in odd representations, a small transform with a pleasing old-school feel.",
+ "brief": {
+  "what_it_is": "Two small POSIX C command-line programs that convert between textual and binary representations of numbers. ascii2binary reads whitespace-separated textual numbers from stdin and writes their binary equivalents; the type and precision are chosen with flags. binary2ascii reads binary numbers and writes text, with flags for type, size and format. Unsigned integers can come out in binary, octal, decimal or hexadecimal, signed integers only in binary or decimal, and floats only in decimal, standard or scientific notation.",
+  "why_it_exists": "The author describes them as useful for generating test data, inspecting binary files, and interfacing programs that produce textual output with programs that need binary input, and for reformatting numbers. The page's example is normalising variable-length hex Unicode range endpoints to a uniform 6-digit width for a table.",
+  "how_it_works": "Each program is a filter over stdin and stdout, so they chain with ordinary shell pipelines. Flags select the numeric type (for example -t ul, -t uc, -t f), the base or bit grouping (-b), field count (-n), width (-w) and padding, and whether output is scientific (-e). Localisation uses GNU gettext, so the -L flag can read and write numbers in other locale formats such as de_DE and en_US. The page notes that to inspect a float's raw bytes you can treat the input as unsigned characters.",
+  "commands_seen": [
+   {
+    "cmd": "ascii2binary -t ul < intex.asc > intex.bin",
+    "context": "Reads the text number 0x10001000 from intex.asc and writes it as a binary unsigned long to intex.bin."
+   },
+   {
+    "cmd": "binary2ascii -t ul -b h < intex.bin",
+    "context": "Converts the binary unsigned long back to text in hexadecimal, printing 0x10001000."
+   },
+   {
+    "cmd": "binary2ascii -t uc -b b -n 4 < intex.bin",
+    "context": "Prints the bytes of the binary file as unsigned chars in binary, four per line, grouped as 00000000 00010000 00000000 00010000."
+   },
+   {
+    "cmd": "ascii2binary -t f < floatex.asc > floatex.bin",
+    "context": "Converts the decimal float 2235.643 into a binary float file."
+   },
+   {
+    "cmd": "binary2ascii -t f -p 1 -w 6 < floatex.bin",
+    "context": "Reads the float back and prints it with one digit of precision in a 6-wide field, giving 0002235.6."
+   },
+   {
+    "cmd": "binary2ascii -t f -e < floatex.bin",
+    "context": "Prints the float in scientific notation, giving 2.236e+03."
+   },
+   {
+    "cmd": "binary2ascii -t uc -b 16 -n 4 < floatex.bin",
+    "context": "Shows the raw bytes of the float as hex, four per line: 0x4A 0xBA 0x0B 0x45."
+   },
+   {
+    "cmd": "awk '{print $1}' < UnicodeRanges | ascii2binary -b 16 -t ul | binary2ascii -b 16 -t ul -w 6 -x -z",
+    "context": "The documented pipeline that pads hex range endpoints from UnicodeRanges to a uniform 6-digit width."
+   },
+   {
+    "cmd": "ascii2binary -t f -L de_DE < DeutscheZahlen | binary2ascii -L en_US -t f > AmericanNumbers",
+    "context": "Converts numbers written in German locale format to American English format in a two-stage pipeline."
+   }
+  ],
+  "install_notes": "The page gives no brew-specific steps. It offers source archives (ascii2binary-2.14.tar.gz, .tar.bz2, .zip) and lists packaging for Debian, FreeBSD, Open Package, Open Solaris, SUSE and Ubuntu. It requires standard C and POSIX, plus GNU gettext as a dependency for localisation. The page does not describe build commands, so I did not confirm the build steps.",
+  "standout": "It is a Unix-style filter pair that goes beyond hex and binary dumps: it handles locale-aware number formats, raw float bytes, and odd bases such as octal and per-byte grouping. Its examples show real pipeline use rather than toy conversions.",
+  "status": "Quiet. The page lists version 2.14 with a last-modified date of 2010-08-29, and the change log's latest entry is 2.14. The page mentions no later release and no newer commits. I could not check any source repository.",
+  "caveats": "Signed integers can only be written out in binary or decimal, and floats only in decimal. Dependencies include GNU gettext. The page was last updated in 2010, and it says no bugs are known, which may only mean the page is stale. The page does not state a licence beyond GNU General Public License. I did not follow the Documentation or Change Log links because the page gave no URLs for them.",
+  "quotes": [
+   "These programs convert between textual and binary representations of numbers.",
+   "The two programs are useful for generating test data, for inspecting binary files, and for interfacing programs that generate textual output to programs that require binary input and conversely.",
+   "No bugs are known."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (Bill Poser)",
+    "url": "https://billposer.org/Software/a2b.html"
+   }
+  ],
+  "fetch_log": [
+   "https://billposer.org/Software/a2b.html: fetched successfully (plain HTML page, not a GitHub repo). Description, examples, download list, and change log were all readable. The Documentation and Downloads links were not followed because the text gave no URLs for them."
+  ]
+ }
+}

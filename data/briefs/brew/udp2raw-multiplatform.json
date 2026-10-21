@@ -1,0 +1,71 @@
+{
+ "name": "udp2raw-multiplatform",
+ "desc": "Multi-platform(cross-platform) version of udp2raw-tunnel client",
+ "homepage": "https://github.com/wangyu-/udp2raw-multiplatform",
+ "installs_365d": 150,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "afternoon"
+ ],
+ "why": "Disguises UDP traffic as TCP or ICMP packets, a fascinating door into how firewalls classify traffic.",
+ "brief": {
+  "what_it_is": "udp2raw_mp is the Windows, Mac and BSD build of udp2raw, a tunnel that takes UDP traffic and wraps it in FakeTCP, UDP or ICMP headers, optionally encrypted, so it gets through networks that block, throttle or mishandle UDP. The client takes local UDP packets on one port and the server emits them as UDP to a service on its side, with the packets on the wire looking like TCP or ICMP. The README says it is protocol-compatible with the Linux udp2raw, so a Linux server can talk to it.",
+  "why_it_exists": "The README frames it as a cross-platform version of udp2raw for users who need the tunnel on Windows, Mac or BSD, where the original only ran on Linux. The upstream README says the tunnel helps you bypass UDP firewalls or unstable UDP environments, and that it can carry OpenVPN over ICMP or avoid TCP-over-TCP problems.",
+  "how_it_works": "The program sends packets through a raw socket and can disguise them as FakeTCP, UDP or ICMP. In FakeTCP mode it simulates a three-way handshake, sequence and ack numbers, and TCP options such as MSS, sackOk, TS and wscale, so firewalls see a TCP connection, but there is no congestion control or retransmission. Encryption and integrity are set with --cipher-mode and --auth-mode (upstream defaults are aes128cbc and md5), and heartbeats let the client reconnect on a new port while UDP sessions stay alive.",
+  "commands_seen": [
+   {
+    "cmd": "./udp2raw_amd64 -s -l0.0.0.0:4096 -r 127.0.0.1:7777    -k \"passwd\" --raw-mode faketcp -a",
+    "context": "Server side example from the upstream udp2raw-tunnel README: listens on TCP-looking port 4096 and forwards to local UDP service 7777. Note the binary is named udp2raw_amd64 there, not udp2raw_mp, and this repo's README shows no commands of its own."
+   },
+   {
+    "cmd": "./udp2raw_amd64 -c -l0.0.0.0:3333  -r44.55.66.77:4096  -k \"passwd\" --raw-mode faketcp -a",
+    "context": "Client side example from the upstream README: listens for local UDP on 3333 and connects to the server at 44.55.66.77:4096."
+   },
+   {
+    "cmd": "./udp2raw_amd64 --conf-file server.conf",
+    "context": "Starts the server from a configuration file so the password stays out of the ps output; the file holds one option per line, with -s, -l, -r, -a, -k and --raw-mode."
+   },
+   {
+    "cmd": "echo reconnect >fifo.file",
+    "context": "With --fifo fifo.file set on the client, this forces it to reconnect."
+   }
+  ],
+  "install_notes": "Download the binary from the Releases page of this repo; the homepage says this repo exists for binary releases, issues and wiki. The upstream README says Linux needs root or the cap_net_raw capability, and that the -a flag adds iptables rules that FakeTCP mode depends on, so forgetting it is a common mistake. The upstream Android and some OpenWRT notes live in separate wiki pages. I did not see Windows or Mac setup steps, such as driver or privilege requirements, in the pages I read.",
+  "standout": "FakeTCP mode is the clever bit: it runs the full TCP-looking handshake and sequence bookkeeping but is really unreliable UDP, so OpenVPN can ride it without TCP-over-TCP stalls. The config options also show the disguise trade-off openly, e.g. xor plus simple is said to fool most packet inspection on routers but not stop serious attacks.",
+  "status": "quiet: this repo's README says that since 2021 its code has been merged upstream and it now only publishes binaries, handles issues and holds wiki articles. The upstream udp2raw-tunnel README shows a build date of Nov 3 2024, so the underlying code was active at least then. I did not see a release date or last commit for this repo.",
+  "caveats": "The multiplatform README is a short pointer to the wiki, which I did not fetch, so details for udp2raw_mp itself are thin. The command examples come from the Linux upstream README and use udp2raw_amd64; I did not verify that the Windows, Mac or BSD builds accept the same flags. The -a and iptables behaviour is Linux-specific. The upstream README says ISPs may still tell FakeTCP apart from real TCP, and its performance test is a single Linux VPS pair, not a general benchmark. I did not see a license. Parts of the README are in Chinese.",
+  "quotes": [
+   "multi-platform(cross-platform) version of udp2raw, which supports Windows/Mac/BSD natively.",
+   "A Tunnel which turns UDP Traffic into Encrypted FakeTCP/UDP/ICMP Traffic by using Raw Socket, helps you Bypass UDP FireWalls(or Unstable UDP Environment).",
+   "Firewalls will regard FakeTCP as a TCP connection, but its essentially UDP: it supports real-time/out-of-order delivery(just as normal UDP does), no congestion control or re-transmission."
+  ],
+  "links": [
+   {
+    "label": "udp2raw-multiplatform homepage",
+    "url": "https://github.com/wangyu-/udp2raw-multiplatform"
+   },
+   {
+    "label": "udp2raw-multiplatform wiki",
+    "url": "https://github.com/wangyu-/udp2raw-multiplatform/wiki"
+   },
+   {
+    "label": "upstream udp2raw-tunnel repo (code home)",
+    "url": "https://github.com/wangyu-/udp2raw-tunnel"
+   },
+   {
+    "label": "upstream udp2raw wiki",
+    "url": "https://github.com/wangyu-/udp2raw-tunnel/wiki"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/wangyu-/udp2raw-multiplatform: worked, README returned; it is thin and points to the wiki and the upstream repo",
+   "https://github.com/wangyu-/udp2raw-tunnel: worked, README returned; used for the mechanism, usage text and commands",
+   "https://github.com/wangyu-/udp2raw-multiplatform/wiki: not fetched; the fetch budget was used on the two READMEs above, and the wiki is the likely source for the missing details"
+  ]
+ }
+}

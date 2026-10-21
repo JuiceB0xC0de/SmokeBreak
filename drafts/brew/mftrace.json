@@ -1,0 +1,143 @@
+{
+ "name": "mftrace",
+ "desc": "Trace TeX bitmap font to PFA, PFB, or TTF font",
+ "homepage": "https://lilypond.org/mftrace/",
+ "installs_365d": 181,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "visual"
+ ],
+ "why": "Traces TeX bitmap fonts back into vector outline fonts, a neat reverse transform of raster glyphs into curves.",
+ "brief": {
+  "what_it_is": "mftrace is a small Python program that traces a TeX bitmap font (the raster glyphs from MetaFont) into a scalable outline font. It takes a TeX font name such as cmr10 and writes a PFA or PFB (PostScript Type 1) font, or a TTF (TrueType) font. It is a thin wrapper: a tracing backend (potrace, recommended, or autotrace) does the vectorizing, and t1utils and MetaFont/kpsewhich do the rest. Output formats also include AFM and SVG, though the README says those and TTF need FontForge installed.",
+  "why_it_exists": "The README argues that scalable fonts render correctly at many printer resolutions, and that Ghostscript produces much better PDF when given scalable PostScript fonts instead of bitmaps. It was called 'pktrace' before version 1.0.5.",
+  "how_it_works": "mftrace runs MetaFont to produce a GF bitmap file for each glyph at a chosen magnification, converts it to PBM with its own gf2pbm tool, and passes the bitmaps to potrace or autotrace to get outlines. Those outlines are then assembled into a Type 1 font, with the encoding read from the TFM file or given by an encoding file. Optional steps run through FontForge for rounding, simplifying, and autohinting.",
+  "commands_seen": [
+   {
+    "cmd": "mftrace cmr10",
+    "context": "Basic usage from the Install section: traces the cmr10 TeX font into a default PFA file."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Source build step, run in the mftrace directory after installing prerequisites."
+   },
+   {
+    "cmd": "make install",
+    "context": "Second source build step after ./configure."
+   },
+   {
+    "cmd": "apt-get install mftrace",
+    "context": "Debian install, run as root; the README says it installs all requirements."
+   },
+   {
+    "cmd": "apt-get install fontforge",
+    "context": "Optional Debian package to enable simplifying and autohinting the font."
+   },
+   {
+    "cmd": "rpmbuild -tb mftrace-version.tar.gz",
+    "context": "How the README says to build an RPM from the release tarball (Red Hat section)."
+   },
+   {
+    "cmd": "--glyphs 1-10,50,55,90-100",
+    "context": "Example of the --glyphs option, which limits processing to a list or ranges of decimal glyph numbers."
+   },
+   {
+    "cmd": "--formats=LIST",
+    "context": "Option listing output formats (AFM, PFA, PFB, TTF, SVG); default is PFA."
+   },
+   {
+    "cmd": "--keep-trying",
+    "context": "Option to push on past external program failures, such as MetaFont overflow or a tracer failing on one glyph."
+   },
+   {
+    "cmd": "--simplify",
+    "context": "Option that passes the font through FontForge for automatic simplification and hinting."
+   },
+   {
+    "cmd": "MFTRACE_BACKEND_OPTIONS",
+    "context": "Environment variable for passing extra options to potrace or autotrace (not a command, but the README's documented knob)."
+   }
+  ],
+  "install_notes": "Prerequisites are Python (the README says 2.2 or later), a tracer (potrace recommended, or autotrace 0.30 or later), t1utils, and a TeX installation that provides kpsewhich and MetaFont. FontForge (040215 or newer) is recommended, and without it you need Ghostscript with printafm for AFM output. Source install is ./configure then make install. Debian and Red Hat packaging is mentioned. The README notes that MFINPUTS and similar kpathsea variables control where .mf files are found.",
+  "standout": "It runs the font's own MetaFont source at a high magnification and traces the resulting bitmaps, so you get outlines for fonts whose source is only METAFONT, such as the Computer Modern family. The README also contrasts it with MetaFog, which works on the curves directly but is proprietary, and with MetaType1, which cannot handle overlaps.",
+  "status": "Unknown as to recent activity. The homepage links download 1.2.20 (mftrace-1.2.20.tar.gz) and the GitHub repo hanwen/mftrace shows 176 commits, 23 stars, and a GPL-2.0 license, but the fetched pages showed no release or commit dates. The install docs still mention Python 2.2 and Debian 3.0, so the text is clearly old even if the code is maintained.",
+  "caveats": "Several output formats (TTF, SVG, and anything other than PFA/PFB/AFM) need FontForge. The README says that without FontForge you must pass --noround to skip integer rounding. Known bugs: relative directories in MFINPUTS or TFMINPUTS are not handled, and some MetaFont fonts overflow at high magnification and need source fixes. The homepage says it is GPL and the GitHub page says GPL-2.0. The copyright notice for the bundled gf2pbm, based on Paul Vojta's Xdvi code, is a permissive MIT-style license. Build pain is the usual autotools route plus TeX and tracer dependencies.",
+  "quotes": [
+   "mftrace is a small Python program that lets you trace a TeX bitmap font into a PFA or PFB font (A PostScript Type1 Scalable Font) or TTF (TrueType) font.",
+   "Scalable fonts offer many advantages over bitmaps, as they allow documents to render correctly at many printer resolutions.",
+   "Why use mftrace over textrace? Textrace and mftrace are functionally similar. However, mftrace is quicker, more cleanly written and can be installed using standard methods."
+  ],
+  "links": [
+   {
+    "label": "mftrace homepage",
+    "url": "https://lilypond.org/mftrace/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/hanwen/mftrace"
+   },
+   {
+    "label": "Release tarball 1.2.20",
+    "url": "http://lilypond.org/downloads/sources/mftrace/mftrace-1.2.20.tar.gz"
+   }
+  ],
+  "fetch_log": [
+   "https://lilypond.org/mftrace/ - fetched OK, full homepage text (rendered from the texinfo manual)",
+   "https://github.com/hanwen/mftrace - fetched OK, README.texi shown, plus repo metadata (176 commits, 23 stars, GPL-2.0, About line)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A peculiar bridge from MetaFont\u2019s bitmap-only fonts to scalable outlines, with a useful chance to explore an otherwise hidden corner of TeX typography."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "mftrace",
+  "tldr": "Turns TeX's METAFONT bitmap fonts like Computer Modern into scalable outline fonts by rendering them large and tracing the pixels back into curves.",
+  "deeper_look": "mftrace is a small Python program that takes a TeX font name such as `cmr10` and writes a scalable font: PostScript Type 1 (PFA or PFB) by default, or TrueType, AFM and SVG if FontForge is installed. It is mostly a conductor. The vectorizing is done by potrace (recommended) or autotrace, and t1utils and FontForge handle the rest.\n\nThe pipeline is a round trip through raster. mftrace runs MetaFont on the font's source at a high magnification to get a GF bitmap for each glyph. Its own `gf2pbm` tool converts those to PBM, the tracer turns the bitmaps into outlines, and the outlines are assembled into a Type 1 font. The encoding comes from the TFM file or an encoding file. Optional FontForge steps round, simplify and autohint the result.\n\nThe idea underneath is that METAFONT fonts are programs, not drawings. Computer Modern was defined as code that draws glyphs with a pen at a given resolution, so the only way to get a conventional outline font out of the source is to render it and trace it. The README's practical argument is that scalable fonts render correctly at many printer resolutions, and that Ghostscript makes much better PDF from scalable PostScript fonts than from bitmaps.\n\nIt was called `pktrace` before version 1.0.5. The README compares it with MetaFog, which works on the curves directly but is proprietary, and with MetaType1, which cannot handle overlaps.",
+  "install": "brew install mftrace\n# Needs a TeX installation that provides kpsewhich and MetaFont. Homebrew pulls in fontforge, potrace and t1utils.",
+  "try_this": [
+   {
+    "cmd": "mftrace cmr10",
+    "what_happens": "Traces the Computer Modern Roman 10pt font into a default PFA (Type 1) font file."
+   },
+   {
+    "cmd": "mftrace --help",
+    "what_happens": "Lists the options, including output formats, glyph selection and simplification."
+   }
+  ],
+  "whats_unique": "It works from the font's own METAFONT source rather than from existing bitmaps, so fonts that exist only as METAFONT programs, like Computer Modern, can become outline fonts.",
+  "caveats": "The documentation still mentions Python 2.2 and Debian 3.0, recent activity is unclear, TTF and SVG output need FontForge, and some MetaFont fonts overflow at high magnification.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "fonts",
+   "tex",
+   "metafont",
+   "vectorizing",
+   "reverse-engineering"
+  ],
+  "links": [
+   {
+    "label": "mftrace homepage",
+    "url": "https://lilypond.org/mftrace/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/hanwen/mftrace"
+   },
+   {
+    "label": "Release tarball 1.2.20",
+    "url": "http://lilypond.org/downloads/sources/mftrace/mftrace-1.2.20.tar.gz"
+   }
+  ]
+ }
+}

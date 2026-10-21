@@ -1,0 +1,154 @@
+{
+ "name": "lxi-tools",
+ "desc": "Open source tools for managing network attached LXI compatible instruments",
+ "homepage": "https://lxi-tools.github.io",
+ "installs_365d": 315,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "network",
+  "needs-hardware",
+  "protocol"
+ ],
+ "why": "Talks to network-attached lab instruments over LXI, a door into a test equipment protocol few developers have touched.",
+ "brief": {
+  "what_it_is": "lxi-tools is an open source command-line tool (lxi) and GUI (lxi-gui) for talking to network-attached test instruments that speak LXI, such as oscilloscopes, power supplies, spectrum analyzers and multimeters. It can discover instruments on the local network via VXI11 or mDNS, send SCPI commands and print the responses, capture display screenshots from supported instruments, benchmark request/response speed, and run Lua scripts that control instruments, log data to CSV and draw live charts. All communication goes through the liblxi library.",
+  "why_it_exists": "The README's stated motivation is 'To make better and simpler open source tools for managing network attached LXI compatible test instruments.' It is an independent community effort and the README says it is not affiliated with the LXI Consortium.",
+  "how_it_works": "The tools use liblxi for all instrument communication. Discovery broadcasts on each local interface (or uses mDNS/DNS-SD with the -m flag), and SCPI goes over VXI11 (port 111) or raw TCP (port 5025 by default). Screenshots are handled by per-instrument plugins, which can be chosen by name or autodetected, and the image can be written to stdout for piping into other tools.",
+  "commands_seen": [
+   {
+    "cmd": "lxi discover",
+    "context": "Searches the local network for LXI devices; the README example shows broadcasts on lo, eth0 and wlan0 and lists two Rigol devices found by IP."
+   },
+   {
+    "cmd": "lxi scpi --address 10.42.1.20 \"*IDN?\"",
+    "context": "Sends the standard *IDN? identification query to the instrument at that IP and prints the response."
+   },
+   {
+    "cmd": "lxi screenshot --address 10.42.1.20 --plugin rigol-1000z",
+    "context": "Captures a screenshot from a Rigol 1000z oscilloscope using the named plugin and saves a PNG file."
+   },
+   {
+    "cmd": "lxi screenshot --address 10.42.1.20 - | convert - screenshot.jpg",
+    "context": "Writes the screenshot to stdout and pipes it into ImageMagick's convert to produce a JPG."
+   },
+   {
+    "cmd": "lxi screenshot --list",
+    "context": "Lists the built-in screenshot plugins, covering Keysight, LeCroy, Rigol, Rohde & Schwarz, Siglent and Tektronix models."
+   },
+   {
+    "cmd": "lxi benchmark --address 10.42.1.20",
+    "context": "Sends 100 ID requests to the instrument by default and reports requests per second (the README example shows 24.7)."
+   },
+   {
+    "cmd": "brew install lxi-tools",
+    "context": "Homebrew install command given in the README for macOS and Linux."
+   },
+   {
+    "cmd": "meson setup build",
+    "context": "First step of building from source; the README says the install steps may differ by system."
+   },
+   {
+    "cmd": "meson compile -C build",
+    "context": "Second step of building from source, compiling the build directory created by meson setup."
+   },
+   {
+    "cmd": "meson install -C build",
+    "context": "Final step of building from source, installing the built files."
+   }
+  ],
+  "install_notes": "Besides brew, the README lists distro packages, a snap (snap install lxi-tools, with --edge for bleeding edge), a Windows installer marked experimental, and WSL2 using the snap inside Ubuntu. Building from source needs liblxi, libreadline, liblua, libgtk, libadwaita, gtksourceview and bash-completion; meson_options.txt controls which features are enabled. No instrument accounts or hardware-specific setup is mentioned beyond the instrument being on the network.",
+  "standout": "It covers a niche protocol family (LXI over VXI11 or raw TCP) with a single CLI and GUI, and its Lua scripting lets you log instrument data to CSV and draw live charts. The README's tested-instrument table is long and specific, and the screenshot plugin system is an easy way to pull a scope's display into a file.",
+  "status": "unknown. The README shows CircleCI build, release, Repology and CodeFactor badges, links to a releases page and a wiki, names Martin Lund as maintainer, and says it was tested on many current instruments. I saw no release date or last-commit date in the fetched text, so I cannot confirm how recently it was updated.",
+  "caveats": "The Windows installer is marked experimental in the README. The Tektronix 2000 screenshot plugin is marked experimental. The README says it is not affiliated with the LXI Consortium. The instrument table lists what was tested, not everything that works, and some instruments need RAW/TCP on a specific port rather than discovery. Source builds need several GUI and runtime libraries (GTK, libadwaita, Lua) and the README warns the meson steps may differ by system. The licence is BSD-3-Clause. The screenshot pipe example depends on ImageMagick being installed separately.",
+  "quotes": [
+   "lxi-tools are open source software tools for managing network attached LXI compatible test instruments such as modern oscilloscopes, power supplies, spectrum analyzers etc.",
+   "To make better and simpler open source tools for managing network attached LXI compatible test instruments.",
+   "Please notice that lxi-tools is not affiliated with the LXI consortium - it is an independent open source community effort."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://lxi-tools.github.io"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/lxi-tools/lxi-tools"
+   },
+   {
+    "label": "Wiki (instrument notes, known issues, SCPI commands)",
+    "url": "https://github.com/lxi-tools/lxi-tools/wiki/"
+   },
+   {
+    "label": "Lua script API documentation (linked from README)",
+    "url": "https://github.com/lxi-tools/lxi-tools/blob/master/doc/lua-api.txt"
+   }
+  ],
+  "fetch_log": [
+   "https://lxi-tools.github.io \u2014 worked; a short page that only says the tools are for managing network attached LXI test instruments and points to GitHub for details",
+   "https://github.com/lxi-tools/lxi-tools \u2014 worked; returned the full README, which was used for all the details above",
+   "Lua API doc, wiki and liblxi were not fetched; they are only linked from the README. The five-fetch limit was not reached."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A niche network protocol becomes tangible here: discover lab instruments, send SCPI commands, pull oscilloscope screens, and script live measurements from the terminal."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "lxi-tools",
+  "tldr": "Command-line and GUI tools for finding and talking to network-attached lab instruments like oscilloscopes and power supplies, using SCPI over LXI.",
+  "deeper_look": "lxi-tools is a small set of programs for instruments that sit on a network and speak LXI: oscilloscopes, power supplies, spectrum analyzers, multimeters. The `lxi` command can discover them on the local network, send SCPI commands and print the replies, grab a screenshot of the instrument's display, and benchmark how fast it answers. `lxi-gui` wraps the same abilities in a GTK interface.\n\nUnderneath is a plain idea. Modern bench equipment is often a small computer with an Ethernet port, and it accepts text commands. SCPI is the standard command language, and `*IDN?` is the standard first question: who are you? Discovery works by broadcasting on each local interface, or by mDNS with a flag. Commands travel over VXI11 on port 111 or raw TCP, which defaults to port 5025. Everything goes through the liblxi library.\n\nScreenshots are handled by per-instrument plugins, covering Keysight, LeCroy, Rigol, Rohde & Schwarz, Siglent and Tektronix models. You can name a plugin or let the tool autodetect one, and the image can go to stdout to be piped into other tools. The Lua scripting layer lets you control an instrument, log readings to CSV and draw live charts.\n\nThe README states its aim as \"To make better and simpler open source tools for managing network attached LXI compatible test instruments.\" It is an independent community project, not affiliated with the LXI Consortium.",
+  "install": "brew install lxi-tools\n# Needs an LXI-capable instrument reachable on your network. The GUI pulls in GTK4 and libadwaita. The screenshot pipe example needs ImageMagick installed separately.",
+  "try_this": [
+   {
+    "cmd": "lxi discover",
+    "what_happens": "Searches the local network for LXI devices and lists any it finds by IP."
+   },
+   {
+    "cmd": "lxi scpi --address 10.42.1.20 \"*IDN?\"",
+    "what_happens": "Sends the standard identification query to the instrument at that address and prints its reply."
+   },
+   {
+    "cmd": "lxi screenshot --list",
+    "what_happens": "Lists the built-in screenshot plugins, one per supported instrument family."
+   }
+  ],
+  "whats_unique": "It puts discovery, SCPI, screenshot capture and Lua scripting for a niche instrument protocol behind one CLI and GUI. The plugin-based screenshot system makes pulling a scope's display into a file a one-liner.",
+  "caveats": "You need a real LXI instrument on your network to see anything happen, some instruments need raw TCP on a specific port rather than discovery, and the Windows installer and the Tektronix 2000 screenshot plugin are marked experimental.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "network",
+   "protocol",
+   "scpi",
+   "test-equipment",
+   "lua"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://lxi-tools.github.io"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/lxi-tools/lxi-tools"
+   },
+   {
+    "label": "Wiki (instrument notes, known issues, SCPI commands)",
+    "url": "https://github.com/lxi-tools/lxi-tools/wiki/"
+   },
+   {
+    "label": "Lua script API documentation",
+    "url": "https://github.com/lxi-tools/lxi-tools/blob/master/doc/lua-api.txt"
+   }
+  ]
+ }
+}

@@ -1,0 +1,112 @@
+{
+ "name": "mrbayes",
+ "desc": "Bayesian inference of phylogenies and evolutionary models",
+ "homepage": "https://nbisweden.github.io/MrBayes/",
+ "installs_365d": 431,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "science",
+  "math",
+  "afternoon",
+  "library"
+ ],
+ "why": "Real Bayesian phylogenetic inference you can run on sequence data at home, a genuine door into how evolutionary trees are estimated.",
+ "brief": {
+  "what_it_is": "MrBayes is a command-line program for Bayesian inference of phylogenies and evolutionary models. It takes sequence or character data (nucleotide, amino acid, restriction site, and morphological characters, alone or mixed in one analysis) and uses Markov chain Monte Carlo to estimate the posterior distribution of model parameters and trees. Output includes posterior samples and majority-rule consensus trees in FigTree format, with branch and node summaries. It also supports model choice via Bayes factors using the stepping-stone method.",
+  "why_it_exists": "The homepage presents it as a general-purpose program for Bayesian model choice and inference across a wide range of phylogenetic and evolutionary models, with one common command-line interface across Macintosh, Windows, and UNIX.",
+  "how_it_works": "It runs MCMC sampling over the posterior of the chosen model's parameters and tree topologies, with convergence monitoring during the run and diagnostics afterward. Checkpointing lets a run be extended or recovered after a crash. Optional MPI spreads jobs across a cluster on macOS and UNIX, and optional BEAGLE support speeds up codon and amino acid models on compatible NVIDIA GPUs.",
+  "commands_seen": [
+   {
+    "cmd": "git clone --depth=1 https://github.com/NBISweden/MrBayes.git",
+    "context": "Shallow-clones the source repository for building from source."
+   },
+   {
+    "cmd": "cd MrBayes",
+    "context": "Enters the cloned source directory."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Configures the build from source; the README says to see the INSTALL file for details."
+   },
+   {
+    "cmd": "make && sudo make install",
+    "context": "Compiles and installs the mb binary, which the README says lands at /usr/local/bin/mb on Unix."
+   }
+  ],
+  "install_notes": "The brew formula is named mrbayes and provides the mb executable. The GitHub README gives a build-from-source route (clone, ./configure, make, sudo make install) and points to an INSTALL file that I did not fetch. Optional extras from the homepage: MPI for cluster runs (macOS and UNIX only), and the BEAGLE library for GPU speedups on NVIDIA cards. I did not find any account or runtime requirements.",
+  "standout": "It is a long-established, full-featured Bayesian phylogenetics tool that mixes data types in one analysis, links parameters across partitions, and handles positive selection and multi-species coalescent (BEST) models. It runs from a plain terminal rather than a GUI.",
+  "status": "Maintenance mode. The README says that after release 3.2.6 (November 2015) MrBayes entered maintenance mode and its care passed to NBIS, with future releases likely to focus on bug fixes rather than new features. The repository's master branch holds releases and the develop branch holds working code. I did not check the latest tag or commit date, so I cannot give a more recent activity date.",
+  "caveats": "Maintenance mode means few new features are expected. Building from source needs a C toolchain and the configure/make steps. MPI works only on macOS and UNIX. BEAGLE acceleration needs compatible NVIDIA hardware. The homepage describes the interface as command-line only, so there is no GUI. I did not read the manual, so option-level details are unverified.",
+  "quotes": [
+   "MrBayes is a program for Bayesian inference and model choice across a wide range of phylogenetic and evolutionary models.",
+   "MrBayes uses Markov chain Monte Carlo (MCMC) methods to estimate the posterior distribution of model parameters.",
+   "After release 3.2.6 (November 2015), MrBayes entered \"maintenance mode\", and its care has been passed over to NBIS"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://nbisweden.github.io/MrBayes/"
+   },
+   {
+    "label": "GitHub repository (README, build instructions, examples)",
+    "url": "https://github.com/NBISweden/MrBayes"
+   },
+   {
+    "label": "MrBayes project site (referenced in README)",
+    "url": "http://mrbayes.net/"
+   }
+  ],
+  "fetch_log": [
+   "https://nbisweden.github.io/MrBayes/ - worked; homepage feature list and description read",
+   "https://github.com/NBISweden/MrBayes - worked; README read (returned as README text). The doc/manual and INSTALL files were referenced but not fetched."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It turns sequence and character data into posterior samples of evolutionary trees, making Bayesian inference and model choice a hands-on, unusual rabbit hole."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "MrBayes",
+  "tldr": "A command-line program that estimates evolutionary trees from DNA, protein or trait data using Bayesian MCMC, the standard way to ask how species are related.",
+  "deeper_look": "MrBayes reads sequence or character data (nucleotides, amino acids, restriction sites, morphological traits, even mixed in one analysis) and estimates which evolutionary trees and model parameters best explain it. Instead of returning one answer, it samples from a posterior distribution using Markov chain Monte Carlo. The output is a set of sampled trees and parameters, plus majority-rule consensus trees in FigTree format with branch and node summaries.\n\nThe idea underneath is that a phylogeny is a hypothesis with uncertainty, not a fact. A chain wanders through the space of possible trees and models, spending more time where the data fit better. Convergence monitoring during the run and diagnostics afterward tell you whether the wandering has settled. Checkpointing lets a run be extended or recovered after a crash. It also supports model choice through Bayes factors using the stepping-stone method.\n\nThe homepage describes a general-purpose tool with one command-line interface across Macintosh, Windows and UNIX. It can link parameters across partitions and handles positive selection and multi-species coalescent (BEST) models. Optional MPI spreads jobs across a cluster, and optional BEAGLE support speeds up codon and amino acid models on compatible NVIDIA GPUs.\n\nThe interface is an interactive prompt rather than a GUI. Learning it means learning how phylogenetic models are specified, which is the real door into the field.",
+  "install": "brew install mrbayes\n# installs the `mb` executable; pulls in beagle and open-mpi as dependencies\n# from source instead: git clone --depth=1 https://github.com/NBISweden/MrBayes.git && cd MrBayes && ./configure && make && sudo make install",
+  "try_this": [
+   {
+    "cmd": "mb --help",
+    "what_happens": "Prints the program's command-line usage, a first look at how it is driven."
+   }
+  ],
+  "whats_unique": "It mixes data types in one analysis, links parameters across partitions, and covers positive selection and multi-species coalescent models, all from a plain terminal.",
+  "caveats": "It has been in maintenance mode since release 3.2.6 in November 2015, so expect bug fixes rather than new features, and you need your own sequence data and the manual to get far.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "science",
+   "math",
+   "phylogenetics",
+   "bayesian",
+   "mcmc",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://nbisweden.github.io/MrBayes/"
+   },
+   {
+    "label": "GitHub repository (README, build instructions, examples)",
+    "url": "https://github.com/NBISweden/MrBayes"
+   },
+   {
+    "label": "MrBayes project site",
+    "url": "http://mrbayes.net/"
+   }
+  ]
+ }
+}

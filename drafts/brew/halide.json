@@ -1,0 +1,151 @@
+{
+ "name": "halide",
+ "desc": "Language for fast, portable data-parallel computation",
+ "homepage": "https://halide-lang.org",
+ "installs_365d": 370,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "library",
+  "afternoon",
+  "visual"
+ ],
+ "why": "A DSL that separates what an image computation does from how it is scheduled, a genuinely interesting idea, though it is a compiler toolchain.",
+ "brief": {
+  "what_it_is": "Halide is a programming language for writing high-performance image and array processing code, embedded in C++ with a Python binding as well. You write an algorithm as a set of functions over x and y, then write a separate schedule that sets tiling, vectorization, parallelism, and where intermediate results are stored or recomputed. Halide turns this into an in-memory pipeline that it compiles to an object file for ahead-of-time use, or JIT-compiles and runs in the same process. It targets many CPU architectures, operating systems, and GPU compute APIs including CUDA, OpenCL, Metal, and Vulkan.",
+  "why_it_exists": "The README says it exists to make it easier to write high-performance image and array processing code on modern machines. The publication titles frame the core idea as decoupling algorithms from schedules, so the same computation can be reorganized for different hardware without rewriting what it computes.",
+  "how_it_works": "A pipeline is built through Halide's C++ API as an in-memory representation rather than parsed from a separate source file. Scheduling calls such as tile, vectorize, parallel, and compute_at are applied to the same Func objects that hold the algorithm, so changing the schedule changes execution order and locality while the algorithm stays the same. The result is then compiled for the chosen target, either to an object file or JIT-compiled in-process.",
+  "commands_seen": [
+   {
+    "cmd": "pip install halide",
+    "context": "Installs the latest full release from PyPI; the README says pip is the easiest way to get a binary build even for C++ users."
+   },
+   {
+    "cmd": "pip install halide --pre --extra-index-url https://pypi.halide-lang.org/simple",
+    "context": "Installs the development build published for every commit to main, per the GitHub README. The homepage gives a test.pypi.org URL for the same idea."
+   },
+   {
+    "cmd": "brew install halide",
+    "context": "Installs Halide via Homebrew on macOS, per the README and the homepage package metadata."
+   },
+   {
+    "cmd": "cmake -G Ninja -S . -B build -DCMAKE_BUILD_TYPE=Release -DHalide_LLVM_ROOT=$LLVM_ROOT",
+    "context": "Configures a Release build from the Halide source tree, pointing at an existing LLVM install."
+   },
+   {
+    "cmd": "cmake --build build",
+    "context": "Builds the configured Halide tree in the build directory."
+   },
+   {
+    "cmd": "cmake --preset=macOS -S . -B build",
+    "context": "Configures a macOS build using a CMake preset that finds LLVM from the Homebrew install path."
+   },
+   {
+    "cmd": "ctest --test-dir build --output-on-failure",
+    "context": "Runs the test suite on Windows (in the README's Windows section); subsets can be selected with -L."
+   },
+   {
+    "cmd": "make run_tests",
+    "context": "Runs the JIT test suite with the Makefile build, which the README says is not supported."
+   },
+   {
+    "cmd": "uv add halide --prerelease=allow --index https://pypi.halide-lang.org/simple",
+    "context": "Pins the nightly Halide build in a uv-managed project, per the README."
+   },
+   {
+    "cmd": "uv sync --frozen --group ci-llvm-22 --no-install-workspace",
+    "context": "Installs the development tools and the prebuilt LLVM 22 Python package from a Halide source checkout, as a way to get LLVM for building."
+   }
+  ],
+  "install_notes": "Homebrew's package metadata lists these installed executables: adams2019_retrain_cost_model, adams2019_weightsdir_to_weightsfile, anderson2021_retrain_cost_model, anderson2021_weightsdir_to_weightsfile, featurization_to_sample, gengen, get_host_target. The README does not describe them, so their purpose is unverified. Pip wheels exist for Windows x86-64, macOS x86-64 and arm64, and Linux x86-64; pip install halide pulls in halide-bin and halide-runtime automatically. C++ users of the pip package on Windows must set CMAKE_PREFIX_PATH to the virtual environment root. Building from source needs CMake 3.28 or newer, C++17, and LLVM 21, 22, or 23 (20 is not supported); the README suggests prebuilt LLVM from the project's package index, Homebrew, or the LLVM APT repo. Windows source builds use Visual Studio 2022 with vcpkg, and need LLVM and Python installed separately. No accounts, API keys, or hardware are mentioned.",
+  "standout": "The algorithm-versus-schedule split is the hook: the homepage's 3x3 box filter is written once, and tiling, vectorizing, and parallelizing are stated as separate lines that can be changed without touching the math. Halide is also embedded in C++ and Python rather than being a standalone language, and the brew executable list includes autoscheduler-style cost-model tools named after the 2019 and 2021 papers.",
+  "status": "maintained. Both pages show active work: every commit to main is published as a development build, a build-bot dashboard is linked, the README tracks LLVM 21 through 23 and CMake 3.28 or newer, and the homepage covers recent CppCon and course material. I did not see a release date or last-commit date on either page, so exact recency is unverified.",
+  "caveats": "The two pages disagree on details. The homepage lists MIPS among CPU targets and omits WebAssembly and Vulkan, while the README lists WebAssembly and Vulkan and no MIPS. The homepage gives a test.pypi.org URL for dev builds, while the README gives pypi.halide-lang.org. The README says the Makefile build is unsupported and cannot build the Python bindings. Vulkan and WebGPU are marked BETA in the docs. Building LLVM from source takes significant time, disk, and RAM, according to the README's own warning. The README says the tests are not designed to teach. The brew caveats field was empty.",
+  "quotes": [
+   "Halide is a programming language designed to make it easier to write high-performance image and array processing code on modern machines.",
+   "Rather than being a standalone programming language, Halide is embedded in C++.",
+   "Halide is open source, under a commercially permissive MIT license. We encourage you to use it in other projects, open source or commercial!"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://halide-lang.org"
+   },
+   {
+    "label": "API docs",
+    "url": "https://halide-lang.org/docs"
+   },
+   {
+    "label": "Tutorials",
+    "url": "https://halide-lang.org/tutorials"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/halide/Halide"
+   }
+  ],
+  "fetch_log": [
+   "https://halide-lang.org - worked; homepage HTML with overview, getting-started, publications, and resources",
+   "https://github.com/halide/Halide - worked; full README returned, including build, install, and environment-variable sections"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Halide\u2019s unusual split between describing an image computation and scheduling its execution makes compiler optimization tangible, with one algorithm retargeted across hardware."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Halide",
+  "tldr": "A language embedded in C++ and Python that splits what an image computation does from how it runs, so you can retune performance without touching the math.",
+  "deeper_look": "Halide is for writing fast image and array processing code. You describe the algorithm as functions over x and y, such as a 3x3 box filter. Then you write a separate schedule: how to tile, vectorize and parallelize the loops, and where intermediate results are stored or recomputed.\n\nThe pipeline is built through the C++ API as an in-memory representation, not parsed from a separate source file. Scheduling calls like `tile`, `vectorize`, `parallel` and `compute_at` are applied to the same `Func` objects that hold the algorithm. Changing the schedule changes execution order and locality, and the algorithm stays the same. Halide can then compile the result to an object file for ahead-of-time use, or JIT-compile and run it in the same process.\n\nThe idea underneath is that most of the work in fast numeric code is not the math but the loop structure around it, and the two can be pulled apart. The same computation can be reorganized for different CPUs or GPU APIs (CUDA, OpenCL, Metal, Vulkan) without rewriting what it computes. The README puts it this way: \"Rather than being a standalone programming language, Halide is embedded in C++.\"\n\nThe Homebrew formula also installs some tools named after 2019 and 2021 autoscheduler papers, such as cost-model retraining utilities. The README does not describe them, so their purpose here is unverified.",
+  "install": "brew install halide\n# or, for the Python binding and a binary build: pip install halide\n# Building from source needs CMake 3.28+, C++17 and LLVM 21, 22 or 23.",
+  "try_this": [
+   {
+    "cmd": "pip install halide",
+    "what_happens": "Installs the latest full release from PyPI, which the README calls the easiest way to get a binary build, even for C++ users."
+   },
+   {
+    "cmd": "get_host_target --help",
+    "what_happens": "Runs one of the executables Homebrew installs; its purpose is not described in the README, so the help output is the place to start."
+   },
+   {
+    "cmd": "gengen --help",
+    "what_happens": "Shows the options of another installed executable, which the README does not explain."
+   }
+  ],
+  "whats_unique": "The algorithm-versus-schedule split is the hook: the homepage's box filter is written once, and tiling, vectorizing and parallelizing are separate lines you can change freely. It is embedded in C++ and Python rather than being a standalone language.",
+  "caveats": "It is a compiler toolchain with real build requirements (LLVM, CMake), the Makefile build is unsupported, Vulkan and WebGPU are marked beta, and the homepage and README disagree on some target details.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "language",
+   "compiler",
+   "image-processing",
+   "gpu",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://halide-lang.org"
+   },
+   {
+    "label": "Tutorials",
+    "url": "https://halide-lang.org/tutorials"
+   },
+   {
+    "label": "API docs",
+    "url": "https://halide-lang.org/docs"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/halide/Halide"
+   }
+  ]
+ }
+}

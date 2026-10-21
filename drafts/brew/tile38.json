@@ -1,0 +1,144 @@
+{
+ "name": "tile38",
+ "desc": "In-memory geolocation data store, spatial index, and realtime geofence",
+ "homepage": "https://tile38.com/",
+ "installs_365d": 145,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "database",
+  "network",
+  "afternoon",
+  "protocol"
+ ],
+ "why": "A geofence database with realtime hooks and a Redis-like protocol, a neat niche but mostly a server you configure rather than explore.",
+ "brief": {
+  "what_it_is": "Tile38 is an in-memory geolocation data store and spatial index, with a server (tile38-server) and a command line client (tile38-cli). You load it with objects such as lat/lon points, bounding boxes, geohashes, GeoJSON, QuadKeys and XYZ tiles, grouped into named collections. You then query it with Nearby, Within and Intersects, filter results by field values or object id, or turn any search into a geofence that streams enter, exit, inside, outside or cross events. Results come back as JSON over HTTP and websockets, or as RESP over telnet and Redis-compatible clients.",
+  "why_it_exists": "The README frames it as an open source server for location-based applications that need fast geospatial queries and realtime geofence notifications. The homepage says it lets you 'simplify your architecture' by handling geofencing in the database rather than in application code.",
+  "how_it_works": "Objects are stored in named collections, each with an id, a geometry and optional double-precision fields, and a spatial index serves the search commands. A search becomes a geofence when you add the FENCE keyword; the connection then stays open and the server pushes JSON messages as objects move in or out of the area. Notifications can also go to pub/sub channels (via setchan) or to webhooks (sethook), and the README says the data is in memory and persists on disk.",
+  "commands_seen": [
+   {
+    "cmd": "set fleet truck1 point 33.5123 -112.2693",
+    "context": "Adds a lat/lon point named truck1 to the collection fleet, from the README's basic CLI example."
+   },
+   {
+    "cmd": "nearby fleet point 33.462 -112.268 6000",
+    "context": "Searches fleet for objects within 6000 meters of a point; the README says this returns one truck."
+   },
+   {
+    "cmd": "nearby fleet fence point 33.462 -112.268 6000",
+    "context": "Turns the same radius search into a geofence that keeps the connection open and streams detection messages."
+   },
+   {
+    "cmd": "nearby fleet fence detect enter,exit point 33.462 -112.268 6000",
+    "context": "Same geofence, limited to enter and exit detections."
+   },
+   {
+    "cmd": "setchan busstop nearby buses fence point 33.5123 -112.2693 200",
+    "context": "Creates a static geofence that publishes notifications for buses within 200 meters of a point to the busstop pub/sub channel."
+   },
+   {
+    "cmd": "subscribe busstop",
+    "context": "Subscribes to the busstop channel to receive geofence notifications."
+   },
+   {
+    "cmd": "docker run -p 9851:9851 tile38/tile38",
+    "context": "Runs the latest stable Tile38 image from Docker Hub with the default port 9851 published."
+   },
+   {
+    "cmd": "brew install tile38",
+    "context": "Installs Tile38 on macOS via Homebrew; the README follows it with tile38-server."
+   },
+   {
+    "cmd": "./tile38-server --metrics-addr=127.0.0.1:4321",
+    "context": "Starts the server with the Prometheus metrics endpoint enabled on localhost port 4321; the flag is disabled by default."
+   },
+   {
+    "cmd": "curl --data \"set fleet truck3 point 33.4762 -112.10923\" localhost:9851",
+    "context": "Sends a Tile38 command over HTTP with curl, with the command in the request body."
+   }
+  ],
+  "install_notes": "No account or external service is needed. The README offers prebuilt binaries for OSX, Linux, FreeBSD and Windows on the GitHub releases page, plus a Docker image and a Homebrew formula (macOS). To build from source you need Go installed; the README says 'make' builds everything and 'make test' runs the tests, and that both 32-bit and 64-bit systems are supported. Run ./tile38-server -h for options. The CLI connects to localhost:9851 by default. Prometheus metrics are off unless you set --metrics-addr. The README's docs are mostly on tile38.com, with examples in the GitHub wiki.",
+  "standout": "Queries and geofences share one syntax: a plain search becomes a live monitor by adding fence, and enter, exit, inside, outside and cross come built in. It also speaks the Redis RESP protocol natively, so most Redis client libraries can talk to it.",
+  "status": "unknown. The README is current enough to mention Discord and the Redis RESP docs, and the homepage is live, but neither the fetched pages nor the brew metadata show a release date or last commit, so I can't confirm recent activity.",
+  "caveats": "The README is a quick start and sends detailed reference material to tile38.com. Building from source needs Go. The README says objects 'persist on disk', but it doesn't describe persistence configuration. Fields are always double-precision floats, and a WHERE on a field an object lacks treats the value as 0. Regex WHERE uses Go's re2 engine. XYZ tiles and QuadKeys can only be used in SEARCH, not stored. The scout notes describe it as mostly a server you configure rather than explore, which matches the README's focus on running the server and its protocols.",
+  "quotes": [
+   "Tile38 is an open source (MIT licensed), in-memory geolocation data store, spatial index, and realtime geofencing server.",
+   "This README is quick start document. You can find detailed documentation at https://tile38.com.",
+   "Tile38 uses the Redis RESP protocol natively. Therefore most clients that support basic Redis commands will also support Tile38."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://tile38.com/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/tidwall/tile38"
+   },
+   {
+    "label": "Geofencing docs",
+    "url": "https://tile38.com/topics/geofencing"
+   }
+  ],
+  "fetch_log": [
+   "https://tile38.com/ \u2014 worked; marketing page with a short feature summary, no command examples",
+   "https://github.com/tidwall/tile38 \u2014 worked; full README with quick start, command examples and client library lists"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Tile38 turns spatial queries into live geofences that stream enter and exit events, a genuinely useful twist on a niche geospatial database."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Tile38",
+  "tldr": "A geolocation database where adding the word FENCE to a spatial query turns it into a live stream of enter and exit events.",
+  "deeper_look": "Tile38 is an in-memory store for things that have a position. You put objects into named collections (points, bounding boxes, geohashes, GeoJSON) and ask questions with Nearby, Within and Intersects. A spatial index answers them. The server is `tile38-server` and the client is `tile38-cli`.\n\nThe interesting move is that a query and a monitor share one syntax. Add the `fence` keyword to a search and the connection stays open. The server then pushes a JSON message whenever an object enters, exits, crosses or stays inside the area. Fences can also be stored on the server, publishing to pub/sub channels with `setchan` or to webhooks with `sethook`, so the application code never has to poll positions and compare them.\n\nThe idea underneath is geofencing as a database feature rather than application logic. It also speaks Redis RESP natively, so the README notes that most Redis clients can talk to it. Results can also come back as JSON over HTTP and websockets, so `curl` is enough to drive it. That makes it a small, concrete way into spatial indexing, streaming queries and the Redis wire protocol all at once.",
+  "install": "brew install tile38\n# then start the server in one terminal:\ntile38-server\n# and connect from another:\ntile38-cli\n# no account needed; the CLI connects to localhost:9851 by default",
+  "try_this": [
+   {
+    "cmd": "set fleet truck1 point 33.5123 -112.2693",
+    "what_happens": "Adds a lat/lon point named truck1 to a collection called fleet."
+   },
+   {
+    "cmd": "nearby fleet point 33.462 -112.268 6000",
+    "what_happens": "Searches fleet for objects within 6000 meters of a point; the README says this returns one truck."
+   },
+   {
+    "cmd": "nearby fleet fence detect enter,exit point 33.462 -112.268 6000",
+    "what_happens": "Turns the same search into a live geofence that holds the connection open and streams enter and exit events as trucks move."
+   }
+  ],
+  "whats_unique": "A plain search becomes a live monitor by adding one keyword, with enter, exit, inside, outside and cross detection built in. It also speaks Redis RESP, so existing Redis clients work.",
+  "caveats": "It is a server you run and configure more than a tool you browse, the README is only a quick start that points to tile38.com for the real docs, and recent project activity could not be confirmed.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "database",
+   "geospatial",
+   "geofence",
+   "redis-protocol",
+   "server"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://tile38.com/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/tidwall/tile38"
+   },
+   {
+    "label": "Geofencing docs",
+    "url": "https://tile38.com/topics/geofencing"
+   }
+  ]
+ }
+}

@@ -1,0 +1,85 @@
+{
+ "name": "doltgres",
+ "desc": "Dolt for Postgres",
+ "homepage": "https://github.com/dolthub/doltgresql",
+ "installs_365d": 598,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "database",
+  "language"
+ ],
+ "why": "A Postgres-compatible database with git-style versioning of data, a strange twist on a familiar system.",
+ "brief": {
+  "what_it_is": "Doltgres is a Postgres-compatible SQL database that adds Git-style version control to data. You connect to it with any Postgres client and read or change schema and data as usual. You can also branch and merge, fork and clone, and push and pull the database the way you would a Git repository. Version control is exposed through SQL system tables, functions, and procedures rather than a Git-style CLI. It is the Postgres-flavored version of Dolt, from the same creators.",
+  "why_it_exists": "The README frames it as Dolt for Postgres: 'Git versions file, Doltgres versions tables. It's like Git and Postgres had a baby.' It aims to give Postgres users versioned tables without giving up the Postgres wire protocol and SQL.",
+  "how_it_works": "Doltgres emulates a Postgres server and parses Postgres SQL into an AST. That AST is converted into a form the Dolt engine can interpret. It uses the same SQL engine and storage format as Dolt, which the README says gives version control at OLTP database performance. Version control operations are invoked as SQL, for example dolt_add, dolt_commit, and the dolt.status and dolt.log system tables.",
+  "commands_seen": [
+   {
+    "cmd": "sudo bash -c 'curl -L https://github.com/dolthub/doltgresql/releases/latest/download/install.sh | bash'",
+    "context": "Installs the latest doltgres release on Linux or Mac into /usr/local/bin/."
+   },
+   {
+    "cmd": "docker run -e DOLTGRES_PASSWORD=myPassword -p 5432:5432 dolthub/doltgresql:latest",
+    "context": "Runs the official Docker image locally with a password set and port 5432 published."
+   },
+   {
+    "cmd": "./scripts/build.sh",
+    "context": "Builds a doltgres binary from source."
+   },
+   {
+    "cmd": "doltgres",
+    "context": "Starts the server. On first run it creates a postgres user and database in the current directory with password 'password'."
+   },
+   {
+    "cmd": "export PATH=\"/opt/homebrew/opt/postgresql@15/bin:$PATH\"",
+    "context": "Adds Homebrew's Postgres bin directory to PATH so psql is available. Only psql is needed as a client."
+   },
+   {
+    "cmd": "PGPASSWORD=password psql -h localhost -U postgres",
+    "context": "Connects to the running Doltgres server as the postgres user."
+   },
+   {
+    "cmd": "select dolt_add('teams', 'employees', 'employees_teams');",
+    "context": "Stages tables for commit, using a SQL function instead of the git add CLI."
+   },
+   {
+    "cmd": "select dolt_commit('-m', 'Created initial schema');",
+    "context": "Creates a Dolt commit with a message, returning the commit hash."
+   },
+   {
+    "cmd": "select * from dolt.log;",
+    "context": "Lists commits from the SQL system table, showing hash, committer, date, and message."
+   }
+  ],
+  "install_notes": "Linux and Mac: run the curl install script with sudo, which places doltgres in /usr/local/bin. Windows: download the Microsoft Installer (.msi) from GitHub releases. Docker: an official image is published on every release, and DOLTGRES_PASSWORD sets the password. Building from source: run ./scripts/build.sh. Configuration: the first run creates a postgres user and database with password 'password'. A config.yaml file or the DOLTGRES_DATA_DIR environment variable sets the data directory. DOLTGRES_USER and DOLTGRES_PASSWORD change the superuser name and password, but only before the first run. You also need psql, which comes from a Postgres install, to follow the getting-started steps.",
+  "standout": "It is a SQL database where tables are versioned like Git repositories, with branch, merge, fork, clone, push, and pull all exposed as SQL. It speaks the Postgres wire protocol, so existing Postgres clients and pg_dump/psql imports should work.",
+  "status": "Maintained, by the evidence visible. The README announces Doltgres 1.0 and links a 1.0 blog post dated 2026-08-06, and it says most bugs can be fixed within 24 hours if you file an issue. I could not see a last-commit date or release list because I only read the README, so the exact activity level is not confirmed.",
+  "caveats": "There is no Git-style CLI for version control, only a SQL interface. No GSSAPI support. Extension support is limited. Some Postgres syntax, types, functions, and features are not implemented yet. Performance: the README's Sysbench table for release 1.0.0 shows Doltgres with an overall mean latency about 2.7x Postgres's, and writes are slower than reads. Correctness: the README's sqllogictest run for 1.0.0 reports 99.317097% correct, with about 13,197 'not ok' and 25,552 'did not run' results out of 5,675,180. Its correctness comparison is against Dolt/MySQL, not Postgres. Platform support is Linux, Mac, and Windows, and the installer script covers Linux and Mac. The README says 'Linx' in its install line, which is a typo in the source.",
+  "quotes": [
+   "Git versions file, Doltgres versions tables. It's like Git and Postgres had a baby.",
+   "a SQL database that you can branch and merge, fork and clone, push and pull just like a Git repository",
+   "Doltgres is 1.0, which means it's ready for your production use case."
+  ],
+  "links": [
+   {
+    "label": "Homepage / GitHub repo",
+    "url": "https://github.com/dolthub/doltgresql"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://doltgres.com/docs"
+   },
+   {
+    "label": "Docker image",
+    "url": "https://hub.docker.com/r/dolthub/doltgresql"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/dolthub/doltgresql (homepage, GitHub repo; fetched OK, returned README)"
+  ]
+ }
+}

@@ -1,0 +1,65 @@
+{
+ "name": "sha1dc",
+ "desc": "Tool to detect SHA-1 collisions in files, including SHAttered",
+ "homepage": "https://github.com/cr-marcstevens/sha1collisiondetection",
+ "installs_365d": 7,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "math"
+ ],
+ "why": "Detects SHAttered-style crafted SHA-1 collisions by inspecting file contents, a real door into how the hash is broken.",
+ "brief": {
+  "what_it_is": "sha1dcsum is a C library and command-line tool that computes the SHA-1 hash of files, like sha1sum, and also checks whether the input shows signs of a cryptanalytic SHA-1 collision attack. It takes a file (or stdin via '-') and prints the hash plus a warning when a known attack pattern is found. The package includes two programs: sha1dcsum, which detects SHAttered-style and sha-mbles attacks, and sha1dcsum_partialcoll, which detects attacks against reduced-round SHA-1. The library exposes an indicator flag, and a safe-hash mode that changes the output hash when a collision is detected.",
+  "why_it_exists": "The author describes the tool as designed to be a near drop-in replacement for common SHA-1 libraries and sha1sum, so that applications can detect known SHA-1 collision attacks without changing much code. The README frames the goal as protecting applications, such as those vulnerable to forged digital signatures built from SHA-1 collisions.",
+  "how_it_works": "The README says the detector looks for the disturbance vectors used by known collision attacks, and claims detection of any collision attack using the top 32 SHA-1 disturbance vectors with probability 1, with false positives below 2^-90. In safe-hash mode, an undetected file gets the real SHA-1 hash, while a detected collision gets a different, unpredictable 'safe' hash, so colliding files no longer match. The theory is in the author's CRYPTO 2013 paper 'Counter-cryptanalysis'.",
+  "commands_seen": [
+   {
+    "cmd": "make",
+    "context": "Compiles the project from source; the README's only build step under the Compiling section."
+   },
+   {
+    "cmd": "bin/sha1dcsum test/sha1_reducedsha_coll.bin test/shattered-1.pdf",
+    "context": "Example run of the main tool on two files, one a reduced-SHA collision sample and one the SHAttered PDF, to detect collision attacks."
+   },
+   {
+    "cmd": "bin/sha1dcsum_partialcoll test/sha1reducedsha_coll.bin test/shattered-1.pdf",
+    "context": "Example run of the reduced-round detector on the same files. Note the README spells the first filename differently from the previous example."
+   },
+   {
+    "cmd": "pipe_data | bin/sha1dcsum -",
+    "context": "Shows reading data from stdin by passing '-' as the file argument; 'pipe_data' is a placeholder for any producer of data."
+   }
+  ],
+  "install_notes": "The README's only build instruction is 'make', and it names the binaries as bin/sha1dcsum and bin/sha1dcsum_partialcoll, so they are built into a bin/ directory. Nothing in the README mentions hardware, accounts, or runtimes. Library users can set preprocessor defines such as SHA1DC_NO_STANDARD_INCLUDES, SHA1DC_INIT_SAFE_HASH_DEFAULT, and SHA1DC_FORCE_LITTLEENDIAN or SHA1DC_FORCE_BIGENDIAN to adapt the build. CPU and endianness are auto-detected, so most users should not need to change anything. The brew formula's executables list matches the two program names.",
+  "standout": "Instead of only flagging collisions, the safe-hash mode makes colliding files produce a different, unpredictable hash, so an application that already uses SHA-1 gets protection without code changes. The author also claims it runs in under twice the time of regular SHA-1.",
+  "status": "unknown. The README I read has no release version, date, or changelog. The copyright line says 2017, and the paper cited is from 2013. I did not check the commit history or release page because the README was complete and I was limited to five fetches.",
+  "caveats": "The tool only detects collision attacks that use the listed disturbance vectors or the reduced-round attacks covered by sha1dcsum_partialcoll, so it is not a general test for every possible SHA-1 collision. The README says sha1dcsum_partialcoll covers only 'a few examples so far'. Test file names are inconsistent in the README: 'sha1_reducedsha_coll.bin' in one example and 'sha1reducedsha_coll.bin' in the other. Licensed under MIT, per the README. The speed claim is the author's own.",
+  "quotes": [
+   "This library and command line tool were designed as near drop-in replacements for common SHA-1 libraries and sha1sum.",
+   "Colliding files will have the same SHA-1 hash, but will have different unpredictable safe-hashes.",
+   "It is very fast and takes less than twice the amount of time as regular SHA-1."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/cr-marcstevens/sha1collisiondetection"
+   },
+   {
+    "label": "shattered.io, the SHAttered attack",
+    "url": "https://shattered.io/"
+   },
+   {
+    "label": "Counter-cryptanalysis paper (CRYPTO 2013, PDF)",
+    "url": "https://marc-stevens.nl/research/papers/C13-S.pdf"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/cr-marcstevens/sha1collisiondetection \u2014 fetched OK; README returned in full, including build, usage, and library notes."
+  ]
+ }
+}

@@ -1,0 +1,134 @@
+{
+ "name": "libchaos",
+ "desc": "Advanced library for randomization, hashing and statistical analysis",
+ "homepage": "https://github.com/maciejczyzewski/libchaos",
+ "installs_365d": 10,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "library",
+  "math"
+ ],
+ "why": "Chaos, randomness and statistics library with an ambitious scope, though obscure and possibly unmaintained.",
+ "brief": {
+  "what_it_is": "Libchaos is a C++ library (C++11) for randomization, hashing and statistical analysis. It offers two families of algorithms: \"chaos machines\", which act as a pseudo-random oracle that you feed data with push and read from with pull, and pseudo-random number generators such as xoroshiro and KISS. Its main entry point is chaos::password, which takes a password and a salt plus time, space and output-size parameters and returns a hex string. The README also describes a planned statistical-tests module and a chaosdeep fork of Hashdeep, but those are listed as in progress or TODO.",
+  "why_it_exists": "The author wants a general, modern, easy-to-use C++ toolkit for scientific research that implements and analyzes randomization and hashing algorithms. The README says TestU01, Dieharder and Hashdeep are obsolete or stopped in development, and that libchaos aims to replace them.",
+  "how_it_works": "A chaos machine is built from a pseudo-random function combined with a chaotic system, and is controlled by three parameters: time (execution time), space (memory or period length) and an initial secret key. You push data in with push or <<, pull blocks out with pull, and set the parameters with set_time, set_space and set_key. The PRNG side uses seed and next in the same style.",
+  "commands_seen": [
+   {
+    "cmd": "$ g++ -std=c++11 -lchaos example.cc",
+    "context": "Compiles the README's example program against the installed library."
+   },
+   {
+    "cmd": "$ ./a.out | xxd -l 1024",
+    "context": "Runs the compiled example and hex-dumps the first 1024 bytes of its output."
+   },
+   {
+    "cmd": "$ git clone git@github.com:maciejczyzewski/libchaos.git",
+    "context": "Basic installation step 1: clones the repository over SSH."
+   },
+   {
+    "cmd": "$ cd libchaos && ./install.sh",
+    "context": "Basic installation step 2: runs the bundled install script from inside the clone."
+   },
+   {
+    "cmd": "$ git clone --recursive git@github.com:maciejczyzewski/libchaos.git",
+    "context": "Manual installation for contributors: clones with submodules, which pull in Google Test and Google Benchmark."
+   },
+   {
+    "cmd": "$ cmake -DLIBCHAOS_ENABLE_TESTING=ON ..",
+    "context": "Configures a build in the build directory with the test and benchmark targets enabled."
+   },
+   {
+    "cmd": "$ make && make install",
+    "context": "Builds the library and installs it; CMake writes install_manifest.txt in the process."
+   },
+   {
+    "cmd": "$ make uninstall # where is install_manifest.txt",
+    "context": "Removes the installed files, using the install manifest that CMake recorded."
+   }
+  ],
+  "install_notes": "The library needs a C++11 compiler; the README says g++ 4.7 or newer. Basic install is a git clone followed by ./install.sh. Manual install needs CMake 2.8.7 or newer, and the tests need Google Test and Google Benchmark, which are fetched as git submodules. The README contains a TODO for Homebrew, written as a future idea (brew install libchaos) and not yet available. The README does not mention runtime configuration or accounts.",
+  "standout": "Chaos machines are presented as a single scheme that can serve as hash, PRF and oracle, with time, space and key as tunable knobs. The password example turns that into a salted, memory-hard-style hashing function. The README also benchmarks itself against the C++ standard library PRNGs.",
+  "status": "Quiet, by the evidence I could see. The README has no release or commit dates. The Travis badge points to travis-ci.org, which has been retired. Support is directed to freenode IRC and a stackoverflow tag. The README also says the project is at an early stage. I did not check the commit history, so this is an inference.",
+  "caveats": "The README warns: This project is at an early stage of development. The list of core features is not ready. Only main modules are documented. The Features table lists the PRNG and chaos-machine sets as ready, and statistical tests, entropy pools, gnuplot/R tools, a JavaScript API and seed-recovery attacks as in progress or TODO. The Homebrew install is only a plan. The README does not name a license; it points to a LICENSE file that I did not fetch. The benchmark numbers come from the author's own runs, and one set was run on Travis CI. The example password hash values in the README are illustrative. Nothing in the README suggests a Windows build.",
+  "quotes": [
+   "Libchaos is a computing library written in the C++ language to help with the development of software for scientific research.",
+   "Popular tools like TestU01, Dieharder and Hashdeep are obsolete or their development has been stopped. Libchaos aims to replace them.",
+   "It turns out that a pseudo-random function can be easily enriched by a chaotic system, creating something completely new."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repository)",
+    "url": "https://github.com/maciejczyzewski/libchaos"
+   },
+   {
+    "label": "Chaos machines theory (eprint paper)",
+    "url": "https://eprint.iacr.org/2016/468"
+   },
+   {
+    "label": "Algorithms list (ALGORITHMS file)",
+    "url": "https://github.com/maciejczyzewski/libchaos/blob/master/ALGORITHMS"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/maciejczyzewski/libchaos (homepage, GitHub README): worked. Thorough README, which covered the brief. Did not follow the eprint paper, the ALGORITHMS file, the examples directory or the LICENSE file."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Its time-, space-, and key-tunable \u201cchaos machine\u201d for hashing and pseudo-random generation is an unusual idea worth exploring, despite the project\u2019s early-stage status."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "libchaos",
+  "tldr": "A C++11 library that builds hash functions and random generators from chaotic systems, with time, space and key as the dials.",
+  "deeper_look": "Libchaos is a C++ library for randomization, hashing and statistical analysis. It has two families of algorithms. The first is \"chaos machines\", which behave like a pseudo-random oracle: you push data in with `push` or `<<`, and pull blocks of output back out with `pull`. The second is a set of ordinary pseudo-random number generators, such as xoroshiro and KISS, used through `seed` and `next`.\n\nThe idea underneath is the chaos machine. The README says: \"It turns out that a pseudo-random function can be easily enriched by a chaotic system, creating something completely new.\" A machine is controlled by three parameters: time (how long it runs), space (memory or period length) and an initial secret key. Turning those dials lets one scheme act as a hash, a pseudo-random function or an oracle. The theory is in an eprint paper linked below.\n\nThe headline entry point is `chaos::password`. It takes a password, a salt, and time, space and output-size parameters, and returns a hex string. That makes it a salted hash whose cost you tune, in the spirit of memory-hard password hashing.\n\nThe author wants a modern C++ toolkit for research on randomness and hashing, and says TestU01, Dieharder and Hashdeep are obsolete or stalled and that libchaos aims to replace them. That ambition is mostly still a plan. The statistical-test module and a Hashdeep fork are listed as in progress or TODO.",
+  "install": "There is no Homebrew formula in the README, only a stated plan. Check `brew info libchaos` first. Otherwise build from source, which needs a C++11 compiler (g++ 4.7 or newer):\ngit clone git@github.com:maciejczyzewski/libchaos.git\ncd libchaos && ./install.sh",
+  "try_this": [
+   {
+    "cmd": "g++ -std=c++11 -lchaos example.cc",
+    "what_happens": "Compiles the README's example program against the installed library."
+   },
+   {
+    "cmd": "./a.out | xxd -l 1024",
+    "what_happens": "Runs the compiled example and hex-dumps the first 1024 bytes of its output."
+   },
+   {
+    "cmd": "cmake -DLIBCHAOS_ENABLE_TESTING=ON ..",
+    "what_happens": "Configures a build with the Google Test and Google Benchmark targets enabled, for contributors."
+   }
+  ],
+  "whats_unique": "Chaos machines present hashing, pseudo-random functions and oracles as one scheme with tunable time, space and key. It is an unusual angle compared with the usual PRNG and hash libraries.",
+  "caveats": "The README says the project is at an early stage, and many listed features are TODO. Its CI badge points to a retired service, so it looks quiet, and the benchmarks are the author's own.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "library",
+   "math",
+   "c++",
+   "random",
+   "hashing"
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repository)",
+    "url": "https://github.com/maciejczyzewski/libchaos"
+   },
+   {
+    "label": "Chaos machines theory (eprint paper)",
+    "url": "https://eprint.iacr.org/2016/468"
+   },
+   {
+    "label": "Algorithms list (ALGORITHMS file)",
+    "url": "https://github.com/maciejczyzewski/libchaos/blob/master/ALGORITHMS"
+   }
+  ]
+ }
+}

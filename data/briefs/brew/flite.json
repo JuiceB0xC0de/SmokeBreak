@@ -1,0 +1,94 @@
+{
+ "name": "flite",
+ "desc": "Small fast and portable speech synthesis system",
+ "homepage": "http://www.festvox.org/flite",
+ "installs_365d": 88,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "quick",
+  "audio",
+  "ancient"
+ ],
+ "why": "A small, old CMU speech synthesizer that turns text into voice from the command line, with a real history behind it.",
+ "brief": {
+  "what_it_is": "Flite (CMU Flite, festival-lite) is a small, fast, open source text-to-speech engine written in ANSI C. You give it text, either as a string or a text file, and it synthesizes speech. Output goes to a WAV file, to the audio device if one is available, or nowhere (for benchmarking). It ships with a small US English diphone voice and a set of other voices, and can load external .flitevox voice files from disk or over HTTP. Its voices are built with the FestVox voice-building tools.",
+  "why_it_exists": "The README says Flite is the answer to the complaint that Festival is too big, too slow, and not portable enough. It is meant as an alternative run-time engine for FestVox voices where size and speed matter, not as a replacement for Festival.",
+  "how_it_works": "Voices, lexicons and language models are compiled into C representations, all const and placed in the text segment, so they can live in ROM and have almost no startup delay. Voices can also be loaded from a single file or over an http connection. The README says that for standard diphone voices, peak memory is under twice the size of the generated waveform, which comes to under 1M on 32-bit systems. Flite is thread safe after initialization.",
+  "commands_seen": [
+   {
+    "cmd": "./configure",
+    "context": "Build configuration step, run from the source directory before make. Options such as -DCST_AUDIO_NONE can be set by editing config/config."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the flite binaries into bin/. The README says the build uses GNU make (gmake on some systems)."
+   },
+   {
+    "cmd": "make get_voices",
+    "context": "Downloads the voice data after the build. Listed in the compilation steps."
+   },
+   {
+    "cmd": "./bin/flite \"Flite is a small fast run-time synthesis engine\" flite.wav",
+    "context": "Synthesizes the quoted sentence into flite.wav, an 8KHz RIFF WAV file."
+   },
+   {
+    "cmd": "./bin/flite -v doc/alice none",
+    "context": "Synthesizes the doc/alice text file with no audio output and prints a speed summary (used for benchmarking)."
+   },
+   {
+    "cmd": "./bin/flite -lv",
+    "context": "Lists the voices linked directly into this build."
+   },
+   {
+    "cmd": "./bin/flite -voice rms -f doc/alice",
+    "context": "Speaks the doc/alice file with the built-in US male rms voice."
+   },
+   {
+    "cmd": "./bin/flite --setf duration_stretch=1.5 doc/alice",
+    "context": "Debug feature override that makes the speech slower. The README says these debug options are not meant for ordinary users."
+   },
+   {
+    "cmd": "./bin/flite_time `date +%H:%M`",
+    "context": "Runs the talking clock example, which takes one HH:MM argument."
+   },
+   {
+    "cmd": "./bin/get_voices us_voices",
+    "context": "Downloads the US English voice set into voices/."
+   }
+  ],
+  "install_notes": "Needs a good C compiler (gcc is fine), GNU make, and a Unix-like shell for the configure step. Audio hardware is optional because output can go to a WAV file. Source is at github.com/festvox/flite (git clone, then ./configure, make, make get_voices), or from a release tarball. The README lists Mac OS X, Linux, Android, FreeBSD, Solaris, OpenWrt devices and Windows under Cygwin, WSL or mingw32 as supported. Visual C++ 6.0 is known to fail on the large diphone database files. Configure can be told the compiler explicitly through config/config. Cross-compiling to WASI is experimental and needs the wasi-sdk toolchain. Building with a different voice set uses --with-langvox, for example ./configure --with-langvox=transtac. This brew formula installs the flite binary plus per-voice binaries: flite_cmu_time_awb, flite_cmu_us_awb, flite_cmu_us_kal, flite_cmu_us_kal16, flite_cmu_us_rms, flite_cmu_us_slt and flite_time.",
+  "standout": "The engine is pure C with no C++ or Scheme, and the voice data is compiled in as const data, so startup is nearly instant and the binary is small. Each voice also gets its own single-voice binary. The README benchmark claims roughly 70 times faster than real time on a 500 MHz PIII, compared with about 13 times for Festival on the same test. The same FestVox voice is meant to sound equivalent in both engines, with Flite being the faster and smaller one.",
+  "status": "The homepage says the latest source is at github.com/festvox/flite and lists CMU Flite 2.1.0-release. The GitHub README's news section lists version 2.3 as dated Mar 2022, and the copyright runs to 2022. I did not check commit history or release dates, so the last commit date is unknown. The project still has a maintainer page, Alan W Black at CMU.",
+  "caveats": "The default bundled voice is an 8KHz diphone voice that the README itself describes as robotic and old-sounding; the author says this was deliberate. Better-sounding voices (Clustergen random forest voices, and the .flitevox downloads) need extra steps. The README's version header says 2.1-release, while its news section gives 2.3 as the latest, so the version is unclear. PalmOS and Windows CE are no longer supported. Visual C++ 6.0 fails. The --setf debug options can break things and are not meant for standard users. The Festival comparison numbers are old and come from a 500 MHz PIII. The README doesn't state a license in the text I read; the copyright line is 'Copyright Carnegie Mellon University 1999-2022, All rights reserved'.",
+  "quotes": [
+   "Flite is the answer to the complaint that Festival is too big, too slow, and not portable enough.",
+   "Flite is an *engine*. We want to be able take voices built with the FestVox process and compile them for flite, the result should be exactly the same quality",
+   "flite doesn't sound better or worse than the equivalent voice in festival, just faster, smaller and scalable."
+  ],
+  "links": [
+   {
+    "label": "Flite homepage (CMU Festvox)",
+    "url": "http://www.festvox.org/flite"
+   },
+   {
+    "label": "GitHub repository (source and README)",
+    "url": "https://github.com/festvox/flite"
+   },
+   {
+    "label": "Bard Storyteller (ebook reader built on flite)",
+    "url": "https://github.com/festvox/bard"
+   },
+   {
+    "label": "Flite voice repository (.flitevox files)",
+    "url": "http://festvox.org/flite/packed/flite-2.1/voices/"
+   }
+  ],
+  "fetch_log": [
+   "http://www.festvox.org/flite: worked. Returned the CMU Flite homepage with a short description and a pointer to github.com/festvox/flite. The Flite Doc and Download nav links were not followed.",
+   "https://github.com/festvox/flite: worked. Returned the full README, which was used as the main source for this brief."
+  ]
+ }
+}

@@ -1,0 +1,131 @@
+{
+ "name": "lcdf-typetools",
+ "desc": "Manipulate OpenType and multiple-master fonts",
+ "homepage": "https://www.lcdf.org/type/",
+ "installs_365d": 661,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering"
+ ],
+ "why": "Lets you open up and manipulate OpenType and multiple-master font internals, a door into font file structure.",
+ "brief": {
+  "what_it_is": "LCDF Typetools is a set of eleven command-line programs for reading and rewriting the internals of PostScript Type 1, Type 1 Multiple Master, OpenType (CFF and TrueType flavored) and TrueType fonts. Inputs are font files (PFA/PFB, OTF/TTF, AMFM and AFM for multiple masters). Outputs vary by tool: Type 1 fonts converted from CFF (cfftot1), AFM metrics files (mmafm, t1rawafm), single-master instances of multiple-master fonts (mmpfb), TeX TFM metrics and encodings (otftotfm), Type 42 wrappers (ttftotype42), PostScript test pages (t1testpage), and plain-text feature or codepoint reports (otfinfo). Some tools also check (t1lint) or modify (t1reencode, t1dotlessj) existing Type 1 fonts.",
+  "why_it_exists": "The author, Eddie Kohler, built it to make Adobe OpenType and multiple-master fonts usable from TeX and other UNIX font toolchains. The homepage says the package was made to let multiple master fonts 'work with UNIX programs for single-master fonts, like afm2tfm, ps2pk, GhostScript ps2pdf, and the X11 Type 1 font server.'",
+  "how_it_works": "Each program is a separate C command-line tool that parses one font format and emits another or a report. Otftotfm interprets OpenType glyph positioning, substitution and ligature tables as far as it can and writes TeX metrics and encoding files, optionally activating features you name. Mmafm and mmpfb generate a specific instance of a multiple master font from its weight and width parameters.",
+  "commands_seen": [
+   {
+    "cmd": "./configure",
+    "context": "Build configuration step from source; run before make. Options are listed by ./configure --help."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles the programs after ./configure has run."
+   },
+   {
+    "cmd": "./bootstrap.sh",
+    "context": "Run first when building from the GitHub checkout, which has no ./configure script yet."
+   },
+   {
+    "cmd": "./configure --help",
+    "context": "Lists configure options, including per-program disabling and the Kpathsea location."
+   },
+   {
+    "cmd": "man PROGRAMNAME/PROGRAMNAME.1",
+    "context": "README's pattern for reading each program's manual page from the source tree."
+   },
+   {
+    "cmd": "mmafm --help",
+    "context": "Prints the full option summary for mmafm."
+   },
+   {
+    "cmd": "mmpfb --help",
+    "context": "Prints the full option summary for mmpfb."
+   },
+   {
+    "cmd": "mmafm MyriadMM.amfm --weight=300 --width=585 > MyriadMM_300_585_.afm",
+    "context": "README example: writes AFM metrics for one instance of a multiple master font to a file."
+   },
+   {
+    "cmd": "mmpfb MyriadMM.pfb --weight=300 --width=585 > MyriadMM_300_585_.pfb",
+    "context": "README example: writes a single-master Type 1 font for the same instance."
+   }
+  ],
+  "install_notes": "Source build: run ./configure then make, or ./bootstrap.sh first if you cloned from GitHub. Otftotfm can use the Kpathsea library for TeX directory integration; if Kpathsea sits in a nonstandard place, pass --with-kpathsea=PREFIX. Individual programs can be left out with --disable-PROGNAME. Mmafm needs AFM files for each master either alongside the AMFM file (named FONTNAME.afm) or listed in a PSres.upr file located through the PSRESOURCEPATH environment variable. The homepage also points to prebuilt packages from others: Homebrew, MacPorts, Fink, Debian packages, Linux RPMs, and a Windows build inside W32TeX.",
+  "standout": "Lets you open a commercial OpenType or multiple master font and get its features, glyph encodings and metrics out as ordinary TeX or PostScript files. Otftotfm's use of the font's own substitution and positioning tables, instead of a hand-written mapping, is what separates it from simpler converters.",
+  "status": "Probably maintained, but the date is unverified. The homepage lists version 2.110 as the latest release, with a changelog entry for it, and the GitHub README says the copyright runs to 2023. I did not see a release date or last-commit date.",
+  "caveats": "The author says he does not support Windows ports. The GitHub README describes the software as GPL version 2 only. The homepage describes t1testpage as 'preliminary software'. Installation needs a C toolchain and a configure/make build; Homebrew is the only package manager named as an install route on Mac. The mmafm and mmpfb tools need specific companion files (AMFM and AFM, or PFA/PFB multiple master fonts) that are not included with the package. The brew caveats field is empty.",
+  "quotes": [
+   "LCDF Typetools comprises several programs for manipulating PostScript Type 1, Type 1 Multiple Master, OpenType, and TrueType fonts.",
+   "Please note that I don\u2019t provide support for Windows ports.",
+   "LCDF stands for Little Cambridgeport Design Factory."
+  ],
+  "links": [
+   {
+    "label": "LCDF Type Software homepage",
+    "url": "https://www.lcdf.org/type/"
+   },
+   {
+    "label": "Source on GitHub",
+    "url": "https://github.com/kohler/lcdf-typetools"
+   }
+  ],
+  "fetch_log": [
+   "https://www.lcdf.org/type/ \u2014 fetched, OK. Project page with descriptions, changelog, and package links; no shell commands.",
+   "https://github.com/kohler/lcdf-typetools \u2014 fetched, OK. The URL was my guess from the homepage's 'On Github' link, and the tool returned the README."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It exposes font internals and turns OpenType layout or multiple-master parameters into usable TeX and PostScript artifacts\u2014a distinctive door into typography."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "LCDF Typetools",
+  "tldr": "Eleven small command-line tools that open up OpenType, TrueType and Type 1 fonts to read their features and convert them into TeX and PostScript files.",
+  "deeper_look": "LCDF Typetools is a set of C programs, each parsing one font format and emitting another format or a plain-text report. The inputs are Type 1 (PFA/PFB), Type 1 Multiple Master, OpenType (CFF and TrueType flavored) and TrueType files. The outputs include Type 1 fonts converted from CFF (cfftot1), AFM metrics (mmafm, t1rawafm), TeX metrics and encodings (otftotfm), Type 42 wrappers (ttftotype42) and PostScript test pages (t1testpage). otfinfo prints reports on a font's features and codepoints, and t1lint checks Type 1 fonts.\n\nEddie Kohler wrote it so that Adobe OpenType and multiple master fonts could be used from TeX and other UNIX font toolchains. The homepage says it lets multiple master fonts 'work with UNIX programs for single-master fonts, like afm2tfm, ps2pk, GhostScript ps2pdf, and the X11 Type 1 font server.' The package is old in spirit, since it fills gaps from an era when those toolchains knew nothing about OpenType.\n\nThe idea underneath is that a font is a structured database: glyph outlines, metrics, and tables that say which glyphs substitute for others and how pairs are positioned. otftotfm reads those substitution, positioning and ligature tables and writes TeX metrics from them, optionally switching on features you name. Multiple master fonts are interpolated: mmpfb and mmafm take weight and width values and produce a single concrete instance. Poking at these tools is a practical way to learn what is inside a font file.",
+  "install": "brew install lcdf-typetools",
+  "try_this": [
+   {
+    "cmd": "otfinfo --help",
+    "what_happens": "Lists the options for inspecting a font file, such as its features and codepoints."
+   },
+   {
+    "cmd": "mmafm --help",
+    "what_happens": "Prints the full option summary for generating AFM metrics from a multiple master font."
+   },
+   {
+    "cmd": "mmpfb MyriadMM.pfb --weight=300 --width=585 > MyriadMM_300_585_.pfb",
+    "what_happens": "Writes a single-master Type 1 font for one weight and width instance of a multiple master font you supply."
+   }
+  ],
+  "whats_unique": "otftotfm uses the font's own substitution and positioning tables to build TeX metrics, rather than relying on a hand-written mapping. The multiple master tools let you carve a concrete instance out of an interpolated font.",
+  "caveats": "The multiple master tools need companion font files (AMFM and AFM, or multiple master PFB) that are not included, and the author does not support Windows ports.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "fonts",
+   "opentype",
+   "truetype",
+   "type1",
+   "tex",
+   "file-formats"
+  ],
+  "links": [
+   {
+    "label": "LCDF Type Software homepage",
+    "url": "https://www.lcdf.org/type/"
+   },
+   {
+    "label": "Source on GitHub",
+    "url": "https://github.com/kohler/lcdf-typetools"
+   }
+  ]
+ }
+}

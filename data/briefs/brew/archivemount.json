@@ -1,0 +1,52 @@
+{
+ "name": "archivemount",
+ "desc": "File system for accessing archives using libarchive",
+ "homepage": "https://git.sr.ht/~nabijaczleweli/archivemount-ng",
+ "installs_365d": 39,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "visual",
+  "library"
+ ],
+ "why": "Mounts any libarchive-readable archive as a filesystem, a neat door into how archive formats can be treated as directories.",
+ "brief": {
+  "what_it_is": "Archivemount is a FUSE filesystem that mounts an archive so it can be browsed like an ordinary directory. The README describes it as glue code between libarchive and FUSE. It takes a possibly compressed archive such as a .tar.gz, .zip or .iso and presents its contents as a mounted filesystem. This is the -ng fork, an upstream-derived version that fixes Debian and upstream bugs. The fork also adds a Port to OpenBSD commit.",
+  "why_it_exists": "The README says this is the archivemount upstream, derived from upstream tarballs, with fixed Debian and upstream bugs. It notes that the upstream author died in 2020, and this fork carries the work forward.",
+  "how_it_works": "Archivemount uses libarchive to read archive entries and FUSE to expose them as a filesystem. Writes are handled differently: libarchive cannot write archives, so on unmount the whole archive is recreated from the changed tree, with a .orig backup of the original kept. Because FUSE backgrounds the process, the unmount command can return before the unmount has finished, and the README says to check the process list for archivemount to see the real state.",
+  "commands_seen": [],
+  "install_notes": "The README lists these requirements: GNU Make, libarchive-dev, libfuse3-dev or libfuse-dev, and pkgconf. It also says you can skip pkgconf by using just the libraries and fixing up the c++ *.cpp files manually. No accounts or runtime configuration are mentioned. No install or build command lines appear in the README.",
+  "standout": "It treats an archive as a directory and handles writes by rebuilding the whole archive at unmount, instead of editing it in place. The README also carries a detailed tracker of which upstream and Debian bugs are libarchive bugs, which are fundamentally invalid, and which are incoherent.",
+  "status": "Maintained, as far as the page shows. The most recent commits on trunk are listed as 22 days ago. The page also shows a release notes entry for 1c, and the README is current about the fork's bug fixes. I did not confirm a release date.",
+  "caveats": "Writing is not native. Changes are applied by recreating the archive only at unmount, and if that fails the changes are lost. The README says there is no guarantee data is written correctly and warns in capitals: DO NOT TRUST THIS SOFTWARE. It says the author is not responsible for lost data. Libarchive supports many more formats for reading than for writing, so re-created archives may use a different tar or compression variant. Unmount can return before it has finished. Licensing is 0BSD and LGPL-2.0-or-later.",
+  "quotes": [
+   "It can be used to mount a (possibly compressed) archive (as in .tar.gz or .zip or .iso) and use it like an ordinary filesystem.",
+   "Writing to an archive with libarchive is unfortunately not possible.",
+   "THERE IS ALSO NO GUARANTEE THAT DATA IS WRITTEN CORRECTLY. DO NOT TRUST THIS SOFTWARE!"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (sourcehut)",
+    "url": "https://git.sr.ht/~nabijaczleweli/archivemount-ng"
+   },
+   {
+    "label": "Issue tracker",
+    "url": "https://todo.sr.ht/~nabijaczleweli/archivemount-ng"
+   },
+   {
+    "label": "Mailing list",
+    "url": "https://lists.sr.ht/~nabijaczleweli/archivemount-ng"
+   },
+   {
+    "label": "Builds",
+    "url": "https://builds.sr.ht/~nabijaczleweli/archivemount-ng"
+   }
+  ],
+  "fetch_log": [
+   "https://git.sr.ht/~nabijaczleweli/archivemount-ng: fetched OK; sourcehut page with README, license and recent commit list. No further fetches made because the README was complete."
+  ]
+ }
+}

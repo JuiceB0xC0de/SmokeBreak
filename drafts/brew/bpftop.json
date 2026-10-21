@@ -1,0 +1,153 @@
+{
+ "name": "bpftop",
+ "desc": "Dynamic real-time view of running eBPF programs",
+ "homepage": "https://github.com/jfernandez/bpftop",
+ "installs_365d": 107,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "tui",
+  "reverse-engineering",
+  "network"
+ ],
+ "why": "Live view of running eBPF programs is a rare window into kernel-level code execution happening on your machine.",
+ "brief": {
+  "what_it_is": "bpftop is a Linux command-line tool that shows eBPF programs currently loaded on the machine in a live, top-style table. For each program it lists the ID, type, and name, plus average runtime, events per second, and an estimated CPU percentage. It takes no input files; it reads kernel eBPF state and prints an interactive terminal UI. Pressing Enter on a program opens time-series graphs of its metrics, and it also shows which processes reference each program.",
+  "why_it_exists": "The README does not state a motivation in a single line. The project history notes it was formerly maintained by Netflix and is now an independent project maintained by Jose Fernandez, and the linked announcement is a Netflix tech blog post about streamlining eBPF performance optimization.",
+  "how_it_works": "bpftop uses the BPF_ENABLE_STATS BPF syscall command to turn on global eBPF runtime statistics, which are off by default to reduce overhead. It samples the statistics every second and computes average runtime, events per second, and estimated CPU utilization for each program in that window. When bpftop exits, it disables statistics gathering by closing the file descriptor that BPF_ENABLE_STATS returned.",
+  "commands_seen": [
+   {
+    "cmd": "curl -fsSL https://bpftop.sh/install | sh",
+    "context": "Recommended install: the script downloads the latest release for x86_64 or aarch64, checks its SHA-256 against GitHub's published digest, and installs to ~/.local/bin (or /usr/local/bin when run as root). Accepts --version <tag> and --bin-dir <path>."
+   },
+   {
+    "cmd": "sudo dnf install bpftop",
+    "context": "Install from the Fedora official repositories."
+   },
+   {
+    "cmd": "sudo pacman -S bpftop",
+    "context": "Install from the Arch Linux official repositories."
+   },
+   {
+    "cmd": "nix profile install nixpkgs#bpftop",
+    "context": "Install from nixpkgs."
+   },
+   {
+    "cmd": "sudo bpftop",
+    "context": "Start bpftop with default 1-second refresh. Root is required."
+   },
+   {
+    "cmd": "sudo bpftop -d 2",
+    "context": "Start bpftop with a 2-second refresh interval (-d/--delay accepts 1-3600 seconds)."
+   },
+   {
+    "cmd": "journalctl _COMM=bpftop",
+    "context": "View bpftop's logs in the systemd journal."
+   },
+   {
+    "cmd": "journalctl _COMM=bpftop -f",
+    "context": "Follow bpftop's logs in real time."
+   },
+   {
+    "cmd": "journalctl _COMM=bpftop -b",
+    "context": "View bpftop's logs from the current boot."
+   },
+   {
+    "cmd": "cargo build --release",
+    "context": "Build from source with a release profile; the project is Rust. Needs clang, libbpf, zlib and libelf dev packages, or use nix develop first."
+   }
+  ],
+  "install_notes": "The install script is the primary path and covers x86_64 and aarch64 Linux. Distro packages exist for Fedora, Arch and Nix, and the README links to Repology for other packagers. Running requires sudo or root. The binary is dynamically linked to libz and libelf, so those must be present at runtime. Building from source needs zlib, libelf, clang and libbpf development packages (apt or dnf names are given), or the repo's Nix flake dev shell. Logging to the systemd journal is optional and falls back gracefully.",
+  "standout": "It turns on eBPF runtime statistics only while it is open and turns them off on exit, so the monitoring cost is paid only during observation. It also reports which processes reference each eBPF program, which is useful for seeing what is attached to the kernel.",
+  "status": "The README gives no release date or changelog, and I did not check the GitHub commit or release pages, so the status is unknown. It is packaged in Fedora, Arch and nixpkgs and has a published install script, which suggests active upkeep, but that is inference. The README says it moved from Netflix to independent maintenance by Jose Fernandez.",
+  "caveats": "Requires root (sudo) for all use, and the README says the tool will not run without it. Full functionality needs Linux kernel 5.8 or later; older kernels use a procfs fallback, with fewer details implied. Linux only. Shows nothing if no eBPF programs are loaded, so you need another tool such as bpftrace to generate some. Needs a terminal with ANSI colour and at least 80x24. The install script is fetched from bpftop.sh, which I did not open, so I cannot vouch for its contents. The README does not state a licence.",
+  "quotes": [
+   "bpftop provides a dynamic real-time view of running eBPF programs.",
+   "This tool minimizes overhead by enabling performance statistics only while it is active.",
+   "Once bpftop terminates, it disables the statistics-gathering function by deleting the file descriptor returned by BPF_ENABLE_STATS.",
+   "This repository was formerly maintained by Netflix. It is now an independent project maintained by Jose Fernandez."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/jfernandez/bpftop"
+   },
+   {
+    "label": "Netflix announcement blog post",
+    "url": "https://netflixtechblog.com/announcing-bpftop-streamlining-ebpf-performance-optimization-6a727c1ae2e5"
+   },
+   {
+    "label": "LWN.net article",
+    "url": "https://lwn.net/Articles/963767/"
+   },
+   {
+    "label": "Fedora package",
+    "url": "https://src.fedoraproject.org/rpms/bpftop"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/jfernandez/bpftop: worked, README returned (1 of 5 fetches used)",
+   "Not fetched: https://bpftop.sh/install (install script, linked from README), https://lwn.net/Articles/963767/ and https://netflixtechblog.com/... (linked, not needed since README was complete)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A live view of kernel eBPF execution\u2014and its per-program CPU cost and process references\u2014offers a rare, hands-on window into what\u2019s attached to your system."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "bpftop",
+  "tldr": "A top-style live table of the eBPF programs running inside your Linux kernel, with per-program runtime, event rate and CPU estimates.",
+  "deeper_look": "bpftop lists every eBPF program currently loaded on a Linux machine, refreshed every second. Each row shows the program's ID, type and name, its average runtime, events per second and an estimated CPU percentage. Press Enter on a row and it opens time-series graphs for that program. It also shows which processes hold a reference to each program.\n\neBPF lets small programs run inside the kernel, attached to network hooks, tracepoints, security checks and more. Tools like tracers, load balancers and firewalls load them constantly, and normally you never see them. bpftop is a way to look at what is attached to your kernel right now and which of it is expensive.\n\nThe mechanism is the interesting part. The kernel keeps eBPF runtime statistics switched off by default because collecting them costs something. bpftop turns them on with the BPF_ENABLE_STATS syscall command and samples once a second. When it exits, it closes the file descriptor that command returned, and the kernel stops counting. In the README's words: \"This tool minimizes overhead by enabling performance statistics only while it is active.\"\n\nThe project was formerly maintained by Netflix and is now an independent project maintained by Jose Fernandez. It is written in Rust.",
+  "install": "curl -fsSL https://bpftop.sh/install | sh\n# or: sudo dnf install bpftop / sudo pacman -S bpftop / nix profile install nixpkgs#bpftop\n# Linux only, needs root to run. The binary links to libz and libelf at runtime.",
+  "try_this": [
+   {
+    "cmd": "sudo bpftop",
+    "what_happens": "Opens the live table of loaded eBPF programs with a 1-second refresh. Press Enter on a row for graphs."
+   },
+   {
+    "cmd": "sudo bpftop -d 2",
+    "what_happens": "Same view, refreshing every 2 seconds (the delay accepts 1 to 3600)."
+   },
+   {
+    "cmd": "journalctl _COMM=bpftop",
+    "what_happens": "Shows bpftop's own logs from the systemd journal."
+   }
+  ],
+  "whats_unique": "It pays the cost of eBPF statistics only while it is open, then switches them off on exit. It also shows which processes reference each program, so you can see what is attached to the kernel.",
+  "caveats": "Linux only, requires root, and full detail needs kernel 5.8 or later; it shows an empty table unless something has loaded eBPF programs, and the brew formula installs no executables listed here, so Linux install paths from the README are the safer route.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "ebpf",
+   "linux",
+   "tui",
+   "kernel",
+   "monitoring"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/jfernandez/bpftop"
+   },
+   {
+    "label": "Netflix announcement blog post",
+    "url": "https://netflixtechblog.com/announcing-bpftop-streamlining-ebpf-performance-optimization-6a727c1ae2e5"
+   },
+   {
+    "label": "LWN.net article",
+    "url": "https://lwn.net/Articles/963767/"
+   },
+   {
+    "label": "Fedora package",
+    "url": "https://src.fedoraproject.org/rpms/bpftop"
+   }
+  ]
+ }
+}

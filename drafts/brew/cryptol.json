@@ -1,0 +1,150 @@
+{
+ "name": "cryptol",
+ "desc": "Domain-specific language for specifying cryptographic algorithms",
+ "homepage": "https://galoisinc.github.io/cryptol/master/RefMan.html",
+ "installs_365d": 209,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "math",
+  "afternoon"
+ ],
+ "why": "A domain-specific language for specifying cryptographic algorithms that can be checked against implementations with formal tools.",
+ "brief": {
+  "what_it_is": "Cryptol is an interpreter for version 3 of the Cryptol language, a domain-specific language for writing executable specifications of cryptographic algorithms. You feed it Cryptol source and interact with it through a REPL, where you can evaluate expressions and run checks. The `:check` command tests predicates against randomly generated test vectors, in the style of QuickCheck. The `:prove` command calls out to SMT solvers such as Yices, Z3, or CVC5 to prove predicates for all possible inputs.",
+  "why_it_exists": "The README says the Cryptol specification language was designed by Galois for the NSA Laboratory for Advanced Cybersecurity Research as a public standard for specifying cryptographic algorithms. It argues that a Cryptol reference specification can serve as the formal documentation for a cryptographic module.",
+  "how_it_works": "Cryptol specifications are fully executable, so designers can run and experiment with them as the design changes. `:check` runs predicates on random inputs, QuickCheck-style. `:prove` and `:sat` hand the question to an external SMT solver, with Z3 as the default. The README also says Galois builds tools that consume Cryptol specs and C or Java implementations, letting you verify that an implementation meets its spec, though this takes some work and is described on the SAW website rather than here.",
+  "commands_seen": [
+   {
+    "cmd": "brew update && brew install cryptol",
+    "context": "Homebrew route on macOS to get the latest stable Cryptol."
+   },
+   {
+    "cmd": "git submodule update --init",
+    "context": "Run after a fresh checkout of the source, before building."
+   },
+   {
+    "cmd": "./cry build",
+    "context": "Builds Cryptol in place from the source directory."
+   },
+   {
+    "cmd": "./cry run",
+    "context": "Runs Cryptol from the current directory after building."
+   },
+   {
+    "cmd": "./cry test",
+    "context": "Runs the regression test suite."
+   },
+   {
+    "cmd": "cabal v2-install --installdir=DIR",
+    "context": "Run from the source directory after a ./cry build to put the binary into DIR."
+   },
+   {
+    "cmd": ":check",
+    "context": "REPL command that tests Cryptol predicates against randomly generated test vectors."
+   },
+   {
+    "cmd": ":prove",
+    "context": "REPL command that calls an SMT solver (Yices, Z3, or CVC5) to prove a predicate for all inputs."
+   }
+  ],
+  "install_notes": "Prebuilt binaries for macOS, Linux, and Windows are on the GitHub releases page; Windows also has .msi installers. Z3 must be on your PATH, since Cryptol uses it by default for type checking and for :sat and :prove. Homebrew installs a matching Z3 automatically, but on Linux you may need to download Z3 yourself, because distro packages can be old. Building from source needs GHC (9.6.7, 9.8.4, or 9.12.2, easiest via ghcup), GMP, and ncurses. Cryptol reads its library files from the embedded copy by default. To override them, copy the lib directory into $HOME/.cryptol or set CRYPTOLPATH.",
+  "standout": "Specifications are executable, so the same file can be run, randomly tested with :check, and proven with an SMT solver with :prove. It is aimed at cryptographers and implementers rather than general programmers. Galois also links it to implementation-verification tooling (SAW).",
+  "status": "Appears maintained. The README says Cryptol is under active development at Galois, cites copyright 2013-2024, and points to a CI solver snapshot dated snapshot-20260622. The docs site shows version 3.6.0.99 with versions 2.12.0 through 3.6.0 listed. I did not see a release date or last commit date, so this is inferred from the README.",
+  "caveats": "The homepage is only the reference manual's table of contents and contains no prose, so the description above comes from the GitHub README. Cryptol needs a separately installed Z3 at runtime. On some 64-bit Linux setups 32-bit Z3 binaries fail with a misleading 'no such file or directory' error, and the fix is to install 32-bit compatibility packages or use the x64 Z3 build. Building from source has several prerequisites and uses a ./cry wrapper script rather than a standard build command. Licensed under a three-clause BSD license. The README notes that Version 1 users should read the Version2Changes document, so older Cryptol material may not match.",
+  "quotes": [
+   "Unlike current specification mechanisms, Cryptol is fully executable, allowing designers to experiment with their programs incrementally as their designs evolve.",
+   "A Cryptol reference specification can serve as the formal documentation for a cryptographic module.",
+   "The interpreter includes a `:check` command, which tests predicates written in Cryptol against randomly-generated test vectors (in the style of QuickCheck)."
+  ],
+  "links": [
+   {
+    "label": "Cryptol Reference Manual (homepage)",
+    "url": "https://galoisinc.github.io/cryptol/master/RefMan.html"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/GaloisInc/cryptol"
+   },
+   {
+    "label": "GitHub releases (binaries)",
+    "url": "https://github.com/GaloisInc/cryptol/releases"
+   },
+   {
+    "label": "cryptol-specs repository (example specs)",
+    "url": "https://github.com/galoisinc/cryptol-specs"
+   },
+   {
+    "label": "SAW website (implementation verification tooling)",
+    "url": "https://saw.galois.com"
+   }
+  ],
+  "fetch_log": [
+   "https://galoisinc.github.io/cryptol/master/RefMan.html: loaded, but only the reference manual's navigation and table of contents came back, with no body text.",
+   "https://github.com/GaloisInc/cryptol: loaded; returned the full README, which was used as the main source."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Cryptol turns cryptographic algorithms into executable specifications you can test randomly and prove for every input with SMT solvers, making it a distinctive formal-methods tool."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Cryptol",
+  "tldr": "A language for writing cryptographic algorithms as executable specs, which you can test with random inputs or prove correct for all inputs with an SMT solver.",
+  "deeper_look": "Cryptol is an interpreter and REPL for a small domain-specific language built for describing cryptographic algorithms. You write the algorithm as a specification, and the specification runs. You can evaluate expressions, feed in values, and watch the design behave while you are still changing it. In the README's words: \"Unlike current specification mechanisms, Cryptol is fully executable, allowing designers to experiment with their programs incrementally as their designs evolve.\"\n\nThe interesting part is what the REPL does with properties. Write a predicate, say that decrypting an encrypted message returns the original. Then `:check` runs it against randomly generated inputs, in the style of QuickCheck. `:prove` hands the same predicate to an SMT solver (Z3 by default, or Yices or CVC5) and asks whether it holds for every possible input. `:sat` asks the opposite question: does any input satisfy it.\n\nGalois designed the language for the NSA Laboratory for Advanced Cybersecurity Research, as a public standard for specifying cryptographic algorithms. The idea is that a Cryptol reference spec can serve as the formal documentation for a cryptographic module. Galois also builds tools, described on the SAW website, that compare a spec against C or Java implementations. The README says this takes some work.\n\nThe door it opens is formal methods: tests sample behaviour, proofs cover all of it, and here both live in the same file.",
+  "install": "brew install cryptol\n# Homebrew installs a matching Z3 automatically. On Linux, prebuilt binaries are on the GitHub releases page, and you may need to fetch Z3 yourself because distro packages can be old.",
+  "try_this": [
+   {
+    "cmd": "cryptol --help",
+    "what_happens": "Lists the interpreter's command-line options."
+   },
+   {
+    "cmd": ":check",
+    "what_happens": "Inside the REPL, tests a Cryptol predicate against randomly generated inputs, QuickCheck-style."
+   },
+   {
+    "cmd": ":prove",
+    "what_happens": "Inside the REPL, asks an SMT solver such as Z3 to prove a predicate holds for all inputs."
+   }
+  ],
+  "whats_unique": "The same file is an executable spec, a randomized test target, and a theorem for an SMT solver to prove. It can also connect to tooling that checks real C or Java implementations against it.",
+  "caveats": "It is aimed at cryptographers and implementers, needs Z3 on your PATH, and the homepage is only a reference manual, so expect to lean on the GitHub README and cryptol-specs for examples.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "language",
+   "formal-methods",
+   "cryptography",
+   "smt",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "Cryptol Reference Manual (homepage)",
+    "url": "https://galoisinc.github.io/cryptol/master/RefMan.html"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/GaloisInc/cryptol"
+   },
+   {
+    "label": "cryptol-specs repository (example specs)",
+    "url": "https://github.com/galoisinc/cryptol-specs"
+   },
+   {
+    "label": "GitHub releases (binaries)",
+    "url": "https://github.com/GaloisInc/cryptol/releases"
+   },
+   {
+    "label": "SAW website (implementation verification tooling)",
+    "url": "https://saw.galois.com"
+   }
+  ]
+ }
+}

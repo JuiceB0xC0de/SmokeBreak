@@ -1,0 +1,109 @@
+{
+ "name": "dhcpdump",
+ "desc": "Monitor DHCP traffic for debugging purposes",
+ "homepage": "https://github.com/dhcpdump-org/dhcpdump",
+ "installs_365d": 356,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "Watching DHCP traffic live is a direct door into a protocol every network runs and almost nobody inspects.",
+ "brief": {
+  "what_it_is": "dhcpdump is a command-line tool that parses DHCP packets captured from a network interface and prints them in readable form. This fork, based on dhcpdump 1.8, adds a session-tracking full-screen TUI (-t) that groups DHCP traffic by client and then by transaction (XID), showing the message flow (DISCOVER, OFFER, REQUEST, ACK and so on) and a derived state such as waiting, offered, bound, NAK, or timed out. It can work on live interfaces (-i) or on a saved capture (-r), and the README says the parser was split into a reusable decoder library separate from the CLI.",
+  "why_it_exists": "The fork exists to collect in one place the bug-fixes and improvements made to dhcpdump 1.8 over more than ten years, since the original project had gone quiet. The README frames it as a consolidated, maintained continuation rather than a new tool.",
+  "how_it_works": "It captures or reads packets, filters for DHCP, and decodes the DHCP options (including VLAN 802.1Q and QinQ 802.1ad tagged traffic) into text. In the TUI, transactions are keyed by XID inside each client's session, and each transaction's state is derived from the messages seen so far.",
+  "commands_seen": [
+   {
+    "cmd": "make NO_TUI=1",
+    "context": "Build step that leaves out the optional TUI, so the yascreen dependency is not needed; this gives the 1.11-style build without session tracking."
+   },
+   {
+    "cmd": "-t",
+    "context": "Flag that starts the full-screen, colour-coded session-tracking view. README says it works with -i (live) and -r (capture file)."
+   },
+   {
+    "cmd": "-i",
+    "context": "Flag for live capture from a network interface, used together with -t for the TUI."
+   },
+   {
+    "cmd": "-r",
+    "context": "Flag for reading traffic from a pcap dump file, used together with -t to browse a capture."
+   }
+  ],
+  "install_notes": "The README does not give a full install procedure beyond the build, so brew install is the main route. The TUI depends on the yascreen library (github.com/bbonev/yascreen); build with make NO_TUI=1 to drop that dependency. The Makefile reads environment variables. The README does not say whether live capture needs root or special permissions.",
+  "standout": "Most DHCP tooling just prints packets. This one groups raw DHCP traffic into per-client sessions and per-XID transactions, and labels each one's state (offered, bound, NAK, timed out), which makes a stuck or misbehaving lease easy to see in one screen.",
+  "status": "Appears maintained but the README gives no release dates or commit dates, so this is partly unknown. The 2.00pre1 section is marked unreleased, and 1.11 is described as unreleased but tagged. The README lists a steady run of fixes, including hardening against out-of-bounds reads and stack overflows on crafted packets.",
+  "caveats": "The TUI and its yascreen dependency are only in the unreleased 2.00pre1 line; the tagged 1.11 release is the last version without them. Release status is unclear from the README. The README does not describe installation details, required privileges, or platform support. The -t, -i and -r flags are listed only as fragments, so the exact invocation syntax should be checked against the manual page, which the README mentions but does not link.",
+  "quotes": [
+   "Parse DHCP packets from a network interface",
+   "This fork of dhcpdump 1.8 by Edwin Groothuis collects in a single place bug-fixes and improvements collected over the last 10+ years.",
+   "This tag keeps the last version that does not have TUI and does not depend on yascreen."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/dhcpdump-org/dhcpdump"
+   },
+   {
+    "label": "yascreen (TUI dependency)",
+    "url": "https://github.com/bbonev/yascreen"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/dhcpdump-org/dhcpdump: fetched OK, README returned. The README links to a manual page for the full key list, but no URL is given, so I did not follow it."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It makes an invisible, ubiquitous protocol tangible by decoding DHCP exchanges and grouping them into client sessions and lease states, though its standout TUI is unreleased."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "dhcpdump",
+  "tldr": "A packet decoder that shows the DHCP conversation on your network, with a full-screen view that groups traffic by client and labels each lease's state.",
+  "deeper_look": "dhcpdump reads DHCP packets, either live from a network interface or from a saved capture, and prints the decoded options as readable text. It also handles traffic tagged with VLAN 802.1Q and QinQ 802.1ad headers. DHCP is the protocol that hands your laptop an address when it joins a network, and normally it happens out of sight.\n\nThis repository is a fork of dhcpdump 1.8 by Edwin Groothuis. The README says it \"collects in a single place bug-fixes and improvements collected over the last 10+ years\", since the original had gone quiet. Many of those fixes harden the parser against out-of-bounds reads and stack overflows on crafted packets. That is a useful reminder that a decoder is a program that trusts strangers' bytes.\n\nThe newer addition is a full-screen, colour-coded view started with -t. It groups traffic by client, then by transaction ID (XID), and shows the message flow: DISCOVER, OFFER, REQUEST, ACK. From the messages seen so far, it derives a state such as waiting, offered, bound, NAK, or timed out. A lease that never completes shows up on one screen instead of being buried in a scrolling dump.\n\nThe idea underneath is that DHCP is a small four-step conversation, and once you can watch it you can see what a device does when it plugs in, reboots, or renews. The README also says the parser was split into a reusable decoder library separate from the command-line tool.",
+  "install": "brew install dhcpdump\n# The TUI depends on the yascreen library. To build from source without it: make NO_TUI=1\n# The README does not say whether live capture needs root.",
+  "try_this": [
+   {
+    "cmd": "dhcpdump --help",
+    "what_happens": "Prints the usage text and the flags your build supports."
+   },
+   {
+    "cmd": "dhcpdump -t -i <interface>",
+    "what_happens": "Starts the full-screen session view on a live interface, grouping DHCP traffic by client and transaction. Check the manual page for exact syntax."
+   },
+   {
+    "cmd": "dhcpdump -t -r <capture.pcap>",
+    "what_happens": "Opens a saved capture in the same session view so you can browse the exchanges at your own pace."
+   }
+  ],
+  "whats_unique": "Most DHCP tools just print packets. This one groups them into per-client sessions and per-XID transactions and labels each state, which makes a stuck or misbehaving lease easy to spot.",
+  "caveats": "The TUI exists only in the unreleased 2.00pre1 line, release dates are unclear from the README, and it does not say what privileges live capture needs.",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "network",
+   "protocol",
+   "dhcp",
+   "packet-capture"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/dhcpdump-org/dhcpdump"
+   },
+   {
+    "label": "yascreen (TUI dependency)",
+    "url": "https://github.com/bbonev/yascreen"
+   }
+  ]
+ }
+}

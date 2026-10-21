@@ -1,0 +1,78 @@
+{
+ "name": "certsync",
+ "desc": "Dump NTDS with golden certificates and UnPAC the hash",
+ "homepage": "https://github.com/zblurx/certsync",
+ "installs_365d": 313,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "security",
+  "reverse-engineering",
+  "protocol"
+ ],
+ "why": "A door into Active Directory certificate abuse, dumping NTDS and UnPACing hashes, which reveals how Windows auth trusts certificates.",
+ "brief": {
+  "what_it_is": "certsync is a Python command-line tool that dumps the NTDS (Active Directory password hash) database from a domain without using DRSUAPI. It takes domain credentials and a domain controller address, pulls the user list, CA information and CRL over LDAP, and then gets the CA certificate and private key from the ADCS server. It forges an offline certificate for every user, uses PKINIT with each one, and UnPACs the hash to recover NT and LM hashes. The output is secretsdump-style lines of user:RID:LM:NT:::, one per account.",
+  "why_it_exists": "The README says DRSUAPI is increasingly monitored and sometimes restricted by EDR products, so it offers a different route to NTDS. It also says certsync does not need a Domain Administrator, only a CA Administrator.",
+  "how_it_works": "It runs in four steps: dump users, CA info and CRL from LDAP; dump the CA certificate and private key; forge a certificate offline for every user; then PKINIT with each forged certificate and UnPAC the hash to get NT and LM hashes. Forging is done offline, so the only domain-side traffic is LDAP and PKINIT. The README claims the attack is not slower than the DRSUAPI route.",
+  "commands_seen": [
+   {
+    "cmd": "certsync -u khal.drogo -p 'horse' -d essos.local -dc-ip 192.168.56.12 -ns 192.168.56.12",
+    "context": "Example run from the README against a lab domain (essos.local); it logs the LDAP collection, CA discovery, forging, and PKINIT/UnPAC steps, then prints hash lines for each user."
+   },
+   {
+    "cmd": "certsync -h",
+    "context": "Prints the full usage text, including CA, authentication, connection, and OPSEC options."
+   },
+   {
+    "cmd": "git clone https://github.com/zblurx/certsync",
+    "context": "Clones the repository for a local install."
+   },
+   {
+    "cmd": "cd certsync",
+    "context": "Moves into the cloned repository before installing."
+   },
+   {
+    "cmd": "pip install .",
+    "context": "Installs certsync locally from the cloned source."
+   },
+   {
+    "cmd": "pip install certsync",
+    "context": "Installs the published package from PyPI."
+   },
+   {
+    "cmd": "pacman -S certsync",
+    "context": "Installs from BlackArch's package repository."
+   }
+  ],
+  "install_notes": "Install with pip from PyPI, from a local clone with pip install ., or with pacman on BlackArch. The README lists no extra runtimes, accounts or first-run configuration beyond the attack prerequisites. Options: -ca-pfx can supply an existing CA pfx/p12 and skip the CA backup; -template takes a cert.pfx to mimic; -k and -aesKey allow Kerberos authentication; -ns and -dns-tcp control name resolution; -timeout, -jitter and -randomize adjust OPSEC behaviour.",
+  "standout": "It turns the CA into the credential source: forged certificates plus UnPAC the hash yield NTLM hashes for every account without a DRSUAPI replication call. The OPSEC options (custom LDAP filter, template cert, timing jitter, randomized keys and serials) are aimed at evading detection, and the README credits Certipy, Certify and the UnPAC the hash work by name.",
+  "status": "unknown. The README has no release date, changelog, or commit information. It is packaged on PyPI as certsync and in BlackArch, and it is tracked by Repology, which shows it is distributed but does not show how active development is.",
+  "caveats": "Prerequisites: a configured Enterprise CA on an ADCS server in the domain, working PKINIT, and either a domain account that is local admin on the ADCS server or an export of the CA certificate and private key. Revoked users cannot PKINIT, so their hashes cannot be dumped. This is an offensive tool for attacking AD and ADCS, and its use is limited to authorised testing. The README does not state a license or supported operating systems, and it does not say which Python versions it needs. The README also has a few typos (for example, DSRUAPI and thier), which do not affect the instructions.",
+  "quotes": [
+   "certsync is a new technique in order to dump NTDS remotely, but this time without DRSUAPI: it uses golden certificate and UnPAC the hash.",
+   "Contrary to what we may think, the attack is not at all slower.",
+   "certsync does not require to use a Domain Administrator, it only require a CA Administrator."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repository)",
+    "url": "https://github.com/zblurx/certsync"
+   },
+   {
+    "label": "Golden certificate (The Hacker Recipes)",
+    "url": "https://www.thehacker.recipes/ad/persistence/ad-cs/golden-certificate"
+   },
+   {
+    "label": "UnPAC the hash (The Hacker Recipes)",
+    "url": "https://www.thehacker.recipes/ad/movement/kerberos/unpac-the-hash"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/zblurx/certsync: fetched OK, README returned (installation, usage, why, requirements, limitations, OPSEC, credits)."
+  ]
+ }
+}

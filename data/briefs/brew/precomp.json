@@ -1,0 +1,75 @@
+{
+ "name": "precomp",
+ "desc": "Command-line precompressor to achieve better compression",
+ "homepage": "http://schnaader.info/precomp.php",
+ "installs_365d": 33,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "compression",
+  "reverse-engineering",
+  "afternoon"
+ ],
+ "why": "Decompresses deflate streams inside files to recompress them losslessly, a neat look into how compressed data hides in formats.",
+ "brief": {
+  "what_it_is": "Precomp is a command-line precompressor written in C++. It takes an already-compressed file, such as a PDF, PNG, ZIP, GIF, JPG, MP3 or bZip2 file, finds the zLib/Deflate, bZip2, GIF, JPG or MP3 streams inside it, and decompresses them. If a stream can be recompressed to be bit-for-bit identical to the original, Precomp keeps the decompressed data. The output is either a smaller LZMA2-compressed .pcf file, or with -cn a file of decompressed data plus reconstruction data that a stronger compressor can then squeeze further. Precomp can also restore the original file from the .pcf.",
+  "why_it_exists": "The README says Precomp \"can be used to further compress files that are already compressed\" and \"improves compression on some file-/streamtypes\", by reversing the compression of the streams inside those files so a general-purpose compressor can see the raw data.",
+  "how_it_works": "Precomp tries to decompress each stream and then recompress it with the matching codec. If the result is bit-to-bit identical to the original, the decompressed stream replaces the compressed one. For Deflate it uses preflate, which the README credits with creating reconstruction information, and for JPG and MP3 it uses packJPG/brunsli and packMP3. The default output is compressed with LZMA2 into a .pcf file.",
+  "commands_seen": [
+   {
+    "cmd": "wget http://mattmahoney.net/dc/silesia.zip",
+    "context": "Downloads the Silesia compression corpus, the test file used in the README's example."
+   },
+   {
+    "cmd": "7z a -mx=9 silesia.7z silesia.zip",
+    "context": "Baseline: compresses the zip with 7-Zip LZMA2 at Ultra setting, giving 67,405,052 bytes (99.7%)."
+   },
+   {
+    "cmd": "precomp silesia.zip",
+    "context": "Runs Precomp on the zip, producing silesia.pcf at 47,122,779 bytes (69.7%)."
+   },
+   {
+    "cmd": "precomp -r -osilesia.zip_ silesia.pcf",
+    "context": "Restores the original file from the .pcf into a new file named silesia.zip_; without -o it would decompress to silesia.zip."
+   },
+   {
+    "cmd": "diff -s silesia.zip silesia.zip_",
+    "context": "Checks that the restored file matches the original byte for byte."
+   }
+  ],
+  "install_notes": "The README gives no install steps beyond the release downloads. Official binaries for Windows and Linux are on GitHub Releases, and an alternative download is linked from the homepage. The README says the project can be built from source, but it does not describe the build. It also says Linux, *nix and macOS are supported since version 0.4.3, and that PCF files work across Windows, Linux, *nix and macOS.",
+  "standout": "Precomp does lossless recompression of streams that are already compressed, which general compressors cannot do. It verifies bit-exact reconstruction before it accepts a stream, so the .pcf can always be restored to the original. It also includes a mode that keeps the decompressed form for use with other compressors. Its codec list is wide: zLib, bZip2, GIF, JPG, MP3 and more.",
+  "status": "Unknown from the sources read. The README has Travis and AppVeyor build badges, a Repology badge, and a copyright range ending in 2021. It gives no release date or last-commit date, and I did not check the GitHub releases or commit history. The homepage returned 404, so I could not confirm whether the project is still maintained.",
+  "caveats": "The official homepage http://schnaader.info/precomp.php returned HTTP 404 when I fetched it, so the README from GitHub is the source for this entry. The README points to a Google Drive folder for older binaries. The JPG and MP3 paths depend on third-party codecs (brunsli, packJPG, packMP3), and the README lists them in a legal section. The tool is a command-line program with no GUI. The README mentions no Windows build instructions beyond the release binaries.",
+  "quotes": [
+   "Precomp is a command line precompressor that can be used to further compress files that are already compressed.",
+   "Precomp tries to decompress the streams, and if they can be decompressed and \"re-\"compressed so that they are bit-to-bit-identical with the original stream, the decompressed stream can be used instead of the compressed one.",
+   "The different versions are completely compatible, PCF files are exchangeable between Windows/Linux/*nix/macOS systems."
+  ],
+  "links": [
+   {
+    "label": "Homepage (returned 404)",
+    "url": "http://schnaader.info/precomp.php"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/schnaader/precomp-cpp"
+   },
+   {
+    "label": "GitHub releases (binaries)",
+    "url": "https://github.com/schnaader/precomp-cpp/releases"
+   },
+   {
+    "label": "Issue list",
+    "url": "https://github.com/schnaader/precomp-cpp/issues"
+   }
+  ],
+  "fetch_log": [
+   "http://schnaader.info/precomp.php: failed, HTTP 404",
+   "https://github.com/schnaader/precomp-cpp: worked, README returned. I inferred this repository from the project name and the homepage's author; it was not given in the input."
+  ]
+ }
+}

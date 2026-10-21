@@ -1,0 +1,70 @@
+{
+ "name": "xmount",
+ "desc": "Convert between multiple input & output disk image types",
+ "homepage": "https://www.sits.lu/xmount",
+ "installs_365d": 11,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering"
+ ],
+ "why": "Converts between forensic disk image formats, a window into how disk images and their containers are structured.",
+ "brief": {
+  "what_it_is": "Xmount is a command-line tool that converts disk images between formats on the fly. It takes forensic and virtual disk images as input (Raw/DD, Expert Witness EWF, AFFv3, VirtualBox VDI, QEMU QCOW2) and presents the converted image as a virtual file system built with FUSE. Output formats are Raw/DD, Apple DMG, Microsoft VHD, VirtualBox VDI, and VMware VMDK. It can also apply morphing functions that combine several input images into one output or reconstruct RAID0 sets, and it can extract unallocated sectors from FAT or HFS filesystems.",
+  "why_it_exists": "The page frames it as a way to convert between harddisk image types without making a full converted copy, and to let acquired images be used directly. Its stated example is booting acquired harddisk images in QEMU, KVM, VirtualBox, VMware or similar.",
+  "how_it_works": "Xmount mounts a FUSE virtual file system that exposes the converted input image as a file in the requested output format. Write access is supported by redirecting changes to a cache file, so the original acquired image is not modified. The morphing functions (Combine, Raid, Unallocated) sit on top of the same input handling.",
+  "commands_seen": [],
+  "install_notes": "The homepage lists Debian and Ubuntu packages through a package repository, plus source downloads of the latest releases and a Git repository. It does not give build steps, dependency lists, or a first-run walkthrough, and no command lines appear on the page. Because it relies on FUSE, a working FUSE setup is needed to mount the virtual file system.",
+  "standout": "Few small tools combine forensic container reading (EWF, AFFv3) with writable, copy-on-write style access to the result and with morphing operations such as RAID reconstruction and combining several images into one. The cache-file approach lets an evidence image be booted in a hypervisor without changing the original.",
+  "status": "unknown. The homepage shows no version number, release date, or changelog, and the fetched page did not link to a dated release or commit history. The Git repository and release pages it links to were not followed.",
+  "caveats": "The page gives no list of supported platforms; the FUSE dependency suggests Unix-like systems. RAID support is limited to RAID0. Unallocated extraction supports only FAT and HFS. Output formats do not include EWF or AFF, so forensic containers are input-only. Licensed under GPL v3 or later. The Homebrew description is short and the page does not mention macOS specifically.",
+  "quotes": [
+   "Xmount allows you to convert on-the-fly between multiple input and output harddisk image types",
+   "You can for example combine multiple input images into one output image, or reconstruct raids on-the-fly.",
+   "This makes it for example possible to boot acquired harddisk images using QEMU, KVM, VirtualBox, VmWare or alike."
+  ],
+  "links": [
+   {
+    "label": "Xmount homepage (SITS Sarl)",
+    "url": "https://www.sits.lu/xmount"
+   }
+  ],
+  "fetch_log": [
+   "https://www.sits.lu/xmount: fetched successfully; homepage text read, no README or docs link followed (package repository and Git links not given as URLs in the fetched text)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It turns forensic disk images into virtual, writable-on-the-side formats and can reconstruct RAID sets, making evidence usable in a hypervisor without altering the source."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "xmount",
+  "tldr": "Presents a forensic or virtual disk image as a different image format through a FUSE mount, so you can boot or inspect it without converting a copy.",
+  "deeper_look": "Xmount takes a disk image in one format and exposes it as a file in another, on the fly. Inputs include Raw/DD, Expert Witness (EWF), AFFv3, VirtualBox VDI and QEMU QCOW2. Outputs include Raw/DD, Apple DMG, Microsoft VHD, VirtualBox VDI and VMware VMDK. It does this by mounting a FUSE virtual file system, so no full converted copy is written to disk.\n\nWrites are supported too. Changes go to a separate cache file, and the original acquired image stays untouched. The stated use is booting acquired hard disk images in QEMU, KVM, VirtualBox, VMware or similar, which matters when the image is evidence and must not change.\n\nOn top of the same input handling sit morphing functions: Combine merges several input images into one output, Raid reconstructs RAID0 sets, and Unallocated extracts unallocated sectors from FAT or HFS filesystems. These make it a way into how disk images and their containers are laid out, and how a disk can be a layered, virtual thing.\n\nThe homepage gives no command lines or walkthrough, so expect to read the man page or the help output once it is installed.",
+  "install": "brew install xmount\n# needs a working FUSE setup to mount the virtual file system",
+  "try_this": [],
+  "whats_unique": "Few small tools read forensic containers like EWF and AFFv3 and also give writable, copy-on-write access to the result, with RAID reconstruction and image combining built in.",
+  "caveats": "The homepage shows no version or release date, so maintenance status is unclear, and Homebrew lists no executables to run. Forensic containers are input-only, RAID support is RAID0 only, and unallocated extraction handles only FAT and HFS.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "forensics",
+   "disk-images",
+   "fuse",
+   "virtualization"
+  ],
+  "links": [
+   {
+    "label": "Xmount homepage (SITS Sarl)",
+    "url": "https://www.sits.lu/xmount"
+   }
+  ]
+ }
+}

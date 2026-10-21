@@ -1,0 +1,58 @@
+{
+ "name": "libtpms",
+ "desc": "Library for software emulation of a Trusted Platform Module",
+ "homepage": "https://github.com/stefanberger/libtpms",
+ "installs_365d": 2716,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "protocol",
+  "library",
+  "afternoon",
+  "reverse-engineering"
+ ],
+ "why": "Software TPM emulation is a real door into trusted computing and the TPM command protocol, though it is a library first.",
+ "brief": {
+  "what_it_is": "libtpms is a C library that emulates a Trusted Platform Module (TPM) in software. It takes TPM command bytes from a caller and returns the TPM's response bytes, so a program can talk to a virtual TPM without hardware. It ships as a shared library (libtpms.so) with a small public header set (tpm_library.h and related files) and man pages for each API call. The README says the user must already know how to build valid TPM commands and parse their results, since the library does not teach TPM concepts.",
+  "why_it_exists": "The README says libtpms exists to integrate TPM functionality into hypervisors, primarily QEMU, and it deliberately keeps the public API very narrow so that this integration is possible.",
+  "how_it_works": "The caller initializes the library with TPMLIB_MainInit, registers callbacks with TPMLIB_RegisterCallbacks, and sends TPM commands through TPMLIB_Process. Its API list also includes TPMLIB_VolatileAll_Store, TPMLIB_DecodeBlob, and TPMLIB_GetTPMProperty. The README gives no deeper explanation of the internals beyond this list of API calls and man pages.",
+  "commands_seen": [
+   {
+    "cmd": "$ ./configure --with-openssl --with-tpm2 --enable-sanitizers --enable-fuzzer \\ CC=clang CXX=clang++",
+    "context": "Configure the build for fuzzing with clang and libFuzzer, with OpenSSL and TPM 2 support enabled. The README wraps this across two lines with a backslash continuation; the second line is CC=clang CXX=clang++."
+   },
+   {
+    "cmd": "$ make && make -C tests fuzz",
+    "context": "Build the library, then build the fuzz targets in the tests directory."
+   },
+   {
+    "cmd": "tests/run-fuzzer.sh",
+    "context": "Run the fuzzer against the testing corpus after the build."
+   }
+  ],
+  "install_notes": "The README gives no Homebrew or binary install path. It describes building from source with ./configure, and the example uses --with-openssl and --with-tpm2. Fuzzing needs clang (the 'clang' package on Fedora 28 or later), and the README says fuzz testing is known to work on Fedora 28 or later. The README also says oss-fuzz uses its own script, tests/oss-fuzz.sh, with $LIB_FUZZING_ENGINE linked in. The README says nothing about hardware, accounts, or first-run steps.",
+  "standout": "Libtpms is a library first, not a standalone TPM you run. Its public surface is intentionally tiny, so it reads more like a component you embed in a hypervisor than a tool you invoke. Its fuzzing setup is also documented, and it is wired into oss-fuzz.",
+  "status": "unknown. The README names Stefan Berger as the current maintainer and points to a mailing list. It gives no release date or commit date, and the packaging paths it lists mention version 0.5.1, which may be stale. The fetch did not show the repository's release or commit history.",
+  "caveats": "The README is written for developers who already know TPMs. It is a library, so there is no CLI or ready-made tool, and Brew has no executables for it. It is not documented as a Homebrew package. The README mentions --enable-sanitizer in prose but --enable-sanitizers in its example, so check the configure help for the exact flag. The file-list section shows a Fedora-style /usr/lib64 layout and version 0.5.1, which may not match the current tree. The README does not state a license in the text it returned, though it lists a LICENSE file in the package layout.",
+  "quotes": [
+   "Libtpms is a library that targets the integration of TPM functionality into hypervisors, primarily into Qemu.",
+   "Only the minimum of necessary APIs are made publicly available.",
+   "It is not within the scope of libtpms's documentation to provide background on this."
+  ],
+  "links": [
+   {
+    "label": "libtpms GitHub repository (homepage, README)",
+    "url": "https://github.com/stefanberger/libtpms"
+   },
+   {
+    "label": "Trusted Computing Group (TPM background, referenced by the README)",
+    "url": "http://www.trustedcomputinggroup.org"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/stefanberger/libtpms: fetched OK, returned README text. No further links followed because the README covered the project adequately."
+  ]
+ }
+}

@@ -1,0 +1,140 @@
+{
+ "name": "lunarml",
+ "desc": "Standard ML compiler that produces Lua/JavaScript",
+ "homepage": "https://github.com/minoki/LunarML",
+ "installs_365d": 194,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language",
+  "library"
+ ],
+ "why": "A Standard ML compiler targeting Lua and JavaScript is an unusual, genuinely strange language toolchain worth poking at.",
+ "brief": {
+  "what_it_is": "LunarML is a compiler for Standard ML, the functional language, written in MLton-compiled code. It takes SML source files (.sml) or ML Basis project files (.mlb) and emits a Lua or JavaScript program or module. Targets include Lua 5.3+, LuaJIT, Node.js (ES modules, .mjs) and the web (.js), and there are CPS variants for the JavaScript targets. The README calls it 'The Standard ML compiler that produces Lua/JavaScript.'",
+  "why_it_exists": "The README gives no explicit motivation. It presents the project as a way to run Standard ML programs on Lua and JavaScript runtimes, and it advertises interfaces to Lua and JavaScript and support for delimited continuations.",
+  "how_it_works": "Running 'lunarml compile' on an .sml or .mlb input produces a Lua or JavaScript file, which you then run with the host runtime (for example 'lua example/hello.lua'). The --lua-continuations and --nodejs-cps/--webjs-cps modes add one-shot or delimited continuations, and the README says the Lua continuation mode also supports deeply nested handle. The README does not describe the internal compilation pipeline.",
+  "commands_seen": [
+   {
+    "cmd": "lunarml compile example/hello.sml",
+    "context": "Basic usage: compiles the hello-world SML example to a Lua output file, run next."
+   },
+   {
+    "cmd": "lua example/hello.lua",
+    "context": "Runs the compiled Lua output; the README shows it printing 'Hello world!'."
+   },
+   {
+    "cmd": "make install PREFIX=/opt/lunarml",
+    "context": "Installs the built binary (or the tarball's contents) under /opt/lunarml; then add /opt/lunarml/bin to PATH."
+   },
+   {
+    "cmd": "docker pull ghcr.io/minoki/lunarml:latest",
+    "context": "Fetches the prebuilt Docker image, the no-install route."
+   },
+   {
+    "cmd": "docker run --rm -v \"$(pwd)\":/work -w /work ghcr.io/minoki/lunarml:latest lunarml compile example/hello.sml",
+    "context": "Runs the compiler inside the container against the current directory."
+   },
+   {
+    "cmd": "make install-precompiled-lua PREFIX=/opt/lunarml",
+    "context": "Installs lunarml.lua for Lua 5.3/5.4 plus LuaFileSystem, for hosts without a native binary; the README calls it slow."
+   },
+   {
+    "cmd": "make install-precompiled-node PREFIX=/opt/lunarml",
+    "context": "Installs lunarml.mjs to run under Node.js instead of a native binary."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the native bin/lunarml from source; needs a recent MLton."
+   },
+   {
+    "cmd": "make test-lua",
+    "context": "Runs the Lua test target after building from source."
+   },
+   {
+    "cmd": "docker build -f package/docker/Dockerfile -t lunarml:0.3.0 .",
+    "context": "Builds a local Docker image from the repository's Dockerfile instead of pulling it."
+   }
+  ],
+  "install_notes": "Several routes. (1) Prebuilt tarball lunarml-{version}-{arch}-{os}.tar.gz, then 'make install PREFIX=...'. (2) Docker image ghcr.io/minoki/lunarml:latest, run with the project directory mounted at /work. (3) No native build: the precompiled lunarml.lua (needs Lua 5.3/5.4 and LuaFileSystem) or lunarml.mjs (needs Node.js). (4) From source: a recent MLton, then 'make'; you also need Lua 5.3+ or a recent Node.js to run the output. No accounts or hardware needed. The README's example uses version 0.3.0 and the tarball name has {arch}/{os} placeholders, so you substitute your platform.",
+  "standout": "Compiling Standard ML to Lua and JavaScript is an unusual target pairing. The language also gets delimited continuations on those targets, and the project supports both Lua and Node/web runtimes from one source.",
+  "status": "Unknown from what I read. The README names version 0.3.0 and has a Dockerfile and a make-based install, which suggests active packaging work. I saw no release dates, commit dates or 'deprecated' notes in the README or the docs index.",
+  "caveats": "The README warns: script-compiled LunarML is slow, so use the native binary for serious use. Building from source requires MLton. Only some features follow SML '97 strictly; the README says some conform to Successor ML instead. The Basis Library support is a subset. The docs index I reached was only a table of contents, so I could not check details of any feature or the library coverage.",
+  "quotes": [
+   "The Standard ML compiler that produces Lua/JavaScript.",
+   "Warning: Script-compiled LunarML is slow. Use native binary for serious use.",
+   "Note that some features conform to Successor ML rather than SML '97."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/minoki/LunarML"
+   },
+   {
+    "label": "Documentation (Read the Docs)",
+    "url": "https://lunarml.readthedocs.io/en/latest/"
+   },
+   {
+    "label": "Docker image",
+    "url": "https://github.com/minoki/LunarML"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/minoki/LunarML: worked, returned README",
+   "https://lunarml.readthedocs.io/en/latest/: worked, but returned only the table of contents with no body text"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "An obscure Standard ML compiler targeting Lua and JavaScript\u2014with delimited continuations\u2014offers a genuinely surprising way to explore functional languages across runtimes."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "LunarML",
+  "tldr": "A Standard ML compiler that emits Lua or JavaScript, so a statically typed functional language can run inside Lua, LuaJIT, Node.js or a browser.",
+  "deeper_look": "LunarML takes Standard ML source (`.sml`) or ML Basis project files (`.mlb`) and writes out a Lua or JavaScript program. Targets include Lua 5.3+, LuaJIT, Node.js as ES modules, and plain web JavaScript. You compile once, then run the output with whatever host runtime you picked.\n\nThe README gives no explicit motivation, but the shape of the project suggests one: Lua and JavaScript are everywhere, and Standard ML is a small, carefully specified language with a strong type system and pattern matching. LunarML lets you write in the second and ship to the first. It also advertises interfaces for calling into Lua and JavaScript.\n\nThe notable extra is continuations. Flags such as `--lua-continuations`, `--nodejs-cps` and `--webjs-cps` add one-shot or delimited continuations on those targets. Those are the kind of control-flow tools that language-design courses talk about and few mainstream runtimes expose. The README also says the Lua continuation mode supports deeply nested `handle`.\n\nThe compiler itself is built with MLton, so it is a native ML program that compiles ML. Some features follow Successor ML rather than strict SML '97, and Basis Library support is a subset.",
+  "install": "brew install lunarml\n# Homebrew also pulls in gmp. To run the output you need Lua 5.3+ (or LuaJIT) or a recent Node.js.",
+  "try_this": [
+   {
+    "cmd": "lunarml compile example/hello.sml",
+    "what_happens": "Compiles the hello-world SML example from the repository into a Lua file."
+   },
+   {
+    "cmd": "lua example/hello.lua",
+    "what_happens": "Runs the compiled Lua output; the README shows it printing 'Hello world!'."
+   },
+   {
+    "cmd": "lunarml --help",
+    "what_happens": "Lists the compiler's options, including the target and continuation modes."
+   }
+  ],
+  "whats_unique": "Standard ML aimed at both Lua and JavaScript from a single compiler is an uncommon pairing, and delimited continuations on those targets are rarer still.",
+  "caveats": "The README warns that script-compiled LunarML is slow and says to use the native binary for serious use; the Basis Library is only a subset, and I could not confirm the project's recent activity.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "standard-ml",
+   "compiler",
+   "lua",
+   "javascript",
+   "continuations",
+   "functional"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/minoki/LunarML"
+   },
+   {
+    "label": "Documentation (Read the Docs)",
+    "url": "https://lunarml.readthedocs.io/en/latest/"
+   }
+  ]
+ }
+}

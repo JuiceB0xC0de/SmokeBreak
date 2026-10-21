@@ -1,0 +1,125 @@
+{
+ "name": "asn1c",
+ "desc": "Compile ASN.1 specifications into C source code",
+ "homepage": "https://lionet.info/asn1c/blog",
+ "installs_365d": 136,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "protocol",
+  "library"
+ ],
+ "why": "ASN.1 is the hidden grammar behind telecom and certificates, and this compiler is a real door into it.",
+ "brief": {
+  "what_it_is": "asn1c is a command-line compiler that takes ASN.1 module files (ASN.1 is the schema language used for telecom and X.509 certificate formats) and generates C source code. The generated C is described as C++ compatible. You pass it one or more .asn1 modules, and by default it writes .c and .h files, one set per ASN.1 type. The generated code serializes native C structures into BER, DER, OER, PER, or XER data and deserializes them back.",
+  "why_it_exists": "The README says ASN.1 is used in practice for X.509 certificates in HTTPS, phone-to-network control data, and car-to-car communication, and that no open source compiler supports the whole ASN.1 family. It calls asn1c 'arguably the most evolved open source ASN.1 compiler.'",
+  "how_it_works": "The compiler runs in three stages: it parses the ASN.1 file into a syntax tree, 'fixes' that tree by checking for semantic errors and rewriting it into canonical form, then compiles the tree into the target language. Options -E, -F, and -P print the output after each stage. The generated API pairs encoders with decoders by transfer syntax, for example der_encode() with ber_decode() for BER and DER, and uper_encode() with uper_decode() for UPER.",
+  "commands_seen": [
+   {
+    "cmd": "asn1c <module.asn1>",
+    "context": "Compiles one ASN.1 module into C source and header files."
+   },
+   {
+    "cmd": "asn1c <module1.asn1> <module2.asn1> ...",
+    "context": "Compiles several modules together when they depend on each other; all of them must be given in the same run."
+   },
+   {
+    "cmd": "./asn1c/asn1c -P ./examples/rfc3280-*.asn1",
+    "context": "Compiles the X.509 PKI module from the examples and prints the result to stdout instead of writing files (-P)."
+   },
+   {
+    "cmd": "asn1c -EF <module-to-test.asn1>",
+    "context": "Parses and semantically fixes a module and dumps the result, for checking whether a construct is supported."
+   },
+   {
+    "cmd": "asn1c -h",
+    "context": "Lists the command-line options; the README also points to man asn1c."
+   }
+  ],
+  "install_notes": "The README points to INSTALL.md for building from source, which I did not fetch, so I can't give build steps. The examples/ directory in the source tarball has sample modules and examples/crfc2asn1.pl, which extracts ASN.1 modules from RFC documents. The Homebrew formula also installs enber, unber, and crfc2asn1.pl, which the README does not describe in the parts I read.",
+  "standout": "The interoperability table in the README maps each encoding (BER, DER, CER, OER, UPER, XER) to the encode function to use for producing it and the decode function to use for reading it, so you can see which combinations are guaranteed to interoperate. The staged print options (-E, -F, -P) let you inspect how the compiler understood your schema, which is unusual for a code generator.",
+  "status": "unknown. The GitHub README includes a Travis CI badge pointing to travis-ci.org, a service that has since shut down, and I found no release date or last-commit date. The author's blog says in 2010 that development had been put on hold for lack of time. The blog's copyright line reads 2003-2017, and the newest post I saw is dated 2010.",
+  "caveats": "The README's interoperability table lists CER as not supported for encoding, and APER as not supported at all. The README says no open source compiler covers the whole ASN.1 standard. The blog reports that development was paused around 2010. I did not see a license in the pages I read. Build requirements are in INSTALL.md, which I did not fetch.",
+  "quotes": [
+   "ASN.1 to C compiler takes the ASN.1 module files (example) and generates the C++ compatible C source code.",
+   "The asn1c is arguably the most evolved open source ASN.1 compiler.",
+   "The ASN.1 family of standards is large and complex, and no open source compiler supports it in its entirety."
+  ],
+  "links": [
+   {
+    "label": "Homepage (ASN.1 Exposed blog)",
+    "url": "https://lionet.info/asn1c/blog"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/vlm/asn1c"
+   },
+   {
+    "label": "Usage manual (PDF, linked from README, not fetched)",
+    "url": "https://github.com/vlm/asn1c/blob/master/doc/asn1c-usage.pdf"
+   }
+  ],
+  "fetch_log": [
+   "https://lionet.info/asn1c/blog: worked. Blog index page with no compiler documentation; the post text was partial.",
+   "https://lionet.info/asn1c/: returned only a redirect notice to the ASN.1 Exposed blog, so no content.",
+   "https://github.com/vlm/asn1c: worked. Returned the README, which served as the main source."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It turns an obscure but foundational wire-schema language into inspectable C encoders and decoders across real formats, making protocol internals unusually approachable despite uncertain maintenance."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "asn1c",
+  "tldr": "A compiler that turns ASN.1 schemas, the grammar behind X.509 certificates and phone network signalling, into C code that reads and writes BER, DER, PER and XER.",
+  "deeper_look": "ASN.1 is a schema language for describing structured data, and it sits under a lot of things nobody looks at. The README names X.509 certificates in HTTPS, control data between phones and the network, and car-to-car communication. asn1c takes ASN.1 module files and generates C source, described as C++ compatible, with one .c and .h pair per type by default. The generated code serializes native C structures into BER, DER, OER, PER or XER and parses them back.\n\nThe author's stated reason is a gap: the README says the ASN.1 family is large and complex, and that no open source compiler supports all of it. It calls asn1c \"arguably the most evolved open source ASN.1 compiler.\"\n\nThe compiler works in three stages. It parses the schema into a syntax tree, fixes the tree by checking for semantic errors and rewriting it into canonical form, then compiles it to C. The -E, -F and -P options print the result after each stage, so you can see how the tool understood your schema before any C is written. The generated API pairs encoders and decoders by transfer syntax, for example der_encode() with ber_decode(), or uper_encode() with uper_decode().\n\nThe formula also installs enber, unber and crfc2asn1.pl. The README parts the brief covers do not describe them. The source tarball's examples directory includes crfc2asn1.pl, which extracts ASN.1 modules from RFC documents. That makes it a handy way to get real schemas to feed the compiler.",
+  "install": "brew install asn1c",
+  "try_this": [
+   {
+    "cmd": "asn1c -h",
+    "what_happens": "Lists the command-line options. The README also points to man asn1c."
+   },
+   {
+    "cmd": "asn1c -P ./examples/rfc3280-*.asn1",
+    "what_happens": "Compiles the X.509 PKI module from the source tarball's examples and prints the generated code to stdout instead of writing files. You need the examples directory from the source."
+   },
+   {
+    "cmd": "asn1c -EF <module-to-test.asn1>",
+    "what_happens": "Parses and semantically fixes a module and dumps the result, which shows how the compiler read your schema and whether a construct is supported."
+   }
+  ],
+  "whats_unique": "The README includes a table mapping each encoding to the encode and decode functions that interoperate. The staged dump options let you inspect how the compiler understood your schema, which is unusual for a code generator.",
+  "caveats": "Status is unclear: the author's blog said in 2010 that development was on hold, CER encoding and APER are listed as unsupported, and the README admits the full ASN.1 standard is not covered.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "asn1",
+   "protocol",
+   "x509",
+   "compiler",
+   "c",
+   "serialization"
+  ],
+  "links": [
+   {
+    "label": "Homepage (ASN.1 Exposed blog)",
+    "url": "https://lionet.info/asn1c/blog"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/vlm/asn1c"
+   },
+   {
+    "label": "Usage manual (PDF, linked from README)",
+    "url": "https://github.com/vlm/asn1c/blob/master/doc/asn1c-usage.pdf"
+   }
+  ]
+ }
+}

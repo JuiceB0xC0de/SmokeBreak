@@ -1,0 +1,102 @@
+{
+ "name": "klee",
+ "desc": "Symbolic Execution Engine",
+ "homepage": "https://klee-se.org",
+ "installs_365d": 630,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "science",
+  "reverse-engineering"
+ ],
+ "why": "Symbolic execution engine that finds inputs driving programs down hidden paths; a strange and rewarding way to watch code think.",
+ "brief": {
+  "what_it_is": "KLEE is a symbolic virtual machine, a dynamic symbolic execution engine built on the LLVM compiler infrastructure. It executes LLVM bitcode modules with support for symbolic values, so inputs can be treated as unknowns rather than fixed data. It also includes a POSIX/Linux emulation layer, aimed at uClibc, that can make parts of the operating system environment symbolic. Replay tools can run computed inputs on native programs, including setting up files, pipes, environment variables, and command-line arguments. The homepage licenses it under the UIUC open source license. The brew metadata lists executables kleaver, klee, klee-exec-tree, klee-replay, klee-stats, klee-zesti, ktest-gen, ktest-randgen, and ktest-tool, but I did not read docs for what each one does.",
+  "why_it_exists": "The homepage presents KLEE as a research and practical tool for symbolic execution, citing the OSDI 2008 paper as the reference for what it is and can do. The README gives no separate problem statement.",
+  "how_it_works": "The README says the core engine executes LLVM bitcode with symbolic values, and a separate POSIX/Linux emulation layer handles the operating system side. Computed inputs can be saved and replayed on native code. The fetched pages do not explain in detail how path exploration or constraint solving works.",
+  "commands_seen": [],
+  "install_notes": "The Getting Started page lists several routes: a web interface (KLEE Web) for running small examples in a browser, Docker images, a Snap Store package (Ubuntu, Fedora, Debian and others), Arch Linux and openSUSE Tumbleweed packages, Nix, a FreeBSD package (pkg install klee, or building the security/klee port), and Homebrew. For manual installs, the recommended route is building from source against LLVM 18, and the page also covers building other KLEE configurations and their dependencies. I did not fetch the build instructions themselves, so I have no details on dependencies or build steps.",
+  "standout": "It is a symbolic virtual machine that treats parts of the operating system environment as symbolic and can replay the generated inputs on native binaries, which goes beyond a pure bitcode analyzer. The project also has a browser-based KLEE Web demo, which lowers the barrier to first contact.",
+  "status": "Unknown from the pages I read. The homepage announces the 5th International KLEE Workshop for 16 October 2026 in Munich, the Getting Started page recommends LLVM 18, and the GitHub README shows a CI badge. I did not find a last release date or last commit date, so I cannot give a firm status.",
+  "caveats": "The GitHub README is thin and mostly points to the webpage. The fetched pages contain no command-line examples, so the commands_seen list is empty. The brew description says it finds inputs that drive programs down hidden paths. That matches the general idea of symbolic execution, but the fetched pages do not state it in those words. The engine works on LLVM bitcode, so it is not a direct tool for arbitrary binaries. The Getting Started page recommends building from source against LLVM 18 for manual installs, which suggests setup is nontrivial. The brew caveats field is empty.",
+  "quotes": [
+   "KLEE is a dynamic symbolic execution engine built on top of the LLVM compiler infrastructure, and available under the UIUC open source license.",
+   "KLEE is a symbolic virtual machine built on top of the LLVM compiler infrastructure.",
+   "Run small code examples in your browser with KLEE Web."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://klee-se.org"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/klee/klee"
+   },
+   {
+    "label": "Getting Started",
+    "url": "https://klee.github.io/getting-started/"
+   }
+  ],
+  "fetch_log": [
+   "https://klee-se.org: worked, returned homepage text with project description, workshop announcement, and links to getting-started, components, and publications sections",
+   "https://github.com/klee/klee: worked, returned README",
+   "https://klee.github.io/getting-started/: worked, returned Getting Started page with install routes and web interface link"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "KLEE uses symbolic execution to generate inputs that explore program paths\u2014a genuinely unusual way to investigate software, not generic plumbing."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "KLEE",
+  "tldr": "KLEE runs programs with unknown inputs instead of fixed ones, then works out concrete inputs that reach each path through the code.",
+  "deeper_look": "KLEE is a symbolic virtual machine built on the LLVM compiler infrastructure. It executes LLVM bitcode, but inputs can be marked as unknowns rather than fixed data. The homepage calls it \"a dynamic symbolic execution engine built on top of the LLVM compiler infrastructure.\" The brew description adds that it finds inputs that drive programs down hidden paths. That matches the general idea of symbolic execution, though the pages read for this entry do not put it in those words.\n\nIt also ships a POSIX/Linux emulation layer, aimed at uClibc, so parts of the operating system environment can be symbolic too. Files, command-line arguments and environment variables can all be treated as unknowns. Replay tools can then take the computed inputs and run them on native programs, setting up files, pipes, environment variables and arguments.\n\nThe idea underneath is a different way of thinking about testing. Instead of asking what a program does on this input, you ask what inputs make it do each of the things it can do. The homepage cites the OSDI 2008 paper as the reference for what KLEE is and can do. The project still holds an international workshop, with a fifth one announced for October 2026 in Munich.\n\nThe formula installs nine executables: kleaver, klee, klee-exec-tree, klee-replay, klee-stats, klee-zesti, ktest-gen, ktest-randgen and ktest-tool. The pages read for this entry do not explain what each one does.",
+  "install": "brew install klee\n# KLEE works on LLVM bitcode, so you also need a compiler that emits it, such as clang. The Getting Started page also lists Docker, Snap, Nix and other routes.",
+  "try_this": [
+   {
+    "cmd": "klee --help",
+    "what_happens": "Prints the options for the main engine, a first look at what can be tuned."
+   },
+   {
+    "cmd": "ktest-tool --help",
+    "what_happens": "Shows how to read the saved test-case files KLEE produces."
+   },
+   {
+    "cmd": "klee-replay --help",
+    "what_happens": "Shows how computed inputs can be replayed against a native program."
+   }
+  ],
+  "whats_unique": "Beyond analysing bitcode, it models parts of the operating system as symbolic and replays the generated inputs on native binaries. KLEE Web also lets you try small examples in a browser first.",
+  "caveats": "It works on LLVM bitcode, not arbitrary binaries, and the docs recommend building from source against LLVM 18, so setup may be fiddly; the brief found no command-line examples and no clear release status.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "symbolic-execution",
+   "llvm",
+   "testing",
+   "research"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://klee-se.org"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/klee/klee"
+   },
+   {
+    "label": "Getting Started",
+    "url": "https://klee.github.io/getting-started/"
+   }
+  ]
+ }
+}

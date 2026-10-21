@@ -1,0 +1,91 @@
+{
+ "name": "godap",
+ "desc": "Complete TUI (terminal user interface) for LDAP",
+ "homepage": "https://github.com/Macmod/godap",
+ "installs_365d": 394,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "tui",
+  "network",
+  "protocol",
+  "afternoon"
+ ],
+ "why": "A TUI for LDAP that opens a door into directory protocols most developers never touch.",
+ "brief": {
+  "what_it_is": "godap is a terminal user interface (TUI) for LDAP, written in Go. You point it at a directory server (usually an Active Directory domain controller), authenticate with a password, NT hash, Kerberos credential, or client certificate, and browse the directory as an expandable object tree. It takes a hostname or IP plus bind options and renders the directory interactively, with attribute formatting, colors, and emojis. It can also search, create, edit, move, and delete objects and attributes, inspect and edit DACLs and userAccountControl, edit ADIDNS records, view GPOs, and export subtrees or results to JSON.",
+  "why_it_exists": "The README calls it \"A complete terminal user interface (TUI) for LDAP.\" The author says it started as a side project and grew into a practical tool, and the main focus is Active Directory; for other LDAP servers the README suggests setting the --backend flag.",
+  "how_it_works": "It runs as a single binary that connects over LDAP, LDAPS, or StartTLS, optionally through a SOCKS4/4a/5 proxy. The explorer loads objects on demand, and entries are cached in memory while the program is open (-M/--cache, default true). Authentication goes through the RedTeamPentesting/adauth library; per the v2.12.0 release notes, the default -u/-p bind is NTLM via the Sicily path and --simple forces a simple bind. Kerberos supports CCACHE, password, NT hash, AES key, or PKINIT, and the SPN is derived from the target host.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/Macmod/godap",
+    "context": "Installation from source: clone the repository."
+   },
+   {
+    "cmd": "cd godap",
+    "context": "Installation from source: enter the cloned directory."
+   },
+   {
+    "cmd": "go install .",
+    "context": "Installation from source: builds and installs the godap binary with the Go toolchain."
+   },
+   {
+    "cmd": "godap <hostname or IP> -u <username> -p <password> -d <domain>",
+    "context": "Bind with username and password; NTLM by default, add --simple for a simple bind."
+   },
+   {
+    "cmd": "godap <hostname or IP> -u <username> -H <hash> [-d <domain>]",
+    "context": "Pass-the-hash bind using an NTLM hash."
+   },
+   {
+    "cmd": "KRB5CCNAME=ticket.ccache godap <hostname or IP> -k -d <domain>",
+    "context": "Kerberos bind using an existing CCACHE ticket, selected by the KRB5CCNAME environment variable."
+   },
+   {
+    "cmd": "godap <hostname or IP> --crt <cert.pem> --key <cert.key> -I",
+    "context": "Bind with a PEM certificate and private key; -I skips TLS verification."
+   },
+   {
+    "cmd": "godap <hostname or IP> --pfx <cert.pfx> -I",
+    "context": "Bind with a PKCS#12 certificate."
+   },
+   {
+    "cmd": "godap <hostname or IP> [bind flags] -S -I",
+    "context": "Use LDAPS for the initial connection, ignoring certificate validation."
+   },
+   {
+    "cmd": "godap <hostname or IP> -x schema://ip:port",
+    "context": "Connect through a SOCKS proxy; schema is socks4, socks4a, or socks5."
+   }
+  ],
+  "install_notes": "Installation is documented as git clone, cd godap, go install ., which requires a Go toolchain. Packages exist in Homebrew (maintained by harpchad), Alpine community, and the Arch AUR (godap-bin). Prebuilt release archives are published for several platforms on the GitHub Releases page. No account or hardware is required. Kerberos use needs a reachable KDC, and --kdc, --dns, and --dns-tcp can adjust resolution. Bind credentials can be read from --passfile or --hashfile, with - meaning stdin. Some operations, such as changing a password with Ctrl+p, require TLS.",
+  "standout": "It covers the whole Active Directory attack-and-audit surface in one terminal UI, including DACL and ACE editing, ADIDNS records, GPO viewing, deleted-object search, and interactive userAccountControl editing, instead of separate scripts. It also supports many authentication forms (password, NT hash, Kerberos CCACHE/password/hash/AES/PKINIT, PEM or PKCS#12 certificates with SChannel) and can switch them at runtime from a connection panel.",
+  "status": "maintained. The GitHub Releases page shows v2.12.2 marked Latest, dated 21 Aug (the asset timestamps read 2026-08-21), with v2.12.1 and v2.12.0 released in the days before it. The release notes are active and describe fixes and migrations. The README's contributing section says the author now has only limited time and is looking for help, so expect slower progress than the recent release cadence suggests.",
+  "caveats": "The README says the tool is highly experimental and was tested mainly on Windows Server 2019; the author disclaims responsibility for changes made to an environment. It is focused on Active Directory, and non-AD backends are only partly supported through --backend. Some features are basic: the ADIDNS editor is described as basic. Certificate binds without a trusted server certificate require -I. Several commands and actions need an authenticated, TLS-enabled session. The brew formula's caveats field was empty. The README itself does not describe a limitation specific to macOS or Windows. The project is MIT licensed.",
+  "quotes": [
+   "A complete terminal user interface (TUI) for LDAP.",
+   "godap started as a fun side project, but has become a really useful tool since then.",
+   "The main focus of this tool is Active Directory."
+  ],
+  "links": [
+   {
+    "label": "GitHub homepage and README",
+    "url": "https://github.com/Macmod/godap"
+   },
+   {
+    "label": "Releases (prebuilt binaries)",
+    "url": "https://github.com/Macmod/godap/releases"
+   },
+   {
+    "label": "Wiki (usage examples)",
+    "url": "https://github.com/Macmod/godap/wiki"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/Macmod/godap - fetched OK; README returned with features, install, usage, flags, keybindings, license.",
+   "https://github.com/Macmod/godap/releases - fetched OK; release list shows v2.12.2 (Latest) down to v2.10.6, with asset timestamps. Page chrome was noisy but the data was readable."
+  ]
+ }
+}

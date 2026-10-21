@@ -1,0 +1,145 @@
+{
+ "name": "inchi",
+ "desc": "IUPAC International Chemical Identifier",
+ "homepage": "https://www.inchi-trust.org/",
+ "installs_365d": 1664,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "science",
+  "library",
+  "afternoon",
+  "math"
+ ],
+ "why": "Turning molecules into canonical text strings is a real chemistry idea worth an afternoon, though the library itself is fairly plain.",
+ "brief": {
+  "what_it_is": "InChI is an open-source structure-based chemical identifier, developed by IUPAC and the InChI Trust. It takes a chemical structure, described by its atoms, bond connectivity, tautomeric, isotope, stereochemistry and charge information, and produces a textual InChI string with those information layers. The README also describes a hashed 27-character InChIKey derived from the InChI, intended for compact storage and search. The repository ships the inchi-1 command-line executable and a C library (libinchi) with the inchi_main demo program. The README's MOLfile and SDfile references suggest molecule files are a main input, but it does not spell out the full input and output workflow.",
+  "why_it_exists": "The README frames InChI as a standard identifier for chemical databases that facilitates information management across chemistry. It says the identifiers are strictly unique, non-proprietary and freely accessible, and that they enable linking chemistry on the web, advancing the FAIR data principles by improving findability and interoperability.",
+  "how_it_works": "The README describes InChI as layered: the connectivity layer comes first, then tautomeric, isotope, stereochemistry and charge information, each as a separate part of the string. The InChIKey is the hashed, fixed-length form of the InChI. Beta options such as EnhancedStereochemistry rewrite the stereo layers from MOLfile V3000 stereo collections (STEABS, STEREL, STERAC), and the README says those collections are ignored without that option. The README gives no further internal algorithm detail.",
+  "commands_seen": [
+   {
+    "cmd": "cmake -B cmake_build -S INCHI-1-SRC/INCHI_API/demos/inchi_main/src",
+    "context": "Configures the inchi_main API demo sub-project with default options, from the README's CMake examples."
+   },
+   {
+    "cmd": "cmake --build cmake_build",
+    "context": "Builds the configured inchi_main project in the cmake_build directory."
+   },
+   {
+    "cmd": "cmake -G \"Ninja\" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ ../INCHI-1-SRC/INCHI_EXE/inchi-1/src",
+    "context": "Configures the inchi-1 command-line build with the Ninja generator, Release build type and Clang compilers."
+   },
+   {
+    "cmd": "cmake --build .",
+    "context": "Builds from inside the build directory after the Ninja configure step."
+   },
+   {
+    "cmd": "./ldlp_fix.sh",
+    "context": "Temporary fix when libinchi.so is not found on Linux with a Make and Clang build; run from INCHI_API/bin/linux, or use source ldlp_fix.sh."
+   },
+   {
+    "cmd": "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/libinchi.so",
+    "context": "Alternative temporary fix that adds the directory containing libinchi.so to the library search path for the session."
+   },
+   {
+    "cmd": "./inchi_build_tool.sh",
+    "context": "Interactive build helper for Linux and macOS, run from the INCHI-1-SRC directory. The README elsewhere names this script cmake_build_tool.sh."
+   }
+  ],
+  "install_notes": "No account or runtime is needed to use the release binaries. The release archive release_artifacts.zip at github.com/IUPAC-InChI/InChI/releases/latest holds 64-bit builds for Windows, Linux and macOS, containing the inchi-1 executable and the libinchi library with inchi_main. To build from source you need CMake (interactive build tool or CLI), Microsoft Visual Studio projects on Windows, or a Make build with GCC or Clang/LLVM. On Linux and macOS, if libinchi.so or the dylib is not found at run time, set LD_LIBRARY_PATH (or DYLD_LIBRARY_PATH on macOS) as the README describes. Optional bounds-checking functions need a third-party C11 Annex K library, and oneTBB is optional.",
+  "standout": "The InChI string is designed to be canonical and strictly unique, and the README presents it as an open standard with fuzzing (OSS-Fuzz) and static analysis (Coverity) run continuously. The 27-character InChIKey is a compact hashed form of the same identity, which is what most databases use for lookup.",
+  "status": "Maintained. The GitHub README shows a 'Maintained? yes' badge, a CI build badge and a link to the release workflow, and the InChI Trust homepage lists news dated April, June and August 2026, including a planned July 2026 technical meeting. I did not check the release page, so the date of the latest release is unknown.",
+  "caveats": "Beta features (EnhancedStereochemistry, MolecularInorganics) produce strings that the README says are not stable across releases, so they should not be stored as persistent identifiers. Many experimental options (KET, 15T, PT_* tautomerism flags, Polymers105, InChI2Struct, InChI2InChI and others) are flagged as possibly not functioning and should be avoided. The 32-bit MSVC build has known issues with the AMI options. Pre-C99 C compiler support is being phased out from version 1.07.5. Intel icc is no longer supported. The README contradicts itself on the build helper's name (cmake_build_tool.sh versus inchi_build_tool.sh). The homepage itself contains no technical description, so the project's own text is the GitHub README.",
+  "quotes": [
+   "InChI is a structure-based textual identifier, strictly unique, non-proprietary, open source, and freely accessible.",
+   "With its fixed length of 27 characters the InChIKey \u2014 the hashed version of the InChI \u2014 allows for a compact representation and usage in databases or search engines.",
+   "InChI and InChIKey are open standards. They use unique machine readable strings to represent, store and search chemical structures."
+  ],
+  "links": [
+   {
+    "label": "InChI Trust homepage",
+    "url": "https://www.inchi-trust.org/"
+   },
+   {
+    "label": "GitHub repository (IUPAC-InChI/InChI)",
+    "url": "https://github.com/IUPAC-InChI/InChI"
+   },
+   {
+    "label": "Web demo",
+    "url": "https://iupac-inchi.github.io/InChI-Web-Demo/"
+   },
+   {
+    "label": "Generated source documentation",
+    "url": "https://iupac-inchi.github.io/InChI/docs/index.html"
+   },
+   {
+    "label": "Latest release binaries",
+    "url": "https://github.com/IUPAC-InChI/InChI/releases/latest"
+   }
+  ],
+  "fetch_log": [
+   "https://www.inchi-trust.org/ \u2014 worked, but returned marketing and news text with no technical description or README content.",
+   "https://github.com/IUPAC-InChI/InChI \u2014 worked, returned the full README, which was used as the main source.",
+   "No further fetches were made."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A canonical, layered encoding that turns molecular structure into interoperable text is a distinctive chemistry idea, not merely a plain library."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "InChI",
+  "tldr": "Turns a molecule's structure into a canonical text string and a 27-character hash, so chemical structures can be searched and compared like words.",
+  "deeper_look": "InChI is the IUPAC International Chemical Identifier. It takes a chemical structure, described by atoms, bond connectivity, tautomers, isotopes, stereochemistry and charge, and produces a text string that names that structure. The same molecule should always give the same string, whichever program drew it.\n\nThe string is built in layers. The connectivity layer comes first, then separate parts for tautomeric, isotope, stereochemistry and charge information. Each layer adds detail, so two records can match on the basic skeleton and differ only in, say, stereochemistry. The README also describes the InChIKey, a hashed, fixed-length form of the InChI, which is what databases and search engines use for lookup.\n\nThe project exists because chemistry data needs a shared, non-proprietary way to say \"this is the same compound.\" The README calls InChI \"strictly unique, non-proprietary, open source, and freely accessible\" and ties it to linking chemistry on the web and to the FAIR data principles. The idea underneath is canonicalization: reducing a graph of atoms to one agreed-upon string, which is a doorway into graph theory and cheminformatics.\n\nThe package ships the `inchi-1` command-line program and `libinchi`, a C library with an `inchi_main` demo. The README points to MOLfile and SDfile as the main inputs, but it does not spell out the full input and output workflow, so expect to read the docs.",
+  "install": "brew install inchi\n# No account or runtime needed. Release binaries and source builds are also available from the GitHub releases page.",
+  "try_this": [
+   {
+    "cmd": "inchi-1 --help",
+    "what_happens": "Prints the command-line options, the quickest way to see what input and output the tool supports."
+   },
+   {
+    "cmd": "inchi_main --help",
+    "what_happens": "Runs the demo program that ships with the C library; the brief does not confirm its options, so this may only show usage."
+   }
+  ],
+  "whats_unique": "It is an open standard rather than one program's private format, and the README says fuzzing (OSS-Fuzz) and static analysis (Coverity) run continuously. The 27-character InChIKey gives every structure a short, searchable fingerprint.",
+  "caveats": "Beta features such as EnhancedStereochemistry and MolecularInorganics produce strings that are not stable across releases, so do not store them as persistent identifiers.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "chemistry",
+   "science",
+   "identifiers",
+   "cheminformatics",
+   "c-library"
+  ],
+  "links": [
+   {
+    "label": "InChI Trust homepage",
+    "url": "https://www.inchi-trust.org/"
+   },
+   {
+    "label": "GitHub repository (IUPAC-InChI/InChI)",
+    "url": "https://github.com/IUPAC-InChI/InChI"
+   },
+   {
+    "label": "Web demo",
+    "url": "https://iupac-inchi.github.io/InChI-Web-Demo/"
+   },
+   {
+    "label": "Generated source documentation",
+    "url": "https://iupac-inchi.github.io/InChI/docs/index.html"
+   },
+   {
+    "label": "Latest release binaries",
+    "url": "https://github.com/IUPAC-InChI/InChI/releases/latest"
+   }
+  ]
+ }
+}

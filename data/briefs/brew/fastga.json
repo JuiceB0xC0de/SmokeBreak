@@ -1,0 +1,98 @@
+{
+ "name": "fastga",
+ "desc": "Pairwise whole genome aligner",
+ "homepage": "https://github.com/thegenemyers/FASTGA",
+ "installs_365d": 149,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science"
+ ],
+ "why": "Pairwise whole genome aligner from a respected bioinformatics group; real science you can run on your own genomes.",
+ "brief": {
+  "what_it_is": "FastGA is a command-line pairwise whole-genome aligner from Gene Myers and Chenxi Zhou. Given two genome assemblies as FASTA (or gzipped FASTA, or ONEcode sequence files), it finds all local DNA alignments between them and by default streams them to stdout in PAF format. It can also write PSL or its own binary .1aln format, and the package includes utilities to convert, inspect, plot, and filter those alignments and to manage the intermediate genome databases and indexes.",
+  "why_it_exists": "The README frames it as a fast way to find all local alignments (over 100bp at 70% or more similarity) between two high-quality, nearly complete genomes, with compact storage of the results. It assumes assemblies of at most several thousand contigs at Q40 or better.",
+  "how_it_works": "FastGA converts each FASTA into a genome database (.1gdb plus a hidden 2-bit sequence file) and builds a truncated suffix-array-like genome index (.gix) for each genome, then compares the two indexes directly. It finds 'adaptamer' seeds, chains them within diagonal bands, and runs a wave-based local aligner (from daligner) on the chains. Alignments are stored as trace-point encodings in a .1aln file, which ALNtoPAF or ALNtoPSL later expand into PAF or PSL on demand.",
+  "commands_seen": [
+   {
+    "cmd": "FastGA A B",
+    "context": "Basic comparison of two genomes (FASTA, gzipped FASTA, or ONEcode sequence); PAF goes to stdout by default, using 8 threads."
+   },
+   {
+    "cmd": "FastGA -v Asm1 -T16 Asm2 -psl",
+    "context": "README example: verbose mode, 16 threads, and PSL output. The README notes that optional arguments may be placed anywhere, so -psl can be appended to a command already typed."
+   },
+   {
+    "cmd": "FastGA A",
+    "context": "Single-source mode: compares A against itself, skipping self-matches, for repeat detection or finding homologous regions between haplotypes."
+   },
+   {
+    "cmd": "FastGA A #mask1.1ano #mask2 B #",
+    "context": "Soft-masks A with the union of two .1ano interval files and masks B with its implicit upper/lower-case mask, per the README's masking example."
+   },
+   {
+    "cmd": "FAtoGDB A.fa",
+    "context": "Converts a FASTA into a genome database A.1gdb in the same directory. The README recommends replacing FASTA files with GDBs, since GDBtoFA can reproduce the FASTA exactly."
+   },
+   {
+    "cmd": "FAtoGDB PATH/A.fna .",
+    "context": "Builds A.1gdb in the current directory from a FASTA in another path, per the README's example."
+   },
+   {
+    "cmd": "FAtoGDB PATH/A.fa.gz BLUE/AG.gdb",
+    "context": "Builds AG.1gdb in the existing directory BLUE from a gzipped FASTA, per the README's example."
+   },
+   {
+    "cmd": "GIXmake [-v] [-L:<log:path>] [-T<int(8)>] [-P<dir($TMPDIR>] [-k<int(40)>] <source:path>[.1gdb|<extn>] (#[<mask>[.1ano]])*",
+    "context": "Usage line from the README for building a genome index (.gix) from a GDB or FASTA. The default k-mer size is 40, and the -T option sets threads."
+   },
+   {
+    "cmd": "ALNtoPAF [-mxsS] [-T<int(8)>] <alignment:path>[.1aln]",
+    "context": "Usage line from the README for converting a .1aln file to PAF on stdout. Requires the source GDBs to remain at the paths recorded in the .1aln."
+   },
+   {
+    "cmd": "ALNtoPSL [-T<int(8)>] <alignments:path>[.1aln]",
+    "context": "Usage line from the README for converting a .1aln file to PSL on stdout."
+   },
+   {
+    "cmd": "GDBstat [-h[<ctg:int>,<scaf:int>]] [-hlog] <source:path[.1gdb]",
+    "context": "Usage line from the README for summary statistics and histograms of a GDB's scaffolds, contigs, and gaps."
+   }
+  ],
+  "install_notes": "Installs through Bioconda with pixi (pixi global install fastga), conda (conda install fastga or conda create -n envname fastga), or micromamba, after the conda-forge and bioconda channels are set up. A Docker/Podman container is available from quay.io/biocontainers/fastga. The Bioconda page lists Linux (x86_64 and aarch64) and macOS (x86_64 needs 11.0 or later, plus osx-arm64) builds, with dependencies on zlib. The README also describes building from source with a Makefile, and notes that for the ONEalnTEST build several modules (GDB, ONElib, alncode, align, gene_core) must be compiled in. No accounts or API keys are mentioned. Disk space matters: GIX indexes occupy about 13-14 GB per gigabase, so the README recommends building them only when needed and removing them afterwards with GIXrm.",
+  "standout": "The alignment output is a compact trace-point encoding (the README's example: 635,000+ local alignments in 44.5 MB) that can be expanded to PAF or PSL later, and the tool compares two genome indexes directly instead of querying one genome's index with the other's sequences. The seed method is credited to Martin Frith's adaptamer idea, and the README reports about 5 minutes wall clock for two 2 Gbp bat genomes on 8 cores.",
+  "status": "Maintained, as far as the sources show. The README header gives a last update of December 30, 2025, with version 1.5 adding ANO annotation files and version 1.4 adding a C library for reading .1aln files. The Bioconda page lists versions 1.5-0, 1.5-1, and 1.5.20260729-0. I did not check the GitHub commit history or release tags directly.",
+  "caveats": "Index size is large: about 14 GB of GIX per gigabase of genome. The PSL output is almost 15 times the size of the .1aln file, and the -m, -x, -s, and -S options slow ALNtoPAF by about 10 times and enlarge output by almost 100 times. Alignments depend on source paths recorded in the .1aln file, so moving GDBs breaks ALNtoPAF unless ALNreset is run. The README says FastGA's results are asymmetric: FastGA A B does not give the same alignments as FastGA B A unless the -S option is used. It is designed for near-complete, high-quality assemblies, and the authors say sensitivity for distant genomes and satellite repeats still needs work. The README reports a BSD-like license, which I got from the Bioconda recipe page, not from a LICENSE file I read. The scout note's claim that the group is 'respected' is an opinion I did not verify. I did not see a docs site beyond the README.",
+  "quotes": [
+   "FastGA searches for all local DNA alignments between two high quality genomes.",
+   "Using FastGA can be as simple as calling it with two FASTA files containing genome assemblies where each entry is a scaffold with runs of N's separating and potentially giving the estimated distance between the contigs thereof.",
+   "Note carefully, that one has the option to keep the results in the very disk efficient ALN format, and then convert it to any of PAF, PSL, or other desired alignment format on demand.",
+   "Beware, the -m, -x, -s and -S options increase the time taken by ALNtoPAF by a factor of 10 and the file size by a factor of almost 100 !"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/thegenemyers/FASTGA"
+   },
+   {
+    "label": "Bioconda recipe page (install and versions)",
+    "url": "https://bioconda.github.io/recipes/fastga/README.html"
+   },
+   {
+    "label": "ONEcode data encoding framework (underlying file format)",
+    "url": "https://github.com/thegenemyers/ONEcode"
+   },
+   {
+    "label": "DALIGNER (the original aligner whose wave-based local alignment FastGA builds on)",
+    "url": "https://github.com/thegenemyers/DALIGNER"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/thegenemyers/FASTGA: worked, README returned (version 1.5 header, overview, FastGA and subprocess reference sections; long output truncated in the tool result)",
+   "https://bioconda.github.io/recipes/fastga/README.html: worked, Bioconda recipe page with installation instructions and version list (page text partly boilerplate)"
+  ]
+ }
+}

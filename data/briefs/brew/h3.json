@@ -1,0 +1,91 @@
+{
+ "name": "h3",
+ "desc": "Hexagonal hierarchical geospatial indexing system",
+ "homepage": "https://uber.github.io/h3/",
+ "installs_365d": 671,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "math",
+  "science",
+  "library",
+  "quick"
+ ],
+ "why": "Uber's hexagonal geospatial index; a clever tiling system you can poke at for geometry and mapping.",
+ "brief": {
+  "what_it_is": "H3 is an open-source C library, developed at Uber, that indexes latitude/longitude points into a hexagonal grid. You give it a coordinate and a resolution from 0 to 15, and it returns a cell ID, a 64-bit index shown as a hex string. Given a cell ID, it can return the cell's hexagon boundary vertices or its center coordinate. The homepage describes it as a discrete global grid system, and the README says it is a hexagonal grid that can be approximately subdivided into finer hexagonal grids.",
+  "why_it_exists": "The homepage says H3 exists so that data can be joined across disparate datasets and aggregated at different levels of precision, and that the grid enables algorithms such as nearest neighbors, shortest path, and gradient smoothing. The README frames it as combining the benefits of a hexagonal grid with the hierarchical subdivisions of Google's S2 library.",
+  "how_it_works": "Each point is mapped to a cell at a chosen resolution, and each cell ID encodes its place in the hierarchy. The README says the hexagons can be approximately subdivided into finer hexagons, so cells nest across resolutions, though not perfectly. The command-line tools wrap the C API: latLngToCell takes coordinates and a resolution, and cellToBoundary and cellToLatLng take a cell index. The README does not explain the underlying projection or the indexing math beyond this.",
+  "commands_seen": [
+   {
+    "cmd": "brew install h3",
+    "context": "The README's install command on macOS, the only package-manager line it gives."
+   },
+   {
+    "cmd": "cmake -DCMAKE_BUILD_TYPE=Release ..",
+    "context": "Configures a release build from inside a build directory, which the README says keeps all artifacts out of the source tree."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles H3 after cmake has configured the build; the README says all subsequent make commands run from the build directory."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs H3 system-wide after a build."
+   },
+   {
+    "cmd": "make test",
+    "context": "Runs the full test suite after building. The README also lists make test-fast, which skips the most expensive tests."
+   },
+   {
+    "cmd": "make kml",
+    "context": "Builds KML files that visualize the hexagon grid; the files are placed in a KML directory."
+   },
+   {
+    "cmd": "./bin/latLngToCell --resolution 10 --latitude 40.689167 --longitude -74.044444",
+    "context": "Returns the H3 index for the Statue of Liberty at resolution 10. The README says the output should look like 8a2a1072b59ffff."
+   },
+   {
+    "cmd": "./bin/cellToBoundary --index 8a2a1072b59ffff",
+    "context": "Prints the six boundary vertices of that hexagon as latitude/longitude pairs."
+   },
+   {
+    "cmd": "./bin/cellToLatLng --index 8a2a1072b59ffff",
+    "context": "Prints the center coordinate of that hexagon, around 40.689 and -74.044 in the README's example."
+   },
+   {
+    "cmd": "cc -lh3 examples/index.c -o example",
+    "context": "Compiles the README's C example against the installed H3 library."
+   }
+  ],
+  "install_notes": "On macOS, brew install h3 is the recommended route. The README says prebuilt bindings are preferred for other languages (Java, JavaScript, Python, and others), and that building from source needs a C compiler (gcc or clang tested), CMake, and Make. Windows builds need Visual Studio and CMake, following a separate build guide in the dev-docs folder. Installed binaries live under bin/ in the build tree, and the README's example commands use that path. Installing with make install puts them on the system path. No accounts or API keys are mentioned.",
+  "standout": "It is a hexagonal grid with a hierarchy, which is unusual because hexagons do not tile neatly across scales, and H3 accepts that the subdivision is only approximate. It also ships a small set of command-line tools that let you poke at cells straight from a shell.",
+  "status": "The README shows active CI badges for Linux, macOS, Windows, and the website, plus a coverage badge, and it links to a documentation site and a StackOverflow tag. I did not see a release date or last-commit date in what I fetched, so recent activity is not confirmed. Overall it looks maintained, but that is an inference from the badges and docs, not a dated fact.",
+  "caveats": "The README says nothing about Windows-only command-line tools, so the bin/ examples assume a Unix-like build. Building from source needs CMake and a C compiler, and contributors also need clang-format. Coverage reports need lcov and a Debug build with ENABLE_COVERAGE=ON. The brew metadata lists executables such as cellToBoundaryHier, cellToLatLngHier, cellToLocalIj, gridDisk, gridDiskUnsafe, h3ToComponents, h3ToHier, and localIjToCell, but the README does not show or explain them, so I did not verify them. The homepage is thin and mostly marketing copy. The repo includes DGGRID code credited to Southern Oregon University under the Apache 2.0 license. Contributions require signing Uber's CLA.",
+  "quotes": [
+   "H3 is a geospatial indexing system using a hexagonal grid that can be (approximately) subdivided into finer and finer hexagonal grids, combining the benefits of a hexagonal grid with S2's hierarchical subdivisions.",
+   "Coordinates can be indexed to cell IDs that each represent a unique cell.",
+   "10 is the H3 resolution, between 0 (coarsest) and 15 (finest)."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://uber.github.io/h3/"
+   },
+   {
+    "label": "Documentation site",
+    "url": "https://h3geo.org/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/uber/h3"
+   }
+  ],
+  "fetch_log": [
+   "https://uber.github.io/h3/ - worked, but thin: short marketing copy with no install or usage detail",
+   "https://github.com/uber/h3 - worked, returned the README with build, usage, and license sections; I did not follow the linked documentation site"
+  ]
+ }
+}

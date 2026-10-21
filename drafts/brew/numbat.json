@@ -1,0 +1,150 @@
+{
+ "name": "numbat",
+ "desc": "Statically typed programming language for scientific computations",
+ "homepage": "https://numbat.dev/",
+ "installs_365d": 1469,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language",
+  "math",
+  "science"
+ ],
+ "why": "A statically typed language with unit-checked scientific computation, a genuinely useful door into dimensional analysis as a type system.",
+ "brief": {
+  "what_it_is": "Numbat is a statically typed programming language and interactive calculator for scientific work, with physical dimensions and units built into its type system. You type expressions or small programs, and it checks that the units make sense, converts between compatible units with the -> operator, and prints the result. Running numbat with no arguments opens a REPL with history, Ctrl-R search and tab completion. The homepage describes it as a high precision scientific calculator with full support for physical units. The homepage itself is a JavaScript and WebAssembly shell, so the description here comes mainly from the GitHub README.",
+  "why_it_exists": "The README frames it as a language for scientific computations with first class support for physical dimensions and units, designed for quick one-off calculations. It explicitly positions itself as a calculator rather than a computer algebra system.",
+  "how_it_works": "Physical dimensions such as Length and Time act as static types, so annotated functions and constants are checked at compile time, and unannotated ones are inferred. The whole unit and dimension system lives in a standard library written in the Numbat language itself, so a single line such as unit bathtub = 150 L adds a new unit. Users can add their own definitions through an init.nbt file, or replace the prelude module entirely.",
+  "commands_seen": [
+   {
+    "cmd": "cargo run -- <numbat args>",
+    "context": "Development: runs the Numbat CLI from a source checkout, passing arguments through."
+   },
+   {
+    "cmd": "cargo install -f --path numbat-cli",
+    "context": "Development: installs the CLI from a local clone of the repository."
+   },
+   {
+    "cmd": "cargo test",
+    "context": "Development: runs the test suite."
+   },
+   {
+    "cmd": "30 km/h -> mph",
+    "context": "Numbat code from the README: converts a speed to miles per hour using the -> operator."
+   },
+   {
+    "cmd": "15 km/h * 30 min = 7.5 km",
+    "context": "Numbat code from the README: the unit expression is simplified automatically, so the result comes out in km."
+   },
+   {
+    "cmd": "unit pixel",
+    "context": "Numbat code from the README: introduces a new unit on the spot."
+   },
+   {
+    "cmd": "unit bathtub = 150 L",
+    "context": "Numbat code from the README: a one-line definition of a new unit, as used in an init.nbt file."
+   },
+   {
+    "cmd": "assert_eq(12 ft, 1 in)",
+    "context": "Numbat code from the README: asserts exact equality of two lengths in different units."
+   },
+   {
+    "cmd": "assert_eq(c, 300_000 km/s, 1% \u00d7 c)",
+    "context": "Numbat code from the README: asserts approximate equality within a tolerance of one percent of c."
+   }
+  ],
+  "install_notes": "Installation is documented at numbat.dev/docs/cli/installation/, which I did not fetch, so I cannot confirm beyond the brew formula. The README points to that page for native CLI installs. Building from source needs a Rust toolchain (cargo). Customisation uses an init.nbt file in the user config directory. Standard module paths vary by operating system, and the README says a symlink from ~/.config/numbat/modules to the repository's numbat/modules folder works for prelude development. Nothing in the README suggests accounts, hardware or a runtime beyond that.",
+  "standout": "Units are first-class values, not strings: you can enter them many ways (km/h, kilometer/hour, m^2, m\u00b2), define new ones inline, and convert between compatible ones with ->. Because the standard library is itself written in Numbat, the unit system is ordinary editable code, and the static dimension checks happen before any calculation runs. That makes it a practical entry point into dimensional analysis as a type system.",
+  "status": "Unknown from what I read. The README names David Peter (sharkdp) as maintainer and shows a CI badge for the main branch, and it links to a Discord server and GitHub discussions. I did not see a release date or last-commit date, and did not fetch the releases page, so I cannot say whether it is actively maintained now.",
+  "caveats": "Numbat is not a computer algebra system: it does not solve differential equations or compute integrals, and the README points users to WolframAlpha for that. It has no graphical interface with buttons. The README says unit coverage is large but not exhaustive, and suggests GNU units for more. The parser is deliberately strict, so malformed input is rejected with an error rather than guessed at. The README does not state a license, so check the repository before reusing code. The homepage needs JavaScript and WebAssembly to show anything.",
+  "quotes": [
+   "high precision scientific calculator with full support for physical units.",
+   "Numbat is a statically typed programming language for scientific computations with first class support for physical dimensions and units.",
+   "Numbat's parser never tries to be \"smart\" on syntactically incorrect input.",
+   "Numbat is a scientific calculator. It's not a computer algebra system that solves differential equations or computes intergrals."
+  ],
+  "links": [
+   {
+    "label": "Homepage and web version",
+    "url": "https://numbat.dev/"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://numbat.dev/docs/"
+   },
+   {
+    "label": "Installation",
+    "url": "https://numbat.dev/docs/cli/installation/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/sharkdp/numbat"
+   }
+  ],
+  "fetch_log": [
+   "https://numbat.dev/ - worked, but returned only a JavaScript and WebAssembly shell with the title and tagline; no feature detail",
+   "https://github.com/sharkdp/numbat - worked, returned the README, which contains the feature descriptions and development notes; linked docs pages were not fetched"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Its editable, unit-aware language turns dimensional analysis into static type checking, making a familiar calculator task a hands-on introduction to a surprisingly powerful idea."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Numbat",
+  "tldr": "A scientific calculator and statically typed language where physical units are part of the type system, so 15 km/h * 30 min comes out as 7.5 km.",
+  "deeper_look": "Numbat is an interactive calculator and small programming language for scientific work. You type expressions, it checks that the units make sense, and it prints the answer. The `->` operator converts between compatible units, so `30 km/h -> mph` does what it looks like. Run with no arguments, it opens a REPL with history, Ctrl-R search and tab completion.\n\nThe idea underneath is dimensional analysis as a type system. Dimensions such as Length and Time act as static types. Annotated functions and constants are checked before anything is calculated, and unannotated ones are inferred. Adding a length to a time is an error, not a number.\n\nThe unit system is not hardcoded. The standard library is written in Numbat itself, so a single line such as `unit bathtub = 150 L` defines a new unit. You can put your own definitions in an `init.nbt` file, or replace the prelude module entirely. Units can be entered many ways: `km/h`, `kilometer/hour`, `m^2`, `m\u00b2`.\n\nIt describes itself as a calculator, not a computer algebra system. It does not solve differential equations or compute integrals. The parser is also strict: in the README's words, it \"never tries to be 'smart' on syntactically incorrect input.\"",
+  "install": "brew install numbat",
+  "try_this": [
+   {
+    "cmd": "numbat",
+    "what_happens": "Opens the interactive REPL, where you can type expressions like `30 km/h -> mph` and get a unit-converted answer."
+   },
+   {
+    "cmd": "unit bathtub = 150 L",
+    "what_happens": "Defines a new unit on one line, which you can then use in later expressions and conversions."
+   },
+   {
+    "cmd": "numbat --help",
+    "what_happens": "Lists the command-line options of the CLI."
+   }
+  ],
+  "whats_unique": "Units are first-class typed values rather than strings, and the unit system is ordinary editable code in a standard library written in Numbat. That makes it a practical way to see dimensional analysis as type checking.",
+  "caveats": "It is a calculator rather than a computer algebra system, unit coverage is large but not exhaustive, and the brief could not confirm how actively it is maintained.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "language",
+   "math",
+   "science",
+   "units",
+   "calculator",
+   "repl"
+  ],
+  "links": [
+   {
+    "label": "Homepage and web version",
+    "url": "https://numbat.dev/"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://numbat.dev/docs/"
+   },
+   {
+    "label": "Installation",
+    "url": "https://numbat.dev/docs/cli/installation/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/sharkdp/numbat"
+   }
+  ]
+ }
+}

@@ -1,0 +1,144 @@
+{
+ "name": "damask-grid",
+ "desc": "Grid solver of DAMASK - Multi-physics crystal plasticity simulation package",
+ "homepage": "https://damask-multiphysics.org",
+ "installs_365d": 283,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "days-off",
+  "science",
+  "simulation"
+ ],
+ "why": "A real crystal plasticity solver you can run at home, a genuine materials-science simulation rabbit hole.",
+ "brief": {
+  "what_it_is": "DAMASK (the D\u00fcsseldorf Advanced Material Simulation Kit) is a multiphysics crystal plasticity simulation package. The grid solver, which is the part this formula installs as damask_grid and DAMASK_grid, takes a geometry file (a .vti grain structure on a regular grid), a load case YAML file, and a material YAML file, then runs a spectral (FFT) solve. Its output is an HDF5-based result file (DADF5). The wider package also includes a Python library for pre- and post-processing, a mesh solver that is still under development, and an integration into the commercial MSC Marc FEM code.",
+  "why_it_exists": "The homepage argues that treating mechanics in isolation is no longer sufficient for emergent advanced high-strength materials, where deformation interacts with displacive phase transformation, significant heating, and potential damage evolution. DAMASK is meant to handle these coupled multiphysics problems using crystal plasticity with a modular approach where additional field equations are solved in a fully coupled way using a staggered approach.",
+  "how_it_works": "The grid solver is set up with a Geometry file and a Load Case file, plus a materialpoint configuration in YAML that defines constitutive models and homogenization. The docs describe it as a spectral (FFT) solver on a regular grid with mixed periodic boundary conditions, as opposed to the FEM-based mesh solver and MSC Marc. Parallelism is via OpenMP threads (OMP_NUM_THREADS) and/or MPI, where MPI decomposes the domain along the z-axis into layers of roughly equal height.",
+  "commands_seen": [
+   {
+    "cmd": "damask_grid --load {load}.yaml --geom {grid}.vti --material {material}.yaml",
+    "context": "Basic grid solver invocation from the usage docs; the three flags --load, --geom and --material are all mandatory. Curly brackets are placeholders for file names."
+   },
+   {
+    "cmd": "OMP_NUM_THREADS={n_threads}",
+    "context": "Environment variable set before running damask_grid to control the number of OpenMP threads."
+   },
+   {
+    "cmd": "mpiexec -n {n_proc} damask_grid --load {load}.yaml --geom {grid}.vti --material {material}.yaml",
+    "context": "Runs the grid solver over n_proc MPI processes, decomposing the domain along the z-axis; MPI and OpenMP can be combined."
+   },
+   {
+    "cmd": "--numerics {numerics}.yaml (short: -n)",
+    "context": "Optional flag listed in the docs (shown as a flag, not a full command) to configure the numerics algorithms."
+   },
+   {
+    "cmd": "--jobname {jobname} (short: -j)",
+    "context": "Optional flag setting the job name, which becomes the DADF5 result file name; default is {grid}_{load}_{material}."
+   },
+   {
+    "cmd": "--workingdirectoy {directory} (short: -w)",
+    "context": "Optional flag for the working directory; the docs spell the flag this way, with the typo included."
+   },
+   {
+    "cmd": "--restart N (short: -r)",
+    "context": "Restarts the simulation at increment N from a snapshot file in the working directory."
+   },
+   {
+    "cmd": "--help (short: -h)",
+    "context": "Reports the solver version and usage instructions."
+   }
+  ],
+  "install_notes": "Beyond brew install, the docs point to curated downloads: a complete grid simulation setup as grid.tar.xz, curated materialpoint configurations as config.tar.xz, and a mesh setup as mesh.tar.xz. The usage docs also mention a DAMASK Python library (import damask) for pre- and post-processing, and the Jupyter notebook tutorials. I did not see explicit pip or Python install steps, a license file, or any hardware requirements in the pages I read. The MSC Marc route needs a commercial MSC Marc licence and a Mentat setup with a DAMASK_Marc.f90 subroutine; I did not need that route for the grid solver.",
+  "standout": "It is a free, open-source spectral FFT crystal plasticity solver with a documented Python toolchain (texture generation, Voronoi polycrystals, load case generation, IPF plots, r-value calculation) and an academic citation with a DOI, which is unusual for a materials simulation code you can install with one formula. Results are stored in HDF5 with a ParaView integration, and the project asks users who make ParaView plots to overlay its logo.",
+  "status": "unknown. The homepage and docs look current and the GitHub mirror exists with issues and discussions enabled, but I did not find a release date or last commit date in the pages I fetched. The citation DOI points to a 2018 paper. Development happens on a private GitLab instance that requires registration, and GitHub is a read-only mirror.",
+  "caveats": "The development repo is private (registration required); GitHub is a read-only mirror, so outside contributions go through issues and discussions. The mesh solver is explicitly under development and the docs warn it lacks features and has convergence issues. The MSC Marc integration is commercial and fiddly (material IDs are zero-based, state variable 2 links to material.yaml, and DAMASK does not check thermal consistency with material.yaml). Marc restarts only support last converged increment. The formula installs only the grid solver executables. I did not fetch the license page, so the free and open source claim rests on the homepage feature list.",
+  "quotes": [
+   "DAMASK is a unified multiphysics crystal plasticity simulation package.",
+   "treating mechanics in isolation is no longer sufficient to study emergent advanced high-strength materials.",
+   "Warning: The mesh solver is under development. It lacks features and has convergence issues."
+  ],
+  "links": [
+   {
+    "label": "DAMASK homepage",
+    "url": "https://damask-multiphysics.org"
+   },
+   {
+    "label": "Usage and grid solver docs",
+    "url": "https://damask-multiphysics.org/documentation/usage.html"
+   },
+   {
+    "label": "GitHub read-only mirror",
+    "url": "https://github.com/damask-multiphysics/DAMASK"
+   },
+   {
+    "label": "Citation DOI",
+    "url": "https://doi.org/10.1016/j.commatsci.2018.04.030"
+   }
+  ],
+  "fetch_log": [
+   "https://damask-multiphysics.org (worked; homepage with feature list, how-to links and citation info, but no install commands)",
+   "https://damask-multiphysics.org/documentation/usage.html (worked; grid solver usage, flags and parallelization)",
+   "https://github.com/damask-multiphysics/DAMASK (worked; README with repository locations and contact info)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A specialized spectral solver that simulates coupled crystal-plasticity physics opens a genuinely unusual materials-science rabbit hole, not just another generic command-line tool."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "DAMASK grid solver",
+  "tldr": "A spectral FFT solver that simulates how polycrystalline metal deforms, grain by grain, from a voxel microstructure and a load case.",
+  "deeper_look": "DAMASK, the D\u00fcsseldorf Advanced Material Simulation Kit, is a crystal plasticity package. This formula installs its grid solver. You give it three files: a .vti geometry describing a grain structure on a regular grid, a load case in YAML, and a material YAML that defines the constitutive models and homogenization. It runs a spectral solve using FFTs with mixed periodic boundary conditions and writes an HDF5-based result file, called DADF5.\n\nThe project's argument is that \"treating mechanics in isolation is no longer sufficient to study emergent advanced high-strength materials.\" Deformation can interact with phase transformation, heating and damage. DAMASK takes a modular approach: further field equations are solved fully coupled, using a staggered scheme, alongside the crystal plasticity.\n\nThe solver runs in parallel with OpenMP threads, MPI, or both. MPI splits the domain along the z-axis into layers of roughly equal height. The wider project also has a Python library for pre- and post-processing (texture generation, Voronoi polycrystals, load case generation, IPF plots), plus ParaView integration for looking at results. The formula installs only the solver, not those parts.\n\nThe door here is micromechanics: how a metal's bulk behaviour emerges from many small crystals, each with its own orientation and slip systems. The solver is the small part. The material models are the larger subject.",
+  "install": "brew install damask-grid\n\nNeeds no special hardware, but the dependency list is long (PETSc, HDF5 with MPI, Open MPI, gcc), so expect a sizeable install. You also need your own geometry, load case and material files. The project offers curated example setups as grid.tar.xz and config.tar.xz downloads.",
+  "try_this": [
+   {
+    "cmd": "damask_grid --help",
+    "what_happens": "Prints the solver version and usage instructions."
+   },
+   {
+    "cmd": "damask_grid --load {load}.yaml --geom {grid}.vti --material {material}.yaml",
+    "what_happens": "Runs a simulation. All three flags are mandatory, and the curly brackets are placeholders for your file names. Results land in a DADF5 file named after the inputs."
+   },
+   {
+    "cmd": "mpiexec -n {n_proc} damask_grid --load {load}.yaml --geom {grid}.vti --material {material}.yaml",
+    "what_happens": "Runs the same solve across n_proc MPI processes, splitting the domain along the z-axis."
+   }
+  ],
+  "whats_unique": "It is a documented, citable (DOI) spectral crystal plasticity code that installs with one formula, with a Python toolchain around it. That is unusual for research-grade materials simulation.",
+  "caveats": "You must supply or download input files before anything runs. Development happens on a private GitLab instance, GitHub is a read-only mirror, and the brief found no release or last-commit date.",
+  "commitment": "days-off",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "days-off",
+   "science",
+   "simulation",
+   "materials",
+   "crystal-plasticity",
+   "mpi"
+  ],
+  "links": [
+   {
+    "label": "DAMASK homepage",
+    "url": "https://damask-multiphysics.org"
+   },
+   {
+    "label": "Usage and grid solver docs",
+    "url": "https://damask-multiphysics.org/documentation/usage.html"
+   },
+   {
+    "label": "GitHub read-only mirror",
+    "url": "https://github.com/damask-multiphysics/DAMASK"
+   },
+   {
+    "label": "Citation DOI",
+    "url": "https://doi.org/10.1016/j.commatsci.2018.04.030"
+   }
+  ]
+ }
+}

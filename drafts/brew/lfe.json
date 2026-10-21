@@ -1,0 +1,144 @@
+{
+ "name": "lfe",
+ "desc": "Concurrent Lisp for the Erlang VM",
+ "homepage": "https://lfe.io/",
+ "installs_365d": 111,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "library",
+  "afternoon"
+ ],
+ "why": "A Lisp dialect running on the Erlang VM, a genuinely unusual pairing worth an afternoon of exploring.",
+ "brief": {
+  "what_it_is": "LFE (Lisp Flavoured Erlang) is a Lisp-syntax front-end to the Erlang compiler, so LFE code runs on the BEAM virtual machine. You give it LFE source, either typed into its REPL, saved as a script, or compiled as a module, and it produces ordinary Erlang-compatible code that can call and be called by normal Erlang modules. It includes a REPL and evaluator for interactive work, plus lfescript for one-off scripts. Its data types are Erlang's: lists, tuples, maps, atoms, and binaries, with strings being lists of integers.",
+  "why_it_exists": "The homepage tagline is \"Taking the syntax out of distributed systems programming\", and the README says LFE is a lisp syntax front-end to the Erlang compiler, so the idea is to give Erlang/OTP's concurrency, distribution, and fault-tolerance machinery a Lisp surface syntax.",
+  "how_it_works": "LFE source is read by an LFE reader and compiled through the Erlang compiler toolchain into BEAM bytecode, so it is interchangeable with Erlang modules at runtime. Macros are compile-time only, except in the REPL, and they are unhygienic but scoped, with no gensym, because the author says that would be unsafe for code shared with remote nodes. The homepage also describes OTP behaviours (gen_server, supervisors) being used directly from LFE syntax.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/lfe/lfe.git",
+    "context": "First step of building LFE from source (README 'Building' section)."
+   },
+   {
+    "cmd": "make compile",
+    "context": "Compiles LFE from a clone; the README says Erlang must already be installed with erl on PATH."
+   },
+   {
+    "cmd": "make tests",
+    "context": "Runs the full LFE test suite."
+   },
+   {
+    "cmd": "make install PREFIX=/Users/rv/ MANINSTDIR=/Users/rv/man",
+    "context": "Example of installing to a custom prefix and man directory; the default install is /usr/local/bin with man pages under PREFIX/share/man."
+   },
+   {
+    "cmd": "./bin/lfe",
+    "context": "Starts the REPL from inside a git clone after compiling; the banner shows LFE v2.2.1 on Erlang/OTP 26."
+   },
+   {
+    "cmd": "lfe",
+    "context": "Starts the REPL from any location once LFE is installed system-wide."
+   },
+   {
+    "cmd": "lfe> (* 2 (lists:foldl #'+/2 0 (lists:seq 1 6)))",
+    "context": "README usage example showing a REPL call into Erlang's lists module; returns 42."
+   },
+   {
+    "cmd": "docker run -it lfex/lfe",
+    "context": "Brings up the LFE REPL from the published Docker image after 'docker pull lfex/lfe'."
+   },
+   {
+    "cmd": "lfe> (mean 1 2 3 4 5 6 42 108)",
+    "context": "Homepage example of a variadic-looking macro (defmacro mean args ...) working around Erlang's lack of n-arity functions; returns 21.375."
+   },
+   {
+    "cmd": "make publish",
+    "context": "Maintainer step for publishing a new release to hex.pm; needs rebar3 and the hex plugin configured."
+   }
+  ],
+  "install_notes": "Requires Erlang/OTP installed with the erl binary on PATH. Build from source with git clone, then make compile; run tests with make tests. make install copies lfe, lfec, lfedoc and lfescript to /usr/local/bin by default (PREFIX overrides this) and installs man pages (MANINSTDIR overrides). The README's install list omits lfeexec, lfe-test and lfe-first-try, which Homebrew also ships, so their purpose is not documented in what I read. Docker is an alternative (docker pull lfex/lfe). No accounts or API keys are mentioned. Libraries come from hex.pm, and the README's Slack invite and Erlang Forums are listed for community help.",
+  "standout": "Lisp-2 semantics (separate function and variable namespaces) on the BEAM, with Erlang-style pattern matching in defun arguments, lets you write Lisp macros that call Erlang's OTP directly. The author's choice to drop gensym and accept unhygienic macros, because code is shared with remote nodes, is an unusual trade-off, stated plainly in the homepage text.",
+  "status": "maintained. Evidence: the README has an active CI badge and Hex.pm version and download badges, documents a full release process (make tags, make publish), and the REPL banner in the README shows LFE v2.2.1 on OTP 26. I did not see a dated last release or last commit, so the exact recency is unknown.",
+  "caveats": "Needs a working Erlang/OTP install, with erl on PATH, before LFE will build or run. The README gives no Windows instructions, and I saw none, so platform support is unclear. Macros are unhygienic (no gensym), so hygiene is the author's responsibility. The homepage describes the SICP LFE edition as only partly complete. The homepage's '40% of the world's telecommunications' claim is marketing copy I did not verify. The homepage is largely promotional, so the README and code examples are the more reliable guide. The homebrew caveats field was empty.",
+  "quotes": [
+   "Taking the syntax out of distributed systems programming",
+   "LFE, Lisp Flavoured Erlang, is a lisp syntax front-end to the Erlang compiler. Code produced with it is compatible with \"normal\" Erlang code.",
+   "LFE is not a casual Lisp. It's a Lisp for those who want to build distributed applications"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://lfe.io/"
+   },
+   {
+    "label": "Source repository and README",
+    "url": "https://github.com/lfe/lfe"
+   },
+   {
+    "label": "Quick Start (gitbook)",
+    "url": "https://lfe.gitbooks.io/quick-start/content/"
+   }
+  ],
+  "fetch_log": [
+   "https://lfe.io/ - fetched OK; marketing page with code examples and book/video lists, no install commands.",
+   "https://github.com/lfe/lfe - fetched OK; README with build, install, REPL, Docker and release notes. Followed because the homepage had no install or status info. Did not fetch the linked docs (docs.lfe.io, lfe.gitbooks.io, doc/user_guide.txt)."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "LFE opens Erlang/OTP\u2019s distributed, fault-tolerant BEAM to Lisp, an unusual language pairing with real pattern matching, macros, and direct interoperability."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "LFE (Lisp Flavoured Erlang)",
+  "tldr": "A Lisp with Erlang's data types that compiles to BEAM bytecode, so you can write macros and call OTP's concurrency machinery in s-expressions.",
+  "deeper_look": "LFE is a Lisp-syntax front-end to the Erlang compiler. You type LFE into a REPL, save it as a script, or compile it as a module. What comes out is ordinary BEAM code that Erlang modules can call and be called by. The data types are Erlang's own: lists, tuples, maps, atoms and binaries, with strings as lists of integers.\n\nThe homepage tagline is \"Taking the syntax out of distributed systems programming\". The idea is to put a Lisp surface on Erlang/OTP's concurrency, distribution and fault-tolerance machinery. Behaviours such as gen_server and supervisors are used directly from LFE syntax.\n\nThe design choices are worth reading about. It is a Lisp-2, with separate function and variable namespaces, and `defun` arguments use Erlang-style pattern matching. Macros are compile-time only, except in the REPL. They are unhygienic but scoped, and there is no gensym. The author says gensym would be unsafe for code shared with remote nodes. A macro like `mean` can also take any number of arguments, which works around Erlang's lack of variadic functions.",
+  "install": "brew install lfe\n# Pulls in Erlang/OTP as a dependency. Docker is an alternative: docker pull lfex/lfe",
+  "try_this": [
+   {
+    "cmd": "lfe",
+    "what_happens": "Starts the REPL, where you can call Erlang modules directly."
+   },
+   {
+    "cmd": "lfe> (* 2 (lists:foldl #'+/2 0 (lists:seq 1 6)))",
+    "what_happens": "Calls into Erlang's lists module from Lisp and returns 42."
+   },
+   {
+    "cmd": "lfe> (mean 1 2 3 4 5 6 42 108)",
+    "what_happens": "Runs the homepage's variadic-style macro example and returns 21.375. It needs the `mean` macro defined first; the homepage shows it as `(defmacro mean args ...)`."
+   }
+  ],
+  "whats_unique": "It is a Lisp whose macros and pattern-matching function heads work directly with OTP, and it gives up gensym and macro hygiene on purpose because code may run on remote nodes.",
+  "caveats": "It needs a working Erlang/OTP install, macros are unhygienic so safety is on you, and the README gives no Windows instructions. Homebrew also ships lfeexec, lfe-test and lfe-first-try, which the README does not document.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "lisp",
+   "erlang",
+   "beam",
+   "language",
+   "repl",
+   "macros",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://lfe.io/"
+   },
+   {
+    "label": "Source repository and README",
+    "url": "https://github.com/lfe/lfe"
+   },
+   {
+    "label": "Quick Start (gitbook)",
+    "url": "https://lfe.gitbooks.io/quick-start/content/"
+   }
+  ]
+ }
+}

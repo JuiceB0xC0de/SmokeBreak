@@ -1,0 +1,89 @@
+{
+ "name": "uhubctl",
+ "desc": "USB hub per-port power control",
+ "homepage": "https://github.com/mvp/uhubctl",
+ "installs_365d": 1650,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware"
+ ],
+ "why": "Cuts power to individual USB hub ports, a neat door into USB power control that most people never knew existed.",
+ "brief": {
+  "what_it_is": "uhubctl is a command-line utility that switches power to individual ports on USB hubs that support per-port power switching, with off, on, cycle, and toggle actions. You name a hub by its location (for example b-x.y.z) and a comma-separated or range list of ports, and it prints the list of supported hubs when run with no arguments. It is written in C and built on libusb. The README covers Linux, macOS, FreeBSD, NetBSD, and SunOS, and says Windows compiles but cannot switch power.",
+  "why_it_exists": "The README says the original idea was inspired by hub-ctrl.c by Niibe Yutaka, a tool for AC power control through USB hubs. The project's aim is to let you cut power to a USB port so a device on it, such as a phone, light, fan, or stuck modem, can be turned off or reset from software.",
+  "how_it_works": "uhubctl looks for hubs that advertise per-port power switching in their USB descriptors, which the FAQ checks with lsusb -v, and by default ignores hubs without it. On Linux 6.0 and later it uses the kernel's standard interface to toggle port power, and otherwise it uses libusb to send the control requests directly. Some USB 3.0 hubs appear as two virtual hubs, USB2 and USB3, and uhubctl switches both by default unless you pass -e.",
+  "commands_seen": [
+   {
+    "cmd": "uhubctl",
+    "context": "With no arguments, lists all supported hubs and their locations, which you need before choosing a hub with -l."
+   },
+   {
+    "cmd": "uhubctl -a off -p 2",
+    "context": "Turns off power on port 2 of the default smart hub. Supported actions are off, on, cycle, and toggle, or 0, 1, 2, and 3."
+   },
+   {
+    "cmd": "uhubctl -l 1-1 -p 2 -a 0",
+    "context": "Raspberry Pi 3B+ example: turns off the ganged ports of the main hub at location 1-1 using port 2."
+   },
+   {
+    "cmd": "uhubctl -l 2 -a 0",
+    "context": "Raspberry Pi 4B example: turns off the USB3 hub at location 2, whose four ports are ganged together."
+   },
+   {
+    "cmd": "uhubctl -l 2 -a 0 and uhubctl -l 4 -a 0",
+    "context": "Raspberry Pi 5 example: the README gives these two lines as the way to cut VBUS across all onboard hubs and ports. The README's Pi 5 example uses these lines and lists 2 and 4 as the hub locations."
+   },
+   {
+    "cmd": "sudo apt install uhubctl",
+    "context": "Installs the packaged version on Ubuntu, Debian, or Raspbian. The README warns the packaged version may lag behind the latest release."
+   },
+   {
+    "cmd": "brew install uhubctl",
+    "context": "Installs via Homebrew on macOS. The README says macOS 26 and later requires libusb 1.0.30 or later."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the uhubctl binary after cloning the source repository and entering it."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the built binary into the system, as /usr/sbin/uhubctl according to the README."
+   },
+   {
+    "cmd": "sudo udevadm trigger --attr-match=subsystem=usb",
+    "context": "Reloads udev so new USB permission rules take effect without a reboot."
+   }
+  ],
+  "install_notes": "Install libusb-1.0 first. The README asks for version 1.0.13 or later and recommends 1.0.23 or later, plus pkgconf or pkg-config. Source builds use git clone, cd uhubctl, then make. On Linux, add a udev rule such as SUBSYSTEM==\"usb\" in /etc/udev/rules.d/52-usb.rules or use sudo, and then reboot or run udevadm trigger. The README links a ready-made rules file in udev/rules.d/52-usb.rules. For Raspberry Pi 4B, check the VL805 firmware with sudo rpi-eeprom-update, since older firmware (before 00137ad) blocks switching. No accounts or runtimes beyond libusb are mentioned.",
+  "standout": "The compatibility table lists dozens of hubs with USB ID values and notes about which ports work, but the README says the list is incomplete and asks users to report new hubs with a VBUS-off test. It also documents Raspberry Pi board wiring in detail, with per-board hub topology, and notes that the Pi 5's four hubs are actually ganged together.",
+  "status": "unknown. The README has no release date and no commit date. Its copyright runs through 2026, it refers to macOS 26, and it lists hardware from 2024, which suggests recent work. The README also links a 5.x to 6.0 kernel fix in uhubctl 2.5.0 and points to a releases page, but I did not open either.",
+  "caveats": "Windows: the README says power switching does not work because libusb uses winusb.sys, which does not support the needed control requests. Linux needs sudo or udev permission rules. Only hubs with per-port power switching are detected by default (-f forces others). Some hubs cut data but not VBUS, so a phone may keep charging, and the README says those are not supported. Raspberry Pi boards gang ports together, so control is coarse; on the Pi 5, VBUS returns for all ports when any one is enabled. Built-in ports can cut off your keyboard or mouse. Linux kernels before 6.0 can cause device files to linger or the port to power back on, and the README gives workarounds. Never change power on ports used to daisy-chain internal hubs. The README says the hub table is not complete.",
+  "quotes": [
+   "uhubctl is utility to control USB power per-port on smart USB hubs.",
+   "Note that not many USB hubs correctly support per-port power switching.",
+   "Turning off built-in USB ports may cut off your keyboard or mouse, so be careful which ports you are turning off!",
+   "Note that quite a few modern motherboards have built-in root hubs that do support this feature - you may not even need to buy any external hub."
+  ],
+  "links": [
+   {
+    "label": "Project homepage and README (GitHub)",
+    "url": "https://github.com/mvp/uhubctl"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/mvp/uhubctl/releases"
+   },
+   {
+    "label": "Ready-made udev rule file",
+    "url": "https://github.com/mvp/uhubctl/blob/master/udev/rules.d/52-usb.rules"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/mvp/uhubctl (homepage, fetched; README returned, loaded successfully). I did not follow further links, since the README was complete."
+  ]
+ }
+}

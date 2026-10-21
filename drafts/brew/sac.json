@@ -1,0 +1,155 @@
+{
+ "name": "sac",
+ "desc": "Seismic Analysis Code, Community Edition",
+ "homepage": "https://github.com/EarthScope/sac-community",
+ "installs_365d": 24,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "needs-hardware",
+  "library"
+ ],
+ "why": "Seismic Analysis Code for processing earthquake waveforms, real seismology you can run at home on your own data.",
+ "brief": {
+  "what_it_is": "SAC (Seismic Analysis Code) Community Edition is a community-maintained continuation of SAC, a program for reading and writing binary seismic data files that hold time series, typically ground motion recorded by seismometers. It takes SAC-format binary waveform files as input and provides filtering and deconvolution functions for processing that data. The repository holds the source code, and releases include pre-built binaries for Linux and macOS. The executables brew installs include sac, sacdiff, saclst, sacset, sacswap, bbfswap, sgfswap, sgftops, unvis, and the sgftoeps.csh and sgftox.csh scripts.",
+  "why_it_exists": "The README says SAC is used primarily in seismological research and that the code was derived from LLNL's SAC2000, which EarthScope now releases as an open source derivative under Apache 2.0 after the LLNL and IRIS license agreement ended. The history section explains that SAC was once distributed by LLNL as Fortran, was later converted to C as SAC2000, and was generally difficult to obtain.",
+  "how_it_works": "SAC is run as an interactive program with its own command language and help system. Users set SACHOME and SACAUX so the program can find its auxiliary data, and they can add a startup macro that runs each time SAC starts. Optional features such as PNG figure output are chosen at build time through configure options.",
+  "commands_seen": [
+   {
+    "cmd": "xattr -dr com.apple.quarantine /path/to/sac",
+    "context": "On macOS, removes the quarantine attribute so the system will run a pre-built sac binary (or other binary in the distribution)."
+   },
+   {
+    "cmd": "echo $PATH ; echo $SACHOME ; echo $SACAUX",
+    "context": "Checks that PATH, SACHOME, and SACAUX are set after editing the shell startup file."
+   },
+   {
+    "cmd": "export SACHOME=/usr/local/sac",
+    "context": "Bash/sh setup line to add to ~/.bashrc, pointing SACHOME at the install directory."
+   },
+   {
+    "cmd": ". ${SACHOME}/bin/sacinit.sh",
+    "context": "Bash/sh line that sources the sacinit script to set PATH, SACAUX, and other SAC options."
+   },
+   {
+    "cmd": ". ~/.bashrc",
+    "context": "Reloads the bash startup file after editing it."
+   },
+   {
+    "cmd": "setenv SACHOME /usr/local/sac",
+    "context": "csh/tcsh setup line to add to ~/.cshrc, pointing SACHOME at the install directory."
+   },
+   {
+    "cmd": "source ${SACHOME}/bin/sacinit.csh",
+    "context": "csh/tcsh line that sources the sacinit script to set up the environment."
+   },
+   {
+    "cmd": "source ~/.cshrc",
+    "context": "Reloads the csh/tcsh startup file after editing it."
+   },
+   {
+    "cmd": "alias sac='\"${SACHOME}/bin/sac\" \"${SACHOME}/macros/init.m\"'",
+    "context": "Bash/sh alias that launches SAC with a per-user initialization macro. The csh/tcsh form is alias sac '\"${SACHOME}/bin/sac\" \"${SACHOME}/macros/init.m\"'."
+   },
+   {
+    "cmd": "lh columns 2 files none; qdp 10000 ; xdiv power off ; xlabel 'Time (sec)'",
+    "context": "A line from the README's sample initialization macro. It is SAC command-language syntax, not a shell command."
+   },
+   {
+    "cmd": "setmacro /usr/local/macros ; transcript history file ./.sachist",
+    "context": "Second line of the README's sample initialization macro. It sets the macro search path and writes a transcript history file."
+   }
+  ],
+  "install_notes": "Pre-built binaries for Linux and macOS are on the GitHub releases page. If none fit your platform, or they fail, the README says to compile from source using README.buildsac. The sac program needs X11, libxml2, and libcurl. On Linux, the shared libraries for all three must be installed. On macOS, libxml2 and libcurl are system libraries, and X11 comes from XQuartz. Set SACHOME, and make sure SACAUX points to the aux/ data directory, or SAC exits with an error. Source the sacinit script for your shell from your shell startup file. Brew's caveat says configuration scripts live in $HOMEBREW_PREFIX/opt/sac/share/sac. PNG output is off by default in v101.6 and later and needs a source build with --enable-png.",
+  "standout": "It is a long-running, Fortran-to-C lineage scientific tool that has been carried forward by a community after its license changed. Its main interface is an interactive command-driven shell with a built-in help system and macros, not a library API.",
+  "status": "unknown. The README has a 2026 copyright line and points to a releases page and an issues tracker, but it shows no release version, release date, or last-commit date, so I could not confirm current activity. It also says the software is not developed or maintained by EarthScope and that volunteer maintainers are still being sought, with PRs reviewed only if volunteers are identified.",
+  "caveats": "The README says EarthScope does not develop or maintain this software, and PR review depends on volunteer maintainers who have not yet been identified. Pre-built macOS binaries may be blocked by Gatekeeper until the quarantine attribute is removed. Building from source needs X11, libxml2, and libcurl, and PNG support is excluded by default. The README lists its help system and manual as the main documentation, and its community support runs through a Google Groups mailing list.",
+  "quotes": [
+   "SAC allows reading and writing of binary seismic data files containing time series data, typically ground motion recorded by seismometers.",
+   "This software is not developed or maintained by EarthScope.",
+   "If you have SAC working, use the help command from within SAC.",
+   "For pre-built binaries on macOS, the system may refuse to run the `sac` binary due to security restrictions."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/EarthScope/sac-community"
+   },
+   {
+    "label": "Releases (source and pre-built binaries)",
+    "url": "https://github.com/EarthScope/sac-community/releases"
+   },
+   {
+    "label": "SAC Manual (HTML)",
+    "url": "https://ds.iris.edu/files/sac-manual/index.html"
+   },
+   {
+    "label": "SAC Community mailing list",
+    "url": "https://groups.google.com/a/earthscope.org/g/sac-community"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/EarthScope/sac-community: fetched OK, README returned. Linked README.buildsac and the SAC Manual were not fetched."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A specialized, interactive seismology workbench lets you inspect and process real earthquake waveforms, making a substantial scientific tool accessible beyond research institutions."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "SAC: Seismic Analysis Code",
+  "tldr": "A decades-old interactive program for filtering and inspecting seismometer recordings, with its own command language, now carried on by the community under Apache 2.0.",
+  "deeper_look": "SAC reads and writes binary seismic data files that hold time series, typically ground motion recorded by seismometers. It runs as an interactive program with its own command language, built-in help and macros. It provides filtering and deconvolution for processing the waveforms. The helper executables cover related jobs: sacdiff, saclst and sacset inspect and edit SAC files, while sacswap, bbfswap and sgfswap handle byte order and graphics files.\n\nThe code has a long history. It was once distributed by LLNL as Fortran, later converted to C as SAC2000, and was generally difficult to obtain. After the LLNL and IRIS license agreement ended, EarthScope began releasing an open source derivative under Apache 2.0. This Community Edition is that derivative.\n\nThe idea underneath is that earthquake data is just long lists of numbers sampled over time, and a good deal of seismology is what you do to those lists: remove an instrument's response, filter out noise, pick out arrivals. SAC is a working example of a scientific tool shaped as a command shell rather than a library, which is how a generation of researchers learned to look at waveforms.\n\nThe README says: \"If you have SAC working, use the help command from within SAC.\" The manual is the main documentation, and you need seismic data files of your own to get much out of it.",
+  "install": "brew install sac\n# SAC needs X11 (XQuartz on macOS). Set SACHOME and make sure SACAUX points to the aux/ data directory, or SAC exits with an error.\n# Source the sacinit script for your shell from your startup file; brew puts configuration scripts in $HOMEBREW_PREFIX/opt/sac/share/sac",
+  "try_this": [
+   {
+    "cmd": "sac --help",
+    "what_happens": "Prints the program's usage information, a quick check that the install and environment work."
+   },
+   {
+    "cmd": "echo $PATH ; echo $SACHOME ; echo $SACAUX",
+    "what_happens": "Checks that the environment variables SAC needs are set after editing your shell startup file."
+   },
+   {
+    "cmd": "sacdiff --help",
+    "what_happens": "Shows usage for the helper that compares SAC data files."
+   }
+  ],
+  "whats_unique": "It is a long-running scientific tool with Fortran-to-C roots, kept alive by a community after its license changed. Its main interface is an interactive command shell with built-in help and macros, not a library API.",
+  "caveats": "The README says EarthScope does not develop or maintain this software and that volunteer maintainers are still being sought, so activity is unclear; PNG output is off by default and needs a source build.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "science",
+   "seismology",
+   "needs-data",
+   "x11"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/EarthScope/sac-community"
+   },
+   {
+    "label": "SAC Manual (HTML)",
+    "url": "https://ds.iris.edu/files/sac-manual/index.html"
+   },
+   {
+    "label": "Releases (source and pre-built binaries)",
+    "url": "https://github.com/EarthScope/sac-community/releases"
+   },
+   {
+    "label": "SAC Community mailing list",
+    "url": "https://groups.google.com/a/earthscope.org/g/sac-community"
+   }
+  ]
+ }
+}

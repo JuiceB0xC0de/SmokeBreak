@@ -1,0 +1,150 @@
+{
+ "name": "koka",
+ "desc": "Compiler for the Koka language",
+ "homepage": "http://koka-lang.org",
+ "installs_365d": 376,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language"
+ ],
+ "why": "A functional language with effect types and reference counting that avoids garbage collection, a genuinely different way to think about code.",
+ "brief": {
+  "what_it_is": "Koka is a strongly typed functional-style language with effect types and handlers, and its compiler. The compiler takes Koka source files (.kk) and compiles them, by default through generated C code, into runnable programs. The README also mentions JavaScript and WebAssembly backends. Koka tracks the side effects of every function in its type, so pure and effectful code are distinguished. Effect handlers let users build control abstractions such as exceptions, async/await, or probabilistic programs as ordinary libraries.",
+  "why_it_exists": "The README presents Koka as a research language from Daan Leijen and collaborators, built on a small set of well-studied features (first-class functions, a polymorphic type and effect system, algebraic data types, effect handlers) with precise effect typing that makes programs easier to reason about for humans and compilers. The Perceus reference counting work is framed as a way to get fast, garbage-collector-free memory management.",
+  "how_it_works": "Koka uses evidence passing to compile effect handlers, and Perceus compiler analysis for reference counting, which lets it emit C code without a garbage collector or runtime system. Perceus also does reuse analysis, so functional-style code can update memory in place when possible. The README reports benchmarks against OCaml, GHC, Swift, Java and C++ on allocation-heavy tests, and says these show Koka is competitive, not a precise head-to-head.",
+  "commands_seen": [
+   {
+    "cmd": "brew install haskell-stack",
+    "context": "README's suggested way to get Stack on macOS, needed to build the compiler from source."
+   },
+   {
+    "cmd": "git clone --recursive https://github.com/koka-lang/koka",
+    "context": "Clones the repository with submodules; the README warns that omitting --recursive causes errors when compiling Koka modules."
+   },
+   {
+    "cmd": "stack update",
+    "context": "Updates the Stack package index before building the compiler."
+   },
+   {
+    "cmd": "stack build --fast",
+    "context": "Builds the compiler quickly, without optimization."
+   },
+   {
+    "cmd": "stack exec koka",
+    "context": "Runs the freshly built koka compiler from the Stack environment."
+   },
+   {
+    "cmd": "stack exec koka -- -e util/bundle",
+    "context": "Generates a binary install bundle, which takes a while because it precompiles the standard libraries in three variants. Run without --fast."
+   },
+   {
+    "cmd": "koka --version",
+    "context": "Checks that the installed koka runs after installing the bundle."
+   },
+   {
+    "cmd": "stack test --fast",
+    "context": "Runs the full test suite."
+   },
+   {
+    "cmd": "koka --fprofile -e myprogram.kk",
+    "context": "Compiles and runs a program with GCC profiling instrumentation, for use with gprof."
+   },
+   {
+    "cmd": "koka util/profile.kk -- myprogram.kk --runs=3 --opt=-O2",
+    "context": "Convenience script that compiles, runs and reports on a program using GCC profiling."
+   }
+  ],
+  "install_notes": "The README lists binary installers for Windows (x64), macOS (x64 and M1), and Linux (x64). Other platforms must build from source. Source builds need Stack (or GHC plus cabal-install, or a minbuild script), and the repo must be cloned with --recursive. Optional extras: vcpkg (for linking C libraries, auto-detected at ~/vcpkg), Node.js for the JavaScript backend, and emscripten plus wasmtime for the WebAssembly backend. On Windows, set the console codepage with chcp 65001 before building with Stack, and install clang or use Visual Studio's cl. Installing the bundle puts koka in <prefix>/bin, defaulting to /usr/local on Unix and macOS and %LOCALAPPDATA%\\koka on Windows. The README does not mention Homebrew packaging.",
+  "standout": "Few mainstream languages compile to C with no garbage collector while tracking effects in the type system. Perceus reference counting with reuse, which turns functional code into in-place updates, is the distinctive part. Effect handlers as the one general mechanism for exceptions, async and similar features also sets it apart from typical functional languages.",
+  "status": "Maintained, by the README's own account. It lists the latest release as v3.2.9, dated 2026-09-17, and has a Recent Releases section pointing to whatsnew notes. It also says Koka v3 is still under development. I did not check commit history, so the status rests on the README's release date.",
+  "caveats": "The README says Koka v3 is a research language 'not quite ready for production use'. Binary installers cover only three platforms. Building from source needs Haskell tooling, and the Windows setup has extra steps. Package management for Koka modules is still on the to-do list, and the async library with libuv integration is not yet ported. The parallel task support is described as very basic. The benchmark numbers are from Koka v2 on a 2020 machine and are dated. The homepage http://koka-lang.org only redirects, and I could not see the destination.",
+  "quotes": [
+   "Koka v3 is a research language that is currently under development and not quite ready for production use.",
+   "Koka tracks the (side) effects of every function in its type, where pure and effectful computations are distinguished.",
+   "this lets Koka compile directly to C code without needing a garbage collector or runtime system."
+  ],
+  "links": [
+   {
+    "label": "Homepage (redirects)",
+    "url": "http://koka-lang.org"
+   },
+   {
+    "label": "Koka book: language tour and specification",
+    "url": "https://koka-lang.github.io/koka/doc/book.html"
+   },
+   {
+    "label": "Library documentation",
+    "url": "https://koka-lang.github.io/koka/doc/toc.html"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/koka-lang/koka"
+   }
+  ],
+  "fetch_log": [
+   "http://koka-lang.org: fetched, but returned only a 'Koka Redirect' page with no visible destination, so the homepage content was not read.",
+   "https://github.com/koka-lang/koka: fetched successfully; the README was returned and used as the main source."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Koka combines effect handlers and effect-typed functions with Perceus memory reuse, making functional code compile to C without a garbage collector\u2014a genuinely distinctive idea to explore."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Koka",
+  "tldr": "A research functional language that tracks side effects in its types and compiles to C without a garbage collector, using effect handlers for exceptions and async.",
+  "deeper_look": "Koka is a strongly typed, functional-style language and its compiler. You write `.kk` files and the compiler turns them, by default through generated C, into runnable programs. The README also mentions JavaScript and WebAssembly backends. Its central habit is that every function's type records its side effects, so pure and effectful code are visibly different.\n\nThe idea underneath is effect handlers. Instead of building exceptions, async/await, and probabilistic programming into the language as separate features, Koka offers one general mechanism. Those control abstractions can then be written as ordinary libraries. The compiler implements this with evidence passing.\n\nThe other half is memory. Koka uses Perceus, a compiler analysis for reference counting, which lets it emit C with no garbage collector or runtime system. Perceus also does reuse analysis: functional-style code that builds a new structure can often update the old memory in place. The README says benchmarks against OCaml, GHC, Swift, Java and C++ show Koka is competitive, though it calls them not a precise head-to-head.\n\nIt comes from Daan Leijen and collaborators as a research language. The README states plainly: \"Koka v3 is a research language that is currently under development and not quite ready for production use.\"",
+  "install": "brew install koka",
+  "try_this": [
+   {
+    "cmd": "koka --version",
+    "what_happens": "Checks that the installed compiler runs and prints its version."
+   },
+   {
+    "cmd": "koka --help",
+    "what_happens": "Lists the compiler's options, including the backends and output choices."
+   },
+   {
+    "cmd": "koka --fprofile -e myprogram.kk",
+    "what_happens": "Compiles and runs a Koka program of your own with GCC profiling instrumentation, for use with gprof."
+   }
+  ],
+  "whats_unique": "Few languages compile to C without a garbage collector while also tracking effects in the type system. Perceus reference counting with in-place reuse, plus handlers as the single mechanism for exceptions and async, sets it apart.",
+  "caveats": "It is a research language, not ready for production by the README's own words, with package management still on the to-do list and only basic parallel task support.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "language",
+   "functional",
+   "effect-types",
+   "compiler",
+   "research"
+  ],
+  "links": [
+   {
+    "label": "Homepage (redirects)",
+    "url": "http://koka-lang.org"
+   },
+   {
+    "label": "Koka book: language tour and specification",
+    "url": "https://koka-lang.github.io/koka/doc/book.html"
+   },
+   {
+    "label": "Library documentation",
+    "url": "https://koka-lang.github.io/koka/doc/toc.html"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/koka-lang/koka"
+   }
+  ]
+ }
+}

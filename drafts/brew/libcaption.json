@@ -1,0 +1,99 @@
+{
+ "name": "libcaption",
+ "desc": "Free open-source CEA608 / CEA708 closed-caption encoder/decoder",
+ "homepage": "https://github.com/szatmary/libcaption",
+ "installs_365d": 28,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "quick",
+  "library",
+  "protocol"
+ ],
+ "why": "Encodes and decodes CEA-608 and CEA-708 closed captions, a hidden data channel inside broadcast video.",
+ "brief": {
+  "what_it_is": "libcaption is a C library for creating and parsing closed-caption data, using the CEA-608 and CEA-708 standards. For CEA-608 it encodes and decodes the control and preamble codes and the Basic North American, Special North American, and Extended Western European character sets. For CEA-708 it only encodes, by placing 608 data in an NTSC field 1 user data structure. It also provides utilities that wrap a 708 payload into an H.264 SEI NAL unit and reverse that wrapping.",
+  "why_it_exists": "The README says libcaption is meant to help community-developed broadcast tools handle closed captions consistently across platforms, and it aims to implement a subset of EIA-608 and CEA-708 as supported by Apple iOS.",
+  "how_it_works": "For H.264, the 708 payload is prefixed with three bytes (nal_unit_type = 6, payloadType = 4, and a variable PayloadSize) and ends with a stop bit in a full byte (value 127). If the payload contains an emulated start code (0,0,1), an emulation prevention byte (3) is inserted. Functions to reverse this are also provided.",
+  "commands_seen": [
+   {
+    "cmd": "cmake . && make",
+    "context": "Build on Mac OS or Linux with re2c enabled (the default)."
+   },
+   {
+    "cmd": "cmake -DENABLE_RE2C=OFF . && make",
+    "context": "Build on Mac OS or Linux without re2c."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Install the built library on Mac OS or Linux."
+   }
+  ],
+  "install_notes": "Build dependencies on Mac OS and Linux are git, cmake, a compiler (Xcode, gcc, or clang), and optionally re2c and ffmpeg. The build is cmake followed by make, then sudo make install. Windows is untested by the author, who says it is pure C with no dependencies, so it should work there. No accounts or runtime setup are mentioned.",
+  "standout": "It targets a deliberately narrow subset of 608/708 chosen to match Apple iOS, so output is consistent across platforms. It also includes a helper for embedding captions in an H.264 elementary stream as SEI NAL units, which is the step most caption tooling has to handle separately.",
+  "status": "unknown. The README shows version v0.8 and the author's contact details, but it has no release date or changelog, and I did not check the commit history or releases page, so I can't say when it was last updated.",
+  "caveats": "The scout note says it both encodes and decodes 608 and 708, but the README limits 708 to encoding only, wrapped in NTSC field 1 user data. Support is partial for 608 as well: only the listed control codes and character sets are covered. B-frame support for caption creation is minimal, and the README says no caption reordering is needed on playback. Windows has never been tested by the author. The README contains no license file link, but the text says the project is MIT-licensed.",
+  "quotes": [
+   "libcaption is a library written in C to aid in the creating and parsing of closed caption data, open sourced under the MIT license to use within community developed broadcast tools.",
+   "It is written in pure C with no dependencies, so there is no reason it would not work.",
+   "I have never tested libcaption in windows."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/szatmary/libcaption"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/szatmary/libcaption - fetched OK; README returned (version v0.8). No further links followed because the README was complete and contained no separate docs."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A focused library for parsing 608 caption codes and embedding caption payloads in H.264 SEI exposes an otherwise invisible data channel in broadcast video."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "libcaption",
+  "tldr": "A small C library that writes and reads CEA-608 and CEA-708 closed captions, the hidden caption data riding inside broadcast video.",
+  "deeper_look": "libcaption is a C library for creating and parsing closed-caption data. For CEA-608 it handles the control and preamble codes plus the Basic North American, Special North American, and Extended Western European character sets, in both directions. For CEA-708 it only encodes, by placing 608 data inside an NTSC field 1 user data structure.\n\nIt also includes helpers that wrap a 708 payload into an H.264 SEI NAL unit and unwrap it again. The wrapping is fiddly: a three-byte prefix (nal_unit_type 6, payloadType 4, and a variable payload size), a stop byte of 127, and an emulation prevention byte (3) inserted whenever the payload would otherwise contain the start code 0,0,1.\n\nThe README says the aim is to help community-developed broadcast tools handle captions consistently across platforms. It implements a deliberately narrow subset of EIA-608 and CEA-708, chosen to match what Apple iOS supports.\n\nThe idea underneath is that captions are not a separate subtitle file. They are a byte stream tucked into the video itself, in a place decoders know to look. Reading this library is a compact way to see how that works, from legacy analog-era 608 codes to modern H.264 containers.",
+  "install": "brew install libcaption\n# From source on macOS or Linux: needs git, cmake, a C compiler; re2c and ffmpeg are optional\n# cmake . && make && sudo make install",
+  "try_this": [
+   {
+    "cmd": "cmake . && make",
+    "what_happens": "Builds the library from a source checkout with re2c enabled, the default."
+   },
+   {
+    "cmd": "cmake -DENABLE_RE2C=OFF . && make",
+    "what_happens": "Builds the library without re2c, for machines that do not have it."
+   },
+   {
+    "cmd": "sudo make install",
+    "what_happens": "Installs the built library and headers system-wide on macOS or Linux."
+   }
+  ],
+  "whats_unique": "It targets a narrow 608/708 subset matched to Apple iOS, so output behaves the same across platforms. It also bundles the H.264 SEI NAL wrapping step, which most caption tooling handles separately.",
+  "caveats": "It is a library with no executables, so you need to write C to use it; 708 is encode-only, 608 coverage is partial, Windows is untested, and the brief could not confirm when it was last updated.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "library",
+   "c",
+   "closed-captions",
+   "video",
+   "protocol",
+   "h264"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/szatmary/libcaption"
+   }
+  ]
+ }
+}

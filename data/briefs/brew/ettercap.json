@@ -1,0 +1,76 @@
+{
+ "name": "ettercap",
+ "desc": "Multipurpose sniffer/interceptor/logger for switched LAN",
+ "homepage": "https://ettercap.github.io/ettercap/",
+ "installs_365d": 1615,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol",
+  "reverse-engineering"
+ ],
+ "why": "ARP poisoning and LAN interception make it a vivid door into how switched networks trust every packet.",
+ "brief": {
+  "what_it_is": "Ettercap is a multipurpose sniffer, interceptor and logger for switched LANs, and the project describes itself as a comprehensive suite for man in the middle attacks. It sniffs live connections, filters and modifies content on the fly, and actively and passively dissects many protocols. It also does host discovery and passive OS fingerprinting. It runs against traffic on the LAN it is attached to. The package ships four executables: ettercap (the main program, with text, curses and GTK interfaces), ettercap-pkexec, etterfilter (compiles filter scripts that ettercap uses), and etterlog (processes log files).",
+  "why_it_exists": "The README gives no motivation beyond describing itself as a suite for man in the middle attacks. Its technical paper explains each attack method in detail, so it reads as documentation of how switched networks can be intercepted.",
+  "how_it_works": "Host discovery sends an ARP request for each IP in the local netmask and collects the replies. For ARP poisoning, ettercap sends forged ARP replies so that two victims each cache the attacker's MAC address as the other's, then records packets and forwards them to the real destination. Its unified sniffing method keeps kernel IP forwarding off and has ettercap re-send packets that are addressed to its MAC but carry other IPs. Filter scripts written in a small language are compiled with etterfilter and can drop or rewrite traffic.",
+  "commands_seen": [
+   {
+    "cmd": "mkdir build && cd build",
+    "context": "Creates and enters a build directory for the recommended CMake build from the source tree."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Configures the build from the parent source directory."
+   },
+   {
+    "cmd": "ccmake .",
+    "context": "Interactive CMake option editor, used to change options such as disabling IPv6 or enabling plugin support."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the built binaries after the build completes."
+   },
+   {
+    "cmd": "apt-get install build-essential debhelper bison check cmake flex groff libbsd-dev libcurl4-openssl-dev libmaxminddb-dev libgtk-3-dev libltdl-dev libluajit-5.1-dev libncurses5-dev libnet1-dev libpcap-dev libpcre2-dev libssl-dev",
+    "context": "Debian and derivatives: installs the build and library dependencies. The README wraps this across several lines; they are joined here."
+   },
+   {
+    "cmd": "apt-get install libgtk-4-dev libadwaita-1-dev",
+    "context": "Needed only for the GTK4 interface (-DGTK_BUILD_TYPE=GTK4), and only on Ubuntu 24.04 or later or Debian 13 or later."
+   }
+  ],
+  "install_notes": "Build tools: a C compiler, flex, bison, and cmake. Mandatory libraries: libpcap 0.8.1 or later, libnet 1.1.2.1 or later (1.1.5 or later for IPv6), openssl 0.9.7 or later, libpthread, zlib, libmaxminddb, and Curl 7.26.0 or later for the SSLStrip plugin. The SSLStrip plugin can be disabled if Curl is unavailable. Optional: libbsd, groff (PDF docs via ENABLE_PDF_DOCS=On), libltdl for plugins, libpcre for Perl regexps in filters, ncurses for the curses UI, and GTK3 (default) or GTK4 with libadwaita via -DGTK_BUILD_TYPE. The README points to INSTALL and README.PLATFORMS for per-OS issues, and to README.GIT for disabling plugins. Configuration lives in etter.conf; the 0.8.4 release notes say the default config path is /etc/ettercap on Linux and /usr/local/etc/ettercap on other systems. The README does not cover Homebrew specifically and gives no first-run steps.",
+  "standout": "The README's technical paper is unusually candid and detailed. It walks through ARP poisoning with a worked MAC and IP example, explains kernel-specific caching quirks (a Linux 2.4 ARP behaviour and a Solaris workaround using a spoofed ICMP echo), describes port stealing by flooding the switch, and covers an SSH1 man-in-the-middle. It is a readable primer on why switched LANs trust every packet.",
+  "status": "Maintained. The GitHub releases page shows v0.8.4.1-Garofalo as Latest, dated 07 Apr (changelog header 20260407), with v0.8.4 dated 01 Feb 2026 before it. The 0.8.4.1 release fixes a heap out-of-bounds read in etterfilter (CVE-2026-3606). I did not check the most recent commit date.",
+  "caveats": "The project is built for man in the middle attacks, and the README gives no guidance on authorized use or legal exposure. Several attacks are half-duplex (ICMP redirection, DHCP spoofing). The README warns that bridged mode will turn a gateway into a bridge, and that a class B netmask sends 65025 ARP requests at the default 1 ms delay. It also says passive LAN scanning is useless on a switched LAN. The GTK4 interface needs recent distributions (libadwaita 1.5 or later); GTK2 is deprecated. The README is Linux and Debian oriented and admits its documentation has typos. Some described issues (old Linux 2.4 and Solaris ARP behaviour) are historical.",
+  "quotes": [
+   "Ettercap is a comprehensive suite for man in the middle attacks.",
+   "It features sniffing of live connections, content filtering on the fly and many other interesting tricks.",
+   "The only method to discover that there is a man-in-the-middle in your connection, is to watch at the arp cache and check if there are two hosts with the same mac address!"
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://ettercap.github.io/ettercap/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/Ettercap/ettercap"
+   },
+   {
+    "label": "Releases and changelogs",
+    "url": "https://github.com/Ettercap/ettercap/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://ettercap.github.io/ettercap/ - worked, but thin: navigation and a short tagline only, no install or usage detail",
+   "https://github.com/Ettercap/ettercap - worked, returned the full README (introduction, requirements, install, technical paper)",
+   "https://github.com/Ettercap/ettercap/releases - worked, used for release dates and the latest version"
+  ]
+ }
+}

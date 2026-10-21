@@ -1,0 +1,86 @@
+{
+ "name": "bic",
+ "desc": "C interpreter and API explorer",
+ "homepage": "https://github.com/hexagonal-sun/bic",
+ "installs_365d": 51,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "languages-and-oddities",
+ "tags": [
+  "tui",
+  "language",
+  "afternoon",
+  "library"
+ ],
+ "why": "A C interpreter that doubles as an API explorer, letting you poke at libraries interactively, which is a genuinely useful strange idea.",
+ "brief": {
+  "what_it_is": "bic is a C interpreter and API explorer. You type C statements into a REPL prompt (BIC>), and #include system headers so you can call real library functions such as fopen and fputs directly, with no wrapping main() needed. It can also run a whole C file with -s file.c, calling its main(). After each expression it prints the result, and the ?name inspector prints type and variable details such as size and declaration location.",
+  "why_it_exists": "The README says it exists to let developers explore and test C APIs using a read eval print loop, also known as a REPL.",
+  "how_it_works": "The lexer and parser are generated from parser.m4 and lex.m4, producing two bison parsers and two flex lexers, one grammar for REPL input and one for C files. Parsed programs become generic tree objects defined in a lisp-like c.lang file, and the evaluator walks that tree recursively. Calls to external functions are marshalled into registers per the calling convention and branched to, with separate x86_64 and aarch64 code.",
+  "commands_seen": [
+   {
+    "cmd": "autoreconf -i",
+    "context": "First step when building from source, run before configure."
+   },
+   {
+    "cmd": "./configure --enable-debug",
+    "context": "Configures the build; the README says --enable-debug turns on property checks on tree accessor macros."
+   },
+   {
+    "cmd": "make",
+    "context": "Compiles bic after configure."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the built bic binary."
+   },
+   {
+    "cmd": "YACC=\"$(brew --prefix bison)/bin/bison -y\" ./configure --enable-debug",
+    "context": "The macOS variant of the configure step, pointing YACC at Homebrew's bison."
+   },
+   {
+    "cmd": "brew install bison flex gmp readline autoconf-archive",
+    "context": "Installs build and runtime dependencies on macOS via Homebrew."
+   },
+   {
+    "cmd": "docker build -t bic https://github.com/hexagonal-sun/bic.git#master",
+    "context": "Builds a Docker image straight from the GitHub master branch."
+   },
+   {
+    "cmd": "docker run -i bic",
+    "context": "Runs bic from the Docker image in interactive mode."
+   },
+   {
+    "cmd": "yay -S bic",
+    "context": "Installs bic from the AUR on Arch Linux."
+   },
+   {
+    "cmd": "bic -s test.c",
+    "context": "Evaluates test.c by calling its main(); the README example prints Factorial of 4 is: 24."
+   }
+  ],
+  "install_notes": "Build dependencies: Flex, GNU Bison, GNU Automake, GNU M4, GNU Autoconf Archive, plus libtool and pkg-config in the Debian list. Runtime dependencies are GNU Readline and GNU MP (libgmp). The README gives apt-get and brew package lists, the autoreconf/configure/make/make install sequence, and a Docker route and an AUR package. No accounts are needed. On first launch, bic reads ~/.bic if present and evaluates it as startup code, which is useful for defining functions you use often.",
+  "standout": "Most C REPLs hand you a language sandbox. This one lets you #include real system headers and call into the actual libc or other shared libraries, and the ?name inspector reports declarations and sizes. The README also describes a -l option for loading other libraries such as Capstone, though the example is not shown in the text I read.",
+  "status": "Unknown from the page. The repository shows 889 commits, 849 stars, 38 forks and a GPL-2.0 license, with CI workflows and a Dockerfile present. The scrape did not show a last-commit date or any release entries, so I could not confirm recent activity.",
+  "caveats": "Only x86_64 and aarch64 are supported, because the external-call code is written per architecture. It is GPL-2.0. Building needs a toolchain of flex, bison, automake, m4 and autoconf-archive, and macOS needs the YACC override shown above. The README's Capstone example has its command missing from the text, so the -l usage is not fully documented there. Bare statements are only allowed in the REPL, not in C files. The ?name inspector is REPL-only.",
+  "quotes": [
+   "This a project that allows developers to explore and test C-APIs using a read eval print loop, also known as a REPL.",
+   "Notice that after evaluating an expression bic will print the result of evaluation.",
+   "This will cause bic to call out to the C-library fopen() and fputs() functions to create a file and write the hello world string into it."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/hexagonal-sun/bic"
+   },
+   {
+    "label": "doc directory in the repo",
+    "url": "https://github.com/hexagonal-sun/bic/tree/master/doc"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/hexagonal-sun/bic (homepage, fetched and worked; the README was included in the response)"
+  ]
+ }
+}

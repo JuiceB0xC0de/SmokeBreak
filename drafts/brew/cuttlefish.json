@@ -1,0 +1,135 @@
+{
+ "name": "cuttlefish",
+ "desc": "Build compacted de Bruijn graphs from references or reads",
+ "homepage": "https://combine-lab.github.io/cuttlefish/",
+ "installs_365d": 42,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "library"
+ ],
+ "why": "Builds compacted de Bruijn graphs from sequencing reads, real genomics software that is a close call for a home break.",
+ "brief": {
+  "what_it_is": "Cuttlefish 3 is a command-line tool that builds compacted de Bruijn graphs, where each vertex is a maximal unitig, from reference FASTA sequences or sequencing reads (FASTQ, gzipped input accepted). It can build an uncolored graph or a colored graph over a collection of genomes, and the colored output records which input sources cover which stretch of each unitig, written alongside the unitig FASTA. The binary also has commands for comparing graphs, querying colors, cleaning up, and probing.",
+  "why_it_exists": "The README frames it as fast, parallel graph construction that stays feasible at collection scale, claiming it has built the colored graph of 150,000 bacterial genomes on a single machine. The homepage says the tool is designed for collections too large to keep in RAM.",
+  "how_it_works": "Partition buckets, blocked edge matrices, and collation buckets live on disk, so peak RAM tracks the worker set rather than the graph size. Partitioning, local contraction, discontinuity contraction, and final collation all run multi-threaded under a worker budget set by the user (the -t flag). The working directory passed with -w holds the intermediate external-memory files.",
+  "commands_seen": [
+   {
+    "cmd": "brew install cuttlefish",
+    "context": "Homebrew install, one of three listed install routes alongside conda and cargo."
+   },
+   {
+    "cmd": "conda install -c bioconda cuttlefish",
+    "context": "Bioconda install route."
+   },
+   {
+    "cmd": "cargo install cuttlefish-rs-cli",
+    "context": "Builds and installs from crates.io; requires a Rust toolchain 1.91 or newer."
+   },
+   {
+    "cmd": "RUSTFLAGS=\"-C target-cpu=native\" cargo install cuttlefish-rs-cli",
+    "context": "Same cargo install but tuned to the installing machine's CPU; faster but not portable."
+   },
+   {
+    "cmd": "git clone https://github.com/COMBINE-lab/cuttlefish.git",
+    "context": "Clone the repository to build from source."
+   },
+   {
+    "cmd": "cargo build --release",
+    "context": "Builds from source; the binary lands at target/release/cuttlefish."
+   },
+   {
+    "cmd": "cuttlefish build --ref --seq genome.fa -k 31 -t 16 -w work/ -o graph",
+    "context": "Builds an uncolored compacted graph from a reference FASTA, with k=31, 16 threads, work directory work/, and output prefix graph."
+   },
+   {
+    "cmd": "cuttlefish build --ref --list genomes.list -k 31 -t 32 -w work/ -o graph --color",
+    "context": "Builds a colored graph over a collection; each path listed in genomes.list is one source color."
+   }
+  ],
+  "install_notes": "Homebrew, Bioconda, and prebuilt GitHub release binaries cover Linux and macOS on x86-64 and arm64. Building from source needs a Rust toolchain 1.91 or newer, either via cargo install cuttlefish-rs-cli or a git clone followed by cargo build --release. No accounts, licences to acquire, or runtimes beyond that were mentioned. The user supplies a work directory (-w) and thread count (-t) on each run; the README does not describe any configuration file.",
+  "standout": "It is a genomics graph builder rather than a typical developer tool, but it stands out for its external-memory design, which keeps RAM use tied to worker count instead of graph size, and for colored graphs over very large genome collections. The same project also keeps the older C++ Cuttlefish 1 and 2 on separate branches and docs, with separate papers.",
+  "status": "Maintained as far as the README shows. It describes version 3.1.0 as feature-complete and validated for odd k from 3 to 63, points to a CHANGELOG, and cites a RECOMB 2026 paper with a bioRxiv preprint. I did not see a release date or last-commit date, so recency beyond the version number is unknown.",
+  "caveats": "Aimed at bioinformaticians working with sequencing data; the homepage and README assume familiarity with de Bruijn graphs and unitigs. Prebuilt binaries are listed only for Linux and macOS, and Windows is not mentioned. Building from source needs Rust 1.91 or newer. The native-CPU build flag makes binaries non-portable. The README asks users to cite the paper. The license is BSD 3-Clause. Cuttlefish 1 and 2 (C++) are documented separately and are not covered by this entry's commands.",
+  "quotes": [
+   "Fast, parallel, low-memory construction of compacted de Bruijn graphs \u2014 from reference sequences or sequencing reads, at collection scale.",
+   "it has built the colored graph of 150,000 bacterial genomes on a single machine.",
+   "Feature-complete and validated on reference and read inputs, uncolored and colored, for odd k from 3 to 63."
+  ],
+  "links": [
+   {
+    "label": "Cuttlefish documentation site",
+    "url": "https://combine-lab.github.io/cuttlefish/"
+   },
+   {
+    "label": "GitHub repository (README source)",
+    "url": "https://github.com/COMBINE-lab/cuttlefish"
+   },
+   {
+    "label": "RECOMB 2026 paper preprint (DOI)",
+    "url": "https://doi.org/10.1101/2025.02.02.636161"
+   }
+  ],
+  "fetch_log": [
+   "https://combine-lab.github.io/cuttlefish/ - worked; Cuttlefish homepage with overview and links to docs, Cuttlefish 1 & 2 section, and citation info.",
+   "https://github.com/COMBINE-lab/cuttlefish - worked; returned the README for Cuttlefish 3 (Rust), including install and usage sections."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A compacted, colored de Bruijn graph builder that handles 150,000-genome collections with external-memory algorithms is a distinctive computational idea, not just niche plumbing."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "cuttlefish",
+  "tldr": "Builds compacted de Bruijn graphs from genome FASTA or sequencing reads, using disk-backed memory so it scales to collections of 150,000 bacterial genomes.",
+  "deeper_look": "Cuttlefish takes DNA sequences, either reference FASTA files or sequencing reads in FASTQ (gzipped is fine), and builds a compacted de Bruijn graph. Chop every sequence into overlapping substrings of length k, treat each as an edge, and merge every unbranching path into one node. Each node is a maximal unitig, a stretch of sequence with no ambiguity about what comes next. The output is those unitigs as a FASTA file.\n\nIt can also build a colored graph over a collection of genomes. Each input file is a color, and the output records which sources cover which stretch of each unitig. That turns a pile of genomes into one shared structure where common sequence is stored once and differences show up as branches.\n\nThe design point is memory. Partition buckets, blocked edge matrices and collation buckets live on disk, so peak RAM tracks the number of worker threads rather than the size of the graph. The README claims it has built the colored graph of 150,000 bacterial genomes on a single machine. You choose the thread budget with `-t` and the scratch directory with `-w`.\n\nThe de Bruijn graph is the idea underneath, and it is a door into genome assembly, read indexing and pangenomics. Many tools in those fields start from a graph like this one. This is the third generation of the project. Versions 1 and 2 were C++ and are kept on separate branches with their own papers.",
+  "install": "brew install cuttlefish\n# alternatives: conda install -c bioconda cuttlefish, or cargo install cuttlefish-rs-cli (needs Rust 1.91+)",
+  "try_this": [
+   {
+    "cmd": "cuttlefish --help",
+    "what_happens": "Lists the subcommands, including build and the commands for comparing graphs, querying colors, cleaning up and probing."
+   },
+   {
+    "cmd": "cuttlefish build --ref --seq genome.fa -k 31 -t 16 -w work/ -o graph",
+    "what_happens": "Builds an uncolored compacted graph from one reference FASTA with k=31 on 16 threads, keeping intermediate files in work/ and writing output under the prefix graph."
+   },
+   {
+    "cmd": "cuttlefish build --ref --list genomes.list -k 31 -t 32 -w work/ -o graph --color",
+    "what_happens": "Builds a colored graph over a collection, where each path listed in genomes.list is one source color."
+   }
+  ],
+  "whats_unique": "Its external-memory design ties RAM use to worker count instead of graph size, and it builds colored graphs over very large genome collections on one machine.",
+  "caveats": "Aimed at bioinformaticians, and the docs assume you already know de Bruijn graphs and unitigs; you also need your own FASTA or FASTQ data to run it.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "genomics",
+   "bioinformatics",
+   "graphs",
+   "science",
+   "rust"
+  ],
+  "links": [
+   {
+    "label": "Cuttlefish documentation site",
+    "url": "https://combine-lab.github.io/cuttlefish/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/COMBINE-lab/cuttlefish"
+   },
+   {
+    "label": "RECOMB 2026 paper preprint (DOI)",
+    "url": "https://doi.org/10.1101/2025.02.02.636161"
+   }
+  ]
+ }
+}

@@ -1,0 +1,149 @@
+{
+ "name": "mlt",
+ "desc": "Author, manage, and run multitrack audio/video compositions",
+ "homepage": "https://www.mltframework.org/",
+ "installs_365d": 2181,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "afternoon",
+  "audio",
+  "visual",
+  "tui"
+ ],
+ "why": "A multitrack audio and video compositing engine with a declarative XML format, a neat door into media pipelines but largely professional plumbing.",
+ "brief": {
+  "what_it_is": "MLT is an open source multimedia framework for authoring, managing, and running multitrack audio/video compositions. It is the engine behind non-linear video editors such as Shotcut, Kdenlive, and Flowblade, and it is meant for broadcasters, editors, media players, transcoders, and web streamers. Its parts are ready-to-use tools (the melt command-line player and renderer), XML authoring components, and a plug-in API. Media clips, XML composition files, and filter or transition plug-ins go in; rendered or played audio and video come out. The executables installed by the Homebrew formula are melt and melt-7.",
+  "why_it_exists": "The homepage says MLT was designed and developed for television broadcasting, and that it provides a toolkit for many kinds of media applications, not just desktop video editors.",
+  "how_it_works": "The homepage describes the system as an assortment of ready-to-use tools, XML authoring components, and an extensible plug-in based API. The README does not explain the internal pipeline in detail. The README's melt example uses an SDL audio consumer, and the news items mention producers, consumers, filters, transitions, and tractors. I did not open the docs to confirm the mechanism.",
+  "commands_seen": [
+   {
+    "cmd": "SDL_AUDIODRIVER=alsa melt video.mp4",
+    "context": "README dev-container section: plays video.mp4 with melt, temporarily setting the SDL audio driver to ALSA instead of the container's dummy driver."
+   },
+   {
+    "cmd": "mkdir -p build",
+    "context": "README configuration step: create the build directory. CMake must be run from inside it, not from the project root."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "README configuration step: run from inside build/ to configure the project."
+   },
+   {
+    "cmd": "cmake -G Ninja ..",
+    "context": "README alternative to configure the build with the Ninja generator."
+   },
+   {
+    "cmd": "cmake --build .",
+    "context": "README compile step after configuring, run from build/."
+   },
+   {
+    "cmd": "ninja",
+    "context": "README alternative compile step when the project was configured for Ninja."
+   },
+   {
+    "cmd": "source ../setenv",
+    "context": "README testing step: sets up the environment so the freshly built tools run without installation. It applies to the current shell only and assumes bash or a Bourne-compatible shell."
+   },
+   {
+    "cmd": "ctest --output-on-failure",
+    "context": "README testing step: runs the test suite from inside build/, showing output on failure."
+   },
+   {
+    "cmd": "sudo cmake --install .",
+    "context": "README installation step: installs the files generated in build/ without touching the source tree."
+   },
+   {
+    "cmd": "sudo ldconfig",
+    "context": "README note: may be needed after install on some Linux systems, especially if the install prefix is not in the linker configuration."
+   }
+  ],
+  "install_notes": "The Homebrew formula is the simple path, and the homepage recommends Shotcut as the easiest way to try MLT. Building from source uses CMake from a build/ directory, optionally with Ninja, then ctest and sudo cmake --install. The README also describes a Dev Container (Docker or Podman, VS Code, CLion, or DevPod) for development. By default that container runs headless with the dummy audio driver and limited GPU access. For real GPU or audio, the README says to uncomment --ipc=host and --privileged in devcontainer.json, rebuild, and set SDL_AUDIODRIVER to alsa or pulseaudio. Recent release notes say C++20 is required and Qt 5 support was dropped, so Qt 6 is the expected Qt version. Full build prerequisites are in the docs at https://mltframework.org/docs/install/, which I did not open.",
+  "standout": "MLT uses a declarative XML format for compositions, so a timeline can be described as a file and rendered by tools rather than built in a GUI. It has a broad plug-in ecosystem (the release notes mention frei0r, LADSPA/LV2/VST2 audio plug-ins, OpenFX, Movit OpenGL, and libplacebo GPU filters). It also has a linear-colour and 10-bit pipeline in recent versions. The homepage calls it the engine of a non-linear editor that also suits apps beyond desktop editing.",
+  "status": "maintained. The homepage news lists v7.42.0 released Oct 3, 2026, preceded by v7.40.0 (Jun 24, 2026), v7.38.0 (Apr 22, 2026), v7.36.0 (Dec 29, 2025), and v7.34.0 (Nov 3, 2025), which is a release roughly every two months. Each entry has detailed notes and fixes. The homepage copyright runs to 2026. I did not check the GitHub commit history.",
+  "caveats": "The README is a build and install quick reference and points elsewhere for usage. The Dev Container's --privileged mode reduces isolation from the host, and the README warns against it outside development. Recent release notes deprecate the sox filter and the volume filter's normalize parameter, and say the frei0r and LADSPA plug-in paths depend on optional packages. Some features depend on optional libraries (for example librnnoise for the rnnoise module, Movit, or hardware decode such as VAAPI or VideoToolbox). The 10-bit path only works with compatible filters, according to the 7.34 notes. The Homebrew caveats field is empty. The project is LGPL licensed.",
+  "quotes": [
+   "MLT is an open source multimedia framework, designed and developed for television broadcasting.",
+   "The engine of a non-linear video editor that can be used in all sorts of apps, not just desktop video editors.",
+   "MLT is a LGPL multimedia framework designed for video editing.",
+   "The easiest way to try out and learn MLT is by downloading Shotcut."
+  ],
+  "links": [
+   {
+    "label": "MLT homepage",
+    "url": "https://www.mltframework.org/"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://www.mltframework.org/docs/"
+   },
+   {
+    "label": "Install guide",
+    "url": "https://mltframework.org/docs/install/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/mltframework/mlt"
+   }
+  ],
+  "fetch_log": [
+   "https://www.mltframework.org/ (homepage): worked, returned full HTML with navigation, news items v7.34.0 through v7.42.0, and featured apps.",
+   "https://github.com/mltframework/mlt (README): worked, returned the README with build, test, install, and Dev Container sections. It points to docs/ and to https://www.mltframework.org/docs/ for usage, which I did not follow."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "MLT\u2019s XML-authored timelines turn a professional audio/video pipeline into something you can inspect, compose, and render from the command line."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "MLT",
+  "tldr": "The multitrack video engine behind Shotcut, Kdenlive and Flowblade, with a melt command that plays and renders compositions described in XML.",
+  "deeper_look": "MLT is an open source multimedia framework for authoring, managing and running multitrack audio and video compositions. Its homepage says it was \"designed and developed for television broadcasting.\" Media clips, XML composition files and filter or transition plug-ins go in, and rendered or played audio and video come out.\n\nMost people meet it indirectly. Shotcut, Kdenlive and Flowblade are all built on it. The Homebrew formula installs `melt`, the command-line player and renderer that sits on the same engine, so you can use it without any editor in front of it.\n\nThe idea underneath is that a timeline does not have to live in a GUI. MLT describes a composition in a declarative XML format, so a project is a file that tools can read, generate, diff and render. The release notes mention producers, consumers, filters, transitions and tractors, which is the vocabulary of that model. Filters come from a wide plug-in ecosystem, including frei0r, LADSPA, LV2, VST2, OpenFX, Movit and libplacebo.\n\nThe README is a build and install reference and sends you to the docs for usage, so the front door is a bit bare. The homepage suggests that \"the easiest way to try out and learn MLT is by downloading Shotcut.\" Using melt directly is the way to see the engine without the editor around it.",
+  "install": "brew install mlt\n# installs the melt and melt-7 executables; the formula pulls in ffmpeg, opencv, Qt and many other libraries, so expect a large download",
+  "try_this": [
+   {
+    "cmd": "melt --help",
+    "what_happens": "Prints melt's usage, which is the quickest way to see what the player and renderer accept."
+   },
+   {
+    "cmd": "melt video.mp4",
+    "what_happens": "Plays a video file of your choosing through melt's player. On Linux the README sets SDL_AUDIODRIVER=alsa in front of this when the default audio driver is a dummy."
+   }
+  ],
+  "whats_unique": "It is the shared engine under several desktop video editors, and it exposes that engine as a command-line tool and an XML composition format. Most video tools only give you the GUI.",
+  "caveats": "The README covers building and installing rather than usage, so you will be reading the docs; the sox filter is deprecated, and some features depend on optional libraries.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "video",
+   "audio",
+   "xml",
+   "ffmpeg",
+   "cli"
+  ],
+  "links": [
+   {
+    "label": "MLT homepage",
+    "url": "https://www.mltframework.org/"
+   },
+   {
+    "label": "Documentation",
+    "url": "https://www.mltframework.org/docs/"
+   },
+   {
+    "label": "Install guide",
+    "url": "https://mltframework.org/docs/install/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/mltframework/mlt"
+   }
+  ]
+ }
+}

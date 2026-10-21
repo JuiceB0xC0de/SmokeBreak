@@ -1,0 +1,126 @@
+{
+ "name": "chibi-scheme",
+ "desc": "Small footprint Scheme for use as a C Extension Language",
+ "homepage": "https://github.com/ashinn/chibi-scheme",
+ "installs_365d": 39753,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "library",
+  "afternoon"
+ ],
+ "why": "A tiny Scheme meant for embedding in C, a small and strange language world worth an afternoon of exploring.",
+ "brief": {
+  "what_it_is": "Chibi-Scheme is a very small Scheme implementation meant to be embedded in C programs as an extension and scripting language. It has no external dependencies and builds a shared library, libchibi-scheme, plus a sample chibi-scheme command-line REPL. Its default language includes the R7RS small bindings, a full numeric tower with rational and complex numbers, Unicode support, hygienic macros, and an extensible module system. Each VM runs in an isolated heap, so several VMs can run at once in different OS threads.",
+  "why_it_exists": "The README frames it as a small library for scripting inside C programs, saying it is \"intended for use as an extension and scripting language in C programs.\" It aims to be easy to drop into any project while still doing \"The Right Thing\" by default despite its small size.",
+  "how_it_works": "The README describes VM-based lightweight threads and a separate heap for each VM, which lets multiple VMs run simultaneously in different OS threads. The language is built in layers, and the manual explains how to compile with fewer features or request a smaller language at startup. The README does not go deeper into the internals.",
+  "commands_seen": [
+   {
+    "cmd": "make && make test",
+    "context": "Builds the project and runs its test suite; the README says this works on most platforms and uses a few GNU make conditionals."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the binaries and libraries, by default under /usr/local."
+   },
+   {
+    "cmd": "make PREFIX=/path/to/install/",
+    "context": "Builds with a custom installation prefix."
+   },
+   {
+    "cmd": "sudo make PREFIX=/path/to/install/ install",
+    "context": "Installs to the custom PREFIX directory."
+   },
+   {
+    "cmd": "make doc",
+    "context": "Generates the documentation, including doc/chibi.html."
+   },
+   {
+    "cmd": "make js",
+    "context": "Builds the Emscripten (JavaScript) version. The README says to run it directly, not with emmake."
+   }
+  ],
+  "install_notes": "No external dependencies. Building uses make; the README notes that non-GNU make needs a few parameters in Makefile.detect set by hand. Installation defaults to /usr/local and can be changed with PREFIX. To run without installing, set LD_LIBRARY_PATH (DYLD_LIBRARY_PATH on macOS) so the shared libraries can be found. Native Windows desktop has basic support, with build instructions in README-win32.md.",
+  "standout": "It is designed to be embedded in C as a small library, and each VM gets its own isolated heap, so several can run in parallel OS threads. Despite the small size, the defaults include a full numeric tower, Unicode, hygienic macros, and R7RS small.",
+  "status": "unknown. The README shows no release date, version number, or last-commit date, and I did not check the commit history. It describes a broad list of supported platforms (Linux, BSDs, macOS, Plan 9, Windows, iOS, Android, ARM, Emscripten), but that does not show whether the project is currently active.",
+  "caveats": "Native Windows desktop support is described only as basic, and the README points to a separate file for it. The build relies on GNU make conditionals, and other makes need manual edits to Makefile.detect. The README does not state a license. The full documentation is in the manual, which I did not fetch.",
+  "quotes": [
+   "Chibi-Scheme is a very small library intended for use as an extension and scripting language in C programs.",
+   "each VM itself runs in an isolated heap allowing multiple VMs to run simultaneously in different OS threads.",
+   "Despite the small size, Chibi-Scheme attempts to do The Right Thing."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/ashinn/chibi-scheme"
+   },
+   {
+    "label": "Online manual",
+    "url": "http://synthcode.com/scheme/chibi/"
+   },
+   {
+    "label": "R7RS small specification",
+    "url": "https://small.r7rs.org/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/ashinn/chibi-scheme: fetched OK, README returned. The README was complete enough that I did not follow the manual link."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A compact R7RS Scheme with hygienic macros and isolated, threadable VM heaps makes C embedding a genuinely interesting way to explore language runtimes."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Chibi-Scheme",
+  "tldr": "A very small Scheme interpreter built to be embedded in C programs, with R7RS, a full numeric tower, and Unicode, and a REPL to try it.",
+  "deeper_look": "Chibi-Scheme is a Scheme implementation shipped as a small C library, libchibi-scheme, plus a sample command-line REPL called `chibi-scheme`. It has no external dependencies. The README describes it as \"intended for use as an extension and scripting language in C programs.\"\n\nDespite the size, the default language is not a toy subset. It includes the R7RS small bindings, a full numeric tower with rationals and complex numbers, Unicode, hygienic macros, and an extensible module system. The README says it \"attempts to do The Right Thing.\" The language is built in layers, and the manual explains how to compile with fewer features or ask for a smaller language at startup.\n\nThe idea underneath is embedding: instead of writing a config format or a one-off scripting syntax for your program, you drop in a small, real language. Each VM runs in its own isolated heap, so several VMs can run side by side in different OS threads. That makes it a useful way to see what a language runtime looks like when it is meant to live inside another program.\n\nThe Homebrew formula also installs `chibi-ffi`, `chibi-doc`, and the `snow-chibi` package tool. The brief does not describe what those do, so check their `--help`.",
+  "install": "brew install chibi-scheme",
+  "try_this": [
+   {
+    "cmd": "chibi-scheme --help",
+    "what_happens": "Lists the options of the sample REPL so you can see how to start it and run scripts."
+   },
+   {
+    "cmd": "chibi-ffi --help",
+    "what_happens": "Shows the usage for the foreign function interface tool that ships with it."
+   },
+   {
+    "cmd": "snow-chibi --help",
+    "what_happens": "Shows the package manager's commands."
+   }
+  ],
+  "whats_unique": "It is a real R7RS Scheme with numeric tower, Unicode, and hygienic macros, designed to be dropped into a C project as a library. Each VM gets an isolated heap, so several can run in parallel OS threads.",
+  "caveats": "The brief could not confirm how actively the project is maintained, and native Windows desktop support is described as basic.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "scheme",
+   "language",
+   "embedding",
+   "c",
+   "r7rs",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/ashinn/chibi-scheme"
+   },
+   {
+    "label": "Online manual",
+    "url": "http://synthcode.com/scheme/chibi/"
+   },
+   {
+    "label": "R7RS small specification",
+    "url": "https://small.r7rs.org/"
+   }
+  ]
+ }
+}

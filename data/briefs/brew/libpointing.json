@@ -1,0 +1,86 @@
+{
+ "name": "libpointing",
+ "desc": "Provides direct access to HID pointing devices",
+ "homepage": "https://github.com/INRIA/libpointing",
+ "installs_365d": 25,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "library",
+  "needs-hardware",
+  "afternoon"
+ ],
+ "why": "Direct access to HID pointing devices is a real hardware door, though it reads more like a library than a toy.",
+ "brief": {
+  "what_it_is": "Libpointing is an open-source C++ library, cross-platform across Windows, Mac OS X and Linux, that gives programs direct access to HID pointing devices such as mice. It delivers raw input events (displacements in x and y, button state, timestamps) and can bypass the operating system's own pointer acceleration. It also supports writing and applying pointer transfer functions, and it can replicate the ones used by Windows, OS X and Xorg. Bindings exist for Java, Python and Node.js.",
+  "why_it_exists": "The citation frames it as \"No more bricolage! Methods and tools to characterize, replicate and compare pointing transfer functions\" (Casiez and Roussel, UIST'11). The README says it is meant to help characterize, replicate and compare pointer acceleration curves.",
+  "how_it_works": "A program creates a PointingDevice and a DisplayDevice from URI-style strings such as \"any:?debugLevel=1\", then creates a TransferFunction (for example \"sigmoid:?debugLevel=2\") linking them. It registers a callback that receives the timestamp, raw dx and dy, and button bits for each event, and calls the function's applyi method to get pixel displacements. The main loop calls PointingDevice::idle(100) to pump events.",
+  "commands_seen": [
+   {
+    "cmd": "brew install libpointing",
+    "context": "Mac OS X install via Homebrew, from the wiki Installation page."
+   },
+   {
+    "cmd": "sudo port install libpointing",
+    "context": "Mac OS X install via MacPorts; the wiki marks this as not up to date."
+   },
+   {
+    "cmd": "-lpointing -L/usr/local/lib",
+    "context": "Compiler/linker flags to link libpointing and its include directory on Mac OS X, per the wiki."
+   },
+   {
+    "cmd": "choco install libpointing",
+    "context": "Windows install via Chocolatey; files land in C:/Program Files/libpointing."
+   },
+   {
+    "cmd": "apt-get update",
+    "context": "Linux (Ubuntu) step after adding the INRIA apt repository line to sources.list."
+   },
+   {
+    "cmd": "apt-get install libpointing",
+    "context": "Linux (Ubuntu) install from the INRIA apt repository."
+   },
+   {
+    "cmd": "make && make install",
+    "context": "Building a downloaded GitHub release from source on Mac OS X or Linux."
+   },
+   {
+    "cmd": "qmake",
+    "context": "Build from the source repository on Mac OS X or Linux; run qmake and make in the root directory to compile everything."
+   },
+   {
+    "cmd": "make",
+    "context": "Second step after qmake in the root directory, per the wiki build-from-sources section."
+   }
+  ],
+  "install_notes": "Beyond brew install: MacPorts (sudo port install libpointing) is noted as out of date. On Windows, install Chocolatey first, then choco install libpointing. Linking needs hid.lib (from the Windows Driver Kit) and setupapi.lib. On Ubuntu, add the line deb http://inria.github.io/libpointing/distrib debian/ to /etc/apt/sources.list, then apt-get update and apt-get install libpointing. Building from source uses qmake and make on Mac/Linux, and Compile all.pro or pointing/pointing.vcxproj on Windows. The wiki also lists an npm install page. Release tarballs are on GitHub Releases.",
+  "standout": "Rather than just reading mouse events, it reproduces the pointer acceleration curves of Windows, OS X and Xorg, so you can run the real system function and a replica side by side on the same input and compare them. Devices are chosen at run time through URIs, and hot-plugging is supported.",
+  "status": "Unknown from the pages read. The README shows Homebrew, PyPI, npm, Chocolatey and CI badges, but I saw no release date or latest-commit date. The wiki Installation page was last edited Apr 14, 2020. Mostly that suggests activity is quiet rather than abandoned, but I could not confirm it.",
+  "caveats": "The license is GNU GPL version 2 or later; the README says ad-hoc licences can be granted on request, and industrial users are asked to fund the work through an Inria research contract. Windows builds need the Windows Driver Kit's hid.lib and setupapi.lib, and QtCreator users must turn off Shadow build. The wiki says MacPorts is out of date. The source build depends on qmake. The README's only code sample is C++.",
+  "quotes": [
+   "An open-source cross-platform library to get raw events from pointing devices and master transfer functions.",
+   "Libpointing is an open-source cross-platform library written in C++ that provides direct access to HID pointing devices and supports the design of pointing transfer functions.",
+   "replicates as faithfully as possible the transfer functions used by Microsoft Windows, Apple OS X and Xorg (the X.Org Foundation server)."
+  ],
+  "links": [
+   {
+    "label": "Homepage (GitHub repository)",
+    "url": "https://github.com/INRIA/libpointing"
+   },
+   {
+    "label": "Wiki: Installation",
+    "url": "https://github.com/INRIA/libpointing/wiki/Installation"
+   },
+   {
+    "label": "Paper: No More Bricolage! (UIST'11), DOI",
+    "url": "https://doi.org/10.1145/2047196.2047276"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/INRIA/libpointing: fetched OK, README returned in full.",
+   "https://github.com/INRIA/libpointing/wiki/Installation: fetched OK, but most of the text is page chrome; the install instructions were readable and used above."
+  ]
+ }
+}

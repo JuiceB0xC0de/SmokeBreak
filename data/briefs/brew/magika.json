@@ -1,0 +1,93 @@
+{
+ "name": "magika",
+ "desc": "Fast and accurate AI powered file content types detection",
+ "homepage": "https://securityresearch.google/magika/",
+ "installs_365d": 954,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "library"
+ ],
+ "why": "Google's AI file type detector, a neat way to see how content sniffing works beyond magic bytes.",
+ "brief": {
+  "what_it_is": "Magika is a command-line tool, with Python, Rust, and JavaScript/TypeScript bindings, that identifies what kind of content a file holds using a small deep-learning model. You give it file paths, a directory with -r, or data on standard input, and it prints a content-type label and description for each file, such as 'Python source' or 'Microsoft Word 2007+ document'. Output can be plain text, JSON, JSONL, MIME type, a simple label, or a custom format. The model is a few MB and reads only a limited part of each file, so inference time stays near-constant regardless of file size. The README says it covers 200+ content types, both binary and textual.",
+  "why_it_exists": "The README frames it as a more accurate alternative to traditional file type detection, saying it 'relies on the recent advance of deep learning to provide accurate detection' and outperforms existing approaches 'especially on textual content types'. The homepage says Google uses it at scale to route Gmail, Drive, and Safe Browsing files to the right security and content-policy scanners.",
+  "how_it_works": "A custom, highly optimized model (a few MBs) is trained on about 100M samples and predicts a content type from a limited subset of each file's bytes. A pre-tuned, per-content-type threshold decides whether to trust the prediction or fall back to a generic label such as 'Generic text document' or 'Unknown binary data'. Prediction modes named high-confidence, medium-confidence, and best-guess control how tolerant it is of errors. Each result includes a score; the JSON output shows both the raw model output and the final output when it is overruled.",
+  "commands_seen": [
+   {
+    "cmd": "brew install magika",
+    "context": "Installs the CLI via Homebrew on macOS or Linux; the README lists this as one of several install routes."
+   },
+   {
+    "cmd": "pipx install magika",
+    "context": "Installs the CLI from the Python package into an isolated environment."
+   },
+   {
+    "cmd": "cargo install --locked magika-cli",
+    "context": "Builds and installs the Rust CLI from crates.io."
+   },
+   {
+    "cmd": "pip install magika",
+    "context": "Installs the Python package, which provides the Python API."
+   },
+   {
+    "cmd": "npm install magika",
+    "context": "Installs the experimental JavaScript/TypeScript package, which powers the web demo."
+   },
+   {
+    "cmd": "magika -r * | head",
+    "context": "Run from tests_data/basic (after cd), recursively identifies files and shows the first lines; the README prints it with a leading shell prompt, which is dropped here."
+   },
+   {
+    "cmd": "magika ./tests_data/basic/python/code.py --json",
+    "context": "Identifies one Python file and prints the full result as JSON, including label, MIME type, group, and score."
+   },
+   {
+    "cmd": "cat tests_data/basic/ini/doc.ini | magika -",
+    "context": "Pipes a file into Magika via standard input; the dash means read from stdin. Output is '-: INI configuration file (text)'."
+   },
+   {
+    "cmd": "magika --help",
+    "context": "Lists the options: -r, --no-dereference, -s, -i, -l, --json, --jsonl, --format with placeholders like %p and %l, and others."
+   },
+   {
+    "cmd": "from magika import Magika",
+    "context": "Python API import; the README then shows m = Magika() with identify_bytes, identify_path, or identify_stream, reading res.output.label."
+   }
+  ],
+  "install_notes": "Several routes: brew install magika (macOS/Linux), pipx install magika, an installer script (curl -LsSf https://securityresearch.google/magika/install.sh | sh on Unix, or a PowerShell irm ... | iex one-liner on Windows), cargo install --locked magika-cli, pip install magika for Python, and npm install magika for JavaScript. No accounts, API keys, or special hardware are mentioned. The README says it runs on a single CPU and that the model loads once, with a one-off overhead. The Go binding is marked WIP.",
+  "standout": "Instead of matching magic bytes or extensions, it uses a neural classifier with per-type confidence thresholds, so it can say 'Unknown binary data' rather than guess. It is built to run in a few milliseconds per file on a CPU, and the same model runs in the browser through a web demo.",
+  "status": "unknown: the fetched pages show no release date or last-commit date. Signs of ongoing work include CI and coverage badges, PyPI and npm version badges, an OpenSSF Best Practices badge, and a reference to an ICSE 2025 paper.",
+  "caveats": "The README disclaims official status: 'This project is not an official Google project. It is not supported by Google and Google specifically disclaims all warranties.' The homepage and scout notes present it as Google's tool, so write it that way only with that disclaimer in mind. Contributions are limited: PRs are reviewed only for 'help wanted' issues and a short list of welcome changes, so open an issue first. The JavaScript package is marked experimental, and the Go binding is WIP. The README says 'more is coming soon!' for open-sourcing. Security reports go to magika-dev@google.com. The license is Apache 2.0.",
+  "quotes": [
+   "Magika is a novel AI-powered file type detection tool that relies on the recent advance of deep learning to provide accurate detection.",
+   "Magika is used at scale to help improve Google users' safety by routing Gmail, Drive, and Safe Browsing files to the proper security and content policy scanners, processing hundreds billions samples on a weekly basis.",
+   "This project is not an official Google project. It is not supported by Google and Google specifically disclaims all warranties as to its quality, merchantability, or fitness for a particular purpose."
+  ],
+  "links": [
+   {
+    "label": "Magika homepage",
+    "url": "https://securityresearch.google/magika/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/google/magika"
+   },
+   {
+    "label": "Research paper (ICSE 2025)",
+    "url": "https://securityresearch.google/magika/additional-resources/research-papers-and-citation/"
+   },
+   {
+    "label": "Web demo (runs locally in browser)",
+    "url": "https://securityresearch.google/magika/demo/magika-demo/"
+   }
+  ],
+  "fetch_log": [
+   "https://securityresearch.google/magika/ \u2014 worked; homepage text with highlights, but no install or command details, so I followed the repo link.",
+   "https://github.com/google/magika \u2014 worked; returned the README, which holds the install routes, CLI help, and Python examples."
+  ]
+ }
+}

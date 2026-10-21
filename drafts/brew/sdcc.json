@@ -1,0 +1,104 @@
+{
+ "name": "sdcc",
+ "desc": "ANSI C compiler for Intel 8051, Maxim 80DS390, and Zilog Z80",
+ "homepage": "https://sdcc.sourceforge.net/",
+ "installs_365d": 1567,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "ancient",
+  "language"
+ ],
+ "why": "A C compiler targeting 8051 and Z80 chips, a real door into retro microcontroller worlds.",
+ "brief": {
+  "what_it_is": "SDCC is a retargetable, optimizing ANSI/ISO C compiler suite for small microcontrollers. It takes C source and produces machine code for Intel MCS51 parts (8031, 8051, 8052 and similar), Maxim DS80C390, Freescale HC08/S08, many Zilog Z80-family chips, Padauk, STM8, MOS 6502 and WDC 65C02. The suite also bundles an assembler and linker (sdas/sdld), a preprocessor (sdcpp), a source-level debugger (sdcdb), archive tools, and about a dozen ucsim simulators. Prebuilt binaries are published for GNU/Linux amd64, Windows, and macOS amd64.",
+  "why_it_exists": "The homepage presents SDCC as a portable, optimizing C compiler for 8-bit and small MCU targets, developed by volunteers and kept current by user input since it moved to SourceForge in 1999. The funding news frames the goal as making SDCC more competitive with non-free compilers and better suited to modern C standards, safety, and security.",
+  "how_it_works": "The page describes a compiler proper (sdcc) with MCU-specific language extensions, standard optimizations (CSE, loop optimizations, constant folding, dead code elimination, switch jump tables), a global register allocator, and a rule-based peephole optimizer. Per-target backends sit under a shared front end, and the assembler/linker derive from ASXXXX and the archive tools from GNU Binutils. The page does not describe the internal pipeline in more detail.",
+  "commands_seen": [
+   {
+    "cmd": "svn checkout svn://svn.code.sf.net/p/sdcc/code/trunk/sdcc sdcc",
+    "context": "Fetches the latest development sources from the SDCC Subversion trunk into a local sdcc directory."
+   },
+   {
+    "cmd": "sdcc -v",
+    "context": "Prints the compiler version and build date; the page asks bug reporters to paste the full version string."
+   }
+  ],
+  "install_notes": "Not a brew-style install on the homepage. Options: distro packages (the page says these are often outdated); the SourceForge file releases page (http://sourceforge.net/projects/sdcc/files/) for source and binaries; or building from source with gcc, which the page says works natively on GNU/Linux and macOS. Windows release builds are cross-compiled to mingw32 on Linux, and Windows users can try Cygwin or an unsupported MSVC build script. Snapshot builds are offered for newer fixes. No accounts are needed to download; a SourceForge account is only needed to post on the forum. No hardware or runtime prerequisites are mentioned.",
+  "standout": "It is much broader than the scout note's 8051-and-Z80 description: it is a full ISO C compiler (C89 through C23, plus C2y features in 4.6.0) for a long list of retro and small MCU families, and it ships simulators for most of them in the same tree. Its executables list covers about 45 tools, including twelve ucsim simulator binaries.",
+  "status": "Maintained. SDCC 4.6.0 was released 2026-06-22, after RC1 (2026-05-28) and RC2 (2026-06-14). The homepage was last updated June 23, 2026. The prior release, 4.5.0, was January 28, 2025. A 2025-10-15 news item reports funding from the NGI0 Commons Fund and the Sovereign Tech Fund.",
+  "caveats": "The PIC16 and PIC18 targets are unmaintained. Licensing is mixed: most components are GPL, the runtime libraries are GPL+LE, makebin is zlib/libpng, packihx is public domain, and the Microchip-derived PIC headers are described by the page as incompatible with the GPL. Officially supported hosts are only amd64 GNU/Linux, x86 GNU/Linux, Windows amd64, and macOS amd64, and Windows x86 is listed among release binaries. Some targets are experimental or in progress (f8l, r5k, r6k, Rabbit 5000/6000, pdk13). Distro packages lag behind releases. The sample -v output on the page is from 2004 (version 2.3.8), so it is only illustrative. Development is mostly unpaid volunteer work.",
+  "quotes": [
+   "SDCC is a retargettable, optimizing Standard C (ANSI C89, ISO C99, ISO C11, ISO C23) compiler suite",
+   "SDCC is primarily developed by unpaid volunteer work",
+   "Please consider downloading one of the snapshot builds if you have run across a bug, or if the above release is more than two months old."
+  ],
+  "links": [
+   {
+    "label": "SDCC homepage",
+    "url": "https://sdcc.sourceforge.net/"
+   },
+   {
+    "label": "SDCC file releases (SourceForge)",
+    "url": "http://sourceforge.net/projects/sdcc/files/"
+   }
+  ],
+  "fetch_log": [
+   "https://sdcc.sourceforge.net/ - fetched OK. This is an HTML project page, not a GitHub repo, so it stood in for the README. No further links were followed because the page was substantive; the linked SDCC Manual PDF and wiki were not fetched."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A maintained C toolchain for obscure 8-bit architectures, bundled with simulators, offers a hands-on way to explore how tiny retro machines work."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "SDCC",
+  "tldr": "A C compiler for tiny chips like the 8051, Z80, STM8 and 6502, bundled with assemblers, a debugger and simulators so you can run the result without hardware.",
+  "deeper_look": "SDCC is a retargetable, optimizing C compiler suite for small microcontrollers and 8-bit CPUs. It takes standard C (the homepage lists C89 through C23) and emits machine code for Intel MCS51 parts, the Maxim DS80C390, Freescale HC08/S08, the Zilog Z80 family, Padauk, STM8, MOS 6502 and WDC 65C02. Several other targets are listed as experimental or in progress.\n\nThe suite is more than a compiler. It includes an assembler and linker (sdas and sdld, derived from ASXXXX), a preprocessor, a source-level debugger (sdcdb), archive tools derived from GNU Binutils, and about a dozen ucsim simulators. That means you can compile a C program for a chip from the 1970s or 80s and run it in a simulator on your laptop, with no board or programmer needed.\n\nThe interesting part is what C has to do on these machines. They have a handful of registers, tiny memory and no stack in the modern sense, so the compiler needs MCU-specific language extensions, a global register allocator and a rule-based peephole optimizer. Looking at the assembly it generates shows how a high-level language gets squeezed onto very small hardware.\n\nThe project says it is \"primarily developed by unpaid volunteer work\" and has lived on SourceForge since 1999. It is still active: version 4.6.0 was released in June 2026.",
+  "install": "brew install sdcc\nNo hardware is needed to compile or to run code in the bundled ucsim simulators. The homepage notes that distro packages are often outdated; source and binaries are on the SourceForge releases page.",
+  "try_this": [
+   {
+    "cmd": "sdcc -v",
+    "what_happens": "Prints the compiler version and build date, a quick check that the toolchain is installed."
+   },
+   {
+    "cmd": "sdcc --help",
+    "what_happens": "Lists the compiler options, including the choice of target architecture."
+   },
+   {
+    "cmd": "ucsim_z80 --help",
+    "what_happens": "Shows how to start the Z80 simulator, one of the bundled ucsim simulators."
+   }
+  ],
+  "whats_unique": "It is a full modern C compiler for a long list of retro and small-MCU families, and it ships simulators for most of them in the same tree.",
+  "caveats": "The PIC16 and PIC18 targets are unmaintained, some other targets are experimental, and the project is mostly unpaid volunteer work.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "compiler",
+   "z80",
+   "8051",
+   "retro",
+   "microcontrollers",
+   "simulator",
+   "c"
+  ],
+  "links": [
+   {
+    "label": "SDCC homepage",
+    "url": "https://sdcc.sourceforge.net/"
+   },
+   {
+    "label": "SDCC file releases (SourceForge)",
+    "url": "http://sourceforge.net/projects/sdcc/files/"
+   }
+  ]
+ }
+}

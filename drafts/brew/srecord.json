@@ -1,0 +1,102 @@
+{
+ "name": "srecord",
+ "desc": "Tools for manipulating EPROM load files",
+ "homepage": "https://srecord.sourceforge.net/",
+ "installs_365d": 1146,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "ancient",
+  "needs-hardware"
+ ],
+ "why": "Manipulates EPROM load files, a hands-on look at firmware image formats used to program old chips.",
+ "brief": {
+  "what_it_is": "SRecord is a collection of command-line tools for manipulating EPROM load files, written in C++ and distributed as a source package. Its main tools are srec_cat (concatenate, join, or convert between formats), srec_cmp (compare load files for equality, or portions of them), and srec_info (print summary information about load files). The page says the tools understand a long list of formats, including Intel hex, Motorola S-Record, TI-TXT, and Verilog VMEM, plus output-only formats such as C array, VHDL, and BASIC DATA statements. Input can be run through filters (crc, checksum, crop, exclude, fill, offset, split, and others) and generators (constant, random, repeated data).",
+  "why_it_exists": "The author, Peter Miller, wrote it because he could not find many programs for manipulating EPROM load files, and the ones he found only did a few of the things he needed.",
+  "how_it_works": "The format handling and filter chaining use polymorphism in C++, so new formats and filters can be added relatively simply. Any input file can be replaced by a generator, and more than one filter can be applied to each input. The project also ships a shared library that exposes the same formats and filters to other programs, and the installed executables are smaller because they use it.",
+  "commands_seen": [],
+  "install_notes": "The source distribution configures itself using CMake and runs on almost any UNIX flavor. It also builds on Windows under MSYS2, and the page mentions Cygwin and DJGPP as Windows build options. The page points to a BUILDING file for details. Nothing on the homepage mentions accounts, runtimes, or first-run configuration.",
+  "standout": "Filters and generators can be chained onto any input in the same command line, and the formats list is unusually long for a tool of this size. The page's own comparison points to sibling projects that apply the same idea to text files (Uncia), file systems (PlasticFS), and archives (Tardy).",
+  "status": "Maintained, according to the homepage. It says the project was written by Peter Miller and continues to be maintained by Scott Finneran, and it names version 1.65 as current. The page gives no release date or recent commit, so recency is not confirmed from this page alone.",
+  "caveats": "The page says the site is kept as close as possible to Peter's original and is 'very much a product of its time', so some content may be dated. Several formats are one-way only: C array, VHDL, BASIC, ASM, and Hexdump are output-only, HP64000 Absolute is read-only, and Xilinx COE and Lattice MEM are write-only. The Wilson format is described as a mystery format added for a particular EPROM writer. Licensing is GNU GPL. The homepage gives no build-time or platform-specific problems beyond the listed build systems.",
+  "quotes": [
+   "The SRecord package is a collection of powerful tools for manipulating EPROM load files.",
+   "I wrote SRecord because when I was looking for programs to manipulate EPROM load files, I could not find very many.",
+   "SRecord runs on almost any flavor of UNIX. The source distribution is self configuring using CMake."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://srecord.sourceforge.net/"
+   },
+   {
+    "label": "Manual (single PDF, linked from homepage)",
+    "url": "https://srecord.sourceforge.net/"
+   },
+   {
+    "label": "Manual pages as HTML (linked from homepage)",
+    "url": "https://srecord.sourceforge.net/"
+   }
+  ],
+  "fetch_log": [
+   "https://srecord.sourceforge.net/ (fetched, loaded successfully; homepage is a full project page with no README, so no further fetches were made)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "SRecord makes obscure EPROM image formats tangible, with composable tools for inspecting, converting, generating, and transforming firmware load files."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "SRecord",
+  "tldr": "A set of command-line tools for converting, filtering, comparing and generating EPROM and firmware load files across Intel hex, Motorola S-Record and many other formats.",
+  "deeper_look": "SRecord is built around three programs. `srec_cat` reads one or more load files, optionally transforms them, and writes the result in another format. `srec_cmp` checks whether two files, or parts of them, hold the same data. `srec_info` prints a summary of a file. Load files are the text or binary images that were once fed to chip programmers, and they are still how a lot of firmware gets passed around.\n\nThe formats list is long: Intel hex, Motorola S-Record, TI-TXT and Verilog VMEM can be read and written. Some formats go one way only. C array, VHDL, BASIC DATA statements, ASM and Hexdump are output-only, so a firmware image can be turned into source code you could paste into a program.\n\nThe design idea is that any input can be replaced by a generator (constant, random, repeated data), and any input can be run through a chain of filters such as crc, checksum, crop, exclude, fill, offset and split. Because they sit on the same command line, you can describe a whole image-patching job as one pipeline instead of writing a one-off script.\n\nThe author, Peter Miller, wrote it because he could not find many programs for manipulating EPROM load files, and the ones he found only did a few of the things he needed. Formats and filters are C++ polymorphic classes, so adding new ones is relatively simple. The project also ships a shared library exposing the same formats and filters to other programs.",
+  "install": "brew install srecord",
+  "try_this": [
+   {
+    "cmd": "srec_cat --help",
+    "what_happens": "Prints usage for the main tool, a first look at the input, filter and output options."
+   },
+   {
+    "cmd": "srec_info --help",
+    "what_happens": "Shows how to get a summary of a load file's contents."
+   },
+   {
+    "cmd": "srec_cmp --help",
+    "what_happens": "Shows how to compare two load files, or portions of them, for equality."
+   }
+  ],
+  "whats_unique": "Filters and generators can be chained onto any input in a single command line, and the format list is unusually long for a tool this small. It reads like a small language for firmware images.",
+  "caveats": "The homepage calls itself 'very much a product of its time', and several formats are one-way only, so not every conversion works in both directions.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "firmware",
+   "eprom",
+   "file-formats",
+   "retro",
+   "cli"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://srecord.sourceforge.net/"
+   },
+   {
+    "label": "Manual (single PDF, linked from homepage)",
+    "url": "https://srecord.sourceforge.net/"
+   },
+   {
+    "label": "Manual pages as HTML (linked from homepage)",
+    "url": "https://srecord.sourceforge.net/"
+   }
+  ]
+ }
+}

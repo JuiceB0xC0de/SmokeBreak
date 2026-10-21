@@ -1,0 +1,136 @@
+{
+ "name": "swaks",
+ "desc": "SMTP command-line test tool",
+ "homepage": "https://www.jetmore.org/john/code/swaks/",
+ "installs_365d": 4043,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "quick",
+  "network",
+  "protocol"
+ ],
+ "why": "A scriptable SMTP test tool that lets you speak raw mail protocol by hand, a good door into how email really works.",
+ "brief": {
+  "what_it_is": "Swaks is a command-line SMTP test tool that opens a transaction to a mail server and sends a test message, with each step under the operator's control. You give it a recipient, optionally a sender, server, authentication, TLS settings, body, headers, or attachments, and it prints the SMTP conversation as it runs and reports the outcome. It can also stop the transaction at a chosen protocol point, such as after RCPT or after the banner. The project describes itself as a Swiss Army Knife for SMTP.",
+  "why_it_exists": "The author describes its primary design goal as being \"a flexible, scriptable, transaction-oriented SMTP test tool.\" The README and reference doc frame it as something operators and scripters can use to test real mail servers and filters, such as virus scanners, spam scanners, LMTP delivery, and recipient verification.",
+  "how_it_works": "By default Swaks connects over TCP to the target server, looking up the server from the recipient domain's DNS MX records when no --server is given. It can also connect to a UNIX-domain socket or spawn a process and talk to it over stdin/stdout pipes. It supports SMTP, ESMTP, and LMTP, and options can come from a config file, environment variables (SWAKS_OPT_name), or the command line, with later sources overriding earlier ones. The --quit-after and --drop-after options take stop-points such as CONNECT, STARTTLS, AUTH, MAIL, RCPT, and DATA to end the transaction at a specific step.",
+  "commands_seen": [
+   {
+    "cmd": "swaks --to user@example.com --server test-server.example.net",
+    "context": "Quick start: delivers a standard test email to user@example.com on port 25 of test-server.example.net."
+   },
+   {
+    "cmd": "swaks --to user@example.com --from me@example.com --auth CRAM-MD5 --auth-user me@example.com --header-X-Test \"test email\"",
+    "context": "Sends a test email authenticated with CRAM-MD5 as me@example.com and adds an X-Test header; the password is prompted for if not found in .netrc."
+   },
+   {
+    "cmd": "swaks -t user@example.com --attach - --server test-server.example.com --suppress-data </path/to/eicar.txt",
+    "context": "Tests a virus scanner by attaching the EICAR test file from stdin and suppressing display of the DATA part."
+   },
+   {
+    "cmd": "swaks --to user@example.com --body @/path/to/gtube/file",
+    "context": "Tests a spam scanner by putting the GTUBE test string into the body from a file, routed via the MX records for example.com."
+   },
+   {
+    "cmd": "swaks --to user@example.com --socket /var/lda.sock --protocol LMTP",
+    "context": "Delivers a test message over LMTP through a UNIX-domain socket file."
+   },
+   {
+    "cmd": "swaks --pipe \"exim -bh 127.0.0.2\"",
+    "context": "Pipe transport example from the reference doc: spawns Exim in its testing mode over stdin/stdout, given as an example of checking DNSBL behaviour."
+   },
+   {
+    "cmd": "swaks --to $E --server test-server.example.com --quit-after RCPT --hide-all",
+    "context": "Inside a shell loop over a file of addresses, stops after RCPT to find recipients the test server cannot verify; the loop echoes any address whose exit status is non-zero."
+   },
+   {
+    "cmd": "SWAKS_OPT_from='fred@example.com'",
+    "context": "Environment-variable form of the --from option, from the configuration section of the reference doc."
+   }
+  ],
+  "install_notes": "Beyond brew install, the README points to an installation page for other environments and offers both a tarball package and a standalone script (swaks-20240103.0). I did not fetch the installation page. The reference doc says it needs Perl modules: IO::Socket::IP for network sockets (with IO::Socket and IO::Socket::INET6 as a deprecated fallback), IO::Socket::UNIX for UNIX sockets, IPC::Open2 for pipes, Net::DNS for MX lookups (without it, it falls back to localhost), and Net::SSLeay for TLS. Configuration is optional: it reads $SWAKS_HOME/.swaksrc, then $HOME/.swaksrc, or a file given with --config, and it also reads an options block placed after __END__ at the bottom of the script. Note that the README's Perl module list is from the reference doc, so the Perl runtime is implied rather than stated outright on the homepage.",
+  "standout": "Swaks is built around the SMTP transaction rather than a single send: --quit-after and --drop-after end the conversation at a named protocol step, and --pipe can drive a local MTA in its test mode. Options can be layered from a config file, the environment, and the command line, and an options block can ride inside the script itself, so a set of preferences can travel from server to server as one file.",
+  "status": "Maintained, though by one person as a hobby. The homepage and README both list the latest release as 20240103.0, and the README says the maintainer does not guarantee timely replies. The blog announcement URL has a 2020/10 date in its path, which conflicts with the version string; I could not resolve that and did not check the GitHub commit or release dates.",
+  "caveats": "Licensed under GPLv2. Heavy reliance on Perl modules: TLS needs Net::SSLeay, and without Net::DNS, MX-based routing does not work. The IO::Socket fallback is deprecated. The reference doc notes that TLS failures under --tls-optional can leave the connection state unknown. On Windows, empty environment variables cannot be set, so the README suggests using \"<>\" as a stand-in. The reference doc is long and dense, and I read only the first 40,000 characters of it, so options beyond that point are unchecked. The README says the maintainer is a single person, so responses may be slow.",
+  "quotes": [
+   "Swaks is a featureful, flexible, scriptable, transaction-oriented SMTP test tool written and maintained by John Jetmore.",
+   "Swaks' primary design goal is to be a flexible, scriptable, transaction-oriented SMTP test tool.",
+   "since Swaks is only maintained by a single person as a hobby, there is no guarantee of a timely response."
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://www.jetmore.org/john/code/swaks/"
+   },
+   {
+    "label": "Reference documentation (plain text, latest release)",
+    "url": "https://jetmore.org/john/code/swaks/latest/doc/ref.txt"
+   },
+   {
+    "label": "Source on GitHub",
+    "url": "https://github.com/jetmore/swaks"
+   }
+  ],
+  "fetch_log": [
+   "https://www.jetmore.org/john/code/swaks/ (homepage): worked, returned page text with features, download, and documentation sections; no shell commands on the page.",
+   "https://github.com/jetmore/swaks (GitHub README): worked, returned the README; no shell commands in it, but it links to the docs and installation pages.",
+   "https://jetmore.org/john/code/swaks/latest/doc/ref.txt (reference doc, linked from the README): worked, but the output was cut at 40,000 characters, so the rest was not read. The installation page and FAQ were not fetched."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Swaks makes SMTP\u2019s hidden transaction visible and lets you stop or shape it at protocol steps, turning a routine mail test into a hands-on protocol lesson."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "swaks",
+  "tldr": "A command-line SMTP test tool that walks a mail server through a transaction step by step, printing every line of the conversation and stopping wherever you choose.",
+  "deeper_look": "Swaks connects to a mail server and sends a test message, showing the full SMTP conversation as it happens. You give it a recipient and optionally a sender, server, authentication, TLS settings, headers, body or attachments. If you leave out the server, it looks up the MX records for the recipient's domain and talks to whatever it finds there.\n\nThe author calls its primary design goal \"a flexible, scriptable, transaction-oriented SMTP test tool.\" The word transaction matters. Email delivery is a short dialogue of connect, greeting, STARTTLS, AUTH, MAIL, RCPT, DATA. Swaks lets you stop at any of those points with `--quit-after` or `--drop-after`. That makes it useful for asking a server narrow questions, such as whether it accepts a given recipient, without ever sending a message.\n\nIt also reaches past TCP. It can speak SMTP, ESMTP or LMTP, connect to a UNIX-domain socket, or spawn a local program and talk to it over stdin and stdout. The docs show it driving Exim's test mode this way. Operators use it to check virus and spam scanners with the standard EICAR and GTUBE test strings, and to check recipient verification.\n\nOptions can come from a config file, from `SWAKS_OPT_name` environment variables, or from the command line, with later sources overriding earlier ones. Reading the printed conversation is a quick way to see what mail servers and clients actually say to each other.",
+  "install": "brew install swaks\n# Perl tool. TLS needs Net::SSLeay, and MX lookups need Net::DNS (without it, it falls back to localhost).",
+  "try_this": [
+   {
+    "cmd": "swaks --help",
+    "what_happens": "Lists the options, a good map of what parts of an SMTP transaction you can control."
+   },
+   {
+    "cmd": "swaks --to user@example.com --server test-server.example.net",
+    "what_happens": "Delivers a standard test email to port 25 of the named server and prints the whole SMTP conversation."
+   },
+   {
+    "cmd": "swaks --to $E --server test-server.example.com --quit-after RCPT --hide-all",
+    "what_happens": "Stops the transaction after RCPT, so you learn whether the server accepts the recipient without sending a message. In the docs it runs inside a shell loop over a list of addresses."
+   }
+  ],
+  "whats_unique": "It is built around the SMTP transaction rather than a single send, so you can halt at a named protocol step, drive a local MTA over a pipe, and carry your option set around as a config file or inside the script itself.",
+  "caveats": "Maintained by one person as a hobby, so replies may be slow, and TLS and MX lookups depend on optional Perl modules being present.",
+  "commitment": "quick",
+  "category": "fundamentals",
+  "tags": [
+   "quick",
+   "smtp",
+   "email",
+   "protocol",
+   "perl",
+   "testing"
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://www.jetmore.org/john/code/swaks/"
+   },
+   {
+    "label": "Reference documentation (plain text, latest release)",
+    "url": "https://jetmore.org/john/code/swaks/latest/doc/ref.txt"
+   },
+   {
+    "label": "Source on GitHub",
+    "url": "https://github.com/jetmore/swaks"
+   }
+  ]
+ }
+}

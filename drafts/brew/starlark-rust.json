@@ -1,0 +1,127 @@
+{
+ "name": "starlark-rust",
+ "desc": "Rust implementation of the Starlark language",
+ "homepage": "https://github.com/facebook/starlark-rust",
+ "installs_365d": 45,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "library",
+  "afternoon"
+ ],
+ "why": "A Rust implementation of Starlark, the deterministic Python-like config language; a niche language worth a look.",
+ "brief": {
+  "what_it_is": "A Rust implementation of Starlark, the deterministic, Python-like configuration language used by Bazel, Buck, and Buck2. It is published as a library crate named starlark, with an evaluator, standard library, debugger support, a linter, and an LSP server. The README also describes a binary, starlark_bin, that gives an interactive REPL, IDE features, and a linter from the command line. Input is Starlark source; output is evaluated values, lint findings, or LSP responses.",
+  "why_it_exists": "Starlark is the configuration language behind Bazel, Buck, and Buck2, and Buck2 depends on this Rust library. The README says the project was originally developed in google/starlark-rust and moved to Meta in version 0.4.0. It is one of at least three Starlark implementations, alongside Java and Go.",
+  "how_it_works": "The starlark crate is the main library, with the evaluator, standard library, and debugger support. starlark_derive is a proc-macro crate that provides the macros, and starlark_map supplies memory-efficient ordered and unordered maps and sets. starlark_syntax holds the AST and parser, starlark_lsp provides the language server, and starlark_bin is the command-line binary. Projects that embed Starlark are expected to write their own binary on top of the library and add their own types and functions.",
+  "commands_seen": [
+   {
+    "cmd": "$ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh",
+    "context": "Installs the Rust toolchain via rustup. The README gives this as the first step before trying the project."
+   },
+   {
+    "cmd": "$ cargo run",
+    "context": "Run from a clone of the repo to start the Starlark interpreter."
+   },
+   {
+    "cmd": "$> 1+2",
+    "context": "Example REPL input at the prompt; the README shows the output as 3."
+   },
+   {
+    "cmd": "cargo publish --allow-dirty --dry-run",
+    "context": "Maintainer release step, run in each component directory before the real publish. Not something a user runs."
+   }
+  ],
+  "install_notes": "The README gives no Homebrew-specific steps. To try it from source, install Rust with rustup, clone the repo, and run cargo run. The README does not describe any accounts, hardware, or extra configuration. The Homebrew formula's executable is named starlark, while the README's binary crate is starlark_bin. Those names may be the same program, but the README does not say so directly.",
+  "standout": "Rust-friendly design: frozen values are Send and Sync, while non-frozen values are not. It also ships an LSP, a DAP debugger adapter, optional runtime-checked types, and fuzz testing through OSS-Fuzz. It is a serious embeddable language core, not just an interpreter.",
+  "status": "unknown. The README has CI and crates.io badges, and its release checklist suggests active maintenance. It cites version 0.4.0 and a GitHub compare link to main, but gives no release date and no last-commit date. I did not fetch the releases or commit pages, so I cannot confirm recent activity.",
+  "caveats": "The README says the project does not aim for API stability between releases, though it does follow SemVer. Bytes are not yet supported. Creating circular data structures may cause stack overflows. The REPL and evaluator only know standard Starlark, so domain-specific embeddings need their own binary. The README says the bin is best treated as a test-bed, and that Python3 is a better choice if you only want plain Starlark. It does not aim for minimal dependencies. The README gives no platform list, and the Homebrew formula's caveats field is empty.",
+  "quotes": [
+   "This project provides a Rust implementation of the Starlark language.",
+   "We do _not_ aim for API stability between releases, preferring to iterate quickly and refine the API as much as possible.",
+   "Useful if you want to use vanilla Starlark (but if you do, consider Python3 instead) or as a test-bed for experimenting."
+  ],
+  "links": [
+   {
+    "label": "GitHub repo (homepage)",
+    "url": "https://github.com/facebook/starlark-rust"
+   },
+   {
+    "label": "crates.io: starlark",
+    "url": "https://crates.io/crates/starlark"
+   },
+   {
+    "label": "docs.rs: starlark",
+    "url": "https://docs.rs/starlark/"
+   },
+   {
+    "label": "Meta blog post on the library",
+    "url": "https://developers.facebook.com/blog/post/2021/04/08/rust-starlark-library/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/facebook/starlark-rust (homepage, GitHub repo; README fetched successfully)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Starlark\u2019s deliberately constrained, deterministic Python-like design makes for an unusual language to explore, and this implementation offers a runnable REPL plus debugger and LSP."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "starlark-rust",
+  "tldr": "A Rust implementation of Starlark, the deterministic Python-like language behind Bazel and Buck2 builds, with a REPL, linter and language server.",
+  "deeper_look": "Starlark is a small configuration language that looks like Python but is deliberately restricted. It is the language behind Bazel, Buck and Buck2. This project is a Rust implementation of it: an evaluator, a standard library, debugger support, a linter and an LSP server. Buck2 depends on this library.\n\nThe repo is split into crates. `starlark` is the main library, `starlark_syntax` holds the parser and AST, `starlark_derive` supplies proc macros, `starlark_map` provides memory-efficient maps and sets, `starlark_lsp` is the language server, and `starlark_bin` is the command-line binary. The project began in google/starlark-rust and moved to Meta at version 0.4.0. Java and Go implementations of Starlark also exist.\n\nThe idea underneath is the embeddable language: a host program exposes its own types and functions to a restricted, deterministic script language. The README says projects that embed Starlark are expected to write their own binary on top of the library. Frozen values are `Send` and `Sync` while non-frozen values are not, which is a Rust-shaped way to make that safe.\n\nUsed on its own, the REPL only knows standard Starlark. That makes it more a way to see how a build-config language is put together than a tool for daily work.",
+  "install": "brew install starlark-rust\n# The README gives no Homebrew steps. To run from source instead: install Rust with rustup, clone the repo, and run `cargo run`.",
+  "try_this": [
+   {
+    "cmd": "starlark --help",
+    "what_happens": "Lists the options of the installed binary. The README does not say outright that this is the same program as its starlark_bin crate."
+   },
+   {
+    "cmd": "cargo run",
+    "what_happens": "From a clone of the repo, starts the Starlark interpreter at a prompt."
+   },
+   {
+    "cmd": "$> 1+2",
+    "what_happens": "Typed at the REPL prompt, evaluates the expression. The README shows the output as 3."
+   }
+  ],
+  "whats_unique": "It is built as an embeddable language core rather than just an interpreter, shipping an LSP, a DAP debugger adapter, optional runtime-checked types and OSS-Fuzz fuzzing.",
+  "caveats": "The README says it does not aim for API stability between releases, bytes are not yet supported, circular data structures may overflow the stack, and the bin is best treated as a test-bed.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "language",
+   "starlark",
+   "rust",
+   "embeddable",
+   "bazel",
+   "buck2",
+   "afternoon"
+  ],
+  "links": [
+   {
+    "label": "GitHub repo (homepage)",
+    "url": "https://github.com/facebook/starlark-rust"
+   },
+   {
+    "label": "crates.io: starlark",
+    "url": "https://crates.io/crates/starlark"
+   },
+   {
+    "label": "docs.rs: starlark",
+    "url": "https://docs.rs/starlark/"
+   },
+   {
+    "label": "Meta blog post on the library",
+    "url": "https://developers.facebook.com/blog/post/2021/04/08/rust-starlark-library/"
+   }
+  ]
+ }
+}

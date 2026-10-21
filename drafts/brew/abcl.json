@@ -1,0 +1,139 @@
+{
+ "name": "abcl",
+ "desc": "Armed Bear Common Lisp: a full implementation of Common Lisp",
+ "homepage": "https://abcl.org/",
+ "installs_365d": 329,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language",
+  "library"
+ ],
+ "why": "Common Lisp running on the JVM is a real door into an old language on an unusual host.",
+ "brief": {
+  "what_it_is": "Armed Bear Common Lisp (ABCL) is an implementation of ANSI Common Lisp that runs on the Java Virtual Machine. It has both an interpreter and a compiler, and the README says it compiles Lisp code directly to Java byte code for execution. You start it with a command that opens a Lisp REPL, where you type Lisp forms and get results. It also works as a JSR-223 scripting engine inside a Java application, and offers Java-to-Lisp integration APIs. The version described is 1.9.2.",
+  "why_it_exists": "The homepage says it was originally started as a scripting language for the J editor. The README frames it as a conforming ANSI X3J13 Common Lisp that runs in a JVM, and says that any behavior other than conformance should be reported as a bug.",
+  "how_it_works": "Lisp source is compiled to Java byte code and run on the JVM, so it can call Java libraries and be embedded in Java programs. The homepage describes using ABCL as a scripting engine in any Java application, or implementing parts of an application in Lisp through the integration APIs.",
+  "commands_seen": [
+   {
+    "cmd": "java -jar abcl.jar",
+    "context": "Starts ABCL from an unpacked binary release; opens the interactive REPL, which shows the prompt CL-USER(1):"
+   },
+   {
+    "cmd": "podman build -t YOURID/abcl .",
+    "context": "Builds a container image from the repo Dockerfile. The README recommends podman over docker; the syntax is the same if you substitute docker."
+   },
+   {
+    "cmd": "podman run -it YOURID/abcl",
+    "context": "Runs the ABCL container interactively, dropping you into the REPL."
+   },
+   {
+    "cmd": "podman run -t YOURID/abcl abcl \\ --batch --load /home/abcl/work/abcl/ci/install-quicklisp.lisp",
+    "context": "Installs Quicklisp for ABCL inside the container. The README wraps this across lines with a backslash continuation."
+   },
+   {
+    "cmd": "ant",
+    "context": "Builds ABCL from the source release using Apache Ant. Requires a JDK with javac, not just a JRE, plus Ant 1.7.1 or later."
+   },
+   {
+    "cmd": "mvn -Dmaven.test.skip=true install",
+    "context": "Alternative source build through Maven, run from the directory containing build.xml. Produces an abcl wrapper executable (abcl.bat on Windows) to start ABCL."
+   },
+   {
+    "cmd": "ant abcl.properties.autoconfigure.openjdk.17",
+    "context": "Generates abcl.properties for an OpenJDK 17 build, enabling incremental builds and tuning for a 64-bit desktop or server. Needs bash locally."
+   },
+   {
+    "cmd": "bash ci/create-abcl-properties.bash openjdk17",
+    "context": "Shell equivalent of the ant autoconfigure target for OpenJDK 17."
+   },
+   {
+    "cmd": "ant help.test",
+    "context": "Prints how to run the ABCL test suite."
+   },
+   {
+    "cmd": "(swank:create-server :dont-close t)",
+    "context": "Lisp form run after loading quicklisp-abcl and swank, starting a Swank server so Emacs SLIME can connect to ABCL."
+   }
+  ],
+  "install_notes": "Binary releases come as tar.gz or zip from abcl.org, or as jars from Maven Central. Unpack the binary release and make sure java is on your PATH; the README says Java 8, 11, and 17 are strongly supported. Source builds need a JDK with javac, Apache Ant 1.7.1 or later (or Maven), and optionally a copied abcl.properties.in. Quicklisp can be installed with a provided ci/install-quicklisp.lisp script. SLIME use requires ASDF and a swank.asd. The container route uses podman or docker with the repo Dockerfile. The Homebrew formula itself gave no caveats.",
+  "standout": "It is a full ANSI Common Lisp that compiles to JVM byte code, so you get Lisp inside Java applications and access to Java libraries, with a REPL and SLIME support. The README's own test table reports about 63 failures out of 21,902 ANSI tests for 1.9.2, and says Maxima's test suite passes.",
+  "status": "Quiet, with some evidence of care. The latest release in the material I read is 1.9.2, and the README footer is dated June 2023. The homepage lists 1.9.2 downloads and says it is hosted on common-lisp.net. I did not see commit dates, so I cannot say more than that.",
+  "caveats": "Supported Java runtimes are Oracle Java SE 8 and 11 and OpenJDK 17, and the README says others may work with some effort. Explicitly supported platforms are Windows, Linux, macOS, OpenBSD, NetBSD, FreeBSD, Solaris, and Google App Engine. Building from source needs a full JDK with javac, not just a JRE. The README says ABCL 1.9.2 fails about 63 of 21,902 ANSI tests and that 'ABCL has many deficiencies, both known and unknown.' The Netbeans debug target needs the abcl.build.incremental property set to true. The homepage's Java build list names openjdk8, openjdk11, and OpenJDK 17. The homepage was a landing page rather than a README, so I took the README from the GitHub repository; I guessed that URL from the homepage's GitHub link.",
+  "quotes": [
+   "Armed Bear Common Lisp is a conforming implementation of ANSI X3J13 Common Lisp that runs in a Java virtual machine.",
+   "Yer now at the interactive ABCL \"Read Eval Print Loop\" (REPL): hacks 'n glory await.",
+   "We recommend using podman over docker for political reasons, but the surface syntax is identical"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://abcl.org/"
+   },
+   {
+    "label": "User Manual (PDF, 1.9.2)",
+    "url": "https://abcl.org/releases/1.9.2/abcl-1.9.2.pdf"
+   },
+   {
+    "label": "Source on GitHub",
+    "url": "https://github.com/armedbear/abcl"
+   }
+  ],
+  "fetch_log": [
+   "https://abcl.org/ - worked; landing page with downloads, links, and a short description; no README-style commands",
+   "https://github.com/armedbear/abcl - worked; returned the README, which holds the build, run, SLIME, and test details. URL was inferred from the homepage's GitHub link, not read from it directly"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A full Common Lisp implementation that compiles to JVM bytecode is an unusual bridge between Lisp and Java, with a real REPL and embedding story."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "ABCL (Armed Bear Common Lisp)",
+  "tldr": "A full ANSI Common Lisp that compiles to Java bytecode, giving you a Lisp REPL with direct access to the Java ecosystem.",
+  "deeper_look": "Armed Bear Common Lisp is an implementation of ANSI Common Lisp that runs on the Java Virtual Machine. It has an interpreter and a compiler, and the compiler turns Lisp code into Java byte code. You start it and land in a Lisp REPL where you type forms and get results.\n\nAccording to the homepage, it began as a scripting language for the J editor. It has since grown into what the README calls \"a conforming implementation of ANSI X3J13 Common Lisp that runs in a Java virtual machine.\" The README treats any non-conforming behavior as a bug.\n\nThe interesting part is the host. Because Lisp compiles to JVM byte code, Lisp can call Java libraries and Java programs can embed Lisp. ABCL works as a JSR-223 scripting engine, and it has APIs for Java-to-Lisp integration, so you can write parts of a Java application in Lisp. That puts an old, dynamic, interactive language inside one of the most widely deployed runtimes.\n\nIt also works with the usual Common Lisp tooling. The README describes installing Quicklisp with a provided script and starting a Swank server so Emacs SLIME can connect.",
+  "install": "brew install abcl\n# pulls in openjdk and rlwrap as dependencies; the README says Java 8, 11 and 17 are strongly supported",
+  "try_this": [
+   {
+    "cmd": "abcl",
+    "what_happens": "Opens the interactive REPL with a CL-USER(1): prompt, where you can type Lisp forms and see results."
+   },
+   {
+    "cmd": "abcl --help",
+    "what_happens": "Lists the command-line options for the launcher."
+   }
+  ],
+  "whats_unique": "It is a full Common Lisp that lives on the JVM, so Lisp code can use Java libraries and be embedded in Java applications. The README reports Maxima's test suite passes on it.",
+  "caveats": "The README says 1.9.2 fails about 63 of 21,902 ANSI tests and that \"ABCL has many deficiencies, both known and unknown\"; the project looks quiet, with the README footer dated June 2023.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "lisp",
+   "common-lisp",
+   "jvm",
+   "repl",
+   "language"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://abcl.org/"
+   },
+   {
+    "label": "User Manual (PDF, 1.9.2)",
+    "url": "https://abcl.org/releases/1.9.2/abcl-1.9.2.pdf"
+   },
+   {
+    "label": "Source on GitHub",
+    "url": "https://github.com/armedbear/abcl"
+   }
+  ]
+ }
+}

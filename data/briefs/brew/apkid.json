@@ -1,0 +1,93 @@
+{
+ "name": "apkid",
+ "desc": "Android application identifier for compilers, packers, and obfuscators",
+ "homepage": "https://github.com/rednaga/APKiD",
+ "installs_365d": 41,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "reverse-engineering",
+  "library"
+ ],
+ "why": "Identifies which compilers, packers and obfuscators built an Android APK, a good window into how apps get wrapped.",
+ "brief": {
+  "what_it_is": "APKiD is a command-line tool that reports how an Android APK was built and protected. It takes an APK, a DEX file, or a directory as input (a FILE argument, optionally recursive) and scans it with YARA rules. It outputs which compilers, packers, obfuscators, and other notable traits it recognizes, per classes.dex entry, either as text or as JSON (-j), or written to a directory with -o. The README's example output shows a line like ' |-> compiler : dx'. It is written in Python and installs from PyPI.",
+  "why_it_exists": "The README says APKiD 'gives you information about how an APK was made' and calls it 'PEiD for Android', after the Windows tool that identified packers and compilers in PE executables. The author also points to detecting pirated and malicious apps and to fingerprinting AppShielding and mobile RASP SDKs.",
+  "how_it_works": "It applies a set of YARA rules to APK and DEX contents to match signatures of known compilers, packers, and obfuscators. The README says new detections are added as rules, and the Hacking section says the rules must be compiled with prep-release.py before they take effect. The README does not describe the matching internals beyond this.",
+  "commands_seen": [
+   {
+    "cmd": "pip install apkid",
+    "context": "Standard install from PyPI, the primary installation route in the README."
+   },
+   {
+    "cmd": "docker build . -t rednaga:apkid",
+    "context": "Builds the Docker image from a cloned APKiD repository (Docker route)."
+   },
+   {
+    "cmd": "docker/apkid.sh ~/reverse/targets/android/example/example.apk",
+    "context": "Runs the Dockerised scanner against an example APK; the README shows output reporting 'compiler : dx' for classes.dex."
+   },
+   {
+    "cmd": "apkid [-h] [-v] [-t TIMEOUT] [-r] [--scan-depth SCAN_DEPTH] [--entry-max-scan-size ENTRY_MAX_SCAN_SIZE] [--typing {magic,filename,none}] [-j] [-o DIR] [FILE [FILE ...]]",
+    "context": "Usage synopsis from the README's help output. FILE is an apk, dex, or directory; -j gives JSON; -o writes per-result files and implies JSON; -r recurses into subdirectories."
+   },
+   {
+    "cmd": "git clone https://github.com/rednaga/APKiD",
+    "context": "First step of the development install from source."
+   },
+   {
+    "cmd": "python prep-release.py",
+    "context": "Compiles the YARA rules; needed after cloning and after any rule change. Requires yara-python and yara-python-dex to be installed first."
+   },
+   {
+    "cmd": "pip install -e .[dev,test]",
+    "context": "Installs the package in editable mode with dev and test extras for hacking on rules or code."
+   },
+   {
+    "cmd": "pip install -e .[dev,test] --user",
+    "context": "Fallback for permission errors when not using a virtual environment."
+   },
+   {
+    "cmd": "pip uninstall -y yara-python yara-python-dex",
+    "context": "Windows-only step: removes existing YARA packages before reinstalling the pinned versions."
+   },
+   {
+    "cmd": "pip install yara-python==3.11.0 wheel",
+    "context": "Windows-only step: pins yara-python 3.11.0 before building yara-python-dex."
+   }
+  ],
+  "install_notes": "The README's primary route is pip install apkid. Docker is an alternative: it requires git and Docker, and the README says to clone the repo and build the image locally. For development, clone the repo, install yara-python and yara-python-dex, run python prep-release.py to compile the rules, then pip install -e .[dev,test]. On Windows, the README asks for removing other YARA versions, pinning yara-python 3.11.0, and building yara-python-dex from the MobSF git repo. The README's sample Docker output says 'APKiD 2.1.0' while its usage text says v2.1.2, so the README is not fully consistent on version numbers. No accounts or hardware are mentioned.",
+  "standout": "It is explicitly modelled on PEiD, applied to Android, and its rule set is extensible. The README invites issues for unrecognized files and encourages contributions beyond packers, including anti-disassembler and anti-VM tricks, so it works as a catalogue of how apps are wrapped and not only as a compiler detector.",
+  "status": "unknown. The README has a Travis CI badge, a PyPI badge, and a usage text at version 2.1.2, and it cites a BlackHat USA 2023 Arsenal talk, which suggests activity into 2023. The fetched README gives no release date or last commit, and I did not fetch the PyPI or commit history to confirm.",
+  "caveats": "The README's Windows instructions are involved and depend on a specific yara-python version and a git-hosted yara-python-dex build. Development setup needs yara-python and yara-python-dex installed before prep-release.py will work. Licensing is dual: a commercial license for closed-source use and GPL for open-source use, so the user must choose one. Detection is only as good as the rule set: unknown packers show up as unrecognized until someone submits a sample.",
+  "quotes": [
+   "APKiD gives you information about how an APK was made. It identifies many compilers, packers, obfuscators, and other weird stuff. It's PEiD for Android.",
+   "We are open to any type of concept you might have for \"something interesting\" to detect, so do not limit yourself solely to packers, compilers or obfuscators.",
+   "This tool is available under a dual license: a commercial one suitable for closed source projects and a GPL license that can be used in open source software."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/rednaga/APKiD"
+   },
+   {
+    "label": "PyPI package",
+    "url": "https://pypi.org/project/apkid/"
+   },
+   {
+    "label": "Detecting Pirated and Malicious Android Apps with APKiD (rednaga.io)",
+    "url": "http://rednaga.io/2016/07/31/detecting_pirated_and_malicious_android_apps_with_apkid/"
+   },
+   {
+    "label": "APKiD: Fast Identification of Mobile RASP SDKs (BlackHat USA Arsenal 2023 slides)",
+    "url": "https://github.com/enovella/cve-bio-enovella/blob/master/slides/bheu23-enovella-APKID.pdf"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/rednaga/APKiD: fetched OK, README returned in full (no further fetches needed)."
+  ]
+ }
+}

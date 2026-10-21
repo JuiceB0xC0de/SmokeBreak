@@ -1,0 +1,86 @@
+{
+ "name": "ovh-ttyrec",
+ "desc": "Enhanced (but compatible) version of the classic ttyrec",
+ "homepage": "https://github.com/ovh/ovh-ttyrec",
+ "installs_365d": 42,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "tui",
+  "ancient"
+ ],
+ "why": "Terminal session recorder compatible with classic ttyrec, a neat way to capture and replay programs as they ran.",
+ "brief": {
+  "what_it_is": "ovh-ttyrec is a terminal session recorder written in C. Running `ttyrec` launches your shell (or a command you give it) and records the session to a ttyrec file until it exits. `ttyplay` replays a recorded file in the terminal. A third binary, `ttytime`, is also installed, but the README does not describe it. The input is the live terminal session; the output is a ttyrec recording file, optionally zstd-compressed. It is a drop-in replacement for the original ttyrec and adds features such as session locking and termination after keyboard inactivity.",
+  "why_it_exists": "The README presents it as an enhanced but fully compatible version of the classic ttyrec, which is based on the `script` program. The goal is a drop-in replacement that adds features without breaking existing ttyrec use.",
+  "how_it_works": "The README says it uses pseudoterminals (via openpty() or grantpt()/unlockpt()) to capture the session, and falls back to pipes in a no-tty mode that still records stdout and stderr. It detects which to use automatically, and this can be overridden on the command line. Compression is applied on the fly with zstd, and output files can be rotated without interrupting the session. The README does not give further internal detail.",
+  "commands_seen": [
+   {
+    "cmd": "ttyrec",
+    "context": "Simplest usage: runs the user's shell and records the session until exit."
+   },
+   {
+    "cmd": "ttyplay ./ttyrecord",
+    "context": "Replays a previously recorded session file."
+   },
+   {
+    "cmd": "ttyrec -f cmds.ttyrec -- sh -c 'for i in a b c; do echo $i; done'",
+    "context": "Records a specific non-interactive command to the file cmds.ttyrec."
+   },
+   {
+    "cmd": "ttyrec -t 60 -k 300 -- ssh remoteserver",
+    "context": "Records an interactive ssh session that locks after 60 seconds of inactivity and is killed after 300 seconds."
+   },
+   {
+    "cmd": "cat script.sh | ttyrec -- ssh remoteserver",
+    "context": "Pipes a local script to be executed on a remote machine's default shell, recorded by ttyrec."
+   },
+   {
+    "cmd": "ttyrec -Z screen",
+    "context": "Records a GNU screen session with on-the-fly compression."
+   },
+   {
+    "cmd": "ttyrec -h",
+    "context": "Prints usage information."
+   },
+   {
+    "cmd": "./configure && make",
+    "context": "Builds the binaries and man pages from source."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs the built binaries; the README notes this is not needed to test from the build folder."
+   },
+   {
+    "cmd": "./configure && make deb",
+    "context": "Builds a .deb package for Debian/Ubuntu."
+   },
+   {
+    "cmd": "./configure && make rpm",
+    "context": "Builds a .rpm package for RHEL/CentOS."
+   }
+  ],
+  "install_notes": "Build from source with `./configure && make`, then optionally `make install`. zstd support requires libzstd on the build machine; it is statically linked when possible. Set NO_ZSTD=1 before configure to omit zstd, or NO_STATIC_ZSTD=1 to link it dynamically. Debian and RPM packages can be built with `make deb` or `make rpm`. The README does not mention a Homebrew formula, accounts, or runtime configuration.",
+  "standout": "It is a drop-in replacement for ttyrec that adds on-the-fly zstd compression, file rotation without interrupting the session, and inactivity-based locking and termination, with a manual 'cheatcodes' keystroke mechanism. It also records in a no-tty pipe mode, which the original does not offer.",
+  "status": "unknown. I fetched only the GitHub README, which shows no release dates, last commit, or maintenance note. The version scheme (A.B.C.D) is described, but I did not see the current version number.",
+  "caveats": "Compression needs libzstd at build time unless disabled. The README says it works on Linux, FreeBSD, NetBSD, OpenBSD, DragonFlyBSD, macOS, Haiku, and OmniOS, and on any POSIX system with openpty() or grantpt()/unlockpt(), but it does not say whether Windows is supported. The 'cheatcodes' keystrokes that lock or terminate a session are mentioned but not listed in the README. The license is 3-clause BSD. The formula's own caveats field is empty.",
+  "quotes": [
+   "`ttyrec` is a terminal (tty) recorder, it comes with `ttyplay`, which is a tty player.",
+   "ovh-ttyrec is based (and compatible with) the original ttyrec, and can be used as a drop-in replacement.",
+   "Drop-in replacement of the classic ttyrec, additional features don't break compatibility",
+   "Supports manually locking or terminating the session via \"cheatcodes\" (specific keystrokes)"
+  ],
+  "links": [
+   {
+    "label": "GitHub homepage and README",
+    "url": "https://github.com/ovh/ovh-ttyrec"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/ovh/ovh-ttyrec: fetched OK, README returned"
+  ]
+ }
+}

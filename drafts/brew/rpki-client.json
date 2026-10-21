@@ -1,0 +1,104 @@
+{
+ "name": "rpki-client",
+ "desc": "OpenBSD portable rpki-client",
+ "homepage": "https://www.rpki-client.org/",
+ "installs_365d": 202,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol",
+  "science"
+ ],
+ "why": "A door into RPKI, the cryptographic layer that validates which networks may announce internet routes.",
+ "brief": {
+  "what_it_is": "rpki-client is a free, easy-to-use implementation of the Resource Public Key Infrastructure (RPKI) for Relying Parties. It queries the global RPKI repository system and validates the untrusted network inputs it fetches. It takes in RPKI repository data and outputs validated ROA payloads and BGPsec Router keys, formatted as configuration for OpenBGPD or BIRD, or as CSV or JSON for other routing stacks. The homepage and README do not give a detailed example invocation.",
+  "why_it_exists": "The homepage frames it as a way for Relying Parties to validate BGP announcements, supporting the RPKI and BGP Prefix Origin Validation described in RFC 6480 and RFC 6811 that help secure global Internet routing.",
+  "how_it_works": "The program queries the global RPKI repository system, validates the untrusted inputs it receives, and emits the validated ROA payloads and BGPsec Router keys in the requested format. The README does not describe the internal mechanism beyond this.",
+  "commands_seen": [
+   {
+    "cmd": "./configure",
+    "context": "Portable build step from the README's Building section, run from the unpacked release tarball before make."
+   },
+   {
+    "cmd": "make",
+    "context": "Portable build step from the README's Building section, run after ./configure to build rpki-client."
+   }
+  ],
+  "install_notes": "The README says the official release location is https://ftp.openbsd.org/pub/OpenBSD/rpki-client/ and that you should use an official release tarball. Confirm authenticity with a previously fetched copy of the Signify key or GPG key. The build is ./configure then make. If installing from a GitHub repository checkout, the README says to read the INSTALL file instead. Known to build and work on Alpine, CentOS/RHEL/Rocky, Debian, Fedora, FreeBSD, macOS, OpenBSD, and Ubuntu. The homepage says the OpenBSD base version ships every six months.",
+  "standout": "It is a validator that feeds routers directly: it emits OpenBGPD and BIRD configuration, not just a raw data dump, and it is a portable build of the OpenBSD base component. The project is developed by a named group of OpenBSD developers, including Theo de Raadt.",
+  "status": "Maintained. The homepage shows the 9.9 release dated Aug 22nd, 2026, and says the portable version is maintained by Sebastian Benoit and Job Snijders with periodic tarball releases. I did not see a last-commit date.",
+  "caveats": "The README says the portable version is tested regularly only on the listed platforms, and that other operating systems may work. The recommended install path is a tarball with signature verification, not a package manager, and I did not check Homebrew specifics. The software is under the ISC license, which the homepage says is free to use and reuse by everyone. The homepage was reachable, so there is no unreachable-site caveat.",
+  "quotes": [
+   "rpki-client is a FREE, easy-to-use implementation of the Resource Public Key Infrastructure (RPKI) for Relying Parties (RP) to facilitate validation of BGP announcements.",
+   "The program queries the global RPKI repository system and validates untrusted network inputs.",
+   "The software is freely usable and re-usable by everyone under the ISC license."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.rpki-client.org/"
+   },
+   {
+    "label": "GitHub portable repository",
+    "url": "https://github.com/rpki-client/rpki-client-portable"
+   },
+   {
+    "label": "RFC 6811 (BGP Prefix Origin Validation)",
+    "url": "https://www.rfc-editor.org/rfc/rfc6811"
+   }
+  ],
+  "fetch_log": [
+   "https://www.rpki-client.org/ - worked, returned the homepage text with release 9.9 info",
+   "https://github.com/rpki-client/rpki-client-portable - worked, returned the README"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A practical window into RPKI: it validates cryptographic route-origin data from the global repository system and turns it into policy routers can use."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "rpki-client",
+  "tldr": "An OpenBSD validator that fetches the global RPKI repositories and checks which networks may announce which internet routes, emitting data for routers.",
+  "deeper_look": "rpki-client is an implementation of the Resource Public Key Infrastructure for what the standards call Relying Parties. It queries the global RPKI repository system, validates the untrusted inputs it receives, and outputs validated ROA payloads and BGPsec Router keys. A ROA is a signed statement that a given network is allowed to originate a given block of IP addresses.\n\nThe output is meant to be consumed. It can be formatted as configuration for OpenBGPD or BIRD, or as CSV or JSON for other routing stacks. A router can then compare a BGP announcement against the validated data, which is the BGP Prefix Origin Validation described in RFC 6811. The background is in RFC 6480.\n\nThe idea underneath is how the internet decides whether to believe a route announcement. BGP was built on trust, and RPKI adds a cryptographic chain that says who holds which address space. This tool is the part that walks that chain and rejects what does not verify, so it is a door into how routing security works in practice.\n\nThe project is developed by a named group of OpenBSD developers, including Theo de Raadt. The portable version, maintained by Sebastian Benoit and Job Snijders, tracks the OpenBSD base component, which ships every six months. The code is under the ISC license.",
+  "install": "brew install rpki-client\n# depends on libretls, openssl@4 and rsync, which brew pulls in\n# upstream recommends a signed release tarball instead: ./configure && make",
+  "try_this": [
+   {
+    "cmd": "rpki-client --help",
+    "what_happens": "Prints the usage summary and lists the options, including how output formats are chosen."
+   }
+  ],
+  "whats_unique": "It is a validator that feeds routers directly, emitting OpenBGPD and BIRD configuration rather than only a raw data dump. It is also a portable build of a component from the OpenBSD base system.",
+  "caveats": "Upstream says the portable version is tested regularly only on Alpine, CentOS/RHEL/Rocky, Debian, Fedora, FreeBSD, macOS, OpenBSD and Ubuntu, and recommends a verified release tarball over a package manager. Its docs give no example invocation, and a full run fetches repository data from the network.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "network",
+   "protocol",
+   "bgp",
+   "routing",
+   "security"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://www.rpki-client.org/"
+   },
+   {
+    "label": "GitHub portable repository",
+    "url": "https://github.com/rpki-client/rpki-client-portable"
+   },
+   {
+    "label": "RFC 6811 (BGP Prefix Origin Validation)",
+    "url": "https://www.rfc-editor.org/rfc/rfc6811"
+   }
+  ]
+ }
+}

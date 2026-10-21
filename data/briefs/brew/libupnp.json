@@ -1,0 +1,75 @@
+{
+ "name": "libupnp",
+ "desc": "Portable UPnP development kit",
+ "homepage": "https://pupnp.sourceforge.io/",
+ "installs_365d": 2900,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "library",
+  "afternoon"
+ ],
+ "why": "A portable UPnP stack that opens the door to SSDP discovery and the device control protocols running on almost every home router.",
+ "brief": {
+  "what_it_is": "libupnp, the Portable SDK for UPnP Devices, is a C library and development kit for building UPnP device and control point applications, and bridges between them. Per its README it consists of the core UPnP protocols, a UPnP-specific XML parser supporting the DOM Level 2 API, and an optional integrated mini web server for serving UPnP-related documents. Developers call its API from their own code; the build produces libupnp.so and installs public headers (upnp/inc and ixml/inc). It targets UPnP Device Architecture version 1.0 and runs on Linux, *BSD, Solaris and others.",
+  "why_it_exists": "The README says the project was forked in 2006 as a '100% compatible fork' of Intel's original Linux SDK, after years of stagnation, so that community patches would not be lost and the library could be available 'for all important platforms to become a standard for UPnP'.",
+  "how_it_works": "The README describes a library-level SDK rather than a runnable tool: an application links against libupnp and uses its API to discover, advertise and control UPnP devices over TCP/IP, HTTP and XML. Multicast discovery needs a route for the 239.0.0.0/8 range on the chosen interface, as the README notes. The optional mini web server serves device description documents.",
+  "commands_seen": [
+   {
+    "cmd": "cmake --build . --target docs",
+    "context": "From the build directory, generates HTML API documentation with Doxygen installed (output under docs/doxygen/html/index.html)."
+   },
+   {
+    "cmd": "apt update && apt install -y build-essential cmake pkg-config git && git clone http://github.com/pupnp/pupnp.git && cd pupnp && cmake -B build",
+    "context": "Inside an Ubuntu Docker container, installs build tools, clones the repo and configures a CMake build; the README calls this an 'inspirational example'."
+   },
+   {
+    "cmd": "cmake --build build",
+    "context": "Compiles the library after the build directory has been configured."
+   },
+   {
+    "cmd": "% ip route add 239.0.0.0/8 dev eth0",
+    "context": "Required multicast routing so device advertisements and control point searches work; eth0 should be the adapter libupnp uses. Needs root."
+   },
+   {
+    "cmd": "cmake --install build",
+    "context": "Installs the built SDK as root; destination is set by CMAKE_INSTALL_PREFIX or --prefix."
+   },
+   {
+    "cmd": "xargs rm < build/install_manifest.txt",
+    "context": "Manual uninstall, as root, since CMake provides no uninstall target. Only valid after a non-DESTDIR install."
+   }
+  ],
+  "install_notes": "Requires CMake and a C toolchain; the README's example uses build-essential, cmake, pkg-config and git on Ubuntu. Requires libpthread (from glibc-devel or equivalent). Multicast routing must be added for 239.0.0.0/8 on the network adapter in use, or discovery silently fails. Docs need Doxygen; the PDF manual needs a LaTeX distribution such as TeX Live. On Windows, the option DOWNLOAD_AND_BUILD_DEPS can fetch pthreads4w if git is present, and cmake-gui is recommended over IDE project generation. Build options include UPNP_ENABLE_TESTING and UPNP_ENABLE_TESTING_INTEGRATION. The README gives no Homebrew-specific notes.",
+  "standout": "It is a long-lived C SDK with a clear lineage: Intel's 2000 Linux SDK, forked in 2006, and now maintained on GitHub with releases through September 2026. It is also the UPnP stack underneath a surprising set of projects, including VLC (service discovery), MPD, Jami, aMule, eMule Morph, and several media servers and IGD gateway daemons.",
+  "status": "Maintained. The GitHub README release table lists version 22.1.8 dated 2026-09-30, with a run of point releases in September 2026 and the 2.0.x and 1.18.x branches also updated in 2026. The README's CI badges are per branch. Note that the homepage text is older and still points at SourceForge.",
+  "caveats": "The README says the UPnP-related docs are generated from source comments, and that the bundled UPnP_Programming_Guide.pdf is from version 1.2 and outdated. The library targets UPnP Device Architecture 1.0 per the homepage. Version numbering is split across several branches (22.1.x, 2.0.x, 1.18.x and older), which can confuse a reader. Multicast routing is a required manual step. The homepage text has no commands and no quick start; the quick start lives in a third-party repo. The scout note's claim that libupnp covers 'almost every home router' is not supported by the README, which only lists projects that use the SDK, including port-forwarding users. The README warns that the library's IXML scripting-support section is a design note, not a finished API guide. License is BSD, per both pages.",
+  "quotes": [
+   "The Portable SDK for UPnP Devices is an SDK for development of UPnP device and control point applications.",
+   "In 2006 this 100% compatible fork of the original project was created to support further development.",
+   "The main goal is the availability of the project for all important platforms to become a standard for UPnP."
+  ],
+  "links": [
+   {
+    "label": "Homepage (pupnp.sourceforge.io)",
+    "url": "https://pupnp.sourceforge.io/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/pupnp/pupnp"
+   },
+   {
+    "label": "libupnp_example, community minimal CMake example",
+    "url": "https://github.com/Zapunidi/libupnp_example"
+   }
+  ],
+  "fetch_log": [
+   "https://pupnp.sourceforge.io/ : fetched OK, homepage text (no commands, links to GitHub and SourceForge)",
+   "https://github.com/pupnp/pupnp : fetched OK, README returned in full (overview, release list, build and install sections)"
+  ]
+ }
+}

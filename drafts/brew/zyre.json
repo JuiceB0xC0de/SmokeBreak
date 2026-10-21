@@ -1,0 +1,145 @@
+{
+ "name": "zyre",
+ "desc": "Local Area Clustering for Peer-to-Peer Applications",
+ "homepage": "https://github.com/zeromq/zyre",
+ "installs_365d": 19,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "network",
+  "protocol",
+  "library",
+  "afternoon"
+ ],
+ "why": "Zero-configuration peer discovery and clustering on a LAN, a real protocol idea, though it is a library rather than something to poke.",
+ "brief": {
+  "what_it_is": "Zyre is a C library for local network group messaging between peers. A program creates a Zyre node, starts it, and joins named groups; the node finds other nodes on the same LAN by UDP beacons (or optionally by a gossip service) and connects to them directly. Applications receive events such as ENTER, EXIT, JOIN, LEAVE, WHISPER and SHOUT from zyre_recv, and send messages with zyre_whisper or zyre_shout. The brew package ships one executable, zpinger, which the README says to run on two or more PCs to test; the README does not describe its output.",
+  "why_it_exists": "The README says Zyre provides reliable group messaging over local area networks with no administration or configuration, and that peers talk to each other without any central broker or server. Its listed use cases are local service discovery, clustering services on one Ethernet network, controlling smart devices (Internet of Things), and multi-user mobile apps such as smart classrooms.",
+  "how_it_works": "Each node broadcasts UDP beacons on a port (default 5670) to find peers and heartbeats them, following the RFC 36 ZRE protocol. Once discovered, nodes interconnect using a Dealer-Router pattern over ZeroMQ, which the README says avoids losing messages unless a peer application terminates. An alternative gossip discovery mode, set up with zyre_gossip_bind and zyre_gossip_connect, replaces UDP beaconing for networks where broadcast is unsuitable.",
+  "commands_seen": [
+   {
+    "cmd": "zyre/src/.libs/zpinger",
+    "context": "Run from the build tree on two or more PCs to test that Zyre discovery works; the only executable the brew package installs."
+   },
+   {
+    "cmd": "zyre/src/.libs/zyre_selftest",
+    "context": "Runs the library's self-test after building from source on Linux or macOS."
+   },
+   {
+    "cmd": "./autogen.sh && ./configure && make check",
+    "context": "Build sequence used for libsodium, libzmq, czmq and zyre when building from GitHub; make check runs each library's tests."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs each library after its build; followed by sudo ldconfig on Linux."
+   },
+   {
+    "cmd": "git clone --depth 1 -b stable https://github.com/jedisct1/libsodium.git",
+    "context": "Fetches libsodium stable branch, the optional curve encryption library, before building libzmq."
+   },
+   {
+    "cmd": "./configure --with-libsodium",
+    "context": "Configures libzmq to use libsodium; the README says to omit this flag to use the internal tweetnacl implementation, which it recommends for development."
+   },
+   {
+    "cmd": "cmake .. -DZYRE_BUILD_SHARED=ON -DZYRE_BUILD_STATIC=OFF -DCMAKE_PREFIX_PATH=C:\\projects\\libs",
+    "context": "CMake configure step for building zyre on Windows against libzmq and czmq installed under C:\\projects\\libs."
+   },
+   {
+    "cmd": "cmake --build . --config Release",
+    "context": "Builds zyre with CMake in Release configuration on Windows; followed by ctest -C Release."
+   },
+   {
+    "cmd": "gcc myapp.c -lzyre -lczmq -lzmq -o myapp",
+    "context": "Typical gcc link line for an application that includes zyre.h and links libzyre, czmq and libzmq."
+   },
+   {
+    "cmd": "sudo apt-get install -y git build-essential libtool pkg-config autotools-dev autoconf automake cmake uuid-dev libpcre3-dev valgrind",
+    "context": "Debian/Ubuntu package install for the build prerequisites listed in the README."
+   }
+  ],
+  "install_notes": "Not a brew-only tool: the README builds it from source in a fixed order: libsodium (optional), libzmq, czmq, then zyre, using autotools on Linux and macOS or CMake and MSVC on Windows. Prerequisites include build-essential or Visual Studio, uuid-dev and libpcre3-dev, plus git. The Windows section calls building czmq's optional libraries (libcurl, lz4, libuuid) 'really tricky' and points to czmq issue 1972. There is no account, runtime or first-run configuration step. Discovery uses UDP broadcast on port 5670 by default, and zyre_set_port can change it so separate clusters can coexist.",
+  "standout": "It is a zero-configuration peer-discovery and group-messaging layer with no broker: nodes find each other by UDP beacon and talk directly, and the ENTER event carries the peer's name and headers. The author's README pitches it for WiFi as well as Ethernet and claims a new peer joins in about one second.",
+  "status": "unknown. The fetched README shows no release date, last commit date or deprecation note; it only shows a GitHub release badge and an OBS badge. It references Travis CI, AppVeyor, a Freenode webchat and Visual Studio 2013 project paths, which suggests parts of the docs predate current tooling. The text was cut off partway through the API reference, so I could not see the rest of the page.",
+  "caveats": "The README is long and was truncated at about 40,000 characters, so later sections were not read. Build dependencies are substantial and the Windows path is laborious. Several API methods are marked draft and only compile with ZYRE_BUILD_DRAFT_API, including CURVE security setup. The README's own text says the zyre_set_silent_timeout is redundant with the evasiveness timeout. The project is MPL 2.0 licensed. The scout note calls it a library rather than something to poke, but zpinger is a real executable, though the README gives no detail on what it prints.",
+  "quotes": [
+   "Zyre provides reliable group messaging over local area networks.",
+   "Zyre needs no administration or configuration.",
+   "Peers talk to each other without any central brokers or servers.",
+   "Test by running the `zpinger` command, from two or more PCs."
+  ],
+  "links": [
+   {
+    "label": "Zyre GitHub repository (homepage)",
+    "url": "https://github.com/zeromq/zyre"
+   },
+   {
+    "label": "RFC 36 ZRE protocol specification",
+    "url": "http://rfc.zeromq.org/spec:36/ZRE"
+   },
+   {
+    "label": "Zyre issue tracker",
+    "url": "https://github.com/zeromq/zyre/issues"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/zeromq/zyre: fetched OK; returned README text, truncated at about 40,000 characters. No further links followed."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "Zyre makes brokerless LAN discovery and group messaging tangible through its beacon-based ZRE protocol, offering a worthwhile networking idea beyond generic plumbing."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Zyre",
+  "tldr": "A C library where programs on the same LAN find each other by UDP beacon and swap group messages with no broker, server, or configuration.",
+  "deeper_look": "Zyre is a C library for group messaging between peers on a local network. A program creates a node, starts it, and joins named groups. The node then finds other nodes on the same LAN by broadcasting UDP beacons, connects to them directly, and reports what happens as events: ENTER, EXIT, JOIN, LEAVE, WHISPER and SHOUT. You send to one peer with `zyre_whisper` or to a whole group with `zyre_shout`.\n\nThe point is that nothing sits in the middle. The README says Zyre \"needs no administration or configuration\" and that \"peers talk to each other without any central brokers or servers.\" Its listed uses are local service discovery, clustering services on one Ethernet network, controlling smart devices, and multi-user mobile apps such as smart classrooms. The README also claims a new peer joins in about one second, on WiFi as well as Ethernet.\n\nUnderneath is the ZRE protocol (RFC 36). Each node beacons on UDP port 5670 by default and sends heartbeats. Once peers have found each other, they connect over ZeroMQ using a Dealer-Router pattern, which the README says avoids losing messages unless a peer application terminates. For networks where broadcast is unsuitable, a gossip discovery mode (`zyre_gossip_bind`, `zyre_gossip_connect`) replaces the beacons.\n\nThe brew package ships a single executable, `zpinger`. The README says to run it on two or more PCs to test that discovery works, but does not describe what it prints.",
+  "install": "brew install zyre\n# Pulls in czmq and zeromq. To build from source instead, the README builds libsodium (optional), libzmq, czmq, then zyre, in that order. No account or runtime is needed.",
+  "try_this": [
+   {
+    "cmd": "zpinger",
+    "what_happens": "Run it on two or more machines on the same LAN to test that Zyre discovery works. The README does not say what it prints."
+   },
+   {
+    "cmd": "zpinger --help",
+    "what_happens": "Shows whatever options the executable offers, since the README does not document them."
+   },
+   {
+    "cmd": "gcc myapp.c -lzyre -lczmq -lzmq -o myapp",
+    "what_happens": "The typical link line for your own program that includes zyre.h, if you want to write a node yourself."
+   }
+  ],
+  "whats_unique": "It is a brokerless discovery and group-messaging layer in which nodes find each other by UDP beacon and talk directly, with the ENTER event carrying each peer's name and headers. The protocol is written up as a public spec, RFC 36.",
+  "caveats": "It is mainly a library, so the one executable is a connectivity test and you need a second machine on the LAN to see anything. Some API features, including CURVE security setup, are draft-only, and the README shows signs of age such as Travis CI and Freenode references.",
+  "commitment": "afternoon",
+  "category": "fundamentals",
+  "tags": [
+   "afternoon",
+   "network",
+   "protocol",
+   "library",
+   "discovery",
+   "zeromq",
+   "p2p"
+  ],
+  "links": [
+   {
+    "label": "Zyre GitHub repository (homepage)",
+    "url": "https://github.com/zeromq/zyre"
+   },
+   {
+    "label": "RFC 36 ZRE protocol specification",
+    "url": "http://rfc.zeromq.org/spec:36/ZRE"
+   },
+   {
+    "label": "Zyre issue tracker",
+    "url": "https://github.com/zeromq/zyre/issues"
+   }
+  ]
+ }
+}

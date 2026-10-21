@@ -1,0 +1,154 @@
+{
+ "name": "ksh93",
+ "desc": "KornShell, ksh93",
+ "homepage": "https://github.com/ksh93/ksh",
+ "installs_365d": 161,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language",
+  "ancient"
+ ],
+ "why": "KornShell is an old-school shell with rich history and quirks worth an afternoon of exploring.",
+ "brief": {
+  "what_it_is": "KornShell 93u+m (ksh93) is a Unix command-line shell and scripting language, maintained as a fork of the last stable AT&T ksh93 release (93u+ 2012-08-01). It takes shell scripts and interactive commands and runs them, with built-in utilities, arrays, arithmetic, job control and line editing. The Homebrew package installs the executables ksh, ksh93, rksh, rksh93 and shcomp. The README covers building from source, not the brew package itself.",
+  "why_it_exists": "The README says that an attempt to refactor ksh93 into ksh2020 (2017 to 2020) was abandoned with many critical bugs, but its AST issue tracker held documentation on fixing bugs. This reboot backports those fixes to the last stable release and adds patches from OpenSUSE, Red Hat, Solaris and the community, with the aim of being 'the least buggy version of ksh93 ever released'.",
+  "how_it_works": "The build is driven by a POSIX shell script, bin/package, which compiles everything into an arch directory named for your architecture, with dynamically linked binaries in dyn/bin and dyn/lib when supported. Features are chosen at compile time by editing src/cmd/ksh93/SHOPT.sh. Regression tests run through bin/shtests, and bin/package use lets you try the shell without installing it.",
+  "commands_seen": [
+   {
+    "cmd": "bin/package make",
+    "context": "Builds ksh from the top of the source tree, run from the repository's top directory."
+   },
+   {
+    "cmd": "quiet make",
+    "context": "Alternative to 'bin/package make' that suppresses compiler output."
+   },
+   {
+    "cmd": "bin/package make -j4",
+    "context": "Parallel build using up to four concurrent jobs."
+   },
+   {
+    "cmd": "bin/package host cpu",
+    "context": "Prints how many CPU cores the system has, to pick a -j value."
+   },
+   {
+    "cmd": "bin/package host type",
+    "context": "Prints the name of the architecture subdirectory where binaries are placed."
+   },
+   {
+    "cmd": "export CCFLAGS=\"-m64 -O\" LDFLAGS=\"-m64\"",
+    "context": "Sets compiler and linker flags before building; the README's example for Solaris Studio cc to make a 64-bit binary. Note the project uses CCFLAGS, not CFLAGS."
+   },
+   {
+    "cmd": "bin/package make SHELL=/bin/bash CCFLAGS=\"-O2 -I/opt/local/include\" LDFLAGS=\"-L/opt/local/lib\"",
+    "context": "Builds with flags and an alternative build-script shell passed on the command line for that one command."
+   },
+   {
+    "cmd": "bin/package test",
+    "context": "Runs the default regression test sets for ksh and the build system after compiling."
+   },
+   {
+    "cmd": "bin/shtests --man",
+    "context": "Prints the manual for the shtests command, which controls ksh regression test runs."
+   },
+   {
+    "cmd": "bin/package use",
+    "context": "Lets you hand-test ksh, its utilities and autoloadable functions without installing."
+   },
+   {
+    "cmd": "bin/package install",
+    "context": "Usage is 'bin/package install install_root_directory [command ...]'; with no command it installs ksh and shcomp."
+   }
+  ],
+  "install_notes": "The README covers building from source, not the Homebrew formula. The build needs a basic POSIX shell, utilities and a compiler, with cc, ar and getconf required at build time and tput optional at runtime for multiline editing. On macOS, install the Xcode Command Line Tools with xcode-select --install. On Android/Termux, install build dependencies with pkg install (clang, binutils, getconf). On NetBSD and OpenBSD, disable SHOPT_SYSRC if the system /etc/ksh.kshrc is incompatible. Set DESTDIR for packager-style staged installs, and export AST_NO_DYLIB to skip the dynamic build. No accounts or hardware are needed.",
+  "standout": "It is a historical revival: the project backports fixes from an abandoned rewrite and from distro patch sets into the last stable ksh93, and the README is explicit that it is willing to break undocumented behaviour rather than keep bug-for-bug compatibility. Its policy of squashing each pull request into one self-documenting commit is also unusual.",
+  "status": "Described as active in the README ('where the KornShell is under active development') and its policy sections describe ongoing maintenance on dev and 1.0 branches. The fetched README shows no release date or last-commit date, so I could not confirm recency beyond that statement.",
+  "caveats": "The README lists supported systems (Android/Termux, Cygwin, BSDs, Haiku, illumos, Linux with glibc or musl, macOS, QNX, Solaris) and says AIX, HP-UX and UnixWare may work but are untested. EBCDIC and z/OS support were removed. The prepare section ends with a '(to be completed)' placeholder. Compiler flags that emit colour codes or -ffast-math break the build or cause arithmetic bugs. The brew description calls it 'KornShell, ksh93' while the project calls itself 93u+m. Its test and install commands live in bin/package rather than a standard make target. The README does not state a licence.",
+  "quotes": [
+   "Welcome to the repository where the KornShell is under active development.",
+   "we are confident at this point that 93u+m is already the least buggy version of ksh93 ever released.",
+   "No 100% bug compatibility. Broken and undocumented behaviour gets fixed.",
+   "No bureaucracy, no formalities. Just fix it, or report it: create issues, send pull requests."
+  ],
+  "links": [
+   {
+    "label": "Project homepage and README",
+    "url": "https://github.com/ksh93/ksh"
+   },
+   {
+    "label": "NEWS (user-visible fixes)",
+    "url": "https://github.com/ksh93/ksh/blame/dev/NEWS"
+   },
+   {
+    "label": "Issue tracker",
+    "url": "https://github.com/ksh93/ksh/issues"
+   },
+   {
+    "label": "Original ksh93 site (AT&T)",
+    "url": "http://www.kornshell.com/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/ksh93/ksh (homepage, GitHub repository; fetched successfully and returned the README, which was complete enough that no further links were followed)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "ksh93\u2019s compound variables and discipline functions make shell variables behave like structured, programmable objects, and its active revival gives this historically influential shell a worthwhile second look."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "ksh93",
+  "tldr": "A maintained fork of KornShell 93, the AT&T shell that shaped bash and POSIX sh, patched to be the least buggy ksh93 yet.",
+  "deeper_look": "ksh93u+m is a Unix shell and scripting language. It runs interactive commands and scripts, with built-in utilities, arrays, arithmetic, job control and line editing. The Homebrew package installs `ksh`, `ksh93`, the restricted variants `rksh` and `rksh93`, and `shcomp`.\n\nThe project exists because of a failed rewrite. According to the README, an attempt to refactor ksh93 into ksh2020 (2017 to 2020) was abandoned with many critical bugs. This fork starts again from the last stable AT&T release, 93u+ of 2012-08-01. It backports the bug fixes documented in the old AST issue tracker and adds patches from OpenSUSE, Red Hat, Solaris and the community. Its stated aim: \"the least buggy version of ksh93 ever released.\"\n\nThe idea underneath is that a shell is a language with its own history. Many features people use in bash and zsh trace back to ksh. Running the original, in a maintained form, shows where they came from and where the lineages diverged. The maintainers are also willing to break old behaviour: \"No 100% bug compatibility. Broken and undocumented behaviour gets fixed.\"\n\nThe build is driven by a POSIX shell script, `bin/package`, and features are chosen at compile time by editing `src/cmd/ksh93/SHOPT.sh`. That makes the source tree worth a look in itself.",
+  "install": "brew install ksh93",
+  "try_this": [
+   {
+    "cmd": "ksh93 --help",
+    "what_happens": "Prints the shell's usage and option summary."
+   },
+   {
+    "cmd": "shcomp --help",
+    "what_happens": "Shows usage for the script compiler that ships alongside ksh."
+   },
+   {
+    "cmd": "rksh93 --help",
+    "what_happens": "Shows usage for the restricted variant of the shell."
+   }
+  ],
+  "whats_unique": "It is a revival of the last stable AT&T ksh93, carrying fixes from an abandoned rewrite and from distro patch sets. Each pull request is squashed into one self-documenting commit.",
+  "caveats": "The README calls the project active but gives no release or commit dates in what was fetched, and its build and test instructions assume compiling from source rather than the brew package.",
+  "commitment": "afternoon",
+  "category": "languages-and-oddities",
+  "tags": [
+   "afternoon",
+   "shell",
+   "language",
+   "ancient",
+   "unix"
+  ],
+  "links": [
+   {
+    "label": "Project homepage and README",
+    "url": "https://github.com/ksh93/ksh"
+   },
+   {
+    "label": "NEWS (user-visible fixes)",
+    "url": "https://github.com/ksh93/ksh/blame/dev/NEWS"
+   },
+   {
+    "label": "Issue tracker",
+    "url": "https://github.com/ksh93/ksh/issues"
+   },
+   {
+    "label": "Original ksh93 site (AT&T)",
+    "url": "http://www.kornshell.com/"
+   }
+  ]
+ }
+}

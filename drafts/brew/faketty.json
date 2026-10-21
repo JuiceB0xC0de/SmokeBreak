@@ -1,0 +1,109 @@
+{
+ "name": "faketty",
+ "desc": "Wrapper to exec a command in a pty, even if redirecting the output",
+ "homepage": "https://github.com/dtolnay/faketty",
+ "installs_365d": 116,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "protocol"
+ ],
+ "why": "Tricks programs into thinking their redirected output is a terminal, a small door into how tty detection actually works.",
+ "brief": {
+  "what_it_is": "faketty is a small command-line wrapper binary written in Rust. You put it in front of any command, and it runs that command inside a pseudoterminal (pty) while still sending the command's stdout and stderr to whatever you redirect them to, such as log files. The README's example is `faketty bazel build :target >log/out 2>log/err`. The output lands in the log files, but the program still sees a terminal and formats its output as if a person were watching.",
+  "why_it_exists": "When a program's output is redirected to a pipe or file, many programs detect that it is no longer a terminal and drop progress bars or colored text. The README says faketty lets you log stdout and stderr separately without changing what the output looks like compared with running in a terminal. It also explains that the standard tool script(1) can fake a terminal but uses a single pty, so it cannot keep stdout and stderr separate.",
+  "how_it_works": "faketty execs the given command inside a pty, so the process sees a real terminal with width, height and similar properties. Because the README says faketty 'preserves distinct stdout and stderr streams', unlike script(1), it keeps the two streams apart so each can go to its own destination. The README does not describe the internal mechanism for doing that separation beyond this.",
+  "commands_seen": [
+   {
+    "cmd": "cargo install faketty",
+    "context": "The README's install command, which uses Cargo to install the crate from crates.io."
+   },
+   {
+    "cmd": "faketty bazel build :target >log/out 2>log/err",
+    "context": "Main usage example: runs bazel build inside a pty, with stdout going to log/out and stderr going to log/err. The README labels 'bazel build :target' as the command to run."
+   },
+   {
+    "cmd": "script --quiet --return --command '...' /dev/null",
+    "context": "Not a faketty command. The README uses it to describe the closest existing equivalent, script(1), which faketty is similar to except that it keeps stdout and stderr distinct."
+   }
+  ],
+  "install_notes": "The README gives only `cargo install faketty`, which means a Rust toolchain with Cargo is needed. The Homebrew formula lists the faketty executable, but the README does not mention brew. No accounts, hardware, or first-run configuration are mentioned.",
+  "standout": "Most wrappers for fooling tty detection use one pseudoterminal, so stdout and stderr get merged. faketty points out that script(1) has this limit and keeps the two streams separate, so you can log errors apart from normal output while the program still believes it is talking to a terminal.",
+  "status": "unknown. The README has a crates.io version badge and a GitHub Actions CI build-status badge, but it gives no release date, last commit date, or maintenance note, and I did not fetch the crates.io page or the commit history to check.",
+  "caveats": "The README says nothing about supported platforms. Because it depends on ptys, it is probably limited to Unix-like systems, but I did not confirm this. Its usefulness depends on the target program's behavior, since programs that check other things besides tty status may still act differently. The README includes no limitations section, so other gaps are unknown.",
+  "quotes": [
+   "This allows logging the stdout and stderr (separately) of a process, without the output being different from what you'd see in the terminal if you weren't logging anything.",
+   "However, `script` only uses a single pty, which makes it impossible to demultiplex stdout and stderr to different places.",
+   "The `faketty` command in this repo is similar to `script --quiet --return --command '...' /dev/null` except that it preserves distinct stdout and stderr streams."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/dtolnay/faketty"
+   },
+   {
+    "label": "crates.io package",
+    "url": "https://crates.io/crates/faketty"
+   },
+   {
+    "label": "script(1) man page",
+    "url": "https://man7.org/linux/man-pages/man1/script.1.html"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/dtolnay/faketty: fetched OK, README returned. It was thorough enough that I did not follow further links."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It exposes a subtle terminal trick: giving a process PTY-backed stdout and stderr while keeping the streams separately redirectable."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "faketty",
+  "tldr": "Runs any command inside a pseudoterminal while your redirects still work, so programs keep their colors and progress bars and you still get separate stdout and stderr logs.",
+  "deeper_look": "Many programs check whether their output is a terminal. If it is not, because you redirected it to a file or a pipe, they switch off colors, progress bars and other formatting meant for a human. faketty runs the command inside a pty, so the program sees what looks like a real terminal, while its stdout and stderr still go wherever your shell redirects them.\n\nThe README's example is `faketty bazel build :target >log/out 2>log/err`. The logs get written, and the output looks the way it would on screen. In the README's words, this allows \"logging the stdout and stderr (separately) of a process, without the output being different from what you'd see in the terminal if you weren't logging anything.\"\n\nThe closest existing tool is script(1). The README says faketty is similar to `script --quiet --return --command '...' /dev/null`, but script uses a single pty, \"which makes it impossible to demultiplex stdout and stderr to different places.\" faketty keeps the two streams distinct. The README does not explain how it does that internally.\n\nThe idea underneath is how programs decide they are talking to a person. Terminal detection is a small, ordinary check, and once you see a tool fool it, you start noticing where it matters: CI logs, pipes, and any output that changes shape when you redirect it.",
+  "install": "cargo install faketty\n# The README only documents Cargo, so a Rust toolchain is needed. The Homebrew formula also installs the faketty executable: brew install faketty",
+  "try_this": [
+   {
+    "cmd": "faketty --help",
+    "what_happens": "Prints usage for the wrapper."
+   },
+   {
+    "cmd": "faketty bazel build :target >log/out 2>log/err",
+    "what_happens": "The README's example: runs the build inside a pty, writing stdout to log/out and stderr to log/err, with terminal-style formatting preserved."
+   }
+  ],
+  "whats_unique": "script(1) can fake a terminal but merges everything into one pty. faketty keeps stdout and stderr separate while the program still believes it has a terminal.",
+  "caveats": "The README does not state supported platforms or a maintenance status; since it relies on ptys it is probably Unix-only, and programs that check more than tty status may still behave differently.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "tty",
+   "pty",
+   "rust",
+   "unix",
+   "shell"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/dtolnay/faketty"
+   },
+   {
+    "label": "crates.io package",
+    "url": "https://crates.io/crates/faketty"
+   },
+   {
+    "label": "script(1) man page",
+    "url": "https://man7.org/linux/man-pages/man1/script.1.html"
+   }
+  ]
+ }
+}

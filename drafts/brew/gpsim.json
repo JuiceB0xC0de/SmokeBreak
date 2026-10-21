@@ -1,0 +1,115 @@
+{
+ "name": "gpsim",
+ "desc": "Simulator for Microchip's PIC microcontrollers",
+ "homepage": "https://gpsim.sourceforge.net/",
+ "installs_365d": 104,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "simulation",
+  "reverse-engineering",
+  "hardware"
+ ],
+ "why": "A PIC microcontroller simulator lets you run and step firmware with simulated pins, a great way to watch hardware execute.",
+ "brief": {
+  "what_it_is": "gpsim is a software simulator for Microchip PIC microcontrollers, licensed under GPL v2 or later with some libraries under LGPL. You load a PIC program (the README's examples are assembler source plus stimulus files) and run it on the simulated chip, with simulated stimuli tied to its I/O pins. It offers a command-line interface like gdb and a GTK GUI. The homepage describes breakpoints, single-stepping, disassembly, memory inspect and change, and a trace buffer, and it lists a register viewer, source browser, breadboard viewer, and scope viewer among its screenshots.",
+  "why_it_exists": "The homepage frames gpsim around three goals: accuracy (\"designed to be as accurate as possible\", covering the core, I/O pins, and internal peripherals so that you can test the PIC \"the same way you would in the real world\"), speed, and usefulness. It also aims to offer debugging features normally found only in in-circuit emulators.",
+  "how_it_works": "Peripherals and external hardware are modelled as stimuli and modules that connect to the simulated I/O pins. The homepage says modules are loadable libraries that are distributed separately, and it lists bundled ones: pull-up/pull-down resistors, USART, switch, logic gates, LEDs, PAL video emulator, rotary encoder, I2C EEPROM, and an LCD module. A continuous trace buffer records simulator activity, and read/write breakpoints can fire on register values.",
+  "commands_seen": [
+   {
+    "cmd": "tar -xvzf gpsim-0.x.y.tar.gz",
+    "context": "Unpacks the source tarball; 'x.y' is the version number. Creates a gpsim-0.x.y directory."
+   },
+   {
+    "cmd": "cd gpsim-0.x.y",
+    "context": "Enters the unpacked source directory before configuring the build."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Creates the Makefile, per the homepage's install steps."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds the gpsim executable."
+   },
+   {
+    "cmd": "su root",
+    "context": "Switches to root if you have root privileges, before installing."
+   },
+   {
+    "cmd": "make install",
+    "context": "Places the gpsim executable in /usr/local/bin."
+   },
+   {
+    "cmd": "processor list",
+    "context": "Typed inside the gpsim command-line interface; the homepage says this is the best way to see the currently supported processors."
+   }
+  ],
+  "install_notes": "The homepage gives a source build: download the tarball, untar it, then run ./configure, make, and make install (as root if needed). The README mentions INSTALL.gpsim, and the examples/ subdirectory has sample asm and stimulus files. On Linux, if your distribution's gtk+extra is missing or out of date, you must download, build, and install gtk+extra before building gpsim. Windows users are pointed to Borut Ra\u017eem's gpsimWin32 port and installer, which is a third-party build, not the official one. Building from SVN is also possible, following the SVN instructions. Nothing about Homebrew specifically appears on the page.",
+  "standout": "Accuracy is the stated priority: the homepage claims full-chip modelling including all internal peripherals, and says that a 'goto $' loop runs at roughly the speed of a 25 MHz PIC. Also unusual for a simulator is the always-on trace buffer and value-based read/write breakpoints, which the author compares to in-circuit emulator features.",
+  "status": "quiet. The homepage footer reads 'Last modified on $Date: 2017-06-12', and the page shows no recent release date, news, or version number, only a 0.x.y tarball placeholder. I did not check the SourceForge release or commit history, so this is based on the homepage alone.",
+  "caveats": "The processor list is long but old and has gaps: it includes the PIC12C5xx/16C-series parts and stops at several 2010-era chips, with the PIC18F2455 and PIC18F4455 marked '*' for USB, which is 'not supported (yet)'. The homepage says 'gpsim is not fancy, but it's improving.' Building from source needs autotools and GTK, and Windows support comes from a third-party port. The page is dated 2017 and has no visible license file in the excerpt I read, though it states GPL v2+ and LGPL v2+. Brew caveats are empty.",
+  "quotes": [
+   "gpsim has been designed to be as accurate as possible.",
+   "a continuous trace buffer tracks every action of the simulator (whether you want it or not).",
+   "gpsim is not fancy, but it's improving."
+  ],
+  "links": [
+   {
+    "label": "gpsim homepage",
+    "url": "https://gpsim.sourceforge.net/"
+   }
+  ],
+  "fetch_log": [
+   "https://gpsim.sourceforge.net/ \u2014 fetched successfully. Not a GitHub repo, so no README. Homepage was substantive enough that I did not follow the docs or download links. Five-fetch limit was not reached."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "gpsim makes PIC firmware and its peripherals, pins, and external circuits inspectable in simulation, a compact way to explore how embedded hardware actually behaves."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "gpsim",
+  "tldr": "A simulator for Microchip PIC microcontrollers that runs real firmware on a virtual chip with simulated pins, LEDs, switches and an LCD, debuggable like gdb.",
+  "deeper_look": "gpsim loads a PIC program and runs it on a software model of the chip. The model covers the core, the I/O pins and the internal peripherals. You get a gdb-style command line, plus a GTK interface with a register viewer, source browser, breadboard viewer and scope viewer. Breakpoints, single-stepping, disassembly and memory editing are all there.\n\nThe author's stated goal is accuracy: gpsim \"has been designed to be as accurate as possible\", so you can test a PIC \"the same way you would in the real world\". It also aims to offer debugging features usually found only in in-circuit emulators. One example is a trace buffer that, in the homepage's words, \"tracks every action of the simulator (whether you want it or not)\". Another is breakpoints that fire on register read and write values.\n\nThe underlying idea is that a microcontroller is a small deterministic machine, and you can watch it work without owning the chip. Peripherals and outside hardware are modelled as stimuli and loadable modules wired to the simulated pins. The homepage lists pull-up and pull-down resistors, USART, switches, logic gates, LEDs, a rotary encoder, an I2C EEPROM and an LCD. You can step through firmware and see exactly which register change lights a pin.",
+  "install": "brew install gpsim",
+  "try_this": [
+   {
+    "cmd": "gpsim --help",
+    "what_happens": "Prints the command-line options so you can see how to load a program."
+   },
+   {
+    "cmd": "gpsim",
+    "what_happens": "Starts the simulator. Its prompt is where you issue commands."
+   },
+   {
+    "cmd": "processor list",
+    "what_happens": "Typed inside gpsim, lists the supported PIC processors. The homepage calls this the best way to check."
+   }
+  ],
+  "whats_unique": "It aims for chip-level accuracy and gives you in-circuit-emulator-style tools, such as an always-on trace buffer and value-based breakpoints, with no hardware attached.",
+  "caveats": "The homepage is dated 2017 and shows no recent release, the processor list stops at several 2010-era chips, and the author says \"gpsim is not fancy, but it's improving.\"",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "simulation",
+   "microcontroller",
+   "pic",
+   "debugger",
+   "hardware"
+  ],
+  "links": [
+   {
+    "label": "gpsim homepage",
+    "url": "https://gpsim.sourceforge.net/"
+   }
+  ]
+ }
+}

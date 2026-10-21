@@ -1,0 +1,86 @@
+{
+ "name": "buildapp",
+ "desc": "Creates executables with SBCL",
+ "homepage": "https://www.xach.com/lisp/buildapp/",
+ "installs_365d": 319,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "quick",
+  "library"
+ ],
+ "why": "Turns Common Lisp programs into standalone SBCL executables; a niche old-school Lisp tool that is a close call.",
+ "brief": {
+  "what_it_is": "Buildapp is a command-line tool that turns a Common Lisp program into a standalone executable. You give it a Lisp image setup as flags: files to --load, ASDF systems to --load-system, --require'd modules, and --eval'd code, plus an --entry function. It loads all of that into SBCL (or CCL), then saves the image as a runnable binary with --output. The output is a single file you run directly, such as ./hello-world. The tool is written in Common Lisp and is a small, separate utility, not a Lisp implementation.",
+  "why_it_exists": "The README frames it as a way to define an application environment by loading files, systems, and code, then dump an executable image with an arbitrary startup function. It is similar to cl-launch and hu.dwim.build, and it deliberately stays narrow: startup initialization, debugger management, command-line parsing, and library fetching are left to other tools.",
+  "how_it_works": "Buildapp parses its flags into a description of the requested build, then writes a temporary Lisp dumpfile with the matching load, eval, and require steps. It runs sbcl (or ccl) as a subprocess with no init files, loads that dumpfile, and the dumpfile ends by calling save-lisp-and-die (or ccl:save-application) to write the executable. Debugger hooks are changed so that errors quit with a special exit code instead of entering the interactive debugger, and most compile and load output goes to a log stream that --logfile can redirect to a file.",
+  "commands_seen": [
+   {
+    "cmd": "make install",
+    "context": "Compiles and installs buildapp with SBCL. The README says it needs no libraries. By default it installs to /usr/local/bin."
+   },
+   {
+    "cmd": "make install LISP=ccl",
+    "context": "Compiles buildapp under CCL instead of SBCL, by naming the Lisp after make."
+   },
+   {
+    "cmd": "make DESTDIR=/path install",
+    "context": "Installs buildapp to a different location than /usr/local/bin."
+   },
+   {
+    "cmd": "buildapp \\ --eval '(defun main (argv) (declare (ignore argv)) (write-line \"Hello, world\"))' \\ --entry main \\ --output hello-world",
+    "context": "The README's smallest example: builds a one-function executable named hello-world with main as its entry point."
+   },
+   {
+    "cmd": "./hello-world",
+    "context": "Runs the executable produced by the hello-world build, which prints Hello, world."
+   },
+   {
+    "cmd": "buildapp --output lisp-curl --asdf-path ~/src/clbuild/systems/ --load-system drakma --eval '(defun main (args) (write-string (drakma:http-request (second args))))' --entry main",
+    "context": "A toy curl-like build that loads the drakma HTTP library from an ASDF path and bakes it into the executable."
+   },
+   {
+    "cmd": "./lisp-curl http://xach.com/",
+    "context": "Runs the lisp-curl executable to fetch a page and print the HTML."
+   },
+   {
+    "cmd": "ln -sf utils cl-ls",
+    "context": "Creates a symlink so one multi-entry executable can be called by a different name. The README uses cl-ls, cl-echo, and cl-true with the utils binary."
+   },
+   {
+    "cmd": "buildapp --output utils --load utils.lisp --dispatched-entry /utils:main --load ls.lisp --dispatched-entry cl-ls/ls:main --load echo.lisp --dispatched-entry cl-echo/echo:main --load true.lisp --dispatched-entry cl-true/true:main",
+    "context": "Builds one executable that picks its entry point from the name it was invoked by, via --dispatched-entry."
+   },
+   {
+    "cmd": "./cl-ls",
+    "context": "Run through the symlink, which triggers the cl-ls dispatched entry and lists files in the current directory."
+   }
+  ],
+  "install_notes": "No libraries are required. Building needs SBCL by default, or CCL with LISP=ccl. The alternative is to load the buildapp system with ASDF and run (buildapp:build-buildapp). Installs go to /usr/local/bin unless DESTDIR is set. The --sbcl flag can point to a specific sbcl binary, and the --asdf-path and --asdf-tree flags tell it where to find systems. Apart from the Lisp environment, no accounts or hardware are mentioned.",
+  "standout": "Its entry-point design is distinctive: --dispatched-entry lets one saved image behave like many small utilities, chosen by the name it was launched under through symlinks. It also builds from the Lisp image itself rather than from a source bundle, so the output is a real SBCL executable, not a wrapper script.",
+  "status": "Quiet. The homepage says the latest version is 1.5.6, released November 7th, 2015, and the page carries a 2010 copyright line. I found no commit history or changelog, so I cannot tell whether it is actively developed; it reads as a finished, low-activity tool.",
+  "caveats": "Output is tied to SBCL or CCL, and the README says any error in the built program drops into the interactive debugger, so the toy curl example is not practical. The README calls the tool limited by design and offers no command-line parsing, library fetching, or startup-hook management. It is a personal project of Zach Beane's and is licensed under a BSD-style license. Homebrew's description says only SBCL, though the README also covers CCL.",
+  "quotes": [
+   "Buildapp is an application for SBCL or CCL that configures and saves an executable Common Lisp image.",
+   "Buildapp is limited in scope. It aims to make the following steps easy:",
+   "Dump an executable image with an arbitrary startup function",
+   "It is similar to cl-launch and hu.dwim.build."
+  ],
+  "links": [
+   {
+    "label": "Buildapp homepage (README-style page)",
+    "url": "https://www.xach.com/lisp/buildapp/"
+   },
+   {
+    "label": "Source tarball (download shortcut)",
+    "url": "http://www.xach.com/lisp/buildapp.tgz"
+   }
+  ],
+  "fetch_log": [
+   "https://www.xach.com/lisp/buildapp/ - fetched OK; full page with install, usage, implementation, and license sections. No other fetches needed."
+  ]
+ }
+}

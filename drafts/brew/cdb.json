@@ -1,0 +1,95 @@
+{
+ "name": "cdb",
+ "desc": "Create and read constant databases",
+ "homepage": "https://cdb.cr.yp.to/",
+ "installs_365d": 48,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "languages-and-oddities",
+ "tags": [
+  "quick",
+  "library",
+  "ancient",
+  "protocol"
+ ],
+ "why": "Daniel Bernstein's constant database format, a tiny write-once file structure with a clever design worth reading about.",
+ "brief": {
+  "what_it_is": "cdb is a C package by D. J. Bernstein for creating and reading constant databases, which are read-only key/value files that are built once and then queried. Its tools build a database from records, dump one back out in cdbmake-compatible format, and print statistics or run tests. The homepage also documents a C read API (cdb_init, cdb_find, cdb_read) that opens a database by file descriptor and returns the records under a key. A 64-bit variant, cdb64, has its own set of tools. The latest release is 20251021.",
+  "why_it_exists": "The homepage pitches cdb as a fast, reliable, simple package with no random limits, low overhead, and fast atomic replacement. Its stated goal is quick lookups in a file that is rewritten whole rather than updated in place.",
+  "how_it_works": "The homepage gives the lookup cost: a successful lookup in a large database normally takes two disk accesses and an unsuccessful one takes one. Replacement is done by rewriting a whole new database, and readers keep using the old file until the new one is swapped into place, so they never pause. The pages describe the read API and the file-level behaviour but do not explain the internal hash layout.",
+  "commands_seen": [],
+  "install_notes": "The fetched pages show no install steps, accounts, or runtime requirements. The brew executable list includes cdbmake, cdbget, cdbdump, cdbstats, cdbtest, and their cdb64 and -12 and -sv variants, but I did not see usage lines for any of them.",
+  "standout": "The homepage stresses that readers never pause during a rewrite and keep using the old file until the new one is in place, and that lookups take about one or two disk accesses. The homepage also lists a long tail of independent implementations in other languages and several well-known programs that use the format, including djbdns, qmail, and Postfix.",
+  "status": "Maintained, by the evidence available. The homepage shows latest release 20251021 and an intro page version dated 2025.10.23. I did not check a commit history or a changelog.",
+  "caveats": "The fetched pages give no build, platform, or licensing information, and the brew caveats field is empty. The read API page is C-level and does not show command-line usage, so I could not confirm the flags or behaviour of the cdb tools themselves. The homepage was reachable.",
+  "quotes": [
+   "cdb is a fast, reliable, simple package for creating and reading constant databases.",
+   "No random limits: cdb handles any database up to 4 gigabytes (or up to an exabyte for cdb64).",
+   "Readers don't pause during a rewrite: they continue transparently using the old database until the new database is in place."
+  ],
+  "links": [
+   {
+    "label": "cdb homepage",
+    "url": "https://cdb.cr.yp.to/"
+   },
+   {
+    "label": "cdb read API",
+    "url": "https://cdb.cr.yp.to/cdb.html"
+   }
+  ],
+  "fetch_log": [
+   "https://cdb.cr.yp.to/ (worked; intro page with features, release 20251021, and list of implementations)",
+   "https://cdb.cr.yp.to/cdb.html (worked; C read API reference, version 2025.10.21)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "An obscure, elegant write-once database pairs near-constant-time lookups with atomic whole-file replacement, making its design worth a short break to explore."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "cdb",
+  "tldr": "D. J. Bernstein's constant database: a read-only key/value file built once, rewritten whole, and looked up in one or two disk accesses.",
+  "deeper_look": "cdb is a small C package for creating and reading constant databases. A constant database is a key/value file you build in one pass and then only query. You never update it in place. The tools build a database from records, dump one back out in cdbmake-compatible format, and report statistics or run tests. A separate cdb64 set of tools handles the 64-bit variant.\n\nThe idea underneath is that giving up in-place updates buys a lot. The homepage says a successful lookup in a large database normally takes two disk accesses, and an unsuccessful one takes one. To change data, you write a whole new file and swap it into place. In the project's words: \"Readers don't pause during a rewrite: they continue transparently using the old database until the new database is in place.\"\n\nThe format is old and widely reused. The homepage lists independent implementations in other languages, and well-known programs that use it, including djbdns, qmail, and Postfix. Reading about why this shape works is a good way into how lookup tables, atomic file replacement, and read-mostly data fit together. The pages the brief covers describe the behaviour and the C read API (cdb_init, cdb_find, cdb_read), not the internal hash layout, so that part is yours to dig into.",
+  "install": "brew install cdb",
+  "try_this": [
+   {
+    "cmd": "cdbmake --help",
+    "what_happens": "Prints whatever usage the database builder offers, a starting point for building your first constant database."
+   },
+   {
+    "cmd": "cdbget --help",
+    "what_happens": "Shows how the lookup tool is invoked, for fetching the record stored under a key."
+   },
+   {
+    "cmd": "cdbdump --help",
+    "what_happens": "Shows usage for the dump tool, which writes a database back out in cdbmake-compatible format."
+   }
+  ],
+  "whats_unique": "It treats the database as an immutable file that is replaced whole, which gives lookups in one or two disk accesses and readers that never pause. Postfix, qmail, and djbdns use the format.",
+  "caveats": "The brief did not confirm usage or flags for the command-line tools, and the documented API is C-level, so expect to read the homepage and the tools' own help.",
+  "commitment": "quick",
+  "category": "languages-and-oddities",
+  "tags": [
+   "quick",
+   "database",
+   "key-value",
+   "c",
+   "djb",
+   "file-format"
+  ],
+  "links": [
+   {
+    "label": "cdb homepage",
+    "url": "https://cdb.cr.yp.to/"
+   },
+   {
+    "label": "cdb read API",
+    "url": "https://cdb.cr.yp.to/cdb.html"
+   }
+  ]
+ }
+}

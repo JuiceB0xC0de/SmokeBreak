@@ -1,0 +1,53 @@
+{
+ "name": "vtable-dumper",
+ "desc": "List contents of virtual tables in a shared library",
+ "homepage": "https://github.com/lvc/vtable-dumper",
+ "installs_365d": 13,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "reverse-engineering",
+  "library"
+ ],
+ "why": "Dumps C++ virtual table layouts from shared libraries, a genuine peek into how compiled object dispatch actually looks.",
+ "brief": {
+  "what_it_is": "vtable-dumper is a command-line tool that lists the contents of C++ virtual tables (vtables) in a shared library. You give it a shared library path, such as vtable-dumper /usr/lib64/libstdc++.so.6, and it prints each vtable with its byte offsets and entries. The README sample shows a vtable header with its mangled symbol name and entry count, then one line per slot giving the offset and the function, such as a virtual method, a destructor, __cxa_pure_virtual, or a typeinfo pointer. Options choose mangled or demangled symbol names.",
+  "why_it_exists": "The README says it is intended for developers of software libraries and maintainers of Linux distributions who want to ensure backward binary compatibility. The tool is developed by Andrey Ponomarenko.",
+  "how_it_works": "The README says the tool loads the target library with dlopen(), so every dependency has to be resolvable by ldd, and LD_LIBRARY_PATH may need extra paths. It lists libelf and libdl as requirements, which suggests it reads ELF symbol data, but the README does not describe the internals.",
+  "commands_seen": [
+   {
+    "cmd": "sudo make install prefix=/usr",
+    "context": "Installs vtable-dumper system-wide under /usr; this is the install step given in the README."
+   },
+   {
+    "cmd": "vtable-dumper SHLIB",
+    "context": "Basic usage pattern: pass a shared library path as the only argument."
+   },
+   {
+    "cmd": "vtable-dumper /usr/lib64/libstdc++.so.6",
+    "context": "Example run that dumps the vtables in the system C++ standard library."
+   }
+  ],
+  "install_notes": "Install with sudo make install prefix=/usr from the source tree. It requires libelf, libdl and libstdc++. The target library's own dependencies must be findable by ldd, or dlopen() may fail; in that case add their paths to LD_LIBRARY_PATH. The README does not mention Homebrew, and the brew entry lists no executables.",
+  "standout": "It shows the vtable layout that the compiler and linker actually produced in a shipped binary, with offsets, thunks, and pure-virtual stubs, rather than what the source code suggests. That makes it useful for checking binary compatibility between library versions. The scout note calls it a peek into how compiled dispatch looks, and the sample output supports that.",
+  "status": "unknown. The README has no release date, changelog, or recent-activity note, and I did not fetch the repository's commit or release pages, so I cannot say whether it is maintained.",
+  "caveats": "The README is short and does not state a license. It is Linux-oriented: the example path is /usr/lib64 and the requirements are Linux libraries. It depends on libelf and libdl and on dependencies being loadable via ldd. Output for the sample is a dump of Qt and libstdc++ symbols, so reading it takes some familiarity with the Itanium C++ ABI. The brew entry has no caveats and no executables listed.",
+  "quotes": [
+   "Vtable-Dumper \u2014 a tool to list content of virtual tables in a C++ shared library.",
+   "The tool is intended for developers of software libraries and maintainers of Linux distributions who are interested in ensuring backward binary compatibility.",
+   "Make sure that all dependencies of a target library can be found by `ldd`. Otherwise `dlopen()` may fail."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/lvc/vtable-dumper"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/lvc/vtable-dumper: fetched successfully, README returned. No further links followed because the README was complete enough for the brief."
+  ]
+ }
+}

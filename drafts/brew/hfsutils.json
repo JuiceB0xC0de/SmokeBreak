@@ -1,0 +1,78 @@
+{
+ "name": "hfsutils",
+ "desc": "Tools for reading and writing Macintosh volumes",
+ "homepage": "https://www.mars.org/home/rob/proj/hfs/",
+ "installs_365d": 729,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "ancient",
+  "reverse-engineering",
+  "afternoon"
+ ],
+ "why": "Reads and writes classic Macintosh HFS disk volumes, a fascinating dead filesystem you can poke at from a modern shell.",
+ "brief": {
+  "what_it_is": "hfsutils is a set of tools for reading and writing volumes in Apple's classic HFS (Hierarchical File System) format, the native Macintosh disk format, from UNIX and other systems. It includes command-line programs named on the page (hformat, hmount, hls, hcopy, and others) that are meant to work like mtools does for MS-DOS disks. It also has an X-based graphical browser (xhfs), a Tcl package offering a scriptable HFS shell, and a C library for low-level volume access. Input is an HFS volume such as a floppy, SCSI disk, CD-ROM, Zip disk, partitioned medium, or image file; output is files read from or written to that volume. The page does not mention the hvol executable that Homebrew lists, so I could not confirm what it does.",
+  "why_it_exists": "The author wants to manipulate Macintosh volumes from UNIX and other systems without a Mac. The page describes the package as 'a comprehensive software package being developed to permit manipulation of HFS volumes from UNIX and other systems.'",
+  "how_it_works": "The page does not explain the internals. It says the C library can be linked into other programs, for example to build a Macintosh Resource Manager on top of it, and that the command-line tools follow the mtools model. The Tcl interface is described as more efficient than calling the external programs.",
+  "commands_seen": [],
+  "install_notes": "The page names no Homebrew-specific steps. To build the Tcl and X tools you need the Tcl and Tk libraries; the page asks for the most recently patched Tcl 7.6 and Tk 4.2, and warns that other versions may not work. The Tcl and Tk interfaces are optional, so you can build only the command-line tools. The page links an FTP download for source but I did not follow it.",
+  "standout": "It reads and writes a volume format that is now mostly dead, and it is meant to be used the way mtools is used for DOS disks. It also has a scriptable Tcl HFS shell and a linkable C library, so it works as a toolkit as well as a set of commands.",
+  "status": "quiet, by the page's own dates. The copyright runs 1996-2000, the page says the software has been in use since 1996, and it still describes HFS+ support as planned but not yet available. The page points to a version history for current status, which I did not fetch, so I cannot give a last release date.",
+  "caveats": "HFS+ (Apple's Extended Format) is not supported; the page says it is planned but not yet available. The obsolete MFS format used on early 400K Mac floppies is not supported. Many PCs cannot read or write physical 800K Mac floppies because of a hardware limitation, though disk images of them work, as do 1440K high-density floppies. The Tcl and X interfaces need Tcl/Tk libraries. The code is GPL v2, with alternate terms available from the author. The page states there is absolutely no warranty.",
+  "quotes": [
+   "hfsutils is the name of a comprehensive software package being developed to permit manipulation of HFS volumes from UNIX and other systems.",
+   "The command-line programs are intended to be used in the same vein as the mtools command-line programs used to access MS-DOS filesystems.",
+   "Support for Apple's new Extended Format (HFS+) is currently planned, but not yet available."
+  ],
+  "links": [
+   {
+    "label": "HFS Utilities home page (Robert Leslie)",
+    "url": "https://www.mars.org/home/rob/proj/hfs/"
+   }
+  ],
+  "fetch_log": [
+   "https://www.mars.org/home/rob/proj/hfs/ - fetched OK; plain HTML page, not a GitHub repo. Link targets for the version history, FTP source, and hfs-user mailing list were not shown in the text, so I did not follow them."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "It makes classic Mac HFS volumes\u2014including disk images and their resource-fork-era contents\u2014inspectable and writable from a modern shell, a worthwhile filesystem-archaeology break."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "hfsutils",
+  "tldr": "Command-line tools that read and write classic Macintosh HFS disks and image files from a modern shell, in the spirit of mtools for DOS floppies.",
+  "deeper_look": "hfsutils is a package for working with volumes in HFS, the Hierarchical File System that classic Macintoshes used before HFS+ replaced it. Point it at a floppy, SCSI disk, CD-ROM, Zip disk, partitioned medium, or an image file, and it can read files off or write files onto the volume without a Mac in the room. The page names tools such as hformat, hmount, hls, and hcopy.\n\nThe author's stated goal is to manipulate Macintosh volumes from UNIX and other systems. The command-line programs are meant to work the way mtools does for MS-DOS disks: small commands that each do one job against a volume. The package also includes an X-based browser (xhfs), a Tcl package with a scriptable HFS shell, and a C library for low-level volume access. The page suggests the library could be linked into other programs, for example to build a Macintosh Resource Manager on top of it.\n\nThe door here is the filesystem itself. HFS is a dead format with its own ideas about catalogs, volumes, and how a Mac laid out data on disk. Having a small, readable toolkit for it is a way to get at old disk images and see how a format from the 1980s and 90s was put together. Homebrew lists one executable, hvol. The project page does not mention it, so check its --help before assuming what it does.",
+  "install": "brew install hfsutils\n\nThe Tcl and X tools need Tcl and Tk libraries; the page asks for patched Tcl 7.6 and Tk 4.2 and warns other versions may not work. Those interfaces are optional. You need an HFS disk image or a physical Mac-format disk to do anything useful.",
+  "try_this": [
+   {
+    "cmd": "hvol --help",
+    "what_happens": "Prints usage for the one executable Homebrew installs, so you can see what it does, since the project page does not describe it."
+   }
+  ],
+  "whats_unique": "It treats a dead Macintosh disk format like a mtools-style toolkit, and it ships a Tcl shell and a linkable C library as well as the commands.",
+  "caveats": "The page's dates run 1996-2000. It does not support HFS+ or the old 400K MFS format, and many PCs cannot read physical 800K Mac floppies, though disk images work.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "filesystems",
+   "macintosh",
+   "retro",
+   "hfs",
+   "reverse-engineering",
+   "ancient"
+  ],
+  "links": [
+   {
+    "label": "HFS Utilities home page (Robert Leslie)",
+    "url": "https://www.mars.org/home/rob/proj/hfs/"
+   }
+  ]
+ }
+}

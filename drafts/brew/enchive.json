@@ -1,0 +1,135 @@
+{
+ "name": "enchive",
+ "desc": "Encrypted personal archives",
+ "homepage": "https://github.com/skeeto/enchive",
+ "installs_365d": 7,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "library",
+  "reverse-engineering"
+ ],
+ "why": "Encrypted archives built on a small, auditable Ed25519 and Curve25519 design by skeeto, a fun crypto-internals read.",
+ "brief": {
+  "what_it_is": "Enchive is a command-line tool for encrypting files to yourself for long-term archival. You generate a keypair once with `keygen`, then `archive` encrypts a file to the public key, producing a `.enchive` file that reveals nothing about its format. `extract` decrypts it with the secret key and passphrase, reproducing the original file. Without filenames, it reads from standard input and writes to standard output. The README says it has no external dependencies and runs on Linux, BSD, macOS and Windows.",
+  "why_it_exists": "The README calls it a focused, simple alternative to more complex solutions such as GnuPG or encrypted filesystems. Its author says he is not aware of any tool that does everything Enchive does, and that GnuPG comes close but cannot derive a key pair from a passphrase.",
+  "how_it_works": "To encrypt, it generates an ephemeral Curve25519 keypair, runs Diffie-Hellman against the master public key, and uses the hashed shared secret to key ChaCha8. It writes the 8-byte IV, the 32-byte ephemeral public key, the ciphertext, and an HMAC-SHA256 of the plaintext. The master key can be derived from a passphrase with an scrypt-like memory-hard function, defaulting to 512MB for the secret key (D=29), so the key can be remembered rather than stored.",
+  "commands_seen": [
+   {
+    "cmd": "make PREFIX=/usr install",
+    "context": "Installs the binary and manual page under PREFIX after cloning the repo. DESTDIR is also supported for staged installs."
+   },
+   {
+    "cmd": "enchive keygen",
+    "context": "First step: generates the master keypair, writing enchive.pub and enchive.sec to ~/.config/enchive (or %APPDATA%\\enchive on Windows). It prompts for a passphrase to protect the secret key."
+   },
+   {
+    "cmd": "enchive archive sensitive.zip",
+    "context": "Encrypts sensitive.zip to sensitive.zip.enchive and leaves the original in place."
+   },
+   {
+    "cmd": "enchive extract sensitive.zip.enchive",
+    "context": "Decrypts the archive on a machine holding enchive.sec, prompting for the keygen passphrase, and reproduces sensitive.zip."
+   },
+   {
+    "cmd": "enchive keygen --derive",
+    "context": "Derives the key pair from a passphrase so it can be stored in memory rather than in a key file. --derive=N sets the iteration exponent (default 29)."
+   },
+   {
+    "cmd": "enchive --agent extract file.enchive",
+    "context": "Uses the built-in protection key agent, which caches the key for 15 minutes by default so several files need only one passphrase prompt. Unix-like systems only."
+   },
+   {
+    "cmd": "make CFLAGS='-O3 -D_FILE_OFFSET_BITS=64'",
+    "context": "Builds with large file support, the fix for the 'Value too large for defined data type' error on 32-bit glibc."
+   },
+   {
+    "cmd": "enchive archive <largefile >largefile.enchive",
+    "context": "Workaround for the 32-bit 2GB limit: lets the shell open the files. Enchive then cannot delete partial output on error."
+   },
+   {
+    "cmd": "make amalgamation",
+    "context": "Produces enchive-cli.c, a standalone C file for building with Visual Studio. Requires sed on a unix-like system."
+   },
+   {
+    "cmd": "C:\\> cl.exe -nologo -Ox enchive-cli.c advapi32.lib",
+    "context": "Compiles the amalgamation on Windows with the MSVC compiler."
+   }
+  ],
+  "install_notes": "The README says a plain `make` builds the binary, and that it has no dependencies or external data, so it can be copied into PATH. Installation to a prefix is optional because the binary can be used without installing it. Building the Windows version with Visual Studio uses the amalgamation route and links advapi32.lib. Compile-time options (-D flags) control defaults such as the agent, pinentry, file extension, and derivation iterations. The agent is off by default on Windows.",
+  "standout": "The format is built to be unrecognizable: encrypted files have no magic numbers and look like random data. Keys can be derived from a passphrase with a memory-hard function, so you can carry the archive key in your head. Each file gets a fresh ephemeral Curve25519 key, which the README uses to justify a shortened IV. The whole thing is one small C program with no dependencies.",
+  "status": "unknown. The README has no version number, release date, changelog, or commit information. It does say the major version increments whenever a file format changes, but it gives no dates. The scout note said the design uses Ed25519, but the README describes Curve25519, ChaCha8, and HMAC-SHA256 and never mentions Ed25519.",
+  "caveats": "Only Linux, BSD, macOS and Windows are listed, and the agent needs a unix-like system. The Windows agent is unsupported. The README says there is no effort at error recovery: it stops at the first error and tries to clean up incomplete files. Files the shell opened for it are not cleaned up. Security of passphrase-derived keys depends on the passphrase being long; the README says short ones are a weak point, and suggests diceware or a computer-chosen passphrase. Visual Studio builds need the amalgamation step. The 32-bit glibc 2GB limit requires a build flag. The README does not state a license. The scout note's mention of Ed25519 does not appear in the README.",
+  "quotes": [
+   "Enchive is a tool to encrypt files to yourself for long-term archival.",
+   "A purposeful design choice is that encrypted/archived files have no distinguishing marks whatsoever (magic numbers, etc.), making them indistinguishable from random data.",
+   "This tool will never achieve critical mass, so what's the point?",
+   "Portability is emphasized over performance."
+  ],
+  "links": [
+   {
+    "label": "Enchive on GitHub (homepage)",
+    "url": "https://github.com/skeeto/enchive"
+   },
+   {
+    "label": "Manual page enchive(1)",
+    "url": "http://nullprogram.com/enchive/"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/skeeto/enchive: fetched OK, README returned in full (no further fetches needed; the README was complete and the manual page link was not followed)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A tiny, dependency-free archive tool with an unusual ephemeral-DH format and passphrase-derived keys offers a worthwhile crypto-internals rabbit hole."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Enchive",
+  "tldr": "A tiny dependency-free C tool that encrypts files to yourself, producing archives indistinguishable from random bytes, with keys you can derive from a passphrase.",
+  "deeper_look": "Enchive encrypts files for long-term archival, to yourself. You run `keygen` once to make a keypair, then `archive` encrypts any file to the public key and `extract` decrypts it with the secret key and passphrase. With no filenames it reads standard input and writes standard output, so it slots into pipes.\n\nThe design is small enough to read in an evening. For each file it generates a fresh ephemeral Curve25519 keypair and does a Diffie-Hellman exchange against your master public key. The hashed shared secret keys ChaCha8. The output is an 8-byte IV, the 32-byte ephemeral public key, the ciphertext, and an HMAC-SHA256 of the plaintext. The README uses the per-file ephemeral key to justify the short IV.\n\nThere is no magic number or header. In the README's words, encrypted files have \"no distinguishing marks whatsoever\", so they look like random data. The idea underneath is public-key encryption used as a backup tool: you can archive on a machine that never holds the secret key, and decrypt only where it lives.\n\nKeys can also be derived from a passphrase with a memory-hard, scrypt-like function, 512MB by default, so the key can live in your head rather than in a file. The README presents it as a focused alternative to GnuPG or encrypted filesystems, and notes GnuPG cannot derive a key pair from a passphrase.",
+  "install": "brew install enchive",
+  "try_this": [
+   {
+    "cmd": "enchive keygen",
+    "what_happens": "Generates enchive.pub and enchive.sec in ~/.config/enchive, prompting for a passphrase to protect the secret key."
+   },
+   {
+    "cmd": "enchive archive sensitive.zip",
+    "what_happens": "Encrypts the file to sensitive.zip.enchive and leaves the original in place. The output looks like random data."
+   },
+   {
+    "cmd": "enchive extract sensitive.zip.enchive",
+    "what_happens": "Prompts for your passphrase and reproduces the original file."
+   }
+  ],
+  "whats_unique": "The output has no header or magic number, and the key pair can be derived from a memorable passphrase using a memory-hard function. All of it is one small C program with no dependencies.",
+  "caveats": "The README gives no version, dates or changelog, so maintenance status is unclear; it does no error recovery, and passphrase-derived keys are only as strong as the passphrase.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "crypto",
+   "encryption",
+   "c",
+   "archival",
+   "curve25519"
+  ],
+  "links": [
+   {
+    "label": "Enchive on GitHub",
+    "url": "https://github.com/skeeto/enchive"
+   },
+   {
+    "label": "Manual page enchive(1)",
+    "url": "http://nullprogram.com/enchive/"
+   }
+  ]
+ }
+}

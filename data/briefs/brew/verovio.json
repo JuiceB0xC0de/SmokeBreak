@@ -1,0 +1,97 @@
+{
+ "name": "verovio",
+ "desc": "Command-line MEI music notation engraver",
+ "homepage": "https://www.verovio.org",
+ "installs_365d": 234,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "afternoon",
+  "audio",
+  "visual",
+  "library"
+ ],
+ "why": "Engraves MEI music notation from the command line, a bridge between machine-readable scores and printed sheet music.",
+ "brief": {
+  "what_it_is": "Verovio is a command-line music notation engraver. It reads MEI (Music Encoding Initiative) score files and renders them as SVG images of printed sheet music. Its converters also accept Plaine & Easie Code, Humdrum, Musedata, MusicXML, EsAC and ABC input, so those formats can be engraved too. The command-line tool writes SVG to a file you name with -o. The same engine is also packaged as a library with bindings for JavaScript, Python, Java, Swift and Go.",
+  "why_it_exists": "The README describes Verovio as a fast, portable and lightweight engraving library for MEI digital scores. It is built for the Music Encoding Initiative, a machine-readable scholarly format for music, and aims to turn that encoding into proper printed-style notation.",
+  "how_it_works": "The codebase is standard C++20 and uses SMuFL (Standard Music Font Layout) for glyphs, so the font can be swapped for personal output. MEI attribute classes are generated from the MEI schema using a modified LibMEI. Embedded libraries handle Humdrum import/export, MIDI export, XML parsing and ZIP reading. The book describes the command-line build as CMake plus make, with a resource directory of fonts and data that the binary has to find at runtime.",
+  "commands_seen": [
+   {
+    "cmd": "brew install verovio",
+    "context": "Installs the command-line tool on macOS via Homebrew, including resources. This is the only pre-built binary route the book lists."
+   },
+   {
+    "cmd": "brew install verovio --HEAD",
+    "context": "Installs the latest development source through Homebrew instead of the release."
+   },
+   {
+    "cmd": "cmake ../cmake",
+    "context": "Configures the build from inside a build directory, per the Building on macOS or Linux section. Versions before 2.6.0 used cmake . instead."
+   },
+   {
+    "cmd": "make -j 8",
+    "context": "Compiles the verovio binary in ./build, using 8 parallel jobs to speed it up."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Copies the executable and resource files to global paths so verovio runs from anywhere."
+   },
+   {
+    "cmd": "verovio -h full",
+    "context": "Prints the full help output, including the default resource path."
+   },
+   {
+    "cmd": "verovio -o output.svg Hummel_Concerto_for_trumpet.mei",
+    "context": "Typesets an MEI file with default options and writes SVG to output.svg. This is the book's basic usage example."
+   },
+   {
+    "cmd": "./verovio -r ../data -o output.svg Hummel_Concerto_for_trumpet.mei",
+    "context": "Same render from an uninstalled local build, pointing -r at the codebase's ./data resource folder."
+   },
+   {
+    "cmd": "cmake ../cmake -DNO_PAE_SUPPORT=ON",
+    "context": "Builds without Plaine & Easie Code support."
+   },
+   {
+    "cmd": "brew uninstall verovio",
+    "context": "Removes the Homebrew-installed version."
+   }
+  ],
+  "install_notes": "On macOS, brew install verovio is the only pre-built route, and it includes resources. On Linux and elsewhere there are no pre-built binaries, so you build from source. That needs CMake and a C++17-capable compiler. You may need sudo make install to put the binary and resources in global paths. If you run an uninstalled build, you must pass -r with the path to the codebase's data folder, or it will not find its resources. Mixing installed and local versions can break things, because newer versions need glyphs that older resource folders lack. Windows needs Microsoft C++ Build Tools and make, and the README lists NMake steps from a VS x86 Native Tools prompt. Visual Studio, Xcode and VS Code build tasks are also described. Optional build flags can turn off the ABC, compressed MusicXML, Humdrum and PAE importers.",
+  "standout": "Verovio runs as a small, dependency-light engine that renders MEI to SVG, so it can be used both as a CLI and inside web, mobile and desktop apps. It also reads several legacy and music-encoding formats (Humdrum, Plaine & Easie, Musedata, EsAC, ABC) and converts them on the fly, which is less common than tools limited to one input format.",
+  "status": "unknown. The fetched pages show no release date or last-commit date, so I cannot confirm recency. Signals of active upkeep: CI badges (GitHub Actions and AppVeyor), PyPI and npm packages with download badges, a Zenodo DOI, a DeepWiki badge, and a book that documents versions up to 2.6.0 and a Homebrew HEAD option. The README does not say whether it is maintained, so treat this as likely active but unverified.",
+  "caveats": "No pre-built binaries except Homebrew on macOS, so Linux and Windows users must compile from source. Resource paths are fragile when multiple versions are installed. The build requires C++17 and CMake, and the book's troubleshooting section notes that Makefiles sometimes need to be regenerated after updates. The Xcode project has Humdrum support off by default. The library is LGPL v3. I did not check the homepage for a full description: it returned only a title line and no body text.",
+  "quotes": [
+   "Verovio is a fast, portable and lightweight library for engraving Music Encoding Initiative (MEI) digital scores into SVG images.",
+   "It can be compiled as a standalone command-line tool or as a music-rendering library for applications.",
+   "There are currently no pre-built binaries of the command-line toolkit available except for Homebrew on macOS. However, building it is very straight-forward.",
+   "Designed for the Music Encoding Initiative - Fast - Light - Flexible - No dependencies"
+  ],
+  "links": [
+   {
+    "label": "Verovio homepage",
+    "url": "https://www.verovio.org"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/rism-digital/verovio"
+   },
+   {
+    "label": "Reference book: command-line build and usage",
+    "url": "https://book.verovio.org/installing-or-building-from-sources/command-line.html"
+   },
+   {
+    "label": "Verovio Online Editor / Viewer",
+    "url": "http://editor.verovio.org"
+   }
+  ],
+  "fetch_log": [
+   "https://www.verovio.org: loaded, but returned only the page title and tagline with no body text",
+   "https://github.com/rism-digital/verovio: loaded, README returned in full",
+   "https://book.verovio.org/installing-or-building-from-sources/command-line.html: loaded, full command-line build and usage page returned"
+  ]
+ }
+}

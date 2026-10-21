@@ -1,0 +1,139 @@
+{
+ "name": "mp4ff",
+ "desc": "Tools for parsing and manipulating MP4/ISOBMFF files",
+ "homepage": "https://github.com/Eyevinn/mp4ff",
+ "installs_365d": 216,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "library",
+  "visual"
+ ],
+ "why": "A Go library and toolset for poking inside MP4 box structure, a useful way to see how the container is built.",
+ "brief": {
+  "what_it_is": "mp4ff is a Go module and a set of nine command-line tools for reading, writing and changing MP4 (ISOBMFF) files. It parses AVC and HEVC video, AAC and AC-3 audio, stpp and wvtt subtitles, and timed metadata, and it focuses on fragmented files used for MPEG-DASH, MSS and HLS fMP4, though it also handles progressive MP4. The CLI tools take an MP4 file in and print information about it (mp4ff-info, mp4ff-pslister, mp4ff-nallister, mp4ff-subslister) or write a new file out (mp4ff-crop, mp4ff-encrypt, mp4ff-decrypt, mp4ff-defragment, mp4ff-mvhevc). The README does not say what the output format of the listers is.",
+  "why_it_exists": "The README says the module 'implements MP4 media file parsing and writing' for streaming-oriented formats, and that the repo is 'focused on the file format' while also covering codec-specific boxes. It does not state a separate motivation beyond that.",
+  "how_it_works": "The top-level type is mp4.File. For progressive files it exposes Ftyp, Moov and Mdat. For fragmented files it exposes Init, Segments and Fragments, and it can run in a lazy mode that reads only metadata and defers media data, using ReadData or CopyData with a byte range. Boxes are dispatched by name from decoder tables (decodersSR and decoders), and unknown boxes become UnknownBox. Newer SliceReader and SliceWriter paths were added in version 0.27 to cut allocations.",
+  "commands_seen": [
+   {
+    "cmd": "brew install mp4ff",
+    "context": "Homebrew install for macOS and Linux, installs all the tools."
+   },
+   {
+    "cmd": "go install github.com/Eyevinn/mp4ff/cmd/mp4ff-info@latest",
+    "context": "Installs the mp4ff-info tool straight from the repo with the Go toolchain. The README says to repeat this for each tool wanted."
+   },
+   {
+    "cmd": "go install github.com/Eyevinn/mp4ff/cmd/mp4ff-encrypt@latest",
+    "context": "Same pattern as above, installs the mp4ff-encrypt tool."
+   },
+   {
+    "cmd": "go build -ldflags \"-X github.com/Eyevinn/mp4ff/internal.commitVersion=vX.Y.Z\" ./cmd/mp4ff-info",
+    "context": "Builds a tool from a source archive with no git metadata, setting the version string at link time. Without this the tool reports (devel)."
+   },
+   {
+    "cmd": "sudo apt install ./mp4ff_<version>_linux_amd64.deb",
+    "context": "Installs the release .deb package on Debian or Ubuntu. Version placeholder must be filled in."
+   },
+   {
+    "cmd": "sudo rpm -i mp4ff_<version>_linux_amd64.rpm",
+    "context": "Installs the release .rpm package on Fedora or RHEL."
+   },
+   {
+    "cmd": "sudo apk add --allow-untrusted mp4ff_<version>_linux_amd64.apk",
+    "context": "Installs the release .apk package on Alpine."
+   },
+   {
+    "cmd": "export OSC_ACCESS_TOKEN=<your-personal-access-token>",
+    "context": "Sets the Eyevinn Open Source Cloud access token before running the cloud example."
+   },
+   {
+    "cmd": "npx -y @osaas/cli@latest create eyevinn-mp4ff test",
+    "context": "Starts mp4ff as a cloud job via the Open Source Cloud CLI. The README's full command continues over several lines with -o options, and the cmdLineArgs value there is: mp4ff-crop s3://input/VINN.mp4 s3://output/VINN-crop2.mp4"
+   }
+  ],
+  "install_notes": "Homebrew works on macOS and Linux. Alternatives are go install per tool or go install . from a directory under cmd, and release archives for macOS, Linux and Windows (amd64 and arm64). Linux users can install the .deb, .rpm or .apk packages from the releases page, or copy the .tar.gz binaries onto their PATH. Building from a source archive without git needs the -ldflags version flag. No accounts, hardware or runtime configuration are needed for the local tools. The Open Source Cloud route needs an access token and S3-compatible storage.",
+  "standout": "Unlike most MP4 tools that only inspect files, mp4ff is a library and CLI set that can also rewrite boxes and encrypt or decrypt CENC (cenc and cbcs) fragments. It covers many codecs beyond H.264 and HEVC, including AV1, VP8/VP9, VVC, IAMF and MPEG-H 3D Audio. The mp4ff-info tool prints a tree of the box hierarchy, which fits the 'see how the container is built' angle.",
+  "status": "Unknown as to release cadence. The README shows a live CI badge, a coverage badge, a CHANGELOG link, and contribution rules, which suggest active upkeep. I did not fetch the releases page or the commit history, so I cannot give a last-release or last-commit date.",
+  "caveats": "mp4ff-crop works only on progressive files, and mp4ff-encrypt and mp4ff-decrypt work only on fragmented files. The README says the APIs 'should be fairly stable, but minor non-backwards-compatible changes may happen until version 1', so the project is pre-1.0. Some code is derived from jfbus/mp4 (MIT) and tcnksm/go-casper (the pkg/bits package), and the README says these came with their own copyrights. Several entries in the codec table are marked experimental (the wvtc and stpc paint models). mp4ff-mvhevc is listed as an inspector and muxer for MV-HEVC. Version reporting falls back to (devel) unless built from git or with the link-time flag. The brew formula has no caveats text. The scout note's 'poking inside MP4 box structure' description covers only part of the project, which is also a codec-aware library and an encryption tool.",
+  "quotes": [
+   "Module mp4ff implements MP4 media file parsing and writing for AVC and HEVC video, AAC and AC-3 audio, stpp and wvtt subtitles, and timed metadata tracks.",
+   "It is focused on fragmented files as used for streaming in MPEG-DASH, MSS and HLS fMP4, but can also decode and encode all boxes needed for progressive MP4 files.",
+   "The APIs should be fairly stable, but minor non-backwards-compatible changes may happen until version 1."
+  ],
+  "links": [
+   {
+    "label": "Homepage and README (GitHub)",
+    "url": "https://github.com/Eyevinn/mp4ff"
+   },
+   {
+    "label": "ChangeLog",
+    "url": "https://github.com/Eyevinn/mp4ff/blob/master/CHANGELOG.md"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/Eyevinn/mp4ff/releases"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/Eyevinn/mp4ff (homepage, fetched, worked: returned the README; the README is long and substantive, so no further fetches were needed)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A specialized MP4 box inspector and rewriter that exposes the structure of fragmented media files and can manipulate their encryption is a worthwhile format deep-dive."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "mp4ff",
+  "tldr": "A Go library and nine command-line tools that print the box tree inside MP4 files and rewrite, crop, encrypt or decrypt them.",
+  "deeper_look": "mp4ff reads and writes MP4, the ISO base media file format (ISOBMFF). An MP4 file is a nested tree of boxes, each with a four-letter name and a size. mp4ff parses that tree into Go types and writes it back out. It understands AVC and HEVC video, AAC and AC-3 audio, stpp and wvtt subtitles and timed metadata, and the brief lists further codecs including AV1, VP8/VP9, VVC, IAMF and MPEG-H 3D Audio.\n\nThe project is focused on fragmented MP4, the variant used for streaming in MPEG-DASH, MSS and HLS fMP4, though it also handles progressive files. A progressive file keeps one moov box and one mdat box. A fragmented file has an init segment followed by many small segments, each carrying its own metadata and media data. The library exposes both shapes, and it has a lazy mode that reads only metadata and fetches media bytes by range later.\n\nThe command-line tools are thin front ends on that library. mp4ff-info prints the box hierarchy as a tree, which is a good way to see how a file is built. mp4ff-pslister, mp4ff-nallister and mp4ff-subslister list parameter sets, NAL units and subtitles. mp4ff-crop, mp4ff-defragment, mp4ff-encrypt, mp4ff-decrypt and mp4ff-mvhevc write new files. Encryption covers the CENC schemes cenc and cbcs.\n\nThe idea underneath is that most video you watch online is a stack of these boxes, and once you can see them, streaming stops being a black box. The README does not describe the output format of the listers, so look at the output before relying on it.",
+  "install": "brew install mp4ff\n# or, with Go: go install github.com/Eyevinn/mp4ff/cmd/mp4ff-info@latest (repeat per tool)\n# No account or hardware needed for the local tools.",
+  "try_this": [
+   {
+    "cmd": "mp4ff-info --help",
+    "what_happens": "Shows the options for the tool that prints an MP4 file's box hierarchy as a tree."
+   },
+   {
+    "cmd": "mp4ff-nallister --help",
+    "what_happens": "Shows how to list the NAL units inside a video track."
+   },
+   {
+    "cmd": "mp4ff-defragment --help",
+    "what_happens": "Shows how to turn a fragmented MP4 into a progressive one."
+   }
+  ],
+  "whats_unique": "Most MP4 tools only inspect files. mp4ff is also a library that rewrites boxes and handles CENC encryption and decryption, with broad codec coverage.",
+  "caveats": "The README says the API is pre-1.0 and may change in minor ways, mp4ff-crop only works on progressive files, and mp4ff-encrypt and mp4ff-decrypt only on fragmented ones.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "mp4",
+   "video",
+   "file-formats",
+   "go",
+   "streaming",
+   "library"
+  ],
+  "links": [
+   {
+    "label": "Homepage and README (GitHub)",
+    "url": "https://github.com/Eyevinn/mp4ff"
+   },
+   {
+    "label": "ChangeLog",
+    "url": "https://github.com/Eyevinn/mp4ff/blob/master/CHANGELOG.md"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/Eyevinn/mp4ff/releases"
+   }
+  ]
+ }
+}

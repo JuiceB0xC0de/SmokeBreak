@@ -1,0 +1,92 @@
+{
+ "name": "f3",
+ "desc": "Test various flash cards",
+ "homepage": "https://fight-flash-fraud.readthedocs.io/en/latest/",
+ "installs_365d": 10003,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "hardware",
+  "needs-hardware"
+ ],
+ "why": "Tests flash cards for fake capacity, a satisfying way to catch counterfeit storage by writing and reading back data.",
+ "brief": {
+  "what_it_is": "f3 is a command-line tool for checking whether a flash drive or memory card holds the capacity and performance it claims. f3write takes a mounted path, fills all free space with 1GB files named N.h2w, and f3read checks those files byte-for-byte against the pseudorandom data that was written. The output is a per-file count of ok, corrupted, changed and overwritten sectors, plus average read and write speeds. A separate tool, f3probe, works on the raw block device (for example /dev/sdX) and reports the drive's usable size next to its announced size, and f3fix can then create a partition that matches the usable size. The homepage is only a table of contents, so this summary is drawn from the GitHub README and the Usage page.",
+  "why_it_exists": "The README says f3 is meant to see 'if they live up to claimed specifications' and that 'F3 stands for Fight Flash Fraud, or Fight Fake Flash.' The Usage page frames it as a free, open answer to counterfeit flash cards that advertise far more capacity than they hold.",
+  "how_it_works": "f3write fills free space with H2testw-compatible N.h2w files, and f3read validates them. Because each sector records what it should contain and where it should sit, f3read can tell a corrupted sector from one that was overwritten at the wrong address, which is how a fake card that wraps around is exposed. f3probe writes only a small number of blocks, about half the drive or 2GB at most, and uses a model of fake-drive behaviour (limbo, wraparound, chain) to find the real size quickly. The docs say f3probe is still marked experimental.",
+  "commands_seen": [
+   {
+    "cmd": "$ build/f3write /media/michel/5EBD-5C80/",
+    "context": "Writes the 1GB N.h2w test files to fill the mounted drive; the README says to run it first."
+   },
+   {
+    "cmd": "$ build/f3read /media/michel/5EBD-5C80/",
+    "context": "Reads and validates the N.h2w files written by f3write, then prints the ok/corrupted/overwritten report."
+   },
+   {
+    "cmd": "# build/f3probe --destructive --time-ops /dev/sdX",
+    "context": "Quick capacity probe on the unmounted block device, run as root. The docs warn it destroys existing data on the disk."
+   },
+   {
+    "cmd": "# build/f3fix --last-sec=16477878 /dev/sdX",
+    "context": "Creates a partition sized to the usable capacity that f3probe reported; the last-sec value comes from the probe output."
+   },
+   {
+    "cmd": "brew install f3",
+    "context": "Installs f3 via Homebrew on a Mac; the docs say this covers f3write and f3read only."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds f3write and f3read from source on Linux or FreeBSD (gmake on FreeBSD)."
+   },
+   {
+    "cmd": "make install",
+    "context": "Installs f3write and f3read after building them."
+   },
+   {
+    "cmd": "make extra",
+    "context": "Builds the Linux-only extra applications f3probe, f3brew and f3fix."
+   },
+   {
+    "cmd": "make install-extra",
+    "context": "Installs the Linux-only extra applications."
+   },
+   {
+    "cmd": "docker run -it --rm --device /dev/sdX peron/f3 f3probe --destructive --time-ops /dev/sdX",
+    "context": "Runs f3probe from the prebuilt Docker Hub image, which is the docs' route to probing on macOS and Windows."
+   }
+  ],
+  "install_notes": "On Linux, build with make, or make extra for f3probe, f3brew and f3fix. Those need libudev and libparted dev packages, for example sudo apt-get install libudev1 libudev-dev libparted-dev on Ubuntu, or sudo dnf install systemd-devel parted-devel on Fedora. Ubuntu before 20.04.1 needs libparted0-dev instead. On FreeBSD you need sudo pkg install argp-standalone gmake. Windows/Cygwin needs gcc-core, make and libargp-devel, plus a LDFLAGS export before building. On Mac, Homebrew or MacPorts is needed, and argp-standalone is required when building from source. f3probe and f3fix need root. Docker on Mac and Windows often cannot pass a USB device through, so the docs describe a docker-machine plus VirtualBox workaround. The docs also say f3probe only works on USB-attached devices.",
+  "standout": "f3probe does not write the whole card the way H2testw does. It estimates the real usable size from a small number of writes using an explicit model of counterfeit controllers, and it reports exact geometry so the card can be partitioned to its real size with f3fix. The file format is also compatible with H2testw, which lets users cross-check results.",
+  "status": "unknown. The README and docs give no release or commit date that I could see. The docs footer reads 'Copyright 2017, Michel Machado' and 'Powered by Sphinx 1.8.6', and the docs call the version 8.0 while the README download example says f3-10.0.zip, so the two may have drifted apart. The repository includes a flake.nix and a Docker image, and the README mentions maintained GUI forks, which suggests the project is still in use.",
+  "caveats": "Several things are Linux-only. f3probe, f3fix and f3brew require Linux, and the README says extra-app ports are not wanted without a patch. The docs call f3probe experimental. The default probe mode is conservative, but the example uses --destructive, which wipes the drive. The Mac script scripts/f3-drive-test-macos.sh erases the drive it is given after confirmation. The docs say f3read can read from the OS cache on some systems, so you should unplug and replug the drive between write and read. A card that fails under heavy writes may be genuinely failing rather than fake. Root access is needed for f3probe and f3fix. The licence is GPLv3.",
+  "quotes": [
+   "f3 is a simple tool that tests flash cards capacity and performance to see if they live up to claimed specifications.",
+   "It fills the device with pseudorandom data and then checks if it returns the same on reading.",
+   "F3 stands for Fight Flash Fraud, or Fight Fake Flash.",
+   "Please do not e-mail me saying that you want the extra applications to run on your platform; I already know that."
+  ],
+  "links": [
+   {
+    "label": "Homepage (Read the Docs)",
+    "url": "https://fight-flash-fraud.readthedocs.io/en/latest/"
+   },
+   {
+    "label": "GitHub repository (README)",
+    "url": "https://github.com/AltraMayor/f3"
+   },
+   {
+    "label": "Usage page with f3write/f3read and f3probe walkthroughs",
+    "url": "https://fight-flash-fraud.readthedocs.io/en/latest/usage.html"
+   }
+  ],
+  "fetch_log": [
+   "https://fight-flash-fraud.readthedocs.io/en/latest/ (worked; the page is only a table of contents and links to other sections)",
+   "https://github.com/AltraMayor/f3 (worked; returned the README with installation, usage, and the extra-application notes)",
+   "https://fight-flash-fraud.readthedocs.io/en/latest/usage.html (worked; full Usage page covering f3write, f3read, f3probe and f3fix)"
+  ]
+ }
+}

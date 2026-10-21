@@ -1,0 +1,95 @@
+{
+ "name": "peekaboo",
+ "desc": "macOS screen capture, accessibility inspection and UI automation",
+ "homepage": "https://peekaboo.sh/",
+ "installs_365d": 72,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "gui",
+  "library"
+ ],
+ "why": "macOS accessibility inspection and UI automation from the terminal, a door into how apps expose their interfaces.",
+ "brief": {
+  "what_it_is": "Peekaboo is a macOS command-line tool and menu-bar app for screen capture, accessibility inspection, and native UI automation. You point it at a screen, window, or app. It takes a PNG or JPEG capture and a structured map of clickable UI elements with IDs, and it can then click, type, press keys, scroll, and drag against those elements. It also includes a natural-language agent that plans multi-step runs, and an MCP server that exposes the same tools to clients such as Codex, Claude Code, and Cursor.",
+  "why_it_exists": "The docs describe it as a macOS automation toolkit \"for humans and agents\" that captures pixels, reads the accessibility tree, drives input, and gives AI clients the same primitives you would use from the shell.",
+  "how_it_works": "The see command reads the accessibility tree of a screen, window, or app and returns elements with IDs, roles, labels, frames, and actions, which other commands then act on by ID. Targeted input is pinned to an exact window and, by default, delivered in the background so the app does not have to become frontmost; coordinate clicks require a fresh capture snapshot. A reusable daemon or a Peekaboo.app Bridge host handles the CLI calls, and the agent and MCP server drive the same tool set.",
+  "commands_seen": [
+   {
+    "cmd": "brew install openclaw/tap/peekaboo",
+    "context": "Installs the CLI from the Homebrew tap; the README's primary install path."
+   },
+   {
+    "cmd": "npx -y @steipete/peekaboo --version",
+    "context": "Runs the npm package, which bundles the CLI and its MCP launcher, and prints the version (Node.js 22+)."
+   },
+   {
+    "cmd": "peekaboo permissions status",
+    "context": "Checks which macOS permissions Peekaboo has; re-run until Screen Recording and Accessibility show as granted."
+   },
+   {
+    "cmd": "peekaboo see --no-elements --mode screen --path /tmp/peekaboo-screen.png",
+    "context": "Takes a whole-screen screenshot and writes it as a PNG to the given path."
+   },
+   {
+    "cmd": "peekaboo see --app Finder --json",
+    "context": "Inspects a running app and returns a structured UI map with opaque element IDs."
+   },
+   {
+    "cmd": "peekaboo window list --app Safari --json",
+    "context": "Lists Safari's windows so you can copy the window_id to pin later steps to one window."
+   },
+   {
+    "cmd": "peekaboo click \"Address and search bar\" --app Safari --window-id 12345",
+    "context": "Clicks a UI element by its label inside one specific Safari window, using background delivery."
+   },
+   {
+    "cmd": "peekaboo type \"github.com/openclaw/Peekaboo\" --app Safari --window-id 12345",
+    "context": "Types text into the same pinned Safari window."
+   },
+   {
+    "cmd": "peekaboo press Return --app Safari --window-id 12345",
+    "context": "Presses a key in the pinned window."
+   },
+   {
+    "cmd": "peekaboo agent \"Open Safari, go to github.com, and search for Peekaboo\" --allow-foreground",
+    "context": "Gives the agent a natural-language goal; --allow-foreground is needed to cold-launch Safari. This is the example from the docs TL;DR."
+   }
+  ],
+  "install_notes": "The released CLI and Mac app require macOS 15 or later. The Mac app is a signed DMG on the latest GitHub release; install the CLI separately if you want peekaboo on PATH. Grant Screen Recording and Accessibility (both required) and verify with peekaboo permissions status. Background keyboard input and foreground synthetic pointer tools need Event Synthesizing, a per-action grant. Over SSH, a LaunchAgent, or Codex, you may need a Peekaboo Bridge host with Screen Recording permission. Agent runs need a configured model provider; credentials and settings live under ~/.peekaboo and are managed with peekaboo config. The npm/MCP route needs Node.js 22+. Source builds need macOS 15+, Swift 6.2+, Node.js 22+, pnpm, and the repo's submodules (pnpm install --frozen-lockfile, then pnpm run build:cli). Shell completions come from peekaboo completions.",
+  "standout": "It is built around the accessibility tree rather than screenshot guessing: the see command returns element IDs that later commands act on, and it prefers semantic actions such as menu click when one exists. It also runs most targeted input in the background, so the target app need not be frontmost, and it exposes the same tools to Codex, Claude Code, and Cursor over MCP. Community ports to Windows and Linux exist as separate projects.",
+  "status": "Appears maintained. The README's \"What's new in 4.9.6\" section describes a recent fix release, and the repo shows CI, npm, and GitHub release badges. I did not see an explicit release date or last-commit date on the pages I read, so the timing is not confirmed.",
+  "caveats": "macOS only: macOS 15 or later, with Swift 6.2 for source builds. Screen capture and control depend on macOS privacy permissions, and some features need extra grants. Agent runs need a configured model provider and its credentials. Behaviour varies by context: background delivery is the default, but some actions still need --foreground, and the docs say scroll, drag, and key chords carry caveats (drag dispatch is unverified and retry-unsafe; WebKit scroll effects are unverifiable). The docs warn that caller-local capture from background launchd sessions can produce wallpaper-only screenshots. The README describes the project as a macOS CLI and menu-bar app; I did not check the license file beyond the README's MIT statement.",
+  "quotes": [
+   "Peekaboo is a macOS CLI and menu-bar app for screen capture, accessibility inspection, and native UI automation.",
+   "Mac automation that sees the screen and does the clicks.",
+   "Prefer a semantic action such as `menu click` when one exists."
+  ],
+  "links": [
+   {
+    "label": "Peekaboo documentation (homepage)",
+    "url": "https://peekaboo.sh/"
+   },
+   {
+    "label": "Quickstart",
+    "url": "https://peekaboo.sh/quickstart"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/openclaw/Peekaboo"
+   },
+   {
+    "label": "Latest release",
+    "url": "https://github.com/openclaw/Peekaboo/releases/latest"
+   }
+  ],
+  "fetch_log": [
+   "https://peekaboo.sh/ \u2014 worked; the docs homepage, which lists the install, quickstart, permissions, and command-reference pages.",
+   "https://github.com/openclaw/Peekaboo \u2014 worked; the README was returned, and it is the main source for this brief.",
+   "https://peekaboo.sh/quickstart \u2014 worked; the quickstart page with the permissions, screenshot, click, and agent examples."
+  ]
+ }
+}

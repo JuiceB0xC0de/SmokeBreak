@@ -1,0 +1,94 @@
+{
+ "name": "pmdmini",
+ "desc": "Plays music in PC-88/98 PMD chiptune format",
+ "homepage": "https://github.com/mistydemeo/pmdmini",
+ "installs_365d": 71,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "quick",
+  "audio",
+  "ancient",
+  "library"
+ ],
+ "why": "Plays PC-88/98 PMD chiptune files, an old Japanese sound format you can listen to straight from the terminal.",
+ "brief": {
+  "what_it_is": "pmdmini is a C library with a simple API for playing back PMD music, the chiptune format made with the Professional Music Driver for PC-98 computers. Its README describes it as a library rather than a player. The homepage README does not document the pmdplay command-line tool that the Homebrew formula installs, so what pmdplay accepts and prints is not confirmed here. The library takes a PMD file path and renders PCM samples at a chosen rate, such as 48000 Hz. It also exposes the song length, title and composer (both Shift-JIS), track count, and the current notes per channel.",
+  "why_it_exists": "The PC-98 had a Yamaha YM2203 or YM2608 sound chip, and many games and songs were written for it using PMD. The README says pmdmini exists to allow playing back that music, which it describes as a library built on earlier PMD sound engines.",
+  "how_it_works": "The caller initialises the library with pmd_init, checks the file with pmd_is_pmd, sets the sample rate with pmd_setrate, and opens the file with pmd_play. It then calls pmd_renderer in a loop to fill a buffer of 16-bit samples, and pmd_get_current_notes for per-channel note data. The README says the library is based on PMDXMMS and PMDWin and uses the OPNA FM sound generator from M88/cisc.",
+  "commands_seen": [],
+  "install_notes": "The homepage README shows no build steps, dependencies, or first-run configuration. It contains only C API sample code. The brew formula lists the executable as pmdplay, but the README does not show how to run it.",
+  "standout": "It is a small, portable C reimplementation of a 1990s Japanese sound driver, built from several earlier engines and used in Android and other players. The README also says the library can report per-channel note data during playback, which a terminal player could show visually.",
+  "status": "Quiet to maintained, but unverified. The README credits Misty De Meo as current maintainer and lists downstream projects. The fetch returned no release or commit dates, so I could not check the last release or commit.",
+  "caveats": "The README sample has bugs: it prints the composer using the title variable, its position calculation looks off, and the description says MDX where the rest of the text says PMD. The README covers only the C library, so the pmdplay CLI's usage and options are not documented here. Licensing was not stated in the fetched text. The formula's caveats were empty. The README also gives no build instructions.",
+  "quotes": [
+   "pmdmini is a C library with a simple API which can play back MDX chiptunes from the PC-98.",
+   "the Professional Music Driver (PMD) library was a popular music library created by M. Kajihara.",
+   "pmdmini allows playing back music written using PMD."
+  ],
+  "links": [
+   {
+    "label": "pmdmini homepage (GitHub)",
+    "url": "https://github.com/mistydemeo/pmdmini"
+   },
+   {
+    "label": "Modland sample PMD music",
+    "url": "http://www.exotica.org.uk/mediawiki/index.php?title=Special%3AModland&md=search&mod=&aut=&for=pmd&col=&ins="
+   },
+   {
+    "label": "Zun's PMD music page",
+    "url": "http://www16.big.or.jp/~zun/html/pmd.html"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/mistydemeo/pmdmini: fetched OK, README returned; it documents the C library API only, with no pmdplay CLI usage."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "medium",
+  "reason": "A portable reimplementation of the PC-98\u2019s PMD music engine makes an obscure sound world playable and exposes live per-channel note data to explore."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "pmdmini",
+  "tldr": "A small C library and a pmdplay command that play PMD chiptunes, the music format written for Japan's PC-98 computers in the 1990s.",
+  "deeper_look": "pmdmini plays back PMD music, the format made with the Professional Music Driver, a sound driver created by M. Kajihara for the NEC PC-98 line of computers. Many PC-98 games and fan songs were written in it. The project's own line is: \"pmdmini allows playing back music written using PMD.\"\n\nThe PC-98 had a Yamaha YM2203 or YM2608 sound chip, which does FM synthesis. The files hold sequenced note data for that chip rather than recorded audio, so something has to emulate the chip to make sound. pmdmini does this by building on earlier engines, PMDXMMS and PMDWin, and using the OPNA FM sound generator from M88/cisc. It is a small, portable C reimplementation of a 1990s Japanese sound driver.\n\nThe README documents the C library, not the player. A caller initialises it, checks a file with pmd_is_pmd, sets a sample rate such as 48000 Hz, opens the file, then renders 16-bit samples in a loop. It can also report the song length, title and composer (both in Shift-JIS), track count, and the notes currently playing on each channel. Homebrew installs a pmdplay executable on top of it, but the README does not describe what pmdplay accepts or prints, so check its help output.\n\nThe door here is old Japanese computer music: sound chips, tracker-like sequencing, and a scene of files you can still download and hear. The linked Modland search and Zun's PMD page are places to find files.",
+  "install": "brew install pmdmini\n# depends on sdl2-compat, which brew pulls in; you also need a .m file in PMD format to play",
+  "try_this": [
+   {
+    "cmd": "pmdplay --help",
+    "what_happens": "Prints the player's usage, since the README does not document its options."
+   }
+  ],
+  "whats_unique": "It is a compact C reimplementation of the PMD sound driver that emulates the PC-98's FM chip, and it reports per-channel note data during playback.",
+  "caveats": "The README covers only the C library, so pmdplay's usage is undocumented here, and the brief could not confirm when the project was last updated.",
+  "commitment": "quick",
+  "category": "sound-and-live-coding",
+  "tags": [
+   "quick",
+   "audio",
+   "chiptune",
+   "pc-98",
+   "retro",
+   "fm-synthesis"
+  ],
+  "links": [
+   {
+    "label": "pmdmini homepage (GitHub)",
+    "url": "https://github.com/mistydemeo/pmdmini"
+   },
+   {
+    "label": "Modland sample PMD music",
+    "url": "http://www.exotica.org.uk/mediawiki/index.php?title=Special%3AModland&md=search&mod=&aut=&for=pmd&col=&ins="
+   },
+   {
+    "label": "Zun's PMD music page",
+    "url": "http://www16.big.or.jp/~zun/html/pmd.html"
+   }
+  ]
+ }
+}

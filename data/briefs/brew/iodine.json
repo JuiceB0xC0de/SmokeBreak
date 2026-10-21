@@ -1,0 +1,86 @@
+{
+ "name": "iodine",
+ "desc": "Tunnel IPv4 traffic through a DNS server",
+ "homepage": "https://code.kryo.se/iodine",
+ "installs_365d": 190,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol"
+ ],
+ "why": "Tunnels IPv4 traffic through DNS queries, a striking door into how DNS can be bent to carry arbitrary data.",
+ "brief": {
+  "what_it_is": "iodine is a command-line tunnel that carries IPv4 traffic inside DNS queries and replies. You run iodined on a server you control, which owns a delegated subdomain and listens for DNS on UDP port 53, and run iodine on the client, which creates a TUN/TAP interface. The client takes an optional relaying DNS server and the tunnel domain as arguments, and the two ends share a password. The result is a point-to-point IPv4 link that rides on whatever DNS the client can reach. The README says the bandwidth is asymmetric, with limited upstream and up to 1 Mbit/s downstream.",
+  "why_it_exists": "The README says it is usable where internet access is firewalled but DNS queries are allowed. The name is a pun: it starts with IOD (IP Over DNS), and iodine has atomic number 53, the DNS port.",
+  "how_it_works": "The client sends upstream data encoded in the labels of DNS queries, using Base32, Base64, Base64u or Base128 depending on what the relay accepts, and the upstream encoding is autodetected. Downstream data comes back in DNS replies, mainly using the NULL and PRIVATE record types, which carry data without encoding. The server holds each reply until the next query arrives (what the README calls lazy mode), so it always has a query ready to answer with, and the client sends periodic pings to keep that going. Login uses challenge-response with an MD5 hash, and the server drops packets that do not come from the address used at login.",
+  "commands_seen": [
+   {
+    "cmd": "meson setup build",
+    "context": "Configures the build in a build directory; the README says meson is required."
+   },
+   {
+    "cmd": "ninja",
+    "context": "Run inside the build directory after meson setup to compile iodine."
+   },
+   {
+    "cmd": "ninja test",
+    "context": "Runs the test suite inside the build directory; the README says this needs the check library."
+   },
+   {
+    "cmd": "./iodined -f 10.0.0.1 test.com",
+    "context": "QUICKSTART server side on a LAN: runs the server in the foreground with tunnel address 10.0.0.1 for domain test.com, then asks for a password."
+   },
+   {
+    "cmd": "./iodine -f -r 192.168.0.1 test.com",
+    "context": "QUICKSTART client side: runs the client in the foreground, forces DNS tunneling with -r, and points at the server address 192.168.0.1."
+   },
+   {
+    "cmd": "./iodined -f -c -P secretpassword 192.168.99.1 t1.mydomain.com",
+    "context": "Server on a real domain, with -c for clients coming from unexpected environments and -P to set the password on the command line."
+   },
+   {
+    "cmd": "./iodine -f -P secretpassword t1.mydomain.com",
+    "context": "Client for the same tunnel: the domain is the only argument, so the system DNS settings are used for the relay."
+   },
+   {
+    "cmd": "dig -t NS foo123.t1.mydomain.com",
+    "context": "Checks that the NS delegation for the tunnel subdomain reaches iodined, which answers NS requests for its subdomains."
+   },
+   {
+    "cmd": "iptables -t nat -A PREROUTING -i eth0 -p udp --dport 53 -j DNAT --to :5353",
+    "context": "Tip for when port 53 is taken: iodined runs on -p 5353 and iptables redirects UDP 53 to it on Linux."
+   }
+  ],
+  "install_notes": "Beyond brew install, the README needs a TUN/TAP device on every platform (on macOS 10.6 and later, -d utunX uses the built-in utun). Server setup needs a real domain you control, with an NS delegation for a subdomain (for example t1.mydomain.com) pointing at a host with a public IP, plus a BIND zone-file example in the README. Dynamic-DNS hosts work too. Client and server must run the same iodine version, since the protocol is not compatible across versions. Windows needs the OpenVPN TAP32 driver, per the README's portability section. Building from source needs meson, and the tests need the check library.",
+  "standout": "It uses the DNS NULL record type to send downstream data without encoding, which the README says gives over a kilobyte of payload per reply. Its lazy-reply design and automatic probing of fragment size and request type make it much faster than typical DNS tunnels.",
+  "status": "Quiet: the homepage lists 0.8.0 as the latest release, dated 2023-04-17. I did not find a commit date in the GitHub README, so I cannot say more about maintenance.",
+  "caveats": "The README says the tunneled traffic is not encrypted at all and can be read or altered relatively easily, so it recommends running a VPN or SSH inside it. Bandwidth is asymmetric, with downstream up to about 1 Mbit/s per the homepage, and round trips add latency, which the performance tables show. Server and client must run the same protocol version. Some DNS relays break or throttle NULL and TXT, and the README says the -T and -M options may be needed. Its DNS forwarding with -b is not transparent (zone transfers will not work). Routing all traffic through the tunnel takes manual host-route and NAT setup. The code is ISC-licensed, and the README's warranty disclaimer is the standard ISC one.",
+  "quotes": [
+   "iodine lets you tunnel IPv4 data through a DNS server. This can be usable in different situations where internet access is firewalled, but DNS queries are allowed.",
+   "The name iodine was chosen since it starts with IOD (IP Over DNS) and since iodine has atomic number 53, which happens to be the DNS port number.",
+   "Note: server and client are required to speak the exact same protocol. In most cases, this means running the same iodine version."
+  ],
+  "links": [
+   {
+    "label": "iodine homepage (kryo.se)",
+    "url": "https://code.kryo.se/iodine"
+   },
+   {
+    "label": "GitHub repository (yarrick/iodine, README)",
+    "url": "https://github.com/yarrick/iodine"
+   },
+   {
+    "label": "DNS setup check tool",
+    "url": "https://code.kryo.se/iodine/check-it/"
+   }
+  ],
+  "fetch_log": [
+   "https://code.kryo.se/iodine: worked; homepage text with the 0.8.0 release note, download list, and links. It says the latest code is on GitHub but gives no URL in the text.",
+   "https://github.com/yarrick/iodine: worked; returned the README. I inferred this repo from the homepage's GitHub mention and the README's header, which links back to code.kryo.se/iodine. Not fetched: the separate README, CHANGELOG and man page that the homepage links to."
+  ]
+ }
+}

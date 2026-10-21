@@ -1,0 +1,111 @@
+{
+ "name": "aravis",
+ "desc": "Vision library for genicam based cameras",
+ "homepage": "https://github.com/AravisProject/aravis",
+ "installs_365d": 813,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "library",
+  "protocol"
+ ],
+ "why": "Opens the GenICam camera protocol family, a door into industrial machine vision hardware with real hands-on potential.",
+ "brief": {
+  "what_it_is": "Aravis is a glib/gobject based C library for video acquisition from GenICam cameras. According to its README it implements the gigabit ethernet (GigE Vision) and USB3 protocols used by industrial cameras. It also ships a basic ethernet camera simulator and a simple video viewer. The inputs are cameras on the network or USB, and the output is video frames and camera control through the library API.",
+  "why_it_exists": "The README frames it simply as a library for video acquisition using GenICam cameras, the standard interface family for industrial cameras. The README gives no further motivation.",
+  "how_it_works": "The README does not explain the internals beyond naming the protocols it implements (GigE Vision and USB3) and its glib/gobject foundation. The Documentation section points to the stable docs for installation, performance tuning, and API reference. The viewer is built on GStreamer1 and Gtk+3, and the GStreamer plugin is an optional add-on to the library.",
+  "commands_seen": [],
+  "install_notes": "The README gives no install commands. Dependencies: the library needs zlib, libxml2 and glib2, with optional USB support via libusb1. The GStreamer plugin also needs GStreamer1. The simple viewer needs GStreamer1, Gtk+3 and the library dependencies. Required versions are in meson.build, and the README says it is possible to build only the library with minimal dependencies. The docs cover installing on Linux, macOS and Windows. The brew caveat (not from the README) says that for GStreamer to find the bundled plugin you must set GST_PLUGIN_PATH to $HOMEBREW_PREFIX/opt/aravis/lib/gstreamer-1.0. Real camera use also requires camera hardware on the network or USB, and the docs mention system tuning for best performance.",
+  "standout": "It bundles a fake GigE camera simulator alongside the real library, so you can test acquisition code without hardware. The README also has an unusual contribution rule: contributions to the GigE Vision and USB3 Vision protocol code must not be based on the A3 specification documents, because A3 forbids their use for open source implementations.",
+  "status": "Maintained. The GitHub releases page shows a 0.9.2 pre-release dated 26 Apr and a 0.8.36 release marked Latest also dated 26 Apr (the fetched text does not show the year). Releases 0.9.1 and 0.8.35 are dated 08 May, and the release notes list many recent fixes by EmmanuelP and other contributors. The README also carries CI badges for Linux, macOS, MinGW and MSVC builds.",
+  "caveats": "Licensed LGPL-2.1-or-later. The README lists Linux, macOS and Windows as supported platforms and has CI for MSVC and MinGW. The viewer and GStreamer plugin pull in GStreamer1 and Gtk+3, so the full build is heavier than the bare library. USB support is optional and needs libusb1. The README says the protocol code for GigE Vision and USB3 must not be developed from the A3 specification documents, which limits outside contributions to that code. The README does not document a command-line tool list; the brew executables (arv-tool-0.8, arv-viewer-0.8, and others) come from brew metadata, not the README.",
+  "quotes": [
+   "Aravis is a glib/gobject based library for video acquisition using Genicam cameras.",
+   "It currently implements the gigabit ethernet and USB3 protocols used by industrial cameras. It also provides a basic ethernet camera simulator and a simple video viewer.",
+   "It is perfectly possible to only build the library, reducing the dependencies to the bare minimum."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/AravisProject/aravis"
+   },
+   {
+    "label": "Documentation (stable)",
+    "url": "https://aravisproject.github.io/aravis/aravis-stable"
+   },
+   {
+    "label": "Forum",
+    "url": "https://aravis-project.discourse.group"
+   },
+   {
+    "label": "GenICam standard",
+    "url": "http://www.genicam.org"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/AravisProject/aravis: worked, returned the README",
+   "https://github.com/AravisProject/aravis/releases: worked, returned the release list text used for status (dates lack a year)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It opens up industrial camera protocols, and its Ethernet camera simulator makes the hardware-acquisition ideas explorable even without a camera."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "Aravis",
+  "tldr": "A C library that speaks the GigE Vision and USB3 protocols of industrial cameras, with a built-in fake camera so you can try it without hardware.",
+  "deeper_look": "Aravis is a glib/gobject library for video acquisition from GenICam cameras. GenICam is the standard interface family for industrial machine vision cameras. Aravis implements the gigabit ethernet (GigE Vision) and USB3 protocols those cameras use. Your program gets video frames and camera control through the library API.\n\nBesides the library, it ships a basic ethernet camera simulator and a simple video viewer. The viewer is built on GStreamer1 and Gtk+3, and an optional GStreamer plugin is included too. The brew install gives you five executables, all with a `-0.8` suffix: `arv-tool`, `arv-viewer`, `arv-test`, `arv-camera-test` and `arv-fake-gv-camera`.\n\nThe interesting part is the door it opens. Industrial cameras are not webcams. They announce themselves on the network, expose their settings through a standard description, and stream frames over protocols most developers never see. The README gives no further motivation or internals, so the docs are the place to learn how it works.\n\nThere is also an unusual contribution rule. Code for the GigE Vision and USB3 Vision protocols must not be based on the A3 specification documents, because A3 forbids their use for open source implementations.",
+  "install": "brew install aravis\n# For GStreamer to find the bundled plugin:\nexport GST_PLUGIN_PATH=$HOMEBREW_PREFIX/opt/aravis/lib/gstreamer-1.0\n# Real camera use needs a GenICam camera on the network or USB.",
+  "try_this": [
+   {
+    "cmd": "arv-fake-gv-camera-0.8 --help",
+    "what_happens": "Shows the options for the bundled fake GigE camera, which stands in for real hardware."
+   },
+   {
+    "cmd": "arv-tool-0.8 --help",
+    "what_happens": "Lists what the command-line tool can do with cameras it finds."
+   },
+   {
+    "cmd": "arv-viewer-0.8 --help",
+    "what_happens": "Shows the options for the simple GStreamer and Gtk+3 video viewer."
+   }
+  ],
+  "whats_unique": "It bundles a fake GigE camera simulator next to the real library, so you can test acquisition code with no hardware. Its README also bars contributors from using the A3 spec documents for the protocol code.",
+  "caveats": "Real use needs a GenICam camera on the network or USB, and the full build pulls in GStreamer and Gtk+3; the README documents no command-line tool list.",
+  "commitment": "afternoon",
+  "category": "radio-and-hardware",
+  "tags": [
+   "afternoon",
+   "needs-hardware",
+   "library",
+   "protocol",
+   "cameras",
+   "genicam"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/AravisProject/aravis"
+   },
+   {
+    "label": "Documentation (stable)",
+    "url": "https://aravisproject.github.io/aravis/aravis-stable"
+   },
+   {
+    "label": "Forum",
+    "url": "https://aravis-project.discourse.group"
+   },
+   {
+    "label": "GenICam standard",
+    "url": "http://www.genicam.org"
+   }
+  ]
+ }
+}

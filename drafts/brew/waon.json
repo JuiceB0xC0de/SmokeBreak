@@ -1,0 +1,116 @@
+{
+ "name": "waon",
+ "desc": "Wave-to-notes transcriber",
+ "homepage": "https://kichiki.github.io/WaoN/",
+ "installs_365d": 61,
+ "deprecated": false,
+ "source": "brew",
+ "score": 8,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "audio",
+  "science",
+  "afternoon",
+  "ancient"
+ ],
+ "why": "Transcribes a recording into musical notes by analysing the waveform, a strange and genuinely clever audio-to-symbol transform.",
+ "brief": {
+  "what_it_is": "WaoN is a command-line 'wave-to-notes' transcriber that reads a WAV file and writes a standard MIDI file (format 0) containing the notes it detects. Input can be a WAV file, or any format SoX can decode if SoX is installed; input and output can both be stdin/stdout. Its version 0.11 also ships pv, a phase vocoder for time-stretching and pitch-shifting, and gwaon, a GUI for waon and pv. The README describes it as the inverse of timidity.",
+  "why_it_exists": "The author wanted to pick out the voicing of harmony from recordings of favourite pianists, and said that no functional application of this kind existed on Unix as far as he knew, so he started writing WaoN.",
+  "how_it_works": "The README gives few internals. It uses FFT analysis with selectable windows (default hanning, 2048-sample frames) and a phase-vocoder correction to refine frequency estimates. Note selection is controlled by cutoff, peak-threshold and pitch-range options, with optional drum-removal and octave-removal filters.",
+  "commands_seen": [
+   {
+    "cmd": "./waon --help",
+    "context": "Prints the option list for waon 0.11 (file, FFT, window, note-selection, drum- and octave-removal options)."
+   },
+   {
+    "cmd": "./waon -i duet-suite.wav -n 1024 -p piano1.wav -r 1",
+    "context": "Analysis example: reads duet-suite.wav with a 1024-sample FFT, uses piano1.wav as the patch file, and applies a relative cutoff of 1; the run reported 26617 notes."
+   },
+   {
+    "cmd": "./waon -i waltz4DB.wav -o waltz4DB.mid -w 3 -n 4096 -s 2048",
+    "context": "README tip for more time resolution: hanning window, 4096-sample FFT, 2048-sample step, writing to waltz4DB.mid."
+   },
+   {
+    "cmd": "cat dolphineD.wav | ./waon -i - -o - | timidity -id -",
+    "context": "README tip that pipes the transcription straight into timidity to hear the result as it is produced."
+   },
+   {
+    "cmd": "mpg123 -m -s reflectD.mp3 | sox -t raw -r 44100 -s -w - -t wav - | ./waon -i -",
+    "context": "README tip for analysing an MP3: decode with mpg123, convert with sox to WAV, then feed waon via stdin."
+   }
+  ],
+  "install_notes": "Building from source needs the FFTW library; the README says the code can be modified to use another FFT routine. Input from WAV uses libsndfile per the history section. Since 0.11 there are Win32 binaries built with MinGW. For MP3 or other formats, install mpg123 and SoX. The README mentions manual pages (waon.1, pv.1, gwaon.1). No account or runtime is needed.",
+  "standout": "It turns recorded audio into MIDI by analysing the waveform's spectrum, the opposite of a synthesiser, and it ships as a small Unix filter that pipes into timidity. The README claims no note-count limit and offers drum and octave removal filters.",
+  "status": "Quiet. The latest release is waon-0.11 on Aug. 8, 2015, and the project moved from SourceForge to GitHub in 2013. The README has a TODO list ('improve algorithms', 'give some examples and instructions') and an empty BUGS entry. I did not see commit dates or a newer release, so recent activity is unknown.",
+  "caveats": "Output is MIDI format 0 only. Building needs FFTW. The README says it was developed on Mac OS X and earlier on FreeBSD, and that it 'is able to be built on any platforms', which is untested here. The licence is GPL v2 or later. The README's TODO asks for examples and instructions, and the 'Demo' section it mentions was not in the text I read. The homepage at kichiki.github.io/WaoN only redirects.",
+  "quotes": [
+   "WaoN is a Wave-to-Notes transcriber, that is, the inverse of 'timidity'",
+   "My original intention is to pick up voicing of harmony from sound of my favorite pianists.",
+   "I believe that WaoN is able to be built on any platforms."
+  ],
+  "links": [
+   {
+    "label": "Homepage (redirect stub)",
+    "url": "https://kichiki.github.io/WaoN/"
+   },
+   {
+    "label": "Source repository and README",
+    "url": "https://github.com/kichiki/WaoN"
+   }
+  ],
+  "fetch_log": [
+   "https://kichiki.github.io/WaoN/ - loaded, but only a 'This page has moved to the WaoN website' redirect notice with no target shown",
+   "https://github.com/kichiki/WaoN - loaded; returned the full project README (version 0.11) as text, which I used as the main source"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "It turns recorded audio into MIDI through spectral analysis\u2014a compelling audio-to-symbol transform that invites experimentation beyond ordinary audio tooling."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "WaoN",
+  "tldr": "WaoN listens to a WAV file and writes out the notes it hears as a MIDI file, running a synthesiser's job in reverse.",
+  "deeper_look": "WaoN is a command-line wave-to-notes transcriber. It reads a WAV file, or anything SoX can decode, and writes a format 0 MIDI file of the notes it detects. Input and output can both be stdin and stdout, so it works as a small Unix filter. The README calls it \"the inverse of 'timidity'\", which turns MIDI into sound.\n\nThe author built it for a personal reason: \"My original intention is to pick up voicing of harmony from sound of my favorite pianists.\" He did not know of a working tool like this on Unix, so he wrote one.\n\nUnderneath it is spectral analysis. WaoN runs an FFT over the audio in frames (hanning window and 2048 samples by default) and uses a phase-vocoder correction to refine the frequency estimates. Cutoff, peak-threshold and pitch-range options decide which spectral peaks count as notes, and optional drum-removal and octave-removal filters clean up the result. Turning a messy waveform into discrete notes is a hard, open-ended problem, and the options show where it gets difficult.\n\nVersion 0.11 also ships pv, a phase vocoder for time-stretching and pitch-shifting, and gwaon, a GUI for both tools. The project is old and quiet, and its README still lists \"improve algorithms\" as a TODO, so expect to tune the settings by hand.",
+  "install": "brew install waon\n# Optional: install mpg123 and sox to feed it MP3s or other formats",
+  "try_this": [
+   {
+    "cmd": "waon --help",
+    "what_happens": "Prints the options for files, FFT size, window type, note selection, and drum and octave removal."
+   },
+   {
+    "cmd": "waon -i waltz4DB.wav -o waltz4DB.mid -w 3 -n 4096 -s 2048",
+    "what_happens": "Transcribes a WAV to MIDI with a 4096-sample FFT and a 2048-sample step, the README's tip for better time resolution."
+   },
+   {
+    "cmd": "cat dolphineD.wav | waon -i - -o - | timidity -id -",
+    "what_happens": "Pipes the transcription straight into timidity so you hear the machine's reading of the recording."
+   }
+  ],
+  "whats_unique": "It runs a synthesiser's job in reverse, turning recorded audio into MIDI notes, and does it as a small Unix filter that pipes into timidity. It also ships a phase vocoder, pv, for time-stretching and pitch-shifting.",
+  "caveats": "The last release was 0.11 in 2015, output is MIDI format 0 only, and the README's own TODO asks for examples and instructions, so expect to experiment with the options.",
+  "commitment": "afternoon",
+  "category": "sound-and-live-coding",
+  "tags": [
+   "audio",
+   "midi",
+   "fft",
+   "transcription",
+   "afternoon",
+   "old"
+  ],
+  "links": [
+   {
+    "label": "Homepage (redirect stub)",
+    "url": "https://kichiki.github.io/WaoN/"
+   },
+   {
+    "label": "Source repository and README",
+    "url": "https://github.com/kichiki/WaoN"
+   }
+  ]
+ }
+}

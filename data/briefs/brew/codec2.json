@@ -1,0 +1,96 @@
+{
+ "name": "codec2",
+ "desc": "Open source speech codec",
+ "homepage": "https://www.rowetel.com/?page_id=452",
+ "installs_365d": 902,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "sound-and-live-coding",
+ "tags": [
+  "afternoon",
+  "audio",
+  "radio",
+  "library"
+ ],
+ "why": "Open speech codec built for tiny bandwidth radio, a fascinating look at voice squeezed into kilobits per second.",
+ "brief": {
+  "what_it_is": "Codec 2 is an open source speech codec, written in C99, that compresses speech to very low bit rates, from about 700 to 3200 bit/s. It takes raw 16-bit 8 kHz speech samples in and produces a compressed bitstream, and a matching decoder turns that bitstream back into speech. The repo also includes HF/VHF modems (OFDM, FSK and others), the FreeDV digital voice API that combines codec, modem and FEC, and GNU Octave simulation code. The installed programs are c2enc, c2dec, c2demo and c2sim.",
+  "why_it_exists": "The main application is low bandwidth HF/VHF digital radio. The homepage says it fills a gap in open source voice codecs below 5000 bit/s, and that informal listening tests put 700 bit/s quality above MELP and comparable to TWELP at 600 bit/s.",
+  "how_it_works": "The README points to doc/codec2.pdf for the algorithm description and to the homepage 'How it Works' link for more documentation, but it does not explain the mechanism itself. The homepage says the codec grew out of a 1997 PhD thesis on harmonic sinusoidal coding, and that Codec 2 has just one voicing bit, unlike mixed-excitation codecs such as AMBE and MELP.",
+  "commands_seen": [
+   {
+    "cmd": "sudo apt install git build-essential cmake",
+    "context": "Installs the build tools on Debian or Ubuntu before building Codec 2."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Configures the build from inside the build_linux directory after cloning the repo."
+   },
+   {
+    "cmd": "./demo/c2demo ../raw/hts1a.raw hts1a_c2.raw",
+    "context": "Encodes and decodes a sample speech file with c2demo, writing the result for playback."
+   },
+   {
+    "cmd": "./src/c2enc 2400 ../raw/hts1a.raw hts1a_c2.bit",
+    "context": "Compresses a raw speech file to a bit file at 2400 bit/s."
+   },
+   {
+    "cmd": "./src/c2dec 2400 hts1a_c2.bit hts1a_c2_2400.raw",
+    "context": "Decompresses the 2400 bit/s bit file back to raw speech samples."
+   },
+   {
+    "cmd": "./src/c2enc 700C ../raw/hts1a.raw hts1a_c2.bit",
+    "context": "Compresses the same speech file using the 700C mode at 700 bit/s."
+   },
+   {
+    "cmd": "./src/c2enc 1300 ../raw/hts1a.raw - | ./src/c2dec 1300 - - | aplay -f S16_LE",
+    "context": "One-liner that encodes and decodes at 1300 bit/s through pipes and plays the result, with no intermediate files."
+   },
+   {
+    "cmd": "br=1300; arecord -f S16_LE -c 1 -r 8000 | ./src/c2enc $br - - | ./src/c2dec $br - - | aplay -f S16_LE -",
+    "context": "Live microphone-to-speaker loop: records 8 kHz mono, encodes and decodes at 1300 bit/s, and plays it back."
+   },
+   {
+    "cmd": "cmake -DUNITTEST=1 ..",
+    "context": "Configures a build with unit tests enabled, for the test workflow."
+   },
+   {
+    "cmd": "ctest -N",
+    "context": "Lists the available tests without running them."
+   }
+  ],
+  "install_notes": "Build with cmake and make on Linux; the README says development and testing are done with gcc on Linux. Optional LPCNet build is needed for FreeDV 2020 support, configured with -DLPCNET_BUILD_DIR. Running the test suite needs GNU Octave, several Octave packages, gnuplot, sox, valgrind, clang-format and TeX packages from apt, plus the CML_PATH environment variable set via an .octaverc file. Windows is handled by cross-compiling a libcodec2.dll with MinGW, and the README says the command-line tools may not behave the same on Windows. Android NDK projects can add the source tree as a submodule. Microcontroller builds need a hardware FPU; the README names the Teensy 4/4.1 and STM32 SM1000 as examples. The Debian packages are built with cpack.",
+  "standout": "The codec is designed to carry intelligible speech in a few hundred to a few thousand bits per second, far below what AMBE or MELP need. The project is also unusually open about its scope: it is a codec, a modem set and a voice protocol in one repo, with a Windows DLL and an STM32 radio adaptor. The homepage uses a truck-noise sample to show where it fails.",
+  "status": "Active but with reduced maintenance on older parts. The README says in July 2023 the repo was refactored and that a major redevelopment of Codec 2 is under active development, with FreeDV 1600, 700C, 700D, 700E and 2020, most Codec 2 modes except 3200 for M17, the LPCNet fork and the SM1000 firmware no longer actively maintained. The most recent dated item on the homepage is 'FreeDV Update - Sep 2023'. I did not see a release date or last commit date.",
+  "caveats": "The README says the developers have limited resources, do not actively maintain several modes, and prefer that outside contributors open an issue before sending a PR. Non-C99 compilers such as MSVC are unsupported; porting is the user's job. The Windows CLI tools may not behave like the Unix versions, and ctests are not supported there. Octave-based tests need extra packages and environment setup. The homepage samples note that background noise is a weak point for this kind of low-rate codec.",
+  "quotes": [
+   "Codec 2 is an open source speech codec designed for communications quality speech between 700 and 3200 bit/s.",
+   "We have limited resources available for maintenance or development on features that may soon be replaced (with the exception of major bugs).",
+   "Note that Codec 2 has just one voicing bit, unlike mixed excitation algorithms like AMBE and MELP."
+  ],
+  "links": [
+   {
+    "label": "Homepage (Rowetel, Codec 2 page)",
+    "url": "https://www.rowetel.com/?page_id=452"
+   },
+   {
+    "label": "GitHub repository (drowe67/codec2)",
+    "url": "https://github.com/drowe67/codec2"
+   },
+   {
+    "label": "FreeDV project site",
+    "url": "https://freedv.org"
+   },
+   {
+    "label": "FreeDV GUI repository",
+    "url": "https://github.com/drowe67/freedv-gui"
+   }
+  ],
+  "fetch_log": [
+   "https://www.rowetel.com/?page_id=452 - worked; blog-style page with the Codec 2 introduction, audio samples, the GitHub links, and a list of talks and the 1997 thesis. Sample audio and the 'How it Works' documentation are not readable as text.",
+   "https://github.com/drowe67/codec2 - worked; README returned with quickstart, programs, tests, Windows, Android and microcontroller notes.",
+   "Did not fetch doc/codec2.pdf or freedv.org; the README references them but I stopped at two fetches, which covered the homepage and the README."
+  ]
+ }
+}

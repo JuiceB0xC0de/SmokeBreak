@@ -1,0 +1,93 @@
+{
+ "name": "rustpython",
+ "desc": "Python Interpreter written in Rust",
+ "homepage": "https://rustpython.github.io",
+ "installs_365d": 113,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "language"
+ ],
+ "why": "A Python interpreter written in Rust; interesting implementation-wise but Python itself is familiar territory.",
+ "brief": {
+  "what_it_is": "RustPython is an open-source Python 3 interpreter written in Rust, with no CPython bindings. You feed it Python source, either as a -c one-liner, a script, or interactively at a >>> prompt, and it runs the code. It can also be embedded in a Rust program as a scripting engine, or compiled to WebAssembly (WASI or the browser) to run Python in a browser or sandbox. The homepage says it targets CPython 3.11.0 or later; the GitHub README says 3.15.0 or later.",
+  "why_it_exists": "The homepage frames it as bringing the Jython and IronPython idea, running Python on a host runtime, to Rust: \"We want to unlock the same possibilities that Jython and IronPython enable, but for the Rust programming language.\" It also cites Rust's minimal runtime as what makes WebAssembly builds practical.",
+  "how_it_works": "It is a from-scratch Python implementation in Rust rather than a wrapper around CPython. The README points to an architecture document for the component layout. The Lib/ directory of Python standard library files is wired in through symlinks, and the stdlib can be frozen into the binary for WASI builds.",
+  "commands_seen": [
+   {
+    "cmd": "cargo install --git https://github.com/RustPython/RustPython rustpython",
+    "context": "Installs the rustpython binary straight from the GitHub repo; the homepage's main install route besides conda."
+   },
+   {
+    "cmd": "cargo run --release -- -c 'print(\"Hello, RustPython!\")'",
+    "context": "Builds and runs the interpreter from a source checkout with a one-line program. --release is needed to avoid a stack overflow on Windows."
+   },
+   {
+    "cmd": "cargo run --release",
+    "context": "Starts the interactive shell from a source checkout; the README shows 2+2 returning 4."
+   },
+   {
+    "cmd": "rustpython --install-pip",
+    "context": "After an SSL-enabled install, bootstraps pip into RustPython."
+   },
+   {
+    "cmd": "rustpython -m venv <your_env_name>",
+    "context": "Creates a virtual environment; the README says this is the easiest route to using pip."
+   },
+   {
+    "cmd": "cargo build --target wasm32-wasip1 --no-default-features --features freeze-stdlib,stdlib --release",
+    "context": "Builds a standalone WASI .wasm module with the standard library frozen in."
+   },
+   {
+    "cmd": "wasmer run --volume `pwd` -- target/wasm32-wasip1/release/rustpython.wasm `pwd`/extra_tests/snippets/stdlib_random.py",
+    "context": "Runs the WASI build under the Wasmer runtime against a test snippet."
+   },
+   {
+    "cmd": "cargo run --features jit",
+    "context": "Enables the very experimental JIT, which compiles Python functions to native code. Requires autoconf, automake, libtool and clang."
+   },
+   {
+    "cmd": "conda install rustpython -c conda-forge",
+    "context": "Installs from conda-forge. The README says this is unofficial and may be out of date."
+   },
+   {
+    "cmd": "git config core.symlinks true",
+    "context": "Windows-only step before cloning, because the Lib/ layout uses symlinks."
+   }
+  ],
+  "install_notes": "Needs the latest stable Rust toolchain (the README cites 1.67.1 as of February 2023); rustup.rs is linked. Build from source with git clone, then cargo. On Windows, set git core.symlinks true before cloning, and set RUSTPYTHONPATH to the Lib directory of the checkout. For HTTPS and pip, build with the ssl feature. The default binary uses rustls with aws-lc; on Windows, OpenSSL 3 may need to be installed, or ssl-openssl-vendor can be used, which needs a C compiler, perl and make. The WASI build needs rustup target add wasm32-wasip1. The JIT needs its own feature flag and C toolchain. The conda package is unofficial.",
+  "standout": "A full Python 3 interpreter written in Rust instead of a binding to CPython, and it runs in a browser through WebAssembly. The project also says it is aiming for a clean implementation with no compatibility hacks. Ruff is cited as a downstream user.",
+  "status": "Appears active, but the evidence is thin. The GitHub README has live CI, codecov, CodSpeed and crates.io badges, and the homepage links a CPython test-compatibility dashboard and a featured pip post. I did not see a release date or last-commit date in either page, so I can't give a precise date.",
+  "caveats": "The README says RustPython is in development and \"not totally production-ready.\" Documentation is described as early-stage. The JIT is \"very\" experimental. Windows needs a symlink setting and RUSTPYTHONPATH; the README also warns that stack overflow on Windows is avoided only with --release. The homepage and README disagree on the target CPython version (3.11.0 vs 3.15.0). The conda package is unofficial and may be stale. Pip and HTTPS depend on the ssl feature and OpenSSL setup. The license is MIT, and the logo is CC-BY-4.0.",
+  "quotes": [
+   "An open source Python 3 (CPython >= 3.11.0) interpreter written in Rust",
+   "Full Python 3 environment entirely in Rust (not CPython bindings), with a clean implementation and no compatiblity hacks.",
+   "RustPython is in development, and while the interpreter certainly can be used in interesting use cases like running Python in WASM and embedding into a Rust project, do note that RustPython is not totally production-ready."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://rustpython.github.io"
+   },
+   {
+    "label": "Online demo (WebAssembly)",
+    "url": "https://rustpython.github.io/demo/"
+   },
+   {
+    "label": "User guide",
+    "url": "https://rustpython.github.io/docs/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/RustPython/RustPython"
+   }
+  ],
+  "fetch_log": [
+   "https://rustpython.github.io \u2014 worked; homepage text returned, including install commands and the Why RustPython section",
+   "https://github.com/RustPython/RustPython \u2014 worked; README returned, used for commands, caveats and the version discrepancy"
+  ]
+ }
+}

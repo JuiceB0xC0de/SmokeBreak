@@ -1,0 +1,79 @@
+{
+ "name": "difftastic",
+ "desc": "Diff that understands syntax",
+ "homepage": "https://difftastic.wilfred.me.uk/",
+ "installs_365d": 25497,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "tui",
+  "quick",
+  "language"
+ ],
+ "why": "Syntax-aware diffing parses code into trees, a clever transform, though well known among diff tool users.",
+ "brief": {
+  "what_it_is": "Difftastic is a command-line diff tool, installed as the executable difft, that compares two files by their syntax rather than line by line. It parses each file into a syntax tree using tree-sitter, then reports what actually changed, so an inner expression that is merely wrapped or reformatted is not shown as a deleted and re-added line. It takes two files (or a single file containing git merge conflict markers) and prints a human-readable diff with real line numbers from both files. It supports over 30 programming languages and several file formats such as HCL, HTML, JSON and YAML; unrecognised extensions fall back to a line-oriented diff with word highlighting.",
+  "why_it_exists": "The author frames it around the problem that a line-oriented diff misleads people: a reformatter splitting code across lines, or a wrapper added around an expression, produces noisy diffs that hide what really changed. The homepage says it produces accurate diffs that are easier for humans to read.",
+  "how_it_works": "Files are parsed with tree-sitter into syntax trees, and the comparison is treated as a graph problem solved with Dijkstra's algorithm. The README says that when parse errors are found it falls back to a line-oriented diff by default, to avoid claiming two syntactically different files are the same; a DFT_PARSE_ERROR_LIMIT environment variable can allow a few parse errors. The author's blog post and the manual's internals section describe the design.",
+  "commands_seen": [
+   {
+    "cmd": "export DFT_PARSE_ERROR_LIMIT=20",
+    "context": "Sets an environment variable so difftastic tolerates up to 20 parse errors before falling back to a line-oriented diff; the README suggests this for C++ and similar files."
+   },
+   {
+    "cmd": "difft foo1.c foo2.c",
+    "context": "Basic usage: diffs two C files structurally, shown alongside the parse-error-limit example."
+   },
+   {
+    "cmd": "difft file_with_conflicts.js",
+    "context": "Passing a single file containing merge conflict markers; difftastic builds the two conflicting versions and diffs those (added in version 0.50)."
+   },
+   {
+    "cmd": "difft <(jq --sort-keys < file_1.json) <(jq --sort-keys < file_2.json)",
+    "context": "Diffing JSON with keys sorted first, so reordered keys do not show as changes, since difftastic always treats order as significant."
+   },
+   {
+    "cmd": "difft --check-only --exit-code before.js after.js",
+    "context": "Checks whether two files have the same AST without computing a diff; exit code 0 means no syntactic changes, 1 means changes were found."
+   },
+   {
+    "cmd": "export DFT_BACKGROUND=light",
+    "context": "Disables ANSI bright colours for users of Solarized and similar themes where bright colours render as grey."
+   }
+  ],
+  "install_notes": "The homepage links to an Install page and the README points to the manual's installation section for instructions; I did not open those pages, so beyond the brew install named in the catalogue entry I have no specific steps. The README mentions a crates.io package (difftastic) and says it integrates with git via configuration instructions in the manual, and with mercurial as well. No hardware, account, or runtime requirements were visible in the pages I read.",
+  "standout": "Structural diffing is a well-known idea among diff tool users, but difftastic is notable for treating the problem as a shortest-path search over a graph, and for choosing to fall back to a line diff on parse errors rather than risk declaring different files equal. It also diffs merge-conflict files directly and offers a fast AST-equality check with a useful exit code.",
+  "status": "Unknown from the pages I read. The README references a release (version 0.50, dated 2023-08-16) and a crates.io badge, and the project has a Codecov badge and an active-looking manual, but I did not see a latest release date or last commit date, so I cannot confirm current maintenance.",
+  "caveats": "The README lists known issues: it scales relatively poorly on files with many changes and can use a lot of memory; its side-by-side display can be confusing; and it has regular releases that fix crashes. It is not a patch generator (use diff for patches) and does not do merges (the README points to mergiraf for AST merging). It is order-sensitive, so set(1, 2) and set(2, 1) show as changed. Parse errors cause fallback to a line diff, and preprocessor-dependent languages like C++ can hit this. Some terminal themes such as Solarized render the bright colours grey unless DFT_BACKGROUND=light is set. The author notes the project is young and does not integrate with every tool. Licence is MIT, with vendored tree-sitter parsers under MIT or Apache licences.",
+  "quotes": [
+   "Difftastic is a structural diff tool that compares files based on their syntax.",
+   "Difftastic is not line-oriented. If you reformat your code and it's now split over multiple lines, difftastic will show you what's actually changed.",
+   "Difftastic is young. Consider writing a plugin for your favourite tool, and I will link it in the README!",
+   "Made with Emacs and coffee by Wilfred Hughes."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://difftastic.wilfred.me.uk/"
+   },
+   {
+    "label": "Manual",
+    "url": "https://difftastic.wilfred.me.uk/introduction.html"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/Wilfred/difftastic"
+   },
+   {
+    "label": "Author's design blog post",
+    "url": "https://www.wilfred.me.uk/blog/2022/09/06/difftastic-the-fantastic-diff/"
+   }
+  ],
+  "fetch_log": [
+   "https://difftastic.wilfred.me.uk/ - worked; returned the marketing page with feature list, language list and MIT licence note, but no commands or install steps.",
+   "https://github.com/Wilfred/difftastic - worked; returned the README (returned as raw HTML markup, text content readable), which contained the commands, FAQ, known issues and licence. Did not follow the manual links."
+  ]
+ }
+}

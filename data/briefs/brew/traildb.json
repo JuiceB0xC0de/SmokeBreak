@@ -1,0 +1,95 @@
+{
+ "name": "traildb",
+ "desc": "Blazingly-fast database for log-structured data",
+ "homepage": "https://traildb.io/",
+ "installs_365d": 30,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "languages-and-oddities",
+ "tags": [
+  "afternoon",
+  "library",
+  "science"
+ ],
+ "why": "A column-oriented store for event trails with a strange, compact design; a close call for a database enthusiast.",
+ "brief": {
+  "what_it_is": "TrailDB is an open-source library, written in C, for storing and querying series of discrete events, such as a user's page views and checkouts or a trading algorithm's trades. You feed it events grouped by a primary key, such as a user ID, and it encodes them into a single immutable, compressed file that can be queried directly without decompressing everything. The README says the repository holds the core C library and the tdb command line tool. The brew metadata also lists a traildb_bench executable, but I did not see it described in the README or docs. Language bindings exist for Go, Python, D, Haskell and R.",
+  "why_it_exists": "The docs say TrailDB is meant to be a core building block for systems that store and process large numbers of discrete events organized by a primary key, complementary to relational databases and key-value stores. The homepage says it was created at AdRoll for processing event time series, and that AdRoll has used it since 2014 to store and query tens of trillions of web events.",
+  "how_it_works": "The docs say TrailDBs are immutable files, and that immutability is what enables deeper compression, scalability and simpler architecture, for example producers writing daily TrailDBs to S3 that many consumers read in parallel. The homepage says the compression exploits the predictability of time-based data, and that you can query the encoded data directly, decompressing only the parts you need. The docs say the compression ratio is comparable to Gzip.",
+  "commands_seen": [
+   {
+    "cmd": "brew install traildb",
+    "context": "README: the only binary install route given, available on OSX through Homebrew."
+   },
+   {
+    "cmd": "apt-get install libarchive-dev libjudy-dev pkg-config",
+    "context": "README: installs build dependencies for compiling from source on Debian/Ubuntu-style systems."
+   },
+   {
+    "cmd": "yum install judy-devel libarchive-devel pkg-config",
+    "context": "README: the equivalent dependency install for RPM-based distros."
+   },
+   {
+    "cmd": "brew install traildb/judy/judy libarchive pkg-config",
+    "context": "README: dependency install for building from source on OSX, using a custom Judy tap."
+   },
+   {
+    "cmd": "./waf configure",
+    "context": "README: first step of the primary source build."
+   },
+   {
+    "cmd": "./waf install",
+    "context": "README: installs TrailDB after configure."
+   },
+   {
+    "cmd": "./autogen.sh",
+    "context": "README: alternative autotools build path, first step."
+   },
+   {
+    "cmd": "./configure",
+    "context": "README: autotools build path, configure step."
+   },
+   {
+    "cmd": "make",
+    "context": "README: autotools build path, compiles the library."
+   },
+   {
+    "cmd": "./waf test",
+    "context": "README: runs the test suite after a source build."
+   }
+  ],
+  "install_notes": "Beyond brew install traildb, the README describes building from source. Dependencies are libarchive, Judy (libjudy) and pkg-config, and the README warns that distro packages of Judy may be too old, and that a patch may be needed with gcc 4.9. FreeBSD dependencies are listed as python, libarchive, Judy, pkgconf and gcc. The build can be done with waf (./waf configure, then ./waf install) or with autotools (./autogen.sh, ./configure, make, make install). Tests run with ./waf test. The README gives no first-run configuration steps and no account or hardware requirements.",
+  "standout": "Most embedded stores optimize for mutable data, but TrailDB trades mutability for compression and simple distribution: each database is a single immutable file that can be copied, shipped to S3, and inspected with ordinary filesystem tools. The homepage says compression exploits predictability in time-based data, which is a different angle from general-purpose compression.",
+  "status": "Unclear, leaning quiet. The homepage announces a TrailDB 0.6 release, but I saw no release date in the fetched pages. The homepage copyright reads 2016-2021, which suggests the last activity was around 2021 at the latest. The README's Travis CI badge points to travis-ci.org, which has since shut down, so the badge is probably stale. I could not check commit dates.",
+  "caveats": "The README says Linux binaries are not available yet, so Linux users must build from source with an older-looking dependency set. Judy version problems are called out explicitly. The homepage claims 'over 90% test coverage' while the docs say 'nearly 100%', so the figures disagree. Performance claims such as 'millions of events per second on a single core' are the project's own and I did not verify them. The README and docs I read do not show how to use the tdb command. traildb_bench is not documented in what I read. The data model is immutable, so you cannot update or delete events in an existing file. Licensing was not visible in the pages I read.",
+  "quotes": [
+   "TrailDB is an efficient tool for storing and querying series of events.",
+   "TrailDBs are immutable files which your application can create and access using the TrailDB library.",
+   "TrailDB's secret sauce is data compression."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://traildb.io/"
+   },
+   {
+    "label": "Getting Started guide",
+    "url": "http://traildb.io/docs/getting_started/"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/traildb/traildb"
+   },
+   {
+    "label": "Docs introduction",
+    "url": "https://traildb.io/docs/"
+   }
+  ],
+  "fetch_log": [
+   "https://traildb.io/ - worked, but the page is mostly HTML and marketing copy; no release date or install detail.",
+   "https://github.com/traildb/traildb - worked, returned the README with install and build instructions.",
+   "https://traildb.io/docs/ - worked, returned the docs introduction and a list of linked resources (tutorial, technical overview, presentation), none of which I fetched."
+  ]
+ }
+}

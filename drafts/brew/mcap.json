@@ -1,0 +1,107 @@
+{
+ "name": "mcap",
+ "desc": "Serialization-agnostic container file format for pub/sub messages",
+ "homepage": "https://mcap.dev",
+ "installs_365d": 1885,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "fundamentals",
+ "tags": [
+  "protocol",
+  "afternoon",
+  "library"
+ ],
+ "why": "Robotics log container format with a neat self-describing design, but it is a file format more than a door into something alive.",
+ "brief": {
+  "what_it_is": "MCAP (pronounced \"em-cap\") is an open source container file format and logging library for multimodal, timestamped log data. It stores multiple channels of pre-serialized messages in one file, and the README says it is commonly used in robotics. Input is messages from pub/sub or sensor streams in any binary encoding; output is a single MCAP file that can be read back with the language libraries or the mcap CLI, which can inspect, merge, and split files.",
+  "why_it_exists": "The homepage pitches MCAP as a way to record and replay pub/sub and multimodal sensor logs regardless of serialization format, and says it is designed for robotics and pub/sub use. The GitHub README describes it as a logging library and file format that works under various workloads, resource constraints, and durability requirements.",
+  "how_it_works": "Files are row-oriented and append-only, which the homepage says minimizes disk I/O and reduces corruption risk on unclean shutdowns. Message schemas are stored alongside the data so files stay readable as code changes. Optional features include an index for fast seeking, chunk-based compression with LZ4 or Zstandard, and CRC checksums, which the homepage says can be configured per application. The format is specified at mcap.dev/spec and has a Kaitai Struct definition in the repo.",
+  "commands_seen": [
+   {
+    "cmd": "brew install mcap",
+    "context": "Install command given in the GitHub README for the MCAP CLI, used to inspect, merge, and split MCAP files."
+   }
+  ],
+  "install_notes": "Beyond brew install mcap, the README points to the GitHub releases page (github.com/foxglove/mcap/releases?q=cli) for downloading the CLI directly. Libraries are installed through each language's package manager: pip package mcap for Python, npm @mcap/core for TypeScript, crates.io mcap for Rust, Conan mcap for C++, and Go and Swift via releases. The CLI guide at mcap.dev/guides/cli covers installation and usage, but I did not fetch it. No hardware, accounts, or first-run configuration were mentioned.",
+  "standout": "The file is self-describing: schemas live inside the file, so it stays readable without the original code, and the serialization is left to the user. The homepage also says MCAP is the default log format in ROS 2, which is a notable adoption claim for a file format.",
+  "status": "unknown. The homepage and README are current in tone and link to a maintained-looking docs set, and the homepage says it is used in production. I did not see a last release date or last commit date in the pages I fetched, so I cannot confirm activity. The project is a Foxglove project.",
+  "caveats": "This is a file format and libraries, not a service or app, so there is little to try interactively beyond the CLI. The README's CLI section is brief and I did not check the CLI guide for supported platforms. The homepage's 'Trusted by leading robotics teams' section lists logos only in text form, so company claims are unverified. Licensed MIT per the README.",
+  "quotes": [
+   "MCAP (pronounced \"em-cap\") is an open source container file format for multimodal log data.",
+   "Record and replay binary messages in any format \u2013 like Protobuf, DDS (CDR), ROS, JSON, and more.",
+   "MCAP stores message schemas alongside data, so your files remain readable in the future even as your codebase evolves."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://mcap.dev"
+   },
+   {
+    "label": "File format specification",
+    "url": "https://mcap.dev/spec"
+   },
+   {
+    "label": "CLI guide",
+    "url": "https://mcap.dev/guides/cli"
+   },
+   {
+    "label": "Motivation paper (evaluation.pdf)",
+    "url": "https://mcap.dev/files/evaluation.pdf"
+   }
+  ],
+  "fetch_log": [
+   "https://mcap.dev: worked, homepage text retrieved, no README or command lines on it",
+   "https://github.com/foxglove/mcap: worked, README retrieved; links to CLI guide and spec were not followed"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "MCAP is a useful rabbit hole into durable, indexed, serialization-agnostic robotics logs, with embedded schemas and ROS 2 adoption giving the format real-world stakes."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "mcap",
+  "tldr": "A command-line tool for MCAP, the self-describing container format that robots use to record timestamped sensor and message streams into one file.",
+  "deeper_look": "MCAP (pronounced \"em-cap\") is an open source container file format for multimodal log data. It holds many channels of pre-serialized, timestamped messages in a single file. The messages can be Protobuf, DDS (CDR), ROS, JSON or anything else, because the format does not care how they were encoded. The `mcap` CLI is the tool for looking inside these files: it can inspect, merge and split them.\n\nThe idea underneath is that a log file should outlive the code that wrote it. Schemas are stored inside the file next to the data, so a reader years later can still make sense of the messages even after the codebase has changed. Serialization stays the user's problem; the container only handles framing, channels, timing and bookkeeping.\n\nFiles are row-oriented and append-only. The homepage says this minimizes disk I/O and reduces corruption risk on unclean shutdowns, which matters when a robot loses power mid-recording. Optional features include an index for fast seeking, chunk-based compression with LZ4 or Zstandard, and CRC checksums.\n\nThe format is written up in a public spec, and the repo includes a Kaitai Struct definition, so it is a readable example of how to design a binary log format. The homepage says MCAP is the default log format in ROS 2. It comes from the Foxglove project, and libraries exist for Python, TypeScript, Rust, C++, Go and Swift.",
+  "install": "brew install mcap\n# Or download the CLI from https://github.com/foxglove/mcap/releases?q=cli\n# No hardware or account needed. You will need an .mcap file to inspect; the CLI guide covers where to get one.",
+  "try_this": [
+   {
+    "cmd": "mcap --help",
+    "what_happens": "Lists the available subcommands, including those for inspecting, merging and splitting MCAP files."
+   }
+  ],
+  "whats_unique": "The file carries its own schemas and leaves serialization to you, so one container can hold Protobuf, ROS, JSON and other messages and still be readable later.",
+  "caveats": "It is a file format and libraries rather than an interactive app, so the CLI is only worth trying if you have an MCAP file to open, and the brief could not confirm recent release activity.",
+  "commitment": "afternoon",
+  "category": "take-things-apart",
+  "tags": [
+   "afternoon",
+   "file-format",
+   "robotics",
+   "logging",
+   "binary",
+   "ros"
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://mcap.dev"
+   },
+   {
+    "label": "File format specification",
+    "url": "https://mcap.dev/spec"
+   },
+   {
+    "label": "CLI guide",
+    "url": "https://mcap.dev/guides/cli"
+   },
+   {
+    "label": "Motivation paper (evaluation.pdf)",
+    "url": "https://mcap.dev/files/evaluation.pdf"
+   }
+  ]
+ }
+}

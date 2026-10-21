@@ -1,0 +1,94 @@
+{
+ "name": "dfu-programmer",
+ "desc": "Device firmware update based USB programmer for Atmel chips",
+ "homepage": "https://github.com/dfu-programmer/dfu-programmer",
+ "installs_365d": 1315,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "tui"
+ ],
+ "why": "Talks the USB DFU protocol to flash Atmel chips directly, a real door into firmware and microcontroller hardware.",
+ "brief": {
+  "what_it_is": "A command-line tool, dfu-programmer, that flashes Atmel microcontrollers over USB using the Device Firmware Upgrade (DFU) protocol. It talks to a chip that is already running a DFU-capable bootloader, so the chip must be in that bootloader mode first. The README does not spell out the input file format or the full command set; the release notes mention a flash command with options such as --erase-first, --validate-first and --ignore-outside. Supported targets are listed by family: 8051, AVR, AVR32, XMEGA, and experimental STM32F4.",
+  "why_it_exists": "The README says it was written because Atmel's FLIP programmer did not support flashing over USB on Linux, and because standard DFU loaders did not work with Atmel's chips. It is based on Atmel's published specifications.",
+  "how_it_works": "It implements the USB Device Firmware Upgrade class driver on the host side and uses libusb to reach the device. The README describes this only briefly and does not detail the flashing sequence. On Windows the device needs a WinUSB or libusb-win32 driver, which can be set with Zadig.",
+  "commands_seen": [
+   {
+    "cmd": "cd dfu-programmer",
+    "context": "Changes into the source directory before building; the README calls this the top-level directory."
+   },
+   {
+    "cmd": "tar -xzf dfu-programmer-<version>.tar.gz",
+    "context": "Unpacks the release source tarball (one of two ways to get the source)."
+   },
+   {
+    "cmd": "git clone https://github.com/dfu-programmer/dfu-programmer.git",
+    "context": "Clones the source from GitHub (the other way to get the source)."
+   },
+   {
+    "cmd": "./bootstrap.sh",
+    "context": "Regenerates base config files; needed for GitHub checkouts and requires autoconf. The README says it is also needed if libusb is in a non-standard location or the build cannot find it."
+   },
+   {
+    "cmd": "./configure",
+    "context": "Regenerates configure and runs it. The README notes that --prefix= can set the install location."
+   },
+   {
+    "cmd": "make",
+    "context": "Builds dfu-programmer; the bash-completion install instructions are printed during this step."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the built binary into the system."
+   },
+   {
+    "cmd": "sudo apt-get install libusb-1.0-0-dev",
+    "context": "Installs the libusb development package on Debian/Ubuntu if the usb library is missing."
+   },
+   {
+    "cmd": "make bash-completion",
+    "context": "Alternate way to get the bash-completion install instructions."
+   },
+   {
+    "cmd": "pacman -S mingw-w64-i686-libusb",
+    "context": "32-bit Windows (MSYS/MinGW) install of libusb headers and libs."
+   },
+   {
+    "cmd": "pacman -S mingw-w64-x86_64-libusb",
+    "context": "64-bit Windows (MSYS/MinGW) install of libusb headers and libs."
+   }
+  ],
+  "install_notes": "On Unix-like systems the README uses the standard source route: unpack or clone, run ./configure, make, and sudo make install. Autoconf is needed if you build from a GitHub checkout, and a libusb 1.0 development package is needed. Windows builds need MinGW and MSYS with developer tools, plus the libusb package from pacman. Windows binaries are also published on the releases page. For Windows device drivers, the built-in WinUSB driver should work, Atmel FLIP's libusb-win32 driver also works, and Zadig can install libusb-win32, libusbK, or WinUSB. The README says any driver except 'USB Serial (CDC)' will work. The chip must already have a DFU-capable bootloader installed; the README says it works 'with the correct bootloader'.",
+  "standout": "It is a host-side DFU client written specifically for Atmel's USB bootloaders, which standard DFU tools did not handle. It covers a wide range of Atmel parts across several families in one tool. The README also says hardware-dependent tests run on a dedicated Raspberry Pi acting as a GitHub Actions runner.",
+  "status": "Maintained, as far as the releases page shows. The latest release is v1.1.0, marked Latest, with notes on --erase-first and several build fixes; the page scrape shows its date only as '08 Jul' with no year. The prior release, v1.0.0, is dated 25 Oct, and v0.9.0 is dated 21 Oct. The README links to active build and coverage badges and a GitHub Actions build. I did not check commit history directly, so the exact year of the latest release is unverified.",
+  "caveats": "Windows needs manual driver setup, and the 'USB Serial (CDC)' driver will not work. Support for STM32F4 is experimental and listed as such. The README does not state a license, so check the repo before reuse. Testing depends on hardware, and the README does not say how much of the test suite runs without a board. The README gives no command-line usage examples for flashing, so readers will need the program's --help output or the test docs. The v1.0.0 release removed libusb0 support, so older libusb0-based builds are no longer maintained.",
+  "quotes": [
+   "dfu-programmer is an implementation of the Device Firmware Upgrade class USB driver that enables firmware upgrades for various USB enabled (with the correct bootloader) Atmel chips.",
+   "This program was created because the Atmel \"FLIP\" program for flashing devices does not support flashing via USB on Linux, and because standard DFU loaders do not work for Atmel's chips.",
+   "Since most testing depends on hardware, we've set up a custom GitHub Action Runner on a dedicated Raspberry Pi."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository (homepage)",
+    "url": "https://github.com/dfu-programmer/dfu-programmer"
+   },
+   {
+    "label": "Releases",
+    "url": "https://github.com/dfu-programmer/dfu-programmer/releases"
+   },
+   {
+    "label": "Project website",
+    "url": "http://dfu-programmer.github.io"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/dfu-programmer/dfu-programmer: worked, README returned in full",
+   "https://github.com/dfu-programmer/dfu-programmer/releases: worked, but the scraped page is mostly interface markup; release names, dates and notes were readable"
+  ]
+ }
+}

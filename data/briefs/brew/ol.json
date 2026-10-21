@@ -1,0 +1,91 @@
+{
+ "name": "ol",
+ "desc": "Purely functional dialect of Lisp",
+ "homepage": "https://yuriy-chumak.github.io/ol/",
+ "installs_365d": 20,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "languages-and-oddities",
+ "tags": [
+  "language",
+  "quick",
+  "library"
+ ],
+ "why": "A purely functional Lisp dialect with a small footprint, an unusual language worth an evening of exploration.",
+ "brief": {
+  "what_it_is": "Ol (Otus Lisp) is a purely functional dialect of Lisp that implements an extended subset of R7RS Scheme plus some SRFIs. It runs as a REPL, takes Lisp source from a file or stdin, and prints results or compiles source to a binary bytecode form with the -c option. The interpreter/VM is described as tiny (about 64KB) and embeddable, and it can call native shared-library functions through a built-in FFI. The README says it also runs in WebAssembly in browsers.",
+  "why_it_exists": "The README presents it as a small, embeddable, cross-platform Lisp that provides a portable high-level interface for calling code written in other languages (C, Python, Lua, etc.). It descends from Owl Lisp, which the author credits as the project that gave birth to it.",
+  "how_it_works": "Source is compiled to Ol bytecode and run by olvm, the Ol virtual machine (C source in src/olvm.c). Compiled binaries need only the VM, so the README says they run without the compiler (about 450KB). The FFI, in extensions/ffi.c, loads shared libraries and declares foreign function prototypes that can be called from Lisp, with callbacks back into Lisp.",
+  "commands_seen": [
+   {
+    "cmd": "make",
+    "context": "Build step from the source README (requires GCC 3.2+ and GNU make; 'make help' lists targets)."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the ol binary to /usr/bin/ol and libraries to /usr/lib/ol/ by default."
+   },
+   {
+    "cmd": "echo '(print (+ 1 2 3))' | ol",
+    "context": "Unattended mode: pipes a Lisp expression to ol on stdin and prints the result."
+   },
+   {
+    "cmd": "echo \"(lambda () 7)\" |ol -c |xxd",
+    "context": "Compiles a script to binary bytecode with -c, written to stdout, and dumps it in hex."
+   },
+   {
+    "cmd": "rlwrap ol",
+    "context": "Q/A tip: Ol's own REPL has no arrow keys or history, so wrap it with rlwrap for line editing."
+   },
+   {
+    "cmd": "echo ,load http/server| ol",
+    "context": "Q/A: starts Ol's simplest HTTP server for sharing a local folder over a network."
+   },
+   {
+    "cmd": "ol - --port 8080",
+    "context": "Q/A: changes the port of the built-in HTTP server to 8080 (the README says to change 'ol' to this form)."
+   },
+   {
+    "cmd": ",save \"filename-you-want\"",
+    "context": "REPL command that saves the current session to a file so it can later be resumed with 'ol filename-you-want'."
+   },
+   {
+    "cmd": "sudo add-apt-repository ppa:yuriy-chumak/ol",
+    "context": "Ubuntu and derivatives: adds the project's PPA before installing the ol package."
+   },
+   {
+    "cmd": "sudo apt install ol",
+    "context": "Installs ol from the project's PPA on Ubuntu-based systems."
+   }
+  ],
+  "install_notes": "Beyond brew install: the Homebrew caveats were empty. The Ol binary is usable standalone by copying the ol executable anywhere on the path. Advanced libraries such as OpenGL need the full package, either from GitHub Releases or by copying the libraries folder to OL_HOME or the current directory. Some extra libraries come from the kiss package manager via the ol-packages repo. Library lookup is configurable with OL_HOME or --home=path, which supports venv-style folders. Building from source needs GCC and GNU make, and the Q/A notes that some systems need gcc-multilib or linux-libc-dev:i386 for 32-bit headers. The source tree is split, so use git clone --recursive for a full checkout. No account, runtime, or hardware is required.",
+  "standout": "Ol is a Lisp that is purely functional by design, with no set! (only limited mutators such as set-car! and vm:set!), but it ships with built-in regular expressions, dictionaries, an infix math reader (\\\\ 2 + 3 * 5), and a foreign function interface that calls native C library functions directly. Its VM is also tiny, roughly 61KB on armhf per the README.",
+  "status": "maintained. The README says the stable release is 2.7 (a 2.7 branch and release tag exist) and that 3.0 is in alpha on master and under active development. CI status badges for many platforms are shown, and the copyright line runs to 2026. The homepage still says 'Version 2.6 is out!', so the README is more current. I did not see an exact release date.",
+  "caveats": "Ol has no set!, numbers are exact by default (typing 1.23 gives 123/100 unless you use #i1.23 or inexact), apply is limited to 249 arguments in 2.7 (the README says 3.0 lifts this), and the command line has no line editing unless wrapped with rlwrap. Sandboxing works only on Linux with seccomp, and the BSD version is still in progress. The README says 3.0 drops clang support and is not finished. Its size claims vary by platform. The FFI needs native libraries, and those depend on the platform. Dual-licensed MIT or LGPL-3.0-or-later.",
+  "quotes": [
+   "Otus Lisp (Ol in short) is a purely functional, multi-platform Lisp dialect with built-in FFI, regular expressions, and infix math notation support.",
+   "For the gods of simplicity. Use an external tool to such behaviour.",
+   "Because Ol was designed to behave identically across all supported platforms.",
+   "and, at least, it's a real Lisp!"
+  ],
+  "links": [
+   {
+    "label": "Project homepage",
+    "url": "https://yuriy-chumak.github.io/ol/"
+   },
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/yuriy-chumak/ol"
+   },
+   {
+    "label": "Ol language reference",
+    "url": "https://github.com/yuriy-chumak/ol/blob/master/doc/reference/README.md"
+   }
+  ],
+  "fetch_log": [
+   "https://yuriy-chumak.github.io/ol/ - fetched OK. Content was messy, with stray template text and a stale 'Version 2.6' banner. Used for the feature list, the platform list, and the infix and factorial examples.",
+   "https://github.com/yuriy-chumak/ol - fetched OK, returned the README. Used for version status, build, install, command-line, and FAQ details. Did not follow the reference or FFI docs links, since the README covered the points needed."
+  ]
+ }
+}

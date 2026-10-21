@@ -1,0 +1,86 @@
+{
+ "name": "fex",
+ "desc": "Powerful field extraction tool",
+ "homepage": "https://www.semicomplete.com/projects/fex/",
+ "installs_365d": 27,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "library"
+ ],
+ "why": "A field extraction tool for log and text streams, an old-school Unix-style oddity worth a look.",
+ "brief": {
+  "what_it_is": "fex is a command-line field extraction tool that splits each input line on delimiter characters and prints selected tokens. It reads text from stdin and writes the chosen fields to stdout. You give it a series of delimiter and field-selection pairs, such as :{1,-2} or /{2:3}, and it can take several independent selectors in one run. Its field navigation is modeled on cut and awk but is more concise, and it supports negative offsets from the end of the line.",
+  "why_it_exists": "The author says cut cannot select from the end of a line, and cutting several fields takes a pipeline of repeated cut or awk calls. Fex is meant to do this in one concise expression. The README calls it a \"powerful field extraction tool\" with \"a very concise language for tokenizeing strings and extracting fields.\"",
+  "how_it_works": "Each argument is a standalone selector made of a delimiter character followed by a field spec. Specs can be a single number, a comma list in braces like {1,3,7}, or a colon range like {N:M}, with negative numbers counting from the end. Empty fields are skipped by default; a leading ? in the spec (for example {?1:3}) keeps them. Fields picked from one selector are rejoined with the original delimiter.",
+  "commands_seen": [
+   {
+    "cmd": "echo \"foo.....bar..baz.fizz\" | fex .2",
+    "context": "Greedy tokenizing on '.': empty fields are skipped, so field 2 is 'bar'."
+   },
+   {
+    "cmd": "echo \"foo.....bar..baz.fizz\" | fex '.{?6}'",
+    "context": "Non-greedy form using the ? prefix so empty fields count; field 6 is 'bar'."
+   },
+   {
+    "cmd": "fex 1 '\"2 2' < /b/logs/access| head",
+    "context": "Pulls the client IP (field 1) and requested URL (the 2nd field after a double quote) from an Apache access log."
+   },
+   {
+    "cmd": "fex /1",
+    "context": "On the input /usr/local/bin/firefox, returns 'usr' (first field split on '/')."
+   },
+   {
+    "cmd": "fex /{1,-1}",
+    "context": "Selects the first and last fields, giving 'usr/firefox' per the page's table."
+   },
+   {
+    "cmd": "fex :{?1:3}",
+    "context": "On input a:b::c:::d, keeps empty fields and returns 'a:b:' per the page's table, contrasting with the greedy :{1:3}."
+   },
+   {
+    "cmd": "fex ':-2/1' < /etc/passwd | sort | uniq -c",
+    "context": "Takes the 2nd-to-last colon field (the home directory), splits it on '/', and takes the first token to list top-level home directory roots."
+   },
+   {
+    "cmd": "fex :1 :-2 < /etc/passwd",
+    "context": "Runs two independent selectors in one invocation: the first colon field and the second-to-last, printed space-separated."
+   },
+   {
+    "cmd": "fex ':{1,-2}' < /etc/passwd",
+    "context": "Same two fields as the previous line but joined with a colon in one selector."
+   },
+   {
+    "cmd": "strace -e trace=file cat /etc/motd |& fex '\"2'",
+    "context": "Extracts the file paths (the 2nd field after a double quote) from strace file-trace output."
+   }
+  ],
+  "install_notes": "Nothing beyond brew install was seen. The homepage says releases are on GitHub, and the executable is named fex. No build steps, runtime, or configuration were mentioned in the pages read.",
+  "standout": "The syntax borrows from ksb's xapply and adds negative offsets, combined selectors like {1,4:7}, and a ? prefix to toggle empty-field handling. A single short expression can replace a chain of cut or awk calls, as the page's examples show.",
+  "status": "quiet. The blog post is dated 19 May 2010, and the GitHub releases page says there aren't any releases. The README is short and I did not see a last-commit date or a recent changelog, so recent activity is unknown.",
+  "caveats": "Selectors are space-separated on output, and the author says \"though I am open to changing this.\" Empty fields are dropped by default, which surprises people used to cut. No releases are published on GitHub. The homepage text is licensed CC BY-NC-SA (content only; the code licence was not seen in the pages I read). Platform support and build details were not mentioned.",
+  "quotes": [
+   "Fex is a powerful field extraction tool.",
+   "Fex provides a very concise language for tokenizeing strings and extracting fields.",
+   "It steals the field extraction syntax much from ksb's xapply tool."
+  ],
+  "links": [
+   {
+    "label": "fex homepage (Jordan Sissel's blog)",
+    "url": "https://www.semicomplete.com/projects/fex/"
+   },
+   {
+    "label": "fex GitHub repository",
+    "url": "https://github.com/jordansissel/fex"
+   }
+  ],
+  "fetch_log": [
+   "https://www.semicomplete.com/projects/fex/ - worked; project page with description, syntax, and examples",
+   "https://github.com/jordansissel/fex - worked; README was short and linked back to the homepage",
+   "https://github.com/jordansissel/fex/releases - worked; page says there aren't any releases"
+  ]
+ }
+}

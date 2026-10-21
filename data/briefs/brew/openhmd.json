@@ -1,0 +1,94 @@
+{
+ "name": "openhmd",
+ "desc": "Free and open source API and drivers for immersive technology",
+ "homepage": "http://openhmd.net",
+ "installs_365d": 203,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "library"
+ ],
+ "why": "Drivers for VR headsets over USB HID; a real door into talking to immersive hardware, though the library itself is plumbing-adjacent.",
+ "brief": {
+  "what_it_is": "OpenHMD is a C library, with drivers, that lets applications read head tracking and related data from immersive hardware such as VR headsets (Oculus Rift, HTC Vive, PlayStation VR, Windows Mixed Reality, and others) and some VR controllers. It takes in raw USB/HID reports from those devices and presents them through one cross-platform C API that applications can enumerate, open and read from. The homepage says it also ships a Generic Android driver and an External Sensor driver, so you can feed in your own sensor data and still use its sensor fusion. Language bindings exist for Go, Java, .NET, Perl, Python and Rust.",
+  "why_it_exists": "The homepage says the aim is to provide a Free and Open Source API and drivers for immersive technology, implementing support for as many devices as possible in a portable, cross-platform package. The blog credits years of reverse engineering, hacking and testing for each device's driver.",
+  "how_it_works": "Drivers talk to headsets and controllers over USB HID, using HIDAPI (hidraw on Linux). Each device has its own driver, and you choose which drivers to compile in at build time. Applications link the library and read tracking data through the public API, which is documented with Doxygen.",
+  "commands_seen": [
+   {
+    "cmd": "meson ./build [-Dexamples=simple,opengl]",
+    "context": "Configure the Meson build; the optional -Dexamples flag selects the example programs, and simple is the example listed as this brew package's executable."
+   },
+   {
+    "cmd": "ninja -C ./build",
+    "context": "Compile the Meson build directory."
+   },
+   {
+    "cmd": "sudo ninja -C ./build install",
+    "context": "Install the built library and files system-wide after the Meson build."
+   },
+   {
+    "cmd": "meson configure ./build -Ddrivers=...",
+    "context": "Change which drivers are compiled, using a comma-separated list such as rift, deepon, psvr, vive, nolo, wmr, xgvr, vrtek, external, android."
+   },
+   {
+    "cmd": "mkdir build",
+    "context": "Create a build directory for the CMake build."
+   },
+   {
+    "cmd": "cd build",
+    "context": "Enter the build directory before running cmake."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Configure the CMake build from the build directory; drivers are toggled with options such as OPENHMD_DRIVER_VRTEK."
+   },
+   {
+    "cmd": "make",
+    "context": "Compile the CMake build."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Install the CMake build system-wide."
+   }
+  ],
+  "install_notes": "You need HIDAPI, and either Meson with Ninja, GNU Autotools (only if building from the git repository), or CMake. On Linux, add a udev rule so you can open USB devices without root, then unplug and replug the device; the README points to a wiki list of udev rules. On Windows with CMake, a Visual Studio generator works; if you link statically with MinGW or MSVC, define OHMD_STATIC before including openhmd.h, but do not define it when using the DLL. By default all drivers except android are enabled. The homepage says v0.3 is the last release to support Autotools.",
+  "standout": "Instead of being one vendor's SDK, it is one open C API that reverse-engineered drivers for many competing headsets share, with a Boost license that lets it be linked into proprietary software. Its own project history is part of the appeal: the blog describes device support arriving through hackathons and reverse engineering.",
+  "status": "Unmaintained. The GitHub README opens with 'UNMAINTAINED' and says OpenHMD is 'currently NOT ACTIVELY MAINTAINED', asking people to open an issue if they want to maintain it. It also says driver development has largely moved to Monado. The latest release on the homepage is v0.3.0, dated 2019-07-12, and the homepage's newest blog post is from that date. I did not check commit history.",
+  "caveats": "The README says the project is not actively maintained, and development has largely moved to Monado. The 0.3.0 release notes say PSVR was disabled because of Windows and modern macOS issues, and that NOLO firmware versions were not all tested. Some peripherals (WMR controllers, PS Move, DualShock 4) work on Linux only through hidapi-hidraw. Oculus Rift CV1 positional tracking lives in a fork, not in this repository. The Unity plugin is labelled alpha, tested only on Unity 5.6 for Windows and Linux 64-bit, with no lens-correction shader. The homepage device table is not a full support list; the README sends you to a GitHub wiki for that. Several links on the homepage are to the old site and may be stale.",
+  "quotes": [
+   "OpenHMD is currently NOT ACTIVELY MAINTAINED. If you are interested in maintaining OpenHMD, please open a github issue.",
+   "OpenHMD aims to provide a Free and Open Source API and drivers for immersive technology, such as head mounted displays with built in head tracking.",
+   "OpenHMD is released under the permissive Boost Software License (see LICENSE for more information), to make sure it can be linked and distributed with both free and non-free software."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "http://openhmd.net"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/OpenHMD/OpenHMD"
+   },
+   {
+    "label": "Supported devices (GitHub wiki)",
+    "url": "https://github.com/OpenHMD/OpenHMD/wiki/Support-List"
+   },
+   {
+    "label": "API reference (Doxygen)",
+    "url": "http://openhmd.net/doxygen/0.1.0/openhmd_8h.html"
+   },
+   {
+    "label": "Monado (successor project)",
+    "url": "https://monado.freedesktop.org/"
+   }
+  ],
+  "fetch_log": [
+   "http://openhmd.net - worked; homepage text returned, including device table, release info, and links to GitHub.",
+   "https://github.com/OpenHMD/OpenHMD - worked; README returned, including the unmaintained notice, build instructions, and bindings list. Not fetched: the wiki support list, the Doxygen API docs, and the blog posts beyond the homepage copy."
+  ]
+ }
+}

@@ -1,0 +1,96 @@
+{
+ "name": "opendht",
+ "desc": "C++17 Distributed Hash Table implementation",
+ "homepage": "https://github.com/savoirfairelinux/opendht",
+ "installs_365d": 3970,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "fundamentals",
+ "tags": [
+  "afternoon",
+  "network",
+  "protocol",
+  "library"
+ ],
+ "why": "A C++ distributed hash table with a bundled tool, a real peer-to-peer door into how DHTs route and store data.",
+ "brief": {
+  "what_it_is": "OpenDHT is a lightweight C++17 distributed hash table library. Every node in the network can read and write values to a shared, distributed in-memory store, and values are spread across the network with redundancy. Programs use it through a C++17 map-style API, with bindings for C, Rust and Python 3, or through an optional REST API with HTTP client and server support and push notifications. It takes keys and values from the calling program and returns stored values to it through get/put calls. The package also ships dhtnode, a command-line tool that runs a DHT node and performs get and put operations on text values, and dhtchat, a simple chat client that runs over the DHT.",
+  "why_it_exists": "The README presents it as an easy-to-use distributed in-memory data store designed for large networks and small devices, with high resilience to network disruption. It was originally based on jech/dht by Juliusz Chroboczek, and the README credits that origin in its acknowledgements.",
+  "how_it_works": "A program starts a node with a generated RSA identity on a chosen port, then joins the network through a known bootstrap node. Data is stored under hashed keys and distributed over the network with redundancy. An optional public-key layer, built on GnuTLS, adds data signing and encryption, as the putSigned call in the example shows. The README does not describe the routing internals in detail.",
+  "commands_seen": [
+   {
+    "cmd": "pip install opendht",
+    "context": "Installs the Python 3 binding from PyPI on Linux, macOS and Windows."
+   },
+   {
+    "cmd": "brew install gnutls msgpack-cxx argon2 asio readline jsoncpp fmt llhttp",
+    "context": "BUILD.md macOS dependency install line."
+   },
+   {
+    "cmd": "sudo apt install pkg-config libncurses5-dev libreadline-dev nettle-dev libgnutls28-dev libargon2-dev libmsgpack-dev libssl-dev libfmt-dev libjsoncpp-dev libhttp-parser-dev libasio-dev libmsgpack-cxx-dev",
+    "context": "BUILD.md Debian 13 dependency install line; other Debian/Ubuntu releases use slightly different package names."
+   },
+   {
+    "cmd": "sudo dnf install readline-devel gnutls-devel msgpack-devel asio-devel libargon2-devel fmt-devel",
+    "context": "BUILD.md Fedora dependency install line."
+   },
+   {
+    "cmd": "git clone https://github.com/savoirfairelinux/opendht.git",
+    "context": "Clones the source repository before building with CMake."
+   },
+   {
+    "cmd": "mkdir build && cd build",
+    "context": "Creates an out-of-tree build directory."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Configures the default build with CMake, which includes the CLI tools."
+   },
+   {
+    "cmd": "make -j$(nproc)",
+    "context": "Compiles the library and tools in parallel."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Installs the built library and tools system-wide."
+   },
+   {
+    "cmd": "cmake -DOPENDHT_TOOLS=OFF ..",
+    "context": "Minimal build with libraries only, skipping the CLI tools."
+   }
+  ],
+  "install_notes": "Build with CMake. The default build includes the tools, so dhtnode is installed with the library. Dependencies are msgpack-c 1.2+, GnuTLS 3.3+, Nettle 2.4+ and {fmt} 9.0+. The REST proxy is optional and needs RESTinio, llhttp, jsoncpp and simdutf. The BUILD.md Debian instructions say RESTinio 0.7.9 must be installed by hand from a tarball, after copying expected-lite into /usr/include/nonstd. Python bindings need Cython and python3-dev. Windows builds use vcpkg in manifest mode with CMake presets. The example program joins through bootstrap.jami.net on port 4222, so a first run needs network access to that bootstrap node. Running a public node is encouraged, and the wiki covers it.",
+  "standout": "It is a real peer-to-peer system you can run on the public network, not a toy. The same API is available from C++, C, Rust, Python and a REST proxy, and the public-key layer lets stored values be signed or encrypted.",
+  "status": "Unknown from the pages I read. The README has a PyPI version badge and a copyright line running through 2026, which suggests recent activity. I did not see a release date or last commit date, so I could not confirm the cadence.",
+  "caveats": "Build is more involved than a typical library: many optional features are off by default, and the proxy server needs RESTinio, which the Debian notes say to install by hand. The build is tested on GNU/Linux, macOS and Windows, with Visual Studio 2019 and 2022 mentioned. The Python binding needs Cython to build from source. The README points most documentation to a wiki, which I did not fetch, so details on the DHT's routing and storage behaviour are thin in what I read. The example relies on the bootstrap.jami.net node, which belongs to the Jami project. The license is MIT.",
+  "quotes": [
+   "A lightweight C++17 Distributed Hash Table implementation.",
+   "Every node in the network can read and write values to the store.",
+   "Values are distributed over the network, with redundancy.",
+   "You can help contribute to the public network by running a stable node with a public IP address."
+  ],
+  "links": [
+   {
+    "label": "OpenDHT homepage (GitHub)",
+    "url": "https://github.com/savoirfairelinux/opendht"
+   },
+   {
+    "label": "OpenDHT wiki (documentation)",
+    "url": "https://github.com/savoirfairelinux/opendht/wiki"
+   },
+   {
+    "label": "Running a node with dhtnode (wiki)",
+    "url": "https://github.com/savoirfairelinux/opendht/wiki/Running-a-node-with-dhtnode"
+   },
+   {
+    "label": "BUILD.md (build instructions)",
+    "url": "https://github.com/savoirfairelinux/opendht/blob/master/BUILD.md"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/savoirfairelinux/opendht (homepage, README returned, worked)",
+   "https://github.com/savoirfairelinux/opendht/blob/master/BUILD.md (worked, build instructions returned)"
+  ]
+ }
+}

@@ -1,0 +1,134 @@
+{
+ "name": "libfaketime",
+ "desc": "Report faked system time to programs",
+ "homepage": "https://github.com/wolfcw/libfaketime",
+ "installs_365d": 3005,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "library",
+  "simulation"
+ ],
+ "why": "Lies to programs about the time, a sharp little hack that opens a door into how software depends on the clock.",
+ "brief": {
+  "what_it_is": "libfaketime is a C shared library that intercepts the system calls programs use to read the clock, then reports a faked date and time to those programs while the real system clock stays unchanged. You supply the fake time through environment variables or a config file (FAKETIME, .faketimerc, /etc/faketimerc, or a timestamp file), either as an absolute date, a start-at date, or a relative offset such as -15d. It ships with a 'faketime' wrapper script that accepts natural-language dates and is installed alongside the libraries. Output is the same program behaving as if it were running on a different day.",
+  "why_it_exists": "The README says it is for use cases such as deterministic build processes, debugging time-related issues like expired SSL certificates, and testing software for year-2038 compliance. It lets you change the time one program sees without changing the time system-wide.",
+  "how_it_works": "On Linux it is loaded through LD_PRELOAD (on macOS through DYLD_INSERT_LIBRARIES with DYLD_FORCE_FLAT_NAMESPACE), so its versions of time-reading functions override the libc ones for that process. Relative offsets are computed from real time plus the offset, so the faked clock keeps ticking; absolute dates freeze the clock. Optional modes add clock speed multipliers (x2, x0,5), a fixed per-call step (i2,0), file-based timestamps, record and replay of timestamps, and deterministic getrandom() output.",
+  "commands_seen": [
+   {
+    "cmd": "make test",
+    "context": "Builds the platform-specific library and runs the full functional test suite, per the README's Testing section."
+   },
+   {
+    "cmd": "make install",
+    "context": "Places the libraries in /usr/local/lib/faketime and the faketime wrapper in /usr/local/bin; the README notes this usually needs root."
+   },
+   {
+    "cmd": "test/docker_baseline.sh gcc:13-bookworm debian:13 alpine:3.20",
+    "context": "Runs the Linux baseline test suite inside disposable Docker containers built from the listed local images."
+   },
+   {
+    "cmd": "LD_PRELOAD=/usr/local/lib/libfaketime.so.1 FAKETIME=\"-15d\" date",
+    "context": "The README's basic example: loads libfaketime and runs date with the clock set 15 days in the past."
+   },
+   {
+    "cmd": "LD_PRELOAD=/usr/local/lib/libfaketime.so.1 FAKETIME=\"-15d\" FAKETIME_DONT_FAKE_MONOTONIC=1 java -version",
+    "context": "Shows the extra variable needed so a JVM does not hang when run under libfaketime."
+   },
+   {
+    "cmd": "faketime 'last Friday 5 pm' /your/command/here",
+    "context": "Uses the faketime wrapper with a relative date phrase, which is interpreted by /bin/date."
+   },
+   {
+    "cmd": "faketime '2018-12-24 08:15:42' /bin/date",
+    "context": "Runs /bin/date with the clock set to an absolute time through the wrapper."
+   },
+   {
+    "cmd": "FAKETIME_ONLY_CMDS=javadoc faketime '2008-12-24 08:15:42' make",
+    "context": "Runs make, but applies the faked time only to javadoc processes."
+   },
+   {
+    "cmd": "LD_PRELOAD=src/libfaketime.so.1 FAKERANDOM_SEED=\"0x12345678DEADBEEF\" test/getrandom_test",
+    "context": "Runs a getrandom test built with FAKE_RANDOM so it receives the deterministic sequence from the given seed; for testing only."
+   }
+  ],
+  "install_notes": "The README says 'make' compiles both library versions (libfaketime.so.1 and libfaketimeMT.so.1) and runs a test program. Root is not required for a local copy; you can copy the libraries anywhere and set PREFIX in the Makefiles. For 32-bit builds on a 64-bit host, see CFLAGS and LDFLAGS in src/Makefile. On macOS, use Makefile.OSX to build libfaketime.1.dylib, set DYLD_INSERT_LIBRARIES and DYLD_FORCE_FLAT_NAMESPACE, and read README.OSX. On Linux, you can register the library in /etc/ld.so.conf.d and run ldconfig so LD_PRELOAD can use a bare filename. Optional -D flags such as FORCE_MONOTONIC_FIX, FAKE_SETTIME, and FAKE_RANDOM are set at compile time. I did not see brew-specific instructions in the README.",
+  "standout": "Instead of a fixed fake time, it can make the clock run at a chosen speed or step a fixed amount per call, which gives programs a repeatable, deterministic clock. Its documented file-timestamp mode lets an outside process pause and resume the fake clock by touching a file.",
+  "status": "Looks maintained. The README header reads 'libfaketime, version 0.9.13 (August 2026)' and describes a CI matrix covering macOS, many Linux distributions, and sanitizers. I did not check commit history or release dates beyond what the README states.",
+  "caveats": "Works only on Linux and macOS, with other Unix-like systems reported to work. It cannot intercept statically linked binaries or setuid programs such as ping or passwd. Go, Python, .NET, JVM, and some other runtimes may bypass the preload through vDSO, direct syscalls, or late library loading; the README says this is a compatibility limit, not a bug. Absolute dates freeze the clock, which breaks programs that measure elapsed time. Config files are cached for 10 seconds by default. Some hangs in CLOCK_MONOTONIC tests need compile-time FORCE_MONOTONIC_FIX or FORCE_PTHREAD_NONVER flags. FAKETIME_SPAWN_TARGET is passed to a shell and is unsafe with untrusted input or privileged processes. FAKE_RANDOM is Linux-only and explicitly insecure, so it must not be used for cryptography. FAKE_PID and FAKE_RANDOM are Linux-only, and macOS builds can abort if they are enabled. FAKETIME_XRESET is labelled experimental. Stale shared memory under /dev/shm can cause errors after killed processes. The README is licensed under GPL, per its License section.",
+  "quotes": [
+   "libfaketime intercepts various system calls that programs use to retrieve the current date and time.",
+   "This means you can modify the system time a program sees without having to change the time system-wide.",
+   "Whenever possible, you should use relative offsets or 'start at' dates, and not use absolute dates."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/wolfcw/libfaketime"
+   },
+   {
+    "label": "Issues (CLOCK_MONOTONIC hangs and bug reports)",
+    "url": "https://github.com/wolfcw/libfaketime/issues"
+   },
+   {
+    "label": "Middle Square Weyl Sequence RNG reference (used by FAKE_RANDOM)",
+    "url": "https://mswsrng.wixsite.com/rand"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/wolfcw/libfaketime (homepage, returned the README; the text was cut at 40000 characters, so the final Contact section and the rest of the file were not read; worked)"
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "A preload shim that gives individual processes alternate, sped-up, stepped, or replayed clocks exposes a surprisingly deep seam in everyday software and is genuinely useful for testing."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "libfaketime",
+  "tldr": "Makes one program believe it is a different date, without touching the real system clock. Useful for expired certificates, year-2038 tests, and reproducible builds.",
+  "deeper_look": "libfaketime is a C shared library that intercepts the calls programs use to read the clock. It reports a fake date and time to the programs that load it, while the system clock stays as it was. In its own words: \"This means you can modify the system time a program sees without having to change the time system-wide.\"\n\nThe fake time can be an absolute date, a start-at date, or a relative offset such as -15d. A relative offset is computed from real time, so the fake clock keeps ticking. An absolute date freezes the clock. The README advises, \"Whenever possible, you should use relative offsets or 'start at' dates, and not use absolute dates.\" A frozen clock breaks programs that measure elapsed time. There are also modes for running the clock faster or slower, stepping a fixed amount on every call, and driving the time from a file that another process can touch to pause and resume it.\n\nUnderneath is dynamic linking. On Linux the library is loaded through LD_PRELOAD, on macOS through DYLD_INSERT_LIBRARIES, so its time functions replace the libc ones for that process. Once you see this, you start noticing how much software quietly trusts the clock: certificates, caches, timeouts, build timestamps. The README lists use cases such as deterministic builds, debugging expired SSL certificates, and testing year-2038 compliance.\n\nThe project also ships a faketime wrapper script that accepts natural phrases, interpreted by /bin/date, so you rarely need to set the environment variables by hand.",
+  "install": "brew install libfaketime\n# Linux or macOS only. The README documents manual LD_PRELOAD or DYLD_INSERT_LIBRARIES use; the faketime wrapper handles this for you.",
+  "try_this": [
+   {
+    "cmd": "faketime '2018-12-24 08:15:42' /bin/date",
+    "what_happens": "Runs date with the clock set to an absolute moment in 2018. The real system time is untouched."
+   },
+   {
+    "cmd": "faketime 'last Friday 5 pm' /your/command/here",
+    "what_happens": "Runs your command with the clock set to a relative phrase, which /bin/date interprets. Swap in any command you like."
+   },
+   {
+    "cmd": "faketime --help",
+    "what_happens": "Prints the wrapper's usage and options."
+   }
+  ],
+  "whats_unique": "It fakes time per process rather than system-wide, and can also run the clock at a chosen speed or step it a fixed amount per call, which gives programs a repeatable, deterministic clock.",
+  "caveats": "Works on Linux and macOS only, cannot intercept statically linked or setuid programs, and runtimes such as Go, Python, and the JVM may bypass the preload or hang without extra settings.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "time",
+   "ld-preload",
+   "testing",
+   "simulation",
+   "library"
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/wolfcw/libfaketime"
+   },
+   {
+    "label": "Issues (CLOCK_MONOTONIC hangs and bug reports)",
+    "url": "https://github.com/wolfcw/libfaketime/issues"
+   }
+  ]
+ }
+}

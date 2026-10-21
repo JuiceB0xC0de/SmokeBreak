@@ -1,0 +1,115 @@
+{
+ "name": "zfp",
+ "desc": "Compressed numerical arrays that support high-speed random access",
+ "homepage": "https://zfp.llnl.gov",
+ "installs_365d": 56,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "deeper-rabbit-holes",
+ "tags": [
+  "afternoon",
+  "science",
+  "library"
+ ],
+ "why": "Lossy compression for floating point arrays with random access, a real scientific-computing idea you can run on your own data.",
+ "brief": {
+  "what_it_is": "zfp is an open-source C and C++ library, with Python and Fortran bindings, for compressing multidimensional floating-point and integer arrays. It provides compressed-array classes that allow fast read and write access to individual elements, and it also compresses whole arrays serially or in parallel (OpenMP, CUDA) for large data sets read from and written to disk. It is aimed mainly at 2D, 3D, and 4D arrays with spatial correlation, such as physics simulation fields and images. Its output is a compressed array, and it can be lossy with an optional error bound, or bit-for-bit lossless.",
+  "why_it_exists": "The homepage describes zfp as providing 'compressed floating-point and integer arrays that support high throughput read and write random access,' aimed at saving memory and storage for numerical work such as differential equation solvers, data analysis, and visualization. The README says zfp is 'designed to achieve high compression ratios' and is 'loosely based on' Peter Lindstrom's 2014 fixed-rate paper.",
+  "how_it_works": "The README does not explain the mechanism in detail; it points to the online documentation's algorithm page. The homepage says the data is partitioned into small blocks, which is visible in its figure. Each block is compressed separately, which is what allows random access to individual elements without decompressing the whole array.",
+  "commands_seen": [
+   {
+    "cmd": "git clone https://github.com/LLNL/zfp.git",
+    "context": "Downloads the zfp source code from GitHub."
+   },
+   {
+    "cmd": "cd zfp\nmkdir build\ncd build\ncmake ..\ncmake --build . --config Release\nctest",
+    "context": "Recommended CMake build. Builds the library into build/lib and the zfp command-line executable into build/bin, then runs the regression tests with ctest."
+   },
+   {
+    "cmd": "cd zfp\nmake\nmake test",
+    "context": "Alternative GNU make build and test. The README says this path is less flexible and does not support every feature, such as CUDA."
+   }
+  ],
+  "install_notes": "The README lists apt, brew, conda, dnf, pacman, pip, port, spack, vcpkg, and yum as package managers. Building from source needs CMake or GNU make. The full test suite needs the BUILD_TESTING_FULL CMake option. CUDA support requires the CMake path. The README did not describe any first-run configuration. Installation details are in the docs at zfp.readthedocs.io/en/latest/installation.html, which I did not fetch.",
+  "standout": "Unlike general-purpose compressors that must decompress a whole stream to reach one value, zfp is built so that single elements of a compressed array can be read and written at high throughput, which is what makes it usable inside a running simulation's memory. The homepage also says it can vary the compression ratio across a wide range, from 10:1 to 250:1 in its figure.",
+  "status": "Appears maintained, but I could not confirm dates. The homepage lists 'GitHub repository and latest version 1.0.0', while the README's docs badge refers to release1.0.1, so the version labels disagree slightly. The homepage's news list includes a CASC newsletter dated September 2026, and the GitHub README has active CI, code coverage, and docs badges. I did not see a last-commit or release date.",
+  "caveats": "The README says zfp 'works best for 2D, 3D, and 4D arrays' and that 1D compression 'is possible but generally discouraged.' Compression is lossy by default; lossless is available through a mode. The GNU make build does not support all features, such as CUDA. The homepage mentions an FPGA implementation, but the README did not describe it. Advanced variable-rate random-access work came from an LLNL project and is not explained in the README.",
+  "quotes": [
+   "zfp is a BSD licensed open-source library for compressed floating-point and integer arrays that support high throughput read and write random access.",
+   "zfp works best for 2D, 3D, and 4D arrays that exhibit spatial correlation, such as continuous fields from physics simulations, natural images, regularly sampled terrain surfaces, etc.",
+   "zfp compression of 1D arrays is possible but generally discouraged."
+  ],
+  "links": [
+   {
+    "label": "Homepage (LLNL)",
+    "url": "https://zfp.llnl.gov"
+   },
+   {
+    "label": "Full documentation (Read the Docs)",
+    "url": "https://zfp.readthedocs.io"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/LLNL/zfp"
+   },
+   {
+    "label": "Installation docs",
+    "url": "https://zfp.readthedocs.io/en/latest/installation.html"
+   }
+  ],
+  "fetch_log": [
+   "https://zfp.llnl.gov (homepage): fetched OK, but it is a marketing page rather than a README. Used for overview, the 1.0.0 version label, and the 10:1 to 250:1 figure caption.",
+   "https://github.com/LLNL/zfp: fetched OK, README returned. Used for commands, license, and citations. Not followed further; the docs pages were linked but not fetched."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Block-based, error-bounded compression lets simulations access individual values in compressed multidimensional arrays\u2014a distinctive scientific-computing idea worth exploring."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "zfp",
+  "tldr": "A compressor for grids of floating-point numbers that lets you read and write single elements without unpacking the whole array.",
+  "deeper_look": "zfp is a library, with Python and Fortran bindings, for compressing multidimensional arrays of floats and integers. It also ships a small command-line tool, `zfp`, for compressing whole arrays to and from disk. It targets 2D, 3D, and 4D data with spatial correlation: fields from physics simulations, natural images, regularly sampled terrain. Output can be lossy with an error bound, or bit-for-bit lossless.\n\nThe idea underneath it is that the array is cut into small blocks, and each block is compressed on its own. A general-purpose compressor generally has to decode a stream from the start to reach one value. With independent blocks, zfp can decode just the block holding the element you want. That makes it usable as the in-memory storage of a running simulation, not only as a file format.\n\nThe homepage figure shows compression ratios ranging from 10:1 to 250:1, depending on how much error you accept. That tradeoff between accuracy and size is the door into a larger area: lossy compression for scientific data, where the question is how much precision your analysis actually needs. The README does not explain the mechanism in detail; it points to the algorithm page in the online docs, and it describes the work as loosely based on Peter Lindstrom's 2014 fixed-rate paper.",
+  "install": "brew install zfp",
+  "try_this": [
+   {
+    "cmd": "zfp --help",
+    "what_happens": "Prints the command-line options for compressing and decompressing arrays, including the modes for lossy and lossless output."
+   }
+  ],
+  "whats_unique": "Most compressors treat data as a stream. zfp treats it as an array you can index, so individual values can be read and written while the data stays compressed.",
+  "caveats": "Compression is lossy by default, it works best on 2D to 4D data (the README calls 1D use \"generally discouraged\"), and the `zfp` command-line tool is the least interesting part, since the library is the main product.",
+  "commitment": "afternoon",
+  "category": "deeper-rabbit-holes",
+  "tags": [
+   "afternoon",
+   "science",
+   "compression",
+   "floating-point",
+   "library",
+   "hpc"
+  ],
+  "links": [
+   {
+    "label": "Homepage (LLNL)",
+    "url": "https://zfp.llnl.gov"
+   },
+   {
+    "label": "Full documentation (Read the Docs)",
+    "url": "https://zfp.readthedocs.io"
+   },
+   {
+    "label": "GitHub repository",
+    "url": "https://github.com/LLNL/zfp"
+   },
+   {
+    "label": "Installation docs",
+    "url": "https://zfp.readthedocs.io/en/latest/installation.html"
+   }
+  ]
+ }
+}

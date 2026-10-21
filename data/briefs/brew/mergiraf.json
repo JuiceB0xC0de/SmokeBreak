@@ -1,0 +1,98 @@
+{
+ "name": "mergiraf",
+ "desc": "Syntax-aware git merge driver",
+ "homepage": "https://mergiraf.org",
+ "installs_365d": 3550,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "quick",
+  "library",
+  "language"
+ ],
+ "why": "A syntax-aware merge driver that parses code into trees, a neat idea hiding in plumbing most developers never inspect.",
+ "brief": {
+  "what_it_is": "Mergiraf is a command-line merge driver for Git that merges files by parsing them into syntax trees rather than only comparing lines of text. It takes the base, left and right versions of a conflicted file and outputs a merged file, which it reports as solved or leaves with conflict markers where it cannot be sure. It is aimed at source code and structured formats, and the project describes support as a growing collection of programming languages and file formats. It can also be run by hand on a conflicted file after a merge, or used as a merge tool with Jujutsu.",
+  "why_it_exists": "The homepage frames it as a way to solve a wide range of Git merge conflicts by understanding the trees in your files, so that it can often reconcile the needs of both sides. Its stated aspirations are not to sweep conflicts under the rug, to stay fast enough for interactive use, and to stay open to other methods, falling back to line-based merging when that is conflict-free.",
+  "how_it_works": "Mergiraf first runs a normal line-based merge, and if that is conflict-free it returns the result immediately. Otherwise it parses the files with a language-specific grammar, reconstructs the base, left and right revisions, and resolves conflicts using syntax-aware heuristics. When it cannot parse a file it falls back to line-based merging, and it leaves conflict markers behind where it judges a resolution suspicious. The usage page says a diff3 conflict style is needed because Mergiraf reconstructs the base revision from the markers.",
+  "commands_seen": [
+   {
+    "cmd": "cargo install --locked mergiraf",
+    "context": "Installs Mergiraf from crates.io with Cargo, from the installation page's source route."
+   },
+   {
+    "cmd": "cargo binstall mergiraf",
+    "context": "Downloads a prebuilt Mergiraf binary from Codeberg, assuming cargo binstall is already installed."
+   },
+   {
+    "cmd": "git config --global merge.mergiraf.driver 'mergiraf merge --git %O %A %B -s %S -x %X -y %Y -p %P -l %L'",
+    "context": "Registers Mergiraf as a Git merge driver globally; the same section can instead go in ~/.config/git/config."
+   },
+   {
+    "cmd": "* merge=mergiraf",
+    "context": "Line for the global gitattributes file that enables Mergiraf for all file types; narrower patterns like *.py merge=mergiraf also work."
+   },
+   {
+    "cmd": "mergiraf languages --gitattributes",
+    "context": "Generates the list of supported file extensions in gitattributes format."
+   },
+   {
+    "cmd": "mergiraf=0 git rebase origin/master",
+    "context": "Temporarily disables Mergiraf for one operation, falling back to Git's normal merge heuristics."
+   },
+   {
+    "cmd": "mergiraf solve config.yml",
+    "context": "Manually runs Mergiraf on a conflicted file after a git merge stops with a conflict."
+   },
+   {
+    "cmd": "mergiraf review geolocation.cpp_o0i2JL8B",
+    "context": "Shows the work Mergiraf did on a merge it resolved, using the merge id printed in Git's output."
+   },
+   {
+    "cmd": "mergiraf report src/lib/geolocation.cpp",
+    "context": "Creates a zip bug-report archive for a faulty merge, to be submitted to the Codeberg issue tracker."
+   },
+   {
+    "cmd": "jj resolve --tool mergiraf",
+    "context": "Resolves all conflicts in a Jujutsu working copy using Mergiraf as the merge tool."
+   }
+  ],
+  "install_notes": "The installation page says to download an archive for your architecture from Codeberg, extract it, and place the binary in your PATH. It also lists package repositories, but the names were not captured in the page text. From source, you need Rust: clone the repository and run cargo install --path . or cargo install --locked mergiraf. Afterwards, configure Git: set merge.conflictStyle to diff3 (the usage page calls this required for every workflow), register the mergiraf merge driver, and add merge=mergiraf to a gitattributes file. The docs recommend Git v2.44.0 or newer. The page also suggests installing Difftastic, a structural diff tool that works well alongside Mergiraf. No accounts or runtimes beyond Rust are mentioned.",
+  "standout": "Mergiraf is a merge driver that uses real syntax trees, not only line diffs, and it deliberately prefers to leave conflict markers rather than guess. It can be wired into Git's own merge, rebase, cherry-pick and revert, so the resolution happens without a separate step. Languages are added declaratively, which the homepage presents as the nonviolent option.",
+  "status": "Maintained. The Codeberg repository showed a commit dated 2026-10-20 (a Cargo update merged that day), 620 commits, 26 releases, 14 open pull requests, 86 open issues, and passing CI. The LICENSE history dates the initial release to 2024-11-01. The GitHub URL I tried returned 404, so Codeberg appears to be the canonical home.",
+  "caveats": "Licensed GPLv3. Syntax-aware merging depends on a parser for each language, so unsupported or unparseable files fall back to line-based merging. C, C++ and HTML have parse-error tolerance turned on by default because their parsers raise spurious errors. The usage page warns that zdiff3 conflict style can break reconstruction of the base revision and so should not be used. Jujutsu users are told not to use mergiraf solve in Jujutsu repositories, and Jujutsu cannot be set to use Mergiraf automatically the way Git can. The homepage was reachable, but the GitHub URL returned 404, and I did not check the package-manager list on the installation page because its contents were not in the text returned.",
+  "quotes": [
+   "Mergiraf can solve a wide range of Git merge conflicts. That's because it's aware of the trees in your files!",
+   "It's a nonviolent animal, so it prefers that over imperatives.",
+   "Don't sweep conflicts under the rug",
+   "A syntax-aware git merge driver for a growing collection of programming languages and file formats."
+  ],
+  "links": [
+   {
+    "label": "Homepage",
+    "url": "https://mergiraf.org"
+   },
+   {
+    "label": "Codeberg repository",
+    "url": "https://codeberg.org/mergiraf/mergiraf"
+   },
+   {
+    "label": "Usage docs",
+    "url": "https://mergiraf.org/usage.html"
+   },
+   {
+    "label": "Installation docs",
+    "url": "https://mergiraf.org/installation.html"
+   }
+  ],
+  "fetch_log": [
+   "https://mergiraf.org - worked; introduction page with pitch and aspirations",
+   "https://mergiraf.org/installation.html - worked; download, Cargo and binstall instructions",
+   "https://github.com/mergiraf/mergiraf - failed, HTTP 404",
+   "https://codeberg.org/mergiraf/mergiraf - worked; repository page and short README pointing to docs",
+   "https://mergiraf.org/usage.html - worked; Git and Jujutsu configuration, commands and caveats"
+  ]
+ }
+}

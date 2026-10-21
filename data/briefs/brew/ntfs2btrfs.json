@@ -1,0 +1,72 @@
+{
+ "name": "ntfs2btrfs",
+ "desc": "In-place conversion of NTFS filesystem to Btrfs",
+ "homepage": "https://github.com/maharmstone/ntfs2btrfs",
+ "installs_365d": 4,
+ "deprecated": false,
+ "source": "brew",
+ "score": 6,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "library"
+ ],
+ "why": "Converts a filesystem in place by reshaping its on-disk structures, a real and risky look inside storage formats.",
+ "brief": {
+  "what_it_is": "Ntfs2btrfs is a command-line tool that converts an NTFS filesystem to Btrfs in place, so the data is reshaped on the same disk rather than copied elsewhere. It takes an NTFS volume (a drive letter on Windows, or a device such as /dev/sda1 on Linux) and leaves a Btrfs filesystem in its place. The original image is kept as a reflink copy at image/ntfs.img, and you can delete it once you are happy with the conversion to free the space. The README says it is modelled on btrfs-convert, which does the same job for ext2.",
+  "why_it_exists": "The README frames it as the NTFS counterpart to btrfs-convert for ext2, letting someone move a Windows-formatted disk to Btrfs without a full backup-and-restore cycle. It also points to the author's WinBtrfs driver for Windows as a related project.",
+  "how_it_works": "The tool rewrites NTFS on-disk structures into Btrfs structures in place, and the original image is preserved as a reflink copy at image/ntfs.img so the change can be rolled back to NTFS. The README credits Eric Biggers's reverse-engineering of Windows 10 'WOF compressed data' and says his code is reused here for that part. The README does not go into further detail on the mechanism.",
+  "commands_seen": [
+   {
+    "cmd": "ntfs2btrfs.exe D:\\",
+    "context": "Windows usage from an Administrator command prompt, converting the D: drive."
+   },
+   {
+    "cmd": "ntfs2btrfs /dev/sda1",
+    "context": "Linux usage run as root, converting the partition /dev/sda1."
+   },
+   {
+    "cmd": "mkdir build",
+    "context": "Linux compilation step: create a build directory."
+   },
+   {
+    "cmd": "cd build",
+    "context": "Linux compilation step: enter the build directory."
+   },
+   {
+    "cmd": "cmake ..",
+    "context": "Linux compilation step: configure the build from the parent source directory."
+   },
+   {
+    "cmd": "make",
+    "context": "Linux compilation step: build the ntfs2btrfs binary."
+   }
+  ],
+  "install_notes": "On Windows, download the latest Zip from the GitHub Releases page, or install via Winget or Scoop. On Linux, packages exist for Arch (AUR), Fedora, Gentoo (sys-fs/ntfs2btrfs in the guru repository), Debian, Ubuntu, and openSUSE; other systems need to compile it. Source build on Linux uses CMake, and the README says libfmt must be installed. However, the 20260810 changelog entry says the code now uses std::format and no longer needs libfmt, so the README's libfmt note may be out of date. The same entry says the code uses C++ modules and needs GCC 15, possibly 16. Compression support needs zlib, lzo, and/or zstd, and can be turned off with the CMake options WITH_ZLIB, WITH_LZO, and WITH_ZSTD. On Windows, build with MSVC by opening the source directory and compiling CMakeLists.txt. Running it requires root on Linux or an Administrator prompt on Windows.",
+  "standout": "It converts a live NTFS volume into Btrfs in place, keeps the original as a reflink so the conversion can be rolled back, and reuses reverse-engineered Windows WOF compression code. The README also says it can make a Windows boot drive run from Btrfs when paired with the separate Quibble project.",
+  "status": "Maintained, based on the changelog. The newest entry is dated 20260810 and the earlier ones run through 2025 and 2024, showing regular updates. I did not see commit or release-page dates, so this rests on the changelog alone.",
+  "caveats": "The author says 'I take no responsibility if something goes awry!' It will not work on a boot drive or on a drive with an active pagefile. Cluster sizes over 1MB are unsupported, encrypted files are unsupported, large ADSes over 16KB are unsupported, and the case-sensitivity flag is not preserved. Old Windows extended attributes are not handled. On WinBtrfs, the readonly flag on the image subvolume must be cleared before it can be deleted. The Linux build needs a recent GCC (15 or later), and the README's libfmt requirement conflicts with the changelog. Licence was not checked.",
+  "quotes": [
+   "Although I believe this tool to be stable, please note that I take no responsibility if something goes awry!",
+   "Bear in mind that it won't work with your boot drive or a drive containing a pagefile that's currently in use.",
+   "Yes, if the stars are right. See Quibble."
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/maharmstone/ntfs2btrfs"
+   },
+   {
+    "label": "WinBtrfs (Btrfs driver for Windows)",
+    "url": "https://github.com/maharmstone/btrfs"
+   },
+   {
+    "label": "Quibble (booting Windows from Btrfs)",
+    "url": "https://github.com/maharmstone/quibble"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/maharmstone/ntfs2btrfs - fetched OK; README returned with usage, install, changelog, compilation, and feature notes. No further fetches needed."
+  ]
+ }
+}

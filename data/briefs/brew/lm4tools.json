@@ -1,0 +1,57 @@
+{
+ "name": "lm4tools",
+ "desc": "Tools for TI Stellaris Launchpad boards",
+ "homepage": "https://github.com/utzig/lm4tools",
+ "installs_365d": 30,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "radio-and-hardware",
+ "tags": [
+  "afternoon",
+  "needs-hardware",
+  "library"
+ ],
+ "why": "Flashing and talking to TI Stellaris Launchpad boards is a genuine hardware door, though niche and sparse.",
+ "brief": {
+  "what_it_is": "lm4tools is a small collection of command-line tools for developing on TI Stellaris Launchpad boards, which carry an ARM Cortex-M4F processor. It includes lm4flash, which takes a compiled firmware binary and writes it to the board over USB through the board's ICDI debug interface. It also includes lmicdiusb, a TCP/USB bridge that lets GDB talk to the ICDI so you can debug on the board. Output is firmware programmed onto the board and a debug link for GDB.",
+  "why_it_exists": "The README says the tools enable multi-platform development on the TI Stellaris Launchpad boards, which are described as low-cost development boards. Flashing and debugging are the two steps it covers.",
+  "how_it_works": "lm4flash uses libusb-1.0 to talk to the Launchpad's ICDI over USB and write the binary. lmicdiusb is a TCP/USB bridge, created by TI, that carries GDB's traffic to the ICDI. The README also describes an optional udev rule that makes the flashing work without root.",
+  "commands_seen": [
+   {
+    "cmd": "$ lm4flash gcc/project0.bin",
+    "context": "Flashes the built project0 binary onto the Stellaris board, run from the boards/ek-lm4f120xl/project0 directory."
+   },
+   {
+    "cmd": "make",
+    "context": "Run inside boards/ek-lm4f120xl/project0 in the StellarisWare examples to build project0 before flashing. Mentioned in prose, not as a code block."
+   }
+  ],
+  "install_notes": "You need an arm-none-eabi cross compiler. The README lists summon-arm-toolchain, arm-eabi-toolchain by James Snyder, and Sourcery Codebench Lite as known to work. You also need TI's StellarisWare package, specifically SW-EK-LM4F120XL, which supplies the example projects. To flash without root on Linux, create /etc/udev/rules.d/61.stellpad.rules with a USB rule matching vendor 1cbe and product 00fd, set MODE to 0666, then restart udev. The brew formula's executables are lm4flash and lmicdi, but the README names the debug bridge lmicdiusb.",
+  "standout": "It is a small, focused hardware bridge for an old, niche board, and it still covers the whole loop from cross compiling to flashing to GDB debugging. The lmicdiusb bridge was built by TI itself.",
+  "status": "unknown. The README I fetched has no release dates, changelog, or version numbers, and I did not check the commit history. The brew description calls it niche and sparse.",
+  "caveats": "lmicdiusb does not work on Windows because it uses poll(), which does not work for USB there. lm4flash is listed for Linux, Mac OS X, Windows, and BSD. Root is needed to flash by default, unless you add the udev rule. You need a separate cross toolchain and the StellarisWare package, so setup is not a single install. The brew executable name lmicdi differs from the lmicdiusb name in the README.",
+  "quotes": [
+   "Some tools which enable multi-platform development on the TI Stellaris Launchpad boards.",
+   "Command-line firmware flashing tool using libusb-1.0 to communicate with the Stellaris Launchpad ICDI.",
+   "Nice hacking!"
+  ],
+  "links": [
+   {
+    "label": "Project homepage (GitHub)",
+    "url": "https://github.com/utzig/lm4tools"
+   },
+   {
+    "label": "Stellaris Launchpad (TI product page)",
+    "url": "http://www.ti.com/ww/en/launchpad/stellaris_head.html?DCMP=stellaris-launchpad&HQS=stellaris-launchpad-b"
+   },
+   {
+    "label": "StellarisWare LM4F120 LaunchPad software (SW-EK-LM4F120XL)",
+    "url": "http://www.ti.com/tool/sw-ek-lm4f120xl"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/utzig/lm4tools (homepage, GitHub README): fetched OK. Not followed further; the README was complete enough for the brief."
+  ]
+ }
+}

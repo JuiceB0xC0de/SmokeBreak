@@ -1,0 +1,142 @@
+{
+ "name": "deark",
+ "desc": "File conversion utility for older formats",
+ "homepage": "https://entropymine.com/deark/",
+ "installs_365d": 143,
+ "deprecated": false,
+ "source": "brew",
+ "score": 7,
+ "category": "take-things-apart",
+ "tags": [
+  "reverse-engineering",
+  "quick",
+  "library"
+ ],
+ "why": "Extracts and converts obscure legacy file formats, a rewarding dive into forgotten binary structures.",
+ "brief": {
+  "what_it_is": "Deark is a free, open-source, portable command-line utility that decodes certain older or obscure file formats. It either converts them to a more modern or more readable format, or extracts embedded files from them. It can also print detailed technical information about a file's contents and metadata with -d. Input is a legacy file such as an image, icon, font, archive, disk image, or executable-packed file. Output is usually written as files named output.* (or into a ZIP or TAR archive with -zip or -tar).",
+  "why_it_exists": "The README frames it as a way to turn files in forgotten or obsolete formats into something modern or readable, and to pull embedded files out of them. The author also notes that Deark contains a lot of knowledge about third-party formats (structures, algorithms, tables, palettes) that is otherwise scattered.",
+  "how_it_works": "Deark autodetects the format of the input file and hands it to a format-specific module; -m selects a module by hand when detection fails or a special-purpose module like copy is wanted. Each module decodes the format and writes the converted or extracted items as output files, with many options controlling names, timestamps, and containers. The README notes that archive formats are best converted to ZIP with -zip -ka so filenames and paths are kept. The formats.txt file lists the modules.",
+  "commands_seen": [
+   {
+    "cmd": "deark [options] [-file] <input-file> [options]",
+    "context": "Basic usage synopsis from the README. Input file is the primary argument; options may go before or after it."
+   },
+   {
+    "cmd": "deark [options] -mp <input-file1> <input-file2>...",
+    "context": "Usage form for modules that take multiple input files (segmented formats). -mp must appear before the second input filename."
+   },
+   {
+    "cmd": "deark <-h|-version|-modules>",
+    "context": "Usage form for help, version info, and listing available modules."
+   },
+   {
+    "cmd": "-zip -ka",
+    "context": "Suggested options when processing archive formats (such as ar or zoo), so filenames and paths are preserved in the output ZIP."
+   },
+   {
+    "cmd": "-d, -d2, -d3, -d4",
+    "context": "Print technical information about the file's contents; -d2 is more verbose and -d3/-d4 are mainly for debugging."
+   },
+   {
+    "cmd": "-l",
+    "context": "List the files that would be extracted without writing them."
+   },
+   {
+    "cmd": "-get <n>",
+    "context": "Extract only the file identified by <n>, where the first file is 0."
+   },
+   {
+    "cmd": "-maxdim <n>",
+    "context": "Allow image dimensions up to <n> pixels; by default Deark refuses images larger than 10000 pixels."
+   },
+   {
+    "cmd": "-opt archive:repro",
+    "context": "Makes -zip or -tar output reproducible by not using current or source-file timestamps."
+   },
+   {
+    "cmd": "-opt extrlist:append",
+    "context": "Used with -extrlist so the list of extracted filenames is appended to the file instead of overwriting it."
+   }
+  ],
+  "install_notes": "The homepage offers a source tarball (deark-1.7.3.tar.gz) and a Windows 64-bit x64 binary in an x64 directory. Windows users may need a tool that handles .tar.gz, such as 7-Zip. Build instructions are in technical.md, which I did not open. No account, runtime, or configuration is mentioned. Beyond brew install, I saw no first-run steps.",
+  "standout": "Deark is one tool covering a very wide spread of legacy formats, including ANSI art, DOS executable packers, Macintosh resource forks, Palm OS, EPOC/Symbian, and calculator pictures. It also has a debug-style inspection mode (-d) that dumps a file's internal structure. Options also let you cap output size, restrict modules for security workflows (-onlymods, -disablemods), and make archive output reproducible.",
+  "status": "Maintained. The homepage lists a release, deark-1.7.3.tar.gz, dated 2026-06-10. The README says feature lists are as of 2025-09, and the copyright runs through 2026. I did not see a commit history.",
+  "caveats": "The README warns that features are subject to change without notice. Unrecognized or misspelled -opt options are silently ignored. Images larger than 10000 pixels in either dimension are refused by default, and large images are not generated efficiently. A malformed input usually produces an error message but exit status 0. The README says it is not really a collaborative project and that unsolicited contributions of more than a few lines are unlikely to be accepted. The main code is MIT-style licensed, but files in the foreign subdirectory have their own terms. Windows users need a .tar.gz-capable tool. The -modcodes option is mainly for developers.",
+  "quotes": [
+   "Deark is a portable command-line utility that can decode certain types of files, and either convert them to a more-modern or more-readable format, or extract embedded files from them.",
+   "Caution: Unrecognized or misspelled options will be silently ignored.",
+   "Deark is not really a collaborative project at this time."
+  ],
+  "links": [
+   {
+    "label": "Deark homepage",
+    "url": "https://entropymine.com/deark/"
+   },
+   {
+    "label": "GitHub project (README, technical.md)",
+    "url": "https://github.com/jsummers/deark"
+   },
+   {
+    "label": "Deark-extras (ancillary files for development)",
+    "url": "https://github.com/jsummers/deark-extras"
+   }
+  ],
+  "fetch_log": [
+   "https://entropymine.com/deark/ - worked; homepage text, supported format list, and download info (the page links a demo video, which I did not fetch)",
+   "https://github.com/jsummers/deark - worked; README returned in full, including usage and options. I did not follow technical.md or formats.txt."
+  ]
+ },
+ "judge": {
+  "verdict": "keep",
+  "confidence": "high",
+  "reason": "Deark turns obscure legacy files into usable data while exposing their internal structures, making forgotten formats a hands-on reverse-engineering playground."
+ },
+ "entry": {
+  "verdict": "write",
+  "reject_reason": "",
+  "title": "deark",
+  "tldr": "A command-line tool that decodes obscure legacy file formats, converting old images, icons, and archives into modern files or extracting what is inside.",
+  "deeper_look": "Deark takes a file in an old or obscure format and either converts it to something modern or pulls out the files embedded inside. The inputs range widely: ANSI art, DOS executable packers, Macintosh resource forks, Palm OS and EPOC/Symbian files, calculator pictures, fonts, icons, disk images, and old archives. It autodetects the format and hands the file to a format-specific module. If detection fails, `-m` picks a module by hand.\n\nOutput usually lands in files named `output.*`, or in a ZIP or TAR archive with `-zip` or `-tar`. For archive formats such as ar or zoo, the README suggests `-zip -ka` so filenames and paths survive. The `-d` option goes the other way and prints the technical structure of the file: headers, fields, and metadata. That makes it a way to learn how a format is laid out by watching a decoder read it.\n\nThe author's stated motivation is turning files in forgotten formats into something modern or readable. The project also holds a lot of knowledge about third-party formats (structures, algorithms, tables, palettes) that is otherwise scattered. Each module is a small, readable record of how some vanished piece of software stored its data. Run it on a file you cannot open and you get a short lesson in how that format worked.",
+  "install": "brew install deark",
+  "try_this": [
+   {
+    "cmd": "deark -h",
+    "what_happens": "Prints usage and the list of options."
+   },
+   {
+    "cmd": "deark -modules",
+    "what_happens": "Lists the format modules Deark knows, a quick survey of the legacy formats it covers."
+   },
+   {
+    "cmd": "deark -d <input-file>",
+    "what_happens": "Prints technical details about the file's internal structure and metadata, instead of just converting it."
+   }
+  ],
+  "whats_unique": "One tool covers a very wide spread of dead formats, from DOS packers to Palm OS to calculator pictures. Its `-d` mode doubles as a format explainer.",
+  "caveats": "Misspelled or unrecognized `-opt` options are silently ignored, malformed input often still exits with status 0, and the README says features may change without notice.",
+  "commitment": "quick",
+  "category": "take-things-apart",
+  "tags": [
+   "quick",
+   "reverse-engineering",
+   "file-formats",
+   "legacy",
+   "retro"
+  ],
+  "links": [
+   {
+    "label": "Deark homepage",
+    "url": "https://entropymine.com/deark/"
+   },
+   {
+    "label": "GitHub project (README, technical.md)",
+    "url": "https://github.com/jsummers/deark"
+   },
+   {
+    "label": "Deark-extras (ancillary files for development)",
+    "url": "https://github.com/jsummers/deark-extras"
+   }
+  ]
+ }
+}

@@ -1,0 +1,88 @@
+{
+ "name": "liblcf",
+ "desc": "Library for RPG Maker 2000/2003 games data",
+ "homepage": "https://easyrpg.org/",
+ "installs_365d": 278,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "take-things-apart",
+ "tags": [
+  "afternoon",
+  "library",
+  "reverse-engineering"
+ ],
+ "why": "A library for parsing RPG Maker 2000/2003 game data files, a real door into old game file formats, though it is a library.",
+ "brief": {
+  "what_it_is": "liblcf is a library for handling RPG Maker 2000 and 2003 game data. It reads and writes the LCF data files (LMU, LMT, LDB, LSD and similar) and can convert them to and from XML. It ships with two small command-line tools: lcf2xml, which converts between the RPG Maker formats and XML, and lcfstrings, which lists the text and filename strings stored in LMU, LMT, LDB and LSD files. It is a library first, so most people will meet it through its tools or through software that links it.",
+  "why_it_exists": "liblcf is part of the EasyRPG Project, a community effort to create a free, open source role playing game creation tool compatible with RPG Maker 2000/2003 games. The README describes the library as a way to handle RPG Maker 2000 and 2003 game data.",
+  "how_it_works": "The README does not explain the internals in detail. It says the library reads and writes LCF and XML files, and it uses Expat for XML reading and ICU for character encoding detection and conversion (without ICU only Windows-1252 is supported). The README points to the EasyRPG wiki for further technical documentation.",
+  "commands_seen": [
+   {
+    "cmd": "tar xf liblcf-0.8.1.tar.xz",
+    "context": "Unpacks the released source tarball (example version 0.8.1) before building with Autotools or CMake."
+   },
+   {
+    "cmd": "./configure --prefix /usr",
+    "context": "Autotools build step that finds libraries and sets options, installing under /usr."
+   },
+   {
+    "cmd": "make",
+    "context": "Autotools build step that compiles the library."
+   },
+   {
+    "cmd": "sudo make install",
+    "context": "Autotools step that installs liblcf system-wide."
+   },
+   {
+    "cmd": "autoreconf -i",
+    "context": "Only needed when building from the git source tree, to generate the configure script. Requires autoconf 2.69 or newer."
+   },
+   {
+    "cmd": "cmake . -DCMAKE_BUILD_TYPE=Release",
+    "context": "CMake configure step for a Release build."
+   },
+   {
+    "cmd": "cmake --build .",
+    "context": "CMake step that compiles the library."
+   },
+   {
+    "cmd": "sudo cmake --build . --target install",
+    "context": "CMake step that installs liblcf system-wide."
+   }
+  ],
+  "install_notes": "Not installed through Homebrew in this check; the Homebrew formula is what the scout listed. Building from the release tarball needs pkg-config and GNU make for Autotools, or CMake 3.10 or newer (pkg-config is not needed on Windows). Building from git also needs autoconf 2.69 or newer, automake 1.11.4 or newer, and libtool. Optional and required dependencies are inih (required when building EasyRPG Player), Expat (XML reading) and ICU (recommended). On Windows, CMake is the only supported build method and all dependencies must come from vcpkg. The README does not mention hardware, accounts or runtime configuration.",
+  "standout": "It is a working door into old game file formats: the lcf2xml tool turns opaque binary RPG Maker 2000/2003 data into readable XML and back, which makes old game data inspectable and editable without the original editor. The lcfstrings tool is a quick way to pull all the dialogue and filename text out of a game's data.",
+  "status": "Appears maintained. The README references release 0.8.1 and links a download archive, and the EasyRPG homepage carries a 2007-2026 copyright. I could not see a last release date or last commit date from the pages I read, so the exact recency is unknown.",
+  "caveats": "It is a library, not an end-user program, so there is nothing to run directly beyond the two small tools. Build setup has several steps and platform-specific paths, and on Windows it requires CMake with vcpkg. Without ICU, only Windows-1252 text encoding is supported. The README contains no explicit warning about data loss when converting files, so check output before relying on a round trip. The homepage I fetched was the EasyRPG project homepage rather than liblcf's own page; I took the liblcf README from the GitHub repository it names.",
+  "quotes": [
+   "liblcf is a library to handle RPG Maker 2000 and 2003 game data.",
+   "It can read and write LCF and XML files.",
+   "LCF2XML is a small tool to convert RPG Maker 2000 and 2003 data format (LMU, LMT, LDB, LSD, ...) to XML and vice-versa.",
+   "LCFSTRINGS is a small tool to list the strings used for the text and filenames from LMU, LMT, LDB and LSD files."
+  ],
+  "links": [
+   {
+    "label": "EasyRPG project homepage",
+    "url": "https://easyrpg.org/"
+   },
+   {
+    "label": "liblcf source repository",
+    "url": "https://github.com/EasyRPG/liblcf"
+   },
+   {
+    "label": "EasyRPG wiki (documentation)",
+    "url": "https://wiki.easyrpg.org"
+   },
+   {
+    "label": "Released versions download archive",
+    "url": "https://easyrpg.org/downloads/"
+   }
+  ],
+  "fetch_log": [
+   "https://easyrpg.org/ \u2014 fetched, worked; returned the EasyRPG project homepage with no liblcf README content and no direct link to the liblcf repository in the returned text.",
+   "https://github.com/EasyRPG/liblcf \u2014 fetched, worked; returned the liblcf README, which I used as the main source. I chose this URL myself, not from a link on the homepage.",
+   "Did not fetch https://wiki.easyrpg.org, because the README was complete enough for the brief."
+  ]
+ }
+}

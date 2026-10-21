@@ -1,0 +1,73 @@
+{
+ "name": "topfew",
+ "desc": "Finds the field values which appear most often in a stream of records",
+ "homepage": "https://github.com/timbray/topfew",
+ "installs_365d": 51,
+ "deprecated": false,
+ "source": "brew",
+ "score": 5,
+ "category": "quick-weird-payoffs",
+ "tags": [
+  "quick",
+  "tui"
+ ],
+ "why": "Streaming frequency counts over record fields is a neat small transform, though its core idea is fairly simple.",
+ "brief": {
+  "what_it_is": "Topfew is a command-line program that reads records (one per line) from a file or standard input, splits each into fields, optionally filters and edits the chosen fields, and prints the values that occur most often with their counts. It is written in Go, and the default output is the top 10. Its filtering and editing options (grep, vgrep, sed) let you narrow the input and clean up values before counting.",
+  "why_it_exists": "The README says the same result can be had with awk, sort, uniq and head, but that topfew is usually much faster, and that anyone choosing it cares about performance. Its main example is finding the IP address that most often hits a web server from an Apache access_log.",
+  "how_it_works": "Records are split on newlines and fields on whitespace by default, with -p to supply a regexp separator and -q to respect quoted fields in Apache-style logs. Lines are filtered with -g and -v regexps, and selected fields are edited with -s sed-style replacements, which may use $1, $2 and so on for capture groups. When given a named file, topfew divides it into segments and processes them in parallel threads, with the thread count (-w) defaulting to Go's runtime.NumCPU().",
+  "commands_seen": [
+   {
+    "cmd": "topfew --fields 1 access_log",
+    "context": "Finds the IP address (field 1) that most commonly hits a web site in an Apache logfile named access_log."
+   },
+   {
+    "cmd": "awk '{print $1}' access_log | sort | uniq -c | sort -rn | head",
+    "context": "The README's equivalent pipeline using standard Unix tools, given as the baseline topfew is compared against."
+   },
+   {
+    "cmd": "topfew --fields 1 --vgrep googlebot --vgrep bingbot",
+    "context": "Top IP addresses while excluding high-traffic bots; no filename given, so it reads standard input."
+   },
+   {
+    "cmd": "topfew --fields 1 --grep '\\[../May/2020'",
+    "context": "Most popular IP addresses from May 2020, using a grep regexp to keep only matching lines."
+   },
+   {
+    "cmd": "topfew --fields 4 --sed \"\\\\[\" \"\"  --sed '^[^:]*:' ''  --sed ':..$' ''",
+    "context": "Most popular hour/minute of the day for retrievals, stripping brackets and date parts with three sed-style edits."
+   },
+   {
+    "cmd": "topfew -g picInfo.xml -f 6 -q -s '\\?utm.*' '' -s \" HTTP/...\" \"\" -s \"GET .*\\/ongoing\" \"\"",
+    "context": "Case study: top URLs fetched by a human from an Apache log. -g keeps picInfo.xml requests, -q handles quoted fields, and the -s edits clean up the result."
+   },
+   {
+    "cmd": "topfew -g example big-file ",
+    "context": "One of two ways the README gives for finding top records containing 'example' in big-file; it reports this is faster on Mac."
+   },
+   {
+    "cmd": "grep example big-file |topfew",
+    "context": "The other way to do the same job, piping grep into topfew; the README reports this is faster on Linux."
+   }
+  ],
+  "install_notes": "The README gives no installation steps beyond what the package metadata shows. It has no mention of accounts, runtimes or configuration. The Go module badge suggests it is built with Go. Badges also claim zero dependencies.",
+  "standout": "It is a small, fast, single-purpose stream-counting tool that packages grep, sed, field-splitting and counting into one command with parallel file segmentation. The README is candid that the whole thing can be done with awk and sort, and it benchmarks options on different hardware instead of claiming one is always fastest.",
+  "status": "unknown. The README says 'This is release 2.0 of Topfew' and shows CI, coverage and Go Report Card badges, but the fetched text gives no release date or last commit date.",
+  "caveats": "Using -p (regexp field separator) is said to carry a significant performance cost, and -p and -q cannot be used together. --sample only works with standard input, not a named file. Reading from standard input is always slower than reading a named file, according to the README. Which option combination is fastest varies from machine to machine. Parallel segmenting only applies to named files.",
+  "quotes": [
+   "A program that finds and prints out the top few records in which a certain field or combination of fields occurs most frequently.",
+   "But topfew is usually much faster.",
+   "Since the effect of topfew can be exactly duplicated with a combination of awk, grep, sed and sort, you wouldn\\u2019t be using it if you didn\\u2019t care about performance.",
+   "Topfew is quite highly tuned and pushes your computer\\u2019s I/O subsystem and Go runtime hard."
+  ],
+  "links": [
+   {
+    "label": "GitHub repository and README",
+    "url": "https://github.com/timbray/topfew"
+   }
+  ],
+  "fetch_log": [
+   "https://github.com/timbray/topfew - fetched OK, README returned. It was complete enough that I did not follow further links."
+  ]
+ }
+}
