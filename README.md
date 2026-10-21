@@ -2,9 +2,11 @@
 
 A catalogue of things worth taking a short break to poke at. Terminal tools, odd libraries, protocols you use all day and never looked at, simulations, instruments, languages. The kind of thing where you run `--help`, learn it a little, and come back from your break with something new in your head.
 
-Not a list of everything. A short shelf of things you have probably never heard of.
+Not a list of everything. A shelf of things you have probably never heard of.
 
-Entries are drafted by Claude, judged by a second model from a different vendor, and the whole pipeline is in this repo. Links go to the real projects. Status: building the catalogue. No CLI yet.
+**[Browse the shelf](catalogue/README.md)**, eight categories, each entry with what it is, how to install it, what to try first, and what makes it odd.
+
+Entries are drafted by Claude, judged by a second model from a different vendor, and the whole pipeline is in this repo. Links go to the real projects. Status: first pass over Homebrew is in. No CLI yet. pip, npm and nix are next.
 
 ## What gets in
 
@@ -59,6 +61,10 @@ python3 -m pipeline.writer brew              # Sonnet writes the keeps -> drafts
 ```
 
 Every stage skips what it has already done, so `--limit N` on any of them is a cheap taste before the full run.
+
+```
+python3 -m pipeline.index                    # rebuild catalogue/ from the entries, no API calls
+```
 
 Briefs land in `data/briefs/brew/<name>.json`. Drafts land in `drafts/brew/<name>.md`, with a `.json` beside each for the judge. Writer rejections go to `drafts/brew/rejected.jsonl`. Re-running skips anything already written.
 
