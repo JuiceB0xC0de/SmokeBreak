@@ -19,6 +19,4 @@ Reject: the ninth git TUI, a SaaS command line wrapper, a text effects library t
 
 ## Output
 
-Reply with JSON only, this exact shape:
-
-{"verdict": "keep" | "reject", "confidence": "high" | "medium" | "low", "reason": "one sentence, under 30 words, for a human reader"}
+`verdict` is keep or reject. `confidence` is high, medium or low. `reason` is one sentence, under 30 words, for a human reader.
